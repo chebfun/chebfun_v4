@@ -1,0 +1,4 @@
+function F = abs(f)
+
+% Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
+F = sign(f).*f;

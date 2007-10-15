@@ -1,0 +1,37 @@
+function F = auto(op,[a b])
+
+
+
+if happy
+    F = chebfun(f,[a b]);
+else
+    mdpt = .5*(b+a);
+    F1 = auto(op,[a mdpt]);
+    F2 = auto(op,[mdpt b]);
+    F = [F1;F2];
+end
+
+if isa(op,'double')|(isa(op,'char') & ~isempty(str2num(op)))
+    f = fun(op); % make a fun from a constant or from a data string
+    F = chebfun(f,[a b]);
+elseif isa(op,'char')| isa(op,'function_handle')
+    % make a fun from a string or from a function handle
+    if isa(op,'char'), op = inline(op); end 
+    [f,happy] = grow(op,[a b]);
+        
+
+        
+    a = ends(i); b = ends(i+1);
+    x = fun('x',1);
+    x = (1-x)*a/2 + (x+1)*b/2;
+    funs{i} = auto(funs{i},x); 
+    % if n(i) is less than the length of the chebfun
+    % already computed, it is a very bad idea to cut it 
+    % only until now. It should be done before --------------------          
+    if n(i)~= -1,
+        funs{i} = prolong(funs{i},n(i));
+    end
+    %--------------------------------------------------------------            
+elseif ~isa(funs{i},'fun')
+    error('One of the inputs object type was not recognized');
+end

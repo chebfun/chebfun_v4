@@ -1,0 +1,12 @@
+function F = auto(op,[a b])
+
+[f,happy] = grow(op,[a b]);
+
+if happy
+    F = chebfun(f,[a b]);
+else
+    mdpt = .5*(b+a);
+    F1 = auto(op,[a mdpt]);
+    F2 = auto(op,[mdpt b]);
+    F = [F1;F2];
+end

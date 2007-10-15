@@ -1,0 +1,8 @@
+function x = cheb(n,a,b)
+% This function generates the Chebyshev points.
+if n==0, x=1; return, end
+if nargin == 1, a = -1; b = 1; end
+   
+%x=sin(pi*(n:-2:-n)/(2*n))';
+xx = cos(.5*pi*(0:2:2*n)'/n);
+x = (2*xx-a-b)/(b-a);

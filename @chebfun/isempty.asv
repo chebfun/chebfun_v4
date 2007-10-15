@@ -1,0 +1,6 @@
+function out = isempty(f)
+% ISEMPTY	True for empty chebfun
+% ISEMPTY(F) returns one if F is an empty chebfun and zero otherwise.
+%
+%
+out = isempty(f.funs);

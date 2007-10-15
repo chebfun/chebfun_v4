@@ -1,0 +1,27 @@
+function [f,happy] = grow(op,[a b]);
+% GROW Grows a fun
+% Given a function handle or an in-line object, creates a FUN rescaled to
+% the interval [a b] with no more than 128 Chebyshev points. If the
+% function in OP requires more points, the obtained FUN is not happy (that
+% is, HAPPY = 0).
+%
+% Ricardo Pachon
+maxn = 128;
+epsauto = 1e-15;
+happy = 0;
+n = 4;
+while  n <= maxn
+    x = .5*((b-a)*cheb(n)+a+b);  % n-rescaled Chebyshev points
+    f = fun;
+    f = set(f,'val',op(x),'n',n-1);
+    c = funpoly(f);
+    if (abs(c(1)) < epsauto*normc | abs(c(2)) < epsauto*normc)
+        happy = 1; n = maxn+1;
+    else
+        n = n*2;
+    end
+end
+if happy
+    f = simplify(f);
+    if (f.val ==0), f.val = 0 ; f.n = 0; end
+end

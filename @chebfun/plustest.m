@@ -1,0 +1,29 @@
+function h = plus(f,g)
+
+if (isempty(f) | isempty(g)), h=chebfun; return; end
+if isa(f,'double')
+    h=g;
+    for i = 1: length(g.funs)
+          h.funs{i} = f + g.funs{i};
+    end
+    return;
+elseif isa(g,'double')
+    h=f;
+    for i = 1:length(f.funs)
+        h.funs{i}=f.funs{i} + g;
+    end
+    return;
+end
+[hends, hf, hg, ord] = overlap(f.ends,g.ends);
+x = fun('x');
+for i = 1:size(ord,2)-1
+    fcheb = f.funs{ord(1,i)}; gcheb = g.funs{ord(2,i)};
+    hfuns{i} = fcheb(hf(1,i)*x+hf(2,i)) + gcheb(hg(1,i)*x+hg(2,i));
+end
+ord = [[1;1] diff(ord,1,2)];
+frows = size(f.imps,1); grows = size(g.imps,1);
+fim = zeros(max(frows,grows),length(hends));  gim = fim;
+fim(1:frows,find(ord(1,:))) = f.imps; 
+gim(1:grows,find(ord(2,:))) = g.imps;
+himps = fim + gim;
+h = chebfun(hfuns,hends,himps);
