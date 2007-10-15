@@ -5,6 +5,7 @@ function F = sin(f)
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 F = f;
 nfuns = length(f.funs);
+disp('Nick was here!')
 for i = 1:nfuns
     F.funs{i} = sin(F.funs{i});
 end
