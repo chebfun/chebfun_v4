@@ -6,10 +6,10 @@ function [f,happy] = grow(op,ends)
 % (that is, HAPPY = 0).
 %
 % Ricardo Pachon
-maxn = 128;
 n = 2;
 a = ends(1); b = ends(2);
 converged = 0; % force to enter into the loop 
+maxn = 4 + round(128/abs(log2(min(.5,diff(ends)))));
 while  not(converged)
     if n >= maxn, happy = 0; return; end
     n = n*2;

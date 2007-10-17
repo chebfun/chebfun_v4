@@ -12,22 +12,22 @@ function chebfunobj = chebfun(varargin)
 %
 % CHEBFUN(f,np) specifies the number np of Chebyshev points to construct the 
 % chebfun. CHEBFUN(f,[a b],np) specifies the interval of definition and the
-% number of Chebyshev points. Neither of this two options work when f is a
-% data string.
+% number np of Chebyshev points. Neither of this two options work when f is 
+% a data string.
 % 
 % CHEBFUN(f1,f2,...,fm,ends), where ends is an increasing vector of length
 % m+1, constructs a piecewise smooth chebfun from the functions f1,...,fm. 
 % The funcion fi can be a string, a function handle or a number, and it is 
 % defined in the interval [ends(i) ends(i+1)]. 
 %
-% CHEBFUN(f1,f2,...,fm,ends,np), where n is a vector of length m, specifies
-% the number n(i) of Chebyshev points for the construction of fi.
+% CHEBFUN(f1,f2,...,fm,ends,np), where np is a vector of length m, specifies
+% the number np(i) of Chebyshev points for the construction of fi.
 % 
 % CHEBFUN(chebs,ends) construct a piecewise smooth chebfun with m pieces
 % from a cell array chebs of size m x 1. Each entry chebs{i} in the cell
 % array is a function defined on [ends(i) ends(i+1)] represented by a
 % string, a function handle or a number. CHEBFUN(chebs,ends,np) specifies
-% the number n(i) of Chebyshev points for the construction of the function
+% the number np(i) of Chebyshev points for the construction of the function
 % in chebs{i}.
 %
 % CHEBFUN creates an empty fun.
@@ -49,7 +49,6 @@ end
 % chebfun main components: ------------------------------------------------
 funs = {};
 ends = [];
-imps = []; 
 % ------------------------------------------------------------------------
 % flags : ----------------------------------------------------------------
 ninps = nargin; % # of inputs
@@ -57,9 +56,6 @@ n = []; % # of Chebyshev points for each fun specified in input (or -1)
 nflag = 0;       % = 1 if the # of Chebyshev points for each fun is known
 funsflag = 0;    % = 1 when the field "funs" is ready
 endsflag = 0;    % = 1 when the field "ends" is ready
-impsflag = 0;    % = 1 when the field "imps" is ready
-xfuns = 0;
-
 % ------------------------------------------------------------------------
 % main loading process : -------------------------------------------------
 propertyArgIn = varargin;
@@ -68,19 +64,19 @@ while ninps > 0,
     propertyArgIn = propertyArgIn(2:end);
     ninps = ninps - 1;
     if ~funsflag && isa(prop,'fun')
+        % a fun: append it to the funs array.
         funs{end+1} = prop;
-        xfuns = xfuns + 1;
     elseif ~funsflag && (isa(prop,'function_handle') || isa(prop,'char') || ...
             (isa(prop,'double') && length(prop) == 1))
+        % a function handle, or a string (function or data) and a number:
+        % append it to the funs array.
         funs{end+1} = prop;
     elseif iscell(prop)
-        funs = prop; funsflag = 1;
-        if not(isempty(prop)) && isa(prop{1},'fun')
-            xfuns = length(prop);
-        end
+        % a cell array: it must contain all the funs.
+        funs = prop; funsflag = 1;            
     elseif isa(prop,'double') && length(prop) > 1
-        % a vector: it could be ends, imps or n; in case we
-        % can assume that all the required funs have been loaded.
+        % a vector: it could be ends or n;  we can assume that all the
+        % required funs have been loaded
         funsflag = 1;
         if ~endsflag && (length(prop) == length(funs) + 1)
             % loading ends
@@ -88,70 +84,68 @@ while ninps > 0,
         elseif endsflag && (length(prop) == length(funs))  &&~nflag
             % loading n
             n = prop; nflag = 1;
-        elseif endsflag && (size(prop,2) == length(ends))
-            imps = prop;
-            impsflag = 1;
-        elseif (isempty(funs))
-            % no funs were loaded; chebfun only has information of ends
-            ends = prop; endsflag = 1;
         else
             error('There was an error loading the vector');
         end
     elseif funsflag && (isa(prop,'double') && length(prop) == 1)
         % a scalar, and the funs have already been loaded: it is n.
-        if endsflag 
-            n = prop; nflag = 1;
-        elseif length(funs) == 1
-            % only one fun and a scalar: assume ends = [-1,1]
-            n = prop; nflag = 1;
-            ends = [-1,1]; endsflag = 1;
-        else
-            error('There was an error loading a scalar');
-        end
+        n = prop; nflag = 1;
     else 
         error('Unrecognized input sequence');
     end
-    % a safeguard ------------------------------------
+    
     if ninps == 1,      % only one input remaining ... 
          funsflag = 1; % ... it cannot belong to funs
-    end   
-    % ------------------------------------------------
+    end  
 end % end of while
 %-------------------------------------------------------------------------
-% infer and fill non-loaded data: ----------------------------------------
-if ~endsflag && ((length(funs) == 1) || nflag)
-    ends = [-1,1];
-elseif ~endsflag && funsflag
-    error('Define the intervals where each function is defined')
-end
-if isempty(n) 
-    for i = 1:length(funs)
-        if isa(funs{i},'char') && ~isempty(str2num(funs{i}))
-            % discrete data; make sure the degree of the polynomial is
-            % correct
-            n(i) = length(str2double(funs{i}))-1; 
-        elseif isa(funs{i},'double')
-            n(i) = 0;
-        else
-            n(i) = -1;
-        end
+if ~endsflag 
+    if (length(funs) == 1)
+        ends = [-1,1];
+    else
+        error('Define the intervals where each function is defined')
     end
 end
-if not(impsflag)
-    imps = zeros(size(ends));
-end
-if xfuns>0 && xfuns<length(funs)
-    error('All or none of the input arguments should be of type fun');
-elseif xfuns==0
-    chebfunobj = chebfun;
-    % convert each element of "funs" into a fun : -------------------------
+%-------------------------------------------------------------------------
+if nflag
+    % # of Chebyshev points are prescribed by the user.
+    if length(n)~=length(funs)
+        error('Prescribe the number of Chebyshev points for all the funs.');
+    end
     for i = 1:length(funs)
-        f =  auto(funs{i},ends(i:i+1),n(i));
-        chebfunobj = [chebfunobj;f];
+        if isa(funs{i},'char'), funs{i} = inline(funs{i}); end
+        f = funs{i};
+        x=cheb(n(i));
+        a = ends(i); b = ends(i+1);
+        x = (1-x)*a/2 + (x+1)*b/2;
+        ffuns{i} = fun;
+        ffuns{i} = set(ffuns{i},'val',f(x),'n',n(i)); %<- problem with constants
     end
 else
-    chebfunobj.funs = funs;
-    chebfunobj.ends = ends;
-    chebfunobj.imps = imps;
-    chebfunobj = class(chebfunobj,'chebfun');
+    ffuns = {};
+    for i = length(funs):-1:1
+        f = funs{i};
+        if isa(f,'double')
+            f = {fun(f)}; % make a fun from a constant
+        elseif isa(f,'char')
+            data = str2num(f);
+            if ~isempty(data) 
+                f = {fun(f,length(data)-1)}; % <- data is stored in reverse
+            else
+                f = inline(f);
+                [f,e] = auto(f,ends(i:i+1));
+                ends = [ends(1:i-1) e ends(i+2:end)];
+            end
+        elseif isa(f,'function_handle')|| isa(f,'inline')
+            [f,e] = auto(f,ends(i:i+1));
+            ends = [ends(1:i-1) e ends(i+2:end)];
+        elseif isa(f,'fun')
+            f = {f};
+        end
+        ffuns = [f;ffuns];
+    end
 end
+chebfunobj.funs = ffuns;
+chebfunobj.ends = ends;
+chebfunobj.imps = zeros(size(ends));
+chebfunobj = class(chebfunobj,'chebfun');
