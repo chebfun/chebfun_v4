@@ -40,4 +40,5 @@ fh = subsref(f,S); gh = subsref(g,S);
 fim = fim.*gh(ones(maxrows,1),:); fim(isnan(fim)) = 0;
 gim = gim.*fh(ones(maxrows,1),:); gim(isnan(gim)) = 0;
 himps = fim + gim;
-h = chebfun(hfuns,hends,himps);
+h = chebfun(hfuns,hends);
+set(h,'imps',himps);

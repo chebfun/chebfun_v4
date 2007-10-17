@@ -30,4 +30,5 @@ fim = zeros(max(frows,grows),length(hends));  gim = fim;
 fim(1:frows,find(ord(1,:))) = f.imps; 
 gim(1:grows,find(ord(2,:))) = g.imps;
 himps = fim + gim;
-h = chebfun(hfuns,hends,himps);
+h = chebfun(hfuns,hends);
+set(h,'imps',himps);

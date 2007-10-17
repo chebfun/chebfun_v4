@@ -33,4 +33,5 @@ S.subs = {hends(2:end)};
 gh = subsref(g,S);
 himps = fim(2:end)./gh(ones(grows,1),:); 
 himps = [zeros(size(himps,1),1) himps];
-h = chebfun(hfuns,hends,himps);
+h = chebfun(hfuns,hends);
+set(h,'imps',himps);
