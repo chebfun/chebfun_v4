@@ -42,7 +42,7 @@ if (n>=maxn || sum(isnan(cf.val)) || sum(isinf(cf.val)))
     warning('Function may not converge, using 2^16 points.');
 else
     if neweps>epsauto
-        warning(['Using tolerace ', num2str(neweps),' instead of ', num2str(epsauto)])
+        warning(['Using tolerance ', num2str(neweps),' instead of ', num2str(epsauto)])
     end    
     F = simplify(cf); % discard coeffs. close to zero.
     if (F.val ==0), F.val = 0 ; F.n = 0; end

@@ -1,9 +1,9 @@
 function [converged,neweps]=convergencetest(c,epstol)
 % Test for convergence on the coefficients of a Chebyshev expansion.
-% First tests for the relative size of the coeficients,
+% First tests for the relative size of the coefficients,
 % if that doesn't indicate convergence, estimates the rate of convergence.
 % If the rate of convergence is worst than O(exp(-5e-4 *N)) it stops and 
-% resets the tolerace value.
+% resets the tolerance value.
 % 
 % R.B. Platte, R. Pachon, L.N. Trefethen 2007
 
