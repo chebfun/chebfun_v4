@@ -17,6 +17,6 @@ else
     if n>nfuns
         error(['Chebfun only has ',num2str(nfuns),' funs'])
     else
-        out = poly(f.funs{n});
+        out = funpoly(f.funs{n});
     end
 end

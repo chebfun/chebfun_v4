@@ -114,7 +114,7 @@ linespec = {'linestyle' linestyle 'marker' marker 'color' color ...
      'markerfacecolor' markerfacecolor 'markersize' markersize}; 
 if nfuncs == 1
     % First plot the impulses of degree 1
-    if not(isempty(f.imps)) & isreal(chebvals(f))
+    if not(isempty(f.imps)) %& isreal(chebvals(f))
         positives = find(f.imps(1,:) > 0);
         negatives = find(f.imps(1,:) < 0);
         stem(f.ends(positives) ,f.imps(1,positives), ...
@@ -134,7 +134,7 @@ if nfuncs == 1
         m = round(2000*(1+get(funs{i},'n'))/nf);
         plot(x,funs{i},m,linespec); hold on
     end
-    if ~strcmp(jumpline,'none') & isreal(chebvals(f))
+    if ~strcmp(jumpline,'none') %& isreal(chebvals(f))
         for i = 1:nfuns - 1
             jp = ends(i+1);
             plot([jp;jp],[funs{i}(1);funs{i+1}(-1)],jumpline);
