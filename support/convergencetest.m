@@ -8,6 +8,7 @@ function [converged,neweps]=convergencetest(op,c,epstol,a,b)
 % R.B. Platte, R. Pachon, L.N. Trefethen 2007
 
    normc=norm(c,'inf');
+   tolc=2*max(epstol,epstol*normc);
    neweps=epstol;
    lenc=length(c);
   
@@ -17,8 +18,8 @@ function [converged,neweps]=convergencetest(op,c,epstol,a,b)
    x=2*rand(5,1)-1;
    f=fun(c);
    y1=f(x);
-   y2=op(.5*((b-a)*x+a+b));   
-   if norm(y1-y2,inf) + norm(c(1:min(5,lenc)) ,inf) < 2*epstol*normc
+   y2=op(.5*((b-a)*x+a+b)); 
+   if norm(y1-y2,inf) + norm(c(1:min(4,lenc)) ,inf) < tolc
        converged=1;
    else
        
@@ -30,7 +31,7 @@ function [converged,neweps]=convergencetest(op,c,epstol,a,b)
                0.0179    0.0214    0.0250];
         
          slope=pin*log(abs(c(1:15))+epstol)';
-         if slope<5e-4 && (norm(y1-y2,inf) + norm(c(1:15),inf)) <2e-9*norm(c,inf)
+         if slope<5e-4 && (norm(y1-y2,inf) + norm(c(1:15),inf)) < max(2e-9, 2e-9*normc);
              converged=1;
              neweps=norm(c(1:5),inf)/normc;
          end
