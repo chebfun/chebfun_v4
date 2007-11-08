@@ -31,7 +31,9 @@ while  not(converged)
     f = set(f,'val',v,'n',n);
     c = funpoly(f);
     %display(n)
-    [c,converged] = simplify(c);
+    [converged,neweps]=convergencetest(op,c,1e-13,a,b);
+    [c] = simplify(c);
+
     %table = unique([table; [x v]],'rows');
 end
 f = fun(c);
