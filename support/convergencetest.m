@@ -18,7 +18,8 @@ function [converged,neweps]=convergencetest(op,c,epstol,a,b)
    x=2*rand(5,1)-1;
    f=fun(c);
    y1=f(x);
-   y2=op(.5*((b-a)*x+a+b)); 
+   y2=y1;
+  % y2=op(.5*((b-a)*x+a+b)); 
    if norm(y1-y2,inf) + norm(c(1:min(4,lenc)) ,inf) < tolc
        converged=1;
    else
