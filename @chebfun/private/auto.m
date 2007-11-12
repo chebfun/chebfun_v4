@@ -1,5 +1,6 @@
 function [funs,ends] = auto(op,ends)
 
+
 % Debugging controls: ---------------------------------------------------
 deb1 = 0; % <-  show the iteration level
 deb2 = 0; % <-  plot advance of the construction (blue = happy; red = sad)
