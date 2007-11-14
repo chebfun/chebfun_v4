@@ -13,7 +13,7 @@ for i = 1:nfuns
     if ~isempty(r)
         F = [F;scale(r,a,b)];
     end
-    if abs(lfun(1)) <= 1e-15
+    if abs(lfun(1)) <= 1e-15*vscale(f)
         F = [F;b];
     elseif i < nfuns
         rfun = f.funs{i+1};

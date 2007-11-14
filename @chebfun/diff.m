@@ -20,14 +20,15 @@ for j = 1:n % loop n times for nth derivative
     % Detect jumps in the function
     fright = f.funs{1};
     newimps = [fright(-1) zeros(1,nfuns)];
+    vs = vscale(f);
     for i = 2:nfuns
         fleft = fright; fright = f.funs{i};
         jmp = fright(-1) - fleft(1);
-        if abs(jmp) > 1e-14
+        if abs(jmp) > 1e-14*vs
            newimps(i) = jmp;
         end
     end
-    if any(f.imps(1,:)>1e-14)
+    if any(f.imps(1,:)>1e-14*vs)
         % Increase the degree of existing Dirac deltas
         F.imps = [newimps;f.imps];
     else

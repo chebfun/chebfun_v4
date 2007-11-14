@@ -13,6 +13,7 @@ function comet(f,varargin)
 ho=ishold;
 if ~ho, hold on; end
 
+hs = hscale(f);
 if nargin==1
     [x0,x1] = domain(f);
     x = linspace(x0,x1,300); x(end) = [];
@@ -28,7 +29,7 @@ end
 if nargin==2
     g = varargin{1};
     [x0,x1] = domain(f); [y0,y1] = domain(g);
-    if (abs(x0-y0)>1e-12) | (abs(x1-y1)>1e-12)
+    if (abs(x0-y0)>1e-12*hs) | (abs(x1-y1)>1e-12*hs)
         disp('f and g must be defined on the same interval')
         return
     end
@@ -46,7 +47,7 @@ end
 if nargin==3
     g = varargin{1}; h = varargin{2};
     [x0,x1] = domain(f); [y0,y1] = domain(g); [z0,z1] = domain(h);
-    if (std([x0 y0 z0])>1e-12) | (std([x1 y1 z1])>1e-12)
+    if (std([x0 y0 z0])>1e-12*hs) | (std([x1 y1 z1])>1e-12*hs)
         disp('f, g and h must be defined on the same interval')
         return
     end

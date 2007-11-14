@@ -1,4 +1,4 @@
-function [f,happy,table] = grow(op,ends,table)
+function [f,happy] = grow(op,ends,vs)
 % GROW Grows a fun
 % Given a function handle or an in-line object, creates a FUN 
 % rescaled to the interval [a b] with no more than 128 Chebyshev points. If
@@ -31,7 +31,17 @@ while  not(converged)
     f = set(f,'val',v,'n',n);
     c = funpoly(f);
     %display(n)
-    [c,converged] = simplify(c);
+
+    % This code segment comes from old support/simplify.m
+    epss = 1e-13;
+    condition = max(epss,epss*norm(c,'inf'))*vs;  % simplify this!
+    firstbig = min(find(abs(c)>= condition));
+    converged = 0;
+    if firstbig > 3
+        c = c(firstbig:end);
+        converged = 1;
+    end
+
     %table = unique([table; [x v]],'rows');
 end
 f = fun(c);

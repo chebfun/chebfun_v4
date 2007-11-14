@@ -10,12 +10,13 @@ function F = sign(f)
 % NOTE: sign(chebfun(0,'x',[-1 0 1])) won't work properly.
 r = roots(f);
 ends = f.ends;
+hs = hscale(f);
 if isempty(r), 
     F = chebfun(sign(f.funs{1}),domain(f));
     return;
 else
-    if abs(r(1)  - ends(1)  ) > 1e-14, r = [ends(1); r  ]; end
-    if abs(r(end)- ends(end)) > 1e-14, r = [r; ends(end)]; end
+    if abs(r(1)  - ends(1)  ) > 1e-14*hs, r = [ends(1); r  ]; end
+    if abs(r(end)- ends(end)) > 1e-14*hs, r = [r; ends(end)]; end
 end
 nr = length(r);
 newints = zeros(1,nr);

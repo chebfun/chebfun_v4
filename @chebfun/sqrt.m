@@ -13,14 +13,15 @@ nfuns = length(f.funs);
 ends = f.ends;
 count = 1;
 newints = ends(1);
+hs = hscale(f);
 for i = 1:nfuns
     fcheb = f.funs{i};
     r = scale(introots(fcheb),ends(i),ends(i+1));
     if isempty(r)
         r = [ends(i);ends(i+1)];
     else
-        if abs(r(1)  - ends(i)  ) > 1e-14, r = [ends(i);r  ]; end
-        if abs(r(end)- ends(i+1)) > 1e-14, r = [r;ends(i+1)]; end
+        if abs(r(1)  - ends(i)  ) > 1e-14*hs, r = [ends(i);r  ]; end
+        if abs(r(end)- ends(i+1)) > 1e-14*hs, r = [r;ends(i+1)]; end
     end
     nr = length(r);
     for i = 1:nr-1

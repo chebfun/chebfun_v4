@@ -6,9 +6,11 @@ deb2 = 0; % <-  plot advance of the construction (blue = happy; red = sad)
 % ---------------------------------------------------------------------
 % Minimum allowed interval length
 minlength = 1e-14;
-table = [];
+vs = 0;
 % ---------------------------------------------------------------------
-[funs{1},hpy,table] = grow(op,ends,table);
+[funs{1},hpy] = grow(op,ends,vs);
+v = get(funs{1},'val');
+vs = max(vs,abs(v));
 sad = not(hpy);
 count = 0;
 % -------------------------------------------------------------------------
@@ -43,13 +45,13 @@ while any(sad)
             child1 = {}; hpy1 = [];
             child2 = {}; hpy2 = [];
         else
-            [child1,hpy1,table] = grow(op,[ends(i) mdpt],table);            
-            [child2,hpy2,table] = grow(op,[mdpt, ends(i+1)],table);
+            [child1,hpy1] = grow(op,[ends(i) mdpt],vs);            
+            [child2,hpy2] = grow(op,[mdpt, ends(i+1)],vs);
             child1 = {child1};
             child2 = {child2};
 
             if hpy1 && (i > 1) && not(sad(i-1))
-                [f,merged,table] = grow(op,[ends(i-1),mdpt],table);
+                [f,merged] = grow(op,[ends(i-1),mdpt],vs);
                 if merged
                     funs{i-1} = f; child1 = {};
                     ends(i) = mdpt; mdpt = [];
@@ -57,7 +59,7 @@ while any(sad)
                 end
             end
             if hpy2 && (i < length(sad)) && not(sad(i+1))
-                [f,merged,table] = grow(op,[mdptcopy,ends(i+2)],table);
+                [f,merged] = grow(op,[mdptcopy,ends(i+2)],vs);
                 if merged
                     funs{i+1} = f; child2 = {};
                      if isempty(mdpt)
@@ -72,6 +74,10 @@ while any(sad)
         funs = [funs(1:i-1);child1;child2;funs(i+1:end)];
         ends = [ends(1:i) mdpt ends(i+1:end)];
         sad  = [sad(1:i-1) not(hpy1) not(hpy2) sad(i+1:end)];
+        for ii = 1:length(funs)
+            v = get(funs{ii},'val');
+            vs = max(vs,max(abs(v)));
+        end
         % -----------------------------------------------------------------        
         if deb2
             hold off;
