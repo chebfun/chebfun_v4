@@ -6,7 +6,9 @@ function r = introots(f)
 if (f.n<100)
   r=roots(f);
   r=r(abs(imag(r))<eps);
-  r=sort(r(abs(r)<=1-1e-11)); % Modified, used to be 1+1e-10
+ %r=sort(r(abs(r)<=1-1e-11)); % Modified, used to be 1+1e-10
+  r=sort(r(abs(r)<=1+1e-12)); % Modified again by LNT 14.11.07
+  r = min(max(r,-1),1);
 else
   c=rand(1,1)*.2-.1;
   g=cheb(f.n);
