@@ -1,4 +1,4 @@
-function [f,happy] = grow(op,ends,vs)
+function [f,happy] = grow(op,ends,vs,hs)
 % GROW Grows a fun
 % Given a function handle or an in-line object, creates a FUN 
 % rescaled to the interval [a b] with no more than 128 Chebyshev points. If
@@ -20,7 +20,7 @@ converged = 0; % force to enter into the loop
 %     if isempty(h), maxn = 128; end
 %     maxn = 4 + ceil(log2(1+h/(2*eps*H)));
 % end
-maxn = 4 + round(128/abs(log2(min(.5,diff(ends)))));
+maxn = 4 + round(128/abs(log2(min(.5,diff(ends)/hs))));
 
 while  not(converged)
     if n >= maxn, happy = 0; return; end
@@ -30,11 +30,13 @@ while  not(converged)
     v = op(x);
     f = set(f,'val',v,'n',n);
     c = funpoly(f);
+    vs = max(vs,norm(c,inf));
     %display(n)
 
     % This code segment comes from old support/simplify.m
     epss = 1e-13;
-    condition = max(epss,epss*norm(c,'inf'))*vs;  % simplify this!
+  % condition = max(epss,epss*norm(c,'inf'))*vs;  % simplify this!
+    condition = epss*vs;
     firstbig = min(find(abs(c)>= condition));
     converged = 0;
     if firstbig > 3

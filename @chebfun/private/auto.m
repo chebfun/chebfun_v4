@@ -6,11 +6,11 @@ deb2 = 0; % <-  plot advance of the construction (blue = happy; red = sad)
 % ---------------------------------------------------------------------
 % Minimum allowed interval length
 minlength = 1e-14;
-vs = 0;
+vs = 0; hs = max(abs(ends));
 % ---------------------------------------------------------------------
-[funs{1},hpy] = grow(op,ends,vs);
+[funs{1},hpy] = grow(op,ends,vs,hs);
 v = get(funs{1},'val');
-vs = max(vs,abs(v));
+vs = max(vs,max(abs(v)));
 sad = not(hpy);
 count = 0;
 % -------------------------------------------------------------------------
@@ -45,13 +45,13 @@ while any(sad)
             child1 = {}; hpy1 = [];
             child2 = {}; hpy2 = [];
         else
-            [child1,hpy1] = grow(op,[ends(i) mdpt],vs);            
-            [child2,hpy2] = grow(op,[mdpt, ends(i+1)],vs);
+            [child1,hpy1] = grow(op,[ends(i) mdpt],vs,hs);            
+            [child2,hpy2] = grow(op,[mdpt, ends(i+1)],vs,hs);
             child1 = {child1};
             child2 = {child2};
 
             if hpy1 && (i > 1) && not(sad(i-1))
-                [f,merged] = grow(op,[ends(i-1),mdpt],vs);
+                [f,merged] = grow(op,[ends(i-1),mdpt],vs,hs);
                 if merged
                     funs{i-1} = f; child1 = {};
                     ends(i) = mdpt; mdpt = [];
@@ -59,7 +59,7 @@ while any(sad)
                 end
             end
             if hpy2 && (i < length(sad)) && not(sad(i+1))
-                [f,merged] = grow(op,[mdptcopy,ends(i+2)],vs);
+                [f,merged] = grow(op,[mdptcopy,ends(i+2)],vs,hs);
                 if merged
                     funs{i+1} = f; child2 = {};
                      if isempty(mdpt)
