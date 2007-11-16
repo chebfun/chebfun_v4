@@ -48,3 +48,4 @@ elseif n==-inf & q==1
   r=introots(diff(f));
   F=min(abs(bary([-1 r' 1],f.val)));
 end
+F = real(F);      % discard possible imaginary rounding errors

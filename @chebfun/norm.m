@@ -20,3 +20,4 @@ elseif n==-inf
 else
     error('Unknown norm');
 end
+F = real(F);   % discard possible imaginary rounding errors

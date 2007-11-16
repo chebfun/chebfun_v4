@@ -11,6 +11,8 @@ if (n==0), V=fn.'; return; end
 V=[fn;fn(end-1:-1:2,:)];
 if (isreal(V))
   V = real(fft(V))/(2*n);
+elseif (isreal(1i*V))
+  V = 1i*imag(fft(V))/(2*n);
 else
   V = fft(V)/(2*n);
 end
