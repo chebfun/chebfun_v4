@@ -25,7 +25,7 @@ if(nargin==2 & k==1)
 elseif(nargin==2 & k==2)
   varargout{1}=n;
 elseif(nargout<=1)
-  varargout{1}=[m n];
+  varargout{1}=[-m n]; % problem here. conflict when using negative lengths
 else
   varargout{1}=m;
   varargout{2}=n;
