@@ -39,7 +39,9 @@ end
 if (n>=maxn || sum(isnan(cf.val)) || sum(isinf(cf.val)))
     F = cf;
     F = prolong(F,maxn);
-    warning('Function may not converge, using 2^16 points.');
+    warning(['Function may not converge, using 2^16 points.'...
+               '  Have you tried typing ''spliton''?']);
+
 else
     F = simplify(cf); % discard coeffs. close to zero.
     if (F.val ==0), F.val = 0 ; F.n = 0; end

@@ -13,7 +13,8 @@ maxn = 2^16;
 
 while  not(converged)
     if n >= maxn, 
-        warning('Function may not converge, using 2^16 points.');
+        warning(['Function may not converge, using 2^16 points.'...
+                 '  Have you tried typing ''spliton''?']);
         return; 
     end
     n = n*2;
