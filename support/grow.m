@@ -20,6 +20,7 @@ converged = 0; % force to enter into the loop
 %     if isempty(h), maxn = 128; end
 %     maxn = 4 + ceil(log2(1+h/(2*eps*H)));
 % end
+
 maxn = 4 + round(128/abs(log2(min(.5,diff(ends)/hs))));
 
 while  not(converged)

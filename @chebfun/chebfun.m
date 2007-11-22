@@ -39,6 +39,10 @@ function chebfunobj = chebfun(varargin)
 % Dirac impulses in the field 'imps'.
 %
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
+if ~ispref('chebfun_defaults')
+    addpref('chebfun_defaults','maxn',128);
+    addpref('chebfun_defaults','splitting',1);
+end
 
 if nargin == 0, 
     chebfunobj = struct('funs',[],'ends',[],'imps',[]);
