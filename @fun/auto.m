@@ -40,7 +40,7 @@ if (n>=maxn || sum(isnan(cf.val)) || sum(isinf(cf.val)))
     F = cf;
     F = prolong(F,maxn);
     warning(['Function may not converge, using 2^16 points.'...
-               '  Have you tried typing ''spliton''?']);
+               '  Have you tried typing ''split on''?']);
 
 else
     F = simplify(cf); % discard coeffs. close to zero.
