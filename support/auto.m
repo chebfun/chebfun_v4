@@ -1,22 +1,16 @@
 function [funs,ends] = auto(op,ends)
 
-
-if ~getpref('chebfun_defaults','splitting')
-    funs{1} = fixedgrow(op,ends);
-    return;
-end
-
 % Debugging controls: ---------------------------------------------------
 deb1 = 0; % <-  show the iteration level
 deb2 = 0; % <-  plot advance of the construction (blue = happy; red = sad)
 % ---------------------------------------------------------------------
 % Minimum allowed interval length
 minlength = 1e-14;
-vs = 0; hs = max(abs(ends));
+values.vs = 0; values.hs = max(abs(ends)); values.table = [];
 % ---------------------------------------------------------------------
-[funs{1},hpy] = grow(op,ends,vs,hs);
+[funs{1},hpy,values] = grow(op,ends,values);
 v = get(funs{1},'val');
-vs = max(vs,max(abs(v)));
+values.vs = max(values.vs,max(abs(v)));
 sad = not(hpy);
 count = 0;
 % -------------------------------------------------------------------------
@@ -51,13 +45,13 @@ while any(sad)
             child1 = {}; hpy1 = [];
             child2 = {}; hpy2 = [];
         else
-            [child1,hpy1] = grow(op,[ends(i) mdpt],vs,hs);            
-            [child2,hpy2] = grow(op,[mdpt, ends(i+1)],vs,hs);
+            [child1,hpy1,values] = grow(op,[ends(i) mdpt],values);            
+            [child2,hpy2,values] = grow(op,[mdpt, ends(i+1)],values);
             child1 = {child1};
             child2 = {child2};
 
             if hpy1 && (i > 1) && not(sad(i-1))
-                [f,merged] = grow(op,[ends(i-1),mdpt],vs,hs);
+                [f,merged,values] = grow(op,[ends(i-1),mdpt],values);
                 if merged
                     funs{i-1} = f; child1 = {};
                     ends(i) = mdpt; mdpt = [];
@@ -65,7 +59,7 @@ while any(sad)
                 end
             end
             if hpy2 && (i < length(sad)) && not(sad(i+1))
-                [f,merged] = grow(op,[mdptcopy,ends(i+2)],vs,hs);
+                [f,merged,values] = grow(op,[mdptcopy,ends(i+2)],values);
                 if merged
                     funs{i+1} = f; child2 = {};
                      if isempty(mdpt)
@@ -82,7 +76,7 @@ while any(sad)
         sad  = [sad(1:i-1) not(hpy1) not(hpy2) sad(i+1:end)];
         for ii = 1:length(funs)
             v = get(funs{ii},'val');
-            vs = max(vs,max(abs(v)));
+            values.vs = max(values.vs,max(abs(v)));
         end
         % -----------------------------------------------------------------        
         if deb2

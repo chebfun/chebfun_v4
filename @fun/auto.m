@@ -1,9 +1,7 @@
 function F = auto(op,f,f2)
 % Original private function for fun. Adaptively procedure to compute the 
 % Chebyshev coefficients of a chebfun.
-
 if isa(op,'char'), op = inline(op); end %% string -> inline object
-
 maxn = 2^16;
 if (isempty(f)), F = fun; return; end
 epsauto = 1e-15;
@@ -18,6 +16,9 @@ if nargin<3
         cf = prolong(f,n);
         cf.val = feval(op,cf.val);
         c = funpoly(cf);
+        plot(abs(c(end:-1:1))), drawnow;
+        min(abs(c))
+        pause(.5)   
         normc = norm(c,inf);
     end
 else

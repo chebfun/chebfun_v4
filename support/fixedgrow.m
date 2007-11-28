@@ -23,15 +23,19 @@ while  not(converged)
     v = op(x);
     f = set(f,'val',v,'n',n);
     c = funpoly(f);
-    vs = norm(c,inf);
-    % This code segment comes from old support/simplify.m
-    epss = 1e-13;
+    vs = norm(c,inf); %*
+    epss = 1e-15;
     % condition = max(epss,epss*norm(c,'inf'))*vs;  % simplify this!
     condition = epss*vs;
     firstbig = min(find(abs(c)>= condition));
     converged = 0;
+    semilogy(abs(c(end:-1:1))), drawnow;
+    min(abs(c))
+    pause(.1)
     if firstbig > 3
+            
         c = c(firstbig:end);
+        semilogy(abs(c(end:-1:1))), drawnow;
         converged = 1;
     end
 end

@@ -17,8 +17,3 @@ conj      cos       cosh      cot       coth      csc
 csch      erf       erfc      erfcx     erfinv    exp 
 imag      log       log10     log2      real      sec       
 sech      sin       sinh      tan       tanh 
- 
-torsion   
-compose 
-cross 
-fixcurv
