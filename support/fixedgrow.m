@@ -7,7 +7,7 @@ function [f,happy] = fixedgrow(op,ends)
 % Pachon, Platte, Trefethen, 2007
 
 % Debugging controls: ---------------------------------------------------
-deb1 = 1;
+deb1 = 0;
 % ---------------------------------------------------------------------
 
 n = 2;
