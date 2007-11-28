@@ -1,5 +1,10 @@
 function [funs,ends] = auto(op,ends)
 
+if getpref('chebfun_defaults','splitting')==0
+    funs{1} = fixedgrow(op,ends);
+    return;
+end
+
 % Debugging controls: ---------------------------------------------------
 deb1 = 0; % <-  show the iteration level
 deb2 = 0; % <-  plot advance of the construction (blue = happy; red = sad)

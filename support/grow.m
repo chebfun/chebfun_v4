@@ -6,7 +6,7 @@ function [f,happy,values] = grow(op,ends,values)
 % (that is, HAPPY = 0).
 
 % Debugging controls: ---------------------------------------------------
-deb1 = 0;
+deb1 = 1;
 % ---------------------------------------------------------------------
 vs    = values.vs;
 hs    = values.hs;
@@ -48,27 +48,26 @@ while  not(converged)
     
     % Rodrigo's suggestion--------------------------------
     % change this:
-     vs = max(vs,norm(c,inf));
-     epss = 1e-15;
-     condition = epss*vs;
+    vs = max(vs,norm(c,inf));
+    epss = 1e-15;
+    condition = epss*vs;
     %------------------------------------------------------
     % for this:
-    %vs = norm(v,inf);
-    %epss = 3e-16;
-    %condition = epss*vs*sqrt(n);
+    % vs = norm(v,inf);
+    % epss = 3e-16;
+    % condition = epss*vs*sqrt(n);
     %------------------------------------------------------
     firstbig = min(find(abs(c)>= condition));
     converged = 0;
     if deb1
         c(find(c==0))=1e-25;
         semilogy(abs(c(end:-1:1))), drawnow;
-        pause(.5)
+        pause(.1)
     end
     if firstbig > 3
         if deb1
             c(find(c==0))=1e-25;
-            semilogy(abs(c(end:-1:1))), drawnow;
-            pause(.5)
+            semilogy(abs(c(end:-1:firstbig))), drawnow;
         end
         c = c(firstbig:end);
         converged = 1;

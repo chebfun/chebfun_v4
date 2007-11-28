@@ -6,10 +6,14 @@ function [f,happy] = fixedgrow(op,ends)
 
 % Pachon, Platte, Trefethen, 2007
 
+% Debugging controls: ---------------------------------------------------
+deb1 = 1;
+% ---------------------------------------------------------------------
+
 n = 2;
 a = ends(1); b = ends(2);
 converged = 0; % force to enter into the loop 
-maxn = 2^16;
+maxn = getpref('chebfun_defaults','maxn');
 
 while  not(converged)
     if n >= maxn, 
@@ -22,20 +26,29 @@ while  not(converged)
     x = cheb(n,a,b);
     v = op(x);
     f = set(f,'val',v,'n',n);
-    c = funpoly(f);
-    vs = norm(c,inf); %*
+    c = funpoly(f);    
+    % Rodrigo's suggestion--------------------------------
+    % change this:
+    vs = norm(c,inf);
     epss = 1e-15;
-    % condition = max(epss,epss*norm(c,'inf'))*vs;  % simplify this!
     condition = epss*vs;
+    %------------------------------------------------------
+    % for this:
+    % vs = norm(v,inf);
+    % epss = 3e-16;
+    % condition = epss*vs*sqrt(n);
+    %------------------------------------------------------ 
     firstbig = min(find(abs(c)>= condition));
     converged = 0;
-    semilogy(abs(c(end:-1:1))), drawnow;
-    min(abs(c))
-    pause(.1)
-    if firstbig > 3
-            
-        c = c(firstbig:end);
+    if deb1
         semilogy(abs(c(end:-1:1))), drawnow;
+        pause(.1)
+    end
+    if firstbig > 3 
+        if deb1
+            semilogy(abs(c(end:-1:firstbig))), drawnow;
+        end
+        c = c(firstbig:end);
         converged = 1;
     end
 end
