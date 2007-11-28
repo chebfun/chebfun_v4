@@ -17,7 +17,9 @@ mn = getpref('chebfun_defaults','maxn');
 switch getpref('chebfun_defaults','degree_mode')
      case 0,
          maxn = mn;
-     case 1,
+    case 1
+         maxn = 4 + round((mn-4)/abs(log2(min(.5,diff(ends)/hs))));
+     case 2,
          table = values.table;
          if isempty(table)
              maxn = mn;
@@ -27,8 +29,7 @@ switch getpref('chebfun_defaults','degree_mode')
              range = hmax-hmin;
              maxn = 4 + round((mn-4)/abs(log2(min(.5,diff(range)/vs))));
          end
-     case 2
-         maxn = 4 + round((mn-4)/abs(log2(min(.5,diff(ends)/hs))));
+
  end
 %display(['    maxn -> ',num2str(maxn)])
 while  not(converged)
@@ -49,7 +50,7 @@ while  not(converged)
     % Rodrigo's suggestion--------------------------------
     % change this:
     vs = max(vs,norm(c,inf));
-    epss = 1e-13;
+    epss = 1e-15;
     condition = epss*vs;
     %------------------------------------------------------
     % for this:
