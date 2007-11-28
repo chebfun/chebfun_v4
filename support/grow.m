@@ -6,7 +6,7 @@ function [f,happy,values] = grow(op,ends,values)
 % (that is, HAPPY = 0).
 
 % Debugging controls: ---------------------------------------------------
-deb1 = 1;
+deb1 = 0;
 % ---------------------------------------------------------------------
 vs    = values.vs;
 hs    = values.hs;
