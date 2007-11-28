@@ -15,10 +15,7 @@ if nargin<3
         n = n*2;  % try doubling degree
         cf = prolong(f,n);
         cf.val = feval(op,cf.val);
-        c = funpoly(cf);
-        plot(abs(c(end:-1:1))), drawnow;
-        min(abs(c))
-        pause(.5)   
+        c = funpoly(cf);  
         normc = norm(c,inf);
     end
 else

@@ -13,7 +13,7 @@ deb1 = 0;
 n = 2;
 a = ends(1); b = ends(2);
 converged = 0; % force to enter into the loop 
-maxn = getpref('chebfun_defaults','maxn');
+maxn = 2^16;
 
 while  not(converged)
     if n >= maxn, 

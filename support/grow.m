@@ -49,7 +49,7 @@ while  not(converged)
     % Rodrigo's suggestion--------------------------------
     % change this:
     vs = max(vs,norm(c,inf));
-    epss = 1e-15;
+    epss = 1e-13;
     condition = epss*vs;
     %------------------------------------------------------
     % for this:
