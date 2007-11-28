@@ -1,5 +1,5 @@
 function splitting(on_off)
-%SPLIT   CHEBFUN split option
+%SPLITTING   CHEBFUN splitting option
 %   SPLITTING ON allows the chebfun constructor to split the interval by
 %   a process of automatic subdivision and edge detection.  This
 %   option is recommended when working with functions with singularities.
