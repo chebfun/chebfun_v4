@@ -1,56 +1,46 @@
-function [f,happy] = fixedgrow(op,ends)
-% FIXEDGROW Grows a "classic" fun, that is, a Zachary Battles' chebfun.
-% Given a function handle or an in-line object, creates a FUN 
-% rescaled to the interval [a b] with no more than 2^16 Chebyshev points. If
-% the function in OP requires more points, a warning message is returned.
+function [f,converged] = fixedgrow(op,ends)
+% FIXEDGROW Constructs a fun f for the function defined by the function
+% handle op on the interval [ends(1), ends(2)].  A fun corresponds to a
+% single global polynomial interpolant through data in Chebyshev points,
+% i.e., a "classic" chebfun as in the original chebfun system by Zachary
+% Battles.  The maximum number of Chebyshev points is 2^16.  If the
+% function is successfully  resolved, a fun f is returned of appropriate
+% length with converged=1.  If the function is not resolved, a fun f of
+% length 2^16 is returned with converged=0, and a warning message is issued.
 
-% Pachon, Platte, Trefethen, 2007
+% The design of this code is slightly intricate because of the
+% desire to get high accuracy while still producing chebfuns of minimal
+% appropriate length.  We have settled on a two-step process.  First,
+% a decision is made of whether the "tail" of the Chebyshev series
+% is small enough that f has been successfully captured.  If not,
+% we double the number of points and try again.  If so, a rather
+% delicate choice is made of exactly where to truncate the series.  
+% This program is the product of a good deal of testing and it should
+% not be modified lightly.
 
-% Debugging controls: ---------------------------------------------------
-deb1 = 0;
-% ---------------------------------------------------------------------
+% Nick Trefethen, November 2007
 
-n = 2;
-a = ends(1); b = ends(2);
-converged = 0; % force to enter into the loop 
-maxn = 2^16;
-
-while  not(converged)
-    if n >= maxn, 
-        warning(['Function may not converge, using 2^16 points.'...
-                 '  Have you tried typing ''split on''?']);
-        return; 
-    end
-    n = n*2;
-    f = fun;
-    x = cheb(n,a,b);
-    v = op(x);
-    f = set(f,'val',v,'n',n);
-    c = funpoly(f);    
-    % Rodrigo's suggestion--------------------------------
-    % change this:
-    vs = norm(c,inf);
-    epss = 1e-15;
-    condition = epss*vs;
-    %------------------------------------------------------
-    % for this:
-    % vs = norm(v,inf);
-    % epss = 3e-16;
-    % condition = epss*vs*sqrt(n);
-    %------------------------------------------------------ 
-    firstbig = min(find(abs(c)>= condition));
-    converged = 0;
-    if deb1
-        semilogy(abs(c(end:-1:1))), drawnow;
-        pause(.1)
-    end
-    if firstbig > 3 
-        if deb1
-            semilogy(abs(c(end:-1:firstbig))), drawnow;
-        end
-        c = c(firstbig:end);
-        converged = 1;
-    end
+f = fun;                              % start with an empty fun
+for n = 2.^(2:16)                     % try increasing values of n
+   v = op(cheb(n,ends(1),ends(2)));   % function vals at scaled Cheb pts
+   f = set(f,'val',v,'n',n);          % set values and number of pts
+   c = funpoly(f);                    % coeffs of Cheb expansion of f
+   ac = abs(c)/norm(v,inf);           % abs value relative to scale of f
+   Tlen = max(3,n/8);                 % length of tail to test
+   Tmax = 2e-16*Tlen^(2/3);           % maximum permitted size of tail
+   if max(ac(1:Tlen)) < Tmax          % we have converged; now chop tail
+      Tend = min(find(ac>=Tmax))-1;   % pos of last entry below Tmax
+      ac = ac(1:Tend); ac(1) = 5e-17;  
+      for i = 2:Tend                  % compute the cumulative max of
+         ac(i) = max(ac(i),ac(i-1));  %   the tail entries and 5e-17
+      end
+      Tbpb = log(1000*Tmax./ac)./ ...
+         (length(c)-(1:Tend));        % bang/buck of chopping at each pos
+      [foo,Tchop] = max(Tbpb);        % Tchop = pos at which to chop
+      f = fun(c(Tchop+1:end));        % chop the tail
+      converged = 1;                  % successful termination
+      return
+   end
 end
-f = fun(c);
-happy = 1;
+converged = 0;                        % unsuccessful termination
+warning('Function not resolved, using 2^16 pts. Have you tried ''splitting on''?');

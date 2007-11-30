@@ -1,44 +1,47 @@
 function chebfunobj = chebfun(varargin)
 % CHEBFUN   Constructor
+%
 % CHEBFUN(f) constructs a chebfun object for the function f on the
-% interval [-1,1]. f can be a string, e.g 'sin(x)', a function handle, e.g
-% @(x) x.^2 + 2x +1, a number. If f is a data string, i.e, a string of the
-% form '[a1;a2;...;an]', the numbers a1,...,an are used as the values of the
-% function on Chebyshev points. 
+% interval [-1,1].  f can be a string, e.g 'sin(x)', a function handle, e.g
+% @(x) x.^2 + 2x +1, or a number.  If f is a data string, i.e, a string of 
+% the form '[a1;a2;...;an]', the numbers a1,...,an are used as the function
+% values at Chebyshev points. 
 %
 % CHEBFUN(f,[a b]) specifies an interval [a b] where the function is
-% defined. In case that f is a data string, the numbers correspond to the
-% values of the function on Chebyshev points scaled to the interval [a b].
+% defined.  If f is a data string, the numbers correspond to function
+% values at Chebyshev points scaled to [a b].
 %
-% CHEBFUN(f,np) specifies the number np of Chebyshev points to construct the 
-% chebfun. CHEBFUN(f,[a b],np) specifies the interval of definition and the
-% number np of Chebyshev points. Neither of this two options work when f is 
+% CHEBFUN(f,np) overrides the adaptive construction process to specify
+% the number np of Chebyshev points to construct the chebfun.
+% CHEBFUN(f,[a b],np) specifies the interval of definition and the
+% number np of Chebyshev points.  These options do not work if f is
 % a data string.
 % 
 % CHEBFUN(f1,f2,...,fm,ends), where ends is an increasing vector of length
 % m+1, constructs a piecewise smooth chebfun from the functions f1,...,fm. 
-% The funcion fi can be a string, a function handle or a number, and it is 
+% Each funcion fi can be a string, a function handle or a number, and is 
 % defined in the interval [ends(i) ends(i+1)]. 
 %
 % CHEBFUN(f1,f2,...,fm,ends,np), where np is a vector of length m, specifies
 % the number np(i) of Chebyshev points for the construction of fi.
 % 
 % CHEBFUN(chebs,ends) construct a piecewise smooth chebfun with m pieces
-% from a cell array chebs of size m x 1. Each entry chebs{i} in the cell
-% array is a function defined on [ends(i) ends(i+1)] represented by a
-% string, a function handle or a number. CHEBFUN(chebs,ends,np) specifies
-% the number np(i) of Chebyshev points for the construction of the function
-% in chebs{i}.
+% from a cell array chebs of size m x 1.  Each entry chebs{i} 
+% is a function defined on [ends(i) ends(i+1)] represented by a
+% string, a function handle or a number.  CHEBFUN(chebs,ends,np)
+% specifies the number np(i) of Chebyshev points for the construction
+% of the function in chebs{i}.
 %
 % CHEBFUN creates an empty fun.
 %
-% F = CHEBFUN(...) returns an object F of type chebfun. A chebfun stores
-% the function values on Chebyshev points (scaled to the appropriate
-% intervals) of the approximating function in the field 'funs', the end
-% points where each pice is defined in the field 'ends', and information of
-% Dirac impulses in the field 'imps'.
+% F = CHEBFUN(...) returns an object F of type chebfun.  A chebfun consists
+% of a cell array 'funs' containing m funs, a vector 'ends' of length
+% m+1 defining the intervals where the funs apply, and a matrix 'imps'
+% containing information about possible delta functions at the breakpoints
+% between funs.
 
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
+
 if ~ispref('chebfun_defaults')
     addpref('chebfun_defaults','maxn',128);
     addpref('chebfun_defaults','splitting',1);
