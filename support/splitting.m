@@ -12,7 +12,6 @@ function splitting(on_off)
 %   SPLITTING, by itself, displays the current splitting state.
 %
 
-
 if nargin==0 
     switch getpref('chebfun_defaults','splitting')
         case 1 
