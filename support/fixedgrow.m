@@ -17,6 +17,7 @@ function [f,converged] = fixedgrow(op,ends)
 % delicate choice is made of exactly where to truncate the series.  
 % This program is the product of a good deal of testing and it should
 % not be modified lightly.
+% Rodrigo has found a bug in this, which LNT will fix.
 
 % Nick Trefethen, November 2007
 
