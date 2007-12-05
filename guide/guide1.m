@@ -3,7 +3,7 @@
 
 %% 1.1  What is a chebfun?
 % A chebfun is a function of one variable defined on
-% an interval $$[a,b]$$.  The syntax for chebfuns is
+% an interval [a,b].  The syntax for chebfuns is
 % almost entirely the same as the usual Matlab syntax for vectors, 
 % with the familiar Matlab commands for vectors overloaded in natural ways. 
 % Thus, for example, whereas sum(f) returns the sum of the
@@ -52,7 +52,7 @@
 % Toby Driscoll (from 2008).
 
 %% 1.2  Constructing simple chebfuns
-% The *chebfun* command constructs a chebfun from a specification
+% The "chebfun" command constructs a chebfun from a specification
 % such as a string or an anonymous function.  If you don't specify
 % an interval, then the default interval [-1,1] is used.
 % For example, the following command makes a chebfun
@@ -73,12 +73,12 @@
 % interpolant through 47 Chebyshev points, i.e., a polynomial of
 % degree 46.  These numbers have been determined by an
 % adaptive process.  We can see the data points by plotting f with
-% the |'.-'| option:
+% the '.-' option:
   plot(f,'.-')
 %%
 % The formula for N+1 Chebyshev points in [-1,1] is
 %
-%    x(j) = cos(j pi/N) ,    0 <= j <= N,
+%           x(j) = cos(j pi/N) ,    0 <= j <= N,
 %
 % and in the figure we can see that the points are clustered
 % accordingly near 1 and -1.
@@ -106,7 +106,7 @@
 %%
 % Here is another example, now with the chebfun defined by
 % an anonymous function instead of a string.
-% In this case the interval is specified as $$[0,100]$$.
+% In this case the interval is specified as [0,100].
   g = chebfun(@(t) besselj(0,t),[0,100]);
   plot(g), ylim([-.5 1])
 
@@ -116,7 +116,7 @@
   length(g)
 %%
 % Is it accurate?  Well, here are three random points
-% in $$[0,100]$$:
+% in [0,100]:
   x = 100*rand(3,1)
 %%
 % Let's compare the chebfun to the true Bessel function
@@ -149,19 +149,19 @@
 %% 1.3  Operations on chebfuns
 % There are about 90 commands that can be applied to
 % a chebfun.  For a complete list you can type
-% *methods*:
+% "methods":
   methods chebfun
 %%
-% To find out what a command does, you can use *help*.
+% To find out what a command does, you can use "help".
 
   help chebfun/domain
 
 %%
 % Every command in the list exists in ordinary Matlab,
-% with the exceptions of *domain*, *prolong* and the
-% chebfun constructor *chebfun*.  We have already seen *length*
-% and *sum* in action.  In fact we have already
-% seen *subsref* too, since that is the Matlab command
+% with the exceptions of "domain", "prolong" and the
+% chebfun constructor "chebfun".  We have already seen
+% "length" and "sum" in action.  In fact we have already
+% seen "subsref" too, since that is the Matlab command
 % for evaluating arguments in parentheses.  Here is another
 % example of its use:
 
@@ -174,7 +174,7 @@
 
 %% 
 % In this Runge function example, we have also implicitly 
-% seen *times*, *plus*, *power*, and *rdivide*, all of which
+% seen "times", "plus", "power", and "rdivide", all of which
 % have been overloaded from their usual Matlab uses
 % to apply to chebfuns.
 %%
@@ -187,7 +187,7 @@
 % but piecewise smooth.  In this case a chebfun may consist
 % of a concatenation of smooth pieces, each with its
 % own polynomial representation.  Each of the smooth pieces is
-% called a _fun_, and funs are implemented as a subclass
+% called a "fun", and funs are implemented as a subclass
 % of chebfuns.  This enhancement of the chebfun system
 % was developed by Ricardo Pachon during 2006-2007.
 % Essentially funs consist of the "classic chebfuns" for smooth
@@ -201,7 +201,7 @@
 % of its capability of automatic edge detection.  For example,
   f = chebfun('abs(x-.3)'); plot(f,'.-')
 %%
-% The *length* command reveals that f is defined by four data points,
+% The "length" command reveals that f is defined by four data points,
 % namely two for each linear interval:
   length(f)
 %%
@@ -211,21 +211,21 @@
 %%
 % This output confirms that f consists of two funs, each defined
 % by two points and two corresponding function values.  We can see
-% its structure from another angle with *struct*, Matlab's command
+% its structure from another angle with "struct", Matlab's command
 % for seeing the various fields within an object:
   struct(f)
 %%
 % This output again shows that f consists of two funs
-% with breakpoints at $$-1$$, $$1$$, and a number very close to 0.3.  The
-% |imps| field refers to _impulses_, which relate to delta functions,
+% with breakpoints at -1, 1, and a number very close to 0.3.  The
+% "imps" field refers to "impulses", which relate to delta functions,
 % discussed in Section 2.4.
 
 %%
 % Another way to make a piecewise smooth chebfun is to construct
 % it explicitly from various pieces.  For example, the following
-% command specifies three functions $$x^2$$, $$1$$, and $$4-x$$, together
+% command specifies three functions x^2, 1, and 4-x, together
 % with a vector of endpoints indicating that the first function
-% applies on $$[-1,1]$$, the second on $$[1,2]$$, and the third on $$[2,4]$$:
+% applies on [-1,1], the second on [1,2], and the third on [2,4]:
 
   f = chebfun('x.^2',1,'4-x',[-1 1 2 4]);
   plot(f)
@@ -246,7 +246,7 @@
   plot(1./(1+f),'r')
 %% 
 % Some chebfun commands naturally introduce breakpoints in a chebfun.
-% For example, the *abs* command first finds zeros of a function
+% For example, the "abs" command first finds zeros of a function
 % and introduces breakpoints there.  Here is 
 % a chebfun consisting of 6 funs:
 
@@ -255,7 +255,7 @@
 
 %%
 % And here is an example where breakpoints are introduced by
-% the *max* command, leading to a chebfun with 12 pieces:
+% the "max" command, leading to a chebfun with 12 pieces:
 
   f = sin(20*x);
   g = exp(x-1);
@@ -279,7 +279,7 @@
 % A final note about piecewise smooth chebfuns is that
 % the automatic edge detection or "splitting" feature
 % can be turned on and  off.  For example, if we compute
-% $$sin(x)$$ over $$[0,1000]$$ with automatic edge detection, 
+% sin(x) over [0,1000] with automatic edge detection, 
 % we end up with a chebfun with many pieces:
   tic, f = chebfun('sin(x)',[0 1000*pi]); toc
   struct(f)
@@ -308,7 +308,7 @@
 %% 1.5  References
 % [Battles & Trefethen 2004] Z. Battles and L. N. Trefethen,
 % "An extension of Matlab to continuous functions and
-% operators", _SIAM Journal on Scientific Computing_ 25 (2004),
+% operators", SIAM Journal on Scientific Computing 25 (2004),
 % 1743-1770.
 % 
 % [Berrut & Trefethen 2005] J.-P. Berrut and L. N. Trefethen,
