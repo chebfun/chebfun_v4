@@ -409,6 +409,11 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 %%
 % *THEOREM 5*.  The barycentric formula of Theorem 4 is numerically stable.
 
+%%
+% In finishing this chapter we should restore the chebfun system to its usual state:
+
+  splitting on
+
 
 %% 4.6  References
 % 
