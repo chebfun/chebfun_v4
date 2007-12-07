@@ -9,7 +9,7 @@ end
 values.vs = 0; values.hs = max(abs(ends)); values.table = [];
 mininterval=1e-14*values.hs;
 % ---------------------------------------------------------------------
-[funs{1},hpy,values] = grow(op,ends,values);
+[funs{1},hpy,values] = grow_rodp(op,ends,values);
 v = get(funs{1},'val');
 values.vs = max(values.vs,max(abs(v)));
 sad = not(hpy);
