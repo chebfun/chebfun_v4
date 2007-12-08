@@ -13,6 +13,13 @@ switch propName
         val = a.ends;
     case 'imps'
         val = a.imps;
+    case 'vals'
+        funs = a.funs;
+        nfuns = length(funs);
+        val = [];
+        for i = 1:nfuns
+           val = [val;get(funs{i},'val')];
+        end
     otherwise
         error([propName,' Is not a valid chebfun property'])
 end

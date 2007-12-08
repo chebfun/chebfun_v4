@@ -113,31 +113,39 @@ linespec = {'linestyle' linestyle 'marker' marker 'color' color ...
      'linewidth' linewidth 'markeredgecolor' markeredgecolor ...
      'markerfacecolor' markerfacecolor 'markersize' markersize}; 
 if nfuncs == 1
-    % First plot the impulses of degree 1
-    if not(isempty(f.imps)) %& isreal(chebvals(f))
-        positives = find(f.imps(1,:) > 0);
-        negatives = find(f.imps(1,:) < 0);
-        stem(f.ends(positives) ,f.imps(1,positives), ...
-            'linewidth',linewidth,'color',color,'marker','^','showbaseline','off');
-        hold on
-        stem(f.ends(negatives) ,f.imps(1,negatives), ...
-            'linewidth',linewidth,'color',color,'marker','v','showbaseline','off');
-    end
     ends = f.ends;
     funs = f.funs;
     nf = length(f);
     nfuns = length(funs);
-    for i = 1:nfuns
-        a = ends(i); b = ends(i+1);
-        x = fun('x',1);
-        x = (1-x)*a/2 + (x+1)*b/2;
-        m = round(2000*(1+get(funs{i},'n'))/nf);
-        plot(x,funs{i},m,linespec); hold on
-    end
-    if ~strcmp(jumpline,'none') %& isreal(chebvals(f))
-        for i = 1:nfuns - 1
-            jp = ends(i+1);
-            plot([jp;jp],[funs{i}(1);funs{i+1}(-1)],jumpline);
+    if isreal(get(f,'vals'))
+        % First plot the impulses of degree 1
+        if not(isempty(f.imps))
+            positives = find(f.imps(1,:) > 0);
+            negatives = find(f.imps(1,:) < 0);
+            stem(f.ends(positives) ,f.imps(1,positives), ...
+                'linewidth',linewidth,'color',color,'marker','^','showbaseline','off');
+            hold on
+            stem(f.ends(negatives) ,f.imps(1,negatives), ...
+                'linewidth',linewidth,'color',color,'marker','v','showbaseline','off');
+        end
+        
+        for i = 1:nfuns
+            a = ends(i); b = ends(i+1);
+            x = fun('x',1);
+            x = (1-x)*a/2 + (x+1)*b/2;
+            m = round(2000*(1+get(funs{i},'n'))/nf);
+            plot(x,funs{i},m,linespec); hold on
+        end
+        if ~strcmp(jumpline,'none')
+            for i = 1:nfuns - 1
+                jp = ends(i+1);
+                plot([jp;jp],[funs{i}(1);funs{i+1}(-1)],jumpline);
+            end
+        end
+    else
+        for i = 1:nfuns
+            m = round(2000*(1+get(funs{i},'n'))/nf);
+            plotcomplex(funs{i},m,linespec); hold on
         end
     end
 else
