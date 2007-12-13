@@ -1,4 +1,4 @@
-function [f,happy,values] = grow(op,ends,values)
+function [f,happy,values] = grow_rodp(op,ends,values)
 % GROW Grows a fun
 % Given a function handle or an in-line object, creates a FUN 
 % rescaled to the interval [a b] with no more than 128 Chebyshev points. If
@@ -10,7 +10,8 @@ hs    = values.hs;
 n = 16;
 a = ends(1); b = ends(2);
 converged = 0; % force to enter into the loop 
-maxn = 256;
+mn = 256;
+maxn = mn;%max(9,round((mn-4)/abs(log2(min(.5,diff(ends)/hs)))));
 
 if b-a <= 1e-12*hs
     happy=1;
@@ -23,7 +24,7 @@ end
 while  not(converged)
     if n >= maxn, 
         happy = 0; 
-        f = fun([0 0]);
+        f = fun(c);
         return;
     end
     n = n*2;
@@ -57,7 +58,7 @@ while  not(converged)
      vs = max(values.vs,norm(v,inf));
      epss = 5e-15;
      condition = epss*vs*sqrt(n);
-    %------------------------------------------------------
+    %----------------------------------------------------
     firstbig = find(abs(c)>= condition,1,'first');
     converged = 0;
     if firstbig > 6
