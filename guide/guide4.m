@@ -273,7 +273,7 @@ subplot(1,2,2), plot(f1000), grid on
 splitting on, fexact = chebfun('abs(x)'); splitting off
 err10 = norm(f10-fexact,inf)
 err100 = norm(f100-fexact,inf)
-err1000 = norm(f100-fexact,inf)
+err1000 = norm(f1000-fexact,inf)
 
 %%
 % Notice the clean linear decrease of the error as N increases.

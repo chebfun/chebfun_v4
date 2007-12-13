@@ -8,6 +8,7 @@ function F = sign(f)
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 
 % NOTE: sign(chebfun(0,'x',[-1 0 1])) won't work properly.
+% NOTE: this does not work if f is complex
 r = roots(f);
 ends = f.ends;
 hs = hscale(f);

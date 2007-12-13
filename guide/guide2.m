@@ -53,11 +53,9 @@
   toc
 %%
 % Here is the performance for Matlab's standard quadrature code "quad"
-  f = @(x) abs(besselj(0,x));
-  tic, quad(f,0,20,1e-14), toc
-%%
 % and for its alternative code "quadl":
   f = @(x) abs(besselj(0,x));
+  tic, quad(f,0,20,1e-14), toc
   tic, quadl(f,0,20,1e-14), toc
 %%
 % This last example highlights the piecewise-smooth aspect

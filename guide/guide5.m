@@ -34,7 +34,7 @@ plot(f)
 axis equal
 
 %%
-% The chebfun semicircle is a simple and smooth function:
+% The chebfun semicircle is represented by a polynomial of low degree:
 
 length(f)
 plot(f,'.-')
@@ -55,7 +55,7 @@ subplot(1,2,2), plot(exp(h)), axis equal
 % Such plots make pretty pictures, but as always with chebfuns,
 % the underlying operations involve serious mathematics and
 % are carried out to many digits
-% of accuracy.  For example, the integral of g is pi/10,
+% of accuracy.  For example, the integral of g is -pi*i/10,
 
 sum(g)
 
@@ -95,17 +95,15 @@ hold on, plot(X,'r')
 % Here we see what happens to R and X under the maps z^2 and exp(z):
 
 close
-R2 = R.^2; X2 = X.^2;
-subplot(1,2,1), plot(R2), grid on, axis equal
-hold on, plot(X2,'r')
-eR = exp(R); eX = exp(X);
-subplot(1,2,2), plot(eR), grid on, axis equal
-hold on, plot(eX,'r')
+subplot(1,2,1), plot(R.^2), grid on, axis equal
+hold on, plot(X.^2,'r')
+subplot(1,2,2), plot(exp(R)), grid on, axis equal
+hold on, plot(exp(X),'r')
 
 %%
 % A particularly interesting set of conformal maps are the
 % *Moebius transformations*, the rational functions of the form (az+b)/(cz+d)
-% for constants a,b,c,z.  For example, here is a square and its
+% for constants a,b,c,d.  For example, here is a square and its
 % image under the map w = 1/(1+z), and the image of the image under the
 % same map, and the image of the image of the image.  We also plot
 % the limiting point given by the equation z = 1/(1+z), i.e., 
@@ -114,15 +112,16 @@ hold on, plot(eX,'r')
 S1 = chebfun('-.5i+s','1-.5i+1i*(s-1)','1+.5i-(s-2)','.5i-1i*(s-3)',0:4);
 close
 LW = 'linewidth'; lw = 3;
-S2 = 1./(1+S1);
-S3 = 1./(1+S2);
-S4 = 1./(1+S3);
+S2 = 1./(1+S1); S3 = 1./(1+S2); S4 = 1./(1+S3);
 plot(S1,'b',LW,lw)
 hold on, axis equal
-plot(S2,'r',LW,lw)
-plot(S3,'g',LW,lw)
-plot(S4,'m',LW,lw)
+plot(S2,'r',LW,lw), plot(S3,'g',LW,lw), plot(S4,'m',LW,lw)
 plot((sqrt(5)-1)/2,0,'.k','markersize',6)
+
+%%
+% One could make more beautiful pictures along these lines with
+% commands of the form fill(chebfun), but Matlab's "fill" command
+% has not yet been overloaded for chebfuns.
 
 %% 5.3 Contour integrals
 % If s is a real parameter and z(s) is a complex function of s,
@@ -145,6 +144,7 @@ plot((sqrt(5)-1)/2,0,'.k','markersize',6)
 %%
 % Notice how easily the contour integral is realized in the
 % chebfun system, even over a contour consisting of several pieces.
+% This particular integral is related to the complex error function [Weideman 1994].
   
 %%
 % According to *Cauchy's theorem*, the integral of an analytic function
@@ -158,8 +158,8 @@ plot((sqrt(5)-1)/2,0,'.k','markersize',6)
   I2 = sum(f.*diff(w))
 
 %%
-% A *meromorphic* function is one that is analytic in a region of interest
-% in the complex plane apart from possible poles at certain points.
+% A *meromorphic function* is a function that is analytic in a region of interest
+% in the complex plane apart from possible poles.
 % According to the *Cauchy integral formula*, (1/2i*pi) times the integral of
 % a function f around a closed contour is equal to the sum of the residues
 % of f associated with any poles it may have in the enclosed region.   The
@@ -173,18 +173,20 @@ z = chebfun('exp(1i*s)',[0 2*pi]);
 f = exp(z)./z.^3;
 I = sum(f.*diff(z))/(2i*pi)
 
+%%
+% Notice that we have just computed the degree 2 Taylor coefficient of exp(z).
 
 %%
-% Note that when the chebfun system integrates around a circular contour
-% like this, it does not use the fact that the integrand is essentially
+% When the chebfun system integrates around a circular contour
+% like this, it does not use the fact that the integrand is
 % periodic.  That would be Fourier analysis as opposed to Chebyshev
 % analysis, and a "fourfun" system would be more efficient for such
-% problems [Davis].  Chebyshev analysis is more flexible, however, since it does
+% problems [Davis 1959].  Chebyshev analysis is more flexible, however, since it does
 % not require periodicity, and the loss in efficiency is only about
 % a factor of pi/2 [Hale & Trefethen 2008].
 
 %%
-% The contour does not have to have radius 1, or be centered at the origin:
+% The contour does not have to have radius 1, or to be centered at the origin:
 z = chebfun('1+2*exp(1i*s)',[0 2*pi]);
 f = exp(z)./z.^3;
 I2 = sum(f.*diff(z))/(2i*pi)
@@ -208,9 +210,11 @@ close, plot(z), axis equal, grid on
 
 %%
 % The integral of f(z) = log(z)tanh(z) around this contour will
-% be equal to 2i*pi times the residue at the pole of f at .5i*pi.
+% be equal to 2i*pi times the residue at the pole of f at 0.5i*pi.
 % First we raise the contour a little bit off the axis to avoid
-% branch problems.
+% branch problems.  Getting branches right is always a bit tricky
+% in numerical computations with analytic functions, and the chebfun
+% system is not immune to such problems.
 
 z = z + 0.001i;
 f = log(z).*tanh(z);
@@ -239,6 +243,11 @@ f = z./((exp(z)-1));
 B10 = factorial(k)*sum((f./z.^(k+1)).*diff(z))/(2i*pi)
 
 %%
+% This problem of numerical instability would arise no matter
+% how one calculated the integral over the unit circle; it is not
+% due to the chebfun system.
+
+%%
 % Another use of Cauchy integrals is to count zeros or
 % poles of functions in specified regions.  According to the
 % *principle of the argument*, the number of zeros
@@ -246,14 +255,14 @@ B10 = factorial(k)*sum((f./z.^(k+1)).*diff(z))/(2i*pi)
 %
 %   N = (1/2i*pi) INT (f'/f) dz
 %
-% where the integral is taken over the boundary.  Since f' = df/dz,
-% we can rewrite this as
+% where the integral is taken over the boundary.  Since f' = df/dz
+% = (df/ds)(ds/dz), we can rewrite this as
 %
-%   N = (1/2i*pi) INT (df/dz)/f dz = (1/2i*pi) INT (df/ds)/f ds.
+%   N = (1/2i*pi) INT (df/ds)/f ds.
 %
 % (What is really going on here is a calculation of the change of the
-% argument of f from as the boundary is traversed.  In principle it
-% should be possible to calculate this by the commands "angle" and "unwrap",
+% argument of f as the boundary is traversed.  In principle it
+% should be possible to calculate this by the Matlab commands "angle" and "unwrap",
 % but these have not yet been overloaded for chebfuns.)
 % For example, the function f(z) = sin(z)^3 + cos(z)^3 clearly has no poles;
 % how many zeros does it have in the disk about 0 of radius 2?
@@ -289,9 +298,9 @@ r = roots(f)
 %% 5.5 Alphabet soup
 % 
 % One can do some silly things with piecewise smooth chebfuns.  
-% For example, here is a very clumsy construction of a chebfun defined
-% on the interval [0,7] that spells the initials LNT.  One could polish this
-% up a great deal with suitable M-functions.
+% For example, here is a chebfun defined
+% on the interval [0,7] that spells the initials LNT.  One could polish
+% up and extend this construction by defining 26 suitable M-functions.
 
 w = chebfun('1.01+.8i-(.01+.8i)*s','1+.6*(s-1)',...            % L
      '2+.8i*(s-2)','2+.8i+(-.8i+.6)*(s-3)','2.6+.8i*(s-4)',... % N
@@ -303,7 +312,7 @@ plot(w,'k',LW,lw), axis equal, axis off
 
 sum(w)
 max(abs(w))
-w(pi)
+w(3.5)
 
 %%
 % We can transform the function in various ways:
@@ -318,7 +327,7 @@ subplot(1,2,2), plot( cos(w),'k',LW,lw), axis equal, axis off
 
 %% 5.6  References
 %
-% [Davis] P. J. Davis, "On the numerical integration of periodic analytic
+% [Davis 1959] P. J. Davis, "On the numerical integration of periodic analytic
 % functions", in R. E. Langer, ed., On Numerical Integration,
 % Math. Res. Ctr., U. of Wisconsin, 1959, pp. 45-59.
 %
@@ -332,3 +341,6 @@ subplot(1,2,2), plot( cos(w),'k',LW,lw), axis equal, axis off
 %
 % [McCune 1966] J. E. McCune, "Exact inversion of dispersion relations",
 % Physics of Fluids 9 (1966), 2082-2084.
+%
+% [Weideman 1994] J. A. C. Weideman, "Computation of the complex error
+% function", SIAM Journal on Numerical Analysis 31 (1994), 1497-1518.
