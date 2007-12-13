@@ -8,18 +8,18 @@ function edge=detectedge(f,a,b,hs)
 
 test=1;
 a0=a; b0=b;
-N=30;  
+N=20;  
 maxd1=0;
 
-while ((b-a)>3e-16*hs)
-
+while ((b-a)>5e-16*hs)
+    
     xm=[a+(0:N-2)*(b-a)/(N-1) b]'; 
     y=f(xm);
     
     switch test
-                           
+                                   
         case 1
-  
+            
             [maxd2,ind]=max(abs(y(1:end-2)-2*y(2:end-1)+y(3:end))); 
             ind=ind+2; maxd2=maxd2/(xm(2)-xm(1))^2;
             if  maxd1>maxd2*.9
@@ -27,8 +27,8 @@ while ((b-a)>3e-16*hs)
                 a=a0; b=b0;
             else
                 maxd1=maxd2;
-                if ind+3<N, b=xm(ind+3); end            
-                if ind-3>1, a=xm(ind-3); end
+                if ind+3<N, b=xm(ind+2); end            
+                if ind-3>1, a=xm(ind-2); end
             end
             
          case 2
@@ -40,12 +40,12 @@ while ((b-a)>3e-16*hs)
                  return
              else
                  maxd1=maxd2;
-                 if ind+4<N, b=xm(ind+4); end            
-                 if ind-4>1, a=xm(ind-4); end
+                 if ind+4<N, b=xm(ind+3); end            
+                 if ind-4>1, a=xm(ind-3); end
              end       
             
     end
 
-end
+end 
 
 edge=(a+b)/2;
