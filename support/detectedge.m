@@ -1,5 +1,5 @@
 function edge=detectedge(f,a,b,hs)
-% Detects a blowup in second or fourth derivatives of f in [a0,b0].
+% Detects a blowup in second or fourth derivatives of f in [a,b].
 % hs is the horizontal scale.
 % If no edge is detected, edge=[] is returned.
 %
@@ -13,6 +13,7 @@ maxd1=0;
 
 while ((b-a)>5e-16*hs)
     
+    dx=(b-a)/(N-1);
     xm=[a+(0:N-2)*(b-a)/(N-1) b]'; 
     y=f(xm);
     
@@ -21,7 +22,8 @@ while ((b-a)>5e-16*hs)
         case 1
             
             [maxd2,ind]=max(abs(y(1:end-2)-2*y(2:end-1)+y(3:end))); 
-            ind=ind+2; maxd2=maxd2/(xm(2)-xm(1))^2;
+            ind=ind+2; maxd2=maxd2/dx^2;
+
             if  maxd1>maxd2*.9
                 test=2;
                 a=a0; b=b0;
@@ -34,7 +36,7 @@ while ((b-a)>5e-16*hs)
          case 2
              
              [maxd2,ind]=max(abs(y(1:end-4)-4*y(2:end-3)+6*y(3:end-2)-4*y(4:end-1)+y(5:end))); 
-             ind=ind+4;  maxd2=maxd2/(xm(2)-xm(1))^4;
+             ind=ind+4;  maxd2=maxd2/dx^4;
              if  maxd1>maxd2*.9
                  edge=[];
                  return

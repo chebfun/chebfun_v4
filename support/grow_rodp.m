@@ -1,17 +1,20 @@
-function [f,happy,values] = grow_rodp(op,ends,values)
+function [f,happy,values] = grow_rodp(op,ends,values,n,mn)
 % GROW Grows a fun
 % Given a function handle or an in-line object, creates a FUN 
 % rescaled to the interval [a b] with no more than 128 Chebyshev points. If
 % the function in OP requires more points, the obtained FUN is not happy 
 % (that is, HAPPY = 0).
 
+if nargin<4
+    n=16; mn=256;
+end
 vs    = values.vs;
 hs    = values.hs;
-n = 16;
+
 a = ends(1); b = ends(2);
 converged = 0; % force to enter into the loop 
-mn = 256;
-maxn = mn;%max(9,round((mn-4)/abs(log2(min(.5,diff(ends)/hs)))));
+
+maxn = mn;
 
 if b-a <= 1e-12*hs
     happy=1;
