@@ -235,8 +235,8 @@ for N = 2.^(4:12)-1
 end
 
 %%
-% Evidently the overshoot converges to a number approximately 1.2822834.
-% The exact limit is presumably known, but I haven't yet found a reference.
+% The overshoot converges to a number 1.282283455775....
+% [Helmberg & Wagner 1997].
 
 %% 4.4 Smoothness and rate of convergence
 % The most basic principle in approximation theory is this:
@@ -443,6 +443,10 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 %
 % [Fox & Parker 1966] L. Fox and I. B. Parker,
 % Chebyshev Polynomials in Numerical Analysis, Oxford U. Press, 1968.
+%
+% [G. Helmberg & P. Wagner 1997] "Manipulating Gibbs' phenomenon for
+% Fourier interpolation," Journal of Approximation Theory 89
+% (1997), 308-320.
 %
 % [Higham 2004] N. J. Higham, "The numerical stability
 % of barycentric Lagrange interpolation", IMA Journal of
