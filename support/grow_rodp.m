@@ -30,44 +30,24 @@ while  not(converged)
         f = fun(c);
         return;
     end
-    n = n*2;
-    x = cheb(n,a,b); 
+    xch=cos((2*(1:n)-1)*pi/(2*n));
+    x = 0.5*b*((1-a/b)*xch+1+a/b);
     v = op(x);
     
-% ------------------------------------------    
-    %f = fun;
-    %f = set(f,'val',v,'n',n);%%%%%
-    %c = funpoly(f);
-    c=[v;v(end-1:-1:2,:)]; 
-    if (isreal(v))
-      c = real(fft(c))/(2*n);
-    elseif (isreal(1i*v))
-      c = 1i*imag(fft(c))/(2*n);
-    else
-      c = fft(c)/(2*n);
-    end
-    c=(c(n+1:-1:1,:));
-    if (n>1), c(2:end-1,:)=2*c(2:end-1,:); end
-    c=c.';
-% -----------------------------------------------
-
-    % Rodrigo's suggestion--------------------------------
-    % change this:
-%      vs = max(vs,norm(c,inf));
-%      epss = 1e-13;
-%      condition = epss*vs;
-    %------------------------------------------------------
-    % for this:
+     c=fliplr(dct(v)) ;
+     c=[c(1:end-1)/sqrt(n/2), c(end)/sqrt(n)];
+ 
      vs = max(values.vs,norm(v,inf));
-     epss = 5e-15;
-     condition = epss*vs*sqrt(n);
-    %----------------------------------------------------
-    firstbig = find(abs(c)>= condition,1,'first');
+     epss = 5e-16;
+     condition = epss*vs*sqrt(n)*max(log2(hs*(b-a))^2,1);
+
+     firstbig = find(abs(c)>= condition,1,'first');
     converged = 0;
     if firstbig > 6
         c = c(firstbig:end);
         converged = 1;
     end
+    n = n*2;
 end
 f = fun(c);
 happy = 1;

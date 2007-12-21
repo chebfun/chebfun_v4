@@ -4,7 +4,7 @@ function F = auto(op,f,f2)
 if isa(op,'char'), op = inline(op); end %% string -> inline object
 maxn = 2^16;
 if (isempty(f)), F = fun; return; end
-epsauto = 1e-15;
+epsauto = 5e-15;
 if nargin<3
     n = 4;
     cf = prolong(f,n); % starting degree
