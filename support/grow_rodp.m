@@ -31,6 +31,13 @@ end
 x = .5*((b-a)*cos((0:n)'*(pi/n))+(b+a));
 v = op(x);
      
+
+if norm(v,inf)<1e-320
+    happy=1;
+    f = set(f,'val',0,'n',0);
+    return
+end
+
 while  not(converged)
     
     n = n*2;
