@@ -11,7 +11,7 @@
 %
 % RPC - 08/07
 clear, clc
-f = chebfun(@(x) log(1+x)./x,[-1 1]);
+f = chebfun(@(z) exp(z)./(z+2));
 L = 5;
 M = 5; 
 % Taylor coefficients -----------------------------------------------------

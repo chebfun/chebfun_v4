@@ -42,6 +42,8 @@ function chebfunobj = chebfun(varargin)
 
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 
+
+
 if ~ispref('chebfun_defaults')
     addpref('chebfun_defaults','maxn',128);
     addpref('chebfun_defaults','splitting',1);
@@ -53,7 +55,15 @@ if nargin == 0,
     chebfunobj = class(chebfunobj,'chebfun');
     return;
 end
-    
+
+if isa(varargin{1},'chebfun')
+    if length(varargin)==1
+        chebfunobj = varargin{1};
+        return;
+    else
+        error('Unrecognized input sequence.');
+    end
+end   
 % chebfun main components: ------------------------------------------------
 funs = {};
 ends = [];

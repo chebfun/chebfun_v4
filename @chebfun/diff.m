@@ -19,7 +19,7 @@ for j = 1:n % loop n times for nth derivative
     end
     % Detect jumps in the function
     fright = f.funs{1};
-    newimps = [fright(-1) zeros(1,nfuns)];
+    newimps = zeros(1,nfuns+1);
     vs = vscale(f);
     for i = 2:nfuns
         fleft = fright; fright = f.funs{i};
