@@ -8,8 +8,8 @@ function edge=detectedge(f,a,b,y,hs)
 
 test=1;
 N=15;  
-a=a+eps*hs;
-b=b-eps*hs;
+a=a+1e-15*hs;
+b=b-1e-15*hs;
 
 x=cheb(length(y)-1,a,b);
 d=diff(y)./diff(x);
@@ -63,12 +63,7 @@ if test==2
         y=[yab(1); f(xm(2:end-1)); yab(2)];
     
         [maxd2,ind]=max(abs(y(1:end-4)-4*y(2:end-3)+6*y(3:end-2)-4*y(4:end-1)+y(5:end)));     
-        %plot(xm(3:end-2),abs(y(1:end-4)-4*y(2:end-3)+6*y(3:end-2)-4*y(4:end-1)+y(5:end)))
         ind=ind+2;  maxd2=maxd2/dx^4;   
-       % maxd2
-       % maxd1
-       % a
-       % b
         if  maxd1>maxd2*.9                 
             edge=[];                 
             return             
@@ -83,3 +78,6 @@ if test==2
 end
 
 edge=(a+b)/2;
+if abs(round(100*edge)/100-edge)<5e-16*hs
+    edge=round(100*edge)/100;
+end
