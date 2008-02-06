@@ -17,7 +17,7 @@ converged = 0;
 maxn = mn;
 f=fun;
 
-htol=1e-15*hs;
+htol=5e-15*hs;
 a=a+htol;
 b=b-htol;
 
@@ -57,11 +57,16 @@ while  not(converged)
     vs = max(values.vs,norm(v,inf));
     condition =2^-52*vs*max(max((hs/vs)*abs(diff(v)./diff(x))),1);
     
-    firstbig = find(abs(c)>= condition,1,'first');
-    converged = 0;
-    if firstbig > 6
-        c = c(firstbig:end);
-        converged = 1;
+    if norm(c,inf)<condition
+        c=0;
+        converged=1;
+    else
+        firstbig = find(abs(c)>= condition,1,'first');
+        converged = 0;
+        if firstbig > 6
+            c = c(firstbig:end);
+            converged = 1;
+        end
     end
     
 end
