@@ -3,42 +3,47 @@ function h = times(f,g)
 % F.*G multiplies chebfuns F and G or a chebfun by a scalar if either F or G is
 % a scalar.
 %
+
+%
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
-if (isempty(f) | isempty(g)), h=chebfun; return; end
+% Rodrigo B. Platte, 2008.
+        
+if (isempty(f) || isempty(g)), h = chebfun; return; end
+
+% scalar times chebfun
 if isa(f,'double')
-    h=g;
+    h = g;
     for i = 1: length(g.funs)
-          h.funs{i} = f * g.funs{i};
+        h.funs{i} = f * g.funs{i};         
+        h = set(h,'imps',f*get(g,'imps'));
     end
     return;
 elseif isa(g,'double')
     h=f;
     for i = 1:length(f.funs)
-        h.funs{i}=f.funs{i} * g;
+        h.funs{i} = f.funs{i} * g;
+        h = set(h,'imps',g*get(f,'imps'));
     end
     return;
 end
-[hends, hf, hg, ord] = overlap(f.ends,g.ends);
-x = fun('x',1);
-for i = 1:size(ord,2)-1
-    fcheb = f.funs{ord(1,i)}; gcheb = g.funs{ord(2,i)};
-    hfuns{i} = fcheb(hf(1,i)*x+hf(2,i)) .* gcheb(hg(1,i)*x+hg(2,i));
-end
-ord = [[1;1] diff(ord,1,2)];
-frows = size(f.imps,1); grows = size(g.imps,1);
-maxrows = max(frows,grows);
-fim = zeros(max(frows,grows),length(hends));  gim = fim;
-fim(1:frows,find(ord(1,:))) = f.imps; 
-gim(1:grows,find(ord(2,:))) = g.imps;
-if any(intersect(fim,gim,'rows')),
-    error('Chebfun cannot multiply two impulses at the same location')
-end
-S.type = '()';
-S.subs = {hends};
-fh = subsref(f,S); gh = subsref(g,S);
 
-fim = fim.*gh(ones(maxrows,1),:); fim(isnan(fim)) = 0;
-gim = gim.*fh(ones(maxrows,1),:); gim(isnan(gim)) = 0;
-himps = fim + gim;
-h = chebfun(hfuns,hends);
-set(h,'imps',himps);
+% product of two chebfuns
+[f,g] = newoverlap(f,g);
+h = f;
+for k = 1:length(f.ends)-1
+    h.funs{k} = f.funs{k}.*g.funs{k};
+end
+
+% impulses
+indf=find(f.imps); indg=find(g.imps);
+rows=size(f.imps,1);
+if any(indf)
+    gvals=repmat(feval(g,h.ends),rows);
+    h.imps(indf) = f.imps(indf).*gvals(indf);
+end
+if any(indg)
+    fvals=repmat(feval(f,h.ends),rows);
+    h.imps(indg) = g.imps(indg).*fvals(indg);
+    [trash,indboth] = intersect(indf,indg);
+    h.imps(indboth) = nan;
+end

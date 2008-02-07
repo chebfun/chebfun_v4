@@ -4,16 +4,20 @@ function F = times(f,g)
 % a scalar.
 
 % Copyright 2003 Zachary Battles, Chebfun Version 1.0
-if (isempty(f) | isempty(g)), F=fun; return; end
-if (isa(f,'double') | isa(g,'double'))
+% Changes by R. Platte in 2008.
+
+if (isempty(f) || isempty(g)), F=fun; return; end
+if (isa(f,'double') || isa(g,'double'))
   F = mtimes(f,g);
-elseif (size(f,2)==1 & size(g,2)==1)
+elseif (size(f,2)==1 && size(g,2)==1)
    F=f;
-%   [temp,temp2] = prolong(f,f.n+g.n,g);
    temp=prolong(f,f.n+g.n);
-   temp2=prolong(g,f.n+g.n);
-   F.val=temp.val.*temp2.val;
+   if f==g
+       F.val=temp.val.^2;          
+   else
+       temp2=prolong(g,f.n+g.n);
+       F.val=temp.val.*temp2.val;
+   end
    F.n = f.n+g.n;
    F=simplify(F);
-%  F=auto(@times,f,g);
 end
