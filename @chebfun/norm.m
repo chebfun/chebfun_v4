@@ -6,11 +6,18 @@ function F = norm(f,n)
 %	NORM(F,inf) = max(abs(F)).
 %	NORM(F,-inf) = min(abs(F)).
 %
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
+% Rodrigo Platte, Feb. 2008
+
 if (nargin==1), n=2; elseif strcmp(n,'inf'), n=inf; elseif strcmp(n,'-inf'), n=-inf; end
 
 if n==2
-    F = sqrt(sum(conj(f).*f));
+    F=0;
+    for k=1:length(f.ends)-1
+        F = F+ .5*(f.ends(k+1)-f.ends(k))*norm(f.funs{k})^2;
+    end
+    F=sqrt(F);
 elseif n==1
     F = sum(abs(f));
 elseif n==inf
