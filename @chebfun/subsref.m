@@ -56,38 +56,22 @@ switch index(1).type
         end
            
     case '()'
-        nfuns = length(f.funs);
-        ends = f.ends;
         s = index.subs{1};
-        [X,I] = rescale(s,ends);
-        F = zeros(size(s));
-        if nfuns == 0
-            % This is an old safeguard. It might be removed
-            ffuns = f.funs;
-            F = ffuns(X);
-            warning('Safeguard in SUBSREF has been used. Please contact support.')
+        if isnumeric(s)
+            F = feval(f,s);
+            varargout = {F};
         else
-            for i = 1:nfuns
-                ffun = f.funs{i};
-                pos = find(I==i);
-                F(pos) = ffun(X(pos));
-            end
+            error('chebfun:subsref:nonnumeric',...
+              'Cannot evaluate chebfun for non-numeric type.')
         end
-        if any(f.imps(1,:))
-            s = s(:).';
-            [val,loc,pos] = intersect(s,ends);
-            F(loc(any(f.imps(:,pos)>0,1))) = inf;
-            F(loc(any(f.imps(:,pos)<0,1))) = -inf;
-        end
-        varargout = {F};
     case '{}'
         error('??? chebfun object, not a cell array');
     otherwise
         error(['??? Unexpected index.type of ' index(1).type]);
 end
 
-if length(varargout) > 1 & nargout <= 1
-    if iscellstr(varargout) || any([cellfun('ismpety',varargout)])
+if length(varargout) > 1 && nargout <= 1
+    if iscellstr(varargout) || any(cellfun('isempty',varargout))
         varargout = {varargout};
     else
         try
