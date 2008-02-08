@@ -1,4 +1,4 @@
-function [fout,gout] = newoverlap(f,g)
+function [fout,gout] = overlap(f,g)
 % OVERLAP chebfuns
 %
 % [fout,gout] = OVERLAP(f,g) returns two chebfuns such that
@@ -12,10 +12,6 @@ fends=f.ends; gends=g.ends;
 frows=size(f.imps,1); grows=size(g.imps,1); maxrows=max(frows,grows);
 fimps=f.imps; gimps=g.imps;
 
-if fends(end)<=gends(1) || gends(end)<=fends(1)
-    error('intersection of domains is empty')
-end
-
 if length(fends)==length(gends) && all(fends==gends)
 
     fout=f; gout=g;    
@@ -24,8 +20,19 @@ if length(fends)==length(gends) && all(fends==gends)
 
 else
     
-    a=max(fends(1),gends(1)); b=min(fends(end), gends(end));    
-    ends=union(fends,gends); ends=ends(a<=ends & b>=ends);
+%%%%%%%%    
+% to overlap two functions defined in different domains, uncomment this:
+%%%%%%%%
+%     if fends(end)<=gends(1) || gends(end)<=fends(1)
+%         error('intersection of domains is empty')
+%     end    
+%     a=max(fends(1),gends(1)); b=min(fends(end), gends(end));    
+%     ends=union(fends,gends); ends=ends(a<=ends & b>=ends);
+    
+    if domain(f)~=domain(g)
+       error('domain(f) ~= domain(g)')
+    end
+    ends=union(fends,gends);
     
     fk=1; gk=1;
     foutfuns=cell(length(ends)-1,1);
@@ -37,11 +44,13 @@ else
         if fends(fk)==a && fends(fk+1)==b
            fk=fk+1;
         else
+            if fends(fk+1)<b, fk=fk+1; ffun=f.funs{fk}; end
             ffun=restrict(ffun,(2*[a b]-fends(fk)-fends(fk+1))/(fends(fk+1)-fends(fk)));
         end
-        if gends(gk)==a && gends(gk+1)==b
+        if  gends(gk)==a && gends(gk+1)==b
             gk=gk+1; 
         else
+            if gends(gk+1)<b, gk=gk+1; gfun=g.funs{gk}; end
             gfun=restrict(gfun,(2*[a b]-gends(gk)-gends(gk+1))/(gends(gk+1)-gends(gk)));
         end
         foutfuns{k}=ffun;  goutfuns{k}=gfun;
