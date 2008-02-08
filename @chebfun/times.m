@@ -28,7 +28,7 @@ elseif isa(g,'double')
 end
 
 % product of two chebfuns
-[f,g] = newoverlap(f,g);
+[f,g] = overlap(f,g);
 h = f;
 for k = 1:length(f.ends)-1
     h.funs{k} = f.funs{k}.*g.funs{k};

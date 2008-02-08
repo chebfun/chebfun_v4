@@ -40,7 +40,11 @@ function plot(f,varargin)
 % line. Notice that it is not possible to modify other properties for jump
 % lines and that the default is ':k'.
 %
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
+% Rodrigo Platte 2008
+%
+
 h = ishold;
 
 if ~isempty(varargin) & isa(varargin{1},'chebfun')
@@ -150,24 +154,20 @@ if nfuncs == 1
     end
 else
     % we create in f and g the same intervals and use the plot from fun. 
-    [hi,hf,hg,ord] = overlap(f.ends,g.ends);
-    nfuns = size(ord,2)-1;
-    x = fun('x',1);
-    for i = 1:nfuns
-        fcheb = f.funs{ord(1,i)}; gcheb = g.funs{ord(2,i)};
-        ffuns{i} = fcheb(hf(1,i)*x+hf(2,i));
-        gfuns{i} = gcheb(hg(1,i)*x+hg(2,i));
-    end
-    for i = 1:nfuns
-        maxfg(i) = max(get(ffuns{i},'n'),get(gfuns{i},'n')); 
-    end
-    nf = sum(maxfg);
-    for i = 1:nfuns
-        m = round(2000*maxfg(i)/nf);
-        plot(ffuns{i},gfuns{i},m,linespec); hold on
-    end
-end
-
-if h, hold on; else hold off; end
-
     
+     [f,g]=overlap(f,g);
+     nfuns = length(f.ends)-1; 
+     maxfg=zeros(1,nfuns);
+     for i = 1:nfuns
+         maxfg(i) = max(get(f.funs{i},'n'),get(g.funs{i},'n')); 
+     end
+     nf = sum(maxfg);
+     for i = 1:nfuns
+         m = round(2000*maxfg(i)/nf);
+         plot(f.funs{i},g.funs{i},m,linespec); hold on
+     end
+ end
+ 
+ if h, hold on; else hold off; end
+ 
+     

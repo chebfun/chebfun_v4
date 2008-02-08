@@ -7,7 +7,9 @@ function plot3(f,g,h,varargin)
 % line. The F,G pairs, or F,G,S triples, can be followed by parameter/value
 % pairs to specify additional properties of the lines, similar as in PLOT.
 %
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
+% Rodrigo Platte 2008
 
 hd = ishold;
 % Default user's parameters
@@ -69,42 +71,29 @@ linespec = {'linestyle' linestyle 'marker' marker 'color' color ...
 
 
 % we create in f, g and h the same intervals--------------
-[pends,pf,pg,ord] = overlap(f.ends,g.ends);
-nfuns = size(ord,2)-1;
-x = fun('x',1);
-for i = 1:nfuns
-    fcheb = f.funs{ord(1,i)}; gcheb = g.funs{ord(2,i)};
-    pfuns{i} = fcheb(pf(1,i)*x+pf(2,i));
-    qfuns{i} = gcheb(pg(1,i)*x+pg(2,i));
-
-end
-[rends,rf,rh,ord] = overlap(pends,h.ends);
-nfuns = size(ord,2)-1;
-for i = 1:nfuns
-    pcheb = pfuns{ord(1,i)}; qcheb = qfuns{ord(1,i)};
-    hcheb = h.funs{ord(2,i)};
-    ffuns{i} = pcheb(rf(1,i)*x+rf(2,i));
-    gfuns{i} = qcheb(rf(1,i)*x+rf(2,i));
-    hfuns{i} = hcheb(rh(1,i)*x+rh(2,i));
-end
+[f,g] = overlap(f,g);
+[f,h] = overlap(f,h);
+[g,h] = overlap(g,h);
+nfuns=length(g.ends)-1;
 % ---------------------------------------------------------
+maxfgh=zeros(1,nfuns);
 for i = 1:nfuns
-    maxfgh(i) = max([get(ffuns{i},'n'),get(gfuns{i},'n'),get(hfuns{i},'n')]); 
+    maxfgh(i) = max([get(f.funs{i},'n'),get(g.funs{i},'n'),get(h.funs{i},'n')]); 
 end
 nf = sum(maxfgh);
 for i = 1:nfuns
     m = round(2000*maxfgh(i)/nf);
-    fcheb = prolong(ffuns{i},m);
-    gcheb = prolong(gfuns{i},m);
-    hcheb = prolong(hfuns{i},m);
+    fcheb = prolong(f.funs{i},m);
+    gcheb = prolong(g.funs{i},m);
+    hcheb = prolong(h.funs{i},m);
     marker = linespec{4}; linespec{4} = 'none';
     plot3(get(fcheb,'val'),get(gcheb,'val'),get(hcheb,'val'),linespec{1:end});  
     hold on
     linespec{4} = marker;
     if ~strcmp(marker,'none')
-        fvcheb = prolong(ffuns{i},maxfgh(i));
-        gvcheb = prolong(gfuns{i},maxfgh(i));
-        hvcheb = prolong(hfuns{i},maxfgh(i));
+        fvcheb = prolong(f.funs{i},maxfgh(i));
+        gvcheb = prolong(g.funs{i},maxfgh(i));
+        hvcheb = prolong(h.funs{i},maxfgh(i));
         linespec{2} = 'none'; % set linestyle to 'none'
         plot3(get(fvcheb,'val'),get(gvcheb,'val'),get(hvcheb,'val'),linespec{1:end});
     end
