@@ -51,7 +51,7 @@ if ~ispref('chebfun_defaults')
 end
 
 if nargin == 0, 
-    chebfunobj = struct('funs',[],'ends',[],'imps',[],'nfuns',[]);
+    chebfunobj = struct('funs',{{}},'ends',[],'imps',[],'nfuns',[]);
     chebfunobj = class(chebfunobj,'chebfun');
     return;
 end
