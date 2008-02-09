@@ -65,7 +65,21 @@ switch index(1).type
               'Cannot evaluate chebfun for non-numeric type.')
         end
     case '{}'
-        error('??? chebfun object, not a cell array');
+        s = [];
+        if length(index.subs)==1
+          if isequal(index.subs{1},':')
+            s = domain(f);
+          %elseif isnumeric(index.subs{1})
+          %  s = index.subs{1};
+          end
+        elseif length(index.subs)==2
+          s = cat(2,index.subs{:});
+        end
+        if ~isnumeric(s) || length(s)~=2
+          error('chebfun:subsref:badinterval',...
+            'Invalid interval syntax.')
+        end
+        varargout = { restrict(f,s) };
     otherwise
         error(['??? Unexpected index.type of ' index(1).type]);
 end

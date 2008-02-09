@@ -2,10 +2,17 @@ function g = restrict(f,subint)
 
 % RESTRICT Restrict a chebfun to a subinterval.
 % 
-% G = RESTRICT(F,S) returns a chebfun G whose domain is [S(1) S(2)] and
+% G = RESTRICT(F,[A,B]) returns a chebfun G whose domain is [A B] and
 % which agrees (to roundoff precision) with F on that interval. 
+%
+% If A==B, the result is a chebfun with a point domain. If A>B,
+% the result is an empty chebfun.
+%
+% An equivalent syntax is G = F{A,B}.
+%
+% See also CHEBFUN/SUBSREF, CHEBFUN/DEFINE.
 
-% Toby Driscoll, 6 February 2008
+% Toby Driscoll, 9 February 2008
 
 g = chebfun;
 if subint(1)>subint(2)
@@ -24,7 +31,7 @@ if subint(2)==subint(1)
   g.nfuns = 1;
   g.ends = subint;
   g.imps = [0 0];
-  return
+  return                                         % empty result
 end
 
 % We now know dom(1)<=subint(1)<subint(2)<=dom(2).
