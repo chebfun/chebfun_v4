@@ -167,4 +167,6 @@ chebfunobj.funs = ffuns;
 chebfunobj.ends = ends;
 chebfunobj.imps = zeros(size(ends));
 chebfunobj.nfuns = length(ffuns);
+
+superiorto('function_handle');
 chebfunobj = class(chebfunobj,'chebfun');
