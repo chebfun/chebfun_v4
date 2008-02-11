@@ -1,6 +1,6 @@
 function [funs,ends] = auto(op,ends)
 
- if getpref('chebfun_defaults','splitting')==0
+ if ~chebfunpref('splitting')
      funs{1} = fixedgrow(op,ends);
      return;
  end

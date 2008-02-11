@@ -13,18 +13,19 @@ function splitting(on_off)
 %
 
 if nargin==0 
-    switch getpref('chebfun_defaults','splitting')
+    switch chebfunpref('splitting')
         case 1 
             disp('SPLITTING is currently ON')
         case 0
             disp('SPLITTING is currently OFF')
     end
 else
-    if strcmp(on_off, 'on') || strcmp(on_off, 'ON')
-        setpref('chebfun_defaults','splitting',1)
-    elseif strcmp(on_off, 'off') || strcmp(on_off, 'OFF')
-        setpref('chebfun_defaults','splitting',0)
+    if strcmpi(on_off, 'on')
+        chebfunpref('splitting',true)
+    elseif strcmpi(on_off, 'off') 
+        chebfunpref('splitting',false)
     else
-        error('CHEBFUN:split:UnknownOption', 'Unknown splitting option: only ON and OFF are valid options.')
+        error('CHEBFUN:split:UnknownOption',...
+          'Unknown splitting option: only ON and OFF are valid options.')
     end
 end

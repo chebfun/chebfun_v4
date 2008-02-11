@@ -44,11 +44,11 @@ function chebfunobj = chebfun(varargin)
 
 
 
-if ~ispref('chebfun_defaults')
-    addpref('chebfun_defaults','maxn',128);
-    addpref('chebfun_defaults','splitting',1);
-    addpref('chebfun_defaults','degree_mode',1);
-end
+% if ~ispref('chebfun_defaults')
+%     addpref('chebfun_defaults','maxn',128);
+%     addpref('chebfun_defaults','splitting',1);
+%     addpref('chebfun_defaults','degree_mode',1);
+% end
 
 if nargin == 0, 
     chebfunobj = struct('funs',{{}},'ends',[],'imps',[],'nfuns',[]);

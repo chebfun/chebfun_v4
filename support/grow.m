@@ -13,8 +13,8 @@ hs    = values.hs;
 n = 2;
 a = ends(1); b = ends(2);
 converged = 0; % force to enter into the loop 
-mn = getpref('chebfun_defaults','maxn');
-switch getpref('chebfun_defaults','degree_mode')
+mn = chebfunpref('maxn');
+switch chebfunpref('degree_mode')
      case 0,
          maxn = mn;
     case 1
@@ -35,7 +35,7 @@ switch getpref('chebfun_defaults','degree_mode')
 while  not(converged)
     if n >= maxn, 
         happy = 0; 
-        if getpref('chebfun_defaults','degree_mode') == 2
+        if chebfunpref('degree_mode') == 2
             values.table = unique([values.table; [x v]],'rows');
         end
         return;
@@ -58,16 +58,16 @@ while  not(converged)
     % epss = 3e-16;
     % condition = epss*vs*sqrt(n);
     %------------------------------------------------------
-    firstbig = min(find(abs(c)>= condition));
+    firstbig = find(abs(c)>= condition, 1 );
     converged = 0;
     if deb1
-        c(find(c==0))=1e-25;
+        c((c==0))=1e-25;
         semilogy(abs(c(end:-1:1))), drawnow;
         pause(.1)
     end
     if firstbig > 3
         if deb1
-            c(find(c==0))=1e-25;
+            c((c==0))=1e-25;
             semilogy(abs(c(end:-1:firstbig))), drawnow;
         end
         c = c(firstbig:end);
