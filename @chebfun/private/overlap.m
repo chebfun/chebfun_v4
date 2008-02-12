@@ -29,7 +29,7 @@ else
 %     a=max(fends(1),gends(1)); b=min(fends(end), gends(end));    
 %     ends=union(fends,gends); ends=ends(a<=ends & b>=ends);
     
-    if domain(f)~=domain(g)
+    if any(domain(f)~=domain(g))
        error('domain(f) ~= domain(g)')
     end
     ends=union(fends,gends);
