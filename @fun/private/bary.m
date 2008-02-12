@@ -15,7 +15,8 @@ else
             x(i) = f(xk==x(i));
         else
             xx = ek./(x(i)-xk);
-            x(i) = (sum(xx.*f))/sum(xx);
+            %x(i) = (sum(xx.*f))/sum(xx);        % most readable
+            x(i) = (xx.'*f)/sum(xx);             % faster
         end
     end
 end
