@@ -10,8 +10,6 @@ function isr=isreal(f)
 %     See also CHEBFUN/REAL, CHEBFUN/IMAG.
 % 
 % 
-%     Reference page in Help browser
-%        doc isreal
 
 %   Rodrigo Platte, 18 Feb 2008
 
