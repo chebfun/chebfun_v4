@@ -7,7 +7,7 @@ function y = polyval(p,x)
 %    Y = P(1)*X^N + P(2)*X^(N-1) + ... + P(N)*X + P(N+1)
 %
 % The polynomial is evaluated at all the points of the chebfun X.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 n = length(p);
 y = p(n);

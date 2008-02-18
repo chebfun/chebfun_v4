@@ -5,7 +5,7 @@ function [out,pos] = max(f,g)
 % H = MAX(F,G), where F and G are chebfuns defined on the same domain,
 % returns a chebfun H such that H(x) = max(F(x),G(x)) and x is in the
 % domain of F and G.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 if nargin == 1
     nfuns = length(f.funs);

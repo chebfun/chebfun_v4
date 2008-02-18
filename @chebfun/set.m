@@ -6,7 +6,7 @@ function a = set(a,varargin)
 % impulses respectively.
 %
 % F = SET(F,PROP_1,VAL_1,...,PROP_n,VAL_n) modifies more than one property.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 propertyArgIn = varargin;
 while length(propertyArgIn) >= 2,

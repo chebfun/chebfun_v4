@@ -4,7 +4,7 @@ function val = get(a, propName)
 % the chebfun F. The string PROP can be 'funs', 'ends' or 'imps', to
 % retrieve the cell array of funs, the vector with endpoints or the matrix
 % with Dirac impulses respectively.
-% 
+ 
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 switch propName
     case 'funs'

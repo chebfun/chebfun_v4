@@ -1,7 +1,7 @@
 function F = sqrt(f)
 % SQRT  Square root.
 % SQRT(F) returns the square root chebfun of a positive or negative chebfun F. 
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 
 % NOTE: if the function values of f are close to zero, SQRT will break.

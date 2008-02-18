@@ -3,7 +3,7 @@ function varargout = domain(f)
 %
 % I = DOMAIN(F) returns the vector I such that the chebfun F is defined on
 % the interval [I(1) I(2)].
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 
 if isempty(f)

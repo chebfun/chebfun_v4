@@ -2,7 +2,7 @@ function F = power(f,b)
 % .^	Chebfun power
 % F.^G returns a chebfun F to the scalar power G or a scalar F to the
 % chebfun power G. The effect of impulses has been ignored.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 if (isa(f,'chebfun') & isa(b,'chebfun'))
   error('Cannot raise a chebfun to the power of a chebfun.');

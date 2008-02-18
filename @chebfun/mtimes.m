@@ -1,7 +1,7 @@
 function F = mtimes(f,g)
 % *	Scalar multiplication
 % F*G multiplies a chebfun by a scalar.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 if (isa(f,'chebfun') & isa(g,'chebfun'))
   error('Use .* to multiply two chebfuns.');

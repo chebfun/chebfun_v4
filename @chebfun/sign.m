@@ -4,7 +4,7 @@ function F = sign(f)
 % the interval where F(x)>0, G(x) = -1 in the interval where F(x)<0 and
 % G(x) = 0  in the interval where F(x) = 0. The breakpoints of H are
 % introduced at zeros of F.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 
 % NOTE: sign(chebfun(0,'x',[-1 0 1])) won't work properly.

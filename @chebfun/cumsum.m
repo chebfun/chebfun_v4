@@ -2,7 +2,7 @@ function F = cumsum(f)
 % CUMSUM	Indefinite integral
 % CUMSUM(F) is the indefinite integral of the chebfun F. Dirac deltas 
 % already existing in F will decrease their degree.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 nfuns = length(f.funs);
 ends = f.ends;

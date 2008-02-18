@@ -5,7 +5,7 @@ function out = chebpoly(f,n)
 % Chebyshev polynomial and F_1 denotes the first fun of chebfun F.
 %
 % A = CHEBPOLY(F,i) returns the same coefficients for the i-th fun.
-%
+ 
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 nfuns = length(f.funs);
 if nargin == 1

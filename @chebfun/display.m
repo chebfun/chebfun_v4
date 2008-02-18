@@ -5,7 +5,7 @@ function display(X)
 % represent that part of the function, together with two columns: the first
 % one with the Chebyshev points in the corresponding interval and the 
 % second with the values of the function at those Chebyshev points.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 loose = ~isequal(get(0,'FormatSpacing'),'compact');
 if loose, disp(' '), end

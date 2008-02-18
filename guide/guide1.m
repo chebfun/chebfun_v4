@@ -25,7 +25,7 @@
 % thanks to the Fast Fourier Transform, by expansions in
 % Chebyshev polynomials.  For a simple function, 20 or 30
 % points often suffice, but the process is stable and
-% effective even for very complicated functions that require
+% effective even for functions complicated enough to require
 % 1000 or 100,000 points.  The chebfun system makes use of
 % adaptive procedures that aim to find the right number of points
 % automatically so as to represent each function
@@ -70,8 +70,8 @@
 
 %%
 % This result tells us that f is represented by a polynomial
-% interpolant through 47 Chebyshev points, i.e., a polynomial of
-% degree 46.  These numbers have been determined by an
+% interpolant through 49 Chebyshev points, i.e., a polynomial of
+% degree 48.  These numbers have been determined by an
 % adaptive process.  We can see the data points by plotting f with
 % the '.-' option:
   plot(f,'.-')
@@ -147,7 +147,7 @@
   plot(f)
 
 %% 1.3  Operations on chebfuns
-% There are about 90 commands that can be applied to
+% There are about 100 commands that can be applied to
 % a chebfun.  For a complete list you can type
 % "methods":
   methods chebfun
@@ -158,12 +158,13 @@
 
 %%
 % Every command in the list exists in ordinary Matlab,
-% with the exceptions of "domain", "prolong" and the
+% with the exceptions of "domain", "prolong", "restrict",
+% "chebpoly", "define", "shift", and the
 % chebfun constructor "chebfun".  We have already seen
 % "length" and "sum" in action.  In fact we have already
 % seen "subsref" too, since that is the Matlab command
-% for evaluating arguments in parentheses.  Here is another
-% example of its use:
+% for (among other things) evaluating arguments in parentheses.
+%  Here is another example of its use:
 
   f(0.5)
 
@@ -199,6 +200,7 @@
 % the moment let us see some examples.  One way to get a piecewise
 % smooth function is directly from the constructor, taking advantage
 % of its capability of automatic edge detection.  For example,
+  splitting on
   f = chebfun('abs(x-.3)'); plot(f,'.-')
 %%
 % The "length" command reveals that f is defined by four data points,
@@ -278,7 +280,8 @@
 %%
 % A final note about piecewise smooth chebfuns is that
 % the automatic edge detection or "splitting" feature
-% can be turned on and  off.  For example, if we compute
+% can be turned on and  off.  (Earlier we used "splitting on"
+% to make sure we were in the right mode.)  For example, if we compute
 % sin(x) over [0,1000] with automatic edge detection, 
 % we end up with a chebfun with many pieces:
   tic, f = chebfun('sin(x)',[0 1000*pi]); toc

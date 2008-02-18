@@ -3,7 +3,6 @@ function h = plus(f,g)
 % F + G adds chebfuns F and G or a scalar to a chebfun if either F or G is 
 % a scalar.
 
-%
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 % Rodrigo Platte, Feb. 2008
 if (isempty(f) | isempty(g)), h=chebfun; return; end

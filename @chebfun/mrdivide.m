@@ -1,7 +1,7 @@
 function F = mrdivide(f,g)
 % /	Right scalar divide
 % F/C divides the chebfun F by a scalar C.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 if (isempty(f)), 
     F=chebfun;

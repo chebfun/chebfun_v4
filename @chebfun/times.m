@@ -2,9 +2,7 @@ function h = times(f,g)
 % .*	Chebfun multiplication
 % F.*G multiplies chebfuns F and G or a chebfun by a scalar if either F or G is
 % a scalar.
-%
 
-%
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 % Rodrigo B. Platte, 2008.
         

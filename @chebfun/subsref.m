@@ -3,7 +3,7 @@ function varargout = subsref(f,index)
 % F(X) returns the values of the chebfun F evaluated on the array X. The 
 % function at the right of a breakpoint x is used for the evaluation of F
 % on x.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 
 switch index(1).type

@@ -5,7 +5,7 @@ function F = diff(f,n)
 % deltas already existing in F will increase their degree.
 %
 % DIFF(F,N) is the N-th derivative of F.
-%
+
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 if (nargin==1) n=1; end
 nfuns = length(f.funs);
