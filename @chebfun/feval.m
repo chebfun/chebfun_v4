@@ -7,6 +7,14 @@ function fx = feval(f,x)
 
 % Toby Driscoll, 6 February 2008.
 
+% Because chebfuns are superior to function_handle, this call can result
+% when f is function_handle and x is chebfun. In that case, revert to the
+% built-in behavior.
+if isa(f,'function_handle')
+  fx = f(x);
+  return
+end
+
 nfuns = length(f.funs);
 ends = f.ends;
 [X,I] = rescale(x,ends);
