@@ -1,28 +1,24 @@
-function F = vertcat(f1,f2)
-% Concatenates adjacent chebfuns
-if isempty(f1)
-    F = f2;
-    return;
-elseif isempty(f2)
-    F = f1;
-    return;
+function f = vertcat(varargin)
+% VERTCAT Concatenate chebfuns into a single chebfun.
+%
+% F = VERTCAT(F1,F2,...) concatenates any number of chebfuns by translating
+% their domains to, in effect, create a piecewise defined chebfun F.
+%
+% See also CHEBFUN/HORZCAT, CHEBFUN/SUBSASGN.
+
+% Toby Driscoll, 21 February 2008.
+
+if nargin==0
+  f = chebfun;
+  return
 end
 
-
-ends1 = f1.ends;
-ends2 = f2.ends;
-%if abs(ends1(end)-ends2(1))>1e-5
-%    error('Cannot concatenate separated chebfuns');
-%end
-
-tmp = chebfun(f1.funs{end},f2.funs{1},[ends1(end-1:end) ends2(2)]);
-[f,happy] = grow(tmp,domain(tmp));
-F = chebfun;
-if happy
-    F = set(F,'funs',[f1.funs(1:end-1); {f}; f2.funs(2:end)],...
-        'ends', [ends1(1:end-1) ends2(2:end)],...
-        'imps', [f1.imps(:,1:end-1) f2.imps(:,2:end)]);
-else
-    F = set(F,'funs',[f1.funs;f2.funs],'ends',[ends1 ends2(2:end)],...
-    'imps',[f1.imps f2.imps(:,2:end)]); % check imps matrices before!
+f = varargin{1};
+for k = 2:nargin
+  newf = varargin{k};
+  delta = f.ends(end) - newf.ends(1);
+  f.ends = [ f.ends delta+newf.ends(2:end) ];
+  f.funs = { f.funs{:}, newf.funs{:} }';
+  f.imps = [ f.imps newf.imps(2:end) ];
 end
+f.nfuns = length(f.funs);
