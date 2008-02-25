@@ -12,7 +12,7 @@ if (isa(f,'double') || isa(g,'double'))
 elseif (size(f,2)==1 && size(g,2)==1)
    F=f;
    temp=prolong(f,f.n+g.n);
-   if f==g
+   if length(f)==length(g) && all(f.val==g.val)
        F.val=temp.val.^2;          
    else
        temp2=prolong(g,f.n+g.n);
