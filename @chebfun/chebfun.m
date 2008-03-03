@@ -151,11 +151,13 @@ else
                 f = {fun(f,length(data)-1)}; % <- data is stored in reverse
             else
                 f = inline(f);
+                f = vectorwrap(f,ends(i:i+1));
                 [f,e] = auto(f,ends(i:i+1));
                 ends = [ends(1:i-1) e ends(i+2:end)];
             end
         elseif isa(f,'function_handle')|| isa(f,'inline')
-            [f,e] = auto(f,ends(i:i+1));
+           f = vectorwrap(f,ends(i:i+1));
+           [f,e] = auto(f,ends(i:i+1));
             ends = [ends(1:i-1) e ends(i+2:end)];
         elseif isa(f,'fun')
             f = {f};
@@ -170,3 +172,25 @@ chebfunobj.nfuns = length(ffuns);
 
 superiorto('function_handle');
 chebfunobj = class(chebfunobj,'chebfun');
+
+end
+
+
+function g = vectorwrap(f,x)
+
+% Try to determine whether f is vectorized. If not, wrap it in a loop.
+
+g = f;
+try
+  f(x);
+catch
+  g = @loopwrapper;
+end
+
+  function v = loopwrapper(x)
+    v = zeros(size(x));
+    for j = 1:numel(v)
+      v(j) = f(x(j));
+    end
+  end
+end
