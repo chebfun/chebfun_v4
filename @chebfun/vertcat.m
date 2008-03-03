@@ -13,12 +13,18 @@ if nargin==0
   return
 end
 
-f = varargin{1};
-for k = 2:nargin
+f = chebfun;
+for k = 1:nargin
   newf = varargin{k};
-  delta = f.ends(end) - newf.ends(1);
-  f.ends = [ f.ends delta+newf.ends(2:end) ];
-  f.funs = { f.funs{:}, newf.funs{:} }';
-  f.imps = [ f.imps newf.imps(2:end) ];
+  if ~isempty(newf)
+    if isempty(f)           % found the first nonempty case
+      f = newf;
+    else                    % append to current f
+      delta = f.ends(end) - newf.ends(1);    
+      f.ends = [ f.ends delta+newf.ends(2:end) ];    % translate domain
+      f.funs = { f.funs{:}, newf.funs{:} }';
+      f.imps = [ f.imps newf.imps(2:end) ];
+    end
+  end
 end
 f.nfuns = length(f.funs);
