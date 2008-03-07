@@ -182,7 +182,7 @@ function g = vectorwrap(f,x)
 
 g = f;
 try
-  f(x);
+  f(x(:));
 catch
   g = @loopwrapper;
 end
