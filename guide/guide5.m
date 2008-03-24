@@ -9,10 +9,10 @@
 % For example, here are 20 points on the upper half
 % of the unit circle in the complex plane:
 
-  s = linspace(0,pi,20);
-  f = exp(1i*s);
-  plot(f,'.')
-  axis equal
+s = linspace(0,pi,20);
+f = exp(1i*s);
+plot(f,'.')
+axis equal
   
 %%
 % In Matlab, both the variables i and j are initialized
@@ -70,6 +70,20 @@ z = chebfun('(1+.5i)*s','1+.5i-2*(s-1)',[0 1 2]);
 subplot(1,2,1), plot(z), axis equal, grid on
 subplot(1,2,2), plot(z.^2), axis equal, grid on
 
+%%
+% Actually, this way of constructing a piecewise chebfun is
+% rather clumsy.  An easier method is to use the "vertcat" feature
+% of the chebfun system, in which a construction like [f; g; h] constructs
+% a single chebfun with the same values as f, g, and h, but on a
+% domain concatenated together.  Thus if the domains of f, g, h are
+% [a,b], [c,d], and [e,d], then [f; g; h] has three pieces with domains
+% [a,b], [b,b+(d-c)], [b+(d-c),b+(d-c)+(d-e)].  Using this trick, 
+% we can construct the chebfun z above in the following alternative manner:
+
+  s = chebfun('s',[0 1]);
+  zz = [(1+.5i)*s; 1+.5i-2*s];
+  norm(z-zz)
+
 %% 5.2 Analytic functions and conformal maps
 %
 % A function is *analytic* if it is differentiable in the complex sense, or
@@ -86,9 +100,10 @@ subplot(1,2,2), plot(z.^2), axis equal, grid on
 % a chebfun corresponding to the four sides of a rectangle, and
 % we define X to be another chebfun corrsponding to a cross inside R. 
 
-R = chebfun('1+s','2+2i*(s-1)','2+2i-(s-2)','1+2i-2i*(s-3)',0:4);
-close, subplot(1,2,1), plot(R), grid on, axis equal
-X = chebfun('1.3+1.5i+.4*s','1.5+1.3i+.4i*(s-1)',0:2);
+s = chebfun('s',[0 1]);
+R = [1+s; 2+2i*s; 2+2i-s; 1+2i-2i*s];
+close all, subplot(1,2,1), plot(R), grid on, axis equal
+X = [1.3+1.5i+.4*s; 1.5+1.3i+.4i*s];
 hold on, plot(X,'r')
 
 %%
@@ -101,6 +116,34 @@ subplot(1,2,2), plot(exp(R)), grid on, axis equal
 hold on, plot(exp(X),'r')
 
 %%
+% We can take the same idea further and construct a grid in the
+% complex plane, each segment of which is a piece of a chebfun that
+% happens to be linear:
+
+  x = chebfun('x');
+  S = chebfun;                  % make an empty chebfun
+  for d = -1:.2:1
+    S = [S; d+1i*x; 1i*d+x];    % add 2 more lines to the collection
+  end
+  close, subplot(1,2,1), plot(S), axis equal
+
+%%
+% Here are the exponential and tangent of the grid:
+
+  subplot(1,2,1), plot(exp(S)), axis equal
+  subplot(1,2,2), plot(tan(S)), axis equal
+
+%%
+% Here is a sequence that puts all three images together on
+% a single scale:
+ 
+  close
+  plot(S), hold on
+  plot(1.6+exp(S))
+  plot(6.6+tan(S))
+  axis equal, axis off
+
+%%
 % A particularly interesting set of conformal maps are the
 % *Moebius transformations*, the rational functions of the form (az+b)/(cz+d)
 % for constants a,b,c,d.  For example, here is a square and its
@@ -109,14 +152,14 @@ hold on, plot(exp(X),'r')
 % the limiting point given by the equation z = 1/(1+z), i.e., 
 % z = (sqrt(5)-1)/2.
 
-S1 = chebfun('-.5i+s','1-.5i+1i*(s-1)','1+.5i-(s-2)','.5i-1i*(s-3)',0:4);
+s = chebfun('s',[0 1]);
+S1 = [-.5i+s; 1-.5i+1i*s; 1+.5i-s; .5i-1i*s];
 close
-LW = 'linewidth'; lw = 3;
 S2 = 1./(1+S1); S3 = 1./(1+S2); S4 = 1./(1+S3);
-plot(S1,'b',LW,lw)
+plot(S1,'b')
 hold on, axis equal
-plot(S2,'r',LW,lw), plot(S3,'g',LW,lw), plot(S4,'m',LW,lw)
-plot((sqrt(5)-1)/2,0,'.k','markersize',6)
+plot(S2,'r'), plot(S3,'g'), plot(S4,'m')
+plot((sqrt(5)-1)/2,0,'.k')
 
 %%
 % One could make more beautiful pictures along these lines with
@@ -195,7 +238,8 @@ I2 = sum(f.*diff(z))/(2i*pi)
 % Not does the contour have to be smooth.
 % Here let us compute the same result by integration over a square:
 
-z = chebfun('1-1i+1i*s','1+1i-(s-2)','-1+1i-1i*(s-4)','-1-1i+(s-6)',0:2:8);
+s = chebfun('s',[-1 1]);
+z = [1+1i*s; 1i-s; -1-1i*s; -1i+s];
 f = exp(z)./z.^3;
 I3 = sum(f.*diff(z))/(2i*pi)
 
@@ -204,22 +248,22 @@ I3 = sum(f.*diff(z))/(2i*pi)
 % can also construct more interesting contours of the kind that
 % appear in complex variables texts.  Here is an example:
 
-z = chebfun('2*exp(pi*1i*s)','-2+1.7*(s-1)',...
-      '.3*exp(pi*1i*(1-s))','.3+1.7*(s-3)',0:4);
-close, plot(z), axis equal, grid on
+  c = [-2+.05i -.2+.05i -.2-.05i -2-.05i];    % 4 corners
+  s = chebfun('s',[0 1]);
+  z = [c(1)+s*(c(2)-c(1))
+       c(2)*c(3).^s./c(2).^s
+       c(3)+s*(c(4)-c(3))
+       c(4)*c(1).^s./c(4).^s];
+  close, plot(z), axis equal, axis off
 
 %%
 % The integral of f(z) = log(z)tanh(z) around this contour will
-% be equal to 2i*pi times the residue at the pole of f at 0.5i*pi.
-% First we raise the contour a little bit off the axis to avoid
-% branch problems.  Getting branches right is always a bit tricky
-% in numerical computations with analytic functions, and the chebfun
-% system is not immune to such problems.
+% be equal to 2i*pi times the sum of the residues at the poles
+% of f at +-0.5i*pi.
 
-z = z + 0.001i;
 f = log(z).*tanh(z);
 I = sum(f.*diff(z))
-Iexact = 2i*pi*log(.5i*pi)
+Iexact = 4i*pi*log(pi/2)
 
 %% 5.4 Cauchy integrals and locating zeros and poles
 %
@@ -302,10 +346,11 @@ r = roots(f)
 % on the interval [0,7] that spells the initials LNT.  One could polish
 % up and extend this construction by defining 26 suitable M-functions.
 
-w = chebfun('1.01+.8i-(.01+.8i)*s','1+.6*(s-1)',...            % L
-     '2+.8i*(s-2)','2+.8i+(-.8i+.6)*(s-3)','2.6+.8i*(s-4)',... % N
-     '3.3+.8i*(s-5)','3+.8i+.6*(s-6)',0:7);                    % T
-plot(w,'k',LW,lw), axis equal, axis off
+s = chebfun('s',[0 1]);
+w = [1.01+.8i-(.01+.8i)*s; 1+.6*s;            % L
+     2+.8i*s; 2+.8i+(-.8i+.6)*s; 2.6+.8i*s;   % N
+     3.3+.8i*s; 3+.8i+.6*s];                  % T
+close, plot(w,'k',LW,lw), axis equal, axis off
 
 %%
 % As always, this is a precisely defined mathematical function:

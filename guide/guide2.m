@@ -69,10 +69,6 @@
 %%
 % The chebfun system readily finds the integral:
   tic, sum(h), toc
-%%
-% Imagine what you would have to do to compute this number
-% by classical numerical methods.
-%%
 
 %% 2.2 norm, mean, std, var
 % An important special case of an integral is the "norm" command,
@@ -207,30 +203,19 @@
 % amplitude 1/3, takes us to the final segment.
 
 %%
-% Thanks to the delta functions, cumsum and diff are
+% Thanks to the delta functions, cumsum and diff are essentially
 % inverse operations.  It is no surprise that differentiating
 % an indefinite integral returns us to the original function:
 
   norm(f-diff(cumsum(f)))
 
 %%
-% More surprising is that integrating a derivative does the same:
+% More surprising is that integrating a derivative does the same, so
+% long as we add in the value at the left endpoint:
 
-  norm(f-cumsum(diff(f)))
-
-
-%%
-% It is the delta functions that make this possible.
-% One may also wonder, what if the value of f had
-% been nonzero at the left endpoint a?  Would this not
-% have led to a discrepancy cumsum(diff(f(a))) = 0 ~= f(a)?
-% No, because in such a case a delta function is introduced at
-% the left endpoint too.  In fact, an endpoint delta function appeared
-% already above in the plot
-% of the derivative of cos(pi*x).  Here is another example:
-  f = chebfun('1-x.^2',[0 1]);
-  fprime = diff(f);
-  plot(fprime)
+  [left,right] = domain(f);
+  f2 = f(left) + cumsum(diff(f));
+  norm(f-f2)
 
 %%
 % Multiple derivatives can be obtained by adding a second
@@ -242,7 +227,7 @@
 % However, one should be cautious about the potential loss of information
 % in repeated differentiation.  For example, if we evaluate this fourth
 % derivative at x=0 we get an answer that matches the correct
-% value 24 only to 9 places:
+% value 24 only to 11 places:
 
   g(0)
 
@@ -255,7 +240,7 @@
 
 %%
 % Since f is a polynomial of low degree, it cannot help but
-% lose information rather fast as we differentiate, and 13
+% lose information rather fast as we differentiate, and 15
 % differentiations eliminate the function entirely.
 
   for j = 0:length(f)
@@ -275,9 +260,7 @@
 % the familiar phenomenon of instability of certain ordinary numerical
 % algorithms.
 
-%% 2.5 prod and cumprod
-
-%% 2.6 References
+%% 2.5 References
 %
 % [Gentleman 1972] W. M. Gentleman, "Implementing
 % Clenshaw-Curtis quadrature I and II", Journal of

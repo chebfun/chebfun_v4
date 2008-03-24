@@ -22,7 +22,7 @@ if nargin==1
     hh = plot(x(1),ydata(1),'.r','markersize',25);
     for j = 2:length(x)
          set(hh,'xdata',x(j),'ydata',ydata(j));
-         drawnow
+         drawnow, pause(.005)
     end
 end
 
@@ -40,7 +40,7 @@ if nargin==2
     hh = plot(xdata(1),ydata(1),'.r','markersize',25);
     for j = 2:length(x)
         set(hh,'xdata',xdata(j),'ydata',ydata(j));
-        drawnow
+        drawnow, pause(.005)
     end
 end
 
@@ -59,7 +59,7 @@ if nargin==3
     hh = plot3(xdata(1),ydata(1),zdata(1),'.r','markersize',25);
     for j = 2:length(x)
         set(hh,'xdata',xdata(j),'ydata',ydata(j),'zdata',zdata(j));
-        drawnow
+        drawnow, pause(.005)
     end
 end
 delete(hh);

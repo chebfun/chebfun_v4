@@ -126,9 +126,14 @@
 %%
 % The function "sign" also introduces breaks, as illustrated
 % in the last section.
-% The commands "round", "floor", and "ceil" should behave
-% like this too, but so far they have not been implemented
-% for chebfuns.
+% The commands "round", "floor", and "ceil" behave like this too.
+% For example, here is exp(x) rounded to nearest multiples of 0.5:
+
+  g = exp(x);
+  close all, plot(g)
+  gh = 0.5*round(2*g);
+  hold on, plot(gh,'r');
+  grid on
 
 %% 3.3 Local extrema: roots(diff(f))
 % Local extrema of smooth functions can be located by finding

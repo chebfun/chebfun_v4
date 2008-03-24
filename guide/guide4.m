@@ -33,7 +33,7 @@
 % application of Chebyshev and Fourier technology to the solution of
 % PDEs.  The subject grew rapidly, and it is in the context of spectral
 % methods that Chebyshev techniques are best known today
-% [Boyd 2000], ]Trefethen 2000], [Canuto et al. 2006/7].
+% [Boyd 2000], [Trefethen 2000], [Canuto et al. 2006/7].
 
 %%
 % We must be clear about terminology.  We shall rarely use the
@@ -386,8 +386,8 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 
 %%
 % *THEOREM 3*.  If f is analytic in the closed ellipse of foci 1 and -1 with
-% semimajor axis M and semiminor axis m, then
-% *||* f - p *||* = O((M+m)^(-N)) as N -> infty.
+% semimajor and semiminor axis lengths summing to rho, then
+% *||* f - p *||* = O(rho^(-N)) as N -> infty.
 
 %%
 % The next theorem asserts that Chebyshev interpolants can be computed
@@ -404,7 +404,8 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 %%
 % The final theorem asserts that the barycentric formula has no difficulty with
 % rounding errors.  Our "theorem" is really just a placeholder; see
-% [Higham 2004] for a precise statement and proof.
+% [Higham 2004] for a precise statement and proof.  Earlier work on this
+% subject appeared in [Rack & Reimer 1982].
 
 %%
 % *THEOREM 5*.  The barycentric formula of Theorem 4 is numerically stable.
@@ -467,6 +468,10 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 %
 % [Meinardus 1967] G. Meinardus, Approximation of Functions:
 % Theory and Numerical Methods, Springer, 1967.
+%
+% [Rack & Reimer 1982] H.-J. Rack and M. Reimer, The numerical stability 
+% of evaluation schemes for polynomials based on the Lagrange
+% interpolation form, BIT 22 (1982), 101-107.
 %
 % [Rivlin 1974] T. J. Rivlin, The Chebyshev Polynomials, Wiley, 1974 and 1990.
 %
