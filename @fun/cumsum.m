@@ -34,6 +34,7 @@ if (~f.td)
     g(:,2)=a(:,1);
     g(:,3)=g(:,2)-g(:,1);
   end
+  g(:);
   F.val=funpolyval(g.');
   if (f.trans) F.val=F.val.'; end
 end
