@@ -30,13 +30,9 @@ end
 end
 
 function [V,D] = bc_eig(A,N,k,sigma)
-L = feval(A,N);
-elim = false(N,1);
-cons = A.constraint;
-for j = 1:length(cons)
-  elim(cons(j).idx(N)) = true;
-  L(cons(j).idx(N),:) = cons(j).row(N);
-end
+[L,rowrep] = feval(A,N);
+elim = false(N,1); 
+elim(rowrep) = true;
 B = -L(elim,elim)\L(elim,~elim);  % maps interior to removed values
 L = L(~elim,~elim) + L(~elim,elim)*B;
 [W,D] = eig(L);
@@ -46,8 +42,6 @@ V(~elim,:) = W(:,idx);
 V(elim,:) = B*V(~elim,:);
 D = D(idx,idx);
 end
-
-
 
 function idx = nearest(lam,sigma,k)
 if isinf(sigma)
