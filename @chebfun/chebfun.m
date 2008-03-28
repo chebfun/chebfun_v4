@@ -108,6 +108,9 @@ while ninps > 0,
     elseif funsflag && (isa(prop,'double') && length(prop) == 1)
         % a scalar, and the funs have already been loaded: it is n.
         n = prop; nflag = 1;
+    elseif isa(prop,'domain')
+        % domain of definition given using domain class
+        ends = double(prop);  endsflag = 1;
     else 
         error('Unrecognized input sequence');
     end

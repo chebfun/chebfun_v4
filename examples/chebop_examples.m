@@ -1,12 +1,13 @@
 %% Examples of chebop usage
 
 %% Three basic operators
-I = chebop_eye;
-D = chebop_diff;
-J = chebop_cumsum;
+d = domain(-1,1);
+I = eye(d);
+D = diff(d);
+J = cumsum(d);
 
 %%
-f = chebfun('exp(2*x)');
+f = chebfun('exp(2*x)',d);
 norm( D*f - 2*f )
 norm( J*f - (f/2-exp(-2)/2) )
 
@@ -25,7 +26,8 @@ J{inf}
 % The operators can be defined for functions on other domains. For the time
 % being, the interval must be specified at creation. This may change in the
 % future.
-D2 = chebop_diff([0 1]);
+d2 = domain(0,1);
+D2 = diff(d2);
 D{5}
 
 %%
@@ -33,7 +35,7 @@ D2{5}
 
 
 %% Diagonal operators
-g = chebfun('sin(4*x.^2)');
+g = chebfun('sin(4*x.^2)',d);
 G = diag(g);
 G{6}   % sparse diagonal
 norm( G*f - g.*f )   % exactly the same
@@ -57,7 +59,7 @@ B = D^0;  B{6}      % note the sparse identity
 
 %% 2nd order BVP
 % Homogeneous Dirichlet.
-f = chebfun('cos(pi*x)-sin(2*pi*x)');
+f = chebfun('cos(pi*x)-sin(2*pi*x)',d);
 A = 0.5*D^2 + G;
 A.bc = 'dirichlet';
 u = A\f;
@@ -126,9 +128,10 @@ end
 %% Newton iteration for an IVP
 f = @(u) 1-atan(4*u);
 dfdu = @(u) -4./(1+(4*u).^2);
-J = chebop_cumsum([0 5]);
-I = chebop_eye([0 5]);
-u = chebfun(-1,[0 5]);
+d = domain(0,5);
+J = cumsum(d);
+I = eye(d);
+u = chebfun(-1,d);
 for k = 1:10
   r = u - J*f(u) + 1;
   norm(r)

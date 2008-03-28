@@ -60,6 +60,8 @@ switch index(1).type
         if isnumeric(s)
             F = feval(f,s);
             varargout = {F};
+        elseif isa(s,'domain')
+              varargout = { restrict(f,s) };
         else
             error('chebfun:subsref:nonnumeric',...
               'Cannot evaluate chebfun for non-numeric type.')
@@ -68,16 +70,16 @@ switch index(1).type
         s = [];
         if length(index.subs)==1
           if isequal(index.subs{1},':')
-            s = domain(f);
-          %elseif isnumeric(index.subs{1})
-          %  s = index.subs{1};
+            s = domain(f); 
+          elseif isa(index.subs{1},'domain')
+            s = index.subs{1};
           end
         elseif length(index.subs)==2
           s = cat(2,index.subs{:});
         end
-        if ~isnumeric(s) || length(s)~=2
-          error('chebfun:subsref:badinterval',...
-            'Invalid interval syntax.')
+        if ~( isa(s,'domain') || (isnumeric(s) && length(s)==2) )
+          error('chebfun:subsref:baddomain',...
+            'Invalid domain syntax.')
         end
         varargout = { restrict(f,s) };
     otherwise

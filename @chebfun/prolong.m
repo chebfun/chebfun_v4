@@ -5,7 +5,7 @@ ends = f.ends;
 dint = diff(ends);
 n = n - nfuns;
 n0 = n;
-n = round(n*dint./diff(domain(f)));
+n = round(n*dint./length(domain(f)));
 r = n0 - sum(n);
 if r > 0
     [xx,I] = sort(dint,'descend');

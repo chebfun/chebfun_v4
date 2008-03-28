@@ -9,5 +9,6 @@ function f = flipud(f)
 % Reverse the order of funs, and the funs themselves.
 f.funs = cellfun( @flipud, flipud(f.funs), 'uniform',false );
 % Reverse and translate the breakpoints.
-f.ends = -fliplr(f.ends) + sum(domain(f));
+domf = domain(f);
+f.ends = -fliplr(f.ends) + sum(domf(:));
 f.imps = fliplr(f.imps);

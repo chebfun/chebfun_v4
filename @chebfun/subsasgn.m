@@ -19,11 +19,13 @@ switch index(1).type
     if length(index.subs)==1
       if isequal(index.subs{1},':')
         s = domain(f);
+      elseif isa(index.subs{1},'domain')
+        s = index.subs{1};
       end
     elseif length(index.subs)==2
       s = cat(2,index.subs{:});
     end
-    if ~isnumeric(s) || length(s)~=2
+    if ~( isa(s,'domain') || (isnumeric(s) && length(s)==2) )
       error('chebfun:subsasgn:badreference','Invalid assignment syntax.')
     end
     f = define(f,s,g);

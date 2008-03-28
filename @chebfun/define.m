@@ -1,9 +1,9 @@
-function f = define(f,subint,g)
+function f = define(f,subdom,g)
 
-% DEFINE Supply a new definition for a chebfun on an interval.
+% DEFINE Supply a new definition for a chebfun on a subdomain.
 %
-% F = DEFINE(F,[A B],G) uses the chebfun G to define the chebfun F in the
-% interval [A,B]. 
+% F = DEFINE(F,S,G) uses the chebfun G to define the chebfun F in the
+% domain S. You can specify S as the vector [A,B] or using DOMAIN. 
 % 
 % DEFINE supports expansion/compression: the domain of G is scaled and
 % translated to coincide with [A,B]. If G is a scalar numerical value, it
@@ -40,6 +40,13 @@ function f = define(f,subint,g)
 
 % Toby Driscoll, 9 February 2008.
 
+%%
+if isa(subdom,'domain')
+  subint = subdom(:);
+else
+  subint = subdom;
+end
+
 %% No change for interval [a,b] with a>b.
 if subint(1)>subint(2)    
   return
@@ -63,7 +70,7 @@ end
 
 %% Transform the domain of g as needed.
 if ~isempty(g)                                   % translate
-  g.ends = subint(1) + (g.ends-g.ends(1))*diff(subint)/diff(domain(g));
+  g.ends = subint(1) + (g.ends-g.ends(1))*diff(subint)/length(domain(g));
 end
 
 %% Trivial return case.

@@ -6,7 +6,7 @@ function out = mean(f,g)
 
 % Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
 if nargin == 1
-    out = sum(f)/diff(domain(f));
+    out = sum(f)/length(domain(f));
 else
     out = (f+g)/2;
 end
