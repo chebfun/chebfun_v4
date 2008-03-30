@@ -8,8 +8,8 @@ switch(class(B))
 %    C = chebop;
 %    C.op = @(n) A.op(n) \ B.op(n);
   case 'chebfun'
-    [L,rowrep] = feval(A,8);
-    if length(rowrep)~=A.difforder
+    nbc = numbc(A);
+    if nbc~=A.difforder
       warning('chebop:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
@@ -27,6 +27,11 @@ end
     N = length(x);
     if N > 1025
       error('failure to converge')
+    end
+    if N <= nbc
+      % Too few points: force refinement
+      v = (-1).^(0:N-1)';
+      return
     end
     L = feval(A,N);  % includes row replacements
     f = B(flipud(x));

@@ -1,25 +1,35 @@
-function [V,D] = eigs(A,k,sigma)
+function varargout = eigs(A,k,sigma)
 
 if nargin < 3
   sigma = 0;
   if nargin < 2
-    k = 10;
+    k = 6;
   end
 end
+
+nbc = numbc(A);
 
 % Adaptively construct the kth eigenvalue.
 v = chebfun( @(x) A.scale + value(x) ) - A.scale;
 % Now we know N.
 [W,D] = bc_eig(A,length(v),k,sigma);
-V = {};
-for j = 1:k
-  V{j} = chebfun( @(x) flipud(W(:,j)), length(W)-1 );
+
+if nargout<2
+  varargout = { diag(D) };
+else
+  V = {};
+  for j = 1:k
+    V{j} = chebfun( @(x) flipud(W(:,j)), length(W)-1 );
+  end
+  varargout = { V, D };
 end
 
   function v = value(x)
     N = length(x);
-    if N==2
-      v = [0;0];
+    if N-nbc < k
+      % There won't be enough eigenvalues. Return a sawtooth to ensure
+      % further refinement.
+      v = (-1).^(0:N-1)';
     else
       [V,D] = bc_eig(A,N,k,sigma);
       v = flipud(V(:,end));

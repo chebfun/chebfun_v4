@@ -20,7 +20,7 @@ if length(fends)==length(gends) && all(fends==gends)
 
 else
         
-    if any(domain(f)~=domain(g))
+    if ~(domain(f)==domain(g))
        error('domain(f) ~= domain(g)')
     end
     ends=union(fends,gends);
