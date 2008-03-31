@@ -15,6 +15,7 @@ A.realization = {};
 A.lbc = struct([]);
 A.rbc = struct([]);
 A.scale = 0;
+A.ID = newIDnum();
 
 if nargin==0
 elseif nargin==1 && isa(varargin{1},'chebop')

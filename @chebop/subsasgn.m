@@ -83,16 +83,14 @@ switch s(1).type
       case 'scale'                 % SCALE
         A.scale = B;
         valid = true;
-      case 'fundomain'             % FUNDOMAIN
-        A.fundomain = B;
-        valid = true;
+%      case 'fundomain'             % FUNDOMAIN
+%        A.fundomain = B;
+%        valid = true;
     end
 end
 
 if ~valid
   error('chebop:subsasgn:invalid','Invalid assignment syntax.')
+elseif ~isequal(s(1).subs,'scale')
+  A.ID = newIDnum();   % stored matrices have become invalid
 end
-
-function A = addbc(A,name,idx,op,val)
-
-A.(name)(idx) 

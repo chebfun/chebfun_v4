@@ -20,6 +20,7 @@ else
   V = {};
   for j = 1:k
     V{j} = chebfun( @(x) flipud(W(:,j)), length(W)-1 );
+    V{j} = V{j}/norm(V{j});
   end
   varargout = { V, D };
 end
