@@ -1,5 +1,5 @@
 function I = eye(d)
 
-I = chebop( @eye, @(u) u, d );
+I = chebop( @speye, @(u) u, d );
 
 end
