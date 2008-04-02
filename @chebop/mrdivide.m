@@ -1,18 +1,11 @@
 function C = mrdivide(A,B)
 
-if ~isa(A,'chebop')
-  error('chebop:mrdivide:badoperand','Unrecognized operand.')
+if isa(B,'chebop')
+  error('chebop:mrdivide:noright','Right inverses not implemented.')
+elseif numel(B)~=1
+  error('chebop:mrdivide:scalaronly','May divide by scalars only.')
 end
 
-switch(class(B))
-  case 'double'
-    C = chebop;
-    C.op = @(n) A.op(n)/B;
-  case 'chebop'
-    C = chebop;
-    C.op = @(n) A.op(n)/B.op(n);
-  otherwise
-    error('chebop:mrdivide:badoperand','Unrecognized operand.')
-end
+C = mtimes(1/B,A);
 
 end
