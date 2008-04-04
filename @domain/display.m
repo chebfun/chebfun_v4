@@ -1,3 +1,8 @@
 function display(r)
 
-fprintf( ['\n' char(r) '\n\n'] )
+loose = ~isequal(get(0,'FormatSpacing'),'compact');
+if loose, disp(' '), end
+disp([inputname(1) ' = domain']);
+if loose, disp(' '), end
+
+fprintf( [char(r) '\n\n'] )
