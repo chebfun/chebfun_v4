@@ -16,6 +16,18 @@
   Iexact = pi*log(2)/8
 
 %%
+% Here is an example whose answer is not known exactly, given
+% as the first example in the section "Numerical Mathematics in
+% Mathematica" in The Mathematica Book [Wolfram 2003].
+
+  f = chebfun('sin(sin(x))',[0 1]);
+  sum(f)
+
+%%
+% All these digits match the result 0.4306061031206906049...
+% reported by Mathematica.
+
+%%
 % Here is another example:
   t = chebfun('t',[0,1]);
   f = 2*exp(-t.^2)/sqrt(pi);
@@ -265,3 +277,6 @@
 % [Gentleman 1972] W. M. Gentleman, "Implementing
 % Clenshaw-Curtis quadrature I and II", Journal of
 % the ACM 15 (1972), 337-346 and 353.
+%
+% [Wolfram 2003] S. Wolfram, The Mathematica Book, 5th ed., 
+% Wolfram Media, 2003.

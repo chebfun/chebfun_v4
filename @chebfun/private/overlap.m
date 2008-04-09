@@ -20,7 +20,8 @@ if length(fends)==length(gends) && all(fends==gends)
 
 else
         
-    if ~(domain(f)==domain(g))
+    [f1 f2] = domain(f); [g1 g2] = domain(g);
+    if (f1~=g1) | (f2~=g2)
        error('domain(f) ~= domain(g)')
     end
     ends=union(fends,gends);
