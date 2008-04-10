@@ -41,7 +41,8 @@ h.nfuns = length(h.ends)-1;
 
 % Define g(-t).
 gm = flipud(g); 
-gm.ends = gm.ends - sum(domain(g));
+[gleft gright] = domain(g);
+gm.ends = gm.ends - (gleft + gright);
 
 % In each smooth interval, auto-construct the fun.
 for k = 1:h.nfuns
