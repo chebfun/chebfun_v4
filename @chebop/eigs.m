@@ -18,8 +18,11 @@ if nargout<2
   varargout = { diag(D) };
 else
   V = {};
+  dom = A.fundomain;
   for j = 1:k
     V{j} = chebfun( @(x) flipud(W(:,j)), length(W)-1 );
+    V{j}{dom(1),dom(2)} = V{j};
+    V{j} = V{j}(dom);
     V{j} = V{j}/norm(V{j});
   end
   varargout = { V, D };

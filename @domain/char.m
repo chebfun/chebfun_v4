@@ -11,7 +11,11 @@ else
     if length(breaks) > cws(1)-length(s)-24
       breaks = sprintf(' %g, ..., %g',d.ends(2),d.ends(end-1));
     end
-    s = [ s ' with breakpoints' breaks ];
+    txt = ' with breakpoint';
+    if length(d.ends) > 3
+      txt = [txt 's'];
+    end
+    s = [ s txt breaks ];
   end
 end
 

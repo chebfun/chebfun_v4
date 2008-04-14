@@ -49,7 +49,7 @@ switch s(1).type
             % Dirichlet case
             bc.(side)(idx).op = 'dirichlet';
             bc.(side)(idx).val = B;
-          elseif ischar(B)
+          elseif ischar(B) || isa(B,'chebop') || isa(B,'varmat')
             bc.(side)(idx).op = B;
             bc.(side)(idx).val = 0;           
           elseif iscell(B) && isnumeric(B{2}) && ...
