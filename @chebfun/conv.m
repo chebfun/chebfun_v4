@@ -13,7 +13,7 @@ function h = conv(f,g)
 % [c,d]. The integral is taken over all t for which the integrand is
 % defined: max(a,x-d) <= t <= min(b,x-c).
 %
-% The breakpoints of H are all pairwise differences of the breakpoints of F
+% The breakpoints of H are all pairwise sums of the breakpoints of F
 % and G.
 %
 % EXAMPLE
@@ -33,7 +33,7 @@ h = chebfun;
 
 % Find all breakpoints in the convolution.
 [A,B] = meshgrid(f.ends,g.ends);
-h.ends = unique( A(:) - B(:) ).';
+h.ends = unique( A(:) + B(:) ).';
 
 % Coalesce breaks that are close due to roundoff.
 h.ends( diff(h.ends) < 10*eps ) = [];
