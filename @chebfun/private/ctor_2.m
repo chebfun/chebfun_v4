@@ -37,13 +37,13 @@ for i = 1:length(ops)
             funs = [funs fs];
             newends = [newends es(2:end)];
             imps = [imps op(es(1:end-1))];
-            sing = [sing(1:end-1) si sing(2:end)];
+            sing = [sing(1:end-1) si];
         case 'function_handle'
             [fs,es,scl,si] = auto(op,ends(i:i+1),scl);
             funs = [funs fs];
             newends = [newends es(2:end)];
             imps = [imps op(es(1:end-1))];
-            sing = [sing(1:end-1) si sing(2:end)];
+            sing = [sing(1:end-1) si];
         case 'cell'
             error(['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])
