@@ -14,25 +14,57 @@ function Fout = vertcat(varargin)
 
 % Chebfun Version 2.0
 
-for i=1:nargin
+thereisdouble = false;
+for i = 1:nargin
     Fout = varargin{i};
-    if ~isempty(Fout), break; end
+    if ~isempty(Fout) && isa(Fout,'chebfun') , break; end
+    if isa(Fout,'double'), thereisdouble = true; end
 end
-%Fout = varargin{1};
-if Fout(1).trans
-   Fout = builtin('horzcat',varargin{:});
-else
-    
-    % Deal with Quasi-matrices:
 
-    for k = i+1:nargin
-        f2 = varargin{2};
-        if size(Fout,2) ~= size(f2,2) || size(f2,1) > 2
-            error('CAT arguments dimensions are not consistent or number of rows>1. Try horzcat?')
-        else
-            for j = 1:numel(f2)
-                Fout(j) = vertcatcol(Fout(j),f2(j));
+
+if Fout(1).trans
+
+    d = domain(Fout(1));
+    
+    % Check for doubles and whether chebfuns are consistent.
+    for k = 1:nargin
+        v = varargin{k};
+        if isa(v,'double') && ~isempty(v)
+           f = chebfun(v,d(:)); 
+           f.trans = true;
+           varargin{k} = f;
+        elseif isa(v,'chebfun') 
+            if ~v(1).trans
+               error('CAT arguments dimensions are not consistent.')     
+            elseif ~(domain(v(1))==d)
+               error('Domains are not consistent');
             end
+        end
+    end
+   
+   % VERTCAT!
+   Fout = builtin('vertcat',varargin{:});
+      
+else      
+        
+    if thereisdouble
+         error('Incorrect input arguments')  % Cannot Tobycat doubles with chebfuns
+    end
+    
+    % TOBYCAT!
+    % Deal with Quasi-matrices:
+    for k = i+1:nargin
+        f2 = varargin{k};
+        if isa(f2,'chebfun')
+            if size(Fout,2) ~= size(f2,2) || size(f2,1) > 2
+                error('CAT arguments dimensions are not consistent or number of rows>1. Try horzcat?')
+            else
+                for j = 1:numel(f2)
+                    Fout(j) = vertcatcol(Fout(j),f2(j));
+                end
+            end
+        else
+            error('Incorrect input arguments')  % Cannot Tobycat doubles with chebfuns
         end
     end
     
@@ -40,7 +72,8 @@ end
 
 
 % ----------------------------------------------
-function f = vertcatcol(varargin)
+% Tobycat (vertcat in version 2007a)
+function f = vertcatcol(varargin) 
 
 if nargin == 0
   f = chebfun;

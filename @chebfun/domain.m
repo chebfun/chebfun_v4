@@ -6,9 +6,6 @@ function varargout = domain(f)
 % 
 % [A,B] = DOMAIN(F) returns the endpoints of the domain.
 %
-% For a quiasimatrix F, [A,B] = DOMAIN(F) returns the ends of the interval
-% of definition of the first chebfun, i.e., F(:,1) or F(1,:).
-%
 % See also domain/domain.
 
 %  Chebfun Version 2.0
