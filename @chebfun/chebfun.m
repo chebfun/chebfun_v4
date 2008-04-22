@@ -49,9 +49,14 @@ elseif nargin > 1
     if ~iscell(varargin{1})
         varargin = unwrap_arg(varargin{:});
     end
+    
+    % deal with the domain class
+    if isa(varargin{2},'domain'), varargin{2}=double(varargin{2}); end
+    
     if  length(varargin) == 2,    
         f = ctor_2(f,varargin{:});
     elseif length(varargin) == 3,
         f = ctor_3(f,varargin{:});
     end
+    
 end
