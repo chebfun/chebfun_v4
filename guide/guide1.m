@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 1: INTRODUCTION
-% Lloyd N. Trefethen, November 2007
+% Lloyd N. Trefethen, April 2008
 
 %% 1.1  What is a chebfun?
 % A chebfun is a function of one variable defined on
@@ -41,7 +41,6 @@
 % collected in one place.  A new reference on this subject
 % will be [Trefethen 2008].
 
-
 %%
 % The chebfun system was originally created by Zachary Battles
 % and Nick Trefethen at Oxford during 2002-2004
@@ -49,7 +48,7 @@
 % in 2005, and meanwhile three new 
 % members have been added to the team: Ricardo
 % Pachon (from 2006), Rodrigo Platte (from 2007), and
-% Toby Driscoll (from 2008).
+% Toby Driscoll (from 2008).  
 
 %% 1.2  Constructing simple chebfuns
 % The "chebfun" command constructs a chebfun from a specification
@@ -70,8 +69,8 @@
 
 %%
 % This result tells us that f is represented by a polynomial
-% interpolant through 49 Chebyshev points, i.e., a polynomial of
-% degree 48.  These numbers have been determined by an
+% interpolant through 51 Chebyshev points, i.e., a polynomial of
+% degree 40.  These numbers have been determined by an
 % adaptive process.  We can see the data points by plotting f with
 % the '.-' option:
   plot(f,'.-')
@@ -172,7 +171,6 @@
 % Here for comparison is the true result:
   1/(1+25/4)
 
-
 %% 
 % In this Runge function example, we have also implicitly 
 % seen "times", "plus", "power", and "rdivide", all of which
@@ -180,7 +178,7 @@
 % to apply to chebfuns.
 %%
 % In the next part of this tour we shall explore many of these commands
-% systematically.  First, however, we should see that chebuns
+% systematically.  First, however, we should see that chebfuns
 % are not restricted to smooth functions.
 
 %% 1.4  Piecewise smooth chebfuns
@@ -190,10 +188,10 @@
 % own polynomial representation.  Each of the smooth pieces is
 % called a "fun", and funs are implemented as a subclass
 % of chebfuns.  This enhancement of the chebfun system
-% was developed by Ricardo Pachon during 2006-2007.
+% was developed intially by Ricardo Pachon during 2006-2007, then
+% also by Rodrigo Platte starting in 2007.
 % Essentially funs consist of the "classic chebfuns" for smooth
 % functions on [-1,1] originally implemented by Zachary Battles.
-
 
 %%
 % Later we shall describe the options in greater detail, but for
@@ -219,7 +217,8 @@
 %%
 % This output again shows that f consists of two funs
 % with breakpoints at -1, 1, and a number very close to 0.3.  The
-% "imps" field refers to "impulses", which relate to delta functions,
+% "imps" field refers to "impulses", which relate to values at
+% breakpoints, including possible information related to delta functions,
 % discussed in Section 2.4.
 
 %%
@@ -234,7 +233,7 @@
 
 %%
 % We expect f to consist of three pieces of lengths 3, 1, and 2,
-% and this indeed the case:
+% and this is indeed the case:
   f
 %%
 % Our eyes see pieces, but to the chebfun system, f is just
@@ -257,7 +256,7 @@
 
 %%
 % And here is an example where breakpoints are introduced by
-% the "max" command, leading to a chebfun with 12 pieces:
+% the "max" command, leading to a chebfun with 13 pieces:
 
   f = sin(20*x);
   g = exp(x-1);
@@ -324,11 +323,11 @@
 %
 % [Salzer 1972] H. E. Salzer, "Lagrangian interpolation at the 
 % Chebyshev points cos(nu pi/n), nu = 0(1)n; some unnoted
-% advantages", Computer Journal 15 (1972),156-159.
+% advantages", Computer Journal 15 (1972), 156-159.
 %
 % [Trefethen 2007] L. N. Trefethen, "Computing numerically
 % with functions instead of numbers", Mathematics in Computer
-% Science 1 (2007).
+% Science 1 (2007), 9-19.
 %
 % [Trefethen 2008] L. N. Trefethen, Neoclassical Numerics, book
 % in preparation.
