@@ -106,7 +106,7 @@ single_chebfun = 0;
 if isempty(f)
     x = [];
     for i = 1:numel(g)
-        f = [f chebfun(@(x) x, g(:,i).ends)];
+        f = [f chebfun(@(x) x, g(i).ends)];
     end
     single_chebfun = 1;
 elseif numel(f) == 1 & numel(g) > 1
@@ -118,7 +118,7 @@ elseif numel(f) ~= numel(g)
 end
 
 for i = 1:numel(f)
-    [c, m] = unwrap_column(f(:,i),g(:,i),linespec, single_chebfun);
+    [c, m] = unwrap_column(f(i),g(i),linespec, single_chebfun);
     curves = [curves, c]; marks = [marks, m];
 end
 %---------------------------------------------------------------------
