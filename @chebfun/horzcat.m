@@ -14,5 +14,5 @@ function Fout = horzcat(varargin)
 
 % Chebfun Version 2.0
 
-for k = 1:nargin, varargin{k} = varargin{k}'; end
-Fout = vertcat(varargin{:})';
+for k = 1:nargin, varargin{k} = varargin{k}.'; end
+Fout = vertcat(varargin{:}).';
