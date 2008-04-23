@@ -1,10 +1,20 @@
-function varargout = eigs(A,k,sigma)
+function varargout = eigs(A,varargin)
 
-if nargin < 3
-  sigma = 0;
-  if nargin < 2
-    k = 6;
+B = [];  k = 6;  sigma = 0;
+gotk = false;
+j = 1;
+while (nargin > j)
+  if isa(varargin{j},'chebop')
+    B = varargin{j};
+  else
+    if ~gotk
+      k = varargin{j};
+      gotk = true;
+    else
+      sigma = varargin{j};
+    end
   end
+  j = j+1;
 end
 
 nbc = numbc(A);
@@ -12,7 +22,7 @@ nbc = numbc(A);
 % Adaptively construct the kth eigenvalue.
 v = chebfun( @(x) A.scale + value(x) ) - A.scale;
 % Now we know N.
-[W,D] = bc_eig(A,length(v),k,sigma);
+[W,D] = bc_eig(A,B,length(v),k,sigma);
 
 if nargout<2
   varargout = { diag(D) };
@@ -35,7 +45,7 @@ end
       % further refinement.
       v = (-1).^(0:N-1)';
     else
-      [V,D] = bc_eig(A,N,k,sigma);
+      [V,D] = bc_eig(A,B,N,k,sigma);
       v = flipud(V(:,end));
       v = filter(v,1e-8);
     end
@@ -43,22 +53,34 @@ end
 
 end
 
-function [V,D] = bc_eig(A,N,k,sigma)
+function [V,D] = bc_eig(A,B,N,k,sigma)
 [L,rowrep] = feval(A,N);
 elim = false(N,1); 
 elim(rowrep) = true;
-B = -L(elim,elim)\L(elim,~elim);  % maps interior to removed values
-L = L(~elim,~elim) + L(~elim,elim)*B;
-[W,D] = eig(L);
-idx = nearest(diag(D),sigma,min(k,N));
-V = zeros(N,length(idx));
-V(~elim,:) = W(:,idx);
-V(elim,:) = B*V(~elim,:);
+if isempty(B)
+  R = -L(elim,elim)\L(elim,~elim);  % maps interior to removed values
+  L = L(~elim,~elim) + L(~elim,elim)*R;
+  [W,D] = eig(full(L));
+  idx = nearest(diag(D),sigma,min(k,N));
+  V = zeros(N,length(idx));
+  V(~elim,:) = W(:,idx);
+  V(elim,:) = R*V(~elim,:);
+else
+  M = feval(B,N);
+  M(elim,:) = 0;
+  [W,D] = eig(full(L),full(M));
+  idx = nearest(diag(D),sigma,min(k,N));
+  V = W(:,idx);
+end  
 D = D(idx,idx);
 end
 
 function idx = nearest(lam,sigma,k)
-if isinf(sigma)
+if isequal(sigma,'LR')
+  [junk,idx] = sort(real(lam),'descend');
+elseif isequal(sigma,'SR')
+  [junk,idx] = sort(real(lam));
+elseif isinf(sigma)
   [junk,idx] = sort(abs(lam),'descend');
 else
   [junk,idx] = sort(abs(lam-sigma));
