@@ -18,6 +18,7 @@ for i = 1:length(ops)
         case 'double'
             funs = [funs fun(op)];
             newends = [newends ends(i+1)];
+            sing = [sing false];
         case 'fun'
             if numel(op) > 1
             error(['A vector of funs cannot be used to construct '...
@@ -25,6 +26,7 @@ for i = 1:length(ops)
             end
             funs = [funs op];
             newends = [newends ends(i+1)];
+            sing = [sing false];
         case 'char'
             if ~isempty(str2num(op))
                 error(['A chebfun cannot be constructed from a string with '...
