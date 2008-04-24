@@ -50,3 +50,5 @@ else
     end
     
 end
+
+fout.trans = f.trans; 

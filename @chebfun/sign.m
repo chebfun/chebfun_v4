@@ -38,7 +38,7 @@ newints(1) = ends(1);
 ff = [];
 
 % Make sure that the domain of definition is not changed
-% Rodp added this to fix a bug reported in Wiki 22/4/08.
+% Rodp added this to fix a bug -- Wiki 22/4/08.
 r(end) = ends(end);
 r(1) = ends(1);
 %---------------------------------------------

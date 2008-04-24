@@ -7,4 +7,5 @@ function Fout = comp(F, op)
 Fout=F;
 for k = 1:numel(F)
     Fout(k) = chebfun(@(x) op(feval(F(k),x)), F(k).ends);
+    Fout(k).trans = F(k).trans;
 end
