@@ -1,11 +1,10 @@
-function out = isempty(F)
+function isemp = isempty(F)
 % ISEMPTY	True for empty chebfun
 % ISEMPTY(F) returns one if F is an empty chebfun and zero otherwise.
 
 % Chebfun Version 2.0
 
-isemp = boolean(numel(F));
+isemp = true;
 for k = 1:numel(F)
-    isemp(k) = isempty(F(k).funs);
+    isemp = true && isempty(F(k).funs);
 end
-out = all(isemp);
