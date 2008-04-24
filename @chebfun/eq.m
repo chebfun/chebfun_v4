@@ -6,7 +6,7 @@ function out = eq(F1,F2)
 
 % Chebfun Version 2.0
 
-if numel(F1) ~= numel(F2)
+if numel(F1) ~= numel(F2) || F1(1).trans ~= F2(1).trans
     out = false;
 else
     out = true;

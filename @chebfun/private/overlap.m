@@ -8,6 +8,10 @@ function [fout,gout] = overlap(f,g)
 
 % Chebfun version 2.0
 
+if f.trans ~= g.trans
+    error('The .trans field of the two chebfuns must agree')
+end
+
 fends=f.ends; gends=g.ends;
 frows=size(f.imps,1); grows=size(g.imps,1); maxrows=max(frows,grows);
 fimps=f.imps; gimps=g.imps;

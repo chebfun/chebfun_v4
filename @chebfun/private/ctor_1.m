@@ -23,17 +23,26 @@ switch class(op)
                 ' numerical values.'])
         end
         op = inline(op);
-        [funs,ends] = auto(op,dom);
+        op = vectorwrap(op,dom);
+        [funs,ends,scl,sing] = auto(op,dom);
+        imps = jumpvals(funs,ends,op,sing);
         f = set(f,'funs',funs,'ends',ends,'trans',0,...
-            'imps',op(ends));
+            'imps',imps);
     case 'function_handle'
-        [funs,ends] = auto(op,dom);
+        op = vectorwrap(op,dom);
+        [funs,ends,scl,sing] = auto(op,dom);
+        imps = jumpvals(funs,ends,op,sing);
         f = set(f,'funs',funs,'ends',ends,'trans',0,...
-            'imps',op(ends)); 
+            'imps',imps); 
     case 'cell'
         error(['A vector of endpoints is required if a cell '...
             'array is used to specify the desired funs.'])
     otherwise
         error(['The input argument of class ''' class(op) ...
             ''' cannot be used to construct a chebfun.'])
+end
+
+% merging step
+if length(sing)>2 
+    f = merge(f, find(~sing));
 end

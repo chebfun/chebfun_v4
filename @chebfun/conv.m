@@ -77,6 +77,7 @@ end
 imps(k+1) =  h.funs(k).vals(end);
 h.imps = imps; 
 h = update_vscl(h);
+h.trans = f.trans;
 
 end   % conv()
 

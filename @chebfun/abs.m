@@ -38,6 +38,7 @@ else
     ind = find(abs(f.imps(2:end,:))>0);
     if ~isempty(ind), r=union(r,ends(ind)); end
     fout = chebfun(@(x) abs(feval(f,x)), r);   
+    fout.trans = f.trans;
     
     % Deal with deltas
     foutimps = zeros(size(f.imps,1),length(fout.ends));      

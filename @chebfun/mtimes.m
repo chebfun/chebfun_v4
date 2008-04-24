@@ -13,7 +13,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
     for k = 1:size(F1,1)
         for j = 1:size(F2,2)
             if F1(k).trans && ~F2(j).trans
-                Fout(k,j) = sum(F1(k).*F2(j));
+                Fout(k,j) = sum(F1(k).*(F2(j).'));
             else
                 error('Chebfun dimensions must agree.')
             end

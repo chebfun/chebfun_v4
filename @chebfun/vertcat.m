@@ -90,7 +90,7 @@ for k = 1:nargin
       delta = f.ends(end) - newf.ends(1);    
       f.ends = [ f.ends delta+newf.ends(2:end) ];    % translate domain
       f.funs = [f.funs, newf.funs];
-      f.imps = [ f.imps newf.imps(2:end) ];
+      f.imps = [f.imps(1:end-1) newf.imps(1:end) ];
     end
   end
 end
