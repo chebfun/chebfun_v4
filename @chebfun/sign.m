@@ -36,6 +36,12 @@ nr = length(r);
 newints = zeros(1,nr);
 newints(1) = ends(1);
 ff = [];
+
+% Make sure that the domain of definition is not changed
+% Rodp added this to fix a bug reported in Wiki 22/4/08.
+r(end) = ends(end);
+r(1) = ends(1);
+%---------------------------------------------
 for i = 1:nr-1
     a = r(i); b = r(i+1);
     ff = [ff fun(sign(feval(f,(a+b)/2)))];
