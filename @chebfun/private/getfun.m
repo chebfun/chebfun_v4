@@ -11,12 +11,17 @@ if (b-a) < 2*htol
     scl.v=max(scl.v,g.scl.v);
     g=set(g,'scl.v',scl.v);
     hpy = true;    
-else   
-    %%% extrpolate to get values of v at end points %%%%%
-     vne = op([a+htol, a+2*htol, b-htol, b-2*htol]'); 
-     vb = 2*vne(3)-vne(4); va = 2*vne(1)-vne(2);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    g = fun(@(x) [va; op(.5*((b-a)*x(2:end-1)+b+a)); vb], maxn, funscl);
-    hpy = (length(g) < maxn);  
+else 
+    if chebfunpref('splitting')
+        %%% extrpolate to get values of v at end points %%%%%
+        vne = op([a+htol, a+2*htol, b-htol, b-2*htol]'); 
+        vb = 2*vne(3)-vne(4); va = 2*vne(1)-vne(2);
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+        g = fun(@(x) [va; op(.5*((b-a)*x(2:end-1)+b+a)); vb], maxn, funscl);
+    else
+        g = fun(@(x) op(.5*((b-a)*x+b+a)), maxn, funscl);
+    end
+    hpy = (length(g) < maxn);          
     scl.v = g.scl.v;
+  
 end
