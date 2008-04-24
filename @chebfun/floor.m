@@ -33,3 +33,4 @@ vals = feval(f, 0.5*(breakpts(1:n-1)+breakpts(2:n)) );
 
 % Construct.
 g = chebfun(num2cell(floor(vals)), breakpts);
+g.trans = f.trans;

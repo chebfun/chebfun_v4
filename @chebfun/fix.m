@@ -9,7 +9,7 @@ function Fout = fix(F)
 % Chebfun Version 2.0
 
 Fout = F;
-for k = 1:nuel(F)
+for k = 1:numel(F)
     Fout(k) = fixcol(F(k));
 end
 
@@ -36,3 +36,4 @@ vals = feval(f, 0.5*(breakpts(1:n-1)+breakpts(2:n)) );
 
 % Construct.
 g = chebfun(num2cell(fix(vals)), breakpts);
+g.trans = f.trans;
