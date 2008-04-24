@@ -32,7 +32,7 @@ end
     if N > 1025
       error('failure to converge')
     end
-    if N <= nbc
+    if N <= nbc+1
       % Too few points: force refinement
       v = (-1).^(0:N-1)';
       return
