@@ -415,7 +415,7 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 %%
 % This stability result may seem surprising when one notes that for
 % x close to x_k, the barycentric formula involves divisions by numbers that
-% are nearly zero.  Nevertheless it is probably stable.  If x is exactly equal
+% are nearly zero.  Nevertheless it is provably stable.  If x is exactly equal
 % to some x_k, then one bypasses the formula and returns the exact value
 % p(x) = f(x_k).
 
