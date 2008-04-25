@@ -11,9 +11,10 @@ A.oper = @(u) [];
 A.validoper = false;
 A.difforder = 0;
 A.fundomain = domain([-1 1]);
-A.realization = {};
+A.realization = {};  % for future?
 A.lbc = struct([]);
 A.rbc = struct([]);
+A.numbc = 0;
 A.scale = 0;
 A.ID = newIDnum();
 

@@ -8,7 +8,7 @@ use_store = cheboppref('storage');
 if isinf(n)
   if A.validoper
     M = A.oper;
-    if numbc(A) > 0
+    if A.numbc > 0
       warning('chebop:feval:funbc',...
         'Boundary conditions are not imposed in the functional form.')
     end

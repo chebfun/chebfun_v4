@@ -17,7 +17,7 @@ while (nargin > j)
   j = j+1;
 end
 
-nbc = numbc(A);
+if ischar(sigma), sigma = upper(sigma); end
 
 % Adaptively construct the kth eigenvalue.
 v = chebfun( @(x) A.scale + value(x) ) - A.scale;
@@ -30,9 +30,7 @@ else
   V = {};
   dom = A.fundomain;
   for j = 1:k
-    V{j} = chebfun( @(x) flipud(W(:,j)), length(W)-1 );
-    V{j}{dom(1),dom(2)} = V{j};
-    V{j} = V{j}(dom);
+    V{j} = chebfun( W(:,j), dom );
     V{j} = V{j}/norm(V{j});
   end
   varargout = { V, D };
@@ -40,13 +38,13 @@ end
 
   function v = value(x)
     N = length(x);
-    if N-nbc < k
+    if N-A.numbc < k
       % There won't be enough eigenvalues. Return a sawtooth to ensure
       % further refinement.
       v = (-1).^(0:N-1)';
     else
       [V,D] = bc_eig(A,B,N,k,sigma);
-      v = flipud(V(:,end));
+      v = V(:,end);
       v = filter(v,1e-8);
     end
   end

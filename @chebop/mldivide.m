@@ -12,8 +12,7 @@ switch(class(B))
 %    C = chebop;
 %    C.op = @(n) A.op(n) \ B.op(n);
   case 'chebfun'
-    nbc = numbc(A);
-    if nbc~=A.difforder
+    if A.numbc~=A.difforder
       warning('chebop:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
@@ -26,13 +25,12 @@ switch(class(B))
     error('chebop:mtimes:badoperand','Unrecognized operand.')
 end
 
-  % NB: flipud() needed for compatability with old chebfuns.
   function v = value(x)
     N = length(x);
     if N > 1025
       error('failure to converge')
     end
-    if N <= nbc+1
+    if N <= A.numbc+1
       % Too few points: force refinement
       v = (-1).^(0:N-1)';
       return
@@ -49,7 +47,7 @@ end
     end
     
     % Modify RHS as needed.
-    f = B(flipud(x));
+    f = B(x);
     for k = 1:length(A.lbc)
       if ~isempty(A.lbc(k).val)
         f(k) = A.lbc(k).val;
@@ -75,7 +73,7 @@ end
       storage(A.ID).u{N} = u;
     end
 
-    v = filter(flipud(v),1e-8);
+    v = filter(v,1e-8);
 
   end
       

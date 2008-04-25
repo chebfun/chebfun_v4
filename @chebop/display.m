@@ -15,13 +15,17 @@ else
   disp( char(A.varmat) );
   if ~isempty(A.oper(chebfun(1,A.fundomain)))
     if loose, disp(' '), end
-    disp( '   and infinite-dimenional representation:' )
+    disp( '   and functional representation:' )
     if loose, disp(' '), end
     disp( ['     ' char(A.oper)] )
     if loose, disp(' '), end
   end
-  if numbc(A) > 0
-    disp( ['   and ' int2str(numbc(A)) ' boundary conditions'] )
+  if A.numbc > 0
+    if A.numbc==1
+      disp( ['   and ' int2str(A.numbc) ' boundary condition'] )
+    else
+      disp( ['   and ' int2str(A.numbc) ' boundary conditions'] )
+    end
     if loose, disp(' '), end
   end
 end
