@@ -47,7 +47,6 @@ if subint(2)==subint(1)
   g.funs = fun( feval(f.funs(j),a) ) ;
   g.nfuns = 1;
   g.ends = subint;
-  g.imps = [0 0];
   return                                         % empty result
 end
 
@@ -73,3 +72,5 @@ else
   g.funs = [restrict(g.funs(1),[a 1]) g.funs(2:end)];         
   g.funs = [g.funs(1:end-1) restrict(g.funs(end),[-1 b])];
 end
+
+g.imps(1,:) = jumpvals(g.funs, g.ends);

@@ -3,6 +3,11 @@ function vals = jumpvals(funs,ends,op,sing)
 % If there is a singular point, op is evaluated in order to obtain a 
 % value at the breakpoint.
 
+if nargin<3
+    op=[]; % op is not needed
+    sing = zeros(size(ends)); % Ged vaules at brealpoints from funs not op.
+end
+
 vals = zeros(size(ends));
 vals(1) = funs(1).vals(1);
 for k = 2:numel(funs)
