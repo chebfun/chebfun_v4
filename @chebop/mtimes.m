@@ -23,11 +23,10 @@ switch(class(B))
     error('chebop:mtimes:badoperand','Unrecognized operand.')
 end
 
-% NB: We are assuming x(1)=-1, but using old chebfuns for now.
   function v = value(x)
     N = length(x);
-    L = feval(A.varmat,N);  Bx = B(flipud(x));
-    v = flipud(L*Bx);
+    L = feval(A.varmat,N);  Bx = B(x);
+    v = L*Bx;
     v = filter(v,1e-8);
   end
 
