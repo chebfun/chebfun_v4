@@ -45,10 +45,10 @@ else
         else
             fout = chebfun(@(x) feval(f,x).^b, f.ends);
         end
+        fout.trans = f.trans;
     else
         fout = chebfun(@(x) f.^feval(b,x), b.ends);
+        fout.trans = b.trans;
     end
     
 end
-
-fout.trans = f.trans; 
