@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 3: ROOTFINDING AND MINIMA AND MAXIMA
-% Lloyd N. Trefethen, November 2007
+% Lloyd N. Trefethen, April 2008
 
 %% 3.1 roots
 % Chebfuns come with a global rootfinding capability -- the
@@ -70,7 +70,7 @@
   f = chebfun('sin(pi*x)',[0 1000]);
   lengthf = length(f)
   tic, r = roots(f); toc
-  fprintf('%22.14f\n',r(end-4:end))
+  fprintf('%22.13f\n',r(end-4:end))
   splitting on
 
 %%

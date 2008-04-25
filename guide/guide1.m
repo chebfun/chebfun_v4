@@ -68,9 +68,13 @@
   length(f)
 
 %%
-% This result tells us that f is represented by a polynomial
+% Another is to remove the semicolon that suppresses output:
+  f
+
+%%
+% These results tell us that f is represented by a polynomial
 % interpolant through 51 Chebyshev points, i.e., a polynomial of
-% degree 40.  These numbers have been determined by an
+% degree 50.  These numbers have been determined by an
 % adaptive process.  We can see the data points by plotting f with
 % the '.-' option:
   plot(f,'.-')
@@ -188,7 +192,7 @@
 % own polynomial representation.  Each of the smooth pieces is
 % called a "fun", and funs are implemented as a subclass
 % of chebfuns.  This enhancement of the chebfun system
-% was developed intially by Ricardo Pachon during 2006-2007, then
+% was developed initially by Ricardo Pachon during 2006-2007, then
 % also by Rodrigo Platte starting in 2007.
 % Essentially funs consist of the "classic chebfuns" for smooth
 % functions on [-1,1] originally implemented by Zachary Battles.
@@ -307,7 +311,36 @@
   splitting on
   tic, f = chebfun('abs(x-.3)'); toc
 
-%% 1.5  References
+%% 1.5  Rows, columns, and quasimatrices
+% Matlab doesn't only deal with column vectors: there are
+% also row vectors and matrices.  The same is true of chebfuns.
+% The chebfuns shown so far have all been in column orientation, which
+% is the default for the chebfun system, but one can also take
+% the transpose, compute an inner products, and so on:
+
+%%
+  x = chebfun('x')
+%%
+  x'
+%%
+  x'*x
+%%
+% One can also make matrices whose columns are chebfuns
+% or whose rows are chebfuns, like this:
+
+  A = [1 x x.^2]
+
+%%
+  A'*A
+
+%%
+% These are called "quasimatrices", and will be discussed in
+% a later section.  Currently it is not possible to make a matrix
+% that is continuous in both directions, however, for example by
+% forming A*A'.
+
+
+%% 1.6  References
 % [Battles & Trefethen 2004] Z. Battles and L. N. Trefethen,
 % "An extension of Matlab to continuous functions and
 % operators", SIAM Journal on Scientific Computing 25 (2004),

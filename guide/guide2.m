@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 2: INTEGRATION AND DIFFERENTIATION
-% Lloyd N. Trefethen, November 2007
+% Lloyd N. Trefethen, April 2008
 
 %% 2.1 sum
 % We have seen that the "sum" command returns
@@ -48,7 +48,7 @@
   tic, quad(f,0,1,1e-14), toc
 %%
 % The timing for chebfuns comes out in-between:
-  tic, sum(chebfun(f,[0,1,])), toc
+  tic, sum(chebfun(f,[0,1])), toc
 %%
 % Here is a similar comparison for a function that is much
 % more difficult, because of the absolute value, which leads to
@@ -239,7 +239,7 @@
 % However, one should be cautious about the potential loss of information
 % in repeated differentiation.  For example, if we evaluate this fourth
 % derivative at x=0 we get an answer that matches the correct
-% value 24 only to 11 places:
+% value 24 only to 12 places:
 
   g(0)
 
@@ -252,7 +252,7 @@
 
 %%
 % Since f is a polynomial of low degree, it cannot help but
-% lose information rather fast as we differentiate, and 15
+% lose information rather fast as we differentiate, and 14
 % differentiations eliminate the function entirely.
 
   for j = 0:length(f)
@@ -261,10 +261,10 @@
   end
 
 %%
-% Is such behavior "wrong"?  We discuss this question in section xx.
+% Is such behavior "wrong"?  We shall discuss this question more later.
 % In short, the chebfun system is behaving correctly in the sense
 % mentioned in the second paragraph of Section 1.1: the 
-% operation are individually stable in that each differentiation returns
+% operations are individually stable in that each differentiation returns
 % the exact derivative of a function very close to the right one.
 % The trouble is that the errors in these stable operations accumulate
 % exponentially as successive derivatives are taken.  This is
