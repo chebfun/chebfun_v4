@@ -10,10 +10,10 @@
  zz = xx + 1i*yy;                              % plotting grid
  gi = chebfun(@(x) 1./gamma(x),[-6,6]);            % reciprocal of Gamma(x)
  gaminv = gi(zz);
-%  gam = 1i./gaminv;                             % Gamma(z) on the grid
-%  mesh(xx,yy,abs(gam))                          % plot |Gamma(z)|
-%  axis([-3.5 4 -2.5 2.5 0 6])
-%  xlabel Re(z), ylabel Im(z)
-%  text(4,-1.4,5.5,'|\Gamma(z)|','fontsize',20)
-%  colormap([0 0 0])                             % make the image blackfunction rpc6()
+  gam = 1i./gaminv;                             % Gamma(z) on the grid
+  mesh(xx,yy,abs(gam))                          % plot |Gamma(z)|
+  axis([-3.5 4 -2.5 2.5 0 6])
+  xlabel Re(z), ylabel Im(z)
+  text(4,-1.4,5.5,'|\Gamma(z)|','fontsize',20)
+  colormap([0 0 0])                             % make the image blackfunction rpc6()
  gamcheb = gaminv;

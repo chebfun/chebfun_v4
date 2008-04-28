@@ -3,6 +3,7 @@ function rpc17()
 % Ricardo Pachon 01/2007
 
 % construct a function with a singularity in its 5th derivative
+splitting off
 f = chebfun(@F, [-2 2]);
 lenf = length(f)
 % construct the same function with pws funs

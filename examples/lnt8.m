@@ -2,5 +2,3 @@
 
 f = chebfun('sign(x)',25);
 plot(f,'.-')
-
-% WHAT TO DO WITH RICFUNS??

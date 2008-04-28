@@ -14,3 +14,4 @@ sum(s)
 
 plot(sx,mx,'ok');
 plot(sn,mn,'ok');
+hold off

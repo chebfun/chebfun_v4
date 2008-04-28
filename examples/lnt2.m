@@ -2,8 +2,9 @@
 
  x = chebfun(@(x) x,[-2*pi,2*pi]);
  cosx = cos(x);
- hold off, plot(x,'-k')
- hold on, plot(cosx,'-.b'); axis tight
+plot(x,'-k')
+ hold on, plot(cosx,'-.b'); axis tight, 
  r = roots(x-cosx)
  plot(r,x(r),'or','markersize',16)
  error = r - cos(r)
+ hold off

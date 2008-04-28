@@ -7,8 +7,9 @@ clear
 clf
 axis([0 10 0 10]), 
 hold on
+box on
 % Initially, the list of points is empty.
-xy = ['['];
+xy = [];
 n = 0;
 % Loop, picking up the points.
 disp('Right mouse button picks points.')
@@ -23,12 +24,12 @@ while drawing
         if but~=1
             plot(xi,yi,'ro')
             n = n+1;
-            xy = [xy num2str([xi+i*yi]) ';'];
+            xy = [xy; xi+1i*yi];
         end
     end
-    data{ncheb} = [xy(1:end-1) ']'];
+    data{ncheb} = xy;
     n = 0;
-    xy = ['['];
+    xy = [];
     [xi,yi,but] = ginput(1);
     ncheb = ncheb+1;
     if but == 1
@@ -36,10 +37,11 @@ while drawing
     else
         plot(xi,yi,'ro')
         n = n+1;
-        xy = [xy num2str([xi+i*yi]) ';'];
+        xy = [xy; xi+1i*yi];
     end
 end
-if ~strcmp(data,']')
-    f = chebfun(data,0:length(data));
-    plot(f,'jumpline','none','linewidth',2)
-end
+
+f = chebfun(data,0:length(data));
+
+plot(f,'linewidth',2)
+hold off
