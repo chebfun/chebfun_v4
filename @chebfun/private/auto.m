@@ -1,8 +1,27 @@
 function [funs,ends,scl,sing] = auto(op,ends,scl)
+% [FUNS,ENDS,SCL,SING] = AUTO(OP,ENDS,SCL)
+%    AUTO generates a vector of FUNS used to construct a chebfun
+%    representation of the function handle OP. 
+%
+%    The input vector ENDS   must initially consist of two values and 
+%    corresponds to the global interval [a,b]. The ouput vector ends may 
+%    contain adional breakpoints if the splitting mode is on. 
+%
+%    SCL is a structure with two fields: SCL.H and SCL.V corresponding to 
+%    the horizonatal and veritcal global scales. This vector is update 
+%    within AUTO and is returned as output. 
+%
+%    The output vector SING is a boolean flagging whether a break point is
+%    also a singularity. More specifically, SING(K) = true if ENDS(k) is an
+%    edge and SING(K) = false otherwise.
+%
+%    Note: this function is used in ctor_1.m and ctor_2.m
+%   
 
-global htol 
+% Rodrigo Platte, 2008.
 
-sing = [true true];
+% Initial setup.
+sing = [false false];
 
 if nargin <3
     scl.h = max(abs(ends)); scl.v = 0;
@@ -10,8 +29,9 @@ end
 
 htol = 1e-14*scl.h;
 
-% -------------------------------------------------------------------------
 
+% -------------------------------------------------------------------------
+% In SPLITTING OFF mode, seek only one piece with length no greater than 2^16!
 if ~chebfunpref('splitting')
      [funs,hpy] = getfun(op,ends,2^16,scl);
      if ~hpy
@@ -20,47 +40,51 @@ if ~chebfunpref('splitting')
      end
      return;
 end
-
 % ------------------------------------------------------------------------
 
-maxn = chebfunpref('maxn');
+% SPLITTING ON mode!
 
-[funs,hpy,scl] = getfun(op,ends,maxn,scl);
-sad = ~hpy;
+maxn = chebfunpref('maxn');                     % Get maxn from preferences: default is 128.
 
+[funs,hpy,scl] = getfun(op,ends,maxn,scl);      % Try to get one smooth piece for the entire interval 
+sad = ~hpy;                                     % before splitting interval
+
+% MAIN LOOP
+% If the above didn't work, anter main loop and start splitting (at least
+% one breakpoint will be introduced).
 while any(sad)
-    
-    i = find(sad);
-    for i = i(end:-1:1)
-    
-        isedge = false;
-        a=ends(i); b=ends(i+1);
-        edge=detectedge(op,a,b,scl.h,scl.v);
-  
-        if isempty(edge)
-            edge=0.5*(a+b);
-        elseif (edge-a)<=htol
-            edge=a+(b-a)/100; 
-        elseif (b-edge)<=htol
-            edge=b-(b-a)/100;
-        else
-            isedge = true;
-        end                
-
-        % ------------------------------------
-        [child1, hpy1, scl] = getfun(op, [a, edge], maxn, scl);
-        [child2, hpy2, scl] = getfun(op, [edge, b], maxn, scl);
-        funs = [funs(1:i-1) child1 child2 funs(i+1:end)];
-        ends = [ends(1:i) edge ends(i+1:end)];
-        sad  = [sad(1:i-1) not(hpy1) not(hpy2) sad(i+1:end)];
-        sing = [sing(1:i) isedge sing(i+1:end)];
         
+    % If a fun is sad in a subinterval, split this subinterval.
+    i = find(sad,1,'first');
+    a = ends(i); b = ends(i+1);
+
+    % Look for an edge between [a,b].
+    isedge = false;
+    edge = detectedge(op,a,b,scl.h,scl.v);
+
+    if isempty(edge) % No edge found, split interval at the middle point
+        edge = 0.5*(a+b);
+    elseif (edge-a) <= htol % Edge is close to the left boundary, assume it is at x=a
+        edge = a+(b-a)/100; % Split interval closer to the left boundary
+    elseif (b-edge) <= htol % Edge is close to the right boundary, assume it is at x=b
+        edge = b-(b-a)/100; % Split interval closer to the right boundary
+    else
+        isedge = true;      % Edge was found and is assumed to be a singular point
     end
-    
+
+    % Try to obtain happy funs on each new subinterval.
+    % ------------------------------------
+    [child1, hpy1, scl] = getfun(op, [a, edge], maxn, scl);
+    [child2, hpy2, scl] = getfun(op, [edge, b], maxn, scl);
+    funs = [funs(1:i-1) child1 child2 funs(i+1:end)];
+    ends = [ends(1:i) edge ends(i+1:end)];
+    sad  = [sad(1:i-1) not(hpy1) not(hpy2) sad(i+1:end)];
+    sing = [sing(1:i) isedge sing(i+1:end)];
+
     %% -------- Stop? check the length --------
-    lenf=0;
-    for i=1:numel(funs)
-        lenf=lenf+length(funs(i));
+    lenf = 0;
+    for i = 1:numel(funs)
+        lenf = lenf+length(funs(i));
     end
     if lenf >6e+4
         warning('CHEBFUN:auto',['Chebfun representation may not be accurate:' ...
@@ -70,4 +94,6 @@ while any(sad)
     %% ----------------------------------------
 end
 
-funs=set(funs,'scl.v',scl.v);
+% Update vertical scale ?
+% funs=set(funs,'scl.v',scl.v);
+% Removed this, the scale will be updated when the chebfun is constructed.

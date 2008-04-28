@@ -21,7 +21,7 @@ Tlen = min(g.n,max(3,round((g.n-1)/8)));% length of tail to test
 %Tmax = 2e-16*Tlen^(2/3);             % maximum permitted size of tail
 % RodP's choice -------------------------------------
 mdiff = (g.scl.h/g.scl.v)*norm(diff(g.vals)./diff(chebpts(g.n)),inf);
-Tmax = 2^-51*max(mdiff,Tlen^(2/3));
+Tmax = 2^-52*max(mdiff,Tlen^(2/3));
 % ---------------------------------------------------
 if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
     Tend = find(ac>=Tmax,1,'first');  % pos of last entry below Tmax

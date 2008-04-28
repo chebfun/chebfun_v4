@@ -15,7 +15,7 @@ function fout = merge(f, bkpts, maxn)
 %   will return F itself.
 %   Impulses will prevent merging at corresponding break points.
 %
-%   See also SPLITTING, CHEBFUNPREF.
+%   See also SPLITTING,  CHEBFUNPREF.
 %
 
 %   Chebfun Version 2.0
@@ -55,19 +55,22 @@ for k = bkpts
     xk = f.ends(k);
     j = find(xk == fout.ends,1,'first');
     
-    % Prevent merging if there are impulses or jumps at ends(k)
-    v = feval(f, [xk, xk+eps(xk), xk-eps(xk)]);
-    if ~any(f.imps(2:end,k),1) && norm(v(1) - v(2:3),inf) < 1e-8*f.scl
-        [mergedfun, hpy] = getfun(@(x) feval(fout,x),  ... 
+    % Prevent merging if there are impulses or chebfun lengths add to more
+    % than maxn
+    if ~any(f.imps(2:end,k),1) && length(fout.funs(j-1))+length(fout.funs(j)) < 1.05*maxn
+        v = feval(f, [xk, xk+eps(xk), xk-eps(xk)]);
+        % Prevent merging if there are jumps (very loose tolerance)
+        if  norm(v(1) - v(2:3),inf) < 1e-8*f.scl 
+            [mergedfun, hpy] = getfun(@(x) feval(fout,x),  ... 
                                [fout.ends(j-1), fout.ends(j+1)], maxn, scl);
-        % merging successful                  
-        if hpy 
-            fout.funs = [fout.funs(1:j-2) mergedfun fout.funs(j+1:end)];
-            fout.ends = [fout.ends(1:j-1) fout.ends(j+1:end)];
-            fout.imps = [fout.imps(:,1:j-1) fout.imps(:,j+1:end)];
-            fout.nfuns = fout.nfuns - 1;
+            % merging successful                  
+            if hpy 
+                fout.funs = [fout.funs(1:j-2) mergedfun fout.funs(j+1:end)];
+                fout.ends = [fout.ends(1:j-1) fout.ends(j+1:end)];
+                fout.imps = [fout.imps(:,1:j-1) fout.imps(:,j+1:end)];
+                fout.nfuns = fout.nfuns - 1;
+            end
         end
-
     end
     
 end
