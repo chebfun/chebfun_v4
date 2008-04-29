@@ -58,14 +58,16 @@ if length(data)==1
     linespec = '';    
     [args_1,args_2] =  unwrap_group(args_1, args_2, f, g, linespec);
     if ~isreal(data{1})
-        args_1(1) = []; args_2(1) = [];        
+        args_1([1 4:6]) = []; 
+        args_2(1) = [];      
     end
     data = [];        
 elseif length(data)==2 & isa(data{2},'char')
     f = []; g = data{1}; linespec = data{2};
     [args_1,args_2] =  unwrap_group(args_1, args_2, f, g, linespec);
     if ~isreal(data{1})
-        args_1(1) = []; args_2(1) = [];        
+        args_1([1 4:6]) = []; 
+        args_2(1) = [];        
     end
     data = [];
 end

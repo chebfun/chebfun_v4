@@ -27,9 +27,9 @@ while length(propertyArgIn) >= 2,
        % F.scl = scl;
         F = update_vscl(F);
     case 'ends'
-        F.ends = val;
+        F.ends = val(:)';
     case 'imps'
-        F.imps = val;
+        F.imps = val(:)';
     case 'scl'
         F.scl = val;  
     case 'trans'

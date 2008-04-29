@@ -21,14 +21,16 @@ switch index(1).type
                     varargout = {f.ends};
                 case 'nfuns'
                     varargout = {f.nfuns};
+                case 'scl'
+                    varargout = {f.scl};
             end
         end           
     case '()'
-        if length(index.subs) == 1
-            s = index.subs{1};
-        elseif length(index.subs)== 2
-            f = f(index.subs{2});
-            s = index.subs{1};
+        if length(index(1).subs) == 1
+            s = index(1).subs{1};
+        elseif length(index(1).subs)== 2
+            f = f(index(1).subs{2});
+            s = index(1).subs{1};
         else
             error('chebfun:subsref:dimensions',...
                 'Index exceeds chebfun dimensions.')
