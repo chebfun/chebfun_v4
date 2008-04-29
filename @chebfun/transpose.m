@@ -5,3 +5,4 @@ function F = transpose(F)
 % Chebfun Version 2.0
 
 for k = 1:numel(F), F(k).trans=not(F(k).trans); end
+F=builtin('transpose',F);
