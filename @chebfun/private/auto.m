@@ -21,7 +21,7 @@ function [funs,ends,scl,sing] = auto(op,ends,scl)
 % Rodrigo Platte, 2008.
 
 % Initial setup.
-sing = [false false];
+sing = [true true];
 
 if nargin <3
     scl.h = max(abs(ends)); scl.v = 0;
