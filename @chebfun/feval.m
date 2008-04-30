@@ -1,4 +1,4 @@
-function Fx = feval(F,x)
+function Fx = feval(F,x,varargin)
 % FEVAL Evaluate at point(s)
 %
 % FEVAL(F,X) evaluates the chebfun F at the point(s) in X.
@@ -12,7 +12,7 @@ function Fx = feval(F,x)
 % built-in behavior.
 
 if isa(F,'function_handle')
-  Fx = F(x);
+  Fx = F(x,varargin{:});
   return
 end
 
