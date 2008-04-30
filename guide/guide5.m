@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 5: COMPLEX CHEBFUNS
-% Lloyd N. Trefethen, December 2007
+% Lloyd N. Trefethen, April 2008
 
 %% 5.1  Complex functions of a real variable
 
@@ -91,14 +91,14 @@ subplot(1,2,2), plot(z.^2), axis equal, grid on
 % Analytic functions do interesting things in the complex plane.
 % In particular, away from points where the derivative is zero, they
 % are *conformal maps*, which means that though they may scale and
-% rotate an infinitesimal region,  they preserve angles
+% rotate an infinitesimal region, they preserve angles
 % between intersecting curves.
 
 %%
 % One can illustrate such maps with chebfuns.
 % For example, suppose we define R to be
 % a chebfun corresponding to the four sides of a rectangle, and
-% we define X to be another chebfun corrsponding to a cross inside R. 
+% we define X to be another chebfun corresponding to a cross inside R. 
 
 s = chebfun('s',[0 1]);
 R = [1+s; 2+2i*s; 2+2i-s; 1+2i-2i*s];
@@ -346,6 +346,7 @@ r = roots(f)
 % on the interval [0,7] that spells the initials LNT.  One could polish
 % up and extend this construction by defining 26 suitable M-functions.
 
+LW = 'linewidth'; lw = 2.5;
 s = chebfun('s',[0 1]);
 w = [1.01+.8i-(.01+.8i)*s; 1+.6*s;            % L
      2+.8i*s; 2+.8i+(-.8i+.6)*s; 2.6+.8i*s;   % N
