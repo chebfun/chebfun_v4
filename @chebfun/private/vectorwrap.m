@@ -2,17 +2,29 @@ function g = vectorwrap(f,x)
 
 % Try to determine whether f is vectorized. If not, wrap it in a loop.
 
-g = f;
-try
-  f(x(:));
-catch
-  g = @loopwrapper;
+if isa(f,'chebfun') || isa(f,'fun')
+    g = f;
+else
+    g = f;
+    try
+        v=f(x(:));
+        if size(v) ~= size(x(:))
+            g = @loopwrapper;
+        end
+    catch
+        g = @loopwrapper;
+    end
+    
+
 end
 
-  function v = loopwrapper(x)
-    v = zeros(size(x));
-    for j = 1:numel(v)
-      v(j) = f(x(j));
+% ----------------------------
+    function v = loopwrapper(x)
+        v = zeros(size(x));
+        for j = 1:numel(v)
+            v(j) = f(x(j));
+        end
     end
-  end
+% ----------------------------
+
 end
