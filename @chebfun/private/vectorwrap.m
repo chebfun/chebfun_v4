@@ -8,7 +8,7 @@ else
     g = f;
     try
         v=f(x(:));
-        if size(v) ~= size(x(:))
+        if any(size(v) ~= size(x(:)))
             g = @loopwrapper;
         end
     catch
