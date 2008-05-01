@@ -1,5 +1,5 @@
 function Fout = fix(F)
-% FIX Pointwise fix function.
+% FIX Round pointwise toward zero.
 %
 % G = FIX(F) returns the chebfun G such that G(X) = FIX(F(X)) for each
 % X in the domain of F.
@@ -15,9 +15,9 @@ end
 
 
 %---------------------------
-function g =fixcol(f)
+function g = fixcol(f)
 
-if isempty(f), g=chebfun; end
+if isempty(f), g=chebfun; return, end
 
 % Find all the integer crossings for f.
 range = floor( [min(f) max(f)] );
@@ -26,7 +26,7 @@ for k = range(1)+1:range(2)
   breakpts = [ breakpts; roots(f-k) ];
 end
 
-% Sort and add the endpoints.
+% Sort, and add the endpoints.
 dom = domain(f);
 breakpts = [dom(1); sort(breakpts); dom(2)];
 n = length(breakpts);
