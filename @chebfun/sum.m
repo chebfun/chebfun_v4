@@ -28,7 +28,7 @@ if nargin < 2
   dim = 1;
 end
 
-F_trans = F.trans;
+F_trans = F(1).trans;
 if F_trans
   F = transpose(F);
   dim = 3-dim;
