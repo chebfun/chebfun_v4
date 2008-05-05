@@ -14,7 +14,7 @@ function F = flipud(F)
 
 
 % Deal with quasi-matrices
-if size(F,1)>1
+if F(1).trans
     F = F(end:-1:1);
 else
     for k = 1:numel(F)

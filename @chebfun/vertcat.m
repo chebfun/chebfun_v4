@@ -56,7 +56,7 @@ else
     for k = i+1:nargin
         f2 = varargin{k};
         if isa(f2,'chebfun')
-            if size(Fout,2) ~= size(f2,2) || size(f2,1) > 2
+            if size(Fout,2) ~= size(f2,2)
                 error('CAT arguments dimensions are not consistent or number of rows>1. Try horzcat?')
             else
                 for j = 1:numel(f2)

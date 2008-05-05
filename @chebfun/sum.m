@@ -8,7 +8,7 @@ function out = sum(F,dim)
 % in the indexed dimension adds together all of the chebfuns to return a
 % single chebfun.
 %
-% For a quasimatrix, SUM(F) is the same as SUM(F,1).
+% For a column quasimatrix, SUM(F) is the same as SUM(F,1).
 %
 % Examples:
 %   x = chebfun('x',[0 1]);
@@ -19,8 +19,7 @@ function out = sum(F,dim)
 %   sum(A.',2)  % transpose of sum(A,1)
 %
 % See also SUM (built-in).
-
-% Chebfun Version 2.0
+%
 
 if isempty(F), out = nan; return, end
 
@@ -35,8 +34,8 @@ if F_trans
 end
 
 if dim==1
-  out = zeros(size(F));
-  for k = 1:numel(F)
+  out = zeros(1,size(F,2));
+  for k = 1:size(F,2);
     out(k) = sumcol(F(k));
   end
 else
