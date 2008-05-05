@@ -1,3 +1,10 @@
-function C = horzcat(A,B)
-C = varmat( @(n) [ feval(A,n) feval(B,n) ] );
-end
+function C = horzcat(varargin)
+
+C = varmat( @hcat );
+
+   function B = hcat(n)
+     A = cellfun( @(A) feval(A,n), varargin, 'uniform',0);
+     B = horzcat( A{:} );
+   end
+ 
+ end
