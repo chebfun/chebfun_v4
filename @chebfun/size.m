@@ -1,15 +1,20 @@
 function varargout = size(F,dim)
-% SIZE   Size of a CHEBFUN.
+% SIZE   Size of a chebfun quasimatrix.
+%   D = SIZE(F) returns a two-element row vector D = [M,N]. If F is a column
+%   quasimatrix, M is infinity and N is the number of columns. For a
+%   row quasimatrix, M is the number of rows and N is infinity.
 %
-% See also length, numel.
-
-% Chebfun Version 2.0
+%   [M,N] = SIZE(F)  returns the dimensions of F as separate output
+%   variables.
+%
+%  M = SIZE(F,DIM) returns the dimension specified by the scalar DIM.
+%
 
 if F(1).trans
     m = numel(F);
-    n = 1;
+    n = inf;
 else
-    m = 1;
+    m = inf;
     n = numel(F);
 end
 
