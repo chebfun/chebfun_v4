@@ -27,11 +27,11 @@ v = chebfun( @(x) A.scale + value(x) ) - A.scale;
 if nargout<2
   varargout = { diag(D) };
 else
-  V = {};
   dom = A.fundomain;
+  V = chebfun;
   for j = 1:k
-    V{j} = chebfun( W(:,j), dom );
-    V{j} = V{j}/norm(V{j});
+    V(:,j) = chebfun( W(:,j), dom );
+    V(:,j) = V(:,j)/norm(V(:,j));
   end
   varargout = { V, D };
 end
