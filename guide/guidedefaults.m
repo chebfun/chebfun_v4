@@ -13,4 +13,4 @@ set(0,...
 rand('state',sum(100*clock))
 randn('state',2)
 format compact, format long
-chebfunpref('defaults');
+chebfunpref('factory');
