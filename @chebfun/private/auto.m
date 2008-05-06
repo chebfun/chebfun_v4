@@ -31,12 +31,14 @@ htol = 1e-14*scl.h;
 
 
 % -------------------------------------------------------------------------
-% In SPLITTING OFF mode, seek only one piece with length no greater than 2^16!
+% In SPLITTING OFF mode, seek only one piece with length no greater than
+% maxn (default is 2^16)
+maxn = chebfunpref('maxn');
 if ~chebfunpref('splitting')
-     [funs,hpy] = getfun(op,ends,2^16,scl);
+     [funs,hpy] = getfun(op,ends,maxn,scl);
      if ~hpy
-        warning('CHEBFUN:auto',['Function not resolved, using 2^16 pts.' ...
-                 ' Have you tried ''splitting on''?']);
+        warning('CHEBFUN:auto',['Function not resolved, using ' int2str(maxn) ...
+            ' pts. Have you tried ''splitting on''?']);
      end
      return;
 end
@@ -44,9 +46,9 @@ end
 
 % SPLITTING ON mode!
 
-maxn = chebfunpref('maxn');                     % Get maxn from preferences: default is 128.
+nsplit = chebfunpref('nsplit');                 % Get maxn from preferences: default is 129.
 
-[funs,hpy,scl] = getfun(op,ends,maxn,scl);      % Try to get one smooth piece for the entire interval 
+[funs,hpy,scl] = getfun(op,ends,nsplit,scl);    % Try to get one smooth piece for the entire interval 
 sad = ~hpy;                                     % before splitting interval
 
 % MAIN LOOP
@@ -74,8 +76,8 @@ while any(sad)
 
     % Try to obtain happy funs on each new subinterval.
     % ------------------------------------
-    [child1, hpy1, scl] = getfun(op, [a, edge], maxn, scl);
-    [child2, hpy2, scl] = getfun(op, [edge, b], maxn, scl);
+    [child1, hpy1, scl] = getfun(op, [a, edge], nsplit, scl);
+    [child2, hpy2, scl] = getfun(op, [edge, b], nsplit, scl);
     funs = [funs(1:i-1) child1 child2 funs(i+1:end)];
     ends = [ends(1:i) edge ends(i+1:end)];
     sad  = [sad(1:i-1) not(hpy1) not(hpy2) sad(i+1:end)];
@@ -86,7 +88,7 @@ while any(sad)
     for i = 1:numel(funs)
         lenf = lenf+length(funs(i));
     end
-    if lenf >6e+4
+    if lenf > maxn
         warning('CHEBFUN:auto',['Chebfun representation may not be accurate:' ...
                 'using ' int2str(lenf) ' points'])
         return

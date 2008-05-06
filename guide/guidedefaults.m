@@ -13,6 +13,4 @@ set(0,...
 rand('state',sum(100*clock))
 randn('state',2)
 format compact, format long
-splitting on
-setpref('chebfun_defaults','maxn',128)
-setpref('chebfun_defaults','degree_mode',1)
+chebfunpref('defaults');

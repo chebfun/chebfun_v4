@@ -10,7 +10,8 @@ function fout = chebsys(op, ends)
 
 % This works in splitting off mode only.
 if chebfunpref('splitting')
-    error('splitting mode must be off')
+    warning('CHEBFUN:chebsys','switching off splitting mode')
+    splitting off
 end
 
 % Global horizontal scale & initializations.
@@ -25,7 +26,8 @@ funs = repmat(fun, 1, nfuns);
 x = cell(1,nfuns);
 
 % search for happiness
-while any(~hpy) && all(NN<2^16)
+maxn = chebfunpref('maxn');
+while any(~hpy) && all(NN< maxn)
     
     % generate cheb points in each interval and place in a cell array.
     for i = 1:nfuns
@@ -48,13 +50,15 @@ while any(~hpy) && all(NN<2^16)
         hpy(i) = length(funs(i))<NN(i);
         if ~hpy(i)
             NN(i) = 2*NN(i);
-        end        
+        else
+            NN(i) = 2^ceil(log2(length(funs(i))-1));
+        end
     end   
 
 end 
 
 if any(~hpy)
-    warning('CHEBFUN:chebsys',['Function not resolved, using 2^16 pts.' ...
+    warning('CHEBFUN:chebsys',['Function not resolved, using ',num2str(maxn),' pts.' ...
                                ' Have you tried ''splitting on''?']);
 end
 
@@ -68,4 +72,3 @@ imps(end) = funs(end).vals(end);
 
 % Get chebfun.
 fout = set(chebfun,'funs',funs,'ends',ends,'imps',imps,'trans',0);
-

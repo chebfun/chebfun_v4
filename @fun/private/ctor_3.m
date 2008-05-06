@@ -31,14 +31,5 @@ switch class(op)
         error(['The input argument of class ' class(op) ...
             ' cannot be used to construct a fun object'])
 end
-npower = floor(log2(n));
-if 2^npower ~= n
-    kk = [2.^(4:npower) n] + 1;
-else
-    kk = 2.^(4:npower) + 1;
-end
-for k = kk
-    g = set(g,'vals',op(chebpts(k)));
-    g = simplify(g);
-    if g.n < k, break, end
-end
+
+g = growfun(op,g,n);

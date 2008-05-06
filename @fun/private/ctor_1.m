@@ -20,9 +20,5 @@ switch class(op)
         error(['The input argument of class ' class(op) ...
             'cannot be used to construct a fun object'])
 end
-npower = 16;
-for k = 2.^(2:npower)+1
-    g = set(g,'vals',op(chebpts(k)));
-    g = simplify(g);
-    if g.n < k, break, end
-end
+
+g = growfun(op,g,chebfunpref('maxn'));

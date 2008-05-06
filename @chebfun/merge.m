@@ -27,9 +27,9 @@ end
 
 if nargin < 3
     if ~chebfunpref('splitting')
-        maxn = 2^16;
+        maxn = chebfunpref('maxn'); % default 2^16+1
     else
-        maxn = chebfunpref('maxn');
+        maxn = chebfunpref('nsplit'); % default 129
     end
 end
 if nargin < 2
