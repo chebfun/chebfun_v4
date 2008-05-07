@@ -12,7 +12,7 @@ function varargout = domain(f)
 
 if numel(f) == 1
     if isempty(f)
-        varargout = domain;
+        varargout = {domain};
     elseif(nargout<=1)
         varargout{1} = domain(f.ends);
     else

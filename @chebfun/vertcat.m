@@ -26,24 +26,28 @@ if Fout(1).trans
 
     d = domain(Fout(1));
     
-    % Check for doubles and whether chebfuns are consistent.
+    % Check for doubles, empty and whether chebfuns are consistent.
+    kk =[];
     for k = 1:nargin
         v = varargin{k};
-        if isa(v,'double') && ~isempty(v)
-           f = chebfun(v,d(:)); 
-           f.trans = true;
-           varargin{k} = f;
-        elseif isa(v,'chebfun') 
-            if ~v(1).trans
-               error('CAT arguments dimensions are not consistent.')     
-            elseif ~(domain(v(1))==d)
-               error('Domains are not consistent');
+        if ~isempty(v)
+            kk =[kk k];
+            if isa(v,'double') && ~isempty(v)
+                f = chebfun(v,d(:));
+                f.trans = true;
+                varargin{k} = f;
+            elseif isa(v,'chebfun')
+                if ~v(1).trans
+                    error('CAT arguments dimensions are not consistent.')
+                elseif  ~(domain(v(1))==d)
+                    error('Domains are not consistent');
+                end
             end
         end
     end
    
    % VERTCAT!
-   Fout = builtin('vertcat',varargin{:});
+   Fout = builtin('vertcat',varargin{kk});
       
 else      
         
