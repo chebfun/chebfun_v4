@@ -18,7 +18,7 @@ else
     kk = 2.^(minpower:npower) + 1;
 end
 
-if resample && 2^npower+1 == n
+if ~resample && 2^npower+1 == n
     
     % single sampling
     ind =1;
