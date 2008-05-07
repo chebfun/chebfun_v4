@@ -93,7 +93,7 @@ while ~isempty(data)
 end
 
 h = ishold;
-if ~h, cla reset, hold on, end
+if ~h, cla, hold on, end
 args_1 = [args_1, ax_props, {'marker','none'}];
 args_2 = [args_2, ax_props,{'linestyle','none'}];
 plot(args_1{:})
@@ -106,9 +106,10 @@ function [curves, marks] = unwrap_group(curves, marks, f, g, linespec)
 
 single_chebfun = 0;
 if isempty(f)
-    x = [];
     for i = 1:numel(g)
-        f = [f chebfun(@(x) x, g(i).ends)];
+        gends = g(i).ends;
+        vs = num2cell([gends(1:end-1);gends(2:end)],1);        
+        f = [f chebfun(vs, g.ends)];
     end
     single_chebfun = 1;
 elseif numel(f) == 1 & numel(g) > 1
@@ -126,7 +127,10 @@ end
 %---------------------------------------------------------------------
 function [curve, mark] = unwrap_column(f, g, linespec, single_chebfun)
 
-[f,g] = overlap(f,g);
+%if ~single_chebfun
+    [f,g] = overlap(f,g);
+%end
+
 maxfg=zeros(1,f.nfuns);
 for i = 1:f.nfuns
      maxfg(i) = max(length(f.funs(i)),length(g.funs(i))); 
@@ -144,8 +148,9 @@ for i = 1:f.nfuns
     fi = prolong(fi,m); gi = prolong(gi,m);
     cf = [cf;fi.vals;fi.vals(end)]; cg = [cg;gi.vals;nan];
 end
-mf(end) = []; mg(end) = [];
 cf(end) = []; cg(end) = [];
+mf(end) = []; mg(end) = [];
+
 
 curve = {cf,cg,linespec}; mark = {mf,mg,linespec};
 if single_chebfun

@@ -26,7 +26,7 @@ if npts == 1
 end
 
 % Evaluation at Chebyshev nodes -> use prolong (npts-1 must be a power of two)·
-power = log2(npts-1);
+if npts == 1, power = 0; else power = log2(npts-1); end
 if round(power) == power
     if norm(x(:) - chebpts(npts),inf) <= 1e-14*g.scl.h
         g2 = prolong(g,npts);
