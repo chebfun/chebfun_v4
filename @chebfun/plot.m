@@ -109,7 +109,7 @@ if isempty(f)
     for i = 1:numel(g)
         gends = g(i).ends;
         vs = num2cell([gends(1:end-1);gends(2:end)],1);        
-        f = [f chebfun(vs, g.ends)];
+        f = [f chebfun(vs, gends)];
     end
     single_chebfun = 1;
 elseif numel(f) == 1 & numel(g) > 1
