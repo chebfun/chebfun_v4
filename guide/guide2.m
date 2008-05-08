@@ -82,6 +82,35 @@
 % The chebfun system readily finds the integral:
   tic, sum(h), toc
 
+%%
+% For a final example of a definite integral we turn to an integrand
+% given as example F21F in [Kahaner 1971].  We treat it first with splitting off:
+
+  splitting off
+  x = chebfun('x',[0 1]);
+  f = sech(10*(x-0.2)).^2 + sech(100*(x-0.4)).^4 + sech(1000*(x-0.6)).^6;
+
+%%
+% The function has three spikes, each ten times narrower than the last:
+  plot(f)
+
+%%
+% The length of the global polynomial representation is accordingly quite
+% large, but the integral comes out correct to full precision:
+
+  length(f)
+  sum(f)
+
+%%
+% With splitting on, we get a much shorter chebfun since the narrow
+% spike is isolated; and the integral is the same:
+
+  splitting on
+  f = sech(10*(x-0.2)).^2 + sech(100*(x-0.4)).^4 + sech(1000*(x-0.6)).^6;
+  length(f)
+  sum(f)
+
+
 %% 2.2 norm, mean, std, var
 % An important special case of an integral is the "norm" command,
 % which for a chebfun by default returns the 2-norm, i.e., the square root
@@ -277,6 +306,9 @@
 % [Gentleman 1972] W. M. Gentleman, "Implementing
 % Clenshaw-Curtis quadrature I and II", Journal of
 % the ACM 15 (1972), 337-346 and 353.
+%
+% [Kahaner 1971] D. K. Kahaner, Comparison of numerical quadrature
+% formulas, in J. R. Rice, ed., Mathematical Software, Academic Press, 1971, 229-259.
 %
 % [Wolfram 2003] S. Wolfram, The Mathematica Book, 5th ed., 
 % Wolfram Media, 2003.

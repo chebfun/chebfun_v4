@@ -26,8 +26,9 @@ r = roots(f);
 ends = f.ends;
 hs = norm(f.ends,inf);
 if isempty(r), 
-    fout = chebfun(sign(feval(f.funs,rand)),[ends(1) ends(end)]);
-    return;
+    fout = chebfun(sign(feval(f.funs(1),rand)),[ends(1) ends(end)]);
+    if f.trans, fout = transpose(fout); end
+    return
 else
     if abs(r(1)  - ends(1)  ) > 1e-14*hs, r = [ends(1); r  ]; end 
     if abs(r(end)- ends(end)) > 1e-14*hs, r = [r; ends(end)];  end

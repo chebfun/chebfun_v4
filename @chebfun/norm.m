@@ -1,55 +1,62 @@
-function F = norm(f,n)
-% NORM	Chebfun norm
-% For quasi-matrices
-%	NORM(A) is the largest singular value of A.
-%	NORM(A,2) is the same as NORM(A).
-%	NORM(A,1) is the maximum over the 1-norms of the columns of A.
-%	NORM(A,'fro') is the Frobenius norm, sqrt(sum(svd(A).^2)).
-%   NORM(A,'inf') is the maximum over the 1-norms of the rows of A
+function normA = norm(A,n)
+% NORM	Chebfun or quasimatrix norm.
 %
-% For chebfuns
-%	NORM(F) = NORM(F,2).
-%	NORM(F,2) = sqrt(integral from -1 to 1 F^2)).
-%	NORM(F,1) = integral from -1 to 1 abs(F).
-%	NORM(F,inf) = max(abs(F)).
-%	NORM(F,-inf) = min(abs(F)).
+% For quasi-matrices...
+%    NORM(A) is the largest singular value of A.
+%    NORM(A,2) is the same as NORM(A).
+%    NORM(A,1) is the maximum of the 1-norms of the columns of A.
+%    NORM(A,inf) is the maximum of the 1-norms of the rows of A
+%    NORM(A,'fro') is the Frobenius norm, sqrt(sum(svd(A).^2)).
 %
+% For chebfuns...
+%    NORM(f) = sqrt(integral from -1 to 1 of abs(f)^2)).
+%    NORM(f,2) is the same as NORM(f).
+%    NORM(f,1) = integral from -1 to 1 of abs(f).
+%    NORM(f,inf) = max(abs(f)).
+%    NORM(f,-inf) = min(abs(f)).
 
 % Chebfun Version 2.0
 
-if (nargin==1), n=2; end
-if numel(f) == 0
-    F = []; return;
-elseif numel(f) == 1
-    switch n
-        case 1
-            if f.trans, f = f'; end    % <- transpose to use sum (?)
-            F = sum(abs(f));
-        case 2
-            if f.trans, f = f'; end    % <- transpose to use sum (?)
-            F = sqrt(sum(conj(f).*f));
-        case {inf,'inf'}
-            F = max(max(f),-min(f));
-        case {-inf,'-inf'}
-            F = min(abs(f));
-        otherwise
-            error('Unknown norm');
-    end
-elseif numel(f) > 1
-    switch n        
-        case 1
-            F = 0;
-            f = max(sum(abs(f),1));
-        case 2
-            s = svd(f,0);
-            F = s(1);
-        case 'fro'
-              s=svd(f,0);
-              F=sqrt(sum(s(s>0).^2));
-        case {'inf',inf}
-            f = max(sum(abs(f),2));
-        otherwise
-            error('Unknown norm')
-    end
+if nargin==1, n=2; end                  % 2-norm is the default
+
+if isempty(A), normA = 0;               % empty chebfun has norm 0
+
+elseif min(size(A))==1                  % A is a chebfun 
+   switch n
+      case 1
+         normA = sum(abs(A));
+      case 2
+         if A.trans 
+            normA = sqrt(A*A');
+         else
+            normA = sqrt(A'*A);
+         end
+      case {inf,'inf'}
+         if isreal(A)
+            normA = max(max(A),-min(A));
+         else
+            normA = max(abs(A));
+         end
+      case {-inf,'-inf'}
+         normA = min(abs(A));
+      otherwise
+         error('Unknown norm');
+   end
+
+elseif min(size(A))>1                  % A is a quasimatrix
+   switch n        
+      case 1
+         normA = max(sum(abs(A),1));
+      case 2
+         s = svd(A,0);
+         normA = s(1);
+      case 'fro'
+         s = svd(A,0);
+         normA = norm(s);
+      case {'inf',inf}
+         normA = max(sum(abs(A),2));
+      otherwise
+         error('Unknown norm')
+   end
 end
-F = real(F);       % discard possible imaginary rounding errors
+normA = real(normA);       % discard possible imaginary rounding errors

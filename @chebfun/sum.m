@@ -19,15 +19,18 @@ function out = sum(F,dim)
 %   sum(A.',2)  % transpose of sum(A,1)
 %
 % See also SUM (built-in).
-%
 
-if isempty(F), out = nan; return, end
+if isempty(F), out = 0; return, end    % empty chebfun has sum 0
 
+F_trans = F(1).trans;                  % default sum along columns
 if nargin < 2
-  dim = 1;
+    if min(size(F))==1 & F_trans
+       dim = 2;                        % ...except for single row chebfun
+    else
+       dim = 1;
+    end 
 end
 
-F_trans = F(1).trans;
 if F_trans
   F = transpose(F);
   dim = 3-dim;
@@ -49,7 +52,7 @@ end
 % ------------------------------------------
 function out = sumcol(f)
 
-if isempty(f), out = nan; return, end
+if isempty(f), out = 0; return, end
 
 ends = f.ends;
 out = 0;

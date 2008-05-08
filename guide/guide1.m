@@ -43,7 +43,7 @@
 
 %%
 % The chebfun system was originally created by Zachary Battles
-% and Nick Trefethen at Oxford during 2002-2004
+% and Nick Trefethen at Oxford during 2002-2005
 % [Battles & Trefethen 2004].  Battles left the project
 % in 2005, and meanwhile three new 
 % members have been added to the team: Ricardo
@@ -108,7 +108,8 @@
 
 %%
 % Here is another example, now with the chebfun defined by
-% an anonymous function instead of a string.
+% an anonymous function instead of a string.  (The construction process
+% is often somewhat faster if you use anonymous functions.)
 % In this case the interval is specified as [0,100].
   g = chebfun(@(t) besselj(0,t),[0,100]);
   plot(g), ylim([-.5 1])

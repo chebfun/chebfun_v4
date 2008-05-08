@@ -22,11 +22,16 @@ for i = 1:f.nfuns
         end
         rts = [rts; rs];
     end
-    if i < f.nfuns && ( isempty(rts) || abs(rts(end)-b) > 1e-14*hs )
+    if isreal(f) && i<f.nfuns && (isempty(rts) || abs(rts(end)-b)>1e-14*hs )
         rfun = f.funs(i+1);
-        fleft = feval(lfun,1); fright = feval(rfun,-1);
-        if real(fleft)*real(fright) <= 0 && imag(fleft)*imag(fright) <= 0
+        if feval(lfun,1)*feval(rfun,-1) <= 0, 
             rts = [rts; b];
+        end
+%   if i < f.nfuns && ( isempty(rts) || abs(rts(end)-b) > 1e-14*hs )
+%       rfun = f.funs(i+1);
+%       fleft = feval(lfun,1); fright = feval(rfun,-1);
+%       if real(fleft)*real(fright) <= 0 && imag(fleft)*imag(fright) <= 0
+%           rts = [rts; b];
         end
     end    
 end 
