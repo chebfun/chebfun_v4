@@ -3,7 +3,7 @@ function g = ctor_3(g,op,n,scl)
 % set scale
 g.scl = scl;
 
-if ~all(isfield(scl,{'v','h'}))
+if ~(isfield(scl,'v') & isfield(scl,'h'))
     error(['Scale argument should be a structure with the fields ''v'''...
         ' and ''h''.']);
 end
