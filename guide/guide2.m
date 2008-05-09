@@ -307,8 +307,8 @@
 % Clenshaw-Curtis quadrature I and II", Journal of
 % the ACM 15 (1972), 337-346 and 353.
 %
-% [Kahaner 1971] D. K. Kahaner, Comparison of numerical quadrature
-% formulas, in J. R. Rice, ed., Mathematical Software, Academic Press, 1971, 229-259.
+% [Kahaner 1971] D. K. Kahaner, "Comparison of numerical quadrature
+% formulas", in J. R. Rice, ed., Mathematical Software, Academic Press, 1971, 229-259.
 %
 % [Wolfram 2003] S. Wolfram, The Mathematica Book, 5th ed., 
 % Wolfram Media, 2003.
