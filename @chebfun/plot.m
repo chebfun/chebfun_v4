@@ -58,16 +58,24 @@ if length(data)==1
     linespec = '';    
     [args_1,args_2] =  unwrap_group(args_1, args_2, f, g, linespec);
     if ~isreal(data{1})
-        args_1([1 4:6]) = []; 
-        args_2(1) = [];      
+        for i = 1:3:length(args_1)
+            args_1{i} = real(args_1{i+1});
+            args_2{i} = real(args_2{i+1});
+            args_1{i+1} = imag(args_1{i+1});
+            args_2{i+1} = imag(args_2{i+1});            
+        end
     end
     data = [];        
 elseif length(data)==2 & isa(data{2},'char')
     f = []; g = data{1}; linespec = data{2};
     [args_1,args_2] =  unwrap_group(args_1, args_2, f, g, linespec);
     if ~isreal(data{1})
-        args_1([1 4:6]) = []; 
-        args_2(1) = [];        
+        for i = 1:3:length(args_1)
+            args_1{i} = real(args_1{i+1});
+            args_2{i} = real(args_2{i+1});
+            args_1{i+1} = imag(args_1{i+1});
+            args_2{i+1} = imag(args_2{i+1});            
+        end       
     end
     data = [];
 end
@@ -153,7 +161,7 @@ mf(end) = []; mg(end) = [];
 
 
 curve = {cf,cg,linespec}; mark = {mf,mg,linespec};
-if single_chebfun
+if single_chebfun & isreal(curve{2})
     jloc = []; jval = [];
     for i = 1:g.nfuns - 1
         jp = g.ends(i+1);
