@@ -23,7 +23,7 @@ nchebs = numel(F);
 if nchebs>1, 
     x=x(:); Fx=[];
     for k = 1:nchebs
-        trans=F.trans;
+        trans=F(1).trans;
         if trans
             Fx = [Fx; fevalcolumn(F(k),x')];
         else
