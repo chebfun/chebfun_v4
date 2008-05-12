@@ -27,9 +27,9 @@ while length(propertyArgIn) >= 2,
        % F.scl = scl;
         F = update_vscl(F);
     case 'ends'
-        F.ends = val(:)';
+        F.ends = val(:).';
     case 'imps'
-        F.imps = val(:)';
+        F.imps = val;
     case 'scl'
         F.scl = val;  
     case 'trans'
@@ -39,6 +39,6 @@ while length(propertyArgIn) >= 2,
     end
 end
 
-if length(F.ends)~=F.nfuns+1 || size(F.imps,2)~=length(F.ends)
+if length(F.ends)~=F.nfuns+1 || size(F.imps,2) ~= length(F.ends)
     error('inconsistent chebfun') 
 end
