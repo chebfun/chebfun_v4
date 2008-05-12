@@ -60,8 +60,10 @@ if length(data)==1
     if ~isreal(data{1})
         for i = 1:3:length(args_1)
             args_1{i} = real(args_1{i+1});
-            args_2{i} = real(args_2{i+1});
             args_1{i+1} = imag(args_1{i+1});
+        end
+        for i = 1:3:length(args_2)            
+            args_2{i} = real(args_2{i+1});
             args_2{i+1} = imag(args_2{i+1});            
         end
     end
@@ -72,10 +74,12 @@ elseif length(data)==2 & isa(data{2},'char')
     if ~isreal(data{1})
         for i = 1:3:length(args_1)
             args_1{i} = real(args_1{i+1});
-            args_2{i} = real(args_2{i+1});
             args_1{i+1} = imag(args_1{i+1});
+        end
+        for i = 1:3:length(args_2)            
+            args_2{i} = real(args_2{i+1});
             args_2{i+1} = imag(args_2{i+1});            
-        end       
+        end    
     end
     data = [];
 end
