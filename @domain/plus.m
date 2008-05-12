@@ -1,7 +1,9 @@
 function d = plus(d,a)
+% -      Translate a domain to the right.
+% D+A and A+D for domain D and scalar A adds A to all of the domain D's
+% endpoints and breakpoints.
 
-% Shift a domain by a scalar constant.
-
+% Swap if needed to make D a domain.
 if isnumeric(d)
   t=a; a=d; d=t;
 end

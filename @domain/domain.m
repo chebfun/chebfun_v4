@@ -1,16 +1,24 @@
-function r = domain(varargin)
-
-% domain(a,b) or domain([a,b]) or domain([a,b,c,d]).
+function d = domain(varargin)
+% DOMAIN  Domain object constructor.
+% D = DOMAIN(A,B) or DOMAIN([A,B]) creates a domain object for the
+% real interval [A,B].
+%
+% D = DOMAIN(V) for vector V of length at least 2 creates a domain for the
+% interval [V(1),V(end)] with breakpoints at V(2:end-1).
 
 if nargin==0
-  e = [];
+  v = [];
 elseif nargin==1
-  e = varargin{1};
+  v = varargin{1};
 else
-  e = cat(2,varargin{:});
+  v = cat(2,varargin{:});
 end
 
-r.ends = e;
+if v(end) < v(1)   % empty interval
+  v = [];
+end
+
+d.ends = v;
 
 superiorto('double');
-r = class(r,'domain');
+d = class(d,'domain');

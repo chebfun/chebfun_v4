@@ -1,9 +1,11 @@
 function t = subsref(d,s)
-
-% d(1) or d(2)
-% d(:) or d.ends (endpoints)
-% d.break
-% d.break(i)
+% SUBSREF Access data from a domain.
+% Given domain D, D(1) and D(2) return the left and right endpoints of D.
+% 
+% D(:) or D.ends returns both endpoints as a vector.
+%
+% D.break returns the breakpoints (excluding endpoints). You can access a
+% single breakpoint via D.break(I).
 
 valid = false;
 switch(s(1).type)

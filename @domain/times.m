@@ -1,7 +1,10 @@
 function d = times(d,a)
+% .*      Scale a domain.
+% A*D or D*A for domain D and scalar A multiplies all the endpoints and
+% breakpoints of D by A. If A is negative, the ordering of the points is
+% then reversed.
 
-% Scale a domain. Reverse points if scaling factor is negative.
-
+% Swap if needed to make D the domain.
 if isnumeric(d)
   t=a; a=d; d=t;
 end

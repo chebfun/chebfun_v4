@@ -1,4 +1,5 @@
 function s = char(d)
+% CHAR   Pretty-print domain as a string.
 
 if isempty(d)
   s = '   empty domain';

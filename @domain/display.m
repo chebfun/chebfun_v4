@@ -1,4 +1,7 @@
 function display(r)
+% DISPLAY Pretty-print domain to the command output.
+%
+% See also CHEBOP/CHAR.
 
 loose = ~isequal(get(0,'FormatSpacing'),'compact');
 if loose, disp(' '), end
