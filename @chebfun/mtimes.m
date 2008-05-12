@@ -43,10 +43,9 @@ else
 end
 
 % ------------------------------------
-function fout = mtimescol(a,f)
+function f = mtimescol(a,f)
 
-funs = f.funs;
 for i = 1:f.nfuns
-    funs(i) = a*funs(i);
+    f.funs(i) = a*f.funs(i);
 end
-fout = set(f, 'funs', funs, 'imps', a*f.imps);
+f.imps = a*f.imps;
