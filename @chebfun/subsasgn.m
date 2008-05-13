@@ -18,6 +18,7 @@ function varargout = subsasgn(f,index,varargin)
 %
 % Chebfun Version 2.0
 n = size(f,2);
+fini = f;
 switch index(1).type
     case '.'
         varargout = {set(f,index(1).subs,varargin{:})};
@@ -30,8 +31,7 @@ switch index(1).type
                     'Index missing for quasi-matrix assignment.')
             end                
         elseif length(index(1).subs) == 2
-            if n > 1
-                fini = f;
+            if n > 1                
                 f = f(index(1).subs{2});
                 s = index(1).subs{1};
             else
@@ -56,9 +56,13 @@ switch index(1).type
                 end 
                 [mem,loc] = ismember(stemp,f.ends);
                 v = varargin{:};
-                f.imps(1,loc(find(loc))) = v(find(mem)); 
-                fini(index(1).subs{2}) = f;
-                varargout = { fini };
+                f.imps(1,loc(find(loc))) = v(find(mem));
+                if n > 1
+                    fini(index(1).subs{2}) = f;
+                    varargout = { fini };
+                else
+                    varargout = {f};
+                end
             else
                 error('chebfun:subsref:dimensions',...
                     ['In an assignment  A(I) = B, the number of '...
