@@ -59,16 +59,17 @@ e1 = (b+a)/2;                               % estimate edge location
 e0 = e1+1;                                  % force loop
 
 % main loop
-while (cont < 2 || maxd == inf) && e0 ~= e1
+% Note that maxd = inf whenever dx<realmin, but there are 
+while (cont < 2 || maxd == inf) && e0 ~= e1 && dx ~= 0
     c = (a+b)/2; yc = f(c); dx = dx/2;      % find c at the center of the interval [a,b]
     dy1 = abs(yc-ya); dy2 = abs(yb-yc);     % find the undivided difference on each side of interval
     maxd1 = maxd;                           % keep track of maximum value
     if dy1 > dy2
        b = c; yb = yc;                      % blow-up seems to be in [a,c]
-       maxd = dy1/dx;                       % upddate maxd
+       if dx ~= 0, maxd = dy1/dx; end       % upddate maxd
     else
        a = c; ya = yc;                      % blow-up seems to be in [c,b]
-       maxd = dy2/dx;
+       if dx ~= 0, maxd = dy2/dx; end
     end 
     e0 = e1; e1 = (a+b)/2;                  % update edge location. 
     if maxd < maxd1*(1.1), cont = cont + 1; end  % test must fail twice before breaking the loop.
