@@ -8,23 +8,7 @@ function varargout = subsref(f,index)
 
 switch index(1).type
     case '.'
-        if isempty(f)
-            varargout = {};
-        else
-            if numel(f) > 1
-                error('Argument cannot be a quasi-matrix.')
-            end
-            switch index(1).subs
-                case 'funs'
-                    varargout = {f.funs};
-                case 'ends'
-                    varargout = {f.ends};
-                case 'nfuns'
-                    varargout = {f.nfuns};
-                case 'scl'
-                    varargout = {f.scl};
-            end
-        end           
+        varargout = {get(f,index(1).subs)};
     case '()'
         if length(index(1).subs) == 1
             s = index(1).subs{1};
@@ -50,8 +34,9 @@ switch index(1).type
         if length(index.subs)==1
           if isequal(index.subs{1},':')
             s = domain(f); 
-          elseif isa(index.subs{1},'domain')
-            s = index.subs{1};
+          else
+              error('chebfun:subsref:baddomain',...
+            'Invalid domain syntax.')
           end
         elseif length(index.subs)==2
           s = cat(2,index.subs{:});

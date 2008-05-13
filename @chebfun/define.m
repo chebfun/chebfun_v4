@@ -95,7 +95,7 @@ end
 
 %% The hard work.
 domf = domain(f);
-if ~isempty(g)                                   % INSERTION/OVERWRITING
+if ~isempty(g)                                 % INSERTION/OVERWRITING
   if subint(2) < domf(1)                       % extension to the left
     f.ends = [ g.ends f.ends ];
     f.funs = [ g.funs fun(0) f.funs ];
@@ -117,7 +117,7 @@ if ~isempty(g)                                   % INSERTION/OVERWRITING
     end
     f.funs = [ fleft.funs g.funs fright.funs ];
     f.ends = [ fleft.ends(1:end-1) g.ends fright.ends(2:end) ];
-    f.imps = [ fleft.imps(1:end-1) g.imps(1:end-1) fright.imps(1:end) ];
+    f.imps = [ fleft.imps(1:end-1) g.imps fright.imps(2:end) ];
   end
 else                                             % DELETION
   if subint(2) < domf(1) || subint(1) > domf(2)
@@ -130,7 +130,7 @@ else                                             % DELETION
     elseif isempty(fleft), f = fright;
     else
       % Deletion strictly inside the domain--slide the right side over.
-      f.funs = [ fleft.fun fright.funs ];
+      f.funs = [ fleft.funs fright.funs ];
       f.ends = [ fleft.ends(1:end-1) fright.ends-fright.ends(1)+fleft.ends(end) ];
       f.imps = [ fleft.imps(1:end-1) fright.imps ];
     end

@@ -47,6 +47,7 @@ if subint(2)==subint(1)
   g.funs = fun( feval(f.funs(j),a) ) ;
   g.nfuns = 1;
   g.ends = subint;
+  
   return                                         % empty result
 end
 
