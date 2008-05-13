@@ -4,8 +4,7 @@ function Fx = feval(F,x,varargin)
 % FEVAL(F,X) evaluates the chebfun F at the point(s) in X.
 %
 % See also CHEBFUN/SUBSREF.
-
-% Chebfun version 2.0
+%
 
 % Because chebfuns are superior to function_handle, this call can result
 % when f is function_handle and x is chebfun. In that case, revert to the
@@ -18,8 +17,8 @@ end
 
 if isempty(F), Fx=[]; return, end
 
+% Deal with quasimatrices.
 nchebs = numel(F);
-
 if nchebs>1, 
     x=x(:); Fx=[];
     for k = 1:nchebs
@@ -34,20 +33,21 @@ else
     Fx = fevalcolumn(F,x);
 end
     
-% ------------------------------------------
 
+% Evaluate a single chebfun
+% ------------------------------------------
 function fx = fevalcolumn(f,x)
 
 fx = zeros(size(x));
-
 
 funs=f.funs;
 ends = f.ends;
 [X,I] = rescale(x,ends);
 for i = 1:f.nfuns
-   ffun = funs(i);
    pos = find(I==i);
-   fx(pos) = feval(ffun,X(pos));
+   if ~isempty(pos)       
+       fx(pos) = feval(funs(i),X(pos));
+   end
 end
 
 x=x(:)';

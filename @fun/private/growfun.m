@@ -1,15 +1,32 @@
-function g = growfun(op,g,n)
-% Generates a fun with at most n points.
-% A fun is happy if the simplify command returns a shorter fun. 
+function g = growfun(op,g,n,g1,g2)
+% G = GROWFUN(OP,G,N,G1,G2)
+%
+% G = GROWFUN(OP,G,N) returns the fun G representing the function handle OP.
+%   N is the maximum number of points allowed in the representation.
+%
+% G = GROWFUN(OP,G,N,G1) returns the fun G representing the composition 
+%   OP(G1), where G1 is a fun. 
+%
+% G = GROWFUN(OP,G,N,G1,G2) returns the fun G representing the composition 
+%   OP(G1,G2), where G1 and G2 are funs.
+%
 
 % Check preferences 
 split = chebfunpref('splitting');
 resample = chebfunpref('resample');
-minn = chebfunpref('minn');
 
+% Set minn 
+if nargin == 4
+    minn = g1.n;
+elseif nargin == 5
+    minn = max(g1.n, g2.n);
+else
+    minn = chebfunpref('minn');
+end
+    
 % Sample using powers of 2.
 npower = floor(log2(n-1));
-minpower = max(1,floor(log2(minn-1)));
+minpower = max(2,ceil(log2(minn-1)));
 
 % Number of nodes to be used 
 if 2^npower+1 ~= n
@@ -18,7 +35,26 @@ else
     kk = 2.^(minpower:npower) + 1;
 end
 
-if ~resample && 2^npower+1 == n
+% ---------------------------------------------------
+% composition case, i.e., want gout = op(g) (see FUN/COMP.M)
+if nargin > 3
+    for k = kk
+        v1 = get(prolong(g1,k),'vals');
+        if nargin == 5
+            v2 = get(prolong(g2,k),'vals');
+            v = op(v1,v2);
+        else
+            v = op(v1);
+        end
+        g = set(g,'vals', v);
+        g = simplify(g);
+        if g.n < k, break, end
+    end
+    return
+end
+% ---------------------------------------------------
+
+if  ~resample && 2^npower+1 == n && nargin<4
     
     % single sampling
     ind =1;

@@ -21,10 +21,10 @@ N = 15;   % grid size for finite difference computations in loop.
 [na,nb,maxd] = maxder(f, a, b, nder, 50);
 
 % Keep track of endpoints.
-ends = [na(nder) nb(nder)]; endsold = ends+1;
+ends = [na(nder) nb(nder)]; 
 
 % Main loop
-while maxd(nder) ~= inf && ~isnan(maxd(nder)) && any(endsold ~= ends)
+while maxd(nder) ~= inf && ~isnan(maxd(nder)) &&  diff(ends) > eps*hs 
     cont = cont + 1;
     maxd1 = maxd(1:nder);                                  % Keep track of max derivatives
     [na,nb,maxd] = maxder(f, ends(1), ends(2), nder, N);   % compute maximum derivatives and interval
@@ -39,7 +39,6 @@ while maxd(nder) ~= inf && ~isnan(maxd(nder)) && any(endsold ~= ends)
     elseif maxd(nder) < 1.2*maxd1(nder)                    
         return                                             % derivatives don't seem to blowup, edge =[]
     end
-    endsold = ends;                                        % update ends
     ends = [na(nder) nb(nder)];
 end
     

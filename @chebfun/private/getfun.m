@@ -25,7 +25,7 @@ if (b-a) < 2*htol
     scl.v=max(scl.v,g.scl.v);
     g=set(g,'scl.v',scl.v);
     hpy = true;
-    warning('CHEBFUN:smallinterval','Small interval, fun might be unhappy')
+    warning('CHEBFUN:getfun:SmallInterval','Small interval, fun might be unhappy')
 else
 
     if ~chebfunpref('splitting') % In splitting OFF mode, use values at end points
@@ -48,7 +48,7 @@ else
         end
 
         % get fun!
-        g = fun(@(x) [va; op(.5*((b-a)*x(2:end-1)+b+a)); vb], maxn, funscl);
+        g = fun(@(x) eval_op(x,op,va,vb,a,b), maxn, funscl);
 
     end
 
@@ -56,3 +56,10 @@ else
     scl.v = g.scl.v;              % Update the vertical scale.
 
 end
+
+% -------------------------------------------------------------------------
+function y = eval_op(x,op,va,vb,a,b)
+
+y = op(.5*((b-a)*x+b+a));
+y(1) = va;
+y(end) = vb;

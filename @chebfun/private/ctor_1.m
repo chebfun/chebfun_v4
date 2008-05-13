@@ -2,7 +2,7 @@ function f = ctor_1(f,op)
 
 
 dom = chebfunpref('domain');
-sing = [false false];
+sing = [true true];
 switch class(op)
     case 'chebfun'
         f = op;  

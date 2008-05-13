@@ -32,22 +32,23 @@ function fout = rdividecol(f1,f2)
 if (isempty(f1) || isempty(f2)), fout=chebfun; return; end
 
 if isa(f2,'double')
-    if f2 ==  0, error('Division by zero'), end
+    if f2 ==  0, error('CHEBFUN:rdivide:DivisionByZero','Division by zero'), end
     fout = f1*(1/f2);  
-    
 elseif ~isempty(roots(f2))
-       error('Division by zero')
+       error('CHEBFUN:rdivide:DivisionByZero','Division by zero')
 elseif isa(f1,'double')    
     if f1 == 0, fout =chebfun(0); 
-    else
-        fout = chebfun(@(x) f1./feval(f2,x), f2.ends);
-        fout.trans = f2.trans;
+    else        
+        fout = comp(f2,@(x) rdivide(f1,x));
+        %fout = chebfun(@(x) f1./feval(f2,x), f2.ends);
+        %fout.trans = f2.trans;
     end
 else
     if f1.trans~=f2.trans
-        error('The .trans field of the two functions must agree')
+        error('CHEBFUN:rdivide:trans','The .trans field of the two functions must agree')
     end
-    fout = chebfun(@(x) feval(f1,x)./feval(f2,x), union(f1.ends,f2.ends));
-    fout.trans = f1.trans;
+    fout = comp(f1, @rdivide, f2);
+    %chebfun(@(x) feval(f1,x)./feval(f2,x), union(f1.ends,f2.ends));
+    %fout.trans = f1.trans;
 end
 

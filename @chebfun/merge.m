@@ -18,12 +18,18 @@ function fout = merge(f, bkpts, maxn)
 %   See also SPLITTING,  CHEBFUNPREF.
 %
 
-%   Chebfun Version 2.0
-%
-
 if numel(f) > 1
     error('MERGE does not handle chebfun quasi-matrices')
 end
+
+if nargin < 2
+    bkpts = 2:f.nfuns;
+end
+if isempty(bkpts)
+    fout =f; 
+    return
+end
+bkpts = unique(bkpts);
 
 if nargin < 3
     if ~chebfunpref('splitting')
@@ -32,14 +38,7 @@ if nargin < 3
         maxn = chebfunpref('nsplit'); % default 129
     end
 end
-if nargin < 2
-    bkpts = 2:f.nfuns;
-elseif isempty(bkpts)
-    fout =f; 
-    return
-end
 
-bkpts = unique(bkpts);
 if  bkpts(1) < 1 || bkpts(end) > f.nfuns+1 || any(round(bkpts)~=bkpts)
     error('Break points must be integers between 1 and length(ends)')
 end

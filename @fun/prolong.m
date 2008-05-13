@@ -9,8 +9,13 @@ if m == 0
     gout = g;
     return
 end
+% Constant case
+if g.n ==1
+    gout = set(g,'vals', g.vals*ones(nout,1));
+    return
+end
 
-if g.n < 65 % Use barycentric to prolong
+if  (m<0 && nout<129 && g.n<1000)% Use barycentric to prolong
     gout = set(g,'vals',bary(chebpts(nout),g.vals));
 else % Use FFTs to prolong
     c = chebpoly(g);  

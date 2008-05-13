@@ -1,9 +1,8 @@
 function Fout = power(F1,F2)
 % .^	Chebfun power
 % F.^G returns a chebfun F to the scalar power G, a scalar F to the
-% chebfun power G, or a chebfun F to the chebfun power G
-
-% Chebfun Version 2.0
+% chebfun power G, or a chebfun F to the chebfun power G.
+%
 
 if isa(F1,'chebfun') && isa(F2,'chebfun')
     if size(F1)~=size(F2)
@@ -32,8 +31,7 @@ if (isa(f,'chebfun') && isa(b,'chebfun'))
     if f.ends(1)~=b.ends(1) ||  f.ends(end)~=b.ends(end)
         error('F and G must be defined in the same interval')
     end
-    ends = union(f.ends,b.ends);
-    fout = chebfun(@(x) feval(f,x).^feval(b,x) , ends);
+    fout = comp(f,@power,b);
 
 else
 
@@ -43,12 +41,13 @@ else
         elseif b==2
             fout = f.*f;
         else
-            fout = chebfun(@(x) feval(f,x).^b, f.ends);
+            fout = comp(f,@(x) power(x,b));
         end
         fout.trans = f.trans;
     else
-        fout = chebfun(@(x) f.^feval(b,x), b.ends);
-        fout.trans = b.trans;
+        fout = comp(b, @(x) power(f,x));
+        %fout = chebfun(@(x) f.^feval(b,x), b.ends);
+        %fout.trans = b.trans;
     end
     
 end
