@@ -53,11 +53,13 @@ for j = 1:length(mfile)
       pause(0.1)
       %fprintf( repmat('\b',1,numchar) )
     end
-  catch me
+  catch
     failed(j) = -1;
     fprintf('CRASHED: ')
-    fprintf(me.message)
-    fprintf('\n')
+    msg = lasterror;  
+    lf = findstr(sprintf('\n'),msg.message); 
+    if ~isempty(lf), msg.message(1:lf(end))=[]; end
+    fprintf([msg.message '\n'])
   end
   
 end
@@ -65,10 +67,10 @@ rmpath(dirname)
 
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')
+  if nargout>0, failfun = {}; end
 else
   fprintf('\n%i failed and %i crashed\n\n',sum(failed>0),sum(failed<0))
+  failfun = mfile(failed~=0);
 end
 
-if nargout>0
-  failfun = mfile(failed~=0);
 end
