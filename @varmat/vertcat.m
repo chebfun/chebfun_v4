@@ -1,4 +1,8 @@
 function C = vertcat(varargin)
+% VERTCAT  Vertical concatenation of varmats.
+
+% Toby Driscoll, 14 May 2008.
+% Copyright 2008.
 
 C = varmat( @vcat );
 

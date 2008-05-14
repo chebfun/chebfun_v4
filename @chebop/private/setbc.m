@@ -1,19 +1,22 @@
 function A = setbc(A,bc)
 
 % Set one or more of the boundary conditions. 
-
+%
 % Two options for bc: struct or mnemonic.
-
+%
 % bc struct has fields .left and .right. Each of these is a struct array
 % with fields .op and .val; these define the operator on the solution and
 % the value of the result at the appropriate boundary. Optional string
 % values for .op are 'dirichlet' (maps to I) and 'neumann' (maps to D).
-
+%
 % bc mnemonic is a string or cell array {string,val}. If val is not given,
 % it defaults to zero. If the string is 'dirichlet' or 'neumann', then the
 % condition is applied at the left (1st order operator) or both sides (2nd
 % order). If the string is 'periodic', you get m nonseparated conditions for
 % difforder=m. 
+
+% Toby Driscoll, 25 April 2008.
+% Copyright 2008.
  
 I = eye(A.fundomain);
 D = diff(A.fundomain);

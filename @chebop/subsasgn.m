@@ -1,6 +1,5 @@
 function A = subsasgn(A,s,B)
-% SUBSASGN Change boundary conditions or other properties of a chebop.
-%
+% SUBSASGN  Change boundary conditions or other properties of a chebop.
 % A.bc = BC assigns boundary conditions at both ends of the function domain
 % as described by a mnemonic or chebop. See CHEBOP/AND for the syntax.
 %
@@ -14,7 +13,10 @@ function A = subsasgn(A,s,B)
 % example in Newton's method where corrections are small compared to the
 % global solution.
 %
-% See also CHEBOP/AND.
+% See also CHEBOP/AND, CHEBOP/MLDIVIDE.
+
+% Toby Driscoll, 14 May 2008.
+% Copyright 2008.
 
 valid = false;
 switch s(1).type

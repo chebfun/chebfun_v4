@@ -1,17 +1,23 @@
 function v = filter(v,thresh)
 
-% Attempt to filter out a "noise plateau" falling below the given relative
-% threshold.
+% The chebfun constructor is happy only when coefficient sizes drop below a
+% level that is tied to machine precision. For solutions of BVPs, this is
+% unrealistic, as the condition number of the problem creates noise in the
+% solution at a higher level. Here we try to detect whether the
+% coefficients have reached a "noise plateau" falling below the given 
+% relative threshold. If so, we replace the coefficients on the plateau
+% with zero in order to nudge the constructor to stop.
 
-% TAD, 4 March 2008.
+% Toby Driscoll, 4 March 2008.
+% Copyright 2008.
 
 n = length(v);
 if n < 64, return, end
 
-c = cd2cp(v);    % ascending degree
+c = cd2cp(v);    % coeffs in ascending degree
 ac = abs(c)/norm(v,inf);
 
-% Smooth using a windowed max.
+% Smooth using a windowed max to overcome symmetry oscillations.
 maxac = ac;
 for k=1:8
   maxac = max(maxac(1:end-1),ac(k+1:end));
@@ -23,7 +29,8 @@ if isempty(t) || n-t < 16
   return
 end
 
-% Find where improvement in the windowed max seems to stop.
+% Find where improvement in the windowed max seems to stop, by looking at
+% the derivative of a smoother form of the curve. 
 dmax = diff( conv( [1 1 1 1]/4, log(maxac(t:end)) ) );
 mindmax = dmax;
 for k = 1:2
@@ -35,54 +42,42 @@ cut = cut(end) + t + k + 8;
 c(cut:end) = 0;
 v = cp2cd(c);
 
-% % Try to identify a leading flat region. 
-% T = max( 10, n/20 );  % block size
-% k = (1:T)';
-% p = polyfit(k,log(ac(k)),1);
-% slope = p(1);
-% while (slope < .005) && (k(end)+T<=n)
-%   c(k) = 0;
-%   k = k+T;
-%   p = polyfit(k,log(ac(k)),1);
-%   slope = p(1);
-% end
-    
+end
 
+function p = cd2cp(y)
+%CD2CP  Chebyshev discretization to Chebyshev polynomials (by FFT).
+%   P = CD2CP(Y) converts a vector of values at the Chebyshev extreme
+%   points to the coefficients (ascending order) of the interpolating
+%   Chebyshev expansion.  If Y is a matrix, the conversion is done
+%   columnwise.
 
-% % Uses an explicit formula for the slopes of
-% % the 'cumulative least squares fit'.
-% T = (1:2*t)';
-% logac = log(ac(T));
-% slopes = ( cumsum(T.*logac) - (T+1)/2.*cumsum(logac) ) * 12 ./ (T.*(T.^2-1));
-% slopes([1 end]) = 1;   % skip the first, guarantee the last
-% if all(slopes(1:6) > 0.05)
-%   tmax = 0;
-% else
-%   tmax = 5 + find( slopes(6:end) > 0.05, 1 );
-% end
-% c(1:tmax) = 0;
+p = zeros(size(y));
+if any(size(y)==1), y = y(:); end
+N = size(y,1)-1;
 
+yhat = fft([y(N+1:-1:1,:);y(2:N,:)])/(2*N);
 
-% locmax = [false; ( diff(sign(diff(logac))) < 0 ); false ];
-% slope = 0;
-% % tnew = find(locmax,8);
-% % if length(tnew) < 8
-% %   tnew = Inf;
-% % else
-% %   tnew = tnew(end);
-% % end
-% tnew = 8; t = 0;
-% while (tnew*abs(slope) < -log(.05)) && (tnew < n)
-%   tnew = ceil(1.5*t);
-%   t = tnew;
-%   k = (1:t)';
-%   if sum(k) > 10
-%     p = polyfit( k, logac(k), 1 );
-%     slope = p(1);
-%   end
-% end
-% c(1:t) = 0;
+p(2:N,:) = 2*yhat(2:N,:);
+p([1,N+1],:) = yhat([1,N+1],:);
 
-% v = cp2cd(flipud(c));
+if isreal(y),  p = real(p);  end
+
+end
+
+function y = cp2cd(p)
+%CP2CD   Chebyshev polynomials to Chebyshev discretization (by FFT).
+%   CP2CD(P) converts a vector of coefficients of Chebyshev 
+%   polynomials to the values of the expansion at the extreme
+%   points. If P is a matrix, the conversion is done columnwise.
+
+y = zeros(size(p));
+if any(size(p)==1), p = p(:); end
+N = size(y,1)-1;
+
+p(2:N,:) = p(2:N,:)/2;
+phat = ifft([p(1:N,:);p(N+1:-1:2,:)])*(2*N);
+
+y = phat(N+1:-1:1,:);
+if isreal(p),  y = real(y);  end
 
 end

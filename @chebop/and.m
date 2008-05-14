@@ -2,19 +2,23 @@ function A = and(A,bc)
 % &     Set boundary conditions for a chebop.
 %
 % (A & BC) returns a chebop the same as A but with boundary conditions
-% defined by BC. If A had any boundary conditions, they are discarded.
+% defined by BC. Any previously defined boundary conditions for A 
+% are discarded.
 %
-% There are multiple options for BC:
+% There are multiple options for the BC part:
 %
-%   'dirichlet' or {'dirichlet',X} :  set value to zero or to X
-%   'neumann' or {'neumann',z}     :  set derivative to zero or to X
-%   B or {B,z}                     :  B is a chebop defining boundary operator          
+%   'dirichlet' or {'dirichlet',c} :  set value to zero or to c
+%   'neumann' or {'neumann',c}     :  set derivative to zero or to c
+%   B or {B,c}                     :  B is a chebop defining boundary operator          
 %   'periodic'                     :  periodicity up to diff. order
 %
-% In addition, BC may be a struct with fields 'left' and 'right'. Each
-% field can be any of the first three options above. If one wants to impose
-% multiple conditions at one boundary, then the field needs to be a struct
-% array with fields 'op' and 'val'. For example:
+% Alternatively, BC may be a struct with fields 'left' and 'right'. To
+% impose a single condition, each of these fields can take the form of any
+% of the first three options above. 
+%
+% If one wants to impose multiple conditions at one boundary, then the
+% left/right field of BC needs to be a struct array with fields 'op' and
+% 'val'. For example:
 %
 %   lbc = struct( 'op', {'dirichlet','neumann'}, 'val', {1,0} );
 %   bc = struct( 'left', lbc, 'right', struct([]) );
@@ -24,13 +28,15 @@ function A = and(A,bc)
 % assignment syntax instead. See CHEBOP/SUBSASGN for more information.
 %
 % One use of & is to apply boundary conditions that were read off of
-% another chebop. For example, A = (A & B.bc);
+% another chebop. For example, A = (A & B.bc)
 %
 % Note that A = (A & BC) is a synonym for A.bc = BC. However, the & syntax
-% creates a new object that can be renamed or used inline, as an argument to
+% creates a new object that can be renamed or used inline as an argument to
 % another function.
 %
 % See also chebop/subsref, chebop/subsasgn.
+
+% Toby Driscoll, 12 May 2008.
 
 A = setbc(A,bc);
 

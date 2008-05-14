@@ -1,4 +1,9 @@
 function C = uminus(A)
-C = chebop( -A.varmat, @(u) -feval(A.oper,u), domain(A) );
-C.difforder = A.difforder;
+% -  Negate a chebop.
+
+% Toby Driscoll, 14 May 2008.
+% Copyright 2008.
+
+C = chebop( -A.varmat, @(u) -feval(A.oper,u), A.fundomain, A.difforder );
+
 end

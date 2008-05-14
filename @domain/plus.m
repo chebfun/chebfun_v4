@@ -1,5 +1,5 @@
 function d = plus(d,a)
-% -      Translate a domain to the right.
+% +  Translate a domain to the right.
 % D+A and A+D for domain D and scalar A adds A to all of the domain D's
 % endpoints and breakpoints.
 

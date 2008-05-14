@@ -1,4 +1,8 @@
 function C = horzcat(varargin)
+% HORZCAT  Horizontally concatenate varmats.
+
+% Toby Driscoll, 14 May 2008.
+% Copyright 2008.
 
 C = varmat( @hcat );
 

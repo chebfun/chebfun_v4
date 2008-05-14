@@ -1,4 +1,20 @@
 function A = chebop(varargin)
+% CHEBOP  Chebfun operator object constructor.
+% CHEBOP(F), where F is a function of one argument N that returns an NxN
+% matrix, returns a chebop object whose NxN finite realization is defined
+% by F.
+%
+% CHEBOP(F,L), where L is a function that can be applied to a chebfun,
+% defines an infinite-dimensional representation of the chebop as well. L
+% may be empty.
+%
+% CHEBOP(F,L,D) specifies the domain D on which chebfuns are to be defined
+% for this operator. If omitted, it defaults to [-1,1].
+%
+% CHEBOP(F,L,D,M) also defines a nonzero differential order for the
+% operator.
+
+% Toby Driscoll, 12 May 2008.
 
 pref = chebfunpref;
 if pref.splitting
@@ -6,17 +22,19 @@ if pref.splitting
 end
 splitting off
 
+% Default properties.
 A.varmat = [];
-A.oper = @(u) [];
-A.validoper = false;
+A.oper = @(u) [];     % inf-dim representation
+A.validoper = false;  % true if inf-dim representation is given
 A.difforder = 0;
 A.fundomain = domain([-1 1]);
-A.realization = {};  % for future?
+A.realization = {};   % for future
 A.lbc = struct([]);
 A.rbc = struct([]);
 A.numbc = 0;
 A.scale = 0;
-A.ID = newIDnum();
+A.blocksize = [0 0];  % experimental, for block chebops
+A.ID = newIDnum();    % for storage of realizations/factorizations
 
 if nargin==0
 elseif nargin==1 && isa(varargin{1},'chebop')
@@ -40,6 +58,7 @@ else
   if nargin>=4
     A.difforder = varargin{4};
   end
+  A.blocksize = [1 1];
 end
   
 superiorto('double');
