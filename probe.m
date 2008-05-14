@@ -34,6 +34,7 @@ fprintf('\nTesting %i functions:\n\n',length(mfile))
 failed = zeros(length(mfile),1);
 
 addpath(dirname)
+warning off
 for j = 1:length(mfile)
   
   fun = mfile{j}(1:end-2);
@@ -64,6 +65,7 @@ for j = 1:length(mfile)
   
 end
 rmpath(dirname)
+warning on
 
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')

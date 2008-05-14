@@ -1,0 +1,11 @@
+function pass = ivp1
+
+d = domain(-1,1);
+I = (d);
+D = diff(d);
+f = chebfun(@(x) exp(sin(x).^2+2),d);
+F = diag(f);
+A = -(2*D^2 - diag(F)*Q);
+Af = A*f;
+
+pass = norm(Af - (f.*cumsum(f)-2*diff(f,2))) < eps;
