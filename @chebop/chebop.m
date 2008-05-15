@@ -1,5 +1,5 @@
 function A = chebop(varargin)
-% CHEBOP  Chebfun operator object constructor.
+% CHEBOP  Chebop operator object constructor.
 % CHEBOP(F), where F is a function of one argument N that returns an NxN
 % matrix, returns a chebop object whose NxN finite realization is defined
 % by F.
@@ -15,6 +15,7 @@ function A = chebop(varargin)
 % operator.
 
 % Toby Driscoll, 12 May 2008.
+% Copyright 2008.
 
 pref = chebfunpref;
 if pref.splitting

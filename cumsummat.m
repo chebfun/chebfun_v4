@@ -18,7 +18,8 @@ Tinv = cd2cpm(N);
 % Matrix mapping coeffs -> integral coeffs. Note that the highest order
 % term is truncated. 
 k = 1:N;
-B = diag(1./(2*k),-1) - diag(1./(2*(k-1)),1);
+k2 = 2*(k-1);  k2(1) = 1;  % avoid divide by zero
+B = diag(1./(2*k),-1) - diag(1./k2,1);
 B(1,:) = sum( diag((-1).^(0:N-1))*B(2:N+1,:), 1 );
 B(:,1) = 2*B(:,1); 
 

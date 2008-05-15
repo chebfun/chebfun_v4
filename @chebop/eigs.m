@@ -1,16 +1,17 @@
 function varargout = eigs(A,varargin)
 % EIGS  Find selected eigenvalues and eigenfunctions of a chebop.
-% D = EIGS(A) returns a vector of the chebop A's 6 smallest (in magnitude) 
-% eigenvalues. This is unlike the built-in EIGS, which returns the largest
-% eigenvalues by default.
+% D = EIGS(A) returns a vector of 6 eigenvalues of the chebop A. EIGS will
+% attempt to return the eigenvalues corresponding to the smoothest
+% eigenfunctions. (This is unlike the built-in EIGS, which returns the 
+% largest eigenvalues by default.)
 %
-% [V,D] = EIGS(A) returns a diagonal 6x6 matrix D of A's smallest
+% [V,D] = EIGS(A) returns a diagonal 6x6 matrix D of A's smoothest
 % eigenvalues, and a quasimatrix V of the corresponding eigenfunctions.
 %
 % EIGS(A,B) solves the generalized eigenproblem A*V = B*V*D, where B
 % is another chebop. 
 %
-% EIGS(A,K) and EIGS(A,B,K) find the K smallest eigenvalues. 
+% EIGS(A,K) and EIGS(A,B,K) find the K smoothest eigenvalues. 
 %
 % EIGS(A,K,SIGMA) and EIGS(A,B,K,SIGMA) find K eigenvalues. If SIGMA is a
 % scalar, the eigenvalues found are the ones closest to SIGMA. Other
@@ -21,9 +22,9 @@ function varargout = eigs(A,varargin)
 %
 % Despite the syntax, this version of EIGS does not use iterative methods
 % as in the built-in EIGS for sparse matrices. Instead, it uses the
-% built-in EIG on dense matrices of increasing size, stopping when the Kth
-% eigenfunction appears to have converged as determined by chebfun
-% construction.
+% built-in EIG on dense matrices of increasing size, stopping when the 
+% targeted eigenfunctions appear to have converged, as determined by the
+% chebfun constructor.
 %
 % EXAMPLE: Simple harmonic oscillator
 %
@@ -38,7 +39,7 @@ function varargout = eigs(A,varargin)
 % Copyright 2008.
 
 % Parsing.
-B = [];  k = 6;  sigma = 0;
+B = [];  k = 6;  sigma = [];
 gotk = false;
 j = 1;
 while (nargin > j)
@@ -56,9 +57,18 @@ while (nargin > j)
   j = j+1;
 end
 
+if isempty(sigma)
+  % Try to determine where the lowest-frequency eigenvalue is.
+  [V,D] = bc_eig(A,B,65,65,0);
+  V = V*diag(1./max(abs(V)));  % inf-norm = 1 for each vector
+  C = cd2cp(V);
+  [cmin,idx] = min( sum(abs(C),1) );  % min 1-norm of cheb coeffs  
+  sigma = D(idx,idx);  
+end
+
 % These assignments cause the nested function value() to overwrite them.
 V = [];  D = [];
-% Adaptively construct the kth eigenfunction.
+% Adaptively construct the sum of eigenfunctions.
 v = chebfun( @(x) A.scale + value(x) ) - A.scale;
 
 % Now V,D are already defined at the highest value of N used.
@@ -75,8 +85,8 @@ else
   varargout = { Vfun, D };
 end
 
-  % Called by the chebfun constructor. Returns values of the "highest"
-  % eigenfunction.
+  % Called by the chebfun constructor. Returns values of the sum of the
+  % "interesting" eigenfunctions. 
   function v = value(x)
     N = length(x);
     if N-A.numbc < k
@@ -84,7 +94,8 @@ end
       v = (-1).^(0:N-1)';
     else
       [V,D] = bc_eig(A,B,N,k,sigma);
-      v = V(:,end);
+      %v = V(:,end);
+      v = sum(V,2);
       v = filter(v,1e-8);
     end
   end
@@ -138,5 +149,25 @@ else
 end
 
 idx = idx( 1:min(k,length(lam)) );  % trim length
+
+end
+
+function p = cd2cp(y)
+%CD2CP  Chebyshev discretization to Chebyshev polynomials (by FFT).
+%   P = CD2CP(Y) converts a vector of values at the Chebyshev extreme
+%   points to the coefficients (ascending order) of the interpolating
+%   Chebyshev expansion.  If Y is a matrix, the conversion is done
+%   columnwise.
+
+p = zeros(size(y));
+if any(size(y)==1), y = y(:); end
+N = size(y,1)-1;
+
+yhat = fft([y(N+1:-1:1,:);y(2:N,:)])/(2*N);
+
+p(2:N,:) = 2*yhat(2:N,:);
+p([1,N+1],:) = yhat([1,N+1],:);
+
+if isreal(y),  p = real(p);  end
 
 end

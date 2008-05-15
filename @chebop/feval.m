@@ -38,6 +38,7 @@ else          % matrix
   if use_store && n > 100 && length(storage)>=A.ID ...
       && length(storage(A.ID).mat)>=n && ~isempty(storage(A.ID).mat{n})
     M = storage(A.ID).mat{n};
+    c = storage(A.ID).bc{n};
     rowreplace = storage(A.ID).rowreplace{n};
   else
     M = feval(A.varmat,n);
@@ -51,6 +52,7 @@ else          % matrix
         storage = struct([]); 
       end
       storage(A.ID).mat{n} = M;
+      storage(A.ID).bc{n} = c;
       storage(A.ID).rowreplace{n} = rowreplace;
     end 
   end
