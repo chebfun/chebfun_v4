@@ -19,8 +19,8 @@ if numel(f) == 1
         varargout{1} = f.ends(1);
         varargout{2} = f.ends(end);
     end
-elseif nargout == 1
-    error('For quasimatrices, use [a,b] = domain(F) instead.')
+%elseif nargout == 1
+%    error('For quasimatrices, use [a,b] = domain(F) instead.')
 elseif nargout == 2
     varargout{1} = f(1).ends(1);
     varargout{2} = f(1).ends(end);

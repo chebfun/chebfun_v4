@@ -32,6 +32,7 @@ else
 end
 
 g = chebfun;
+g.trans = f.trans;
 if subint(1)>subint(2)
   return                                         % empty result
 end

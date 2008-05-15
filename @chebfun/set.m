@@ -25,7 +25,9 @@ while length(propertyArgIn) >= 2,
        % scl = 0;
        % for i = 1:F.nfuns, scl = max(scl,norm(val(i).vals,inf)); end
        % F.scl = scl;
-        F = update_vscl(F);
+       F = update_vscl(F);
+    case 'nfuns'
+        F.nfuns = val;    
     case 'ends'
         F.ends = val(:).';
     case 'imps'

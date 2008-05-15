@@ -16,11 +16,13 @@ switch propName
     case 'scl'
         val = f.scl;    
     case 'vals'
-        funs = f.funs;
-        val = [];
-        for i = 1:f.nfuns
-           val = [val;get(funs(i),'vals')];
-        end
+       funs = f.funs;
+       val = [];
+       for i = 1:f.nfuns
+          val = [val;get(funs(i),'vals')];
+       end
+    case 'trans'
+        val = f(1).trans;       
     otherwise
-        error([propName,' Is not a valid chebfun property'])
+        error([propName,' is not a valid chebfun property'])
 end

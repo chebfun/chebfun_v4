@@ -17,82 +17,96 @@ function varargout = subsasgn(f,index,varargin)
 %     is any of the chebfun fields.
 %
 % Chebfun Version 2.0
-n = size(f,2);
-fini = f;
+idx = index(1).subs;
 switch index(1).type
     case '.'
-        varargout = {set(f,index(1).subs,varargin{:})};
+        varargout = {set(f,idx,varargin{:})};
     case '()'
-        if length(index(1).subs) == 1            
-            if n == 1
-                s = index(1).subs{1};
-            else
+        % --- transpose row chebfuns/quasimatrices -------
+        trans = 0;
+        if get(f,'trans')
+            trans = 1;
+            f = f';
+            idx = fliplr(idx);
+        end
+        n = size(f,2);  
+        s = idx{1};
+        % ---- read input arguments -----------------------------
+        if length(idx) == 1  
+            % f(s), where s can be vector, domain or ':'
+            % syntaxis not allowed when f is a quasimatrix
+            if n ~= 1
                 error('chebfun:subsasgn:dimensions',...
                     'Index missing for quasi-matrix assignment.')
-            end                
-        elseif length(index(1).subs) == 2
-            if n > 1                
-                f = f(index(1).subs{2});
-                s = index(1).subs{1};
-            else
-                error('chebfun:subsasgn:dimensions',...
-                'Index exceeds chebfun dimensions.')
+            end
+            col = 1;          
+        elseif length(idx) == 2
+            % f(s,col), where s can be vector, domain or ':'
+            col = idx{2}; 
+            if (isnumeric(col) & length(col)>1) | isequal(s,':')                    
+                error('chebfun:subsasgn:multiplecols',...
+                    'Assignment of more than one column/row not available yet.')
+            end
+            if col > n
+                f(:,n+1:col) = repmat(chebfun(0,domain(f)),1,col-n);
             end
         else
             error('chebfun:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
+        fcol = f(:,col);        
+        % ---- assign values/chebfuns at given points/domains ---        
         if isnumeric(s)
+            if ~isa(varargin{:},'numeric')
+                error('chebfun:subsref:conversion',...
+                        ['Conversion to numeric from ',class(varargin{:}),...
+                        'is not possible.'])
+            end
             if length(s) == length(varargin{:})
-                if min(s)<f.ends(1) || max(s)>f.ends(end)
+                if min(s) < f.ends(1) || max(s) > f.ends(end)
                     error('chebfun:subsref:outbounds',...
                         'Cannot introduce endpoints outside domain.')
                 end
-                [a,b] = domain(f);
+                [a,b] = domain(fcol);
                 stemp = s;
-                s(find(s==f.ends(end))) = [];
+                s(find(s==fcol.ends(end))) = [];
                 for i = s
-                    f = [restrict(f,[a,i]); restrict(f,[i,b])];                    
+                    fcol = [restrict(fcol,[a,i]); restrict(fcol,[i,b])];                    
                 end 
-                [mem,loc] = ismember(stemp,f.ends);
+                [mem,loc] = ismember(stemp,fcol.ends);
                 v = varargin{:};
-                f.imps(1,loc(find(loc))) = v(find(mem));
-                if n > 1
-                    fini(index(1).subs{2}) = f;
-                    varargout = { fini };
-                else
-                    varargout = {f};
-                end
+                fcol.imps(1,loc(find(loc))) = v(find(mem)); 
             else
                 error('chebfun:subsref:dimensions',...
                     ['In an assignment  A(I) = B, the number of '...
                     'elements  in B and I must be the same.'])
             end
         elseif isa(s,'domain')
-            fini(index(1).subs{2}) = define(f,s,varargin{:});
-            varargout = { fini };
-        elseif strcmp(s,':')
-            fini(index(1).subs{2}) = define(f,domain(f),varargin{:});
-            varargout = { fini };
+            fcol = define(fcol,s,varargin{:});
+        elseif isequal(s,':')
+            fcol = define(fcol,domain(fcol),varargin{:});
         else
             error('chebfun:subsref:nonnumeric',...
               'Cannot evaluate chebfun for non-numeric type.')
         end
-    case '{}'        
-        s = [];
-        if length(index.subs)==1
-          if isequal(index.subs{1},':')
-            s = domain(f); 
-          else
-              error('chebfun:subsref:baddomain',...
-            'Invalid domain syntax.')
-          end
-        elseif length(index.subs)==2
-          s = cat(2,index.subs{:});
-        end
-        if ~( isa(s,'domain') || (isnumeric(s) && length(s)==2) )
-          error('chebfun:subsref:baddomain',...
-            'Invalid domain syntax.')
+        % --- assign modified column to original chebfun/quasimatrix ---
+        f(:,col) = fcol;
+        if trans, f = f'; end
+        varargout = { f };  
+        
+    case '{}'
+        if length(idx) == 1
+            if isequal(idx{1},':')
+                s = domain(f); 
+            else
+                error('chebfun:subsref:baddomain',...
+                    'Invalid domain syntax.')
+            end
+        elseif length(idx) == 2
+            s = domain(cat(2,idx{:}));
+        else
+            error('chebfun:subsasgn:dimensions',...
+                'Index exceeds chebfun dimensions.')
         end
         varargout = { define(f,s,varargin{:}) };
     otherwise

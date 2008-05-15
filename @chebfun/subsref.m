@@ -4,51 +4,71 @@ function varargout = subsref(f,index)
 % function at the right of a breakpoint x is used for the evaluation of F
 % on x.
 
-% Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
-
+% Chebfun Version 2.0
+idx = index(1).subs;
 switch index(1).type
     case '.'
-        varargout = {get(f,index(1).subs)};
+        varargout = { get(f,idx) };
     case '()'
-        if length(index(1).subs) == 1
-            s = index(1).subs{1};
-        elseif length(index(1).subs)== 2
-            f = f(index(1).subs{2});
-            s = index(1).subs{1};
+        % --- transpose row chebfuns/quasimatrices -------
+        trans = 0;
+        if get(f,'trans')   
+            n = size(f,1);
+            s = idx{2}; % where to evaluate
+        else
+            n = size(f,2);
+            s = idx{1}; % where to evaluate
+        end     
+        % ---- read input arguments -----------------------------
+        if length(idx) == 1
+            % f(s), where s can be vector, domain or ':'
+            % syntaxis not allowed when f is a quasimatrix
+            if n ~= 1
+                error('chebfun:subsasgn:dimensions',...
+                    'Index missing for quasi-matrix assignment.')
+            end
+        elseif length(idx) == 2
+            if get(f,'trans')
+                f = f(cat(2,idx{1}),:);
+            else
+                f = f(:,cat(2,idx{2}));
+            end
         else
             error('chebfun:subsref:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
+        % ---- assign values/chebfuns at given points/domains ---        
         if isnumeric(s)
-            varargout = {feval(f,s)};
+            varargout = { feval(f,s) };
         elseif isa(s,'domain')
-            varargout = { restrict(f,s) };
-        elseif strcmp(s,':')
-            varargout = {f};
+            f = restrict(f,s);            
+            varargout = { f };
+        elseif isequal(s,':')
+            varargout = { f }; 
         else
             error('chebfun:subsref:nonnumeric',...
               'Cannot evaluate chebfun for non-numeric type.')
-        end
+        end       
     case '{}'
-        s = [];
-        if length(index.subs)==1
-          if isequal(index.subs{1},':')
-            s = domain(f); 
-          else
-              error('chebfun:subsref:baddomain',...
-            'Invalid domain syntax.')
-          end
-        elseif length(index.subs)==2
-          s = cat(2,index.subs{:});
+        if length(idx) == 1
+            if isequal(idx{1},':')
+                s = domain(f); 
+            else
+                error('chebfun:subsref:baddomain',...
+                    'Invalid domain syntax.')
+            end
+        elseif length(idx) == 2
+            s = domain(cat(2,idx{:}));
+        else
+            error('chebfun:subsasgn:dimensions',...
+                'Index exceeds chebfun dimensions.')
         end
-        if ~( isa(s,'domain') || (isnumeric(s) && length(s)==2) )
-          error('chebfun:subsref:baddomain',...
-            'Invalid domain syntax.')
-        end
-        varargout = { restrict(f,s) };
+        varargout = { restrict(f,s) };        
     otherwise
         error(['??? Unexpected index.type of ' index(1).type]);
 end
+
+
 
 if length(index) > 1
     varargout = {subsref([varargout{:}], index(2:end))};
