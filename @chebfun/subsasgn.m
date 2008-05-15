@@ -84,7 +84,11 @@ switch index(1).type
         elseif isa(s,'domain')
             fcol = define(fcol,s,varargin{:});
         elseif isequal(s,':')
-            fcol = define(fcol,domain(fcol),varargin{:});
+            if isempty(fcol)
+                fcol = define(fcol,domain(varargin{:}),varargin{:});
+            else
+                fcol = define(fcol,domain(fcol),varargin{:});
+            end
         else
             error('chebfun:subsref:nonnumeric',...
               'Cannot evaluate chebfun for non-numeric type.')
@@ -92,8 +96,7 @@ switch index(1).type
         % --- assign modified column to original chebfun/quasimatrix ---
         f(:,col) = fcol;
         if trans, f = f'; end
-        varargout = { f };  
-        
+        varargout = { f };          
     case '{}'
         if length(idx) == 1
             if isequal(idx{1},':')
