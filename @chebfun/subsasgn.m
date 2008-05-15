@@ -43,7 +43,7 @@ switch index(1).type
         elseif length(idx) == 2
             % f(s,col), where s can be vector, domain or ':'
             col = idx{2}; 
-            if (isnumeric(col) & length(col)>1) | isequal(s,':')                    
+            if (isnumeric(col) & length(col)>1) | ~isequal(s,':')                    
                 error('chebfun:subsasgn:multiplecols',...
                     'Assignment of more than one column/row not available yet.')
             end
