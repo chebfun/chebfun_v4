@@ -22,8 +22,9 @@ if hs^nder < realmin
 end
 
 % Compute norm_inf of first nder derivatives. FD grid size is 50.
-[na,nb,maxd1] = maxder(f, a, b, nder, 50);
-[na,nb,maxd] = maxder(f, na(nder), nb(nder), nder, N); 
+[na,nb,maxd] = maxder(f, a, b, nder, 50);
+maxd1 = maxd;
+%[na,nb,maxd] = maxder(f, na(nder), nb(nder), nder, N); 
 
 % Keep track of endpoints.
 ends = [na(nder) nb(nder)]; 
@@ -97,7 +98,7 @@ na = a*ones(nder,1); nb = b*ones(nder,1);
 
 % generate FD grid points and values
 dx = (b-a)/(N-1); 
-x = [a+(0:N-2)*dx b];  
+x = [a+(0:N-2)*dx b].';  
 dy = f(x);
 
 % main loop (through derivatives), undivided differenes
