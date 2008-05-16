@@ -2,11 +2,12 @@ function pass = orthosincos
 
 % TAD
 
+S = []; C = [];
 for n = 1:5
-  S(:,n) = chebfun(@(x) sin(n*x),[0 2*pi]);
-  C(:,n) = chebfun(@(x) cos(n*x),[0 2*pi]);
+  S = [S chebfun(@(x) sin(n*x),[0 2*pi])];
+  C = [C chebfun(@(x) cos(n*x),[0 2*pi])];
 end
-ip = S'*G;
-pass = norm(ip - pi*eye(5)) < 10*eps;
+ip = S'*C;
+pass = norm(ip) < 100*eps;
 
 end
