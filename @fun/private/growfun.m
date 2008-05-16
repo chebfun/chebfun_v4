@@ -17,9 +17,9 @@ resample = chebfunpref('resample');
 
 % Set minn 
 if nargin == 4
-    minn = g1.n;
+    minn = max(5, g1.n);
 elseif nargin == 5
-    minn = max(g1.n, g2.n);
+    minn = max([5, g1.n, g2.n]);
 else
     minn = chebfunpref('minn');
 end

@@ -45,5 +45,5 @@ end
 
 % merging step
 if length(sing)>2 
-    f = merge(f, find(~sing));
+    f = merge(f);%, find(~sing));
 end

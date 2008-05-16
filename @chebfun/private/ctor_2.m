@@ -65,5 +65,5 @@ f = set(f,'funs',funs,'ends',newends,'imps',imps,'trans',0);
 
 % merging step
 if length(sing)>2 
-    f = merge(f, find(~sing));
+    f = merge(f);%, find(~sing));
 end
