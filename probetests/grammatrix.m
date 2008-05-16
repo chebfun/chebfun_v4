@@ -1,5 +1,7 @@
 function pass = grammatrix
 
+% TAD
+
 A = chebfun;
 x = chebfun(@(x) x,domain(0,1));
 for n=1:4

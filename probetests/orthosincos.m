@@ -1,5 +1,7 @@
 function pass = orthosincos
 
+% TAD
+
 for n = 1:5
   S(:,n) = chebfun(@(x) sin(n*x),[0 2*pi]);
   C(:,n) = chebfun(@(x) cos(n*x),[0 2*pi]);
