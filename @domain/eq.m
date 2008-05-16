@@ -3,6 +3,10 @@ function e = eq(a,b)
 % Domains are considered equal if their endpoints are identical floating
 % point numbers. Breakpoints are not considered.
 
-e = isequal( a.ends([1 end]), b.ends([1 end]) );
+if isempty(a) || isempty(b)
+  e = [];
+else
+  e = isequal( a.ends([1 end]), b.ends([1 end]) );
+end
 
 end

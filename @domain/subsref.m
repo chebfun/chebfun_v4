@@ -10,6 +10,10 @@ function t = subsref(d,s)
 valid = false;
 switch(s(1).type)
   case '()'
+    if isempty(d)
+      error('domain:subsref:empty',...
+        'Cannot reference an endpoint of an empty domain.')
+    end
     k = s(1).subs{1};
     valid = true;
     if isequal(k,1)
@@ -39,7 +43,7 @@ switch(s(1).type)
 end
         
 if ~valid
-  error('domain:subsref:invalid','Invalid reference syntax.')
+  error('domain:subsref:invalid','Invalid reference.')
 end
         
 end

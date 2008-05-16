@@ -14,7 +14,7 @@ else
   v = cat(2,varargin{:});
 end
 
-if v(end) < v(1)   % empty interval
+if (length(v)>1) && (v(end) < v(1))   % empty interval
   v = [];
 end
 
