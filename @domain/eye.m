@@ -5,6 +5,10 @@ function I = eye(d)
 %
 % See also CHEBOP.
 
-I = chebop( @speye, @(u) u, d );
+if isempty(d)
+  I = chebop;
+else
+  I = chebop( @speye, @(u) u, d );
+end
 
 end

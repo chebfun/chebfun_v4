@@ -29,10 +29,17 @@ switch(class(B))
     C = chebop(mat,op,dom,order );
   case 'chebfun'    % chebop * chebfun
     dom = domaincheck(A,B);
+    if isinf(size(B,2))
+      error('chebop:mtimes:dimension','Inner dimensions do not agree.')
+    end
     if A.validoper
       C = feval(A.oper,B);
     else
-      C = chebfun( @(x) value(x), dom );
+      C = chebfun;
+      for k = 1:size(B,2)
+        f = B(:,k);
+        C(:,k) = chebfun( @(x) value(x), dom );
+      end
     end
   otherwise
     error('chebop:mtimes:badoperand','Unrecognized operand.')
@@ -40,8 +47,8 @@ end
 
   function v = value(x)
     N = length(x);
-    L = feval(A.varmat,N);  Bx = B(x);
-    v = L*Bx;
+    L = feval(A.varmat,N);  
+    v = L*f(x);
     v = filter(v,1e-8);
   end
 

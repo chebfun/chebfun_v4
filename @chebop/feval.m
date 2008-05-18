@@ -1,6 +1,5 @@
 function [M,c,rowreplace] = feval(A,n)
 % FEVAL  Realization of a chebop at fixed size.
-%
 % FEVAL(A,N) for integer N returns the matrix associated with A at size N. 
 % If boundary conditions are specified for A, they modify rows of this
 % matrix accordingly. 

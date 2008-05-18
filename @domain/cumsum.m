@@ -7,9 +7,13 @@ function J = cumsum(d,m)
 %
 % See also CHEBOP, CHEBFUN/CUMSUM.
 
-J = chebop( @(n) cumsummat(n)*length(d)/2, @(u) cumsum(u), d, -1 );
-if nargin > 1
-  J = mpower(J,m);
+if isempty(d)
+  J = chebop;
+else
+  J = chebop( @(n) cumsummat(n)*length(d)/2, @(u) cumsum(u), d, -1 );
+  if nargin > 1
+    J = mpower(J,m);
+  end
 end
 
 end

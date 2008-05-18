@@ -5,5 +5,10 @@ function Z = zeros(d)
 %
 % See also CHEBOP.
 
-Z = chebop( @zeros, @(u) 0*u, d );
+if isempty(d)
+  Z = chebop;
+else
+  Z = chebop( @zeros, @(u) 0*u, d );
+end
+
 end
