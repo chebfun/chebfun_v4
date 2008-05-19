@@ -130,7 +130,7 @@
 % For example, here is exp(x) rounded to nearest multiples of 0.5:
 
   g = exp(x);
-  close all, plot(g)
+  clf, plot(g)
   gh = 0.5*round(2*g);
   hold on, plot(gh,'r');
   grid on
@@ -141,7 +141,7 @@
 % the Airy function again, with all its extrema in its range of
 % definition located and plotted.
   f = chebfun('exp(real(airy(x)))',[-15,0]);
-  close all, plot(f)
+  clf, plot(f)
   r = roots(diff(f));
   hold on, plot(r,f(r),'.r'), grid on
 
@@ -154,7 +154,7 @@
   f = exp(x).*sin(30*x);
   g = 2-6*x.^2;
   h = max(f,g);
-  close, plot(h)
+  clf, plot(h)
 
 %%
 % Here are all the local extrema, smooth and nonsmooth:

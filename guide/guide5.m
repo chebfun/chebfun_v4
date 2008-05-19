@@ -102,14 +102,14 @@ subplot(1,2,2), plot(z.^2), axis equal, grid on
 
 s = chebfun('s',[0 1]);
 R = [1+s; 2+2i*s; 2+2i-s; 1+2i-2i*s];
-close all, subplot(1,2,1), plot(R), grid on, axis equal
+clf, subplot(1,2,1), plot(R), grid on, axis equal
 X = [1.3+1.5i+.4*s; 1.5+1.3i+.4i*s];
 hold on, plot(X,'r')
 
 %%
 % Here we see what happens to R and X under the maps z^2 and exp(z):
 
-close
+clf
 subplot(1,2,1), plot(R.^2), grid on, axis equal
 hold on, plot(X.^2,'r')
 subplot(1,2,2), plot(exp(R)), grid on, axis equal
@@ -125,7 +125,7 @@ hold on, plot(exp(X),'r')
   for d = -1:.2:1
     S = [S; d+1i*x; 1i*d+x];    % add 2 more lines to the collection
   end
-  close, subplot(1,2,1), plot(S), axis equal
+  clf, subplot(1,2,1), plot(S), axis equal
 
 %%
 % Here are the exponential and tangent of the grid:
@@ -137,7 +137,7 @@ hold on, plot(exp(X),'r')
 % Here is a sequence that puts all three images together on
 % a single scale:
  
-  close
+  clf
   plot(S), hold on
   plot(1.6+exp(S))
   plot(6.6+tan(S))
@@ -154,7 +154,7 @@ hold on, plot(exp(X),'r')
 
 s = chebfun('s',[0 1]);
 S1 = [-.5i+s; 1-.5i+1i*s; 1+.5i-s; .5i-1i*s];
-close
+clf
 S2 = 1./(1+S1); S3 = 1./(1+S2); S4 = 1./(1+S3);
 plot(S1,'b')
 hold on, axis equal
@@ -254,7 +254,7 @@ I3 = sum(f.*diff(z))/(2i*pi)
        c(2)*c(3).^s./c(2).^s
        c(3)+s*(c(4)-c(3))
        c(4)*c(1).^s./c(4).^s];
-  close, plot(z), axis equal, axis off
+  clf, plot(z), axis equal, axis off
 
 %%
 % The integral of f(z) = log(z)tanh(z) around this contour will
@@ -351,7 +351,7 @@ s = chebfun('s',[0 1]);
 w = [1.01+.8i-(.01+.8i)*s; 1+.6*s;            % L
      2+.8i*s; 2+.8i+(-.8i+.6)*s; 2.6+.8i*s;   % N
      3.3+.8i*s; 3+.8i+.6*s];                  % T
-close, plot(w,'k',LW,lw), axis equal, axis off
+clf, plot(w,'k',LW,lw), axis equal, axis off
 
 %%
 % As always, this is a precisely defined mathematical function:

@@ -148,7 +148,7 @@
   x = chebfun('x');
   f = 1./(1+25*x.^2);
   length(f)
-  plot(f)
+  clf, plot(f)
 
 %% 1.3  Operations on chebfuns
 % There are about 100 commands that can be applied to

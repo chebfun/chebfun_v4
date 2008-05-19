@@ -193,7 +193,7 @@
 %%
 % (The chebfun system has no trouble if xmax is increased
 % to 10^5 or 10^10.)  Here is a plot comparing Li(x) with pi(x):
-  close, plot(Li,'m')
+  clf, plot(Li,'m')
   p = primes(xmax);
   hold on, plot(p,1:length(p),'.k')
 
