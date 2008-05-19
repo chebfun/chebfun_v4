@@ -31,23 +31,54 @@ function h = timescol(f,g)
 
 % product of two chebfuns
 [f,g] = overlap(f,g);
-h = f;
+ffuns = [];
 for k = 1:length(f.ends)-1
-    h.funs(k) = f.funs(k).*g.funs(k);
+    ffuns = [ffuns f.funs(k).*g.funs(k)];
 end
 
-% impulses
-indf=find(f.imps); indg=find(g.imps);
-rows=size(f.imps,1);
-if any(indf)
-    gvals=repmat(feval(g,h.ends),rows);
-    h.imps(indf) = f.imps(indf).*gvals(indf);
+% Deal with impulse matrix:
+%------------------------------------------------
+% Look for deltas in f
+hfimps = 0*f.imps;
+deg_delta = find(sum(abs(f.imps),2)>eps*f.scl , 1, 'first')-1;
+dg = g;
+for j = 2:deg_delta+1
+    hfimps(j,:) = (-1)^j * feval(dg,f.ends) .* f.imps(j,:) + hfimps(j-1,:);
+    dg = diff(dg);
 end
+
+% Look for deltas in g
+hgimps = 0*g.imps;
+deg_delta = find(sum(abs(g.imps),2)>eps*g.scl , 1, 'first')-1;
+df = f;
+for j = 2:deg_delta+1
+    hgimps(j,:) = (-1)^j * feval(df,g.ends) .* g.imps(j,:) + hgimps(j-1,:);
+    df = diff(df);
+end
+
+% Contributions of both f and g.
+imps = hfimps + hgimps;
+
+% INF if deltas at a common point
+indf = find(f.imps); indg = find(g.imps);
 if any(indg)
-    fvals=repmat(feval(f,h.ends),rows);
-    h.imps(indg) = g.imps(indg).*fvals(indg);
-    [trash,indboth] = intersect(indf,indg);
-    imps_cp = h.imps;
-    h.imps(indboth) = nan;
-    h.imps(1,:) = imps_cp(1,:); %fix first row since these are funct. vals.
+     [trash,indboth] = intersect(indf,indg);
+     imps(indboth) = inf*sign(f.imps(indboth).*g.imps(indboth));
 end
+
+% Update first row of h.imps (function values)
+imps(1,:) = feval(f,f.ends).*feval(g,g.ends);
+
+% % If there are deltas, then function value is + or - inf. (or should it
+% be nan in some cases?)
+% if size(imps,1)>1
+%     for k = 1:f.nfuns+1
+%         ind = find(imps(2:end,k),1,'first');
+%         if ~isempty(ind)            
+%             imps(1,k) = inf*sign(imps(ind+1,k));
+%         end
+%     end
+% end
+
+% Set chebfun:
+h = set(chebfun, 'funs', ffuns,'ends', f.ends, 'imps', imps, 'trans', f.trans);
