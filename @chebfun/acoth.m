@@ -1,7 +1,7 @@
 function Fout = acoth(F)
-% ACOTH(F) is the inverse hyperbolic cotangent of F.
+% ACOTH   Inverse hyperbolic cotangent of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) acoth(x));

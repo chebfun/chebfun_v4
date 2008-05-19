@@ -1,8 +1,8 @@
 function F = conj(F)
-% CONJ	Complex conjugate 
+% CONJ	 Complex conjugate.
 % CONJ(F) is the complex conjugate  of F.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 for k = 1:numel(F)
     funs = F(k).funs;

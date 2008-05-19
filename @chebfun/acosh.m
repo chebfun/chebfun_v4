@@ -1,7 +1,7 @@
 function Fout = acosh(F)
-% ACOSH(F) is the inverse hyperbolic cosine of the CHEBFUN F.
+% ACOSH   Inverse hyperbolic cosine of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) acosh(x));

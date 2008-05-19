@@ -16,7 +16,7 @@ function [u,normres,Q] = gmres(varargin)
 % defaults to 36.
 %
 % U = GMRES(A,F,RESTART,TOL,MAXIT,M1INV,M2INV) applies the left and right
-% preconditioners M1INV and M2INV, defined as operators. They should
+% preconditioners M1INV and M2INV, defined as functions. They should
 % approximate the inverse of A. Note that this usage of preconditioners
 % differs from that in the built-in GMRES.
 %
@@ -59,9 +59,9 @@ while (normres(j) > tol) && (j<maxiter)          % outer iterations
   for n = 1:m                                    % inner iterations
     % Next Krylov vector, with preconditioners.
     q = Q(:,n);                                    
-    if ~isempty(M2inv), q = M2inv*q; end       
+    if ~isempty(M2inv), q = M2inv(q); end       
     v = L(q);                                   
-    if ~isempty(M1inv), v = M1inv*v; end       
+    if ~isempty(M1inv), v = M1inv(v); end       
     % Modified Gram-Schmidt iteration.
     for k = 1:n                     
       H(k,n) = Q(:,k)' * v ;             
@@ -104,10 +104,10 @@ while (normres(j) > tol) && (j<maxiter)          % outer iterations
   
   y = R(1:n,1:n)\(P(:,1:n)'*QTb);                % least squares soln
   u0 = Q(:,1:n)*y;                               % new part of solution
-  if ~isempty(M2inv), u0=M2inv*u0; end
+  if ~isempty(M2inv), u0=M2inv(u0); end
   u = u + u0;                                    % solution
   v = L(u0);
-  if ~isempty(M1inv), v = M1inv*v; end
+  if ~isempty(M1inv), v = M1inv(v); end
   r = r - v;                                     % new residual
   if showtrace, fprintf('  (restart)\n'), end
 end   % outer iterations

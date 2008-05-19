@@ -3,6 +3,8 @@ function Fout = abs(F)
 % ABS(F) is the absolute value of the chebfun F.
 %
 
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
+
 % Quasi-matrix
 Fout = F;
 for k = 1:numel(F)

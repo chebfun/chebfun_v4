@@ -1,7 +1,6 @@
 function Fout = atan(F)
-% ATAN(F) is the arctangent of the CHEBFUN F.
-%
+% ATAN   Arctangent of a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) atan(x));

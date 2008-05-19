@@ -1,7 +1,7 @@
 function Fout = asec(F)
-% ASEC(F) is the inverse secant of the CHEBFUN F.
+% ASEC   Inverse secant of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) asec(x));

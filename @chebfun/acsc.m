@@ -1,7 +1,7 @@
 function Fout = acsc(F)
-% ACSC(F) is the inverse cosecant of the CHEBFUN F.
+% ACSC   Inverse cosecant of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) acsc(x));

@@ -1,7 +1,7 @@
 function Fout = acot(F)
-% ACOT(F) is the inverse cotangent of F
+% ACOT   Inverse cotangent of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) acot(x));

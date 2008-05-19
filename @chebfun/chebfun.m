@@ -1,6 +1,5 @@
 function f = chebfun(varargin)
-% CHEBFUN   Constructor
-%
+% CHEBFUN   Constructor for chebfuns.
 % CHEBFUN(f) constructs a chebfun object for the function f on the
 % interval [-1,1].  f can be a string, e.g 'sin(x)', a function handle, e.g
 % @(x) x.^2 + 2x +1, or a number.  If f is a doubles array, [a1;a2;...;an],
@@ -36,6 +35,8 @@ function f = chebfun(varargin)
 % of a vector of 'funs', a vector 'ends' of length m+1 defining the 
 % intervals where the funs apply, and a matrix 'imps'containing information
 % about possible delta functions at the breakpoints between funs.
+
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 persistent default_f
 if isempty(default_f)

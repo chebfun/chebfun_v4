@@ -1,7 +1,7 @@
 function Fout = acos(F)
-% ACOS(F) is the arccosine of the CHEBFUN F.
+% ACOS   Arccosine of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) acos(x));

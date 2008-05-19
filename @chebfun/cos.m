@@ -1,7 +1,6 @@
 function Fout = cos(F)
-% COS(F) is the cosine of the CHEBFUN F.
-%
+% COS   Cosine of a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) cos(x));

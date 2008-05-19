@@ -1,7 +1,7 @@
 function Fout = acsch(F)
-% ACSCH(F) is the inverse hyperbolic cosecant of the CHEBFUN F.
+% ACSCH   Inverse hyperbolic cosecant of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) acsch(x));

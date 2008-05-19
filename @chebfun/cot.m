@@ -1,7 +1,6 @@
 function Fout = cot(F)
-% COT(F) is the cotangent of the CHEBFUN F.
-%
+% COT   Cotangent of a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
 
 Fout = comp(F, @(x) cot(x));
