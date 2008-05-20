@@ -104,13 +104,11 @@ while ~isempty(data)
     [args_1,args_2] =  unwrap_group(args_1, args_2, f, g, linespec);
 end
 
-h = ishold;
-if ~h, cla, hold on, end
 args_1 = [args_1, ax_props, {'marker','none'}];
 args_2 = [args_2, ax_props,{'linestyle','none'}];
 plot(args_1{:})
+h = ishold; hold on
 plot(args_2{:})
-
 if ~h, hold off; end
 
 %---------------------------------------------------------------------
