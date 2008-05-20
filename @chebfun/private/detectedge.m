@@ -17,7 +17,7 @@ nder = 4; % Number of derivatives to be tested
 N = 15;   % grid size for finite difference computations in loop.
 
 % Interval too small for edge detection, switch to bisection!
-if hs^nder < realmin
+if (b-a)^nder < realmin
     return
 end
 

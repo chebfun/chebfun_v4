@@ -63,7 +63,6 @@ end
 imps = jumpvals(funs,newends,op,sing); % Update values at jumps, first row of imps.
 f = set(f,'funs',funs,'ends',newends,'imps',imps,'trans',0);
 
-% merging step
 if length(sing)>2 
-    f = merge(f);%, find(~sing));
+    f = merge(f,find(~ismember(newends,ends))); % Avoid merging at specified breakpoints
 end
