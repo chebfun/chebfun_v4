@@ -1,11 +1,11 @@
 function varargout = eigs(A,varargin)
 % EIGS  Find selected eigenvalues and eigenfunctions of a chebop.
 % D = EIGS(A) returns a vector of 6 eigenvalues of the chebop A. EIGS will
-% attempt to return the eigenvalues corresponding to the smoothest
+% attempt to return the eigenvalues corresponding to the least oscillatory
 % eigenfunctions. (This is unlike the built-in EIGS, which returns the 
 % largest eigenvalues by default.)
 %
-% [V,D] = EIGS(A) returns a diagonal 6x6 matrix D of A's smoothest
+% [V,D] = EIGS(A) returns a diagonal 6x6 matrix D of A's least oscillatory
 % eigenvalues, and a quasimatrix V of the corresponding eigenfunctions.
 %
 % EIGS(A,B) solves the generalized eigenproblem A*V = B*V*D, where B
@@ -60,10 +60,10 @@ end
 if isempty(sigma)
   % Try to determine where the lowest-frequency eigenvalue is.
   [V,D] = bc_eig(A,B,65,65,0);
-  V = V*diag(1./max(abs(V)));  % inf-norm = 1 for each vector
-  C = cd2cp(V);
-  [cmin,idx] = min( sum(abs(C),1) );  % min 1-norm of cheb coeffs  
-  sigma = D(idx,idx);  
+  C = abs( cd2cp(V) );
+  C = C*diag(1./max(C));
+  [cmin,idx] = min( sum(C,1) );  % min 1-norm of cheb coeffs  
+  sigma = D(idx,idx);
 end
 
 % These assignments cause the nested function value() to overwrite them.
@@ -94,8 +94,8 @@ end
       v = (-1).^(0:N-1)';
     else
       [V,D] = bc_eig(A,B,N,k,sigma);
-      %v = V(:,end);
-      v = sum(V,2);
+      v = V(:,end);
+      %v = sum(V,2);
       v = filter(v,1e-8);
     end
   end
@@ -148,7 +148,8 @@ else
   end
 end
 
-idx = idx( 1:min(k,length(lam)) );  % trim length
+idx(isinf(lam(idx))) = [];
+idx = idx( 1:min(k,length(idx)) );  % trim length
 
 end
 
