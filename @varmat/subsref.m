@@ -38,16 +38,21 @@ function sel = parseidx(idx)
 if isequal(idx,':')
   sel = [];
 elseif isnumeric(idx)
-  if ~isinf(idx)
-    sel = @(n) idx;
-  else                          % "end" kludge
-    sel = @(n) n+real(idx);
-  end
+  sel = @select;
 elseif isa(idx,'function_handle')
   sel = idx;
 else
   error('varmat:subsref:badindex',...
     'Index must be a :, value, or function handle.')
 end
+
+  function num = select(n)
+    % Use the 1i*Inf kludge to separate "forward" indices from "backward"
+    % ones.
+    num = zeros(size(idx));
+    i = isinf(idx);
+    num(~i) = idx(~i);
+    num(i) = n+real(idx(i));
+  end
 
 end

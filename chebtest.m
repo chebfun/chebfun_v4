@@ -1,25 +1,25 @@
-function failfun = probe(dirname)
-% PROBE Probe system against standard test files.
-% PROBE DIRNAME runs each M-file in the directory DIRNAME. Each M-file
+function failfun = chebtest(dirname)
+% CHEBTEST Probe chebfun system against standard test files.
+% CHEBTEST DIRNAME runs each M-file in the directory DIRNAME. Each M-file
 % should be a function that takes no inputs and returns a logical scalar 
 % value. If this value is true, the function is deemed to have 'passed'. 
 % If its result is false, the function 'failed'. If the function
 % threw an error, it is considered to have 'crashed'. A report is
 % generated in the command window.
 %
-% PROBE by itself tries to find a directory named 'probetests' in the
-% directory in which probe.m resides.
+% CHEBTEST by itself tries to find a directory named 'chebtests' in the
+% directory in which chebtest.m resides.
 %
-% FAILED = PROBE('DIRNAME') returns a cell array of all functions that
+% FAILED = CHEBTEST('DIRNAME') returns a cell array of all functions that
 % either failed or crashed.
 
-% Toby Driscoll, 13 May 2008.
+% Copyright 2008 by the Chebfun Team. See www.chebfun.org.
 
 if nargin < 1
-  % Attempt to find "probetests" directory.
-  w = which('probe.m');
+  % Attempt to find "chebtests" directory.
+  w = which('chebtest.m');
   dirname = fileparts(w);
-  dirname = fullfile(dirname,'probetests');
+  dirname = fullfile(dirname,'chebtests');
 end
   
 if exist(dirname)~=7
