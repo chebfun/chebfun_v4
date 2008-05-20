@@ -161,6 +161,11 @@ end
 cf(end) = []; cg(end) = [];
 mf(end) = []; mg(end) = [];
 
+if single_chebfun
+    cf(1) = g(1).ends(1); mf(1) = cf(1);
+    cf(end) = g(1).ends(end); mf(end) = cf(end);
+end
+
 
 curve = {cf,cg,linespec}; mark = {mf,mg,linespec};
 if single_chebfun & isreal(curve{2})
