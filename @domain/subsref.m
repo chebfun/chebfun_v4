@@ -21,7 +21,8 @@ switch(s(1).type)
     elseif isequal(k,2)
       t = d.ends(end);
     elseif isequal(k,':')
-      t = d.ends([1 end]);
+      t = chebfun(@(x) x,d);
+      %t = d.ends([1 end]);
     else
       valid = false;
     end

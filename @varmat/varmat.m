@@ -18,8 +18,10 @@ A.defn = [];
 A.rowsel = [];
 A.colsel = [];
 
-if isa(defn,'varmat')
+if nargin==0
+elseif isa(defn,'varmat')
   A = defn;
+  return
 elseif isa(defn,'function_handle')
   A.defn = defn;
 else
