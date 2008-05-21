@@ -22,7 +22,7 @@ if (b-a)^nder < realmin
 end
 
 % Compute norm_inf of first nder derivatives. FD grid size is 50.
-[na,nb,maxd] = maxder(f, a, b, nder, 50);
+[na,nb,maxd] = maxder(f, a, b, nder, N);
 maxd1 = maxd;
 %[na,nb,maxd] = maxder(f, na(nder), nb(nder), nder, N); 
 
@@ -35,17 +35,18 @@ while maxd(nder) ~= inf && ~isnan(maxd(nder)) &&  diff(ends) > eps*hs
     [na,nb,maxd] = maxder(f, ends(1), ends(2), nder, N);   % compute maximum derivatives and interval
         nder = find( (maxd > (5.5-(1:nder)').*maxd1) & (maxd > 10*vs./hs.^(1:nder)') , 1, 'first' );      % find proper nder
         if isempty(nder)  
-            break                                          % derivatives are not gowing, return edge =[]
+            return                                         % derivatives are not gowing, return edge =[]
         elseif nder == 1 && diff(ends) < 1e-3*hs
             edge = findjump(f, ends(1) ,ends(2), hs, vs);  % blow up in first derivative, use findjump
             return
         end
     ends = [na(nder) nb(nder)];
 end
-    
-if any(maxd1 > 1e+6*vs./hs.^(1:length(maxd1))')            % Blowup detected?
-    edge = mean(ends);
-end
+
+edge = mean(ends);
+%  if any(maxd1 > 1e+15*vs./hs.^(1:length(maxd1))')            % Blowup detected?
+%     edge = mean(ends);
+%  end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function edge = findjump(f, a, b, hs, vs)
 % Detects a blowup in first the derivative and uses bisection to locate the
