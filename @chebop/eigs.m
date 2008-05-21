@@ -58,12 +58,17 @@ while (nargin > j)
 end
 
 if isempty(sigma)
-  % Try to determine where the lowest-frequency eigenvalue is.
-  [V,D] = bc_eig(A,B,65,65,0);
-  C = abs( cd2cp(V) );
-  C = C*diag(1./max(C));
-  [cmin,idx] = min( sum(C,1) );  % min 1-norm of cheb coeffs  
-  sigma = D(idx,idx);
+  % Try to determine where the lowest-frequency eigenvalue is.\
+  [V1,D1] = bc_eig(A,B,33,33,0);
+  [V2,D2] = bc_eig(A,B,65,65,0);
+  lam1 = diag(D1);  lam2 = diag(D2);
+  dif = repmat(lam1.',length(lam2),1) - repmat(lam2,1,length(lam1));
+  [tmp,idx] = min(  min( abs(dif) ) );
+  sigma = lam1(idx);
+%   C = abs( cd2cp(V) );
+%   C = C*diag(1./max(C));
+%   [cmin,idx] = min( sum(C,1) );  % min 1-norm of cheb coeffs  
+%  sigma = D(idx,idx);
 end
 
 % These assignments cause the nested function value() to overwrite them.
@@ -94,8 +99,8 @@ end
       v = (-1).^(0:N-1)';
     else
       [V,D] = bc_eig(A,B,N,k,sigma);
-      v = V(:,end);
-      %v = sum(V,2);
+      %v = V(:,end);
+      v = sum(V,2);
       v = filter(v,1e-8);
     end
   end
@@ -122,6 +127,10 @@ else
   M = feval(B,N);
   M(elim,:) = 0;
   [W,D] = eig(full(L),full(M));
+  % We created some infinite eigenvalues. Peel them off. 
+  [lam,idx] = sort( abs(diag(D)),'descend' );
+  idx = idx(1:sum(elim));
+  D(:,idx) = [];  D(idx,:) = [];  W(:,idx) = [];
   idx = nearest(diag(D),sigma,min(k,N));
   V = W(:,idx);
 end
@@ -148,7 +157,6 @@ else
   end
 end
 
-idx(isinf(lam(idx))) = [];
 idx = idx( 1:min(k,length(idx)) );  % trim length
 
 end
