@@ -22,7 +22,7 @@ if (b-a)^nder < realmin
 end
 
 % Compute norm_inf of first nder derivatives. FD grid size is 50.
-[na,nb,maxd] = maxder(f, a, b, nder, N);
+[na,nb,maxd] = maxder(f, a, b, nder, 50);
 maxd1 = maxd;
 %[na,nb,maxd] = maxder(f, na(nder), nb(nder), nder, N); 
 
