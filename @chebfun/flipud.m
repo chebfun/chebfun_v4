@@ -30,6 +30,6 @@ if ~f.trans
     for k = 1:f.nfuns, f.funs(k) = flipud(f.funs(k)); end
     % Reverse and translate the breakpoints.
     domf = domain(f);
-    f.ends = -fliplr(f.ends) + sum(domf(:));
+    f.ends = -fliplr(f.ends) + sum(domf.ends);
     f.imps = fliplr(f.imps);
 end

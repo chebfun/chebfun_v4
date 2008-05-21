@@ -58,17 +58,26 @@ while (nargin > j)
 end
 
 if isempty(sigma)
-  % Try to determine where the lowest-frequency eigenvalue is.\
+  % Try to determine where the 'most interesting' eigenvalue is.
   [V1,D1] = bc_eig(A,B,33,33,0);
   [V2,D2] = bc_eig(A,B,65,65,0);
   lam1 = diag(D1);  lam2 = diag(D2);
   dif = repmat(lam1.',length(lam2),1) - repmat(lam2,1,length(lam1));
-  [tmp,idx] = min(  min( abs(dif) ) );
-  sigma = lam1(idx);
-%   C = abs( cd2cp(V) );
-%   C = C*diag(1./max(C));
-%   [cmin,idx] = min( sum(C,1) );  % min 1-norm of cheb coeffs  
-%  sigma = D(idx,idx);
+  delta = min( abs(dif) );   % diffs from 33->65
+  bigdel = (delta > 1e-12*norm(lam1,Inf));
+  if all(bigdel) 
+    % All values changed somewhat--choose the one changing the least.
+    [tmp,idx] = min(delta);
+    sigma = lam1(idx);
+  else
+    % Of those that did not change much, take the smallest cheb coeff
+    % vector. 
+    lam1(bigdel) = [];
+    C = abs( cd2cp(V1(:,~bigdel)) );
+    C = C*diag(1./max(C));
+    [cmin,idx] = min( sum(C,1) );  % min 1-norm of cheb coeffs  
+    sigma = lam1(idx);
+  end
 end
 
 % These assignments cause the nested function value() to overwrite them.

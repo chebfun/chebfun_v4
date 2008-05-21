@@ -33,7 +33,7 @@ if Fout(1).trans
         if ~isempty(v)
             kk =[kk k];
             if isa(v,'double') && ~isempty(v)
-                f = chebfun(v,d(1:2));
+                f = chebfun(v,d.ends);
                 f.trans = true;
                 varargin{k} = f;
             elseif isa(v,'chebfun')

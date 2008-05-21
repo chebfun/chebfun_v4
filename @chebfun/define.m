@@ -56,7 +56,7 @@ function f = definecol(f,subdom,g)
 
 
 if isa(subdom,'domain')
-  subint = subdom(:);
+  subint = subdom.ends;
 else
   subint = subdom;
 end

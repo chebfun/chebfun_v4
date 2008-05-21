@@ -70,6 +70,7 @@ end
         && length(storage(A.ID).l)>=N && ~isempty(storage(A.ID).l{N})
      l = storage(A.ID).l{N};
      u = storage(A.ID).u{N};
+     c = storage(A.ID).c{N};
      rowidx = storage(A.ID).rowidx{N};
     else
       [L,c,rowidx] = feval(A,N);  % includes row replacements
@@ -93,6 +94,7 @@ end
       end
       storage(A.ID).l{N} = l;
       storage(A.ID).u{N} = u;
+      storage(A.ID).c{N} = c;
       storage(A.ID).rowidx{N} = rowidx;
     end
 

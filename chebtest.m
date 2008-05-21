@@ -46,7 +46,7 @@ for j = 1:length(mfile)
   try
     close all
     chebfunpref('factory');
-    failed(j) = ~feval( fun );
+    failed(j) = ~ all(feval( fun ));
     if failed(j)
       fprintf('FAILED\n')
     else

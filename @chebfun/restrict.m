@@ -26,7 +26,7 @@ end
 function g = restrictcol(f,subdom)
 
 if isa(subdom,'domain')
-  subint = subdom(:);
+  subint = subdom.ends;
 else
   subint = subdom;
 end
@@ -45,10 +45,11 @@ end
 if subint(2)==subint(1)
   % Easiest to dispose of this case separately.
   [a,j] = rescale(subint(1),f.ends);             % locn of new 'domain'
-  g.funs = fun( feval(f.funs(j),a) ) ;
+  val = feval(f.funs(j),a);
+  g.funs = fun( val ) ;
   g.nfuns = 1;
   g.ends = subint;
-  
+  g.imps = [ val val ];
   return                                         % empty result
 end
 

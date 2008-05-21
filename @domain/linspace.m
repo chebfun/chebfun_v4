@@ -6,7 +6,7 @@ function x = linspace(d,varargin)
 if isempty(d)
   x = [];
 else
-  x = linspace(d(1),d(2),varargin{:});
+  x = linspace(d.ends(1),d.ends(end),varargin{:});
 end
 
 end

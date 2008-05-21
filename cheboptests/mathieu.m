@@ -11,7 +11,7 @@ c = chebfun('cos(2*x)',d);
 A = diff(d,2) - 2*q*diag(c);
 A.bc = 'periodic';
 
-lam = eigs(A,30,'LR');
+lam = eigs(A,30);
 
 % From MMA
 exactA25 = [ -40.256779546566787276, -21.314899690665726935, -3.5221647271582959443, ...
