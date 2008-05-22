@@ -1,12 +1,14 @@
 function display(F)
-% DISPLAY       Display chebun
-% DISPLAY(F) is called when the semicolon is not used at the end of a statement.
-% DISPLAY(F) shows for each piece of a chebfun the number of points used to
-% represent that part of the function, together with two columns: the first
-% one with the subinterval for each sooth piece and the second with the 
-% number of Chebyshev points used.
+% DISPLAY   Display a chebfun.
+% DISPLAY(F) outputs important information about the chebfun F to the
+% command window, including its domain of definition, its length (number of
+% sample values used to represent it), and a summary of its values. Each
+% row or column is displayed if F is a quasimatrix.
+%
+% It is called automatically when the semicolon is not used at the
+% end of a statement that results in a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 disp([inputname(1) ' = '])
 

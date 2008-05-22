@@ -1,21 +1,20 @@
 function normA = norm(A,n)
-% NORM	Chebfun or quasimatrix norm.
-%
-% For quasi-matrices...
+% NORM   Chebfun or quasimatrix norm.
+% For quasi-matrices:
 %    NORM(A) is the largest singular value of A.
 %    NORM(A,2) is the same as NORM(A).
 %    NORM(A,1) is the maximum of the 1-norms of the columns of A.
 %    NORM(A,inf) is the maximum of the 1-norms of the rows of A
 %    NORM(A,'fro') is the Frobenius norm, sqrt(sum(svd(A).^2)).
 %
-% For chebfuns...
+% For chebfuns:
 %    NORM(f) = sqrt(integral from -1 to 1 of abs(f)^2)).
 %    NORM(f,2) is the same as NORM(f).
 %    NORM(f,1) = integral from -1 to 1 of abs(f).
 %    NORM(f,inf) = max(abs(f)).
 %    NORM(f,-inf) = min(abs(f)).
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if nargin==1, n=2; end                  % 2-norm is the default
 

@@ -1,7 +1,7 @@
 function Fout = sinh(F)
-% SINH(F) is the hyperbolic sine of the CHEBFUN F.
+% SINH   Hyperbolic sine of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) sinh(x));

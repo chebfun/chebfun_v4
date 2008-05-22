@@ -6,7 +6,7 @@ function out = chebpoly(f,n)
 %
 % A = CHEBPOLY(F,i) returns the coefficients for the i-th fun.
  
-% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if numel(f)>1, error('CHEBPOLY does not handle chebfun quasi-matrices'), end
 

@@ -1,10 +1,9 @@
 function out = eq(F1,F2)
-% ==	Equal
-%  F1 == F2 compares funs F1 and F2 and returns one if F1 and F2 are
-%  equal and zero otherwise.
-%
+% ==   Equal.
+%  F1 == F2 compares chebfuns F1 and F2 and returns logical true if F1 and
+%  F2 are equal and false otherwise.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if numel(F1) ~= numel(F2) || F1(1).trans ~= F2(1).trans
     out = false;

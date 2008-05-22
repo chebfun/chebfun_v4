@@ -1,12 +1,12 @@
 function [out,pos] = max(f,g)
-% MAX   Maximum value of a chebfun.
+% MAX   Maximum value or pointwise max function.
 % MAX(F) returns the maximum value of the chebfun F. 
 % 
 % H = MAX(F,G), where F and G are chebfuns defined on the same domain,
-% returns a chebfun H such that H(x) = max(F(x),G(x)) and x is in the
+% returns a chebfun H such that H(x) = max(F(x),G(x)) for all x in the
 % domain of F and G.
 
-%  Chebfun Version 2.0
+%  Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if numel(f)>1 
     error('max and min do not handle chebfun quasi-matrices')

@@ -1,8 +1,8 @@
 function fout = mrdivide(f1,f2)
-% /	Right scalar divide
+% /	  Scalar right divide.
 % F/C divides the chebfun F by a scalar C.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if isa(f2,'double')
     fout = f1*(1/f2);

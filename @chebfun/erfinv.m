@@ -1,7 +1,6 @@
 function Fout = erfinv(F)
-% ERFINV(F) is the inverse error function for the chebfun F.
-%
+% ERFINV   Inverse error function for a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) erfinv(x));

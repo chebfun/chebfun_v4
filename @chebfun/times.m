@@ -1,9 +1,9 @@
 function Fout = times(F1,F2)
-% .*	Chebfun multiplication
+% .*   Chebfun multiplication.
 % F.*G multiplies chebfuns F and G or a chebfun by a scalar if either F or G is
 % a scalar.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
         
 if (isempty(F1) || isempty(F2)), Fout = chebfun; return; end
 

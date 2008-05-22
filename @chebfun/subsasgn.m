@@ -1,4 +1,5 @@
 function varargout = subsasgn(f,index,varargin)
+% SUBSASGN   Modify a chebfun.
 %     F(I) = G assigns the chebfun G into the interval of the chebfun F specifed 
 %     by the domain I. A(I,C) = F assigns the chebfun F to the column C of a 
 %     quasi-matrix A.  A colon used as a subscript in the first argument, as in 
@@ -15,8 +16,8 @@ function varargout = subsasgn(f,index,varargin)
 %  
 %     F.FIELD = B is a wrapper for the command SET(F,FIELD,B), where FIELD
 %     is any of the chebfun fields.
-%
-% Chebfun Version 2.0
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 idx = index(1).subs;
 switch index(1).type
     case '.'

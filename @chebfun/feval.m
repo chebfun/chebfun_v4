@@ -1,10 +1,10 @@
 function Fx = feval(F,x,varargin)
-% FEVAL Evaluate at point(s)
-%
+% FEVAL   Evaluate a chebfun at one or more points.
 % FEVAL(F,X) evaluates the chebfun F at the point(s) in X.
 %
 % See also CHEBFUN/SUBSREF.
-%
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 % Because chebfuns are superior to function_handle, this call can result
 % when f is function_handle and x is chebfun. In that case, revert to the

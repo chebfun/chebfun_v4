@@ -5,6 +5,6 @@ function g = ceil(f)
 %
 % See also CHEBFUN/FLOOR, CHEBFUN/ROUND, CHEBFUN/FIX, CEIL.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 g = -floor(-f);

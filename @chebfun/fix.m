@@ -1,12 +1,11 @@
 function Fout = fix(F)
 % FIX Round pointwise toward zero.
-%
 % G = FIX(F) returns the chebfun G such that G(X) = FIX(F(X)) for each
 % X in the domain of F.
 %
 % See also CHEBFUN/ROUND, CHEBFUN/CEIL, CHEBFUN/FLOOR, FIX.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = F;
 for k = 1:numel(F)

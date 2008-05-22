@@ -1,9 +1,10 @@
-
 function [Q,R] = qr(A,econ)   
-% QR	QR factorization
+% QR	QR factorization.
 % [Q,R] = QR(A,0), where A is a column quasimatrix with n columns,
 % produces a column quasimatrix Q with n orthonormal columns
 % and an n x n upper triangular matrix R such that A = Q*R.
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 % The computation is carried out by modified Gram-Schmidt following
 % Battles' 2006 PhD thesis.

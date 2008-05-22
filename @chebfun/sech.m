@@ -1,7 +1,7 @@
 function Fout = sech(F)
-% SECH(F) is the hyperbolic secant of the CHEBFUN F.
+% SECH   Hyperbolic secant of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) sech(x));

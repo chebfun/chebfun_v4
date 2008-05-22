@@ -1,17 +1,18 @@
 function F = flipud(F)
-% FLIPUD Flip/reverse a chebfun.
-%
-% G = FLIPUD(F) returns a chebfun G with the same domain as F but reversed;
-% that is, G(x)=F(a+b-x), where the domain is [a,b].
-% Remark: If F is a single row chebfun, then FLIPUD(F) returns F. 
+% FLIPUD   Flip/reverse a chebfun or quasimatrix.
+% If F is a column chebfun, G = FLIPUD(F) returns a column chebfun G with
+% the same domain as F but reversed; that is, G(x)=F(a+b-x), where the
+% domain is [a,b]. 
 % 
-% If F is a column quasi-matrix, FLIPUD(F) is the same as 
-% [ FLIPUD(F(:,1)) ...  FLIPUD(F(:,end)) ]
+% If F is a column quasimatrix, FLIPUD(F) applies the above operation is to
+% each column of F.
 %
-% If F is a row quasi-matrix, FLIPUD(F) is the same as 
-% [ F(end,:); ...  ; F(1,:)]
+% If F is a row chebfun, FLIPUD(F) has no effect. If F is a row
+% quasimatrix, FLIPUD(F) reverses the order of the rows. 
 %
+% See also chebfun/fliplr.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 % Deal with quasi-matrices
 if F(1).trans

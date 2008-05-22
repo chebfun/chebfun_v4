@@ -1,8 +1,9 @@
 function isemp = isempty(F)
-% ISEMPTY	True for empty chebfun
-% ISEMPTY(F) returns one if F is an empty chebfun and zero otherwise.
+% ISEMPTY   True for empty chebfun.
+% ISEMPTY(F) returns logical true if F is an empty chebfun and false 
+% otherwise.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 
 isemp = true;

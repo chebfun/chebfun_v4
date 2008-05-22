@@ -1,8 +1,9 @@
 function Fout = rdivide(F1,F2)
-% ./	Right chebfun division
-% F./G is the chebfun division of G into F.
+% ./   Pointwise chebfun right divide.
+% F./G returns a chebfun that represents the function F(x)/G(x). This may
+% fail to converge if G is ever close to zero.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if (isempty(F1) || isempty(F2)), Fout = chebfun; return; end
 

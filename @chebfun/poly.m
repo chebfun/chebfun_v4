@@ -1,9 +1,9 @@
 function out = poly(f,n)
-% POLY	Polynomial coefficients
+% POLY	Polynomial coefficients.
 % POLY(F) returns the polynomial coefficients of the first fun of F. 
 % POLY(F,N) returns the polynomial coefficients of the Nth fun of F.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 nfuns = f.nfuns;
 if nargin == 1

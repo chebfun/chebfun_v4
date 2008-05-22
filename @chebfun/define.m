@@ -1,5 +1,4 @@
 function Fout = define(F,subdom,G)
-
 % DEFINE Supply a new definition for a chebfun on a subdomain.
 %
 % F = DEFINE(F,S,G) uses the chebfun G to define the chebfun F in the
@@ -38,9 +37,9 @@ function Fout = define(F,subdom,G)
 %   Deletion:
 %     f = chebfun('abs(x)'); f{-1/2,1/2} = [];
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
-%% Deal with quasi-matrices
+% Deal with quasi-matrices.
 if numel(F)~=numel(G), 
     error('Chebfun quasi-matrix dimensions must agree')
 end 
@@ -50,10 +49,11 @@ for k = 1:numel(F)
     Fout(k) = definecol(F(k),subdom,G(k));
 end
 
-%% Deal with single chebfun
+end
+
 
 function f = definecol(f,subdom,g)
-
+% Deal with a single chebfun.
 
 if isa(subdom,'domain')
   subint = subdom.ends;
@@ -61,7 +61,7 @@ else
   subint = subdom;
 end
 
-%% No change for interval [a,b] with a>b.
+% No change for interval [a,b] with a>b.
 if subint(1)>subint(2)    
   return
   % flip
@@ -70,7 +70,7 @@ if subint(1)>subint(2)
 end
 
 
-%% Convert a scalar or empty input to a chebfun.
+% Convert a scalar or empty input to a chebfun.
 if isnumeric(g) 
   if numel(g)==1
     g = chebfun(g);
@@ -82,18 +82,18 @@ if isnumeric(g)
   end
 end
 
-%% Transform the domain of g as needed.
+% Transform the domain of g as needed.
 if ~isempty(g)                                   % translate
   g.ends = subint(1) + (g.ends-g.ends(1))*diff(subint)/length(domain(g));
 end
 
-%% Trivial return case.
+% Trivial return case.
 if isempty(f)
   f = g;
   return
 end
 
-%% The hard work.
+% The hard work.
 domf = domain(f);
 if ~isempty(g)                                 % INSERTION/OVERWRITING
   if subint(2) < domf(1)                       % extension to the left
@@ -138,3 +138,5 @@ else                                             % DELETION
 end
 
 f.nfuns = numel(f.funs);
+
+end

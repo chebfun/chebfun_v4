@@ -1,10 +1,10 @@
 function Fout = cumsum(F)
-% CUMSUM	Indefinite integral
+% CUMSUM   Indefinite integral.
 % CUMSUM(F) is the indefinite integral of the chebfun F. Dirac deltas 
 % already existing in F will decrease their degree.
 %
 
-%  Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = F;
 for k = 1:numel(F)

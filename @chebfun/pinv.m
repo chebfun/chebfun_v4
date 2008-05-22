@@ -1,10 +1,12 @@
 function X = pinv(A,tol)
-% PINV	Pseudoinverse
+% PINV	Pseudoinverse.
 % X = PINV(A) produces a row quasimatrix X so that A*X*A = A and
 % X*A*X = X.
 %
-% X = PINV(A,TOL) uses the tolerance TOL.  The computation uses SVD(A) and any
-% singular value less than the tolerance TOL is treated as zero.
+% X = PINV(A,TOL) uses the tolerance TOL.  The computation uses SVD(A) and
+% any singular value less than the tolerance TOL is treated as zero.
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if A(1).trans
    error('PINV only defined for column quasimatrices')

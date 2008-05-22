@@ -1,5 +1,5 @@
 function varargout = svd(A,econ)
-% SVD	Singular value decomposition
+% SVD   Singular value decomposition.
 % [U,S,V] = SVD(A,0), where A is a column quasimatrix with n columns,
 % produces an n x n diagonal matrix S with nonnegative diagonal
 % elements in nonincreasing order, a column quasimatrix U with n
@@ -10,6 +10,8 @@ function varargout = svd(A,econ)
 % and V is a row quasimatrix.
 %
 % S = SVD(A) produces a vector containing the singular values.
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 % The computation is carried out by orthogonalization operations
 % following Battles' 2006 thesis.

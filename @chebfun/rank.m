@@ -5,6 +5,8 @@ function r = rank(A,tol)
 %
 % RANK(A,TOL) is the number of singular values of A greater than TOL.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 s = svd(A);
 n = min(size(A));
 if nargin==1 

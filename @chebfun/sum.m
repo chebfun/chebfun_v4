@@ -20,6 +20,9 @@ function out = sum(F,dim)
 %
 % See also SUM (built-in).
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
+
 if isempty(F), out = 0; return, end    % empty chebfun has sum 0
 
 F_trans = F(1).trans;                  % default sum along columns

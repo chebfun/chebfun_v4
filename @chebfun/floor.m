@@ -1,12 +1,11 @@
 function Fout = floor(F)
-% FLOOR Pointwise floor function.
-%
+% FLOOR   Pointwise floor function.
 % G = FLOOR(F) returns the chebfun G such that G(X) = FLOOR(F(X)) for each
 % X in the domain of F.
 %
 % See also CHEBFUN/CEIL, CHEBFUN/ROUND, CHEBFUN/FIX, FLOOR.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = F;
 for k = 1:numel(F)

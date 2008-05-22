@@ -1,7 +1,5 @@
 function Fout = restrict(F,subdom)
-
-% RESTRICT Restrict a chebfun to a subinterval.
-% 
+% RESTRICT   Restrict a chebfun to a subinterval.
 % G = RESTRICT(F,S) returns a chebfun G whose domain is S and
 % which agrees (to roundoff precision) with F on that interval. S may be
 % specified as the vector [A,B] or using a DOMAIN.
@@ -13,7 +11,7 @@ function Fout = restrict(F,subdom)
 %
 % See also CHEBFUN/SUBSREF, CHEBFUN/DEFINE.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 % Deal with quasi-matrices
 Fout = F;

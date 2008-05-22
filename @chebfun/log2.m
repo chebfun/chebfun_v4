@@ -1,7 +1,6 @@
 function Fout = log2(F)
-% LOG2(F) is the base 2 logarithm of the chebfun F.
-%
+% LOG2   Base 2 logarithm of a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) log2(x));

@@ -1,7 +1,7 @@
 function Fout = sin(F)
-% SIN(F) is the sine of the CHEBFUN F.
+% SIN   Sine of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) sin(x));

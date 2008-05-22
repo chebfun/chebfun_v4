@@ -1,10 +1,10 @@
 function varargout = subsref(f,index)
-% SUBSREF   subscripted reference
+% SUBSREF   Evaluate a chebfun.
 % F(X) returns the values of the chebfun F evaluated on the array X. The 
 % function at the right of a breakpoint x is used for the evaluation of F
 % on x.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 idx = index(1).subs;
 switch index(1).type
     case '.'

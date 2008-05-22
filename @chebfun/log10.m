@@ -1,7 +1,6 @@
 function Fout = log10(F)
-% LOG10(F) is the base 10 logarithm of the chebfun F.
-%
+% LOG10   Base 10 logarithm of a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) log10(x));

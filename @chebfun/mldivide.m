@@ -1,8 +1,8 @@
 function fout = mldivide(f1,f2)
-% \ Left scalar divide
+% \   Scalar left divide.
 % C\F divides the chebfun F by a scalar C.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if isa(f1,'double')
     fout = (1/f1) * f2;

@@ -1,15 +1,17 @@
 function F = fliplr(F)
-% FLIPLR Flip/reverse a chebfun.
-%
-% G = FLIPLR(F) returns a chebfun G with the same domain as F but reversed;
-% that is, G(x)=F(a+b-x), where the domain is [a,b]. 
-% Remark: If F is a single column chebfun, then FLIPLR(F) returns F. 
+% FLIPLR   Flip/reverse a chebfun or quasimatrix.
+% If F is a row chebfun, G = FLIPLR(F) returns a row chebfun G with the
+% same domain as F but reversed; that is, G(x)=F(a+b-x), where the domain
+% is [a,b]. 
 % 
-% If F is a row quasi-matrix, FLIPLR(F) is the same as 
-% [ FLIPLR(F(1,:)); ...;  FLIPLR(F(end,:)) ]
+% If F is a row quasimatrix, FLIPLR(F) applies the above operation is to
+% each row of F.
 %
-% If F is a column quasi-matrix, FLIPLR(F) is the same as 
-% [ F(:,end) ...  F(:,1)]
+% If F is a column chebfun, FLIPLR(F) has no effect. If F is a column
+% quasimatrix, FLIPLR(F) reverses the order of the columns. 
 %
+% See also chebfun/flipud.
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 F = flipud(F')';

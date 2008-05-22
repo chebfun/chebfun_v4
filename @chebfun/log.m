@@ -1,7 +1,6 @@
 function Fout = log(F)
-% LOG(F) is the natural logarithm of the chebfun F.
-%
+% LOG   Natural logarithm of a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) log(x));

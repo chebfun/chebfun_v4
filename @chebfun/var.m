@@ -1,6 +1,8 @@
 function out = var(F)
-% VAR	Variance
+% VAR   Variance.
 % VAR(F) is the variance of the chebfun F.
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if F(1).trans
     out = transpose(var(transpose(F)));

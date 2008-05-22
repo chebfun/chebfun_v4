@@ -1,9 +1,9 @@
 function H = plus(F1,F2)
-% +	Plus
-% F + G adds chebfuns F and G or a scalar to a chebfun if either F or G is 
+% +	  Plus.
+% F + G adds chebfuns F and G, or a scalar to a chebfun if either F or G is 
 % a scalar.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if (isempty(F1) || isempty(F2)), H=chebfun; return; end
 

@@ -1,11 +1,11 @@
 function Fout = sign(F)
-% SIGN  Sign function.
+% SIGN   Sign function.
 % G = SIGN(F) returns a piecewise constant chebfun G such that G(x) = 1 in
 % the interval where F(x)>0, G(x) = -1 in the interval where F(x)<0 and
 % G(x) = 0  in the interval where F(x) = 0. The breakpoints of H are
 % introduced at zeros of F.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = F;
 for k = 1:numel(F)

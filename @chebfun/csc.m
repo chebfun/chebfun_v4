@@ -1,7 +1,7 @@
 function Fout = csc(F)
-% CSC(F) is the cosecant of the CHEBFUN F.
+% CSC   Cosecant of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) csc(x));

@@ -1,5 +1,5 @@
 function fout = merge(f, bkpts, maxn)
-%MERGE     Chebfun merge
+% MERGE   Try to remove breakpoints.
 %   G = MERGE(F) returns a chebfun representation of F with the smallest 
 %   number of breakpoints possible such that each smooth piece has at
 %   most NMAX number of points. NMAX being specified in CHEBFUNPREF. 
@@ -13,10 +13,13 @@ function fout = merge(f, bkpts, maxn)
 %
 %   In all cases, if elimination of break points is not successful, MERGE 
 %   will return F itself.
+%
 %   Impulses will prevent merging at corresponding break points.
 %
-%   See also SPLITTING,  CHEBFUNPREF.
+%   See also SPLITTING, CHEBFUNPREF.
 %
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if numel(f) > 1
     error('MERGE does not handle chebfun quasi-matrices')

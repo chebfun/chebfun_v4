@@ -39,8 +39,8 @@ function plot(varargin)
 % example, PLOT(F,'JumpLine','-r') will plot discontinuities as a solid red
 % line. Notice that it is not possible to modify other properties for jump
 % lines and that the default is ':k'.
-%
-%  Chebfun Version 2.0
+
+%  Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if nargin == 0, error('Not enough input arguments.'); end
 

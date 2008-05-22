@@ -1,6 +1,8 @@
 function F = cumprod(F)
-% CUMPROD	Indefinite integral of product
-% CUMPROD(F) is the indefinite integral of product of F.
+% CUMPROD   Indefinite product integral.
+% CUMPROD(F) is the indefinite product integral of the chebfun F, which 
+% is defined as exp( cumsum(log(F)) ).
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 F = exp(cumsum(log(F)));

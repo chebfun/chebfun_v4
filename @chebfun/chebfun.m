@@ -36,7 +36,7 @@ function f = chebfun(varargin)
 % intervals where the funs apply, and a matrix 'imps'containing information
 % about possible delta functions at the breakpoints between funs.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.chebfun.org.
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 persistent default_f
 if isempty(default_f)

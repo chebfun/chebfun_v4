@@ -1,18 +1,18 @@
 function Fout = vertcat(varargin)
-% Vertcat   Chebfun horizontal concatenation.
-%   [F1; F2] is the horizontal concatenation of chebfun quasi-matrices F1 and F2.
+% Vertcat   Chebfun vertical concatenation.
+%   [F1; F2] is the vertical concatenation of chebfun quasimatrices F1 and F2.
 %
 %   For column chebfuns, F = VERTCAT(F1,F2,...) concatenates any number
 %   of chebfuns by translating their domains to, in effect, create a
 %   piecewise defined chebfun F.
 %
-%   For row chebfuns, F = VERTCAT(F1,F2,...) returns a quasi-matrix whose
+%   For row chebfuns, F = VERTCAT(F1,F2,...) returns a quasimatrix whose
 %   rows are F1, F2, ....
 %
 %   See also CHEBFUN/HORZCAT, CHEBFUN/SUBSASGN.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 thereisdouble = false;
 for i = 1:nargin

@@ -1,8 +1,8 @@
 function rts = roots(f)
-% ROOTS	Roots of a chebfun
+% ROOTS	  Roots of a chebfun.
 % ROOTS(F) returns the roots of F in the interval where it is defined.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if numel(f)>1
     error('roots does not work with chebfun quasi-matrices')
@@ -19,8 +19,8 @@ for i = 1:f.nfuns
         rs = scale(r,a,b); % roots in a piece
         if ~isempty(rts)
             while length(rs)>=1 && abs(rts(end)-rs(1))<1e-14*hs
-                rs=rs(2:end);
-            end
+            rs=rs(2:end);
+        end
         end
         rts = [rts; rs];
     end

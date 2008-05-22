@@ -10,6 +10,8 @@ function varargout = size(F,dim)
 %  M = SIZE(F,DIM) returns the dimension specified by the scalar DIM.
 %
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if F(1).trans
     m = numel(F);
     n = inf;

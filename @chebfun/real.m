@@ -1,8 +1,8 @@
 function Fout = real(F)
-% REAL	Complex real part
+% REAL  Complex real part.
 % REAL(F) is the real part of F.
 
-%  Chebfun Version 2.0
+%  Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = realcol(F(k));

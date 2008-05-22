@@ -1,8 +1,9 @@
 function Fout = power(F1,F2)
-% .^	Chebfun power
+% .^	Chebfun power.
 % F.^G returns a chebfun F to the scalar power G, a scalar F to the
 % chebfun power G, or a chebfun F to the chebfun power G.
-%
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if isa(F1,'chebfun') && isa(F2,'chebfun')
     if size(F1)~=size(F2)

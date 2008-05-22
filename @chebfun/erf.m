@@ -1,7 +1,6 @@
 function Fout = erf(F)
-% ERF(F) is the error function for the chebfun F.
-%
+% ERF   Error function of a chebfun.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) erf(x));

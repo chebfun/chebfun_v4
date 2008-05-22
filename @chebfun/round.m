@@ -1,12 +1,12 @@
 function Fout = round(f)
-% ROUND Round pointwise to nearest integer.
+% ROUND   Round pointwise to nearest integer.
 %
 % G = ROUND(F) returns the chebfun G such that G(X) = ROUND(F(X)) for each
 % X in the domain of F.
 %
 % See also CHEBFUN/FIX, CHEBFUN/FLOOR, CHEBFUN/CEIL, ROUND.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = f;
 for k = 1:numel(f)

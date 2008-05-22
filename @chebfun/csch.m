@@ -1,7 +1,7 @@
 function Fout = csch(F)
-% CSCH(F) is the hyperbolic cosecant of the CHEBFUN F.
+% CSCH   Hyperbolic cosecant of a chebfun.
 %
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 Fout = comp(F, @(x) csch(x));

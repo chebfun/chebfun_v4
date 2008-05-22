@@ -1,8 +1,8 @@
 function Fout = mtimes(F1,F2)
-% *	Scalar multiplication
+% *	  Scalar multiplication.
 % F*G multiplies a chebfun by a scalar.
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 % Quasi-matrices product
 if (isa(F1,'chebfun') && isa(F2,'chebfun'))
