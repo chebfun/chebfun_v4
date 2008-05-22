@@ -6,8 +6,7 @@ function [fout,gout] = overlap(f,g)
 % 
 % This function replaces support/overlap.m
 
-% Copyright 2002-2008 by The Chebfun Team. 
-% See www.comlab.ox.ac.uk/chebfun.html
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 if f.trans ~= g.trans
     error('The .trans field of the two chebfuns must agree')

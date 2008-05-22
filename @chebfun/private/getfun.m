@@ -10,8 +10,7 @@ function [g, hpy, scl] = getfun(op, interval, maxn, scl)
 %   an output.
 %
 
-% Copyright 2002-2008 by The Chebfun Team. 
-% See www.comlab.ox.ac.uk/chebfun.html
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 % Initial setup
 htol = 1e-14*scl.h;

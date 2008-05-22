@@ -1,7 +1,6 @@
 function f = ctor_3(f,ops,ends,n)
 
-% Copyright 2002-2008 by The Chebfun Team. 
-% See www.comlab.ox.ac.uk/chebfun.html
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 if length(ends) ~= length(ops)+1
     error(['Unrecognized input sequence: Number of intervals '...

@@ -8,7 +8,6 @@ function X = scale(x,a,b)
 % X can be a scalar or a matrix.
 %
 
-% Copyright 2002-2008 by The Chebfun Team. 
-% See www.comlab.ox.ac.uk/chebfun.html
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 X = (1-x)*a/2 + (x+1)*b/2;

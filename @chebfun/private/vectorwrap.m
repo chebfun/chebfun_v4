@@ -1,8 +1,7 @@
 function g = vectorwrap(f,x)
 % Try to determine whether f is vectorized. If not, wrap it in a loop.
 
-% Copyright 2002-2008 by The Chebfun Team. 
-% See www.comlab.ox.ac.uk/chebfun.html
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 if isa(f,'chebfun') || isa(f,'fun')
     g = f;

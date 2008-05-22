@@ -9,8 +9,7 @@ function [X,I] = rescale(x,ends)
 % of the vector ENDS used to rescale X.
 %
 
-% Copyright 2002-2008 by The Chebfun Team. 
-% See www.comlab.ox.ac.uk/chebfun.html
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 nchebs = length(ends)-1;
 X = zeros(size(x));

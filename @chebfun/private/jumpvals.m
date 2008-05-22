@@ -3,8 +3,7 @@ function vals = jumpvals(funs,ends,op,sing)
 % If there is a singular point, op is evaluated in order to obtain a 
 % value at the breakpoint.
 
-% Copyright 2002-2008 by The Chebfun Team. 
-% See www.comlab.ox.ac.uk/chebfun.html
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 if nargin<3 || isa(op,'double') || isa(op,'fun')
     op=[]; % op is not needed

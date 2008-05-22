@@ -18,8 +18,7 @@ function [funs,ends,scl,sing] = auto(op,ends,scl)
 %    Note: this function is used in ctor_1.m and ctor_2.m
 %   
 
-% Copyright 2002-2008 by The Chebfun Team. 
-% See www.comlab.ox.ac.uk/chebfun.html
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 % Initial setup.
 sing = [true true];
