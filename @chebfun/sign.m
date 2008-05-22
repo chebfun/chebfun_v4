@@ -33,16 +33,29 @@ else
     if abs(r(1)  - ends(1)  ) > 1e-14*hs, r = [ends(1); r  ]; end 
     if abs(r(end)- ends(end)) > 1e-14*hs, r = [r; ends(end)];  end
 end
-nr = length(r);
-newints = zeros(1,nr);
-newints(1) = ends(1);
-ff = [];
+
+% Get rid of multiple roots:
+if any(diff(r)<1e-14*hs)
+    rcp = r; r=r(1);
+    for i = 2:length(rcp)
+        if abs(r(end)-rcp(i)) > 1e-14*hs
+            r(end+1) = rcp(i);
+        end
+    end
+end
+
+% -------------------------------------------
 
 % Make sure that the domain of definition is not changed
 % Rodp added this to fix a bug -- Wiki 22/4/08.
 r(end) = ends(end);
 r(1) = ends(1);
 %---------------------------------------------
+
+nr = length(r);
+newints = zeros(1,nr);
+newints(1) = ends(1);
+ff = [];
 for i = 1:nr-1
     a = r(i); b = r(i+1);
     ff = [ff fun(sign(feval(f,(a+b)/2)))];

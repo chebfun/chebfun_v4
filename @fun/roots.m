@@ -12,8 +12,8 @@ if (g.n<101)                                    % for small length funs
         end
         c=c(ind:end);
     end
-    if (g.n<3)
-        r=roots(chebpoly(g));
+    if (g.n<=4)
+        r=roots(poly(g));
     else
         c=.5*c(end:-1:2)/(-c(1));               % assemble colleague matrix A
         c(end-1)=c(end-1)+.5;
