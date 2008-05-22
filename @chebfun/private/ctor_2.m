@@ -12,7 +12,7 @@ end
 funs = [];
 imps = [];
 sing = true;
-scl.v=0; scl.h=max(abs(ends(1,end)));
+scl.v=0; scl.h=max(abs(ends([1,end])));
 newends = ends(1);
 for i = 1:length(ops)
     op = ops{i};
