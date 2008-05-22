@@ -1,5 +1,8 @@
 function NewInputArg = unwrap_arg(varargin)
 
+% Copyright 2002-2008 by The Chebfun Team. 
+% See www.comlab.ox.ac.uk/chebfun.html
+
 if length(varargin) == 2
     temp = varargin{2};
     if ~isnumeric(temp)        

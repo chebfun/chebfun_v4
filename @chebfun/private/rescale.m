@@ -8,7 +8,10 @@ function [X,I] = rescale(x,ends)
 % [Y,I] = RESCALE(X,ENDS) returns the rescaled values Y and the index i
 % of the vector ENDS used to rescale X.
 %
-% Ricardo Pachon and Lloyd N. Trefethen, 2007, Chebfun Version 2.0
+
+% Copyright 2002-2008 by The Chebfun Team. 
+% See www.comlab.ox.ac.uk/chebfun.html
+
 nchebs = length(ends)-1;
 X = zeros(size(x));
 I = zeros(size(x));

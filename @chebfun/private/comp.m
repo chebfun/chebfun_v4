@@ -11,6 +11,9 @@ function Fout = comp(F1, op, F2)
 %        Fout = comp(x+1,@power,x+5)
 %
 
+% Copyright 2002-2008 by The Chebfun Team. 
+% See www.comlab.ox.ac.uk/chebfun.html
+
 % Note: this function does not deal with deltas! It will delete them!
 % Only the first row of imps is updated. 
 

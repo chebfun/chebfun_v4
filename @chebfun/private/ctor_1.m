@@ -1,5 +1,7 @@
 function f = ctor_1(f,op)
 
+% Copyright 2002-2008 by The Chebfun Team. 
+% See www.comlab.ox.ac.uk/chebfun.html
 
 dom = chebfunpref('domain');
 sing = [true true];

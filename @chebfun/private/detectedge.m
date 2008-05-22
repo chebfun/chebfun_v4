@@ -8,7 +8,8 @@ function edge = detectedge(f,a,b,hs,vs)
 % If no edge is detected, EDGE=[] is returned.
 %
 
-% Rodrigo Platte, 2008. 
+% Copyright 2002-2008 by The Chebfun Team. 
+% See www.comlab.ox.ac.uk/chebfun.html
 
 % Assume no edge is found
 edge = [];
