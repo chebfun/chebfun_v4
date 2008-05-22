@@ -2,6 +2,8 @@ function out = roots(g)
 % ROOTS	Roots in the interval [-1,1]
 % ROOTS(G) returns the roots of the FUN G in the interval [-1,1].
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 epstol = 1e-14;
 if (g.n<101)                                    % for small length funs
     c=chebpoly(g);                              % compute Cheb coeffs

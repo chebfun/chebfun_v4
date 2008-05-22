@@ -23,6 +23,8 @@ function gout = diff(g,k)
 %
 % See "Chebyshev Polynomials" by Mason ad Handscomb, CRC 2002, pg 34.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 if isempty(g), gout = g; return, end
 if (nargin==1), k=1; end                
 c = chebpoly(g);                        % obtain Cheb coeffs {C_r}

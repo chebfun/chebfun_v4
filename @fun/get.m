@@ -1,6 +1,9 @@
 function val = get(a, propName)
 % GET Get asset properties from the specified object
 % and return the value
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 switch propName
     case 'vals'
         val = a.vals;

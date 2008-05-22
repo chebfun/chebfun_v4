@@ -11,6 +11,8 @@ function g = growfun(op,g,n,g1,g2)
 %   OP(G1,G2), where G1 and G2 are funs.
 %
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 % Check preferences 
 split = chebfunpref('splitting');
 resample = chebfunpref('resample');

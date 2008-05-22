@@ -2,6 +2,8 @@ function out = sum(g)
 % SUM	Definite integral from -1 to 1
 % SUM(G) is the integral from -1 to 1 of F.  
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 if isempty(g), out = g; return, end
 n = g.n;
 if (n==1), out=g.vals*2; return; end

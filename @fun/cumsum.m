@@ -21,6 +21,8 @@ function gout = cumsum(g)
 %
 % See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 32-33.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 if isempty(g), gout = g; return, end
 n = g.n;
 c = [0;0;chebpoly(g)];                    % obtain Cheb coeffs {c_r}

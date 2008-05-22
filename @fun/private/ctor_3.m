@@ -1,5 +1,7 @@
 function g = ctor_3(g,op,n,scl)
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 % set scale
 g.scl = scl;
 

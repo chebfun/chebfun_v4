@@ -2,6 +2,8 @@ function out = poly(f)
 % POLY	Polynomial coefficients of a fun.
 % POLY(F) returns the polynomial coefficients of F.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 v=chebpoly(f);
 n=length(v);
 tnold2=1;

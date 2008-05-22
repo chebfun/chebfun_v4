@@ -5,4 +5,6 @@ function out = feval(g,x)
 % nodes of length 2^n+1 then the evaluation could be done using FFTs through
 % prolong.m (faster).
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 out = bary(x,g.vals);

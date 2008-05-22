@@ -3,6 +3,8 @@ function x = bary(x,gvals)
 % The function values are store in gvals
 % and the function is evaluated at the value(s) in x.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 n = length(gvals);
 if n==1
     % The function is a constant

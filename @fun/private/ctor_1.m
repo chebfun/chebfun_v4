@@ -1,5 +1,7 @@
 function g = ctor_1(g,op)
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 switch class(op)
     case 'fun'      % returns the same fun
         g = op;  

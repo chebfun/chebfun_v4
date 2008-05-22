@@ -3,6 +3,8 @@ function gout = times(g1,g2)
 % G1.*G2 multiplies funs G1 and G2 or a fun by a scalar if either G1 or G2 is
 % a scalar.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 if (isempty(g1) || isempty(g2)), gout=fun; return; end
 if (isa(g1,'double') || isa(g2,'double'))
   gout = mtimes(g1,g2);

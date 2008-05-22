@@ -5,6 +5,8 @@ function g = set(g,varargin)
 %
 % G = SET(G,PROP_1,VAL_1,...,PROP_n,VAL_n) modifies more than one property.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 propertyArgIn = varargin;
 while length(propertyArgIn) >= 2,
     prop = propertyArgIn{1};

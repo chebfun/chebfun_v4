@@ -1,5 +1,7 @@
 function g = ctor_2(g,op,n)
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 switch class(op)
     case 'fun'      % returns the same fun
         warning(['Generating fun from fun object on the first' ...

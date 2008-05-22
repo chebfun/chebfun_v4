@@ -4,6 +4,8 @@ function out = chebpoly(g)
 % G = C_N T_N(x)+...+C_1 T_1(x)+C_0 T_0(x) where T_N(x) denotes the N-th
 % Chebyshev polynomial.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 gvals = flipud(g.vals);
 n = g.n;
 if (n==1), out = gvals; return; end

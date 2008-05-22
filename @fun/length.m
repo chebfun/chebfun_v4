@@ -2,7 +2,7 @@ function len = length(g)
 % LENGTH	Length of a fun
 % LENGTH(F) is the number of Chebyshev points N. 
 
-% Chebfun Version 2.0
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 len=0;
 if numel(g)>1, error('numel(g)>1'), end

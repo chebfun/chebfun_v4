@@ -14,6 +14,8 @@ function g = fun(op,n,scl)
 %
 % FUN creates an empty fun.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 persistent default_g
 if isempty(default_g)
     default_g = ctor_ini;

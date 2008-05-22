@@ -1,6 +1,8 @@
 function gout = restrict(g,subint)
 % RESTRICT Restrict a fun to a subinterval.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 if (subint(1)<-1) || (subint(2)>1) || (subint(1)>subint(2))
   error('fun:restrict:badinterval','Not given an interval in [-1,1].')
 end

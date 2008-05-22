@@ -5,6 +5,8 @@ function gout = compfun(g1,op,g2)
 % This function is called at the chebfun level (CHEBFUN/PRIVATE/COMP.M)
 % See also FUN/PRIVATE/GROWFUN.M
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
 if chebfunpref('splitting')
     n = chebfunpref('nsplit');
 else
