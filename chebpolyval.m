@@ -1,5 +1,10 @@
 function v = chebpolyval(c)
-% This function maps Chebyshev coefficients to values at Chebyshev points.
+%CHEBPOLYVAL   maps Chebyshev coefficients to values at Chebyshev points
+%   CHEBPOLYVAL(C) returns the values of the polynomial 
+%   P(x) = C(1)T_{N-1}(x)+C(2)T_{N-2}(x)+...+C(N) at Chebyshev nodes.
+%               
+
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 c = c(:);       % input should be a column vector
 lc = length(c);

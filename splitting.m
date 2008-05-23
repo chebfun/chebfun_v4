@@ -12,6 +12,8 @@ function splitting(on_off)
 %   SPLITTING, by itself, displays the current splitting state.
 %
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if nargin==0 
     switch chebfunpref('splitting')
         case 1 

@@ -48,6 +48,8 @@ function varargout = chebfunpref(varargin)
 % See also SPLITTING, RESAMPLE
 %
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 % persistent variables are known only to the function in which they are
 % declared.
 persistent prefs

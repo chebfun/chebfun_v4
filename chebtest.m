@@ -13,7 +13,7 @@ function failfun = chebtest(dirname)
 % FAILED = CHEBTEST('DIRNAME') returns a cell array of all functions that
 % either failed or crashed.
 
-% Copyright 2008 by the Chebfun Team. See www.chebfun.org.
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if nargin < 1
   % Attempt to find "chebtests" directory.

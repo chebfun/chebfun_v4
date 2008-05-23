@@ -11,6 +11,8 @@ function resample(on_off)
 %   evaluations are time consuming.
 %
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if nargin==0 
     switch chebfunpref('resample')
         case 1 

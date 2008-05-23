@@ -1,6 +1,6 @@
 % Chebfun logo.
 
-% Copyright 2008 by The Chebfun Team. See www.chebfun.org.
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 figure
 x = linspace(-1,0.93,300)';
