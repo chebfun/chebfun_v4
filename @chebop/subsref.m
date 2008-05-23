@@ -2,7 +2,8 @@ function A = subsref(A,s)
 %SUBSREF  Extract information from a chebop.
 % A{N} returns a realization of the chebop A at dimension N. If N is
 % infinite, the functional form of the operator is returned as a function
-% handle.
+% handle. If N is finite, any boundary conditions on A will be applied to
+% some rows of A. (This is equivalent to the output of FEVAL(A,N,'bc').)
 %
 % A(I,J) returns a chebop that selects certain rows or columns from the
 % finite-dimensional realizations of A. A(1,:) and A(end,:) are examples of
@@ -19,10 +20,10 @@ function A = subsref(A,s)
 % A.scale returns the global scale set for linear system solution, as
 % described in the documentation for mldivide.
 %
-% See also chebop/subsasgn, chebop/and, chebop/mldivide.
+% See also chebop/subsasgn, chebop/feval, chebop/and.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 valid = false;
 switch s(1).type
@@ -33,7 +34,7 @@ switch s(1).type
       A = chebop( subsref(A.varmat,s), @(u) [], A.fundomain );
       valid = true;
     elseif length(t)==1 && isnumeric(t{1})  % return a realization (feval)
-      A = feval(A,t{1});
+      A = feval(A,t{1},'bc');
       valid = true;
    end
   case '.'

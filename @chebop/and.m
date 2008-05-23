@@ -1,6 +1,5 @@
 function A = and(A,bc)
-% &     Set boundary conditions for a chebop.
-%
+% &   Set boundary conditions for a chebop.
 % (A & BC) returns a chebop the same as A but with boundary conditions
 % defined by BC. Any previously defined boundary conditions for A 
 % are discarded.
@@ -36,7 +35,8 @@ function A = and(A,bc)
 %
 % See also chebop/subsref, chebop/subsasgn.
 
-% Toby Driscoll, 12 May 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 A = setbc(A,bc);
 

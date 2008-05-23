@@ -1,8 +1,8 @@
 function e = isempty(A)
-% ISEMPTY  Test for empty chebop.
+% ISEMPTY   True for empty chebop.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 e = isempty(A.varmat);
 

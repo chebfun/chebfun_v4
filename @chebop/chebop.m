@@ -13,9 +13,15 @@ function A = chebop(varargin)
 %
 % CHEBOP(F,L,D,M) also defines a nonzero differential order for the
 % operator.
+%
+% Normally one does not call CHEBOP directly. Instead, use one of the
+% functions in the see-also line.
+%
+% See also domain/eye, domain/diff, domain/cumsum, chebfun/diag,
+% domain/zeros.
 
-% Toby Driscoll, 12 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 pref = chebfunpref;
 if pref.splitting
@@ -29,13 +35,15 @@ A.oper = @(u) [];     % inf-dim representation
 A.validoper = false;  % true if inf-dim representation is given
 A.difforder = 0;
 A.fundomain = domain([-1 1]);
-A.realization = {};   % for future
 A.lbc = struct([]);
 A.rbc = struct([]);
 A.numbc = 0;
 A.scale = 0;
-A.blocksize = [0 0];  % experimental, for block chebops
+A.blocksize = [0 0];  % for block chebops
 A.ID = newIDnum();    % for storage of realizations/factorizations
+
+% Note: A.oper should be callable, even when it is not a valid operation,
+% so that arithmetic on chebops can produce a result without syntax error.
 
 if nargin==0
 elseif nargin==1 && isa(varargin{1},'chebop')

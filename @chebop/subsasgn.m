@@ -15,8 +15,8 @@ function A = subsasgn(A,s,B)
 %
 % See also CHEBOP/AND, CHEBOP/MLDIVIDE.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 valid = false;
 switch s(1).type
@@ -69,9 +69,6 @@ switch s(1).type
         A = setbc(A,B);
         valid = true;
                           
-%      case 'fundomain'             % FUNDOMAIN
-%        A.fundomain = B;
-%        valid = true;
     end
 end
 

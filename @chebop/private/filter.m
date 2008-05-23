@@ -8,8 +8,8 @@ function v = filter(v,thresh)
 % relative threshold. If so, we replace the coefficients on the plateau
 % with zero in order to nudge the constructor to stop.
 
-% Toby Driscoll, 4 March 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 n = length(v);
 if n < 64, return, end

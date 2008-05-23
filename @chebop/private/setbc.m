@@ -15,9 +15,9 @@ function A = setbc(A,bc)
 % order). If the string is 'periodic', you get m nonseparated conditions for
 % difforder=m. 
 
-% Toby Driscoll, 25 April 2008.
-% Copyright 2008.
- 
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
+
 I = eye(A.fundomain);
 D = diff(A.fundomain);
 

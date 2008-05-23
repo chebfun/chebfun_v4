@@ -3,8 +3,8 @@ function C = mrdivide(A,B)
 % A/M for chebop A and scalar M returns (1/M)*A. No other syntax is
 % supported.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 if ~isnumeric(B)
   error('chebop:mrdivide:noright','Right inverses not implemented.')

@@ -1,8 +1,10 @@
 function display(A)
 % DISPLAY Pretty-print a chebop.
+% DISPLAY is called automatically when a statement that results in a chebop
+% output is not terminated with a semicolon.
 
-% Toby Driscoll, 12 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 loose = ~isequal(get(0,'FormatSpacing'),'compact');
 if loose, disp(' '), end

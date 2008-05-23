@@ -5,8 +5,8 @@ function newID = newIDnum()
 % function is cleared (erasing persistent storage) while the chebop methods
 % are left uncleared, but this possibility seems remote.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 persistent ID
 if isempty(ID), ID = 0; end

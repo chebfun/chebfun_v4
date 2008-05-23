@@ -26,8 +26,8 @@ function C = mldivide(A,B)
 %
 % See also chebop/and, chebop/mtimes.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 % For future performance, store LU factors of realized matrices.
 persistent storage
@@ -38,20 +38,40 @@ switch(class(B))
   case 'chebop'
     %TODO: Experimental, undocumented.
     dom = domaincheck(A,B);
-    C = chebop( A.varmat\B.varmat, [], dom, B.difforder-A.difforder );  
+    C = chebop( A.varmat\B.varmat, [], dom, B.difforder-A.difforder ); 
+
+  case 'double'
+    if length(B)==1  % scalar expansion
+      C = mldivide(A,chebfun(B,domain(A)));
+    else
+      error('chebop:mldivide:operand','Use scalar or chebfun with \.')
+    end
+
   case 'chebfun'
     dom = domaincheck(A,B(:,1));
-    if A.numbc~=A.difforder
+    m = A.blocksize(2);
+    if (m==1) && (A.numbc~=A.difforder)
       warning('chebop:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
+    
+    V = [];  % so that the nested function overwrites it
     if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
       C = chebfun( @(x) A.scale(x)+value(x), dom ) - A.scale;
     else
       C = chebfun( @(x) A.scale+value(x), dom ) - A.scale;
     end
+    
+    % V has been overwritten by the nested value function.
+    if m > 1
+      for j = 1:m
+        c = chebfun( V(:,j), dom );
+        C(:,j) = chebfun( @(x) c(x), dom );
+      end
+    end
+    
   otherwise
-    error('chebop:mtimes:badoperand','Unrecognized operand.')
+    error('chebop:mtimes:operand','Unrecognized operand.')
 end
 
   function v = value(x)
@@ -67,22 +87,25 @@ end
     
     % Retrieve or compute LU factors of the matrix.
     if use_store && N > 5 && length(storage)>=A.ID ...
-        && length(storage(A.ID).l)>=N && ~isempty(storage(A.ID).l{N})
-     l = storage(A.ID).l{N};
-     u = storage(A.ID).u{N};
+        && length(storage(A.ID).L)>=N && ~isempty(storage(A.ID).L{N})
+     L = storage(A.ID).L{N};
+     U = storage(A.ID).U{N};
      c = storage(A.ID).c{N};
      rowidx = storage(A.ID).rowidx{N};
     else
-      [L,c,rowidx] = feval(A,N);  % includes row replacements
-      [l,u] = lu(L);
+      Amat = feval(A,N);
+      [Bmat,c,rowidx] = bdyreplace(A,N);
+      Amat(rowidx,:) = Bmat;
+      [L,U] = lu(Amat);
     end
     
-    % Modify RHS as needed.
-    f = B(x);
+    % Evaluate and modify RHS as needed.
+    f = B(x,:);
+    f = f(:);
     f(rowidx) = c;
      
     % Solve.
-    v = u\(l\f);
+    v = U\(L\f);
     
     % Store factors if necessary.
     if use_store && N > 5
@@ -92,12 +115,14 @@ end
       if ssize.bytes > cheboppref('maxstorage')
         storage = struct([]); 
       end
-      storage(A.ID).l{N} = l;
-      storage(A.ID).u{N} = u;
+      storage(A.ID).L{N} = L;
+      storage(A.ID).U{N} = U;
       storage(A.ID).c{N} = c;
       storage(A.ID).rowidx{N} = rowidx;
     end
 
+    V = reshape(v,N,m);
+    v = sum(V,2);
     v = filter(v,1e-8);
 
   end

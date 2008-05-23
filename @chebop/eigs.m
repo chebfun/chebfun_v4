@@ -35,8 +35,8 @@ function varargout = eigs(A,varargin)
 %
 % See also EIGS, EIG.
 
-% Toby Driscoll, 12 May 2008. 
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 % Parsing.
 B = [];  k = 6;  sigma = [];
@@ -57,6 +57,11 @@ while (nargin > j)
   j = j+1;
 end
 
+m = A.blocksize(2);
+if m~=A.blocksize(1)
+  error('chebop:eigs:notsquare','Block size must be square.')
+end
+
 if isempty(sigma)
   % Try to determine where the 'most interesting' eigenvalue is.
   [V1,D1] = bc_eig(A,B,33,33,0);
@@ -73,9 +78,15 @@ if isempty(sigma)
     % Of those that did not change much, take the smallest cheb coeff
     % vector. 
     lam1(bigdel) = [];
-    C = abs( cd2cp(V1(:,~bigdel)) );
-    C = C*diag(1./max(C));
-    [cmin,idx] = min( sum(C,1) );  % min 1-norm of cheb coeffs  
+    V1 = reshape( V1, [33,m,size(V1,2)] );  % [x,varnum,modenum]
+    V1(:,:,bigdel) = [];
+    V1 = permute(V1,[1 3 2]);       % [x,modenum,varnum]
+    C = zeros(size(V1));
+    for j = 1:size(C,3)  % fpr each variable
+      C(:,:,j) = abs( cd2cp(V1(:,:,j)) );  % cheb coeffs of all modes
+    end
+    mx = max( max(C,[],1), [], 3 );  % max for each mode over all vars
+    [cmin,idx] = min( sum(sum(C,1),3)./mx );  % min 1-norm of each mode
     sigma = lam1(idx);
   end
 end
@@ -91,11 +102,18 @@ if nargout<2
   varargout = { diag(D) };
 else
   dom = A.fundomain;
-  Vfun = chebfun;
+  V = reshape( V, [N,m,k] );
+  Vfun = {};
+  for i = 1:m
+    Vfun{i} = chebfun;
   for j = 1:k
-    Vfun(:,j) = chebfun( V(:,j), dom );
-    Vfun(:,j) = Vfun(:,j)/norm(Vfun(:,j));
+      f = chebfun( V(:,i,j), dom );
+      % This line is needed to simplify/compress the chebfuns.
+      f = chebfun( @(x) f(x), dom );
+      Vfun{i}(:,j) = f/norm(f);
   end
+  end
+  if m==1, Vfun = Vfun{1}; end
   varargout = { Vfun, D };
 end
 
@@ -103,13 +121,16 @@ end
   % "interesting" eigenfunctions. 
   function v = value(x)
     N = length(x);
+    if N > 1025
+      error('chebop:eigs:converge',...
+      'Not converging. Check the sigma argument, or ask for fewer modes.')
+    end
     if N-A.numbc < k
       % Not enough eigenvalues. Return a sawtooth to ensure refinement.
       v = (-1).^(0:N-1)';
     else
       [V,D] = bc_eig(A,B,N,k,sigma);
-      %v = V(:,end);
-      v = sum(V,2);
+      v = sum( sum( reshape(V,[N,m,k]),2), 3);
       v = filter(v,1e-8);
     end
   end
@@ -119,8 +140,11 @@ end
 
 % Computes the (discrete) e-vals and e-vecs. 
 function [V,D] = bc_eig(A,B,N,k,sigma)
-[L,c,rowrep] = feval(A,N);
-elim = false(N,1);
+m = A.blocksize(1);
+L = feval(A,N);
+[Bmat,c,rowrep] = bdyreplace(A,N);
+L(rowrep,:) = Bmat;
+elim = false(N*m,1);
 elim(rowrep) = true;
 if isempty(B)
   % Use algebra with the BCs to remove degrees of freedom.
@@ -128,7 +152,7 @@ if isempty(B)
   L = L(~elim,~elim) + L(~elim,elim)*R;
   [W,D] = eig(full(L));
   idx = nearest(diag(D),sigma,min(k,N));
-  V = zeros(N,length(idx));
+  V = zeros(N*m,length(idx));
   V(~elim,:) = W(:,idx);
   V(elim,:) = R*V(~elim,:);
 else

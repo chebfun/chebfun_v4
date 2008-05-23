@@ -14,12 +14,12 @@ function [u,normres] = gmres(varargin)
 %
 % See also chebfun/gmres, gmres.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 A = varargin{1};
 op = @(u) A*u;
 [u,normres] = gmres(op,varargin{2:end});
 
-end   % main function
+end   
 

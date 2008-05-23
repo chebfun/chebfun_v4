@@ -4,8 +4,8 @@ function C = minus(A,B)
 % difference. If one is a scalar, it is interpreted as the scalar times the
 % identity operator.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 C = plus(A,-B);
 end

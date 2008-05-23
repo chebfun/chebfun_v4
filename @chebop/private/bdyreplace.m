@@ -3,33 +3,50 @@ function [B,c,rowidx] = bdyreplace(A,n)
 % B*u=c. This function finds all rows of B and c, and also the indices of
 % rows of A*u=f that should be replaced by them.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
-% Scalar case
-B = zeros(A.numbc,n);
+m = size(A,2);
+B = zeros(A.numbc,n*m);
 c = zeros(A.numbc,1);
 rowidx = zeros(1,A.numbc);
 if A.numbc==0, return, end
 
+elimnext = 1:n:m*n;  % in each variable, next row to eliminate
 q = 1;
 for k = 1:length(A.lbc)
-  T = feval( A.lbc(k).op, n );   % realize boundary operator
-  if size(T,1)>1, T = T(1,:); end   % select row at left end
+  op = A.lbc(k).op;
+  if size(op,2)~=m
+    error('chebop:bdyreplace:systemsize',...
+      'Boundary conditions not consistent with system size.')
+  end
+  T = feval(op,n);
+  if size(T,1)>1, T = T(1,:); end   % at left end only
   B(q,:) = T;
   c(q) = A.lbc(k).val;
-  rowidx(q) = k;
+  nz = any( reshape(T,n,m)~=0 );    % nontrivial variables
+  j = find(full(nz),1,'first');     % eliminate from the first
+  rowidx(q) = elimnext(j);
+  elimnext(j) = elimnext(j)+1;
   q = q+1;
 end
+
+elimnext = n:n:n*m;  % in each variable, next row to eliminate
 for k = 1:length(A.rbc)
-  T = feval( A.rbc(k).op, n );   % realize boundary operator
-  if size(T,1)>1, T = T(n,:); end  % select row at right end
+  op = A.rbc(k).op;
+  if size(op,2)~=m
+    error('chebop:bdyreplace:systemsize',...
+      'Boundary conditions not consistent with system size.')
+  end
+  T = feval(op,n);
+  if size(T,1)>1, T = T(n,:); end   % at right end only
   B(q,:) = T;
   c(q) = A.rbc(k).val;
-  rowidx(q) = n+1-k;
+  nz = any( reshape(T,n,m)~=0 );    % nontrivial variables 
+  j = find(full(nz),1,'last');      % eliminate from the last
+  rowidx(q) = elimnext(j);
+  elimnext(j) = elimnext(j)-1;
   q = q+1;
 end
-
-
 
 end
