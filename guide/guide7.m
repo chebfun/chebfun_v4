@@ -1,4 +1,4 @@
-%% CHEBFUN GUIDE 7: SOLVING LINEAR DIFFERENTIAL EQUATIONS WITH CHEBOPS
+%% CHEBFUN GUIDE 7: LINEAR DIFFERENTIAL EQUATIONS WITH CHEBOPS
 % Copyright Tobin A. Driscoll, May 2008.
 
 %% 7.1  About chebops
@@ -289,7 +289,7 @@ subplot(1,3,3), plot( expm(1.8*A & A.bc)*f )
 %% References
 %
 % [DBT2008] Driscoll, T. A., Bornemann, F., and Trefethen, L. N. Automatic
-% spectral methods using chebops, in preparation.
+% spectral computations and the chebop system, in preparation.
 %
 % [Forn1996] Forberg, B. A Practical Guide to Pseudospectral Methods.
 % Cambridge University Press, 1996.
