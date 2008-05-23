@@ -7,6 +7,8 @@ function J = cumsum(d,m)
 %
 % See also CHEBOP, CHEBFUN/CUMSUM.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if isempty(d)
   J = chebop;
 else

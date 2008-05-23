@@ -5,6 +5,8 @@ function e = double(d)
 %
 % If you want only the endpoints and not any breakpoints, use D(:).
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 e = d.ends;
 
 end

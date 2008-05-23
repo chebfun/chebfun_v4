@@ -7,6 +7,8 @@ function t = subsref(d,s)
 % D.break returns the breakpoints (excluding endpoints). You can access a
 % single breakpoint via D.break(I).
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 valid = false;
 switch(s(1).type)
   case '()'

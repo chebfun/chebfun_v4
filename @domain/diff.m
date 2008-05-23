@@ -7,6 +7,8 @@ function D = diff(d,m)
 %
 % See also CHEBOP, CHEBFUN/DIFF.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if isempty(d)
   D = chebop;
 else

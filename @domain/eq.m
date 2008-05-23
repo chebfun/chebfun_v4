@@ -3,6 +3,8 @@ function e = eq(a,b)
 % Domains are considered equal if their endpoints are identical floating
 % point numbers. Breakpoints are not considered.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if isempty(a) || isempty(b)
   e = [];
 else

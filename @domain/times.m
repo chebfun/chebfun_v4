@@ -4,6 +4,8 @@ function d = times(d,a)
 % breakpoints of D by A. If A is negative, the ordering of the points is
 % then reversed.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 % Swap if needed to make D the domain.
 if isnumeric(d)
   t=a; a=d; d=t;

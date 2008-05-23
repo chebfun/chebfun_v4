@@ -5,6 +5,8 @@ function I = eye(d)
 %
 % See also CHEBOP.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if isempty(d)
   I = chebop;
 else

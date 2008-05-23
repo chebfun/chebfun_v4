@@ -1,6 +1,8 @@
 function s = char(d)
 % CHAR   Pretty-print domain as a string.
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if isempty(d)
   s = '   empty domain';
 else

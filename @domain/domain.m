@@ -6,6 +6,8 @@ function d = domain(varargin)
 % D = DOMAIN(V) for vector V of length at least 2 creates a domain for the
 % interval [V(1),V(end)] with breakpoints at V(2:end-1).
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 if nargin==0
   v = [];
 elseif nargin==1
