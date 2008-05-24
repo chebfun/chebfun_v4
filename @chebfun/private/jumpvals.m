@@ -8,6 +8,8 @@ function vals = jumpvals(funs,ends,op,sing)
 if nargin<3 || isa(op,'double') || isa(op,'fun')
     op=[]; % op is not needed
     sing = zeros(size(ends)); % Ged vaules at brealpoints from funs not op.
+else
+    sing = ones(size(ends));
 end
 
 vals = zeros(size(ends));
