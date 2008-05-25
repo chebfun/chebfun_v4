@@ -98,5 +98,6 @@ for k = length(A.rbc):-1:1
 end
 
 A.numbc = length(A.lbc) + length(A.rbc);
+A.ID = newIDnum;
   
 end

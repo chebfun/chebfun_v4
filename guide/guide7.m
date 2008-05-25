@@ -12,14 +12,14 @@
 % Chebyshev polynomial interpolation; in the context of differential
 % equations such techniques are called spectral collocation methods. (See 
 % the references at the end of this guide for further reading.) Also
-% like chebfuns, the sizes of function discretizations are chosen
+% as with chebfuns, the sizes of function discretizations are chosen
 % automatically to achieve the maximum possible accuracy available from
 % double precision arithmetic. 
 
 %%
 % The chebop package was first conceived at Oxford University by Folkmar
-% Bornemann, Toby Driscoll, and Nick Trefethen. The implementation as of
-% this writing has been by Toby Driscoll.
+% Bornemann, Toby Driscoll, and Nick Trefethen. The implementation has been
+% by Toby Driscoll.
 
 %% 7.2 chebop syntax
 % Many chebops are created out of three basic building blocks, eye, diff,
@@ -67,14 +67,13 @@ norm( F*g - f.*g )
 
 %%
 % Chebops respond to arithmetic operations much as matrices do. Both the
-% underlying matrices and functional representations are updated in
-% accordance.
+% underlying matrices and functional representations are kept up to date.
 A = D^2 + I;
 J = 4 + Q*F;
 norm( J*g - (4*g - cumsum(f.*g)) )
 
 %% 7.3 Solving linear equations
-% The backslash operator works on chebops much like it does on matrices, to
+% The backslash operator works on chebops much as it does on matrices, to
 % solve a linear system. In this case, the system may be an integral or
 % differential one. For instance, we can transform the differential
 % equation
@@ -95,8 +94,10 @@ clf, plot(u)
 title( ['residual norm = ' num2str( norm((D+F)*u) ) ] )
 
 %%
-% In order to solve the original differential equation more directly, we
-% need to attach boundary condition information to a differential operator.
+% Differential operators are not generally invertible in the absence of 
+% auxiliary conditions. In order to solve the original differential
+% equation more directly, we can form the differential operator, assign it
+% a boundary condition, and finally use backslash. 
 A = D + F;
 A.lbc = -2;
 u = A \ 0;
@@ -106,7 +107,7 @@ title( ['residual norm = ' num2str( norm((D+F)*u) ) ] )
 %%
 % Note in the above that A.lbc was used to assign a condition on the
 % solution at the left endpoint of the domain, and the scalar 0 is
-% "expanded" into a constant chebfun on the domain automatically. 
+% automatically "expanded" into a constant chebfun on the domain. 
 
 %%
 % In order to assign a Neumann condition on the solution at the
@@ -116,26 +117,39 @@ u = A\1;
 clf, plot(u)
 
 %% 
-% In general, if a value is given as a boundary condition, it is imposed on the
-% solution, and if an operator is given, it is applied homogeneously to the
-% solution. In order to impose a general linear, inhomogeneous condition,
-% supply both the operator and the value as a cell array.
-A.rbc = {D-4*I, 1};
-u = A\0;
-feval( diff(u)-4*u, 1 )
+% In general, if a number is given as a boundary condition, it is imposed
+% as a Dirichlet condition on the solution; if an operator is given, it is
+% applied homogeneously to the solution; and if {operator,number} are given
+% in a cell array, the operator applied to the solution equals that number
+% at the boundary. One can alternatively use the string 'dirichlet' or
+% 'neumann' anywhere an operator would be accepted. 
+A.rbc = 'neumann';   % same as previous example
+A.rbc = {D-4*I, 5};  % so that u'(1)-4u(1)=5
 
 %%
-% For second-order differential operators, additional mnemonics 'dirichlet'
-% and 'neumann' are understood in boundary condition assignments. 
-A = D^2 + diag(1000*x.^2);
-A.bc = 'dirichlet';
-u = A\exp(x);  plot(u)
-
-%%
-% The assignment A.bc above applies to both boundaries. A synonym for this
-% type of assignment is to use the & operator:
+% For second-order differential operators, one can assign to .lbc and .rbc
+% separately, or one can use .bc to apply the same condition at both ends. 
+f = sin(2*pi*x);
 A = D^2 - D + diag(1000*x.^2);
-u = (A & 'neumann')\exp(x);  plot(u)
+A.bc = 'dirichlet';
+u = A\f;  plot(u)
+
+%%
+% The assignment A.bc above applies to both boundaries. A synonym for the
+% .bc assignment is to use the & operator:
+u = (A & 'neumann') \ f;  hold on, plot(u,'k')
+
+%%
+% One can also retrieve boundary conditions as a structure, then assign
+% them to another operator. 
+bc = A.bc;
+u = ( (A+40) & bc ) \ f;  plot(u,'r')
+
+%%
+% Moreover, there is one special boundary condition string 'periodic' that
+% will find a periodic solution, provided that the right-side function is also
+% periodic.
+u = ( A & 'periodic') \ f;  plot(u-0.1,'m.-')  
 
 %%
 % For all the details on how to assign boundary conditions, see the help 
@@ -147,7 +161,7 @@ u = (A & 'neumann')\exp(x);  plot(u)
 d = domain(0,pi);  D = diff(d);
 [V,D] = eigs(D^2 & 'dirichlet');
 diag(D)
-plot(V(:,1:4))
+clf, plot(V(:,1:4))
 
 %%
 % By default, eigs tries to find the six eigenvalues that are "most readily
@@ -167,9 +181,9 @@ subplot(1,2,1), plot(V(:,1:2:5)), title('elliptic cosines')
 subplot(1,2,2), plot(V(:,2:2:6)), title('elliptic sines')
 
 %%
-% eigs can solve generalized eigenproblems. Here is an example of modes
+% eigs can also solve generalized eigenproblems. Here is an example of modes
 % from the Orr-Sommerfeld equation of hydrodynamic linear stability
-% analysis, at parameters very close to the onset of instability. This is a
+% analysis at parameters very close to the onset of instability. This is a
 % fourth-order problem, requiring two conditions at each boundary.
 d = domain(-1,1);  x = d(:);
 D = diff(d);  I = eye(d);
@@ -219,7 +233,7 @@ end
 % is realized. Boundary conditions are used to modify the matrix (and
 % right-hand side for \) so that they become implicit in the linear algebra
 % of the n-dimensional system, and the corresponding finite-dimensional
-% solution is found using the builtin \, eig, or expm functions. 
+% solution is found using the built-in \, eig, or expm functions. 
 
 %%
 % The discretization length of the chebfun solution is thus chosen
@@ -228,8 +242,8 @@ end
 % values at finite dimension cannot in general be expected to have
 % condition numbers close to one, we cannot expect the resulting solutions
 % to be meaningful to full machine precision. Typically one loses just a
-% few digits for second-order differential problems, but six or more for
-% fourth-order problems. 
+% few digits for second-order differential problems, but six or more digits
+% for fourth-order problems. 
 
 %% 7.7 Nonlinear equations by Newton iteration
 % A sequence of linear problems may be useful in solving nonlinear
@@ -278,7 +292,7 @@ eigs(A,16)/pi
 
 %%
 % Here we exponentiate the same operator to see the time-evolution behavior
-% of this system (Maxwell's equation).
+% of this system (Maxwell's equations).
 x = d(:);
 f = exp(-20*x.^2) .* sin(14*x);  f = [f -f];
 subplot(1,3,1), plot(f)
