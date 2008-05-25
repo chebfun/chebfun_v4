@@ -1,11 +1,11 @@
 function comet(f,varargin)
 % COMET   Two-dimensional comet plot.
-% A comet graph is an animated graph in which a circle (the comet head) 
-% traces the data points on the screen. Notice that the chebfun comet does
-% not leave a trail, as it is the case of the standard comet.
+% A comet graph is an animated graph in which a thick dot (the comet head) 
+% traces the data points on the screen. Notice that unlike the standard
+% Matlab comet command, the chebfun comet does not leave a trail.
 %
 % comet(F) displays a comet graph of the chebfun F, comet(F,G) displays a
-% comet of the chebfun F versus the chebfun G and comet(F,G,H) displays a
+% comet of the chebfun F versus the chebfun G, and comet(F,G,H) displays a
 % comet in 3D-space using the three chebfuns as coordinates.
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.

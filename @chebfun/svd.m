@@ -9,7 +9,7 @@ function varargout = svd(A,econ)
 % If A is a row quasimatrix with n rows, then U is a unitary matrix
 % and V is a row quasimatrix.
 %
-% S = SVD(A) produces a vector containing the singular values.
+% S = SVD(A) returns a vector containing the singular values.
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 

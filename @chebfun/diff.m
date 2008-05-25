@@ -1,10 +1,10 @@
 function Fout = diff(F,n)
 % DIFF	Differentiation of a chebfun.
 % DIFF(F) is the derivative of the chebfun F. At discontinuities, DIFF
-% creates a Dirac delta with factor equal to the size of the jump. Dirac
-% deltas already existing in F will increase their degree.
+% creates a Dirac delta with coefficient equal to the size of the jump.
+% Dirac deltas already existing in F will increase their degree.
 %
-% DIFF(F,N) is the N-th derivative of F.
+% DIFF(F,N) is the Nth derivative of F.
 % 
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.

@@ -4,9 +4,9 @@ function out = sum(F,dim)
 % where it is defined.
 %
 % If F is a quasimatrix, SUM(F,DIM) sums along the dimension DIM. Summing 
-% in the chebfun dimension does a definite integral of each chebfun; 
-% in the indexed dimension adds together all of the chebfuns to return a
-% single chebfun.
+% in the chebfun dimension computes a definite integral of each chebfun; 
+% summing in the indexed dimension adds together all of the chebfuns to
+% return a single chebfun.
 %
 % For a column quasimatrix, SUM(F) is the same as SUM(F,1).
 %
