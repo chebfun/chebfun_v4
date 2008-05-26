@@ -3,7 +3,6 @@ function f = ctor_1(f,op)
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 dom = chebfunpref('domain');
-sing = [true true];
 switch class(op)
     case 'chebfun'
         f = op;  
@@ -26,14 +25,14 @@ switch class(op)
         end
         op = inline(op);
         op = vectorwrap(op,dom);
-        [funs,ends,scl,sing] = auto(op,dom);
-        imps = jumpvals(funs,ends,op,sing);
+        [funs,ends] = auto(op,dom);
+        imps = jumpvals(funs,ends,op);
         f = set(f,'funs',funs,'ends',ends,'trans',0,...
             'imps',imps);
     case 'function_handle'
         op = vectorwrap(op,dom);
-        [funs,ends,scl,sing] = auto(op,dom);
-        imps = jumpvals(funs,ends,op,sing);
+        [funs,ends] = auto(op,dom);
+        imps = jumpvals(funs,ends,op);
         f = set(f,'funs',funs,'ends',ends,'trans',0,...
             'imps',imps); 
     case 'cell'
@@ -45,6 +44,6 @@ switch class(op)
 end
 
 % merging step
-if length(sing)>2 
-    f = merge(f);%, find(~sing));
+if length(f.ends)>2 
+    f = merge(f);
 end

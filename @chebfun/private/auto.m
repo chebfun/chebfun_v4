@@ -1,4 +1,4 @@
-function [funs,ends,scl,sing] = auto(op,ends,scl)
+function [funs,ends,scl] = auto(op,ends,scl)
 % [FUNS,ENDS,SCL,SING] = AUTO(OP,ENDS,SCL)
 %    AUTO generates a vector of FUNS used to construct a chebfun
 %    representation of the function handle OP. 
@@ -11,17 +11,12 @@ function [funs,ends,scl,sing] = auto(op,ends,scl)
 %    the horizonatal and veritcal global scales. This vector is update 
 %    within AUTO and is returned as output. 
 %
-%    The output vector SING is a boolean flagging whether a break point is
-%    also a singularity. More specifically, SING(K) = true if ENDS(k) is an
-%    edge and SING(K) = false otherwise.
-%
 %    Note: this function is used in ctor_1.m and ctor_2.m
 %   
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 % Initial setup.
-sing = [true true];
 
 if nargin <3
     scl.h = max(abs(ends)); scl.v = 0;
@@ -61,7 +56,6 @@ while any(sad)
     a = ends(i); b = ends(i+1);
 
     % Look for an edge between [a,b].
-    isedge = false;
     edge = detectedge(op,a,b,scl.h,scl.v);
 
     if isempty(edge) % No edge found, split interval at the middle point
@@ -70,8 +64,6 @@ while any(sad)
         edge = a+(b-a)/100; % Split interval closer to the left boundary
     elseif (b-edge) <= htol % Edge is close to the right boundary, assume it is at x=b
         edge = b-(b-a)/100; % Split interval closer to the right boundary
-    else
-        isedge = true;      % Edge was found and is assumed to be a singular point
     end
 
     % Try to obtain happy funs on each new subinterval.
@@ -81,7 +73,6 @@ while any(sad)
     funs = [funs(1:i-1) child1 child2 funs(i+1:end)];
     ends = [ends(1:i) edge ends(i+1:end)];
     sad  = [sad(1:i-1) not(hpy1) not(hpy2) sad(i+1:end)];
-    sing = [sing(1:i) isedge sing(i+1:end)];
 
     %% -------- Stop? check the length --------
     lenf = 0;

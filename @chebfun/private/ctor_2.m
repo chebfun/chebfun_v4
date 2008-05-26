@@ -11,7 +11,6 @@ if any(diff(ends)<0),
 end
 funs = [];
 imps = [];
-sing = true;
 scl.v=0; scl.h=max(abs(ends([1,end])));
 newends = ends(1);
 for i = 1:length(ops)
@@ -20,7 +19,6 @@ for i = 1:length(ops)
         case 'double'
             funs = [funs fun(op)];
             newends = [newends ends(i+1)];
-            sing = [sing true];
         case 'fun'
             if numel(op) > 1
             error(['A vector of funs cannot be used to construct '...
@@ -28,7 +26,6 @@ for i = 1:length(ops)
             end
             funs = [funs op];
             newends = [newends ends(i+1)];
-            sing = [sing true];
         case 'char'
             if ~isempty(str2num(op))
                 error(['A chebfun cannot be constructed from a string with '...
@@ -36,16 +33,14 @@ for i = 1:length(ops)
             end
             op = inline(op);
             op = vectorwrap(op,ends(i:i+1));
-            [fs,es,scl,si] = auto(op,ends(i:i+1),scl);
+            [fs,es,scl] = auto(op,ends(i:i+1),scl);
             funs = [funs fs];
             newends = [newends es(2:end)];
-            sing = [sing(1:end-1) si];
         case 'function_handle'
             op = vectorwrap(op,ends(i:i+1));
-            [fs,es,scl,si] = auto(op,ends(i:i+1),scl);
+            [fs,es,scl] = auto(op,ends(i:i+1),scl);
             funs = [funs fs];
             newends = [newends es(2:end)];
-            sing = [sing(1:end-1) si];
         case 'cell'
             error(['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])
@@ -57,14 +52,14 @@ for i = 1:length(ops)
                 'cannot be used to construct a chebfun object.'])
     end
 end
-switch class(op)
-    case 'double', imps(end+1) = op(end);
-    case 'fun'   , imps(end+1) = op.vals(end);
-end
+% switch class(op)
+%     case 'double', imps(end+1) = op(end);
+%     case 'fun'   , imps(end+1) = op.vals(end);
+% end
 
-imps = jumpvals(funs,newends,op,sing); % Update values at jumps, first row of imps.
+imps = jumpvals(funs,newends,op); % Update values at jumps, first row of imps.
 f = set(f,'funs',funs,'ends',newends,'imps',imps,'trans',0);
 
-if length(sing)>2 
+if length(f.ends)>2 
     f = merge(f,find(~ismember(newends,ends))); % Avoid merging at specified breakpoints
 end

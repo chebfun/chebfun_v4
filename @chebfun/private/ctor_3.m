@@ -70,5 +70,5 @@ switch class(op)
     case 'fun'   , imps(end+1) = op.vals(end);
 end
 
-imps = jumpvals(funs,ends,op,zeros(size(ends))); % Update values at jumps, first row of imps.
+imps = jumpvals(funs,ends,op); 
 f = set(f,'funs',funs,'ends',ends,'imps',imps,'trans',0,'scl',scl);
