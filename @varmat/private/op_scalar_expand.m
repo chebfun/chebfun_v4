@@ -4,8 +4,8 @@ function C = op_scalar_expand(op,A,B)
 % happens to be scalar. Expansion is the usual matlab sense of copying a
 % scalar to every position in the array.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 if isnumeric(A) && numel(A)==1
   C = varmat( @(n) op(A,feval(B,n)) );

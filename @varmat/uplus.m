@@ -1,9 +1,7 @@
-function C = uplus(A)
-% +  Unitary plus of a varmat.
+function A = uplus(A)
+% +  Same varmat.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
-
-C = A;
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 end

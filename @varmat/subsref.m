@@ -6,8 +6,8 @@ function A = subsref(A,s)
 % index I and J can be a ':', one or more fixed numbers, the keyword 'end',
 % or a function of N.
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 valid = false;
 switch s(1).type

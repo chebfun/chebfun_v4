@@ -1,8 +1,8 @@
 function C = ctranspose(A)
-%CTRANSPOSE Conjugate transpose of a varmat.
+% CTRANSPOSE  Conjugate transpose of a varmat.
   
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2008 by Toby Driscoll.
+% See www.comlab.ox.ac.uk/chebfun.
 
 C = varmat( @(n) feval(A,n)' );
 

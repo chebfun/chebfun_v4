@@ -25,11 +25,11 @@ while norm(du)>1e-11
   J.bc = bc;
   J.scale = norm(u);
   du = -(J\r);
-  u = chebfun(u+du);
+  u = (u+du);
 end
 
 
-pass = abs( feval(diff(u,2),0) - 0.927680043004878) < 100*eps; 
+pass = abs( feval(diff(u,2),0) - 0.927680043004878) < 1e-9; 
 
 
 
