@@ -13,14 +13,14 @@ else
 
   if all(A.blocksize==[1 1])
     s = char(s,char(A.varmat),' ');
-    if A.validoper 
+    if ~isempty(A.oper)
       s = char(s, '   and functional representation:',' ',...
         ['     ' char(A.oper)], ' ');
     end
   else
     s = char(s,sprintf('   with %ix%i block definitions',A.blocksize),' ');
   end
-  
+    
   if A.difforder~=0
     s = char(s, ['   and differential order ' num2str(A.difforder)],' ');
   end    

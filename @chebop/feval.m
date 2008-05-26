@@ -2,7 +2,7 @@ function [M,B,c,rowreplace] = feval(A,n,usebc)
 % FEVAL  Realization of a chebop at fixed size.
 % M = FEVAL(A,N) for integer N returns the matrix associated with A at 
 % size N.
-% 
+%
 % [M,B,C,RR] = FEVAL(A,N,'bc') modifies the matrix according to any
 % boundary conditions that have been set for A. In particular, M(RR,:)=B,
 % and C is a vector of boundary values corresponding to the rows in RR.
@@ -22,7 +22,7 @@ use_store = cheboppref('storage');
 usebc = (nargin > 2) && strcmpi(usebc,'bc');
 
 if isinf(n)   % function
-  if A.validoper
+  if ~isempty(A.oper)
     M = A.oper;
     if A.numbc && usebc > 0
       warning('chebop:feval:funbc',...
@@ -33,7 +33,7 @@ if isinf(n)   % function
       'This operator does not have a functional form defined.')
   end
 
-else          % matrix
+else          % matrix   
   if use_store && n > 10 && length(storage)>=A.ID ...
       && length(storage(A.ID).mat)>=n && ~isempty(storage(A.ID).mat{n})
     M = storage(A.ID).mat{n};

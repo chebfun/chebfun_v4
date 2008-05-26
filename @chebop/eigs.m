@@ -106,12 +106,12 @@ else
   Vfun = {};
   for i = 1:m
     Vfun{i} = chebfun;
-  for j = 1:k
+    for j = 1:k
       f = chebfun( V(:,i,j), dom );
       % This line is needed to simplify/compress the chebfuns.
       f = chebfun( @(x) f(x), dom );
       Vfun{i}(:,j) = f/norm(f);
-  end
+    end
   end
   if m==1, Vfun = Vfun{1}; end
   varargout = { Vfun, D };

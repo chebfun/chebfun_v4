@@ -38,7 +38,7 @@ switch(class(B))
   case 'chebop'
     %TODO: Experimental, undocumented.
     dom = domaincheck(A,B);
-    C = chebop( A.varmat\B.varmat, [], dom, B.difforder-A.difforder ); 
+    C = chebop( A.varmat\B.varmat, [], dom, B.difforder-A.difforder );  
 
   case 'double'
     if length(B)==1  % scalar expansion
@@ -103,7 +103,7 @@ end
     f = B(x,:);
     f = f(:);
     f(rowidx) = c;
-     
+      
     % Solve.
     v = U\(L\f);
     
@@ -120,7 +120,7 @@ end
       storage(A.ID).c{N} = c;
       storage(A.ID).rowidx{N} = rowidx;
     end
-
+    
     V = reshape(v,N,m);
     v = sum(V,2);
     v = filter(v,1e-8);

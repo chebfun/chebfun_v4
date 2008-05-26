@@ -31,8 +31,7 @@ splitting off
 
 % Default properties.
 A.varmat = [];
-A.oper = @(u) [];     % inf-dim representation
-A.validoper = false;  % true if inf-dim representation is given
+A.oper = oparray;     % inf-dim representation
 A.difforder = 0;
 A.fundomain = domain([-1 1]);
 A.lbc = struct([]);
@@ -41,9 +40,6 @@ A.numbc = 0;
 A.scale = 0;
 A.blocksize = [0 0];  % for block chebops
 A.ID = newIDnum();    % for storage of realizations/factorizations
-
-% Note: A.oper should be callable, even when it is not a valid operation,
-% so that arithmetic on chebops can produce a result without syntax error.
 
 if nargin==0
 elseif nargin==1 && isa(varargin{1},'chebop')
@@ -57,13 +53,13 @@ else
   end
   % Second argument defines the operator.
   if nargin>=2 && ~isempty(varargin{2})
-    A.oper = varargin{2};
-    A.validoper = true;
+    A.oper = oparray(varargin{2});
   end
   % Third argument supplies the function domain. 
   if nargin>=3 
     A.fundomain = varargin{3};
   end
+  % 4th argument is differential order
   if nargin>=4
     A.difforder = varargin{4};
   end

@@ -20,7 +20,7 @@ end
 
 switch(class(B))
   case 'double'     % chebop * scalar
-    C = chebop(B*A.varmat, @(u) B*feval(A.oper,u), A.fundomain, A.difforder );
+    C = chebop(B*A.varmat, B*A.oper, A.fundomain, A.difforder );
     C.blocksize = A.blocksize;
     
   case 'chebop'     % chebop * chebop
@@ -28,22 +28,24 @@ switch(class(B))
     if size(A,2) ~= size(B,1)
       error('chebop:mtimes:size','Inner block dimensions must agree.')
     end
+    mat = A.varmat * B.varmat;
+    op =  A.oper * B.oper;
     order = A.difforder + B.difforder;
-    op =  @(u) feval( A.oper, feval(B.oper,u) );
-    mat = A.varmat*B.varmat;
     C = chebop(mat,op,dom,order);
+    C.blocksize = [size(A,1) size(B,2)];
 
   case 'chebfun'    % chebop * chebfun
     dom = domaincheck(A,B);
     if isinf(size(B,2))
       error('chebop:mtimes:dimension','Inner dimensions do not agree.')
     end
+   
     % Block operator case is special.   
     if (A.blocksize(2) > 1) && (A.blocksize(2)~=size(B,2))
       error('chebop:mtimes:blockdimension',...
         'Number of column blocks must equal number of quasimatrix columns.')
     end
-    if A.validoper   % operator form
+    if ~isempty(A.oper)   % functional form
       C = feval(A.oper,B); 
     else             % adaptive matrix multiplication
       if A.blocksize(2)==1
@@ -67,7 +69,7 @@ switch(class(B))
         end
       end
     end
-
+           
   otherwise
     error('chebop:mtimes:badoperand','Unrecognized operand.')
 end
@@ -81,6 +83,7 @@ end
     v = V*combine;
     v = filter(v,1e-8);
   end
+   
 
 end
 

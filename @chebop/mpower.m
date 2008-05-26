@@ -6,21 +6,22 @@ function C = mpower(A,m)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
-if (m > 0) && (m==round(m))
-  C = chebop(A.varmat^m, @iteratedop, A.fundomain );
-  C.difforder = m*A.difforder;
-elseif m==0
-  C = eye(A.fundomain);
-else
-  error('chebop:mpower:badexponent',...
-    'Only nonnegative integer exponents are allowed.')
+if ~((numel(m)==1)&&(m==round(m))&&(m>=0))
+  error('oparray:mpower:argument','Exponent must be a nonnegative integer.')
 end
 
-  function u = iteratedop(u) 
-    for k=1:m
-      u=feval(A.oper,u); 
-    end
-  end
+s = A.blocksize;
+if s(1)~=s(2) 
+  error('oparray:mpower:square','Oparray must be square')
+end
+
+if (m > 0) 
+  C = chebop(A.varmat^m, A.oper^m, A.fundomain );
+  C.difforder = m*A.difforder;
+  C.blocksize = s;
+else
+  C = blockeye(A.fundomain,s(1));
+end
 
 end
 

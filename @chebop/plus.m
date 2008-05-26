@@ -1,5 +1,5 @@
 function C = plus(A,B)
-% +   Sum of chebops.
+% +  Sum of chebops.
 % If A and B are chebops, A+B returns the chebop that represents their
 % sum. If one is a scalar, it is interpreted as the scalar times the
 % identity operator.
@@ -27,13 +27,14 @@ if isa(B,'chebop')
     error('chebop:plus:sizes','Chebops must have identical sizes.')
   end
 
-  op = @(u) feval(A.oper,u) + feval(B.oper,u);
+  op = A.oper + B.oper;
   order = max( A.difforder, B.difforder );
   C = chebop( A.varmat+B.varmat, op, dom, order );
   C.blocksize = A.blocksize;
 
 else
   error('chebop:plus:badoperand','Unrecognized operand.')
+
 end 
 
 end

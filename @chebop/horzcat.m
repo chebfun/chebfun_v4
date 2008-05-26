@@ -27,8 +27,11 @@ dom = domaincheck( varargin{:} );
 V = cellfun( @(A) A.varmat, varargin, 'uniform',false );
 V = horzcat(V{:});
 
-% We will disable the functional-form mode and differential order.
-op = [];
+% Cat the operators.
+op = cellfun( @(A) A.oper, varargin, 'uniform',false );
+op = horzcat( op{:} );
+
+% We disable differential order.
 difford = 0;
 
 A = chebop( V, op, dom, difford );
