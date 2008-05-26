@@ -64,7 +64,7 @@ end
 g.funs = f.funs(j:k);
 g.ends = [subint(1) f.ends(j+1:k) subint(2)];
 g.nfuns = k-j+1;
-g.imps = [0 f.imps(j+1:k) 0];                    % assumes no imps at ends!
+g.imps = f.imps(j:k+1);             
 
 % Trim off the end funs.
 if j==k
@@ -74,4 +74,5 @@ else
   g.funs = [g.funs(1:end-1) restrict(g.funs(end),[-1 b])];
 end
 
-g.imps(1,:) = jumpvals(g.funs, g.ends);
+%g.imps(1,:) = jumpvals(g.funs, g.ends);
+
