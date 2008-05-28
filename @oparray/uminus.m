@@ -3,7 +3,7 @@ function C = uminus(A)
 
 % Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
 
-if isempty(A) || isempty(B)
+if isempty(A) 
   C = oparray({});
   return
 end
