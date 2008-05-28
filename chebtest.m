@@ -34,6 +34,7 @@ fprintf('\nTesting %i functions:\n\n',length(mfile))
 failed = zeros(length(mfile),1);
 
 addpath(dirname)
+warnstate = warning;
 warning off
 for j = 1:length(mfile)
   
@@ -65,7 +66,8 @@ for j = 1:length(mfile)
   
 end
 rmpath(dirname)
-warning on
+warning(warnstate)
+chebfunpref('factory');
 
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')

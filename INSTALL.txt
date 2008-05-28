@@ -1,4 +1,4 @@
-		      Chebfun system, Version 2_
+		      Chebfun system, Version 2
 
 Installation instructions:
 
@@ -15,6 +15,10 @@ Installation instructions:
 
 3. A restart of MATLAB may be needed, if you want to access the user
    guides via the Help browser.
+
+4. To check whether the system appears to be working, type "chebtest" at 
+   the command window prompt. If a problem is reported, please contact       chebfun@comlab.ox.ac.uk with the details (including output of the 
+   "ver" command).
 
 Point your web browser to the guide/html directory of the chebfun
 installation in order to read the user guides.
