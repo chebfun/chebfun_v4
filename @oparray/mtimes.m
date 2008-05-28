@@ -6,6 +6,11 @@ function C = mtimes(A,B)
 
 % Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
 
+if isempty(A) || isempty(B)
+  C = oparray({});
+  return
+end
+
 if isnumeric(A)
   C = A; A = B; B = C;
 end

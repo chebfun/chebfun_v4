@@ -1,10 +1,13 @@
-function d = domain(varargin)
+function [d,x] = domain(varargin)
 % DOMAIN  Domain object constructor.
 % D = DOMAIN(A,B) or DOMAIN([A,B]) creates a domain object for the
 % real interval [A,B].
 %
 % D = DOMAIN(V) for vector V of length at least 2 creates a domain for the
 % interval [V(1),V(end)] with breakpoints at V(2:end-1).
+%
+% [D,X] = DOMAIN(...) also returns the 'identity chebfun', the
+% result of CHEBFUN('x',D).
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
@@ -24,3 +27,9 @@ d.ends = v;
 
 superiorto('double');
 d = class(d,'domain');
+
+if nargout > 1
+  x = chebfun(@(x) x,d);
+end
+
+end

@@ -3,8 +3,12 @@ function C = plus(A,B)
 
 % Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
 
-op = cellfun( @(a,b) @(u) feval(a,u)+feval(b,u), A.op,B.op,...
-  'uniform',false );
-C = oparray(op);
+if isempty(A) || isempty(B)
+  C = oparray({});
+else
+  op = cellfun( @(a,b) @(u) a(u)+b(u), A.op,B.op,...
+    'uniform',false );
+  C = oparray(op);
+end
 
 end

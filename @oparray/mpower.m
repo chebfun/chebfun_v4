@@ -1,6 +1,11 @@
 function M = mpower(A,m)
 % ^   Repeated application of oparray.
 
+if isempty(A)
+  M = oparray({});
+  return
+end
+
 assert( (numel(m)==1)&&(m==round(m))&&(m>=0), ...
   'oparray:mpower:argument','Exponent must be a nonnegative integer.');
 

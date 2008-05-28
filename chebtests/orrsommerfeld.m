@@ -28,5 +28,5 @@ correct = [
     -1.564823130376978e-001-8.413737949305676e-001i
 ];
 
-pass = norm( lam-correct, Inf) < 1e-13;
+pass = norm( lam-correct, Inf) < 1e-9;
 

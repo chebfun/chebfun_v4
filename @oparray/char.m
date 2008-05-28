@@ -3,7 +3,9 @@ function s = char(A)
 
 % Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
 
-if numel(A.op)==1
+if isempty(A)
+  s = '{}';
+elseif numel(A.op)==1
   s = char(A.op{1,1});
 else
   s = '';
@@ -15,6 +17,7 @@ else
     end
     s = char(s,sr);
   end
-  s(1,:) = [];
+  if all(s(1,:)==' '), s(1,:) = []; end
 end
+
 end
