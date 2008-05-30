@@ -87,4 +87,9 @@ else
         if g.n < k, break, end
     end
     
+     % Check for NaN's or Inf's    
+     if any(isnan(g.vals)) || isinf(g.scl.v)
+        error('CHEBFUN:growfun:naneval','Function returned NaN or Inf when evaluated.')
+     end
+    
 end
