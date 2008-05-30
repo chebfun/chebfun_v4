@@ -14,4 +14,4 @@ B.rbc(1)=I; B.rbc(2)=D;     % clamped at boundary
 u1 = B\(r.^3.*f);
 load circplate
 
-pass = norm(u-u1) < 1e-13;
+pass = norm(u-u1) < 1e-10;

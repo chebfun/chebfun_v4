@@ -9,7 +9,11 @@ gout = g;
 if g.scl.v == 0, 
     gout = set(g,'vals',0);               % is g the zero function?
     return;
+    elseif isinf(g.scl.v)
+        error('CHEBFUN:simplify:InfEval', ...
+                'Function returned Inf when evaluated.')
 end
+
 c = chebpoly(g);                      % coeffs of Cheb expansion of g
 ac = abs(c)/g.scl.v;                  % abs value relative to scale of f
 Tlen = min(g.n,max(3,round((g.n-1)/8)));% length of tail to test
@@ -27,8 +31,13 @@ Tmax = 2^-52*max(mdiff,Tlen^(2/3));
 if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
     Tend = find(ac>=Tmax,1,'first');  % pos of last entry below Tmax
     if isempty(Tend)                  % is g the zero function?  
-         gout = set(g,'vals',0);
-         return;
+        if any(isnan(ac))
+            error('CHEBFUN:simplify:NaNEval', ...
+                'Function returned NaN when evaluated.')
+        else
+            gout = set(g,'vals',0);
+            return;
+        end
     end
     Tend=Tend-1;
     ac = ac(1:Tend); ac(1) = 5e-17;   

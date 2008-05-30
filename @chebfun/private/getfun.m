@@ -36,6 +36,12 @@ else
 
         % Get values at the boundary and close to it.
         vne = op([a, a+htol, a+2*htol, b-2*htol, b-htol, b]');
+        
+        % Check for NaN's or Inf's
+        if any(isnan(vne)) || any(isinf(vne))
+            error('CHEBFUN:getfun:naneval','Function returned NaN or Inf when evaluated.')
+        end
+        
         if abs(vne(1)-vne(2))<1e-14*funscl.v
             va = vne(1);                 % Extrapolation at x=a is not needed
         else
