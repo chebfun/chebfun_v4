@@ -29,7 +29,7 @@ while norm(du)>1e-11
 end
 
 
-pass = abs( feval(diff(u,2),0) - 0.927680043004878) < 5e-9; 
+pass = abs( feval(diff(u,2),0) - 0.927680043004878) < 5e-8; 
 
 
 
