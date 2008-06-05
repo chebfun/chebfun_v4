@@ -40,24 +40,28 @@ switch(class(B))
       error('chebop:mtimes:dimension','Inner dimensions do not agree.')
     end
    
-    % Block operator case is special.   
     if (A.blocksize(2) > 1) && (A.blocksize(2)~=size(B,2))
       error('chebop:mtimes:blockdimension',...
         'Number of column blocks must equal number of quasimatrix columns.')
     end
-    if ~isempty(A.oper)   % functional form
-      C = feval(A.oper,B); 
-    else             % adaptive matrix multiplication
-      if A.blocksize(2)==1
-        % Apply to each column of input.
-        C = chebfun;
-        combine = 1;  % no component combination required
-        for k = 1:size(B,2)
-          C(:,k) = chebfun( @(x) value(x,B(:,k)), dom );
+    
+    % Behavior for quasimatrix B is different depending on whether
+    % A is a block operator.
+    if A.blocksize(2)==1    % apply to each column of input
+      C = chebfun;
+      for k = 1:size(B,2)  
+        if ~isempty(A.oper)   % functional form
+          C(:,k) = feval(A.oper,B(:,k));
+        else
+         combine = 1;  % no component combination required
+         C(:,k) = chebfun( @(x) value(x,B(:,k)), dom );
         end
+      end
+    else                    % apply to multiple variables
+      if ~isempty(A.oper)   % functional form
+        C = feval(A.oper,B);
       else
-        % Apply to entire input representing multiple variables.
-        V = [];  % to get nested function overwrite
+        V = [];  % force nested function overwrite
         % For adaptation, combine solution components randomly.
         combine = randn(A.blocksize(2),1);   
         c = chebfun( @(x) value(x,B), dom );  % adapt
