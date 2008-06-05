@@ -15,8 +15,8 @@ if isa(F1,'double') || isa(F2,'double')
 else 
 % product of two chebfuns
 
-    if size(F1)~=size(F2)
-        error('Quasi-matrix dimensions must agree')
+    if any(size(F1)~=size(F2))
+        error('Quasimatrix dimensions must agree')
     end
       
     Fout = F1;
