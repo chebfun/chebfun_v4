@@ -29,6 +29,7 @@ end
 % -------------------------------
 function h = timescol(f,g)
 
+
 % product of two chebfuns
 [f,g] = overlap(f,g);
 ffuns = [];
@@ -39,21 +40,21 @@ end
 % Deal with impulse matrix:
 %------------------------------------------------
 % Look for deltas in f
-hfimps = 0*f.imps;
-deg_delta = find(sum(abs(f.imps),2)>eps*f.scl , 1, 'first')-1;
+hfimps = zeros(size(f.imps));
+deg_delta = find(sum(abs(f.imps),2)>eps*f.scl , 1, 'last')-1;
 dg = g;
 for j = 2:deg_delta+1
     hfimps(j,:) = (-1)^j * feval(dg,f.ends) .* f.imps(j,:) + hfimps(j-1,:);
-    dg = diff(dg);
+    if j<deg_delta+1, dg = diff(dg); end
 end
 
 % Look for deltas in g
-hgimps = 0*g.imps;
-deg_delta = find(sum(abs(g.imps),2)>eps*g.scl , 1, 'first')-1;
+hgimps = zeros(size(g.imps));
+deg_delta = find(sum(abs(g.imps),2)>eps*g.scl , 1, 'last')-1;
 df = f;
 for j = 2:deg_delta+1
     hgimps(j,:) = (-1)^j * feval(df,g.ends) .* g.imps(j,:) + hgimps(j-1,:);
-    df = diff(df);
+    if j<deg_delta+1, df = diff(df); end
 end
 
 % Contributions of both f and g.
@@ -62,7 +63,7 @@ imps = hfimps + hgimps;
 % INF if deltas at a common point
 indf = find(f.imps); indg = find(g.imps);
 if any(indg)
-     [trash,indboth] = intersect(indf,indg);
+     [indboth,trash] = intersect(indf,indg);
      imps(indboth) = inf*sign(f.imps(indboth).*g.imps(indboth));
 end
 
