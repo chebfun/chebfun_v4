@@ -303,7 +303,7 @@ subplot(1,3,3), plot( expm(1.8*A & A.bc)*f )
 % [DBT2008] Driscoll, T. A., Bornemann, F., and Trefethen, L. N. Automatic
 % spectral computations and the chebop system, in preparation.
 %
-% [Forn1996] Forberg, B. A Practical Guide to Pseudospectral Methods.
+% [Forn1996] Fornberg, B. A Practical Guide to Pseudospectral Methods.
 % Cambridge University Press, 1996.
 %
 % [Tref2000] Trefethen, L. N. Spectral Methods in MATLAB. Society for
