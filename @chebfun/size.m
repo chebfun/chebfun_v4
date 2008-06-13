@@ -13,11 +13,19 @@ function varargout = size(F,dim)
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if F(1).trans
+  if isempty(F)
+    m = 0;
+  else
     m = numel(F);
-    n = inf;
+  end
+  n = inf;
 else
-    m = inf;
+  if isempty(F)
+    n = 0;
+  else
     n = numel(F);
+  end
+  m = inf;
 end
 
 if nargin == 1 

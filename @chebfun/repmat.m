@@ -13,17 +13,19 @@ if nargin < 2
     error('CHEBFUN:repmat:NotEnoughInputs', 'Requires 3 inputs.')
 end
 
-Fout = F;
+Fout = chebfun;
 if F(1).trans 
-    if N>1
-        error('Use REPMAT(F,M,1) to replicate and tile row chebfuns')
+    if N~=1
+        error('chebfun:repmat:row',...
+          'Use REPMAT(F,M,1) to replicate and tile row chebfuns.')
     else
-        for j = 2:M, Fout = [ Fout; F ];  end
+        for j = 1:M, Fout = [ Fout; F ];  end
     end
 else 
-    if M>1
-        error('Use REPMAT(F,1,N) to replicate and tile column chebfuns')
+    if M~=1
+        error('chebfun:repmat:col',...
+          'Use REPMAT(F,1,N) to replicate and tile column chebfuns.')
     else
-        for j = 2:N, Fout = [Fout F];  end 
+        for j = 1:N, Fout = [Fout F];  end 
     end
 end
