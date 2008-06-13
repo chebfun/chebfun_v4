@@ -12,9 +12,11 @@ else
   s = char(s,['  ' char(A.fundomain)],' ');
 
   if all(A.blocksize==[1 1])
-    s = char(s,char(A.varmat),' ');
+    if ~isempty(A.varmat)
+      s = char(s,char(A.varmat),' ');
+    end
     if ~isempty(A.oper)
-      s = char(s, '   and functional representation:',' ',...
+      s = char(s, '   with functional representation:',' ',...
         ['     ' char(A.oper)], ' ');
     end
   else

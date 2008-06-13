@@ -4,6 +4,6 @@ function e = isempty(A)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
-e = isempty(A.varmat);
+e = isempty(A.varmat) && isempty(A.oper);
 
 end

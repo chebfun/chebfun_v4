@@ -44,7 +44,7 @@ switch(class(B))
     if length(B)==1  % scalar expansion
       C = mldivide(A,chebfun(B,domain(A)));
     else
-      error('chebop:mldivide:operand','Use scalar or chebfun with \.')
+      error('chebop:mldivide:operand','Use scalar or chebfun with backslash.')
     end
 
   case 'chebfun'
