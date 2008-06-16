@@ -19,9 +19,10 @@ function varargout = subsasgn(f,index,varargin)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 idx = index(1).subs;
+vin = varargin{:};
 switch index(1).type
     case '.'
-        varargout = {set(f,idx,varargin{:})};
+        varargout = {set(f,idx,vin)};
     case '()'
         % --- transpose row chebfuns/quasimatrices -------
         trans = 0;
@@ -42,15 +43,15 @@ switch index(1).type
             end
             col = 1;          
         elseif length(idx) == 2
-            % f(s,col), where s can be vector, domain or ':'
-            col = idx{2}; 
-            if (isnumeric(col) & length(col)>1) | ~isequal(s,':')                    
-                error('chebfun:subsasgn:multiplecols',...
-                    'Assignment of more than one column/row not available yet.')
+            % f(s,col), where s can be domain, ':' or a vector
+            % specifying the assigned columns.
+            col = idx{2};
+            if col == ':'
+                col = 1:n;
+            elseif max(col) > n
+                f(:,n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);
             end
-            if col > n
-                f(:,n+1:col) = repmat(chebfun(0,domain(f)),1,col-n);
-            end
+
         else
             error('chebfun:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
@@ -58,37 +59,41 @@ switch index(1).type
         fcol = f(:,col);        
         % ---- assign values/chebfuns at given points/domains ---        
         if isnumeric(s)
-            if ~isa(varargin{:},'numeric')
+            if ~isa(vin,'numeric')
                 error('chebfun:subsref:conversion',...
-                        ['Conversion to numeric from ',class(varargin{:}),...
+                        ['Conversion to numeric from ',class(vin),...
                         'is not possible.'])
             end
-            if length(s) == length(varargin{:})
-                if min(s) < f.ends(1) || max(s) > f.ends(end)
-                    error('chebfun:subsref:outbounds',...
-                        'Cannot introduce endpoints outside domain.')
-                end
-                [a,b] = domain(fcol);
-                stemp = s;
-                s(find(s==fcol.ends(end))) = [];
-                for i = s
-                    fcol = [restrict(fcol,[a,i]); restrict(fcol,[i,b])];                    
-                end 
-                [mem,loc] = ismember(stemp,fcol.ends);
-                v = varargin{:};
-                fcol.imps(1,loc(find(loc))) = v(find(mem)); 
-            else
+            if length(vin) == 1
+               vin = vin*ones(length(s),length(col));
+            elseif length(col) == 1 & min(size(vin)) == 1 & ...
+                    length(vin)==length(s)
+                vin = vin(:);
+            elseif length(s)~=size(vin,1) | length(col)~=size(vin,2)
                 error('chebfun:subsref:dimensions',...
-                    ['In an assignment  A(I) = B, the number of '...
-                    'elements  in B and I must be the same.'])
+                        ['Subscripted assignment dimension mismatch.'])
+            end
+            [a,b] = domain(fcol);
+            if min(s) < a || max(s) > b
+                error('chebfun:subsref:outbounds',...
+                    'Cannot introduce endpoints outside domain.')
+            end
+            stemp = s;
+            s(find(s==b)) = [];
+            for i = 1:length(s)
+                fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
+            end 
+            for i = 1:length(col)   
+                [mem,loc] = ismember(stemp,fcol(i).ends);
+                fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
             end
         elseif isa(s,'domain')
-            fcol = define(fcol,s,varargin{:});
+            fcol = define(fcol,s,vin);
         elseif isequal(s,':')
             if isempty(fcol)
-                fcol = define(fcol,domain(varargin{:}),varargin{:});
+                fcol = define(fcol,domain(vin),vin);
             else
-                fcol = define(fcol,domain(fcol),varargin{:});
+                fcol = define(fcol,domain(fcol),vin);
             end
         else
             error('chebfun:subsref:nonnumeric',...
@@ -112,7 +117,7 @@ switch index(1).type
             error('chebfun:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
-        varargout = { define(f,s,varargin{:}) };
+        varargout = { define(f,s,vin) };
     otherwise
         error(['??? Unexpected index.type of ' index(1).type]);
 end
