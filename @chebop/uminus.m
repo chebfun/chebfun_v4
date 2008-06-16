@@ -4,7 +4,7 @@ function C = uminus(A)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
  
-C = chebop( -A.varmat, -A.oper, A.fundomain, A.difforder );
+C = chebop( -A.varmat, -A.oparray, A.fundomain, A.difforder );
 C.blocksize = A.blocksize;
 
 end

@@ -16,7 +16,7 @@ if s(1)~=s(2)
 end
 
 if (m > 0) 
-  C = chebop(A.varmat^m, A.oper^m, A.fundomain );
+  C = chebop(A.varmat^m, A.oparray^m, A.fundomain );
   C.difforder = m*A.difforder;
   C.blocksize = s;
 else

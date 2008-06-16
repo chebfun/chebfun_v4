@@ -31,7 +31,7 @@ splitting off
 
 % Default properties.
 A.varmat = [];
-A.oper = oparray;     % inf-dim representation
+A.oparray = oparray;     % inf-dim representation
 A.difforder = 0;
 A.fundomain = domain([-1 1]);
 A.lbc = struct([]);
@@ -53,7 +53,7 @@ else
   end
   % Second argument defines the operator.
   if nargin>=2 && ~isempty(varargin{2})
-    A.oper = oparray(varargin{2});
+    A.oparray = oparray(varargin{2});
   end
   % Third argument supplies the function domain. 
   if nargin>=3 

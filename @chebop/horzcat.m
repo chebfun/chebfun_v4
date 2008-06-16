@@ -28,7 +28,7 @@ V = cellfun( @(A) A.varmat, varargin, 'uniform',false );
 V = horzcat(V{:});
 
 % Cat the operators.
-op = cellfun( @(A) A.oper, varargin, 'uniform',false );
+op = cellfun( @(A) A.oparray, varargin, 'uniform',false );
 op = horzcat( op{:} );
 
 % We disable differential order.

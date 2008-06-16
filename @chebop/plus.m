@@ -27,7 +27,7 @@ if isa(B,'chebop')
     error('chebop:plus:sizes','Chebops must have identical sizes.')
   end
 
-  op = A.oper + B.oper;
+  op = A.oparray + B.oparray;
   order = max( A.difforder, B.difforder );
   C = chebop( A.varmat+B.varmat, op, dom, order );
   C.blocksize = A.blocksize;

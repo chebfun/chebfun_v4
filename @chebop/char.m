@@ -15,9 +15,9 @@ else
     if ~isempty(A.varmat)
       s = char(s,char(A.varmat),' ');
     end
-    if ~isempty(A.oper)
+    if ~isempty(A.oparray)
       s = char(s, '   with functional representation:',' ',...
-        ['     ' char(A.oper)], ' ');
+        ['     ' char(A.oparray)], ' ');
     end
   else
     s = char(s,sprintf('   with %ix%i block definitions',A.blocksize),' ');

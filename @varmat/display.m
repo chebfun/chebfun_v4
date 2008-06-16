@@ -11,5 +11,6 @@ if loose, disp(' '), end
 
 s = char(V);
 disp(s)
+if loose, disp(' '), end
 
 end

@@ -4,7 +4,12 @@ function C = mtimes(A,B)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
-C = op_scalar_expand(@mtimes,A,B);
+if isnumeric(B)
+  n = size(B,1);
+  C = feval(A,n)*B;
+else
+  C = op_scalar_expand(@mtimes,A,B);
+end
 
 end
   

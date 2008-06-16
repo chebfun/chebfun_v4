@@ -22,8 +22,8 @@ use_store = cheboppref('storage');
 usebc = (nargin > 2) && strcmpi(usebc,'bc');
 
 if isinf(n)   % function
-  if ~isempty(A.oper)
-    M = A.oper;
+  if ~isempty(A.oparray)
+    M = A.oparray;
     if A.numbc && usebc > 0
       warning('chebop:feval:funbc',...
         'Boundary conditions are not imposed in the functional form.')

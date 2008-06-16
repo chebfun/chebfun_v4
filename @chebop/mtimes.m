@@ -20,7 +20,7 @@ end
 
 switch(class(B))
   case 'double'     % chebop * scalar
-    C = chebop(B*A.varmat, B*A.oper, A.fundomain, A.difforder );
+    C = chebop(B*A.varmat, B*A.oparray, A.fundomain, A.difforder );
     C.blocksize = A.blocksize;
     
   case 'chebop'     % chebop * chebop
@@ -29,7 +29,7 @@ switch(class(B))
       error('chebop:mtimes:size','Inner block dimensions must agree.')
     end
     mat = A.varmat * B.varmat;
-    op =  A.oper * B.oper;
+    op =  A.oparray * B.oparray;
     order = A.difforder + B.difforder;
     C = chebop(mat,op,dom,order);
     C.blocksize = [size(A,1) size(B,2)];
@@ -48,18 +48,18 @@ switch(class(B))
     % Behavior for quasimatrix B is different depending on whether
     % A is a block operator.
     if A.blocksize(2)==1    % apply to each column of input
-      C = chebfun;
+      C = zeros(dom,size(B,2));
       for k = 1:size(B,2)  
-        if ~isempty(A.oper)   % functional form
-          C(:,k) = feval(A.oper,B(:,k));
+        if ~isempty(A.oparray)   % functional form
+          C(:,k) = feval(A.oparray,B(:,k));
         else
          combine = 1;  % no component combination required
          C(:,k) = chebfun( @(x) value(x,B(:,k)), dom );
         end
       end
     else                    % apply to multiple variables
-      if ~isempty(A.oper)   % functional form
-        C = feval(A.oper,B);
+      if ~isempty(A.oparray)   % functional form
+        C = feval(A.oparray,B);
       else
         V = [];  % force nested function overwrite
         % For adaptation, combine solution components randomly.

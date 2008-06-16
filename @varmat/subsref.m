@@ -20,9 +20,12 @@ switch s(1).type
     end
   case '()'
     t = s(1).subs;
-    if length(t)==2                 % define a slice
+    if length(t)==2                     % define a slice
       A.rowsel = parseidx(t{1});
       A.colsel = parseidx(t{2});
+      valid = true;
+    elseif length(t)==1                 % return realization
+      A = feval(A,t{1});
       valid = true;
     end
 end
