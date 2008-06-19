@@ -52,7 +52,7 @@ switch(class(B))
       for k = 1:size(B,2)  
         if ~isempty(A.oparray)   % functional form
           C(:,k) = feval(A.oparray,B(:,k));
-        else
+        else                     % matrix application
          combine = 1;  % no component combination required
          C(:,k) = chebfun( @(x) value(x,B(:,k)), dom );
         end

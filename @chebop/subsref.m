@@ -30,9 +30,19 @@ switch s(1).type
   case '{}'                              
   case '()'                          
     t = s(1).subs;
-    if length(s(1).subs)==2          % slice the varmat
-      A = chebop( subsref(A.varmat,s), @(u) [], A.fundomain );
-      valid = true;
+    if length(t)==2
+      % Will return first row, last row, or both only.
+      firstrow = isequal(t{1},1);
+      lastrow = isinf(t{1}) & real(t{1})==0;
+      pts = [];
+      if any(firstrow), pts = [pts; A.fundomain(1)]; end
+      if any(lastrow), pts = [pts; A.fundomain(2)]; end
+      if isequal(t{2},':') && ~isempty(pts)
+        mat = subsref(A.varmat,s);
+        op = @(u) feval(A*u,pts);
+        A = chebop(mat,op,A.fundomain );
+        valid = true;
+      end
     elseif length(t)==1 && isnumeric(t{1})  % return a realization (feval)
       A = feval(A,t{1},'bc');
       valid = true;
