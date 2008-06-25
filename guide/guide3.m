@@ -106,7 +106,7 @@
 % tells us where to put the discontinuities.
 % For example, the "abs" command introduces breakpoints
 % wherever the argument goes through zero.  Here we 
-% see that x consists of a single piece, whereas |x| consists
+% see that x consists of a single piece, whereas abs(x) consists
 % of two pieces.
 
   x = chebfun('x')
@@ -148,7 +148,7 @@
 %%
 % This method will find non-smooth extrema as well as smooth ones,
 % since these correspond to "zeros" of the derivative where
-% there derivative jumps from one sign to the other.  Here is an
+% the derivative jumps from one sign to the other.  Here is an
 % example.
   x = chebfun('x');
   f = exp(x).*sin(30*x);

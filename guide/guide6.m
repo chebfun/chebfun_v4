@@ -140,9 +140,11 @@
 % "abbreviated", or "condensed"
 % QR factorization, since Q is rectangular rather than square and R is
 % square rather than rectangular.  In Matlab the syntax for computing such things is
-% [Q,R] = qr(A,0), and the same command has been overloaded for chebfuns:
+% [Q,R] = qr(A,0), and the same command has been overloaded for chebfuns.  The
+% computation makes use of a quasimatrix analogue of Householder triangularization
+% [Trefethen 2008].  Alternatively one can simply write [Q,R] = qr(A):
 
-  [Q,R] = qr(A,0);
+  [Q,R] = qr(A);
   plot(Q), grid on
 
 %%
@@ -174,7 +176,7 @@
 %%
 % Here is what the hat functions look like after orthonormalization:
 
-  [Q2,R2] = qr(A2,0);
+  [Q2,R2] = qr(A2);
   plot(Q2)
 
 %% 6.4 SVD, norm, cond
@@ -367,6 +369,10 @@ cond(Acheb)
 %
 % [Stewart 1998] G. W. Stewart, Afternotes Goes to Graduate School:
 % Lectures on Advanced Numerical Analysis, SIAM, 1998.
+%
+%
+% [Trefethen 2008] L. N. Trefethen, "Householder triangularization of
+% a quasimatrix", manuscript, 2008.
 %
 % [Trefethen 1997] L. N. Trefethen and D. Bau, III, Numerical Linear
 % Algebra, SIAM, 1997.

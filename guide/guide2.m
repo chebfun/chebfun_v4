@@ -124,9 +124,9 @@
 
 %%
 % Here is a function that is infinitely differentiable
-% but not analytic.  The shift by 1e-30 is introduced
+% but not analytic.  The term involving eps is introduced
 % to avoid spurious difficulties with evaluation of exp(-1/0).
-  f = chebfun('exp(-1./sin(10*x+1e-30).^2)');
+  f = chebfun('exp(-1./sin(10*x+eps*(x==0)).^2)');
   plot(f)
 
 %%
@@ -169,7 +169,7 @@
   [fint((1:5)') erf((1:5)')]
 
 %% 
-% Here is the integral of a oscillatory step function:
+% Here is the integral of an oscillatory step function:
 
   x = chebfun('x',[0 6]);
   f = x.*sign(sin(x.^2)); subplot(1,2,1), plot(f)

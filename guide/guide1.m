@@ -81,7 +81,7 @@
 %%
 % The formula for N+1 Chebyshev points in [-1,1] is
 %
-%           x(j) = cos(j pi/N) ,    0 <= j <= N,
+%           x(j) = cos(j pi/N) ,     j = 0:N,
 %
 % and in the figure we can see that the points are clustered
 % accordingly near 1 and -1.
@@ -303,6 +303,7 @@
 %%
 % On the other hand with splitting off there is no hope
 % for a function like the absolute value:
+  warning on
   tic, f = chebfun('abs(x-.3)'); toc
 
 %%

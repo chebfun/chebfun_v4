@@ -64,7 +64,10 @@ sum(g)
 
 sum(h)
 %%
-% Piecewise smooth complex chebfuns are also possible:
+% Piecewise smooth complex chebfuns are also possible.
+% For example, the following starts from a chebfun z defined
+% as (1+0.5i)s for s on the interval [0,1] and
+% 1+0.5i-2(s-1) for s on the interval [1,2].
 
 z = chebfun('(1+.5i)*s','1+.5i-2*(s-1)',[0 1 2]);
 subplot(1,2,1), plot(z), axis equal, grid on
@@ -235,7 +238,7 @@ f = exp(z)./z.^3;
 I2 = sum(f.*diff(z))/(2i*pi)
 
 %% 
-% Not does the contour have to be smooth.
+% Nor does the contour have to be smooth.
 % Here let us compute the same result by integration over a square:
 
 s = chebfun('s',[-1 1]);
@@ -348,7 +351,7 @@ r = roots(f)
 
 LW = 'linewidth'; lw = 2.5;
 s = chebfun('s',[0 1]);
-w = [1.01+.8i-(.01+.8i)*s; 1+.6*s;            % L
+w = [1+.8i-.8i*s; 1+.6*s;            % L
      2+.8i*s; 2+.8i+(-.8i+.6)*s; 2.6+.8i*s;   % N
      3.3+.8i*s; 3+.8i+.6*s];                  % T
 clf, plot(w,'k',LW,lw), axis equal, axis off

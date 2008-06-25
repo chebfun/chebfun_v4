@@ -16,16 +16,17 @@ function varargout = svd(A,econ)
 % The computation is carried out by orthogonalization operations
 % following Battles' 2006 thesis.
 
-if ((nargout>1)&(nargin~=2)) | ((nargin==2) & (econ~=0))
+if (nargin>2) | ((nargin==2) & (econ~=0))
     error('chebfun:svd:twoargs',...
-          'Use svd(A,0) for SVD of quasimatrix.');
+          'Use svd(A) or svd(A,0) for QR decomposition of quasimatrix.');
 end
+
 if A(1).trans                 % A is a row quasimatrix
-    [Q,R] = qr(A',0);
+    [Q,R] = qr(A');
     [V,S,U] = svd(R,0);
     V = Q*V;
 else
-    [Q,R] = qr(A,0);          % A is a column quasimatrix
+    [Q,R] = qr(A);          % A is a column quasimatrix
     [U,S,V] = svd(R,0);
     U = Q*U;
 end

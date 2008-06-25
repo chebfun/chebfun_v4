@@ -70,7 +70,7 @@
 %%
 % Note that that output of "poly" follows the pattern for Matlab's standard "poly"
 % command: it is a row vector, and the high-order coefficients come first.
-% Thus, for example, the fourth row above tells us the T_3(x) = 4x^3 - 3x.
+% Thus, for example, the fourth row above tells us that T_3(x) = 4x^3 - 3x.
 
 %%
 % Here are plots of T_2, T_3, T_15, and T_50.

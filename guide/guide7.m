@@ -4,7 +4,7 @@
 %% 7.1  About chebops
 % A chebop represents a linear differential or integral operator that acts
 % on chebfuns. Chebops are designed to understand and obey many appropriate
-% commands defined by MATLAB for matrices, notably including commands for
+% commands defined by Matlab for matrices, notably including commands for
 % solving linear systems and eigenvalue problems.
 
 %%
