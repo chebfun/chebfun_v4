@@ -33,7 +33,7 @@ function f = chebfun(varargin)
 %
 % F = CHEBFUN(...) returns an object F of type chebfun.  A chebfun consists
 % of a vector of 'funs', a vector 'ends' of length m+1 defining the 
-% intervals where the funs apply, and a matrix 'imps'containing information
+% intervals where the funs apply, and a matrix 'imps' containing information
 % about possible delta functions at the breakpoints between funs.
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
