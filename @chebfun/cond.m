@@ -4,5 +4,9 @@ function out = cond(f)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
-s=svd(f,0);
-out=s(1)/s(end);
+s = svd(f,0);
+if any(s==0)
+  out = inf;
+else
+  out=s(1)/s(end);
+end
