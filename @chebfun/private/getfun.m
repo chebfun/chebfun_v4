@@ -25,7 +25,7 @@ if (b-a) < 2*htol
     scl.v=max(scl.v,g.scl.v);
     g=set(g,'scl.v',scl.v);
     hpy = true;
-    warning('CHEBFUN:getfun:SmallInterval','Small interval, fun might be unhappy')
+    %warning('CHEBFUN:getfun:SmallInterval','Small interval, fun might be unhappy')
 else
 
     if ~chebfunpref('splitting') % In splitting OFF mode, use values at end points

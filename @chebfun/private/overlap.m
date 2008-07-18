@@ -39,8 +39,15 @@ else
             end
         end
         f.ends = fends;
-        [fout,gout] = overlap(f,g);
-        return;
+        
+       % This recursion is not ideal because g.ends(i) may be close to
+       % g.ends(i+1). RodP
+       % [fout,gout] = overlap(f,g);
+       % return;
+        
+       % replacing with this
+       ends = union(fends,gends);
+       
     end
     % --------------------------------------------------------------------
     
