@@ -20,10 +20,24 @@ if (g.n<101)                                    % for small length funs
         c=.5*c(end:-1:2)/(-c(1));               % assemble colleague matrix A
         c(end-1)=c(end-1)+.5;
         oh=.5*ones(length(c)-1,1);
-        A=diag(oh,1)+diag(oh,-1);
-        A(1,2)=1;
-        A(end,:)=c;
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       % Replace this with A(end:-1:1,end:-1:1)' (LNT's trick)
+       % to fix a bug in roots, e.g. p = fun( '(x-.1).*(x+.9).*x.*(x-.9) + 1e-15*x.^5' );
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        % Original colleague matrix:
+%        A=diag(oh,1)+diag(oh,-1);
+%        A(1,2)=1;
+%        A(end,:)=c;
+
+        % Modified colleague matrix:
+        A = diag(oh,1)+diag(oh,-1);
+        A(end-1,end) = 1;
+        A(:,1) = flipud(c);
+        
         r=eig(A);                               % compute roots as eig(A)
+        
     end
     mask=abs(imag(r))<epstol*g.scl.h;           % filter imaginary roots
     r = real( r(mask) );
