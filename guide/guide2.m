@@ -201,7 +201,8 @@
 % The Prime Number Theorem implies that pi(x) ~ Li(x) as x -> infinity.
 % Littlewood proved in 1914 that although Li(x) is greater than
 % pi(x) at first, the two curves eventually cross each other infinitely often.
-% (It is thought that the first crossing may occur around x = 1e316.)
+% (It is known that the first crossing occurs somewhere between x=1e14
+% and x=2e316 (Kotnik 2008).)
 
 %%
 % The "mean", "std", and "var" commands have also been overloaded
@@ -309,6 +310,9 @@
 %
 % [Kahaner 1971] D. K. Kahaner, "Comparison of numerical quadrature
 % formulas", in J. R. Rice, ed., Mathematical Software, Academic Press, 1971, 229-259.
+%
+% [Kotnik 2008] T. Kotnik, "The prime-counting function and its
+% analytic approximations", Advances in Computational Mathematics 29 (2008), 55-70.
 %
 % [Wolfram 2003] S. Wolfram, The Mathematica Book, 5th ed., 
 % Wolfram Media, 2003.
