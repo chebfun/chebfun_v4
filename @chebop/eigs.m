@@ -103,14 +103,18 @@ if nargout<2
 else
   dom = A.fundomain;
   V = reshape( V, [N,m,k] );
-  Vfun = {};
-  for i = 1:m
-    Vfun{i} = chebfun;
-    for j = 1:k
+  Vfun = {}; 
+  for j = 1:k
+    nrm2 = 0;
+    for i = 1:m
       f = chebfun( V(:,i,j), dom );
       % This line is needed to simplify/compress the chebfuns.
       f = chebfun( @(x) f(x), dom );
-      Vfun{i}(:,j) = f/norm(f);
+      Vfun{i}(:,j) = f;  nrm2 = nrm2 + norm(f)^2;
+    end
+    % Normalization
+    for i = 1:m
+      Vfun{i}(:,j) = Vfun{i}(:,j)/sqrt(nrm2);
     end
   end
   if m==1, Vfun = Vfun{1}; end
@@ -138,12 +142,15 @@ end
 
 end
 
-% Computes the (discrete) e-vals and e-vecs. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [V,D] = bc_eig(A,B,N,k,sigma)
+% Computes the (discrete) e-vals and e-vecs. 
+
 m = A.blocksize(1);
+% Instantiate A, with row replacements.
 L = feval(A,N);
-[Bmat,c,rowrep] = bdyreplace(A,N);
-L(rowrep,:) = Bmat;
+[Abdy,c,rowrep] = bdyreplace(A,N);
+L(rowrep,:) = Abdy;
 elim = false(N*m,1);
 elim(rowrep) = true;
 if isempty(B)
@@ -158,6 +165,16 @@ if isempty(B)
 else
   % Use generalized problem to impose the BCs.
   M = feval(B,N);
+  %FIXME: Kludge when B is given BCs. We have to assume that these are 
+  % given in the same order as they are in A. I can't see any way to check 
+  % up on this. 
+  Bbdy = bdyreplace(B,N);
+  nla = length(A.lbc);  nra = length(A.rbc);
+  nlb = length(B.lbc);  nrb = length(B.rbc);
+  Brows = rowrep( [1:nlb, nla+(1:nrb)] );
+  M(Brows,:) = Bbdy;
+  % For rows of B that were not replaced, default to zero rows.
+  elim(Brows) = false;
   M(elim,:) = 0;
   [W,D] = eig(full(L),full(M));
   % We created some infinite eigenvalues. Peel them off. 
@@ -170,7 +187,9 @@ end
 D = D(idx,idx);
 end
 
-% Returns index that sorts eigenvalues/vectors by the given criterion.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Returns index vector that sorts eigenvalues by the given criterion.
 function idx = nearest(lam,sigma,k)
 
 if isnumeric(sigma)
@@ -190,10 +209,16 @@ else
   end
 end
 
-idx = idx( 1:min(k,length(idx)) );  % trim length
+% Delete infinite values. These can arise from rank deficiencies in the 
+% RHS matrix of the generalized eigenproblem.
+idx( ~isfinite(lam(idx)) ) = [];
+
+% Return the first k, if more are available.
+idx = idx( 1:min(k,length(idx)) );  
 
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function p = cd2cp(y)
 %CD2CP  Chebyshev discretization to Chebyshev polynomials (by FFT).
 %   P = CD2CP(Y) converts a vector of values at the Chebyshev extreme
