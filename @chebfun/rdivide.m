@@ -38,7 +38,7 @@ if isa(f2,'double')
 elseif ~isempty(roots(f2))
        error('CHEBFUN:rdivide:DivisionByZero','Division by zero')
 elseif isa(f1,'double')    
-    if f1 == 0, fout =chebfun(0); 
+    if f1 == 0, fout = chebfun(0, f2.ends([1,end])); 
     else        
         fout = comp(f2,@(x) rdivide(f1,x));
         %fout = chebfun(@(x) f1./feval(f2,x), f2.ends);
