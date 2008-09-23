@@ -46,7 +46,7 @@ switch index(1).type
             % f(s,col), where s can be domain, ':' or a vector
             % specifying the assigned columns.
             col = idx{2};
-            if col == ':'
+            if ischar(col) && col==':'
                 col = 1:n;
             elseif max(col) > n
                 f(:,n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);
