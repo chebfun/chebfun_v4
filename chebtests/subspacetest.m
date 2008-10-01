@@ -1,0 +1,14 @@
+function pass = subspacetest
+% test the subspace function (angle between subspaces). Also calls vander.m
+% Rodrigo Platte, October 2008.
+
+[d,theta] = domain(0,2*pi);
+
+A = [vander(exp(-i*theta), 3) vander(exp(i*theta), 3)];
+B = [cos(5*theta) sin(10*theta)];
+
+angle = subspace(A,B);
+pass = abs(angle - pi/2)< 1e-14;
+
+angle = subspace(A,sin(2*theta));
+pass = pass && angle < 1e-14;

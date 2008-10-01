@@ -29,4 +29,4 @@ for k=1:size(A,2)
    B = B - A(:,k)*(A(:,k)'*B);
 end
 % Make sure it's magnitude is less than 1.
-theta = asin(norm(B));
+theta = asin(min(1,norm(B)));
