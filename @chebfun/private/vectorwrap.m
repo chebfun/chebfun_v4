@@ -10,9 +10,13 @@ else
     try
         v=f(x(:));
         if any(size(v) ~= size(x(:)))
+          warning('chebfun:vectorwrap:shape',...
+        'Supplied function gives an unexpected shape for vector input.')
             g = @loopwrapper;
         end
     catch
+      warning('chebfun:vectorwrap:error',...
+        'Supplied function gives an error for vector input.')
         g = @loopwrapper;
     end
     
