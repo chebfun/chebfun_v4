@@ -10,6 +10,7 @@ function normA = norm(A,n)
 % For chebfuns:
 %    NORM(f) = sqrt(integral of abs(f)^2).
 %    NORM(f,2) is the same as NORM(f).
+%    NORM(f,'fro') is also the same as NORM(f).
 %    NORM(f,1) = integral of abs(f).
 %    NORM(f,inf) = max(abs(f)).
 %    NORM(f,-inf) = min(abs(f)).
@@ -24,7 +25,7 @@ elseif min(size(A))==1                  % A is a chebfun
    switch n
       case 1
          normA = sum(abs(A));
-      case 2
+      case {2,'fro'}
          if A.trans 
             normA = sqrt(A*A');
          else

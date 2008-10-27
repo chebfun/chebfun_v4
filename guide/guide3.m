@@ -43,8 +43,8 @@
   [rA(end-2:end) rB(end-2:end)]
 
 %%
-% The chebfun system finds roots by a method due to Boyd
-% [Boyd 2002].  If the chebfun is of degree much greater than about 100,
+% The chebfun system finds roots by a method due to Boyd and Battles
+% [Boyd 2002, Battles 2006].  If the chebfun is of degree much greater than about 100,
 % it is broken into smaller pieces recursively.  On each small piece
 % zeros are then found as eigenvalues of a "colleague matrix", the analogue
 % for Chebyshev polynomials of a companion matrix for monomials [Good 1961].
@@ -226,6 +226,10 @@
 
 
 %% 3.6 References
+%
+% [Battles 2006] Z. Battles, Numerical Linear Algebra for
+% Continuous Functions, DPhil thesis, Oxford University
+% Computing Laboratory, 2006.
 %
 % [Boyd 2002] J. A. Boyd, "Computing zeros on a real interval
 % through Chebyshev expansion and polynomial rootfinding",

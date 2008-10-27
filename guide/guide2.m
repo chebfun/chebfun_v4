@@ -111,7 +111,7 @@
   sum(f)
 
 %%
-% The chebfun system is not an item "quadrature software"; it is a general
+% The chebfun system is not an item of "quadrature software"; it is a general
 % system for manipulating functions in which quadrature is just one of many capabilities.
 % Nevertheless if one investigates chebfun purely as a quadrature engine, it
 % compares quite well to specialized software.  This is the conclusion of the
