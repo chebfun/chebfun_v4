@@ -209,9 +209,9 @@
 
 %% 3.5 norm(f,1) and norm(f,inf)
 % The default, 2-norm form of the "norm" command was considered in Section 2.2.
-% In standard Matlab one can also compute 1, infinity, and Frobenius norms
-% with norm(f,1), norm(f,inf), and norm(f,'fro').  The first two of these
-% have been overloaded in the chebfun system, and in both cases, rootfinding
+% In standard Matlab one can also compute 1-, infinity-, and Frobenius norms
+% with norm(f,1), norm(f,inf), and norm(f,'fro').  These
+% have been overloaded in the chebfun system, and in the first two cases, rootfinding
 % is part of the implementation.  The 1-norm norm(f,1) is the integral of 
 % the absolute value, and the system computes this by adding up segments
 % between zeros, at which abs(f) will typically have a discontinuous slope.

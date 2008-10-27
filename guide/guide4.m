@@ -17,7 +17,8 @@
 % a smooth periodic function, series of Chebyshev polynomials can
 % do the same for a smooth nonperiodic function.  A number
 % of excellent textbooks and monographs have been published on approximation
-% theory, including [Davis 1963], [Cheney 1966], [Meinardus 1967], and [Lorentz 1986],
+% theory, including [Davis 1963], [Cheney 1966], [Meinardus 1967], [Lorentz 1986],
+% and Powell [Powell, 1981],
 % and in addition there are books devoted entirely to Chebyshev polynomials:
 % [Rivlin 1974] and [Mason & Handscomb 2003].
 
@@ -39,6 +40,9 @@
 % We must be clear about terminology.  We shall rarely use the
 % term *Chebyshev approximation*, for that expression refers specifically to
 % an approximation that is optimal in the minimax sense.
+% (To compute polynomial or rational Chebyshev approximations
+% by a Remez algorithm
+% in the chebfun system, contact chebfun author Ricardo Pachon [Pachon & Trefethen 2008].)
 % Chebyshev approximations are fascinating, but 
 % the chebfun system is built on the different techniques of polynomial
 % interpolation in Chebyshev points and expansion in Chebyshev
@@ -46,16 +50,16 @@
 % they are nearly optimal and much easier to compute.
 
 %%
-% By *Chebyshev points* we shall mean the set of points in
+% By *Chebyshev points* we shall mean as usual the set of points in
 % [-1,1] defined by
 %
-%         x(j) = cos(j pi/N),    0 <= j <= N,
+%         x(j) = -cos(j pi/N),    0 <= j <= N,
 %
 % where N is an integer >= 1.  (If N=0, we take x(0)=1.)
 % Through any data values f(j) at these points there is a unique
 % polynomial interpolant p(x) of degree <= N, which we call
 % the *Chebyshev interpolant*.
-% In particular, if the data are f(j) = (-1)^j, then p(x) is
+% In particular, if the data are f(j) = (-1)^(n-j), then p(x) is
 % T_N, the Nth Chebyshev polynomial, which can also be defined
 % by the formula T_N(x) = cos(N acos(x)).  In the chebfun system,
 % the command "chebfun((-1).^(N:-1:0))" returns a chebfun corresponding to T_N, and
@@ -119,7 +123,7 @@
 
 %% 4.2 chebpoly and poly
 %
-% Throughout this section of the guide, we set
+% Throughout this section of the Chebfun Guide, we set
 
 splitting off
 %%
@@ -387,14 +391,18 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 % I do not know where an explicit statement first appeared in print.
 
 %%
-% *THEOREM 3*.  If f is analytic in the closed ellipse of foci 1 and -1 with
+% *THEOREM 3*.  If f is analytic and bounded in the ellipse of foci 1 and -1 with
 % semimajor and semiminor axis lengths summing to rho, then
 % *||* f - p *||* = O(rho^(-N)) as N -> infty.
 
 %%
+% More precisely, if abs(f(z)) <= M in the ellipse, then the bound on the right
+% can be taken as 4Mr^(-n)/(r-1).
+
+%%
 % The next theorem asserts that Chebyshev interpolants can be computed
-% by the barycentric formula [Salzer 1972].  The notation SUM" denotes a
-% sum from k=0 to k=N, with both terms k=0 and k=N multiplied by 1/2.
+% by the barycentric formula [Salzer 1972].  The notation SUM" denotes the
+% sum from k=0 to k=N with both terms k=0 and k=N multiplied by 1/2.
 
 %%
 % *THEOREM 4*.  p(x) = SUM" (-1)^k f(x_k)/(x-x_k) / SUM" (-1)^k/(x-x_k).
@@ -477,6 +485,13 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 %
 % [Meinardus 1967] G. Meinardus, Approximation of Functions:
 % Theory and Numerical Methods, Springer, 1967.
+%
+% [Pachon & Trefethen 2008] R. Pachon and L. N. Trefethen,
+% "A barycentric-Remez algorithm for best polynomial and rational
+%  approximations", to appear.
+%
+% [Powell 1981] M. J. D. Powell, Approximation Theory and Methods,
+% Cambridge University Press, 1981.
 %
 % [Rack & Reimer 1982] H.-J. Rack and M. Reimer, The numerical stability 
 % of evaluation schemes for polynomials based on the Lagrange
