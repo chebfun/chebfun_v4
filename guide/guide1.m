@@ -81,7 +81,7 @@
 %%
 % The formula for N+1 Chebyshev points in [-1,1] is
 %
-%           x(j) = cos(j pi/N) ,     j = 0:N,
+%           x(j) = -cos(j pi/N) ,     j = 0:N,
 %
 % and in the figure we can see that the points are clustered
 % accordingly near 1 and -1.
@@ -94,7 +94,7 @@
 % which is evaluated by
 % the barycentric formula introduced by Salzer
 % [Berrut & Trefethen 2004, Salzer 1972].  This method of evaluating
-% polynomial interpolants is stable and efficient even
+% polynomial interpolants is stable and efficient
 % even if the degree is in the millions [Higham 2004].
 %%
 % What is the integral of f from -1 to 1?  Here it is:
@@ -109,7 +109,7 @@
 %%
 % Here is another example, now with the chebfun defined by
 % an anonymous function instead of a string.  (The construction process
-% is often somewhat faster if you use anonymous functions.)
+% is often faster if you use anonymous functions.)
 % In this case the interval is specified as [0,100].
   g = chebfun(@(t) besselj(0,t),[0,100]);
   plot(g), ylim([-.5 1])
@@ -151,7 +151,7 @@
   clf, plot(f)
 
 %% 1.3  Operations on chebfuns
-% There are about 100 commands that can be applied to
+% There are more than 100 commands that can be applied to
 % a chebfun.  For a complete list you can type
 % "methods":
   methods chebfun
@@ -318,7 +318,7 @@
 % also row vectors and matrices.  The same is true of chebfuns.
 % The chebfuns shown so far have all been in column orientation, which
 % is the default for the chebfun system, but one can also take
-% the transpose, compute an inner products, and so on:
+% the transpose, compute inner products, and so on:
 
 %%
   x = chebfun('x')

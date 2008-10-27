@@ -110,9 +110,23 @@
   length(f)
   sum(f)
 
+%%
+% The chebfun system is not an item "quadrature software"; it is a general
+% system for manipulating functions in which quadrature is just one of many capabilities.
+% Nevertheless if one investigates chebfun purely as a quadrature engine, it
+% compares quite well to specialized software.  This is the conclusion of the
+% Oxford MSc thesis by Phil Assheton [Assheton 2008], which compared chebfun experimentally to
+% quadrature codes including Matlab's quad and quadl, Gander and Gautschi's
+% adaptsim and adaptlob, Espelid's modsim, modlob, coteda, and coteglob, 
+% QUADPACK's d01ak and d01aj, and the NAG Library's d01ah.  In both reliability
+% and speed, chebfun was found to be competitive with these alternatives.  The overall
+% winner was coteda [Espelid 2003], which was typically about twice as fast as chebfun.  
+% One limitation of the chebfun system is that unlike many quadrature codes,
+% it cannot integrate functions that diverge to infinity, since at
+% present the chebfun system does not allow such functions.
 
 %% 2.2 norm, mean, std, var
-% An important special case of an integral is the "norm" command,
+% A special case of an integral is the "norm" command,
 % which for a chebfun by default returns the 2-norm, i.e., the square root
 % of the integral of the square of the absolute value over the
 % region of definition.  Here is a well-known example:
@@ -202,7 +216,7 @@
 % Littlewood proved in 1914 that although Li(x) is greater than
 % pi(x) at first, the two curves eventually cross each other infinitely often.
 % (It is known that the first crossing occurs somewhere between x=1e14
-% and x=2e316 (Kotnik 2008).)
+% and x=2e316 [Kotnik 2008].)
 
 %%
 % The "mean", "std", and "var" commands have also been overloaded
@@ -222,7 +236,7 @@
   hold off, plot(f)
   hold on, plot(fprime,'r')
 %%
-% If the derivative is computed of a function with a jump, then
+% If the derivative of a function with a jump is computed, then
 % a delta function is introduced, which shows up as an arrow in
 % in the "plot" command.  Consider for example this
 % function defined piecewise:
@@ -282,7 +296,7 @@
 
 %%
 % Since f is a polynomial of low degree, it cannot help but
-% lose information rather fast as we differentiate, and 14
+% lose information rather fast as we differentiate, and 15
 % differentiations eliminate the function entirely.
 
   for j = 0:length(f)
@@ -296,13 +310,18 @@
 % mentioned in the second paragraph of Section 1.1: the 
 % operations are individually stable in that each differentiation returns
 % the exact derivative of a function very close to the right one.
-% The trouble is that the errors in these stable operations accumulate
-% exponentially as successive derivatives are taken.  This is
-% an example of the instability of a chebfun algorithm, analogous to
-% the familiar phenomenon of instability of certain ordinary numerical
-% algorithms.
+% The trouble is that because of the intrinsically ill-posed nature of
+% differentiation, the errors in these stable operations accumulate
+% exponentially as successive derivatives are taken.
 
 %% 2.5 References
+%
+% [Assheton 2008] P. Assheton, Comparing Chebfun to Adaptive
+% Quadrature Software, dissertation, MSc in Mathematical Modelling
+% and Scientific Computing, Oxford University, 2008.
+%
+% [Espelid 2003] Terje O. Espelid, "Doubly adaptive quadrature routines 
+% based on Newton-Cotes rules," BIT Numerical Mathematics 43 (2003), 319-337.
 %
 % [Gentleman 1972] W. M. Gentleman, "Implementing
 % Clenshaw-Curtis quadrature I and II", Journal of
