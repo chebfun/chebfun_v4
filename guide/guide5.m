@@ -20,7 +20,7 @@ axis equal
 % 1i instead (just as one might write,
 % for example, 3+2i or 2.2-1.1i).  Writing the imaginary unit
 % in this fashion is a common trick among Matlab programmers,
-% for it avoids the possibility of surprises caused by i or j being
+% for it avoids the risk of surprises caused by i or j being
 % overwritten by other values.
 % The "axis equal" command ensures that the real and
 % imaginary axes are scaled equally.
@@ -53,8 +53,8 @@ subplot(1,2,2), plot(exp(h)), axis equal
 
 %%
 % Such plots make pretty pictures, but as always with chebfuns,
-% the underlying operations involve serious mathematics and
-% are carried out to many digits
+% the underlying operations involve precise mathematics
+% carried out to many digits
 % of accuracy.  For example, the integral of g is -pi*i/10,
 
 sum(g)
@@ -197,7 +197,7 @@ plot((sqrt(5)-1)/2,0,'.k')
 % around a closed curve is zero, or equivalently, the integral between two
 % points z1 and z2 is path-independent.  To verify this, we can
 % compute the same integral over the straight segment going directly from
-% 0 to -1+.5i:
+% 0 to -1+0.5i:
 
   w = chebfun('(-1+.5i)*s',[0 1]);
   f = exp(-w.^2);
@@ -232,7 +232,7 @@ I = sum(f.*diff(z))/(2i*pi)
 % a factor of pi/2 [Hale & Trefethen 2008].
 
 %%
-% The contour does not have to have radius 1, or to be centered at the origin:
+% The contour does not have to have radius 1, or be centered at the origin:
 z = chebfun('1+2*exp(1i*s)',[0 2*pi]);
 f = exp(z)./z.^3;
 I2 = sum(f.*diff(z))/(2i*pi)
@@ -292,7 +292,7 @@ B10 = factorial(k)*sum((f./z.^(k+1)).*diff(z))/(2i*pi)
 %%
 % This problem of numerical instability would arise no matter
 % how one calculated the integral over the unit circle; it is not
-% due to the chebfun system.
+% the fault of the chebfun system.
 
 %%
 % Another use of Cauchy integrals is to count zeros or
@@ -346,12 +346,12 @@ r = roots(f)
 % 
 % One can do some silly things with piecewise smooth chebfuns.  
 % For example, here is a chebfun defined
-% on the interval [0,7] that spells the initials LNT.  One could polish
+% on the interval [0,7] that prints the initials LNT.  One could polish
 % up and extend this construction by defining 26 suitable M-functions.
 
 LW = 'linewidth'; lw = 2.5;
 s = chebfun('s',[0 1]);
-w = [1+.8i-.8i*s; 1+.6*s;            % L
+w = [1+.8i-.8i*s; 1+.6*s;                     % L
      2+.8i*s; 2+.8i+(-.8i+.6)*s; 2.6+.8i*s;   % N
      3.3+.8i*s; 3+.8i+.6*s];                  % T
 clf, plot(w,'k',LW,lw), axis equal, axis off
@@ -386,7 +386,7 @@ subplot(1,2,2), plot( cos(w),'k',LW,lw), axis equal, axis off
 %
 % [Hale & Trefethen 2008] N. Hale and L. N. Trefethen,
 % "New quadrature formulas from conformal maps", SIAM Journal
-% on Numerical Analysis, to appear.
+% on Numerical Analysis 46 (2008), 930-948.
 %
 % [McCune 1966] J. E. McCune, "Exact inversion of dispersion relations",
 % Physics of Fluids 9 (1966), 2082-2084.

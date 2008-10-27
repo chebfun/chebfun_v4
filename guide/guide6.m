@@ -372,7 +372,7 @@ cond(Acheb)
 %
 %
 % [Trefethen 2008] L. N. Trefethen, "Householder triangularization of
-% a quasimatrix", manuscript, 2008.
+% a quasimatrix", manuscript submitted to IMA Journal on Numerical Analysis, 2008.
 %
 % [Trefethen 1997] L. N. Trefethen and D. Bau, III, Numerical Linear
 % Algebra, SIAM, 1997.
