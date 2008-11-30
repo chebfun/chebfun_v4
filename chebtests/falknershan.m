@@ -17,15 +17,15 @@ bcright = struct('op',D,'val',0);
 bc = struct('left',bcleft,'right',bcright);
 
 % Newton iteration
-du = Inf;
-while norm(du)>1e-11
+du = Inf;  niter = 0;
+while norm(du)>1e-10 && niter < 11
   r = f(u);  
-  %J = jacobian(r);
   J = dfdu(u);
   J.bc = bc;
   J.scale = norm(u);
   du = -(J\r);
   u = (u+du);
+  niter = niter+1;
 end
 
 
