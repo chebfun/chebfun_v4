@@ -62,13 +62,16 @@ imps = hfimps + hgimps;
 
 % INF if deltas at a common point
 indf = find(f.imps); indg = find(g.imps);
-if any(indg)
+if any(indg(2:end,:))
      [indboth,trash] = intersect(indf,indg);
      imps(indboth) = inf*sign(f.imps(indboth).*g.imps(indboth));
 end
 
 % Update first row of h.imps (function values)
-imps(1,:) = feval(f,f.ends).*feval(g,g.ends);
+% this seems to be slow:
+%imps(1,:) = feval(f,f.ends).*feval(g,g.ends);
+% replaced with
+imps(1,:) = f.imps(1,:).*g.imps(1,:);
 
 % % If there are deltas, then function value is + or - inf. (or should it
 % be nan in some cases?)

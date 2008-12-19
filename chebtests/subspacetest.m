@@ -4,12 +4,12 @@ function pass = subspacetest
 
 pass = true;
 [d,theta] = domain(0,2*pi);
-A = [vander(exp(-i*theta), 3) vander(exp(i*theta), 2)];
-f = sin(10*theta); 
-B = chebfun;
+A = [vander(exp(-1i*theta), 3) vander(exp(1i*theta), 2)];
+f = sin(10*theta); f = f/norm(f);
+A(:,1) = A(:,1)/norm(A(:,1));
 alpha = [1e-12 pi/6 pi/3 pi/2-1e-12];
-for k =1:length(alpha)
-    B(:,1) = cos(alpha(k))*A(:,1)+sin(alpha(k))*f;
+for k = 1:length(alpha)
+    B = cos(alpha(k))*A(:,1)+sin(alpha(k))*f;
     angle = subspace(A,B);
     pass = pass && (abs(angle-alpha(k)) < 1e-14);
 end
