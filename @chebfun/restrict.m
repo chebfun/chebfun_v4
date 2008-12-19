@@ -64,7 +64,7 @@ end
 g.funs = f.funs(j:k);
 g.ends = [subint(1) f.ends(j+1:k) subint(2)];
 g.nfuns = k-j+1;
-g.imps = f.imps(j:k+1);             
+g.imps = f.imps(:,j:k+1);
 
 % Trim off the end funs.
 if j==k
@@ -74,5 +74,9 @@ else
   g.funs = [g.funs(1:end-1) restrict(g.funs(end),[-1 b])];
 end
 
-%g.imps(1,:) = jumpvals(g.funs, g.ends);
+% Bug fix (18/12/08) RodP: correct imps matrix at endpoints: 
+% Note: deltas at new end poits will be lost!
+g.imps(:,1) = [g.funs(1).vals(1); zeros(size(g.imps,1)-1,1)];
+g.imps(:,end) = [g.funs(end).vals(end); zeros(size(g.imps,1)-1,1)];
+
 
