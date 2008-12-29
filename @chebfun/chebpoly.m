@@ -5,6 +5,9 @@ function out = chebpoly(f,n)
 % Chebyshev polynomial and F_1 denotes the first fun of chebfun F.
 %
 % A = CHEBPOLY(F,i) returns the coefficients for the i-th fun.
+%
+% There is also a CHEBPOLY command in the chebfun trunk directory, which
+% computes the chebfun corresponding to the Chebyshev polynomial T_n.
  
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
