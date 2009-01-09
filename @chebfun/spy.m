@@ -13,8 +13,7 @@ if isinf(m) & ~isinf(n)            % column quasimatrix
       plot([j j],[a b],'-b'), hold on
    end
    set(gca,'ytick',[a b])
-   yl = get(gca,'yticklabel');
-   set(gca,'yticklabel',flipud(yl))
+   set(gca,'ydir','reverse')
    if n<10, set(gca,'xtick',1:n)
       else, set(gca,'xtick',[1 n]), end
    axis([0 n+1 a b])
@@ -30,8 +29,7 @@ if ~isinf(m) & isinf(n)            % row quasimatrix
    set(gca,'xtick',[a b])
    if m<10, set(gca,'ytick',1:m)
       else, set(gca,'ytick',[1 m]), end
-   yl = get(gca,'yticklabel');
-   set(gca,'yticklabel',flipud(yl))
+   set(gca,'ydir','reverse')
    axis([a b 0 m+1])
    ar = get(gca,'plotboxaspectratio');
    ar(2) = .4*ar(2);
