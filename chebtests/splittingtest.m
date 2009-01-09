@@ -2,9 +2,8 @@ function pass = splittingtest
 % Test for exact jump detection and singular function approximation.
 % Rodrigo Platte.
 
-if ~chebfunpref('splitting')
-    error('splitting must be ON')
-end
+splitting on
+
 debug = false;
 Ntests = 3;
 

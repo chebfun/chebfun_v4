@@ -1,6 +1,7 @@
 function pass = breakpoints
 
 % Rodrigo Platte
+splitting on
 
 f=chebfun(@(x) ceil(x-.1), [0 1 2]);
 pass = length(f)==4;

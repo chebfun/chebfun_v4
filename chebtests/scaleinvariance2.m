@@ -5,6 +5,8 @@ function pass = scaleinvariance2
 % This code makes sure a few things are scale-invariant when the interval
 % is splitted (tests endpoints).
 
+splitting on
+
 d = [1 2];
 scale = 2^100;
 fh = @(x) abs(x-1.2)+10;

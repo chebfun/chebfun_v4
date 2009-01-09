@@ -2,6 +2,8 @@ function pass = restrictimps
 % Test handling of the imps matrix by restrict
 % RodP 18/12/2008
 
+splitting on
+
 f = chebfun(@(x) sign(x)+sin(x));
 g = diff(f);
 h = g{-0.8, 0.7};

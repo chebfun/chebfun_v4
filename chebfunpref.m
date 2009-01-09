@@ -32,7 +32,7 @@ function varargout = chebfunpref(varargin)
 %        Factory value is 129.
 %
 % splitting - Spliting option. Must be either true (1) or false (0).
-%        Factory value is true.
+%        Factory value is false.
 %
 % resample -  Resample option. Must be either true (1) or false (0).
 %        Factory value is true.
@@ -70,7 +70,7 @@ end
 
 % These are the options
 options =    {'minn', 'maxn', 'nsplit', 'splitting', 'resample', 'domain'};
-factoryvals = {9,     2^16+1,   129,     true,        true,      [-1 1]};
+factoryvals = {9,     2^16+1,   129,     false,        true,      [-1 1]};
 
 % Restore defaults ?
 factory_flag = false;

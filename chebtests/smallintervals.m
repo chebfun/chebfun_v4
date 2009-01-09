@@ -2,6 +2,8 @@ function pass = smallintervals
 % Operations on small intervals
 % Rodrigo Platte, July 2008.
 
+splitting on
+
 f1 = chebfun(@(x) x,[-1 -1+eps/2 0]);
 f2 = chebfun(@(x) x,[-1 -eps/2 0]);
 f3 = chebfun(@(x) x.^2, [-1 0]);
