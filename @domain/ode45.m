@@ -10,7 +10,7 @@ function y = ode45(varargin)
 %   y = ode45(@vdp1,domain(0,20),[2;0]); % solve Van der Pol problem
 %   roots( y(:,1)-1 )   % find times when first component is 1
 %
-% See also domain/ode15s, domain/ode113
+% See also ode45, odeset, domain/ode15s, domain/ode113
 
 % Copyright 2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
@@ -18,6 +18,6 @@ function y = ode45(varargin)
 j = find( cellfun('isclass',varargin,'domain') );
 varargin{j} = varargin{j}.ends;
 
-y = odesol( ode45(varargin{:}), 14 );
+y = odesol( ode45(varargin{:}), 5 );
 
 end
