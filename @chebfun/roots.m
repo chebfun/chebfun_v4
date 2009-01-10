@@ -4,6 +4,8 @@ function rts = roots(f)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
+tol = 1e-14;
+
 if numel(f)>1
     error('roots does not work with chebfun quasi-matrices')
 end
@@ -18,13 +20,13 @@ for i = 1:f.nfuns
     if ~isempty(r)
         rs = scale(r,a,b); % roots in a piece
         if ~isempty(rts)
-            while length(rs)>=1 && abs(rts(end)-rs(1))<1e-14*hs
+            while length(rs)>=1 && abs(rts(end)-rs(1))<tol*hs
             rs=rs(2:end);
         end
         end
         rts = [rts; rs];
     end
-    if isreal(f) && i<f.nfuns && (isempty(rts) || abs(rts(end)-b)>1e-14*hs )
+    if isreal(f) && i<f.nfuns && (isempty(rts) || abs(rts(end)-b)>tol*hs )
         rfun = f.funs(i+1);
         if lfun.vals(end)*rfun.vals(1) <= 0, 
             rts = [rts; b];

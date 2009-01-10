@@ -1,5 +1,7 @@
 function pass = systemapply
 
+tol = chebfunpref('tol');
+
 % Test 2x2 systems applied to functions.
 % TAD
 
@@ -17,9 +19,9 @@ w = A*v;
 z = (B+3)*u;
 
 u1 = u(:,1); u2 = u(:,2);
-pass(1) = norm( v(:,1) - (u1+2*diff(u1,2)-diff(u2))) < eps;
-pass(2) = norm( v(:,2) - (diff(u1))) < eps;
-pass(3) = norm( w - B*u ) < 1e-10;
-pass(4) = norm( z - w - 3*u ) < 1e-10;
+pass(1) = norm( v(:,1) - (u1+2*diff(u1,2)-diff(u2))) < tol;
+pass(2) = norm( v(:,2) - (diff(u1))) < tol;
+pass(3) = norm( w - B*u ) < 1e-10*(tol/eps);
+pass(4) = norm( z - w - 3*u ) < 1e-10*(tol/eps);
 
 end

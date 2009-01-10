@@ -39,6 +39,8 @@ function varargout = chebfunpref(varargin)
 %
 % domain - Domain of definition of a chebfun. Factory definition is [-1 1].
 %
+% tol - Relative tolerance. Factory value is 2^-52 (eps).
+%
 % Examples
 %       chebfunpref
 %       chebfunpref('minn', 17)
@@ -69,8 +71,8 @@ end
 % If the above didn't work, go through the longer process:
 
 % These are the options
-options =    {'minn', 'maxn', 'nsplit', 'splitting', 'resample', 'domain'};
-factoryvals = {9,     2^16+1,   129,     false,        true,      [-1 1]};
+options =    {'minn', 'maxn', 'nsplit', 'splitting', 'resample', 'domain', 'tol'};
+factoryvals = {9,     2^16+1,   129,     false,        true,      [-1 1],   2^-52};
 
 % Restore defaults ?
 factory_flag = false;

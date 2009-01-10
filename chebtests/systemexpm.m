@@ -38,4 +38,4 @@ ucorrect = [
    0.051307419712737  -0.057244515064558
 ];
 
-pass = norm(u(0.1:0.1:0.9,:)-ucorrect,inf) < 1e-12;
+pass = norm(u(0.1:0.1:0.9,:)-ucorrect,inf) < 1e4*chebfunpref('tol');

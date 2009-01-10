@@ -4,7 +4,9 @@ function out = roots(g)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
-epstol = 1e-14;
+
+tol = 100*eps;
+
 if (g.n<101)                                    % for small length funs
     c=chebpoly(g);                              % compute Cheb coeffs
     if abs(c(1)) < realmin
@@ -39,9 +41,9 @@ if (g.n<101)                                    % for small length funs
         r=eig(A);                               % compute roots as eig(A)
         
     end
-    mask=abs(imag(r))<epstol*g.scl.h;           % filter imaginary roots
+    mask=abs(imag(r))<tol*g.scl.h;           % filter imaginary roots
     r = real( r(mask) );
-    out = sort(r(abs(r) <= 1+epstol*g.scl.h));  % keep roots inside [-1 1]
+    out = sort(r(abs(r) <= 1+tol*g.scl.h));  % keep roots inside [-1 1]
     if ~isempty(out)
         out(1) = max(out(1),-1);                % correct root -1
         out(end) = min(out(end),1);             % correct root  1

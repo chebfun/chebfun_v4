@@ -21,6 +21,8 @@ function fout = merge(f, bkpts, maxn)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
+tol = 1e7*chebfunpref('tol');
+
 if numel(f) > 1
     error('MERGE does not handle chebfun quasi-matrices')
 end
@@ -62,7 +64,7 @@ for k = bkpts
     if ~any(f.imps(2:end,k),1) && length(fout.funs(j-1))+length(fout.funs(j)) < 1.05*maxn
         v = feval(f, [xk, xk+eps(xk), xk-eps(xk)]);
         % Prevent merging if there are jumps (very loose tolerance)
-        if  norm(v(1) - v(2:3),inf) < 1e-8*f.scl 
+        if  norm(v(1) - v(2:3),inf) < tol*f.scl 
             [mergedfun, hpy] = getfun(@(x) feval(fout,x),  ... 
                                [fout.ends(j-1), fout.ends(j+1)], maxn, scl);
             % merging successful                  

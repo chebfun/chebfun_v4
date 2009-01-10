@@ -22,15 +22,43 @@ function y = odesol(sol,m)
 
 % Copyright 2009 by the Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
-cursplit = chebfunpref('splitting');
-splitting on
+% Note: Remove m from input and correct help comments.
+
+% Current tolerance used by user
+usertol = chebfunpref('tol');
+
 ends = sol.x;
-n = length(ends)-1;  % number of time subintervals
-y = chebfun;
-for j = 1:size(sol.y,1)
-  f = repmat( {@(x) deval(sol,x,j)'}, [1 n]);   % evaluation function
-  y(:,j) = chebfun(f,ends,m*ones(n,1));
+scl = max(abs(sol.y),[],2); % Vertical scale (needed for RelTol)
+opt = sol.extdata.options;
+ncols = size(sol.y,1);
+
+% Find relative tolerances used in computations
+% start with odeset default values
+RelTol = 1e-3*ones(ncols,1);           % Relative
+AbsTol = 1e-6*ones(ncols,1);           % Absolute
+% update if user used different tolerances
+if ~isempty(opt)
+    if ~isempty(opt.RelTol) % Relative tolerance given by user
+        RelTol = opt.RelTol*ones(ncols,1);
+    end
+    if ~isempty(opt.AbsTol) % Absolute tolerance given by user
+        if length(opt.AbsTol) == 1 % AbsTol might be vector or scalar
+            AbsTol = opt.AbsTol*ones(ncols,1);
+        else
+            AbsTol = opt.AbsTol;
+        end
+    end   
 end
-chebfunpref('splitting',cursplit)
+% Turn AbsTol into RelTol using scale
+RelTol = max(RelTol(:),AbsTol(:)./scl(:));
+
+y = chebfun;
+for j = 1:ncols
+  chebfunpref('tol', RelTol(j))
+  y(:,j) = chebfun(@(x) deval(sol,x,j)', [ends(1) ends(end)]);
+end
+
+% Return to user tolerance
+chebfunpref('tol',usertol)
 
 end

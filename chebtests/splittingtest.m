@@ -2,8 +2,9 @@ function pass = splittingtest
 % Test for exact jump detection and singular function approximation.
 % Rodrigo Platte.
 
-splitting on
+tol = chebfunpref('tol');
 
+splitting on
 debug = false;
 Ntests = 3;
 
@@ -27,20 +28,23 @@ try
             error('jump2')
         end
 
-        x0 = rand;
-        x0 = sign(x0-.5)*x0/1000; % change sign and even closer to origin
-        f= chebfun(@(x) exp(x) +cos(7*x) + 0.1*sign(x-x0))+1;
-        pass = pass && f.ends(2) == x0 && (length(f.ends) < 4);
-        if ~pass
-            error('jump3')
+        if chebfunpref('tol') > 1/1000
+            x0 = rand;
+            x0 = sign(x0-.5)*x0/1000; % change sign and even closer to origin
+            f= chebfun(@(x) exp(x) +cos(7*x) + 0.1*sign(x-x0))+1;
+            pass = pass && f.ends(2) == x0 && (length(f.ends) < 4);
+            if ~pass
+                error('jump3')
+            end
         end
 
         % test C0 functions
         x0 = rand;
         x0 = sign(x0-.5)*x0; % change sign and closer to origin
         f= chebfun(@(x) exp(x) +cos(7*x) + abs(x-x0));
-        pass = pass && abs(f.ends(2) - x0)< 1e-12 && (length(f.ends) < 4);
+        pass = pass && (length(f.ends)<3) || (abs(f.ends(2) - x0)< 1e-12*(tol/eps) && (length(f.ends) < 4));
         if ~pass
+            abs(f.ends(2) - x0)
             error('C0')
         end
 
@@ -48,7 +52,7 @@ try
         x0 = rand;
         x0 = sign(x0-.5)*x0;
         f= chebfun(@(x) (x-x0).^2.*double(x>x0));
-        pass = pass && abs(f.ends(2) - x0)< 1e-8 && (length(f.ends) < 4);
+        pass = pass && abs(f.ends(2) - x0)< 1e-8*(tol/eps) && (length(f.ends) < 4);
         if ~pass
             error('C1')
         end
@@ -57,7 +61,7 @@ try
         x0 = rand;
         x0 = sign(x0-.5)*x0/100; % change sign and closer to origin
         f= chebfun(@(x) exp(x) + abs(x-x0).^3+1);
-        pass = pass && abs(f.ends(2) - x0)< 1e-4 && (length(f.ends) < 4);
+        pass = pass && abs(f.ends(2) - x0)< 1e-4*(tol/eps) && (length(f.ends) < 4);
         if ~pass
             error('C2')
         end
@@ -77,7 +81,7 @@ try
     ff = @(x) sqrt(x-2)+10;
     f = chebfun(ff, [2,20]);
     xx = linspace(2,10);
-    pass = pass && length(f) <600 && norm(f(xx) - ff(xx),inf)<5e-7;
+    pass = pass && length(f) <600 && norm(f(xx) - ff(xx),inf)<5e-7*(tol/eps);
     if ~pass
         error('SQRT')
     end

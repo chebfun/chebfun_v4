@@ -22,6 +22,8 @@ function F = diffcol(f,n)
 
 if isempty(f), F=chebfun; return, end
 
+tol = max(chebfunpref('tol')*10, 1e-14) ;
+
 ends = f.ends;
 F = f;
 funs = f.funs;
@@ -48,7 +50,7 @@ for j = 1:n % loop n times for nth derivative
     for i = 2:f.nfuns
         fleft = fright; fright = f.funs(i);
         jmp = feval(fright,-1) - feval(fleft,1);
-        if abs(jmp) > 1e-12*f.scl
+        if abs(jmp) > tol*f.scl
            newimps(i) = jmp;
         end
     end

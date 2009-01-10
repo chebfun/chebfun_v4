@@ -12,8 +12,12 @@ function failfun = chebtest(dirname)
 %
 % FAILED = CHEBTEST('DIRNAME') returns a cell array of all functions that
 % either failed or crashed.
+%
+% 
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
+tol = chebfunpref('tol');
 
 if nargin < 1
   % Attempt to find "chebtests" directory.
@@ -47,6 +51,7 @@ for j = 1:length(mfile)
   try
     close all
     chebfunpref('factory');
+    chebfunpref('tol',tol);
     failed(j) = ~ all(feval( fun ));
     if failed(j)
       fprintf('FAILED\n')
@@ -68,6 +73,7 @@ end
 rmpath(dirname)
 warning(warnstate)
 chebfunpref('factory');
+chebfunpref('tol',tol);
 
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')

@@ -1,7 +1,9 @@
-function pass = systemtest0
+function pass = systemsolve1
 
 % Test 2x2 system (sin/cos)
 % TAD
+
+tol = chebfunpref('tol');
 
 d=domain(-pi,pi);
 D=diff(d);
@@ -15,5 +17,5 @@ A.rbc = [Z I];
 u = A\f;
 
 u1 = u(:,1); u2 = u(:,2);
-pass(1) = norm( u1 - cos(x)) < 100*eps;
-pass(2) = norm( u2 - sin(x) ) < 100*eps;
+pass(1) = norm( u1 - cos(x)) < 100*tol;
+pass(2) = norm( u2 - sin(x) ) < 100*tol;

@@ -2,6 +2,8 @@ function pass = orrsommerfeld
 
 % Eigenvalues of the Orr-Sommerfeld operator
 
+tol = chebfunpref('tol');
+
 d = domain(-1,1);
 R = 5772;
 D = diff(d);  I = eye(d);
@@ -28,5 +30,5 @@ correct = [
     -1.564823130376978e-001-8.413737949305676e-001i
 ];
 
-pass = norm( lam-correct, Inf) < 1e-7;
+pass = norm( lam-correct, Inf) < 1e-7*(tol/eps);
 
