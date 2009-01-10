@@ -29,11 +29,12 @@ else
   subint = subdom;
 end
 
-g = chebfun;
-g.trans = f.trans;
 if subint(1)>subint(2)
+   g = chebfun;
   return                                         % empty result
 end
+
+g = f;
 
 dom = domain(f);
 if (subint(1)<dom(1)) || (subint(2)>dom(2))
