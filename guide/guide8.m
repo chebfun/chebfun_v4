@@ -81,7 +81,7 @@
 % This example involves specific points of singularity, which the constructor
 % has duly located.  In addition to this,
 % in splitting on mode the constructor will subdivide intervals recursively
-% at arbitrary points when
+% at non-singular points when
 % convergence is not taking place fast enough.  For example, with splitting off
 % we cannot successfully construct a chebfun for the square root function on [0,1]:
 
@@ -100,7 +100,7 @@
 
 %%
 % Closer inspection reveals that the system has broken the interval into a
-% succession of pieces, each about 100 times smaller than the last:
+% succession of pieces, each about 100 times smaller than the next:
   
   f.ends
 
@@ -108,7 +108,7 @@
 % In this example all but one of the subdivisions have occurred
 % near an endpoint, for the edge detector has estimated that the difficulty
 % of resolution lies there.  For more general functions, however,
-% splitting will tend to occur near midpoints.  For example, here is a function
+% splitting will take place at midpoints.  For example, here is a function
 % that is complicated throughout [-1,1], especially for larger values of x.
 
   ff = @(x) sin(x).*tanh(3*exp(x).*sin(15*x));
@@ -131,8 +131,8 @@
   format short, f.ends
 
 %%
-% When should one used splitting off, and when splitting on?  When the goal
-% is simply to represent complicated functions, especially when there are
+% When should one use splitting off, and when splitting on?  If the goal
+% is simply to represent complicated functions, especially when they are
 % more complicated in some regions than others, splitting on has its advantages.
 % An example is given by the function above posed on [-3,3] instead of [-1,1].
 % With splitting off, the global polynomial has degree in the tens of thousands:
@@ -153,7 +153,7 @@
 % On the other hand, splitting off mode has its advantages too.  In particular,
 % operations involving derivatives generally work better if functions
 % are represented by global polynomials, and the chebop system for the most
-% part requires this.  And for educational purposes,
+% part requires this.  Also, for educational purposes,
 % it is very convenient that the chebfun system can be used so easily
 % to study pure polynomial representations.
 
@@ -225,7 +225,7 @@
 % number of points at which a function is sampled during the chebfun construction
 % process, and the factory value of this parameter is 9.  This does not
 % mean that all chebfuns have length at least as large as 9.  For example, 
-% if f is a cubic, then it will be sampled at 9 points, Chebyshev expansions
+% if f is a cubic, then it will be sampled at 9 points, Chebyshev expansion
 % coefficients will be computed, and 5 of these will be found to be of negligible
 % size and discarded.  So the resulting chebfun is a cubic, even though
 % the construcor never sampled at fewer than 9 points.
@@ -240,7 +240,7 @@
 % negligible.
 
 %% 
-% Like any process based on sampling, this one can be broken.
+% Like any process based on sampling, this one can fail.
 % For example, here is a success:
 
   splitting off
@@ -256,12 +256,13 @@
   plot(f)
 
 %%
-% What has happened can be explained as follows.   On a 9-point Chebyshev
-% grid, the function sampled has a peak at x = 0.5, and the closest
-% grid points lie near 0.383 and 0.707.  At x=0.383, exp(-(30(x-.5)^2))=4.5e-6,
+% What has happened can be explained as follows.   
+% The function being sampled has a narrow peak near x = 0.5, and the closest
+% grid points lie near 0.383 and 0.707.  In the case of the exponent 2, we
+% note that at x=0.383, exp(-(30(x-.5)^2))=4.5e-6,
 % which is large enough to be noticed by the chebfun constructor.
-% On the other hand exp(-(30(x-.5)^4))=1.2e-66, which is far below machine
-% precision relative to the function being sampled.  So in the latter
+% On the other hand in the case of exponent 4, we have
+% exp(-(30(x-.5)^4))=1.2e-66, which is far below machine precision.  So in the latter
 % case the constructor thinks it has a quadratic and does not try a finer grid.
 
 %%
@@ -302,9 +303,9 @@
 % to the very idea of what it means to sample a function.
 
 %%
-% When a chebfun is constructed, a function is normally sampled 9, 17, 33,...
+% When a chebfun is constructed, a function is normally sampled at 9, 17, 33,...
 % Chebyshev points until convergence is achieved.  Now Chebyshev points are nested,
-% so the 17-point grid, for example, only has 8 new points that were not in the
+% so the 17-point grid, for example, only has 8 new points that are not in the
 % 9-point grid.  It seems obvious that the chebfun constructor should take advantage
 % of this property and not recompute
 % values that have already been computed.  By the time we get to 65 points, for example,
@@ -312,7 +313,7 @@
 % would seem to be at stake.
 
 %% 
-% Nevertheless, the chebfun system DOES recompute values, or as we say,
+% Nevertheless, the chebfun system DOES by default recompute values, or as we say,
 % resample.  Why?  Part of the reason is historical.
 % The original version by Zachary Battles in 2002 resampled, and we never found a compelling
 % reason to change this.  Although the speed difference can be a factor of 2 in certain
@@ -321,7 +322,7 @@
 
   chebfunpref('factory');
   splitting off
-  tic, f = chebfun(@(x) sin(x),[0 10000]); toc
+  tic, f = chebfun(@(x) sin(x),[0 2000]); toc
   length(f)
 
 %%
@@ -336,73 +337,71 @@
 % If we construct the same chebfun as before, we find the speedup
 % is not very great:
 
-  tic, f = chebfun(@(x) sin(x),[0 10000]); toc
+  tic, f = chebfun(@(x) sin(x),[0 2000]); toc
   length(f)
 
 %%
 % The reason there is so little improvement is that evaluating sin(x) is so
 % quick.  To see more of an effect, we need a function whose sample values take
-% longer to compute.  The chebfun representation of sin(x) is a good candidate,
+% longer to compute.  The chebfun representation of sin(x) over this long interval
+% is a good candidate,
 % so let us try the same experiment as before, but now sampling
 % f(x) rather than sin(x):
 
   resample on
-  tic, g = chebfun(@(x) f(x),[0 10000]); toc
+  tic, g = chebfun(@(x) f(x),[0 2000]); toc
   length(g)
 
 %%
 
   resample off
-  tic, g = chebfun(@(x) f(x),[0 10000]); toc
+  tic, g = chebfun(@(x) f(x),[0 2000]); toc
   length(g)
 
 %%
-% Now we see the factor of 2.
-% Users dealing with difficult functions may wish to try resample off in hopes
+% Now we see a factor closer to 2.
+% Users dealing with challenging functions may wish to try resample off in hopes
 % of a similar speedup.
 
 %%
 % The other reason why the chebfun system resamples is that this introduces 
 % very interesting new possibilities.  What if the "function" being sampled is not
-% a fixed, but depends on the grid?  For example, consider this object:
+% fixed, but depends on the grid?  For example, consider this object:
 
-  ff = @(x) length(x)*x;
+  ff = @(x) length(x)*sin(2*x);
 
 %%
 % The values depend on the length of the vector at which it is evaluated!
 % What will happen if we try to make a chebfun of it?  The constructor tries
-% the 9-point Chebyshev grid, is satisfied that the function has been resolved, and
-% terminates, so the output is the function 9x:
+% the 9-point Chebyshev grid, then the 17-point grid, then the 33-point grid.  On
+% the last of this it finds the Chebyshev coefficients are sufficiently small, and
+% proceeds to truncate to length 18.
+% So we end up with a chebfun of length 18 for the function 33sin(2x).
 
   resample on
   f = chebfun(ff);
+  length(f)
+  max(f)
   plot(f,'.-')
 
 %%
 % This is a rather bizarre result, and it tempts us to play further.
-% What if we change x to sin(x)?
-
-  gg = @(x) length(x)*sin(x);
-  g = chebfun(gg);
-  plot(g,'.-')
-
-%% 
-% The reader should be able to figure out why this has converged.  On the
-% other hand here is an example that fails to converge, which the
-% reader should also figure out.
+% What if we change length(x)*sin(2*x) to sin(length(x)*x)?
+% Now there is no convergence, for no matter how fine the grid is, the
+% function is underresolved.
 
   hh = @(x) sin(length(x)*x);
   h = chebfun(hh);
 
 %%
-% And here is an in-between case:
+% Here is an in-between case where convergence is achieved:
 
-  kk = @(x) sin(sqrt(length(x))*x);
+  kk = @(x) sin(length(x).^(2/3)*x);
   k = chebfun(kk);
   plot(k,'.-')
 
 %%
-% Bizarre indeed!  Are such effects of any use?  Yes indeed, they are
+% Are such curious effects of any use?  Yes indeed, they are
 % at the heart of the chebop system.  When the chebop system solves a differential
 % equation by a command like u = L\f, for example, the chebfun u is determined by
 % a "sampling" process in which a matrix problem obtained by Chebyshev spectral discretization 
@@ -431,12 +430,12 @@
 % On the left, the values are all -1:
 
   format short
-  f([-1 -0.01 -eps])
+  f([-1 -0.01 -realmin])
 
 %%
 % On the right, they are all +1:
 
-  f([eps 0.01 1])
+  f([realmin 0.01 1])
 
 %%
 % In the middle, the value is zero:
@@ -450,7 +449,7 @@
 % matter, we can change that value:
 
   f(0) = 17;
-  f([-1 -.01 -eps 0 eps .01 1])
+  f([-1 -.01 -realmin 0 realmin .01 1])
 
 %%
 % The chebfun f is still well-defined, and various derived quantities take
@@ -530,6 +529,7 @@
 % chebfuns.  For example, here is a chebfun obtained by concatenating two copies of k:
 
   kk = [k; k];
+  plot(kk)
 
 %%
 % Further related objects can be constructed with the chebfun overload of
@@ -540,3 +540,11 @@
   A = [chebpoly(1) chebpoly(3) chebpoly(5)];
   A{0.1,0.6} = [x x.^3 x.^5];
   plot(A)
+
+%%
+% The plot looks like a picture of a rather arbitrary collection of functions, and
+% so it is, but as always in the chebfun system, A is a well-defined object with which
+% we can calculate precisely.  For example, here are its singular values:
+
+  format long
+  svd(A)
