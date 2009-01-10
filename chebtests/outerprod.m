@@ -3,6 +3,8 @@ function pass = outerprod
 % Toby Driscoll
 % Outer product testing
 
+tol = chebfunpref('tol');
+
 [d,x] = domain(0,1);
 f = [ exp(x), tanh(x) ];
 g = [ exp(x), x./(1+x.^2) ];
@@ -12,10 +14,10 @@ A = f*g';
 Au = (exp(x) + (1-pi/4)*tanh(x));
 
 % operational form
-pass1 = norm( Au - A*u ) < 1e-12;
+pass1 = norm( Au - A*u ) < 1e-12*(tol/eps);
 
 % discrete form
 xx = (1+sin(pi*(2*(1:200)'-200-1)/(400-2)))/2;
-pass2 = norm( Au(xx) - A(200)*u(xx) ) < 1e-12;
+pass2 = norm( Au(xx) - A(200)*u(xx) ) < 1e-12*(tol/eps);
 
 pass = pass1 & pass2;
