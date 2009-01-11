@@ -6,6 +6,12 @@ function y = ode113(varargin)
 % piecewise-defined chebfun or quasimatrix with one column per solution 
 % component.
 %
+% CHEBFUN/ODE113 has the same calling sequence as Matlab's standard ODE113, 
+% except that instead of a TSPAN vector like  [T0 TFINAL], it takes a TSPAN
+% domain like domain(T0,TFINAL). The presence of this argument from the 
+% domain class signals Matlab to use the chebfun version of ODE113 rather 
+% than the standard version.
+%
 % Example:
 %   y = ode113(@vdp1,domain(0,20),[2;0]); % solve Van der Pol problem
 %   roots( y(:,1)-1 )   % find times when first component is 1

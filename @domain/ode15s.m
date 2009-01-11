@@ -6,6 +6,12 @@ function y = ode15s(varargin)
 % piecewise-defined chebfun or quasimatrix with one column per solution 
 % component.
 %
+% CHEBFUN/ODE15S has the same calling sequence as Matlab's standard ODE15S, 
+% except that instead of a TSPAN vector like  [T0 TFINAL], it takes a TSPAN
+% domain like domain(T0,TFINAL). The presence of this argument from the 
+% domain class signals Matlab to use the chebfun version of ODE15S rather 
+% than the standard version.
+%
 % Example:
 %   y = ode15s(@vdp1000,domain(0,3000),[2;0]); % solve Van der Pol problem
 %   roots( y(:,1)-1 );   % find times when first component is 1
