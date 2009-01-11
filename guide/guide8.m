@@ -23,6 +23,9 @@
 % about a bit at its edges.  At the end we'll take the process a little further
 % and show some really sneaky tricks.
 
+%%
+% The preference "tol" will not be discussed here; it gets a chapter of
+% its own.
 
 %% 8.2  chebfunpref('domain'): the default domain
 % Like Chebyshev polynomials themselves, chebfuns are defined by default
@@ -31,8 +34,8 @@
 % trigonometric functions on [0,2pi] conveniently like this:
 
   chebfunpref('domain',[0 2*pi])
-  f = chebfun('sin(19*t)');
-  g = chebfun('cos(20*t)');
+  f = chebfun(@(t) sin(19*t));
+  g = chebfun(@(t) cos(20*t));
   plot(f,g), axis equal, axis off
 
 %% 8.3  chebfunpref('splitting'): splitting off and splitting on
@@ -62,8 +65,8 @@
 %%
 % The difference between splitting off and splitting on pertains to additional
 % breakpoints that may be introduced in the more basic chebfun construction process,
-% where the constructor is making a chebfun solely by sampling point values.
-% For example, suppose we try to make the same function as above from scratch,
+% when the constructor makes a chebfun solely by sampling point values.
+% For example, suppose we try to make the same chebfun as above from scratch,
 % by sampling an anonymous function, in splitting off mode.  We get a warning message:
 
   ff = @(x) min(abs(x),exp(x)/6);
@@ -99,7 +102,7 @@
   f((.1:.1:.5)'.^2)
 
 %%
-% Closer inspection reveals that the system has broken the interval into a
+% Inspection reveals that the system has broken the interval into a
 % succession of pieces, each about 100 times smaller than the next:
   
   f.ends
@@ -107,7 +110,7 @@
 %%
 % In this example all but one of the subdivisions have occurred
 % near an endpoint, for the edge detector has estimated that the difficulty
-% of resolution lies there.  For more general functions, however,
+% of resolution lies there.  For other functions, however,
 % splitting will take place at midpoints.  For example, here is a function
 % that is complicated throughout [-1,1], especially for larger values of x.
 
@@ -143,7 +146,7 @@
   plot(f3)
 
 %%
-% With splitting on the representation is much more efficient:
+% With splitting on the representation is much more compact:
 
   splitting on
   f3 = chebfun(ff,[-3 3]);
@@ -151,14 +154,14 @@
 
 %%
 % On the other hand, splitting off mode has its advantages too.  In particular,
-% operations involving derivatives generally work better if functions
+% operations involving derivatives generally work better when functions
 % are represented by global polynomials, and the chebop system for the most
 % part requires this.  Also, for educational purposes,
 % it is very convenient that the chebfun system can be used so easily
-% to study pure polynomial representations.
+% to study the properties of pure polynomial representations.
 
 %% 8.4  chebfunpref('nsplit'): degree limit in splitting on mode
-% When intervals are broken up in splitting on mode, as just illustrated, 
+% When intervals are subdivided in splitting on mode, as just illustrated, 
 % the parameter nsplit determines where this will happen.  With the factory
 % value nsplit=129, splitting will take place if a polynomial of degree 128
 % proves insufficient to resolve a fun. 
@@ -168,7 +171,7 @@
   f.funs
 
 %%
-% Alternatively, suppose we wish to permit individual funs to
+% Alternatively, suppose we wish to allow individual funs to
 % have length up to 513.  We can do that like this:
 
   chebfunpref('nsplit',513);
@@ -200,7 +203,7 @@
 
 %%
 % Notice that no warning message is produced since we have asked explicitly for
-% 50 points.  On the other hand we could also change the default to this number,
+% exactly 50 points.  On the other hand we could also change the default maximum to this number,
 % and then there would be a warning message:
 
   chebfunpref('maxn',50);
@@ -210,7 +213,9 @@
 % Perhaps more often one might wish to adjust this preference to enable use of
 % especially high degrees.  On the machines of 2008, the chebfun system is perfectly
 % capable of working with polynomials of degrees in the millions.
-% For example:
+% The function abs(x)^(3/2) on [-1,1] provides a nice example, for it is
+% smooth enough to be resolved by a global polynomial, provided it is
+% of rather high degree:
 
   chebfunpref('maxn',1e6);
   tic
@@ -224,11 +229,11 @@
 % At the other end of the spectrum, the parameter minn determines the minimum
 % number of points at which a function is sampled during the chebfun construction
 % process, and the factory value of this parameter is 9.  This does not
-% mean that all chebfuns have length at least as large as 9.  For example, 
+% mean that all chebfuns have length at least 9.  For example, 
 % if f is a cubic, then it will be sampled at 9 points, Chebyshev expansion
 % coefficients will be computed, and 5 of these will be found to be of negligible
 % size and discarded.  So the resulting chebfun is a cubic, even though
-% the construcor never sampled at fewer than 9 points.
+% the constructor never sampled at fewer than 9 points.
 
   chebfunpref('factory');
   f = chebfun('x.^3');
@@ -257,7 +262,7 @@
 
 %%
 % What has happened can be explained as follows.   
-% The function being sampled has a narrow peak near x = 0.5, and the closest
+% The function being sampled has a narrow spike near x = 0.5, and the closest
 % grid points lie near 0.383 and 0.707.  In the case of the exponent 2, we
 % note that at x=0.383, exp(-(30(x-.5)^2))=4.5e-6,
 % which is large enough to be noticed by the chebfun constructor.
@@ -282,8 +287,8 @@
 %%
 % The default minn=9 was chosen as a good compromise between efficiency
 % and reliability.  In practice it rarely seems to fail, but perhaps
-% it is most vulnerable when working in splitting on mode
-% with functions with discontinuities.  For example, the following
+% it is most vulnerable when applied in splitting on mode
+% to functions with discontinuities.  For example, the following
 % chebfun is missing some pieces near the right boundary:
 
   chebfunpref('factory')
@@ -304,20 +309,22 @@
 
 %%
 % When a chebfun is constructed, a function is normally sampled at 9, 17, 33,...
-% Chebyshev points until convergence is achieved.  Now Chebyshev points are nested,
-% so the 17-point grid, for example, only has 8 new points that are not in the
-% 9-point grid.  It seems obvious that the chebfun constructor should take advantage
+% Chebyshev points until convergence is achieved.  Now Chebyshev grids are nested,
+% so the 17-point grid, for example, only contains 8 points that are not in the
+% 9-point grid.  It may seem obvious that the chebfun constructor should take advantage
 % of this property and not recompute
 % values that have already been computed.  By the time we get to 65 points, for example,
+% it may seem obvious that
 % we should have done 65 evaluations, not 9+17+33+65 = 114.  A factor of approximately 2
 % would seem to be at stake.
 
 %% 
-% Nevertheless, the chebfun system DOES by default recompute values, or as we say,
+% Nevertheless, the chebfun system DOES by default recompute values when
+% the grid is refined, or as we say,
 % resample.  Why?  Part of the reason is historical.
 % The original version by Zachary Battles in 2002 resampled, and we never found a compelling
 % reason to change this.  Although the speed difference can be a factor of 2 in certain
-% circumstances, often it is a smaller factor.  For example, here is a big chebfun constructed
+% circumstances, often it is a smaller factor.  For example, here is a chebfun constructed
 % in the usual factory mode, corresponding to resampling on:
 
   chebfunpref('factory');
@@ -327,22 +334,23 @@
 
 %%
 % Now let us see what happens if we turn off resampling, so that previously
-% compute values will be resused.  We can do this with
+% computed values will be reused.  We can do this with
 % the command resample off:
 
   resample off
   chebfunpref
 
 %%
-% If we construct the same chebfun as before, we find the speedup
-% is not very great:
+% If we construct the same chebfun as before, we find that there is a little
+% speedup, but it is not very great:
 
   tic, f = chebfun(@(x) sin(x),[0 2000]); toc
   length(f)
 
 %%
-% The reason there is so little improvement is that evaluating sin(x) is so
-% quick.  To see more of an effect, we need a function whose sample values take
+% The reason there is so little improvement is that evaluating sin(x) is nearly as
+% quick as the other operations involved.
+% To see more of an effect, we need a function whose sample values take
 % longer to compute.  The chebfun representation of sin(x) over this long interval
 % is a good candidate,
 % so let us try the same experiment as before, but now sampling
@@ -359,24 +367,25 @@
   length(g)
 
 %%
-% Now we see a factor closer to 2.
-% Users dealing with challenging functions may wish to try resample off in hopes
-% of a similar speedup.
+% Now we see a speedup by a factor closer to 2.
+% Users dealing with challenging functions may wish to try "resample off" in hopes
+% of obtaining a similar speedup.
 
 %%
 % The other reason why the chebfun system resamples is that this introduces 
 % very interesting new possibilities.  What if the "function" being sampled is not
-% fixed, but depends on the grid?  For example, consider this object:
+% actually a fixed function, but depends on the grid?  For example, consider this prescription:
 
   ff = @(x) length(x)*sin(2*x);
 
 %%
-% The values depend on the length of the vector at which it is evaluated!
-% What will happen if we try to make a chebfun of it?  The constructor tries
+% The values of f at any particular point will
+% depend on the length of the vector in which it is embedded!
+% What will happen if we try to make a chebfun?  The constructor tries
 % the 9-point Chebyshev grid, then the 17-point grid, then the 33-point grid.  On
-% the last of this it finds the Chebyshev coefficients are sufficiently small, and
+% the last of these it finds the Chebyshev coefficients are sufficiently small, and
 % proceeds to truncate to length 18.
-% So we end up with a chebfun of length 18 for the function 33sin(2x).
+% We end up with a chebfun of length 18 that precisely matches the function 33sin(2x).
 
   resample on
   f = chebfun(ff);
@@ -385,7 +394,7 @@
   plot(f,'.-')
 
 %%
-% This is a rather bizarre result, and it tempts us to play further.
+% This rather bizarre example tempts us to play further.
 % What if we change length(x)*sin(2*x) to sin(length(x)*x)?
 % Now there is no convergence, for no matter how fine the grid is, the
 % function is underresolved.
@@ -394,10 +403,11 @@
   h = chebfun(hh);
 
 %%
-% Here is an in-between case where convergence is achieved:
+% Here is an in-between case where convergence is achieved on the grid of length 65:
 
   kk = @(x) sin(length(x).^(2/3)*x);
   k = chebfun(kk);
+  length(k)
   plot(k,'.-')
 
 %%
@@ -411,7 +421,7 @@
 
 %%
 % Besides chebops, are there other practical uses of the chebfun resampling feature?
-% We do not currently know of any but would be interested to hear from users who
+% We do not currently know the answer and would be pleased to hear from users who
 % may have ideas.
 
 %% 8.8  Point values of chebfuns
@@ -444,16 +454,16 @@
 
 %%
 % The chebfun constructor knows nothing about the sign function, and
-% has determined all this just by sampling sign(x).  For a different function the
+% has determined all this just by sampling.  For a different function the
 % value at the point of discontinuity might have come out otherwise, and for that
-% matter, we can change that value:
+% matter, it can be subsequently changed:
 
   f(0) = 17;
   f([-1 -.01 -realmin 0 realmin .01 1])
 
 %%
-% The chebfun f is still well-defined, and various derived quantities take
-% their appropriate values:
+% The chebfun f is still well-defined, still with two funs,
+% and various derived quantities take their appropriate values:
 
   sum(f), max(f)
 
@@ -462,30 +472,30 @@
   norm(f), norm(f,inf)
 
 %%
-% (Thus max and norm(.,inf) return a true supremum, not what analysts call 
-% an essential supremum.)
+% (Thus max and norm( . ,inf) return the strict supremum of a function,
+% not what analysts call the essential supremum.)
 % This brings to mind a trick that proves convenient in some applications.
-% We can also take a point in the middle of a fun and change the value there:
+% We can take a point in the middle of a fun and change the value there:
 
   f(0.5) = 999;
   f(0:0.1:0.9)
 
 %%
 % What has happened here is that the system has introduced a breakpoint at 0.5
-% so that the new value can be accommodated:
+% to accommodate the new value, so now the chebfun has three funs:
 
   f.ends
 
 %%
-% We can also use the same syntax to introduce a breakpoint even when
-% there is no discontinuity.  For example, here we introduce a breakpoint at 0.25:
+% We can also use the same syntax to introduce a breakpoint without a
+% discontinuity.  For example, here we introduce a breakpoint at 0.25:
 
   f(0.25) = f(0.25);
   f.ends
 
 %% 8.9  Subintervals with {} and concatenations with ;
 % The chebfun system uses the curly brackets { and } in a variety of ways that
-% may be confusing at first but are extraodinarily convenient.  These uses do not
+% may be confusing at first but are extraordinarily convenient.  These uses do not
 % correspond to the usual Matlab uses of { and }, namely for cell arrays.  Actually
 % they are closer to Matlab's [ and ].  The trouble is that in the chebfun system,
 % one would really like [ and ] to have two different meanings.  For example, if f is
@@ -518,14 +528,14 @@
 %%
 % If the length of the interval on the left is not the same as that on 
 % the right, then one is scaled to fit the other.  For example, here we put
-% a copy of all of f inside the interval from 40 to 80:
+% a copy of all of f inside the interval [40,80]:
 
   k = f;
   k{40,80} = 0.8*k;
   plot(k)
 
 %%
-% Just as { and } enable the extraction of subintervals, ; enables the concatnation of
+% Just as { and } enable the extraction of subintervals, ; enables the concatenation of
 % chebfuns.  For example, here is a chebfun obtained by concatenating two copies of k:
 
   kk = [k; k];
@@ -533,17 +543,19 @@
 
 %%
 % Further related objects can be constructed with the chebfun overload of
-% the command repmat.  The possibilities are endless.  Here is an example involving
-% quasimatrices:
+% the command repmat.
+
+%%
+% Here is an example involving quasimatrices:
 
   x = chebfun('x');
   A = [chebpoly(1) chebpoly(3) chebpoly(5)];
-  A{0.1,0.6} = [x x.^3 x.^5];
+  A{0,0.5} = [x x.^3 x.^5];
   plot(A)
 
 %%
 % The plot looks like a picture of a rather arbitrary collection of functions, and
-% so it is, but as always in the chebfun system, A is a well-defined object with which
+% so it is, but as always in the chebfun system, A is a precisely defined object with which
 % we can calculate precisely.  For example, here are its singular values:
 
   format long
