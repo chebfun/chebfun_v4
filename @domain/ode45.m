@@ -18,6 +18,6 @@ function y = ode45(varargin)
 j = find( cellfun('isclass',varargin,'domain') );
 varargin{j} = varargin{j}.ends;
 
-y = odesol( ode45(varargin{:}), 5 );
+y = odesol( ode45(varargin{:}) );
 
 end

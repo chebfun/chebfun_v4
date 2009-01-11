@@ -1,36 +1,27 @@
-function y = odesol(sol,m)
+function y = odesol(sol)
 %ODESOL  Convert an ODE solution to chebfun.
 
-% ODESOL(SOL,M) converts the solution of an ODE initial-value or 
+% ODESOL(SOL,OPT) converts the solution of an ODE initial-value or 
 % boundary-value problem by standard MATLAB methods into a chebfun 
 % representation. SOL is the one-output form of any solver such as ODE45,
-% ODE15S, BVP5C, etc. M is the piecewise degree of the chebfun
-% representation (proper value depends on the solution method).
+% ODE15S, BVP5C, etc.
 %
 % The result is a piecewise chebfun of low polynomial degree on 
 % each piece. 
 %
-% Examples (using built-in ODE demos):
-%
-%   y = odesol( ode45(@vdp1,[0 20],[2;0]) );
-%   roots( y(:,1)-1 )   % find times when first component is 1
-%
-%   solinit = bvpinit(linspace(0,4,5),[1 0]);
-%   y = odesol( bvp5c(@twoode,@twobc,solinit) );
-%   plot(y)
-% 
 
 % Copyright 2009 by the Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
-% Note: Remove m from input and correct help comments.
 
 % Current tolerance used by user
-usertol = chebfunpref('tol');
+usertol = chebfunpref('tol'); 
 
 ends = sol.x;
 scl = max(abs(sol.y),[],2); % Vertical scale (needed for RelTol)
-opt = sol.extdata.options;
 ncols = size(sol.y,1);
+
+% Catch user ode preferences
+opt = sol.extdata.options;
 
 % Find relative tolerances used in computations
 % start with odeset default values

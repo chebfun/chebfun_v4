@@ -18,6 +18,6 @@ function y = ode113(varargin)
 j = find( cellfun('isclass',varargin,'domain') );
 varargin{j} = varargin{j}.ends;
 
-y = odesol( ode113(varargin{:}), 14 );  % what is the correct degree?
+y = odesol( ode113(varargin{:}) ); 
 
 end

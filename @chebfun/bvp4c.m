@@ -55,7 +55,7 @@ init = bvpinit(x,f, params{:});
 
 % Call bvp solver and convert to chebfun.
 sol = bvp4c(fun1,fun2,init,opts{:});
-varargout{1} = odesol(sol,4);
+varargout{1} = odesol(sol,opts{:});
 
 % Look for parameter output.
 if ~isempty(params), varargout{2} = sol.parameters; end
