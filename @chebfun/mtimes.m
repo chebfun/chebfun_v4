@@ -20,7 +20,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
       splitstate = chebfunpref('splitting');
       splitting off
       sampstate = chebfunpref('resampling');
-      resample on
+      resampling on
       Fout = 0;
       d = domain(F1);
       if ~(d==domain(F2))
