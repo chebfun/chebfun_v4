@@ -12,9 +12,9 @@ if (isa(g1,'double') || isa(g2,'double'))
 end  
 
 temp=prolong(g1,g1.n+g2.n-1); 
-if g1==g2
+if isequal(g1,g2)
    vals=temp.vals.^2;          
-elseif conj(g1)==g2
+elseif isequal(conj(g1),g2)
    vals=conj(temp.vals).*temp.vals;
 else
    temp2=prolong(g2,g1.n+g2.n-1); 

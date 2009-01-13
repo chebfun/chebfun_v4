@@ -10,4 +10,4 @@ f2 = chebfun(@(x) exp(-x), [0 30], 10);
 f3 = chebfun(@(x) exp(-x), d);
 f4 = chebfun(@(x) exp(-x), [0 30]);
 
-pass= f1==f2 && f3==f4;
+pass= isequal(f1,f2) && isequal(f3,f4);

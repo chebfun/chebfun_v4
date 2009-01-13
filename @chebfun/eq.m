@@ -1,8 +1,13 @@
 function fout = eq(F1,F2)
 % ==   Equal.
-%  F1 == F2 returns a chebfun which is zero almost everywhere except at the
-%  intersection points of F1 and F2. 
+%  F1 == F2 returns a chebfun which is zero everywhere except at the
+%  intersection points of F1 and F2, where it evaluates to one.
 %
+%  Example:
+%    x = chebfun(@(x) x);
+%    plot(sign(x) == 1)
+%
+%  See also chebfun/find, chebfun/ne, chebfun/not.
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
@@ -30,25 +35,19 @@ function fout = eqcol(f1,f2)
 % Eq for two single chebfuns or one chebfun and one scalar
 % Note: f1 must be a chebfun, f2 may be a scalar
 
-r = roots(f1-f2); % Find points where f1 == f2
-ends = f1.ends;
-fout = chebfun;
-newends = union(r,ends);
-fout.scl = 1;
-fout.ends = newends;
-fout.imps = 1+newends*0;
-fout.nfuns = length(fout.ends)-1;
-fout.trans = f1.trans;
-funs =[];
+fout = sign(f1-f2);
 for k = 1:fout.nfuns
-    funs = [funs fun(0)];
+    if all(fout.funs(k).vals) == 0
+        fout.funs(k) = fun(1);
+    else 
+        fout.funs(k) = fun(0);
+    end
 end
-fout.funs = funs;
 
-% Check whehter endpoints are also roots:
-if r(1) ~= ends(1)
+fout.imps = fout.imps + 1;
+if fout.imps(1) ~= 1
     fout.imps(1) = 0;
 end
-if r(end) ~= ends(end)
+if fout.imps(end) ~= 1
     fout.imps(end) = 0;
 end
