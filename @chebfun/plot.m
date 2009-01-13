@@ -114,6 +114,12 @@ if ~h, hold off; end
 %---------------------------------------------------------------------
 function [curves, marks] = unwrap_group(curves, marks, f, g, linespec)
 
+% RodP added this here to handle row quasimatrices (Jan 2009):
+if g(1).trans
+    [curves, marks] = unwrap_group(curves, marks, f.', g.', linespec);
+    return
+end
+
 single_chebfun = 0;
 if isempty(f)
     for i = 1:numel(g)
