@@ -116,8 +116,7 @@ function [curves, marks] = unwrap_group(curves, marks, f, g, linespec)
 
 % RodP added this here to handle row quasimatrices (Jan 2009):
 if g(1).trans
-    [curves, marks] = unwrap_group(curves, marks, f.', g.', linespec);
-    return
+    f = f.'; g = g.'; % Only deal with column quasimatrices from this point
 end
 
 single_chebfun = 0;
