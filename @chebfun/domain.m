@@ -11,10 +11,8 @@ function varargout = domain(f)
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 if numel(f) == 1
-    if isempty(f)
-        varargout = {domain};
-    elseif(nargout<=1)
-        varargout{1} = domain(f.ends);
+    if nargout < 2 || numel(f.ends)==0
+        varargout{1} = domain(f.ends);   % OK if f is empty
     else
         varargout{1} = f.ends(1);
         varargout{2} = f.ends(end);

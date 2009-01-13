@@ -17,7 +17,7 @@ if nargin==1    % return chebop
   if isempty(d)
     Z = chebop;
   else
-    Z = chebop( @zeros, @(u) 0*u, d );
+    Z = chebop( @(n) sparse(n,n), @(u) 0*u, d );
   end
 else            % return chebfun
   if isnumeric(d) % number given first
