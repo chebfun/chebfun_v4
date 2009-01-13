@@ -4,7 +4,7 @@
 %% 1.1  What is a chebfun?
 % A chebfun is a function of one variable defined on
 % an interval [a,b].  The syntax for chebfuns is
-% almost entirely the same as the usual Matlab syntax for vectors, 
+% almost exactly the same as the usual Matlab syntax for vectors, 
 % with the familiar Matlab commands for vectors overloaded in natural ways. 
 % Thus, for example, whereas sum(f) returns the sum of the
 % entries when f is a vector, when f is a chebfun
@@ -26,7 +26,7 @@
 % Chebyshev polynomials.  For a simple function, 20 or 30
 % points often suffice, but the process is stable and
 % effective even for functions complicated enough to require
-% 1000 or 100,000 points.  The chebfun system makes use of
+% 1000 or 1,000,000 points.  The chebfun system makes use of
 % adaptive procedures that aim to find the right number of points
 % automatically so as to represent each function
 % to roughly machine precision (about 15 digits
@@ -39,7 +39,8 @@
 % figure, for example, was Bernstein in the 1910s.
 % Nevertheless it is hard to find the relevant material
 % collected in one place.  A new reference on this subject
-% will be [Trefethen 2008].
+% will be [Trefethen 2009].  A printed book adapted from this Guide
+% is also being prepared [Trefethen et al. 2009].
 
 %%
 % The chebfun system was originally created by Zachary Battles
@@ -162,8 +163,8 @@
 
 %%
 % Every command in the list exists in ordinary Matlab,
-% with the exceptions of "domain", "prolong", "restrict",
-% "chebpoly", "define", "shift", and the
+% with the exceptions of "domain", "restrict",
+% "chebpoly", "define", and the
 % chebfun constructor "chebfun".  We have already seen
 % "length" and "sum" in action.  In fact we have already
 % seen "subsref" too, since that is the Matlab command
@@ -309,7 +310,7 @@
 %%
 % So we had better turn it on again.  In a chebfun computation,
 % splitting can be turned on and off freely to handle different
-% functions appropriately.  
+% functions appropriately.  The default or "factory" value is splitting off.
   splitting on
   tic, f = chebfun('abs(x-.3)'); toc
 
@@ -337,10 +338,7 @@
 
 %%
 % These are called "quasimatrices", and will be discussed in
-% a later section.  Currently it is not possible to make a matrix
-% that is continuous in both directions, however, for example by
-% forming A*A'.
-
+% a later section.
 
 %% 1.6  References
 % [Battles & Trefethen 2004] Z. Battles and L. N. Trefethen,
@@ -364,6 +362,9 @@
 % with functions instead of numbers", Mathematics in Computer
 % Science 1 (2007), 9-19.
 %
-% [Trefethen 2008] L. N. Trefethen, Neoclassical Numerics, book
+% [Trefethen 2009] L. N. Trefethen, Neoclassical Numerics, book
 % in preparation.
+%
+% [Trefethen et al. 2009] L. N. Trefethen et al., Chebfun, Chebop, and
+% Chebyshev Technology, book in preparation.
 
