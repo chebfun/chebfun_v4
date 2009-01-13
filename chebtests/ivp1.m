@@ -1,6 +1,6 @@
 function pass = ivp1
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 d = domain(-1,1);
 x = chebfun(@(x)x,d);

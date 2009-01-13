@@ -5,7 +5,7 @@ function out = eq(F1,F2)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
-tol = 10*chebfunpref('tol');
+tol = 10*chebfunpref('eps');
 
 if numel(F1) ~= numel(F2) || F1(1).trans ~= F2(1).trans
     out = false;

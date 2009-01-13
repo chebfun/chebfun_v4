@@ -2,7 +2,7 @@ function pass = sumcos20x
 
 % TAD
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 f = chebfun('cos(20*x)');
 pass = abs(sum(f)-sin(20)/10) < 1e-15*(tol/eps);

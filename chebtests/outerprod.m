@@ -3,7 +3,7 @@ function pass = outerprod
 % Toby Driscoll
 % Outer product testing
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 [d,x] = domain(0,1);
 f = [ exp(x), tanh(x) ];

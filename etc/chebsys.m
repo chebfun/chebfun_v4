@@ -26,7 +26,7 @@ funs = repmat(fun, 1, nfuns);
 x = cell(1,nfuns);
 
 % search for happiness
-maxn = chebfunpref('maxn');
+maxn = chebfunpef('maxdegree');
 while any(~hpy) && all(NN< maxn)
     
     % generate cheb points in each interval and place in a cell array.

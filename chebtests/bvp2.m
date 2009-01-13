@@ -1,6 +1,6 @@
 function pass = bvp2
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 d = domain(-1,0);
 D = diff(d);  I = eye(d);

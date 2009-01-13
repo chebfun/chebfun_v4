@@ -15,7 +15,7 @@ function g = growfun(op,g,n,g1,g2)
 
 % Check preferences 
 split = chebfunpref('splitting');
-resample = chebfunpref('resample');
+resample = chebfunpref('resampling');
 
 % Set minn 
 if nargin == 4
@@ -23,7 +23,7 @@ if nargin == 4
 elseif nargin == 5
     minn = max([5, g1.n, g2.n]);
 else
-    minn = chebfunpref('minn');
+    minn = chebfunpref('minsamples');
 end
     
 % Sample using powers of 2.

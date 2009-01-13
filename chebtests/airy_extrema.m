@@ -17,4 +17,4 @@ R =[-14.935937196720515
     -4.820099211178722
     -3.248197582179822
     -1.018792971647486];
-pass = norm(r-R,inf) < 500*chebfunpref('tol');
+pass = norm(r-R,inf) < 500*chebfunpref('eps');

@@ -14,7 +14,7 @@ function y = odesol(sol)
 
 
 % Current tolerance used by user
-usertol = chebfunpref('tol'); 
+usertol = chebfunpref('eps'); 
 
 ends = sol.x;
 scl = max(abs(sol.y),[],2); % Vertical scale (needed for RelTol)
@@ -45,11 +45,11 @@ RelTol = max(RelTol(:),AbsTol(:)./scl(:));
 
 y = chebfun;
 for j = 1:ncols
-  chebfunpref('tol', RelTol(j))
+  chebfunpref('eps', RelTol(j))
   y(:,j) = chebfun(@(x) deval(sol,x,j)', [ends(1) ends(end)]);
 end
 
 % Return to user tolerance
-chebfunpref('tol',usertol)
+chebfunpref('eps',usertol)
 
 end

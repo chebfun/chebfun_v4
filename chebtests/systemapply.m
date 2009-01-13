@@ -1,6 +1,6 @@
 function pass = systemapply
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 % Test 2x2 systems applied to functions.
 % TAD

@@ -160,7 +160,7 @@
 % it is very convenient that the chebfun system can be used so easily
 % to study the properties of pure polynomial representations.
 
-%% 8.4  chebfunpref('nsplit'): degree limit in splitting on mode
+%% 8.4  chebfunpref('splitdegree'): degree limit in splitting on mode
 % When intervals are subdivided in splitting on mode, as just illustrated, 
 % the parameter nsplit determines where this will happen.  With the factory
 % value nsplit=129, splitting will take place if a polynomial of degree 128
@@ -174,13 +174,13 @@
 % Alternatively, suppose we wish to allow individual funs to
 % have length up to 513.  We can do that like this:
 
-  chebfunpref('nsplit',513);
+  chebfunpref('splitdegree',513);
   f = chebfun(ff);
   length(f)
   format short, f.ends
   f.funs
 
-%% 8.5  chebfunpref('maxn'): maximum number of points
+%% 8.5  chebfunpef('maxdegree'): maximum number of points
 % As just mentioned, in
 % splitting off mode, the constructor tries to make a global chebfun
 % from the given string or anonymous function.  For a function like
@@ -206,7 +206,7 @@
 % exactly 50 points.  On the other hand we could also change the default maximum to this number,
 % and then there would be a warning message:
 
-  chebfunpref('maxn',50);
+  chebfunpef('maxdegree',50);
   f = chebfun('sign(x)');
 
 %%
@@ -217,7 +217,7 @@
 % smooth enough to be resolved by a global polynomial, provided it is
 % of rather high degree:
 
-  chebfunpref('maxn',1e6);
+  chebfunpef('maxdegree',1e6);
   tic
   f = chebfun('abs(x).^1.5');
   lengthf = length(f)
@@ -303,7 +303,7 @@
   f = chebfun('round(.55*sin(x+x.^2))',[0 10]);
   plot(f), axis off
     
-%% 8.7  chebfunpref('resample'): resampling off and resampling on
+%% 8.7  chebfunpref('resampling'): resampling off and resampling on
 % We now turn to a chebfun preference with some rather deep significance, relating
 % to the very idea of what it means to sample a function.
 
@@ -337,7 +337,7 @@
 % computed values will be reused.  We can do this with
 % the command resample off:
 
-  resample off
+  resampling off
   chebfunpref
 
 %%
@@ -356,13 +356,13 @@
 % so let us try the same experiment as before, but now sampling
 % f(x) rather than sin(x):
 
-  resample on
+  resampling on
   tic, g = chebfun(@(x) f(x),[0 2000]); toc
   length(g)
 
 %%
 
-  resample off
+  resampling off
   tic, g = chebfun(@(x) f(x),[0 2000]); toc
   length(g)
 
@@ -387,7 +387,7 @@
 % proceeds to truncate to length 18.
 % We end up with a chebfun of length 18 that precisely matches the function 33sin(2x).
 
-  resample on
+  resampling on
   f = chebfun(ff);
   length(f)
   max(f)

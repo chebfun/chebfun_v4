@@ -4,7 +4,7 @@ function pass = chebpolytest
 
 % Tests of the form chebfun = chebpoly(integer):
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 T5 = chebpoly(5);
 x = [0 .4 1];

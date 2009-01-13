@@ -15,5 +15,5 @@ A.rbc = [Z D];
 u = A\f;
 
 u1 = u(:,1); u2 = u(:,2);
-pass(1) = norm( diff(u1)+u1+2*u2-exp(x)) < 1e4*chebfunpref('tol');
-pass(2) = norm( diff(u1)-u1+diff(u2)-1 ) < 1e4*chebfunpref('tol');
+pass(1) = norm( diff(u1)+u1+2*u2-exp(x)) < 1e4*chebfunpref('eps');
+pass(2) = norm( diff(u1)-u1+diff(u2)-1 ) < 1e4*chebfunpref('eps');

@@ -4,7 +4,7 @@ function pass = restrictscl
 % This function tests the retrict function (problem related to a bug report
 % by Justin Kao of MIT.
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 f = chebfun(@(x)x,[0 1]);
 g = f{0.5,1};

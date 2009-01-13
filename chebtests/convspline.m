@@ -7,6 +7,6 @@ s = chebfun(1,[-.5 .5]);
 f = s;
 for k = 1:3, f = conv(f,s); end
 
-pass = norm( f-B ) < 1e-14*chebfunpref('tol')/eps;
+pass = norm( f-B ) < 1e-14*chebfunpref('eps')/eps;
 
 end

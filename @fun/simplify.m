@@ -6,7 +6,7 @@ function gout = simplify(g)
 
 % This is the code in the old fixedgrow.m by LNT
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 epstol = 2^-52;
 
 gout = g;

@@ -19,7 +19,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
     if isinf(size(F1,1))     % outer product
       splitstate = chebfunpref('splitting');
       splitting off
-      sampstate = chebfunpref('resample');
+      sampstate = chebfunpref('resampling');
       resample on
       Fout = 0;
       d = domain(F1);
@@ -43,7 +43,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         Fout = Fout + chebop(mat,op,d);
       end
       chebfunpref('splitting',splitstate)
-      chebfunpref('resample',sampstate)
+      chebfunpref('resampling',sampstate)
     else      % inner product
       Fout = zeros(size(F1,1),size(F2,2));
       for k = 1:size(F1,1)

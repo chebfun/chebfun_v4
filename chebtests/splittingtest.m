@@ -2,7 +2,7 @@ function pass = splittingtest
 % Test for exact jump detection and singular function approximation.
 % Rodrigo Platte.
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 splitting on
 debug = false;
@@ -28,7 +28,7 @@ try
             error('jump2')
         end
 
-        if chebfunpref('tol') > 1/1000
+        if chebfunpref('eps') > 1/1000
             x0 = rand;
             x0 = sign(x0-.5)*x0/1000; % change sign and even closer to origin
             f= chebfun(@(x) exp(x) +cos(7*x) + 0.1*sign(x-x0))+1;

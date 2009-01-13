@@ -23,4 +23,4 @@ switch class(op)
             'cannot be used to construct a fun object'])
 end
 
-g = growfun(op,g,chebfunpref('maxn'));
+g = growfun(op,g,chebfunpref('maxdegree'));

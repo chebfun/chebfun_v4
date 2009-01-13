@@ -1,7 +1,7 @@
 function pass = circplate
 % Deflection of a circular plate
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 d = domain(0,1);
 f = chebfun('exp(-50*r)',d);  % loading function

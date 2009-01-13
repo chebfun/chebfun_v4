@@ -2,8 +2,9 @@ function fout = merge(f, bkpts, maxn)
 % MERGE   Try to remove breakpoints.
 %   G = MERGE(F) returns a chebfun representation of F with the smallest 
 %   number of breakpoints possible such that each smooth piece has at
-%   most NMAX number of points. NMAX being specified in CHEBFUNPREF. 
-%   In SPLITTING OFF mode, NMAX = 2^16 is used.
+%   most SPLITDEGREE number of points, SPLITDEGREE being specified in  
+%   CHEBFUNPREF. In SPLITTING OFF mode instead of SPLITDEGREE, the 
+%   parameter MAXDEGREE in CHEBFUNPREF is used.
 %  
 %   G = MERGE(F, BKPTS) returns an equivalent chebfun representation of F
 %   after attempting to eliminate the breakpoints specified in BKPTS. 
@@ -21,7 +22,7 @@ function fout = merge(f, bkpts, maxn)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
-tol = 1e7*chebfunpref('tol');
+tol = 1e7*chebfunpref('eps');
 
 if numel(f) > 1
     error('MERGE does not handle chebfun quasi-matrices')
@@ -38,9 +39,9 @@ bkpts = unique(bkpts);
 
 if nargin < 3
     if ~chebfunpref('splitting')
-        maxn = chebfunpref('maxn'); % default 2^16+1
+        maxn = chebfunpref('maxdegree'); % default 2^16+1
     else
-        maxn = chebfunpref('nsplit'); % default 129
+        maxn = chebfunpref('splitdegree'); % default 129
     end
 end
 

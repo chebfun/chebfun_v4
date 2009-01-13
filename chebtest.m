@@ -17,7 +17,7 @@ function failfun = chebtest(dirname)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 if nargin < 1
   % Attempt to find "chebtests" directory.
@@ -51,7 +51,7 @@ for j = 1:length(mfile)
   try
     close all
     chebfunpref('factory');
-    chebfunpref('tol',tol);
+    chebfunpref('eps',tol);
     failed(j) = ~ all(feval( fun ));
     if failed(j)
       fprintf('FAILED\n')
@@ -73,7 +73,7 @@ end
 rmpath(dirname)
 warning(warnstate)
 chebfunpref('factory');
-chebfunpref('tol',tol);
+chebfunpref('eps',tol);
 
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')

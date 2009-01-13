@@ -38,4 +38,4 @@ mma = [ 0
   95.008177101267663
   98.150570349583958];
 
-pass = norm( extrema-mma, Inf) < 1e-12*chebfunpref('tol')/eps;
+pass = norm( extrema-mma, Inf) < 1e-12*chebfunpref('eps')/eps;

@@ -2,7 +2,7 @@ function pass = orrsommerfeld
 
 % Eigenvalues of the Orr-Sommerfeld operator
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 d = domain(-1,1);
 R = 5772;

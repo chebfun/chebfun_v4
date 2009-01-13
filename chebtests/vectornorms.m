@@ -13,4 +13,4 @@ norms(7) = norm(f',inf);
 norms(8) = norm(f','fro');
 s = sqrt(20);
 exact = [12 s 2 s 12 s 2 s];
-pass = (norm(norms-exact,inf) < 1e-14*chebfunpref('tol')/eps);
+pass = (norm(norms-exact,inf) < 1e-14*chebfunpref('eps')/eps);

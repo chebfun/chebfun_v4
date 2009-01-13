@@ -22,7 +22,7 @@ function F = diffcol(f,n)
 
 if isempty(f), F=chebfun; return, end
 
-tol = max(chebfunpref('tol')*10, 1e-14) ;
+tol = max(chebfunpref('eps')*10, 1e-14) ;
 
 ends = f.ends;
 F = f;

@@ -3,7 +3,7 @@ function pass = systemsolve1
 % Test 2x2 system (sin/cos)
 % TAD
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 d=domain(-pi,pi);
 D=diff(d);

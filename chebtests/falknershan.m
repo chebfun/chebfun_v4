@@ -1,6 +1,6 @@
 function pass = falknershan
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 dom = domain(0,6);
 beta = 0.5;
 

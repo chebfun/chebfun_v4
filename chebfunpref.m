@@ -19,27 +19,30 @@ function varargout = chebfunpref(varargin)
 %
 % CHEBFUN PREFERENCES (case sensitive)
 %
-% minn - Minimum number of points used by the constructor. The contructed
-%        fun or chebfun might be shorter as a result of the simplify
-%        command. MUST BE 2^n+1 to conform with fun/growfun.
-%        Factory value is 9.
-%
-% maxn - Maximum number of points used by the constructor in SPLITTING
-%        OFF mode. Factory value is 2^16+1.
-%
-% nsplit - Maximum number of points used by the constructor in SPLITTING ON
-%        mode. Note: 2^n+1 conforms with the way fun/growfun works.
-%        Factory value is 129.
-%
 % splitting - Spliting option. Must be either true (1) or false (0).
 %        Factory value is false.
 %
-% resample -  Resample option. Must be either true (1) or false (0).
+% minsamples - Minimum number of points used by the constructor. The 
+%        contructed fun or chebfun might be shorter as a result of the 
+%        simplify command. MUST BE 2^n+1 to conform with fun/growfun.
+%        Factory value is 9.
+%
+% maxdegree - Maximum number of points used by the constructor in SPLITTING
+%        OFF mode. Factory value is 2^16+1.
+%
+% maxlength - Maximum number of points used by the constructor in SPLITTING
+%        ON mode. Factory value is 2^12+1.
+%
+% splitdegree - Maximum number of points per fun used by the constructor in 
+%        SPLITTING ON mode. Note: 2^n+1 conforms with the way fun/growfun
+%        works. Factory value is 129.
+%
+% resampling -  Resample option. Must be either true (1) or false (0).
 %        Factory value is true.
 %
 % domain - Domain of definition of a chebfun. Factory definition is [-1 1].
 %
-% tol - Relative tolerance. Factory value is 2^-52 (eps).
+% eps - Relative tolerance. Factory value is 2^-52 (eps).
 %
 % Examples
 %       chebfunpref
@@ -47,7 +50,7 @@ function varargout = chebfunpref(varargin)
 %       chebfunpref('minn','factory')
 %       chebfunpref('factory')
 %
-% See also SPLITTING, RESAMPLE
+% See also SPLITTING, RESAMPLING
 %
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
@@ -71,8 +74,8 @@ end
 % If the above didn't work, go through the longer process:
 
 % These are the options
-options =    {'minn', 'maxn', 'nsplit', 'splitting', 'resample', 'domain', 'tol'};
-factoryvals = {9,     2^16+1,   129,     false,        true,      [-1 1],   2^-52};
+options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps'};
+factoryvals = {false,       9,            2^16+1,      2^12+1,      129,          true,         [-1 1],   2^-52};
 
 % Restore defaults ?
 factory_flag = false;
@@ -118,9 +121,14 @@ elseif nargin==2
 %             minn = varargin{2};
 %             varargin{2} = max(2,2^floor(log2(minn-1))+1);
 %         end
-
+        % If preference is 'eps', check for consistency!
+         if strcmp(varargin{1},'eps') & varargin{2}<2^-52
+             varargin{2} = 2^-52;
+             warning('CHEBFUN:chebfunpref:argin','eps value below machine precision. eps set to 2^-52');
+         end
         % Set preference!
         prefs.(varargin{1}) = varargin{2};
+        
 
     end
 

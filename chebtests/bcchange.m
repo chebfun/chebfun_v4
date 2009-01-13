@@ -1,6 +1,6 @@
 function pass = bcchange
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 
 d = domain(-3,4);
 D = diff(d);  I = eye(d);

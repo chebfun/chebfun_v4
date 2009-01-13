@@ -1,6 +1,6 @@
 function pass = eigsho
 
-tol = chebfunpref('tol');
+tol = chebfunpref('eps');
 d = domain(0,pi);
 A = diff(d,2) & 'dirichlet';
 lam = eigs(A,10);
