@@ -28,7 +28,7 @@ axis equal
 %%
 % Here is a chebfun analogue.
 
-s = chebfun('s',[0 pi]);
+s = chebfun(@(s) s,[0 pi]);
 f = exp(1i*s);
 plot(f)
 axis equal
@@ -83,7 +83,7 @@ subplot(1,2,2), plot(z.^2), axis equal, grid on
 % [a,b], [b,b+(d-c)], [b+(d-c),b+(d-c)+(d-e)].  Using this trick, 
 % we can construct the chebfun z above in the following alternative manner:
 
-  s = chebfun('s',[0 1]);
+  s = chebfun(@(s) s,[0 1]);
   zz = [(1+.5i)*s; 1+.5i-2*s];
   norm(z-zz)
 
@@ -121,12 +121,14 @@ hold on, plot(exp(X),'r')
 %%
 % We can take the same idea further and construct a grid in the
 % complex plane, each segment of which is a piece of a chebfun that
-% happens to be linear:
+% happens to be linear.  In this case we accumulate the various
+% pieces as successive columns of a quasimatrix, i.e., a "matrix" whose
+% columns are chebfuns.
 
-  x = chebfun('x');
+  x = chebfun(@(x) x);
   S = chebfun;                  % make an empty chebfun
   for d = -1:.2:1
-    S = [S; d+1i*x; 1i*d+x];    % add 2 more lines to the collection
+    S = [S d+1i*x 1i*d+x];      % add 2 more lines to the collection
   end
   clf, subplot(1,2,1), plot(S), axis equal
 
@@ -155,13 +157,15 @@ hold on, plot(exp(X),'r')
 % the limiting point given by the equation z = 1/(1+z), i.e., 
 % z = (sqrt(5)-1)/2.
 
-s = chebfun('s',[0 1]);
-S1 = [-.5i+s; 1-.5i+1i*s; 1+.5i-s; .5i-1i*s];
+moebius = @(z) 1./(1+z);
+s = chebfun(@(s) s,[0 1]);
+S = [-.5i+s; 1-.5i+1i*s; 1+.5i-s; .5i-1i*s];
 clf
-S2 = 1./(1+S1); S3 = 1./(1+S2); S4 = 1./(1+S3);
-plot(S1,'b')
+for j = 1:3
+  S = [S moebius(S(:,j))];
+end
+plot(S)
 hold on, axis equal
-plot(S2,'r'), plot(S3,'g'), plot(S4,'m')
 plot((sqrt(5)-1)/2,0,'.k')
 
 %%
@@ -381,7 +385,7 @@ subplot(1,2,2), plot( cos(w),'k',LW,lw), axis equal, axis off
 % Math. Res. Ctr., U. of Wisconsin, 1959, pp. 45-59.
 %
 % [Delves & Lyness 1967] L. M. Delves and J. N. Lyness, "A numerical
-% method for locating the zeros of an analytic function," Mathematics
+% method for locating the zeros of an analytic function", Mathematics
 % of Computation 21 (1967), 543--560.
 %
 % [Hale & Trefethen 2008] N. Hale and L. N. Trefethen,
