@@ -8,9 +8,9 @@ function gout = compfun(g1,op,g2)
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 if chebfunpref('splitting')
-    n = chebfunpref('splitdegree');
+    n = chebfunpref('splitdegree')+1;
 else
-    n = chebfunpref('maxdegree');
+    n = chebfunpref('maxdegree')+1;
 end
 
 if nargin == 3

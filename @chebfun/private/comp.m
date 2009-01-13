@@ -45,8 +45,8 @@ end
 function fout = compcol(f1, op, f2)
     
 % Get preferences
-if chebfunpref('splitting'), n = chebfunpref('splitdegree');    
-else n = chebfunpref('maxdegree'); end
+if chebfunpref('splitting'), n = chebfunpref('splitdegree')+1;    
+else n = chebfunpref('maxdegree')+1; end
 
 ffuns = [];
 ends = f1.ends(1);

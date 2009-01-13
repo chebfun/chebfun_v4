@@ -39,9 +39,9 @@ bkpts = unique(bkpts);
 
 if nargin < 3
     if ~chebfunpref('splitting')
-        maxn = chebfunpref('maxdegree'); % default 2^16+1
+        maxn = chebfunpref('maxdegree')+1; % default 2^16+1
     else
-        maxn = chebfunpref('splitdegree'); % default 129
+        maxn = chebfunpref('splitdegree')+1; % default 129
     end
 end
 

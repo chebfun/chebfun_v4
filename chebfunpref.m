@@ -27,14 +27,14 @@ function varargout = chebfunpref(varargin)
 %        simplify command. MUST BE 2^n+1 to conform with fun/growfun.
 %        Factory value is 9.
 %
-% maxdegree - Maximum number of points used by the constructor in SPLITTING
-%        OFF mode. Factory value is 2^16+1.
+% maxdegree - Maximum degree used by the constructor in SPLITTING OFF mode.
+%         Factory value is 2^16+1.
 %
 % maxlength - Maximum number of points used by the constructor in SPLITTING
 %        ON mode. Factory value is 2^12+1.
 %
-% splitdegree - Maximum number of points per fun used by the constructor in 
-%        SPLITTING ON mode. Note: 2^n+1 conforms with the way fun/growfun
+% splitdegree - Maximum degree per fun used by the constructor in SPLITTING
+%        ON mode. Note: 2^n+1 conforms with the way fun/growfun
 %        works. Factory value is 129.
 %
 % resampling -  Resample option. Must be either true (1) or false (0).
@@ -75,7 +75,7 @@ end
 
 % These are the options
 options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps'};
-factoryvals = {false,       9,            2^16+1,      2^12+1,      129,          true,         [-1 1],   2^-52};
+factoryvals = {false,       9,            2^16,      5000,      128,          true,         [-1 1],   2^-52};
 
 % Restore defaults ?
 factory_flag = false;

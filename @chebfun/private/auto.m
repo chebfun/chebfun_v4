@@ -30,7 +30,7 @@ htol = 1e-14*scl.h;
 % maxdegree (default is 2^16)
 
 if ~chebfunpref('splitting')
-     maxn = chebfunpref('maxdegree');
+     maxn = chebfunpref('maxdegree')+1;
      [funs,hpy] = getfun(op,ends,maxn,scl);
      if ~hpy
         warning('CHEBFUN:auto',['Function not resolved, using ' int2str(maxn) ...
@@ -41,8 +41,8 @@ end
 % ------------------------------------------------------------------------
 
 % SPLITTING ON mode!
-maxn = chebfunpref('maxlength');
-nsplit = chebfunpref('splitdegree');            % Get maxn from preferences: default is 129.
+maxn = chebfunpref('maxlength')+1;
+nsplit = chebfunpref('splitdegree')+1;            % Get maxn from preferences: default is 129.
 
 [funs,hpy,scl] = getfun(op,ends,nsplit,scl);    % Try to get one smooth piece for the entire interval 
 sad = ~hpy;                                     % before splitting interval

@@ -24,7 +24,7 @@
 % and show some really sneaky tricks.
 
 %%
-% The preference "tol" will not be discussed here; it gets a chapter of
+% The preference "eps" will not be discussed here; it gets a chapter of
 % its own.
 
 %% 8.2  chebfunpref('domain'): the default domain
@@ -162,30 +162,30 @@
 
 %% 8.4  chebfunpref('splitdegree'): degree limit in splitting on mode
 % When intervals are subdivided in splitting on mode, as just illustrated, 
-% the parameter nsplit determines where this will happen.  With the factory
-% value nsplit=129, splitting will take place if a polynomial of degree 128
+% the parameter splitdegree determines where this will happen.  With the factory
+% value splitdegree=128, splitting will take place if a polynomial of degree 128
 % proves insufficient to resolve a fun. 
 % Let us confirm for the chebfun f constructed a moment ago that
-% the lengths of the individual funs are all less than 129:
+% the degrees of the individual funs are all less or equal than 128:
 
   f.funs
 
 %%
 % Alternatively, suppose we wish to allow individual funs to
-% have length up to 513.  We can do that like this:
+% have degree up to 512.  We can do that like this:
 
-  chebfunpref('splitdegree',513);
+  chebfunpref('splitdegree',512);
   f = chebfun(ff);
   length(f)
   format short, f.ends
   f.funs
 
-%% 8.5  chebfunpef('maxdegree'): maximum number of points
+%% 8.5  chebfunpref('maxdegree'): maximum degree
 % As just mentioned, in
 % splitting off mode, the constructor tries to make a global chebfun
 % from the given string or anonymous function.  For a function like
 % abs(x) or sign(x), this will typically not be possible and we must give up somewhere.
-% The parameter maxn, set to 2^16+1 in the factory, determines this giving-up point.
+% The parameter maxdegree, set to 2^16 in the factory, determines this giving-up point.
 
 %%
 % For example, here's what happens normally if we try to make a chebfun for sign(x).
@@ -198,7 +198,7 @@
 % Suppose we wish to examine the interpolant to this function through 50 points
 % instead of 65537.  One way is like this:
 
-  f = chebfun('sign(x)',50);
+  f = chebfun('sign(x)',49);
   plot(f)
 
 %%
@@ -206,7 +206,7 @@
 % exactly 50 points.  On the other hand we could also change the default maximum to this number,
 % and then there would be a warning message:
 
-  chebfunpef('maxdegree',50);
+  chebfunpref('maxdegree',49);
   f = chebfun('sign(x)');
 
 %%
@@ -217,7 +217,7 @@
 % smooth enough to be resolved by a global polynomial, provided it is
 % of rather high degree:
 
-  chebfunpef('maxdegree',1e6);
+  chebfunpref('maxdegree',1e6);
   tic
   f = chebfun('abs(x).^1.5');
   lengthf = length(f)
@@ -225,8 +225,8 @@
   plot(f)
   toc
 
-%% 8.6  chebfunpref('minn'): minimum number of points
-% At the other end of the spectrum, the parameter minn determines the minimum
+%% 8.6  chebfunpref('minsamples'): minimum number of sample points
+% At the other end of the spectrum, the parameter minsamples determines the minimum
 % number of points at which a function is sampled during the chebfun construction
 % process, and the factory value of this parameter is 9.  This does not
 % mean that all chebfuns have length at least 9.  For example, 
@@ -271,21 +271,21 @@
 % case the constructor thinks it has a quadratic and does not try a finer grid.
 
 %%
-% If we increase minn, the correct chebfun is found:
+% If we increase minsamples, the correct chebfun is found:
 
-  chebfunpref('minn',17)
+  chebfunpref('minsamples',17)
   f = chebfun('-x -x.^2 + exp(-(30*(x-.5)).^4)');
   length(f)
   plot(f)
 
 %%
-% Incidentally, if the value of minn specified is not one greater
+% Incidentally, if the value of minsamples specified is not one greater
 % than a power of 2, it is rounded up to the next such value.
-% So chebfunpref('minn',10) would give the same result as
-% chebfunpref('minn',17).
+% So chebfunpref('minsamples',10) would give the same result as
+% chebfunpref('minsamples',17).
 
 %%
-% The default minn=9 was chosen as a good compromise between efficiency
+% The default minsamples=9 was chosen as a good compromise between efficiency
 % and reliability.  In practice it rarely seems to fail, but perhaps
 % it is most vulnerable when applied in splitting on mode
 % to functions with discontinuities.  For example, the following
@@ -297,9 +297,9 @@
   plot(f), axis off
 
 %%
-% Increasing minn fills in the missing pieces:
+% Increasing minsamples fills in the missing pieces:
 
-  chebfunpref('minn',17)
+  chebfunpref('minsamples',17)
   f = chebfun('round(.55*sin(x+x.^2))',[0 10]);
   plot(f), axis off
     
@@ -335,7 +335,7 @@
 %%
 % Now let us see what happens if we turn off resampling, so that previously
 % computed values will be reused.  We can do this with
-% the command resample off:
+% the command resampling off:
 
   resampling off
   chebfunpref
@@ -368,7 +368,7 @@
 
 %%
 % Now we see a speedup by a factor closer to 2.
-% Users dealing with challenging functions may wish to try "resample off" in hopes
+% Users dealing with challenging functions may wish to try "resampling off" in hopes
 % of obtaining a similar speedup.
 
 %%
