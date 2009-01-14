@@ -1,7 +1,7 @@
 %% CHEBFUN GUIDE 6: QUASIMATRICES AND LEAST-SQUARES
 % Lloyd N. Trefethen, May 2008
 
-%% 6.1  Quasimatrices
+%% 6.1  Quasimatrices and "spy"
 % A chebfun can have more than one column, or if it is transposed, it can
 % have more than one row.  In these cases we get a
 % *quasimatrix*, a "matrix" in which one of the dimensions is
@@ -59,6 +59,12 @@
 
   format short, A'*A, format long
 
+%%
+% You can get an idea of the shape of a quasimatrix with the overloaded SPY command
+
+  subplot(1,2,1), spy(A), title A
+  subplot(1,2,2), spy(A'), title('A''')
+
 %% 6.2 Backslash and least-squares
 
 %%
@@ -84,7 +90,7 @@
 % the least-squares approximation (in red), which we label ffit.
 
   ffit = A*c;
-  plot(f), grid on, hold on
+  clf, plot(f), grid on, hold on
   plot(ffit,'r'), hold off
   error = norm(f-ffit)
 
@@ -148,6 +154,19 @@
   plot(Q), grid on
 
 %%
+% The spy command confirms the shape of these various matrices.
+% One sees fewer dots in the spy(R) plot than one may expect at first,
+% the reason being that half its entries in the upper-triangle should
+% be zero because of the columns of A alternate even and odd functions.
+% In fact, because of rounding or truncation errors, not all those mathematical
+% zeros are zero on the computer, so the upper half of
+% spy(R) appears as an imperfect checkerboard.
+
+  subplot(1,3,1), spy(A), title A
+  subplot(1,3,2), spy(Q), title Q
+  subplot(1,3,3), spy(R), title R
+
+%%
 % The plot shows *orthogonal polynomials*, namely the orthogonalizations of
 % the monomials 1, x,...,x^5 over [-1,1].  These are the famous Legendre
 % polynomials {P_k} [Abramowitz & Stegun 1972],
@@ -159,7 +178,7 @@
     R(j,:) = R(j,:)*Q(1,j);
     Q(:,j) = Q(:,j)/Q(1,j);
   end
-  plot(Q), grid on
+  clf, plot(Q), grid on
   
 %%
 % If A=QR, then A*inv(R) = Q, and here is inv(R):
@@ -220,11 +239,21 @@
 % The SVD enables us to identify exactly what vectors are involved in achieving
 % this maximum ratio.  The optimal vector x is v1, the first right singular vector of A,
 
-  [U,S,V] = svd(A,0);
+  [U,S,V] = svd(A);
+
+%%
+% First we use spy to confirm the shapes of the matrices.  As with spy(R) earlier, here
+% spy(V) should in principle show a checkerboard, but some of its blanks are turned into
+% dots by rounding or truncation errors.
+
+  subplot(1,4,1), spy(A), title A
+  subplot(1,4,2), spy(U), title U
+  subplot(1,4,3), spy(S), title S
+  subplot(1,4,4), spy(V), title V
   v1 = V(:,1)
 
 %%
-% and the norm of v1 is 1:
+% Next we confirm that the norm of v1 is 1:
 
   norm(v1)
 
@@ -252,7 +281,7 @@
 % interpret these as the largest and smallest degree-5 polynomials, as
 % measured in the 2-norm over [-1,1], whose coefficient vectors have 2-norm equal to 1.
 
-  plot(A*v1), grid on, hold on
+  clf, plot(A*v1), grid on, hold on
   vn = V(:,end);
   plot(A*vn,'r'), hold off
 
@@ -346,7 +375,14 @@ cond(Acheb)
 %%
 % If A is an inf x n column quasimatrix, the command pinv(A) computes the pseudoinverse
 % of A, an n x inf row quasimatrix such that pinv(A)*c = A\c. 
-% 
+
+%%
+% Here is a summary of the dimensions of these objects:
+
+  subplot(1,3,1), spy(null(B)), title null(B)
+  subplot(1,3,2), spy(orth(B)), title orth(B)
+  subplot(1,3,3), spy(pinv(A)), title pinv(A)
+
 
 %% 6.7  References
 % 

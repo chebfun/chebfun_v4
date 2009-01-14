@@ -35,3 +35,5 @@ if ~isinf(m) & isinf(n)            % row quasimatrix
    ar(2) = .4*ar(2);
    set(gca,'plotboxaspectratio',ar)
 end
+
+hold off
