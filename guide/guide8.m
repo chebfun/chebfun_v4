@@ -1,4 +1,4 @@
-%% CHEBFUN GUIDE 8: CHEBFUN PREFERENCES AND DIRTY TRICKS
+%% CHEBFUN GUIDE 8: CHEBFUN PREFERENCES
 % Lloyd N. Trefethen, January 2009
 
 %% 8.1  Introduction
@@ -16,16 +16,11 @@
   chebfunpref('factory')
 
 %%
-% In this section of the Chebfun Guide we shall explore some of
-% these adjustable preferences, showing how special effects can be achieved
+% In this section of the Chebfun Guide we explore these
+% adjustable preferences, showing how special effects can be achieved
 % by modifying them.  Besides showing off some useful techniques, this
 % review will also serve to deepen the user's understanding of the system by poking
-% about a bit at its edges.  At the end we'll take the process a little further
-% and show some really sneaky tricks.
-
-%%
-% The preference "eps" will not be discussed here; it gets a chapter of
-% its own.
+% about a bit at its edges.
 
 %% 8.2  chebfunpref('domain'): the default domain
 % Like Chebyshev polynomials themselves, chebfuns are defined by default
@@ -103,7 +98,7 @@
 
 %%
 % Inspection reveals that the system has broken the interval into a
-% succession of pieces, each about 100 times smaller than the next:
+% succession of pieces, each 100 times smaller than the next:
   
   f.ends
 
@@ -198,12 +193,13 @@
 % Suppose we wish to examine the interpolant to this function through 50 points
 % instead of 65537.  One way is like this:
 
-  f = chebfun('sign(x)',49);
+  f = chebfun('sign(x)',50);
   plot(f)
 
 %%
 % Notice that no warning message is produced since we have asked explicitly for
-% exactly 50 points.  On the other hand we could also change the default maximum to this number,
+% exactly 50 points.  On the other hand we could also change the default maximum
+% to this number (or more precisely the default degree to one less than this number),
 % and then there would be a warning message:
 
   chebfunpref('maxdegree',49);
@@ -303,7 +299,7 @@
   f = chebfun('round(.55*sin(x+x.^2))',[0 10]);
   plot(f), axis off
     
-%% 8.7  chebfunpref('resampling'): resampling off and resampling on
+%% 8.7  chebfunpref('resampling'): resampling off and on
 % We now turn to a chebfun preference with some rather deep significance, relating
 % to the very idea of what it means to sample a function.
 
@@ -424,139 +420,14 @@
 % We do not currently know the answer and would be pleased to hear from users who
 % may have ideas.
 
-%% 8.8  Point values of chebfuns
-% Chebfuns can have discontinuities; an example is a chebfun made from sign(x).
-% What values do they take at the breakpoints?  At each breakpoint of a chebfun,
-% there is a fun on the left, a fun on the right, and a value in the middle, which
-% may be arbitrary.
-
-%%
-% Here for example we construct a chebfun for sign(x) itself:
-
-  splitting on
-  f = chebfun(@(x) sign(x));
-
-%%
-% On the left, the values are all -1:
-
-  format short
-  f([-1 -0.01 -realmin])
-
-%%
-% On the right, they are all +1:
-
-  f([realmin 0.01 1])
-
-%%
-% In the middle, the value is zero:
-
-  f(0)
-
-%%
-% The chebfun constructor knows nothing about the sign function, and
-% has determined all this just by sampling.  For a different function the
-% value at the point of discontinuity might have come out otherwise, and for that
-% matter, it can be subsequently changed:
-
-  f(0) = 17;
-  f([-1 -.01 -realmin 0 realmin .01 1])
-
-%%
-% The chebfun f is still well-defined, still with two funs,
-% and various derived quantities take their appropriate values:
-
-  sum(f), max(f)
-
-%%
-
-  norm(f), norm(f,inf)
-
-%%
-% (Thus max and norm( . ,inf) return the strict supremum of a function,
-% not what analysts call the essential supremum.)
-% This brings to mind a trick that proves convenient in some applications.
-% We can take a point in the middle of a fun and change the value there:
-
-  f(0.5) = 999;
-  f(0:0.1:0.9)
-
-%%
-% What has happened here is that the system has introduced a breakpoint at 0.5
-% to accommodate the new value, so now the chebfun has three funs:
-
-  f.ends
-
-%%
-% We can also use the same syntax to introduce a breakpoint without a
-% discontinuity.  For example, here we introduce a breakpoint at 0.25:
-
-  f(0.25) = f(0.25);
-  f.ends
-
-%% 8.9  Subintervals with {} and concatenations with ;
-% The chebfun system uses the curly brackets { and } in a variety of ways that
-% may be confusing at first but are extraordinarily convenient.  These uses do not
-% correspond to the usual Matlab uses of { and }, namely for cell arrays.  Actually
-% they are closer to Matlab's [ and ].  The trouble is that in the chebfun system,
-% one would really like [ and ] to have two different meanings.  For example, if f is
-% a chebfun, then the expression
-%
-%                        f([1,5])
-%
-% returns the vector obtained by evaluating f at the points 1 and 5.
-% Yet it would also be natural for it to return a chebfun corresponding to f evaluated
-% on the interval [1,5].  Since the same syntax cannot have two different meanings, we
-% write f{1,5} in the second case.
-
-%%
-% Our first example is of just this kind:
-
-  f = chebfun('cos(x)',[0 100]);
-  g = f{50,70};
-  plot(g)
-
-%%
-% But one can do much more, playing tricks with { and } just as Matlab plays
-% tricks with [ and ].  For example, here we replace one part of f by a multiple of itself
-% and another by a constant:
-
-  h = f;
-  h{20,40} = 0.5*h{20,40};
-  h{60,80} = 0.75;
-  plot(h)
-
-%%
-% If the length of the interval on the left is not the same as that on 
-% the right, then one is scaled to fit the other.  For example, here we put
-% a copy of all of f inside the interval [40,80]:
-
-  k = f;
-  k{40,80} = 0.8*k;
-  plot(k)
-
-%%
-% Just as { and } enable the extraction of subintervals, ; enables the concatenation of
-% chebfuns.  For example, here is a chebfun obtained by concatenating two copies of k:
-
-  kk = [k; k];
-  plot(kk)
-
-%%
-% Further related objects can be constructed with the chebfun overload of
-% the command repmat.
-
-%%
-% Here is an example involving quasimatrices:
-
-  x = chebfun('x');
-  A = [chebpoly(1) chebpoly(3) chebpoly(5)];
-  A{0,0.5} = [x x.^3 x.^5];
-  plot(A)
-
-%%
-% The plot looks like a picture of a rather arbitrary collection of functions, and
-% so it is, but as always in the chebfun system, A is a precisely defined object with which
-% we can calculate precisely.  For example, here are its singular values:
-
-  format long
-  svd(A)
+%% 8.8 chebfunpref('eps'): chebfun constructor tolerance
+% An experimental feature has been included in recent versions of the chebfun
+% system: the ability to weaken the tolerance in constructing a chebfun.
+% The chebfunpref parameter eps is set by default to machine precision,
+% i.e., Matlab's eps value 2.2204e-16.  However, one can weaken this with
+% a command like chebfunpref('eps',1e-6).
+% After further development we
+% intend to discuss this in a separate section of this Guide.  We recommend
+% that users not change eps unless they are having real problem with standard
+% precision.  Also we ask: if you have interesting experience with the eps parameter,
+% please get in touch with us at chebfun@comlab.ox.ac.uk 
