@@ -32,7 +32,7 @@ switch s(1).type
     t = s(1).subs;
     if length(t)==2
       % Will return first row, last row, or both only.
-      firstrow = isequal(t{1},1);
+      firstrow = t{1}==1;
       lastrow = isinf(t{1}) & real(t{1})==0;
       pts = [];
       if any(firstrow), pts = [pts; A.fundomain(1)]; end
@@ -44,7 +44,11 @@ switch s(1).type
         valid = true;
       end
     elseif length(t)==1 && isnumeric(t{1})  % return a realization (feval)
-      A = feval(A,t{1},'bc');
+      if A.numbc > 0
+        A = feval(A,t{1},'bc');
+      else
+        A = feval(A,t{1});
+      end
       valid = true;
    end
   case '.'

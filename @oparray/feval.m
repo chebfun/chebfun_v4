@@ -17,13 +17,19 @@ else
     error('oparray:feval:size',...
       'Number of op columns must equal number of chebfun columns.')
   end
-  dom = domain(f);
-  g = chebfun;
   % Emulate matrix * vector.
+  g = [];
   for i = 1:size(A,1)
-    g(:,i) = chebfun(0,dom);
+%    g(:,i) = chebfun(0,dom);
+    h = 0;
     for j = 1:size(A,2)
-      g(:,i) = g(:,i) + A.op{i,j}(f(:,j));
+      h = h + A.op{i,j}(f(:,j));
+    end
+    if isa(h,'chebfun')
+      % Can't assign chebfun to previously undefined name.
+      if i==1, g=h; else g(:,i) = h; end
+    else
+      g = [g;h];
     end
   end
 end

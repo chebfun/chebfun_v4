@@ -11,7 +11,7 @@ function varargout = find(f)
 %
 %  Example:
 %    f = chebfun(@sin,[0 2*pi]);
-%    format long, find( f==1/2 )
+%    format long, find(f==1/2) / pi
 %    
 %  See also chebfun/roots, chebfun/eq, find.
 
@@ -22,22 +22,26 @@ if numel(f) > 1 && nargout<2
 end
 
 x = [];  idx = [];
+% Keep track of the abscissae and the row/column in which they are found.
 for n = 1:numel(f)
   for k = 1:f(n).nfuns
     if any(f(n).funs(k).vals)
+      % Continuous part is not identically zero!
       error('chebfun:find','Nonzero locations are not a finite set.')
     end
   end
 
-  xnew = f(n).ends( f(n).imps(1,:)~=0 );
+  xnew = f(n).ends( f(n).imps(1,:)~=0 );  % does all the real work
   x = [ x xnew ];
   idx = [ idx repmat(n,size(xnew)) ];
 end
 
 if nargout==1
+  % Output has same shape as input. 
   if ~f(1).trans, x=x.'; end
   varargout = {x};
 else
+  % Output is always column, but order matters.
   if ~f(1).trans
     varargout = {x.',idx.'};
   else

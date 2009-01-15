@@ -25,9 +25,12 @@ function A = chebop(varargin)
 
 pref = chebfunpref;
 if pref.splitting
-  warning('chebop:chebop:splitting','SPLITTING will now be turned OFF.')
+  warning('chebop:splitting','Splitting will now be turned OFF.')
 end
-splitting off
+if ~pref.resampling
+  warning('chebop:resampling','Resampling will now be turned ON.')
+end
+resampling on
 
 % Default properties.
 A.varmat = [];

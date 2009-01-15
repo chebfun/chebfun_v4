@@ -17,7 +17,7 @@ function [M,B,c,rowreplace] = feval(A,n,usebc)
 % For future performance, store realizations.
 persistent storage
 if isempty(storage), storage = struct([]); end
-use_store = cheboppref('storage');
+use_store = true; %cheboppref('storage');
 
 usebc = (nargin > 2) && strcmpi(usebc,'bc');
 
@@ -34,12 +34,12 @@ if isinf(n)   % function
   end
 
 else          % matrix   
-  if use_store && n > 10 && length(storage)>=A.ID ...
+  if use_store && n > 4 && length(storage)>=A.ID ...
       && length(storage(A.ID).mat)>=n && ~isempty(storage(A.ID).mat{n})
     M = storage(A.ID).mat{n};
   else
     M = feval(A.varmat,n);
-    if use_store && n > 10
+    if use_store && n > 4
       % This is very crude garbage collection! If size is exceeded, wipe
       % out everything.
       ssize = whos('storage');

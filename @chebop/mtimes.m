@@ -47,15 +47,16 @@ switch(class(B))
     
     % Behavior for quasimatrix B is different depending on whether
     % A is a block operator.
+    C = [];
     if A.blocksize(2)==1    % apply to each column of input
-      C = zeros(dom,size(B,2));
       for k = 1:size(B,2)  
         if ~isempty(A.oparray)   % functional form
-          C(:,k) = feval(A.oparray,B(:,k));
+          Z = feval(A.oparray,B(:,k));
         else                     % matrix application
-         combine = 1;  % no component combination required
-         C(:,k) = chebfun( @(x) value(x,B(:,k)), dom );
+          combine = 1;  % no component combination required
+          Z = chebfun( @(x) value(x,B(:,k)), dom );
         end
+        C = [C Z]; 
       end
     else                    % apply to multiple variables
       if ~isempty(A.oparray)   % functional form
@@ -66,10 +67,10 @@ switch(class(B))
         combine = randn(A.blocksize(2),1);   
         c = chebfun( @(x) value(x,B), dom );  % adapt
         % Now V is defined with values of each component at cheb points.
-        C = chebfun;
         for k = 1:size(B,2)
           c = chebfun( V(:,k), dom );
-          C(:,k) = chebfun( @(x) c(x), dom );  % to force simplification
+          Z = chebfun( @(x) c(x), dom );  % to force simplification
+          C = [C Z];
         end
       end
     end

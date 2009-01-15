@@ -37,7 +37,7 @@ else              % compose
 end
 
   function v = innersum(u,i,j)
-    v = chebfun(0,domain(u));
+    v = 0;
     for k = 1:q
       v = v + A.op{i,k}( B.op{k,j}(u) );
     end
