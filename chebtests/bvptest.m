@@ -27,12 +27,12 @@ opts = odeset('RelTol', 1e-6);
 y = bvp4c(@twoode,@twobc,y0,opts);         % Chebfun solution
 sol = bvp4c(@twoode,@twobc,solinit,opts);  % Matlab's solution
 
-pass3 = max(max(abs(sol.y' - feval(y,sol.x')))) < 5e-5;
+pass3 = max(max(abs(sol.y' - feval(y,sol.x')))) < 1e-4;
 
 % Test bvp5c 
 y = bvp5c(@twoode,@twobc,y0,opts);         % Chebfun solution
 sol = bvp5c(@twoode,@twobc,solinit,opts);  % Matlab's solution
 
-pass4 = max(max(abs(sol.y' - feval(y,sol.x')))) < 5e-5;
+pass4 = max(max(abs(sol.y' - feval(y,sol.x')))) < 1e-4;
 
 pass = pass1 && pass2 && pass3 && pass4;
