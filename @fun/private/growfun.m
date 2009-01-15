@@ -31,11 +31,14 @@ npower = floor(log2(n-1));
 minpower = max(2,ceil(log2(minn-1)));
 
 % Number of nodes to be used 
-if 2^npower+1 ~= n
-    kk = [2.^(minpower:npower)+1 n];
+if resample
+  npn = min(npower,6);
+  kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
 else
-    kk = 2.^(minpower:npower) + 1;
+  kk = 2.^(minpower:npower) + 1;
 end
+
+if kk(end)~=n, kk(end+1) = n;  end
 
 % ---------------------------------------------------
 % composition case, i.e., want gout = op(g) (see FUN/COMP.M)
