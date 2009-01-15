@@ -32,12 +32,12 @@ for i = 1:length(ops)
                     ' numerical values.'])
             end
             op = inline(op);
-            op = vectorwrap(op,ends(i:i+1));
+            vectorcheck(op,ends(i:i+1));
             [fs,es,scl] = auto(op,ends(i:i+1),scl);
             funs = [funs fs];
             newends = [newends es(2:end)];
         case 'function_handle'
-            op = vectorwrap(op,ends(i:i+1));
+            vectorcheck(op,ends(i:i+1));
             [fs,es,scl] = auto(op,ends(i:i+1),scl);
             funs = [funs fs];
             newends = [newends es(2:end)];

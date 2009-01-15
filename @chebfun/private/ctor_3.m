@@ -44,13 +44,13 @@ for i = 1:length(ops)
             end
             a = ends(i); b = ends(i+1);
             op = inline(op);
-            op = vectorwrap(op,[a b]);
+            vectorcheck(op,[a b]);
             g = fun(@(x) op(.5*((b-a)*x+b+a)), n(i));
             funs = [funs g];
             scl = max(scl, norm(g.vals,inf));
         case 'function_handle'
             a = ends(i); b = ends(i+1);   
-            op = vectorwrap(op,[a b]);
+            vectorcheck(op,[a b]);
             g = fun(@(x) op(.5*((b-a)*x+b+a)), n(i));
             funs = [funs g];
             scl = max(scl, norm(g.vals,inf));

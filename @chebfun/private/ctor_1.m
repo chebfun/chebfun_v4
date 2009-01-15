@@ -24,13 +24,13 @@ switch class(op)
                 ' numerical values.'])
         end
         op = inline(op);
-        op = vectorwrap(op,dom);
+        vectorcheck(op,dom);
         [funs,ends] = auto(op,dom);
         imps = jumpvals(funs,ends,op);
         f = set(f,'funs',funs,'ends',ends,'trans',0,...
             'imps',imps);
     case 'function_handle'
-        op = vectorwrap(op,dom);
+        vectorcheck(op,dom);
         [funs,ends] = auto(op,dom);
         imps = jumpvals(funs,ends,op);
         f = set(f,'funs',funs,'ends',ends,'trans',0,...
