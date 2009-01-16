@@ -1,6 +1,5 @@
 function varargout = bvp4c(fun1,fun2,y0,varargin)
 %BVP4C  Represent boundary-value problem solution using chebfuns.
-%
 % Y = BVP4C(ODEFUN,BCFUN,Y0) applies the standard BVP4C method to solve a
 % boundary-value problem. ODEFUN and BCFUN are as in BVP4C. The Y0 argument
 % is a chebfun that represents the initial guess to the solution Y. Its
@@ -8,10 +7,11 @@ function varargout = bvp4c(fun1,fun2,y0,varargin)
 % Y0 is used to set the number of points in an initial equispaced mesh.
 % Note that it is not necessary to call BVPINIT.
 %
-% Y = BVP4C(ODEFUN,BCFUN,Y0,PARAM,OPTS) allows you to specify an initial 
-% guess for any additionalparameters to be found for the solution, and an
-% options vector to guide the solution. See BVP4C and BVPSET for details. 
-% You may specify either extra argument, or both.
+% [Y,P] = BVP4C(ODEFUN,BCFUN,Y0,PARAM,OPTS) allows you to specify an
+% initial guess for any additional parameters to be found for the solution,
+% and an options vector to guide the solution. See BVP4C and BVPSET for
+% details. You may specify either extra argument, or both. An additional
+% output is used to return the parameter values found.
 %
 % It is possible to take a crude continuation approach by solving for a
 % simple variation of the problem, then using the resulting chebfun as the
