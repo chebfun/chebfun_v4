@@ -16,7 +16,7 @@ if size(F1) ~= size(F2)
 end
 
 for k = 1:min(size(F1))
-    if F1(k).ends ~= F2(k).ends
+    if F1(k).nfuns~=F2(k).nfuns || any(F1(k).ends ~= F2(k).ends)
         out = false;
         return
     end

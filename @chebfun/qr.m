@@ -8,7 +8,7 @@ function [Q,R] = qr(A,econ)
 % Trefethen, "Householder triangularization of a quasimatrix", to appear.
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
-if (nargin>2) | ((nargin==2) & (econ~=0))
+if (nargin>2) || ((nargin==2) && (econ~=0))
     error('chebfun:qr:twoargs',...
           'Use qr(A) or qr(A,0) for QR decomposition of quasimatrix.');
 end
@@ -20,15 +20,10 @@ end
 n = size(A,2); R = zeros(n);
 
 % Set up target quasimatrix E with orthonormal columns: 
-
 [a,b] = domain(A);
-E = chebfun(sqrt(0.5),[a b]);
-for k = 1:n-1
-   x = sin(pi*(-k:2:k)/(2*k))';
-   vals = legendre(k,x,'norm'); vals = vals(1,:)';
-   E(:,k+1) = chebfun(vals,[a b]);     % kth Legendre poly
+for k = 0:n-1
+   E(:,k+1) = legpoly(k,[a,b],'norm');
 end
-E = E/sqrt((b-a)/2);                   % normalize for interval length
 
 % Householder triangularization:
 
