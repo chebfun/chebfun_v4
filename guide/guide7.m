@@ -301,7 +301,7 @@ subplot(1,3,3), plot( expm(1.8*A & A.bc)*f )
 %% References
 %
 % [Driscoll, Bornemann & Trefethen 2008] T. A. Driscoll, F. Bornemann, and L. N. Trefethen, The chebop system
-% for automatic solution of differential equations, BIT Numerical Mathematics, to appear.
+% for automatic solution of differential equations, BIT Numerical Mathematics 46 (2008),701-723.
 %
 % [Fornberg 1996] B. Fornberg, A Practical Guide to Pseudospectral Methods,
 % Cambridge University Press, 1996.
