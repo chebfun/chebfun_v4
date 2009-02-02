@@ -5,20 +5,30 @@ function x = bary(x,gvals)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
-n = length(gvals);
-if n==1
-    % The function is a constant
-    x = gvals*ones(size(x));
-    return;
-end
-xk = chebpts(n);
-ek = [1/2; ones(n-2,1); 1/2].*(-1).^((0:n-1)');
-mem = ismember(x,xk);
-for i = 1:numel(x)
-    if (mem(i))
-        x(i) = gvals(xk==x(i));
-    else
-        xx = ek./(x(i)-xk);
-        x(i) = (xx.'*gvals)/sum(xx);
+if barymex
+    
+    % Use precompiled MEX file
+    x = bary_mex(x(:),gvals(:));
+    
+else
+    
+    % Use this m-file implementation
+    n = length(gvals);
+    if n==1
+        % The function is a constant
+        x = gvals*ones(size(x));
+        return;
     end
+    xk = chebpts(n);
+    ek = [1/2; ones(n-2,1); 1/2].*(-1).^((0:n-1)');
+    mem = ismember(x,xk);
+    for i = 1:numel(x)
+        if (mem(i))
+            x(i) = gvals(xk==x(i));
+        else
+            xx = ek./(x(i)-xk);
+            x(i) = (xx.'*gvals)/sum(xx);
+        end
+    end
+       
 end
