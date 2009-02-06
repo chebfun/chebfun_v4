@@ -31,7 +31,7 @@ function varargout = chebfunpref(varargin)
 %        Factory value is 2^16.
 %
 % maxlength - Maximum number of points used by the constructor in SPLITTING
-%        ON mode. Factory value is 5000.
+%        ON mode. Factory value is 6000.
 %
 % splitdegree - Maximum degree per fun used by the constructor in SPLITTING
 %        ON mode. Note: 2^n conforms with the way fun/growfun
@@ -75,7 +75,7 @@ end
 
 % These are the options
 options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps'};
-factoryvals = {false,       9,            2^16,      5000,      128,          true,         [-1 1],   2^-52};
+factoryvals = {false,       9,            2^16,      6000,      128,          true,         [-1 1],   2^-52};
 
 % Restore defaults ?
 factory_flag = false;
