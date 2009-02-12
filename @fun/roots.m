@@ -49,7 +49,8 @@ if (g.n<101)                                    % for small length funs
         out(end) = min(out(end),1);             % correct root  1
     end
 else
-    c = rand*.2-.1;                             % split at a random point
+    c = -0.004849834917525; % arbitrary splitting point to avoid a root at c
+    %c = rand*.2-.1;                             % split at a random point
     g1 = restrict(g,[-1,c]);
     g2 = restrict(g,[ c,1]);
     out = [-1+(roots(g1)+1)*.5*(1+c);...          % find roots recursively 
