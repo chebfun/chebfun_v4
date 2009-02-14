@@ -12,14 +12,18 @@ if nargin == 1
     if nfuns>1
         warning('Chebfun has more than one fun. Only the polynomial coefficients of the first one are returned');
     end
-    a = f.ends(1); b = f.ends(2);
-    out = scale(poly(f.funs(1)),a,b);
+    n = 1;
+end
+
+if n>nfuns
+    error(['Chebfun only has ',num2str(nfuns),' funs'])
 else
-    if n>nfuns
-        error(['Chebfun only has ',num2str(nfuns),' funs'])
-    else
-        a = f.ends(n); b = f.ends(n+1);
-        out = scale(poly(f.funs(n)),a,b); 
-    end
+
+    a = f.ends(n); b = f.ends(n+1);
+    x = chebfun(@(x) x,[a,b],length(f.funs(n))); % Chebyshev nodes
+    
+    % polyfit uses the Vandermonde matrix (results may be unreliable)
+    out = polyfit(x.funs(n).vals,f.funs(n).vals,length(x)-1);
+
 end
 
