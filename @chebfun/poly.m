@@ -21,9 +21,23 @@ else
 
     a = f.ends(n); b = f.ends(n+1);
     x = chebfun(@(x) x,[a,b],length(f.funs(n))); % Chebyshev nodes
+        
+    % Coefficients on the unit interval
+    c = fliplr(poly(f.funs(n)));
     
-    % polyfit uses the Vandermonde matrix (results may be unreliable)
-    out = polyfit(x.funs(n).vals,f.funs(n).vals,length(x)-1);
+    % Constants for rescaling
+    alpha = 2/(b-a); 
+    beta = -(b+a)/(b-a);
+    
+    % Rescale coefficiets to actual interval
+    N = f.funs(n).n;              % Degree of polynomial plus 1.
+    out = zeros(size(c));         % Preallocate memory
+    for j = 0:N-1
+        k = j:N-1;
+        binom = factorial(k)./(factorial(k-j)*factorial(j));% Binomial coef
+        out(j+1) = sum(c(k+1).*binom.*beta.^(k-j).*alpha^(j));
+    end
+    out = fliplr(out);
 
 end
 
