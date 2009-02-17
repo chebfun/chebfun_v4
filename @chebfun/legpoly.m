@@ -20,21 +20,23 @@ if nargin == 1
                  ' coefficients of the first one are returned.' ...
                  ' Use CHEBPOLY(F,1) to suppress this warning.'])
     end
-    g= f.funs(1);
+    g = f.funs(1);
+    ends = [f.ends(1) f.ends(2)];
 else
     if n>f.nfuns
         error(['Chebfun only has ',num2str(f.nfuns),' funs'])
     else
-        g = f.funs(1);
+        g = f.funs(n);
+        ends = [f.ends(n) f.ends(n+1)];
     end
 end
 
 % Legendre matrix
 for k = 0:g.n-1
-    E(:,k+1) = legpoly(k,[-1,1],'norm');  
+    E(:,k+1) = legpoly(k,ends,'norm');  
 end
 
 % Coefficients are computed using inner products.
-out = flipud(E'*chebfun(g));
+out = flipud(E'*chebfun(g,ends));
 
 
