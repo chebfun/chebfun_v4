@@ -1,5 +1,5 @@
 function p = legpoly(n,d,normalize)
-%LEGPOLY Associated Legendre function.
+%LEGPOLY Legendre polynomials.
 %   P = LEGPOLY(N) computes a chebfun of the Legendre polynomial 
 %   of degree N on the interval [-1,1]. N must be a scalar integer.
 %
@@ -10,7 +10,7 @@ function p = legpoly(n,d,normalize)
 %   of three possible normalizations, where normalize is 'unnorm',
 %   'sch' or 'norm'.
 %
-%   See also legendre, chebpoly.
+% See also chebfun/legpoly and chebpoly.
 
 if nargin < 3, normalize = 'unnorm'; end
 if nargin < 2, d = [-1,1]; end
