@@ -33,10 +33,11 @@ end
 
 % Legendre matrix
 for k = 0:g.n-1
-    E(:,k+1) = legpoly(k,ends,'norm');  
+    E(:,k+1) = legpoly(k,ends);  
 end
 
 % Coefficients are computed using inner products.
-out = flipud(E'*chebfun(g,ends));
+norm2 = (ends(end)-ends(1))./(2*(0:g.n-1)+1).'; % 2-norm squared
+out = flipud((E'*chebfun(g,ends))./norm2);
 
 
