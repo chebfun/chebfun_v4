@@ -19,11 +19,11 @@ if nargin == 1
                  ' coefficients of the first one are returned.' ...
                  ' Use CHEBPOLY(F,1) to suppress this warning.'])
     end
-    out = chebpoly(f.funs(1));
+    out = chebpoly(f.funs(1)).';
 else
     if n>f.nfuns
         error(['Chebfun only has ',num2str(f.nfuns),' funs'])
     else
-        out = chebpoly(f.funs(n));
+        out = chebpoly(f.funs(n)).';
     end
 end
