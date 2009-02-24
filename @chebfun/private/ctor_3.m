@@ -54,6 +54,14 @@ for i = 1:length(ops)
             g = fun(@(x) op(.5*((b-a)*x+b+a)), n(i));
             funs = [funs g];
             scl = max(scl, norm(g.vals,inf));
+        case 'chebfun'
+            a = ends(i); b = ends(i+1); 
+            if op.ends(1) > a || op.ends(end) < b
+                error('chebfun:c_tor3:domain','chebfun is not defined in the domain')
+            end
+            g = fun(@(x) feval(op,.5*((b-a)*x+b+a)), n(i));
+            funs = [funs g];
+            scl = max(scl, norm(g.vals,inf));
         case 'cell'
             error(['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])

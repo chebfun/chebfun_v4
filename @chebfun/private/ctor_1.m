@@ -4,9 +4,6 @@ function f = ctor_1(f,op)
 
 dom = chebfunpref('domain');
 switch class(op)
-    case 'chebfun'
-        f = op;  
-        return
     case 'double'
         f = set(f,'funs',fun(op),'ends',dom,...
             'imps',[op(1) op(end)],'trans',0);
@@ -35,6 +32,13 @@ switch class(op)
         imps = jumpvals(funs,ends,op);
         f = set(f,'funs',funs,'ends',ends,'trans',0,...
             'imps',imps); 
+    case 'chebfun'
+        if op.ends(1) <= dom(1) && op.ends(end) >= dom(end)
+            f = restrict(op,dom);
+        else
+            error('chebfun:c_tor1:domain','chebfun is not defined in the domain')
+        end
+            
     case 'cell'
         error(['A vector of endpoints is required if a cell '...
             'array is used to specify the desired funs.'])

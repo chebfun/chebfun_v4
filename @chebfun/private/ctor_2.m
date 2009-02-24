@@ -41,6 +41,15 @@ for i = 1:length(ops)
             [fs,es,scl] = auto(op,ends(i:i+1),scl);
             funs = [funs fs];
             newends = [newends es(2:end)];
+        case 'chebfun'
+            if op.ends(1) <= ends(1) && op.ends(end) >= ends(end)
+                x = chebfun(@(x) x, union(ends,op.ends));
+                [f, x] = overlap(op,x);
+                f = restrict(f,[ends(1) ends(end)]);
+            else
+                error('chebfun:c_tor2:domain','chebfun is not defined in the domain')
+            end
+            return
         case 'cell'
             error(['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])

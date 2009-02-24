@@ -5,6 +5,10 @@ function vals = jumpvals(funs,ends,op)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
+if isa(op,'chebfun')
+    op = @(x) feval(op,x);
+end
+
 vals = zeros(size(ends));
 vals(1) = funs(1).vals(1);
 if nargin<3 || isa(op,'double') || isa(op,'fun')
