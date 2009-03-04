@@ -24,7 +24,9 @@ if isempty(A), normA = 0;               % empty chebfun has norm 0
 elseif min(size(A))==1                  % A is a chebfun 
    switch n
       case 1
-         normA = sum(abs(A));
+         absA = abs(A);
+         absA.imps = A.imps;
+         normA = sum(absA);
       case {2,'fro'}
          if A.trans 
             normA = sqrt(A*A');

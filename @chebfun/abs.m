@@ -19,12 +19,10 @@ if isempty(f), fout = chebfun; return, end
 
 % Real case
 if isreal(f)
-  fout = sign(f).*f;
-  
+  fout = sign(f).*f;  
 % Imaginary case  
 elseif isreal(1i*f)
-    fout = abscol(1i*f);
-  
+    fout = abscol(1i*f);  
 % Complex case    
 else
 %     hs = norm(f.ends,inf);
