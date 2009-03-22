@@ -5,6 +5,8 @@
 % piecewise-defined chebfun or quasimatrix with one column per solution 
 % component.
 %
+% One can also write [T,Y] = ODE45(...).
+%
 % CHEBFUN/ODE45 has the same calling sequence as Matlab's standard ODE45, 
 % except that instead of a TSPAN vector like  [T0 TFINAL], it takes a TSPAN
 % domain like domain(T0,TFINAL). The presence of this argument from the 
