@@ -94,8 +94,8 @@ function [y,x] = minval(f)
 % Return the value and argument of a min.
 
 % If there is an impulse, return inf
-ind = find(min(f.imps(2:end,:),[],1)>0,1,'first');
-if ~isempty(ind), y = inf; x = f.ends(ind); return, end
+ind = find(min(f.imps(2:end,:),[],1)<0,1,'first');
+if ~isempty(ind), y = -inf; x = f.ends(ind); return, end
 
 ends = f.ends;
 y = zeros(1,f.nfuns); x = y;

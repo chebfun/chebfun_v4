@@ -25,7 +25,7 @@ elseif min(size(A))==1                  % A is a chebfun
    switch n
       case 1
          absA = abs(A);
-         absA.imps = A.imps;
+         absA.imps = abs(A.imps);
          normA = sum(absA);
       case {2,'fro'}
          if A.trans 
