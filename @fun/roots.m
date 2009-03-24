@@ -1,12 +1,16 @@
-function out = roots(g)
+function out = roots(g,all)
 % ROOTS	Roots in the interval [-1,1]
 % ROOTS(G) returns the roots of the FUN G in the interval [-1,1].
+% ROOTS(G,'all') returns all the roots.
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 
 tol = 100*eps;
-
+if nargin == 1
+    all = 0;
+end
+    
 if (g.n<101)                                    % for small length funs
     c=chebpoly(g);                              % compute Cheb coeffs
     if abs(c(1)) < 1e-14*norm(c,inf)
@@ -41,12 +45,16 @@ if (g.n<101)                                    % for small length funs
         r=eig(A);                               % compute roots as eig(A)
         
     end
-    mask=abs(imag(r))<tol*g.scl.h;           % filter imaginary roots
-    r = real( r(mask) );
-    out = sort(r(abs(r) <= 1+tol*g.scl.h));  % keep roots inside [-1 1]
-    if ~isempty(out)
-        out(1) = max(out(1),-1);                % correct root -1
-        out(end) = min(out(end),1);             % correct root  1
+    if ~all
+        mask=abs(imag(r))<tol*g.scl.h;           % filter imaginary roots
+        r = real( r(mask) );
+        out = sort(r(abs(r) <= 1+tol*g.scl.h));  % keep roots inside [-1 1]   
+        if ~isempty(out)
+            out(1) = max(out(1),-1);                % correct root -1
+            out(end) = min(out(end),1);             % correct root  1
+        end
+    else
+        out = r;
     end
 else
     c = -0.004849834917525; % arbitrary splitting point to avoid a root at c
