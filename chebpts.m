@@ -1,5 +1,5 @@
 function x = chebpts(n)
-% This function generates the Chebyshev points.
+% X = CHEBPTS(N)  N Chebyshev points in [-1,1]
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
