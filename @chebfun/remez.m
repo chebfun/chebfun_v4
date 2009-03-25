@@ -1,4 +1,4 @@
-function [p,norme] = remez(f,n); 
+function [p,err] = remez(f,n); 
 % Best polynomial approximation.
 %
 % P = REMEZ(F,N) computes the chebfun of the best polynomial approximation
@@ -6,7 +6,7 @@ function [p,norme] = remez(f,n);
 % Remez algorithm (see "Barycentric-Remez algorithms for best polynomial 
 % approximation in the chebfun system" by Pachon and Trefethen, 2008). 
 %
-% [P,NORME] = REMEZ(F,N) also returns the maximum error NORME.    
+% [P,ERR] = REMEZ(F,N) also returns the maximum error ERR.    
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
@@ -15,19 +15,19 @@ xo = xk;
 sigma = (-1).^[0:n+1]';                % alternating signs
 normf = norm(f);
 delta = 1;
-while delta/normf > 1e-10    
+while delta/normf > 1e-13    
     fk = feval(f,xk);
     w = bary_weights(xk);
     h = (w'*fk)/(w'*sigma);             % levelled reference error              
     pk = fk - h*sigma;                  % polynomial vals in the reference         
     p=chebfun(@(x)bary(x,xk,pk,w),n+1); % chebfun of trial polynomial
     e = f - p;                          % chebfun of the error
-    [xk,norme] = exchange(xk,e,h,2);    % replace reference    
-    if norme/normf > 10^5               % if overshoot, recompute with one-
-        [xk,norme] = exchange(xo,e,h,1);% point exchange
+    [xk,err] = exchange(xk,e,h,2);      % replace reference    
+    if err/normf > 10^5                 % if overshoot, recompute with one-
+        [xk,err] = exchange(xo,e,h,1);  % point exchange
     end
     xo = xk;
-    delta = norme - abs(h);             % stopping value 
+    delta = err - abs(h);               % stopping value 
     %delta                              % uncomment to see progress
 end
 
@@ -37,7 +37,7 @@ function [xk,norme] = exchange(xk,e,h,method)
 
 rr = [-1; roots(diff(e)); 1];             % critical pts of the error
 if method == 1                            % one-point exchange
-    [tmp,pos] = max(abs(e(rr))); pos = pos(1);
+    [tmp,pos] = max(abs(feval(e,rr))); pos = pos(1);
 else                                      % full exchange                  
     pos = find(abs(feval(e,rr))>=abs(h));       % vals above leveled error
 end
