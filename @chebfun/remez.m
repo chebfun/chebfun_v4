@@ -9,26 +9,27 @@ function [p,err] = remez(f,n);
 % [P,ERR] = REMEZ(F,N) also returns the maximum error ERR.    
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
-
-xk = cos(pi*(n+1:-1:0)'/(n+1));        % initial reference 
+if n < 15, tol = 1e-15; elseif n < 100, tol = 1e-13; else tol = 1e-11; end
+xk = cos(pi*(n+1:-1:0)'/(n+1));         % initial reference 
 xo = xk;
-sigma = (-1).^[0:n+1]';                % alternating signs
+sigma = (-1).^[0:n+1]';                 % alternating signs
 normf = norm(f);
 delta = 1;
-while delta/normf > 1e-13    
+while delta/normf > tol  
     fk = feval(f,xk);
     w = bary_weights(xk);
-    h = (w'*fk)/(w'*sigma);             % levelled reference error              
+    h = (w'*fk)/(w'*sigma);             % levelled reference error  
+    if h==0, h = 1e-19; end             % perturbe error if necessary
     pk = fk - h*sigma;                  % polynomial vals in the reference         
     p=chebfun(@(x)bary(x,xk,pk,w),n+1); % chebfun of trial polynomial
-    e = f - p;                          % chebfun of the error
+    e = f - p;                          % chebfun of the error    
     [xk,err] = exchange(xk,e,h,2);      % replace reference    
-    if err/normf > 10^5                 % if overshoot, recompute with one-
+    if err/normf > 1e5                  % if overshoot, recompute with one-
         [xk,err] = exchange(xo,e,h,1);  % point exchange
     end
     xo = xk;
     delta = err - abs(h);               % stopping value 
-    %delta                              % uncomment to see progress
+    %delta                               % uncomment to see progress
 end
 
 
