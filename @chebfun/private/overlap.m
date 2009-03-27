@@ -31,10 +31,10 @@ else
     ends=union(fends,gends);
     
     % If ends(i) is too close to ends(i+1), merge them: ------------------
-    if min(diff(ends))<1e-15*hs
+    if min(diff(ends))<1e-13*hs   % LNT has changed this frmo 1e-15
         for k=1:length(fends)
             [delta,ind]=min(abs(gends-fends(k)));
-            if delta < 1e-15*hs
+            if delta < 1e-13*hs   % LNT has changed this frmo 1e-15
                 fends(k)=gends(ind);
             end
         end
