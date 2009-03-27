@@ -26,29 +26,4 @@ function p = interp1(xk,yk,d)
 
 w = bary_weights(xk);
 a = d.ends;
-p = chebfun(@(x) bary(x,xk,yk,w),a([1 end]),length(xk));
-
-function p = bary(x,xk,pk,w)               % barycentric interpolation
-p = zeros(size(x));
-numer = p; denom = p; exact = p;
-I = true(size(x));                         % x(i)=false if x(i)=xk(j), some j
-for j = 1:length(xk)
-  xdiff = x-xk(j);
-  ii = find(xdiff==0);
-  exact(ii) = j;
-  I(ii) = false;
-  tmp = w(j)./xdiff(I);
-  numer(I) = numer(I) + tmp*pk(j);
-  denom(I) = denom(I) + tmp;
-end
-p(~I) = pk(exact(~I));
-p(I) = numer(I)./denom(I);
-
-function w = bary_weights(xk)
-n = length(xk);
-w = ones(n,1);
-for i = 1:n
-    v = 2*(xk(i)-xk);
-    vv = exp(sum(log(abs(v(find(v))))));    
-    w(i) = 1./(prod(sign(v(find(v))))*vv);
-end
+p = chebfun(@(x) bary_general(x,xk,yk,w),a([1 end]),length(xk));

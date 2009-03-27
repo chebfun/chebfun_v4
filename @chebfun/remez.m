@@ -21,7 +21,7 @@ while delta/normf > tol
     h = (w'*fk)/(w'*sigma);             % levelled reference error  
     if h==0, h = 1e-19; end             % perturbe error if necessary
     pk = fk - h*sigma;                  % polynomial vals in the reference         
-    p=chebfun(@(x)bary(x,xk,pk,w),n+1); % chebfun of trial polynomial
+    p=chebfun(@(x)bary_general(x,xk,pk,w),n+1); % chebfun of trial polynomial
     e = f - p;                          % chebfun of the error    
     [xk,err] = exchange(xk,e,h,2);      % replace reference    
     if err/normf > 1e5                  % if overshoot, recompute with one-
@@ -57,32 +57,3 @@ end
 [norme,idx] = max(abs(es));               % choose n+2 consecutive pts
 d = max(idx-length(xk)+1,1);              % that include max of error
 xk = s(d:d+length(xk)-1);
-
-
-
-function p = bary(x,xk,pk,w)               % barycentric interpolation
-p = zeros(size(x));
-numer = p; denom = p; exact = p;
-I = true(size(x));                         % x(i)=false if x(i)=xk(j), some j
-for j = 1:length(xk)
-  xdiff = x-xk(j);
-  ii = find(xdiff==0);
-  exact(ii) = j;
-  I(ii) = false;
-  tmp = w(j)./xdiff(I);
-  numer(I) = numer(I) + tmp*pk(j);
-  denom(I) = denom(I) + tmp;
-end
-p(~I) = pk(exact(~I));
-p(I) = numer(I)./denom(I);
-
-
-function w = bary_weights(xk)
-
-n = length(xk);
-w = ones(n,1);
-for i = 1:n
-    v = 2*(xk(i)-xk);
-    vv = exp(sum(log(abs(v(find(v))))));    
-    w(i) = 1./(prod(sign(v(find(v))))*vv);
-end
