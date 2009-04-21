@@ -9,6 +9,7 @@ end
 x = chebpts(g.n);
 x = 0.5*( diff(subint)*x + sum(subint) );  % translate to subinterval
 gout = fun(bary(x,g.vals));
+gout.scl.v = g.scl.v;
 gout.scl.h = gout.scl.h*...
     (2/(subint(2)-subint(1)));             % update horizontal scale.
 gout = simplify(gout);                     % may get significantly smaller
