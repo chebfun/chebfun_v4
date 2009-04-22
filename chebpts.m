@@ -3,6 +3,7 @@ function x = chebpts(n)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
+
 if n<=0, 
     error('Input should be a positive number');
 elseif n==1,
