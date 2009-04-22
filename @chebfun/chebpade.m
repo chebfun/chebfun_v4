@@ -1,4 +1,4 @@
-function [r p q] = chebpade(F,m,n) 
+function [r p q pk qk] = chebpade(F,m,n) 
 %CHEBYSHEV-PADE APPROXIMATION
 % [R P Q] = chebpade(F,M,N) constructs R = P/Q, where P and Q are
 %   chebfuns corresponding to the [M/N] Chebyshev-Pade approximation 
@@ -10,11 +10,9 @@ function [r p q] = chebpade(F,m,n)
 
 tol = 1e-14; % tolerance for testing singular matrices
 
-a = F;
-d = domain(-1,1);
 if isa(F,'chebfun')
     if numel(F) > 1, error('CHEBPADE does not handle chebfun quasi-matrices'), end
-    if length(F.ends) > 2
+    if F.nfuns > 2
         warning(['Chebfun has more than one fun. Only the Chebyshev-' ...
                  'Pade approximation to the first one is returned.'])
     end
@@ -38,10 +36,10 @@ D = a(col(:,ones(n,1))+row(ones(n,1),:)+1)+a(abs(col(:,ones(n,1))-row(ones(n,1),
 if n > m,  D = D + a(1)*diag(ones(n-m,1),m); end
 if rank(D,tol) < min(size(D)) % test for singularity of matrix
     if m > 1
-        [r p q pk qk] = chebpade(a,m-1,n);
+        [r p q pk qk] = chebpade(F,m-1,n);
         warning(['Singular matrix encountered. Computing [',int2str(m-1),',',int2str(n),'] approximant'])
     elseif n > 1
-        [r p q pk qk] = chebpade(a,m,n-1);
+        [r p q pk qk] = chebpade(F,m,n-1);
         warning(['Singular matrix encountered. Computing [',int2str(m),',',int2str(n-1),'] approximant'])
     else
         error('Singular matrix encountered. [1/1] approximation is not computable');
