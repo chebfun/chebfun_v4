@@ -18,7 +18,9 @@
 %   roots( y(:,1)-1 )   % find times when first component is 1
 %
 % See also ode45, odeset, domain/ode15s, domain/ode113
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 % This is a dummy file. The actual code is under @domain.

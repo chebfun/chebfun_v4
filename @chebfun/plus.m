@@ -2,8 +2,10 @@ function H = plus(F1,F2)
 % +	  Plus.
 % F + G adds chebfuns F and G, or a scalar to a chebfun if either F or G is 
 % a scalar.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if (isempty(F1) || isempty(F2)), H=chebfun; return; end
 

@@ -5,8 +5,10 @@ function X = pinv(A,tol)
 %
 % X = PINV(A,TOL) uses the tolerance TOL.  The computation uses SVD(A) and
 % any singular value less than the tolerance TOL is treated as zero.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if A(1).trans
    error('PINV only defined for column quasimatrices')

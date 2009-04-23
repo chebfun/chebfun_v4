@@ -6,6 +6,8 @@ function [r p q pk qk] = chebpade(F,m,n)
 % [R P Q] = chebpade(A,M,N) construct the [M/N] approximation to
 %   the function qith Chebyshev coefficients A.
 %
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+
 % Nick Hale, 2009
 
 tol = 1e-14; % tolerance for testing singular matrices

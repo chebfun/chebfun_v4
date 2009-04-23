@@ -1,6 +1,8 @@
 function public_struct = struct(g)
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 names = fieldnames(g);
 values = cell(length(names), numel(g(:)));

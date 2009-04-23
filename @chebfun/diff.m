@@ -5,9 +5,10 @@ function Fout = diff(F,n)
 % Dirac deltas already existing in F will increase their degree.
 %
 % DIFF(F,N) is the Nth derivative of F.
-% 
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if nargin==1, n=1; end
 

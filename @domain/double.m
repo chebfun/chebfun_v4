@@ -4,8 +4,10 @@ function e = double(d)
 % sorted order) of the domain D.
 %
 % If you want only the endpoints and not any breakpoints, use D(:).
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 e = d.ends;
 

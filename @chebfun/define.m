@@ -36,8 +36,10 @@ function Fout = define(F,subdom,G)
 %
 %   Deletion:
 %     f = chebfun('abs(x)'); f{-1/2,1/2} = [];
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 % Deal with quasi-matrices.
 if numel(F)~=numel(G), 

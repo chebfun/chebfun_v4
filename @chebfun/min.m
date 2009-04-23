@@ -20,8 +20,10 @@ function [y,x] = min(f,g,dim)
 % function(s).
 %
 % See also chebfun/max. 
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if nargin==2
   if nargout > 1

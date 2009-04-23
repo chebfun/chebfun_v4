@@ -4,8 +4,10 @@ function gout = compfun(g1,op,g2)
 % Here GOUT, G1, and G2 are funs, and OP is a function handle.
 % This function is called at the chebfun level (CHEBFUN/PRIVATE/COMP.M)
 % See also FUN/PRIVATE/GROWFUN.M
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if chebfunpref('splitting')
     n = chebfunpref('splitdegree')+1;

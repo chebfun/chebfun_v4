@@ -4,8 +4,10 @@ function g = set(g,varargin)
 % the value VAL. PROP can be 'vals', 'n', 'scl', 'scl.h', or 'scl.v'.
 %
 % G = SET(G,PROP_1,VAL_1,...,PROP_n,VAL_n) modifies more than one property.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 propertyArgIn = varargin;
 while length(propertyArgIn) >= 2,

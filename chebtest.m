@@ -11,11 +11,11 @@ function failfun = chebtest(dirname)
 % directory in which chebtest.m resides.
 %
 % FAILED = CHEBTEST('DIRNAME') returns a cell array of all functions that
-% either failed or crashed.
+% either failed or crashed. 
 %
-% 
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 tol = chebfunpref('eps');
 

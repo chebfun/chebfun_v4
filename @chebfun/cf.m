@@ -20,6 +20,11 @@ function [p,lam] = cf(f,m)
 %
 % Note: at present this is restricted to [-1,1] and to
 %       polynomial CF approximation only
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+
+% Copyright 2009 by The Chebfun Team. 
+
 
 M = length(f)-1;                         % degree of f
 if m>=M

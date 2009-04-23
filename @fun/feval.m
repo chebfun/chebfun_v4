@@ -4,7 +4,9 @@ function out = feval(g,x)
 % using the barycentric formula in bary.m. However, if X is a vector of Chebyshev 
 % nodes of length 2^n+1 then the evaluation could be done using FFTs through
 % prolong.m (faster).
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 out = bary(x,g.vals);

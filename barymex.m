@@ -4,6 +4,10 @@ function varargout = barymex(varargin)
 %   BARYMEX ON enables chebfun to use the C implementation.
 %   BARYMEX OFF disables the compiled C implementation of the barycentric
 %   formula and uses the m-file implementation (Default).
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+
+% Copyright 2002-2008 by The Chebfun Team. 
 
 persistent mybarypref
 

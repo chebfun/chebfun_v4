@@ -6,8 +6,10 @@ function J = cumsum(d,m)
 % Q = CUMSUM(D,M) returns the chebop for M-fold integration. 
 %
 % See also CHEBOP, CHEBFUN/CUMSUM.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if isempty(d)
   J = chebop;

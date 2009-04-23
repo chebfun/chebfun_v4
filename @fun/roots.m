@@ -2,9 +2,10 @@ function out = roots(g,all)
 % ROOTS	Roots in the interval [-1,1]
 % ROOTS(G) returns the roots of the FUN G in the interval [-1,1].
 % ROOTS(G,'all') returns all the roots.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
-
+% Copyright 2002-2008 by The Chebfun Team. 
 
 tol = 100*eps;
 if nargin == 1

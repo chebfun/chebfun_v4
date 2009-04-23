@@ -3,8 +3,10 @@ function out = chebpoly(g)
 % C = CHEBPOLY(G) returns the coefficients such that
 % G = C_N T_N(x)+...+C_1 T_1(x)+C_0 T_0(x) where T_N(x) denotes the N-th
 % Chebyshev polynomial.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 gvals = flipud(g.vals);
 n = g.n;

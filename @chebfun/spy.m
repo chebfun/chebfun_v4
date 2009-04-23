@@ -1,8 +1,9 @@
 function spy(A)
 % SPY   spy of a chebfun
 %
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2009 by The Chebfun Team. 
 
 hold off
 [m,n] = size(A);

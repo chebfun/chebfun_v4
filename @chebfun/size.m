@@ -7,10 +7,11 @@ function varargout = size(F,dim)
 %   [M,N] = SIZE(F)  returns the dimensions of F as separate output
 %   variables.
 %
-%  M = SIZE(F,DIM) returns the dimension specified by the scalar DIM.
+%   M = SIZE(F,DIM) returns the dimension specified by the scalar DIM.
 %
+%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if F(1).trans
   if isempty(F)

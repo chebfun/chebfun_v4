@@ -1,7 +1,9 @@
 function names = fieldnames(g,varargin)
 % Returns the list of public member variable names
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if nargin == 1
     names = {'vals' 'n' 'scl'}';

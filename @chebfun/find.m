@@ -14,8 +14,10 @@ function varargout = find(f)
 %    format long, find(f==1/2) / pi
 %    
 %  See also chebfun/roots, chebfun/eq, find.
+%
+%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if numel(f) > 1 && nargout<2
   error('chebfun:find','Use two output arguments for quasimatrices.')

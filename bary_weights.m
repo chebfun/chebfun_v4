@@ -2,6 +2,12 @@ function w = bary_weights(xk)
 % W = BARY_WEIGHTS(XK)
 % Compute the barycentric weights W for the points XK
 % Ricardo Pachon 2008; Nick Hale 2009
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+
+% Copyright 2002-2008 by The Chebfun Team. 
+
+
 n = length(xk);
 if n < 300          % for small n using matrices is faster
    XK = repmat(xk(:),1,n);

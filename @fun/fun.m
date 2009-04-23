@@ -13,8 +13,10 @@ function g = fun(op,n,scl)
 % and SCL.V (vertical scale). 
 %
 % FUN creates an empty fun.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 persistent default_g
 if isempty(default_g)

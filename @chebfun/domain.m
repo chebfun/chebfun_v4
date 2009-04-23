@@ -7,8 +7,10 @@ function varargout = domain(f)
 % [A,B] = DOMAIN(F) returns the endpoints of the domain as scalars.
 %
 % See also domain/domain.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if numel(f) == 1
     if nargout < 2 || numel(f.ends)==0

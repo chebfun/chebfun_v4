@@ -1,8 +1,10 @@
 function gout = simplify(g)
 % This function removes leading Chebyshev coefficients that are below 
 % epsilon, relative to the verical scale stored in g.scl.v
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 % This is the code in the old fixedgrow.m by LNT
 

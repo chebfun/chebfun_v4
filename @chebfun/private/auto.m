@@ -12,10 +12,11 @@ function [funs,ends,scl] = auto(op,ends,scl)
 %    within AUTO and is returned as output. 
 %
 %    Note: this function is used in ctor_1.m and ctor_2.m
-%   
+%
+%    See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
-
+% Copyright 2002-2008 by The Chebfun Team. 
+ 
 % Initial setup.
 
 if nargin <3

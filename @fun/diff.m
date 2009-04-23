@@ -22,8 +22,10 @@ function gout = diff(g,k)
 % with c_{n} = c_{n+1} = 0.
 %
 % See "Chebyshev Polynomials" by Mason ad Handscomb, CRC 2002, pg 34.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if isempty(g), gout = g; return, end
 if (nargin==1), k=1; end                

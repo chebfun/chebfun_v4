@@ -5,9 +5,11 @@ function f = chebpoly(n,d)
 % or a domain, gives the same result scaled accordingly.
 %
 % See also chebfun/chebpoly.
- 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
+% Copyright 2002-2008 by The Chebfun Team. 
+ 
 if nargin == 1
     f = chebfun((-1).^(n:-1:0));
 else

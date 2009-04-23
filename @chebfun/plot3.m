@@ -6,6 +6,9 @@ function plot3(varargin)
 %   PLOT3(X,Y,Z), where X, Y and Z are three chebfun quasimatrices, plots
 %   several curves obtained from the columns (or rows) of X, Y, and Z. 
 %
+%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+
+%   Copyright 2002-2008 by The Chebfun Team. 
 
 % This is a simple implementation that should be replaced soon! 
 % Rodp, June 2008.

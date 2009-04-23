@@ -10,8 +10,9 @@ function resampling(on_off)
 %   the number of nodes is doubled. This option is recommended when the
 %   evaluations are time consuming.
 %
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if nargin==0 
     switch chebfunpref('resampling')

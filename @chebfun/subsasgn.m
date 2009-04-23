@@ -16,8 +16,11 @@ function varargout = subsasgn(f,index,varargin)
 %  
 %     F.FIELD = B is a wrapper for the command SET(F,FIELD,B), where FIELD
 %     is any of the chebfun fields.
+%
+%     See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
+
 idx = index(1).subs;
 vin = varargin{:};
 switch index(1).type

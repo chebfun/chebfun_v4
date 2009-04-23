@@ -1,8 +1,10 @@
 function out = sum(g)
 % SUM	Definite integral from -1 to 1
 % SUM(G) is the integral from -1 to 1 of F.  
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if isempty(g), out = g; return, end
 n = g.n;

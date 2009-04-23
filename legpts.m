@@ -5,13 +5,16 @@ function [x,w] = legpts(n,method)
 %
 % [X,W] = LEGPTS(N,METHOD) choose which method to use to compute nodes and
 %       weights. METHOD = 'GW' will use the Golub-Welsh whereas 'FAST' will
-%       use Rohklin et al's fast algorithm [1].
+%       use Rohklin et al's fast algorithm.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+
+% Reference: G,L&R, "A fast algorithm for ...", SISC, 29(4):1420–1438, 2007.
 %
 % GW by Nick Trefethen, March 2009.
 % FAST by Nick Hale, April 2009.
-% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 %
-% [1]  G,L&R, "A fast algorithm for ...", SISC, 29(4):1420–1438, 2007.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 
 if n<=0

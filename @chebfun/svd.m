@@ -10,8 +10,10 @@ function varargout = svd(A,econ)
 % and V is a row quasimatrix.
 %
 % S = SVD(A) returns a vector containing the singular values.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 % The computation is carried out by orthogonalization operations
 % following Battles' 2006 thesis.

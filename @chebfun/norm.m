@@ -14,8 +14,10 @@ function normA = norm(A,n)
 %    NORM(f,1) = integral of abs(f).
 %    NORM(f,inf) = max(abs(f)).
 %    NORM(f,-inf) = min(abs(f)).
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if nargin==1, n=2; end                  % 2-norm is the default
 

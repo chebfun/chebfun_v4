@@ -10,8 +10,10 @@ function Z = zeros(d,m)
 % identically zero.
 %
 % See also DOMAIN/ONES, DOMAIN/EYE, CHEBOP.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if nargin==1    % return chebop
   if isempty(d)

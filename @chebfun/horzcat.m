@@ -10,8 +10,10 @@ function Fout = horzcat(varargin)
 %   whose columns are F1, F2, ....
 %
 % See also CHEBFUN/VERTCAT, CHEBFUN/SUBSASGN.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 for k = 1:nargin, varargin{k} = varargin{k}.'; end
 Fout = vertcat(varargin{:}).';

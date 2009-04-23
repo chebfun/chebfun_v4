@@ -7,8 +7,10 @@ function comet(f,varargin)
 % comet(F) displays a comet graph of the chebfun F, comet(F,G) displays a
 % comet of the chebfun F versus the chebfun G, and comet(F,G,H) displays a
 % comet in 3D-space using the three chebfuns as coordinates.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 ho=ishold;
 if ~ho, hold on; end

@@ -8,8 +8,10 @@ function [d,x] = domain(varargin)
 %
 % [D,X] = DOMAIN(...) also returns the 'identity chebfun', the
 % result of CHEBFUN('x',D).
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if nargin==0
   v = [];

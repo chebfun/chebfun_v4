@@ -6,8 +6,9 @@ function Fout = repmat(F,M,N)
 %    quasimatrix with N*size(F,2) chebfun columns. If F consists of row
 %    chebfuns, REPMAT(F,M,1) returns a quasimatrix with M*size(F,1).
 %
+%    See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if nargin < 2
     error('CHEBFUN:repmat:NotEnoughInputs', 'Requires 3 inputs.')

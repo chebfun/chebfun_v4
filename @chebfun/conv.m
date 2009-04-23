@@ -21,8 +21,10 @@ function Fout = conv(F1,F2)
 %   subplot(2,2,1), plot(f)
 %   for j=2:4, g=conv(f,g); subplot(2,2,j), plot(g), end
 %   figure, for j=1:4, subplot(2,2,j), plot(g), g=diff(g); end
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 % Deal with quasi-matrices
 if size(F1) ~= size(F2)

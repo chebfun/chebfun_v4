@@ -10,8 +10,10 @@ function Fout = restrict(F,subdom)
 % An equivalent syntax is G = F{A,B}.
 %
 % See also CHEBFUN/SUBSREF, CHEBFUN/DEFINE.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 % Deal with quasi-matrices
 Fout = F;

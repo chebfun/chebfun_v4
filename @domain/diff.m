@@ -6,8 +6,10 @@ function D = diff(d,m)
 % D = DIFF(R,M) returns the chebop for M-fold differentiation. 
 %
 % See also CHEBOP, CHEBFUN/DIFF.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if isempty(d)
   D = chebop;

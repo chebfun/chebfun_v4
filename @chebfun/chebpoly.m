@@ -8,9 +8,11 @@ function out = chebpoly(f,n)
 %
 % There is also a CHEBPOLY command in the chebfun trunk directory, which
 % computes the chebfun corresponding to the Chebyshev polynomial T_n.
- 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
+% Copyright 2002-2008 by The Chebfun Team. 
+ 
 if numel(f)>1, error('CHEBPOLY does not handle chebfun quasi-matrices'), end
 
 if nargin == 1

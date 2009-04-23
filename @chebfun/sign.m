@@ -4,8 +4,10 @@ function Fout = sign(F)
 % the interval where F(x)>0, G(x) = -1 in the interval where F(x)<0 and
 % G(x) = 0  in the interval where F(x) = 0. The breakpoints of H are
 % introduced at zeros of F.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 Fout = F;
 for k = 1:numel(F)

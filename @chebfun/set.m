@@ -6,8 +6,10 @@ function F = set(F,varargin)
 % impulses respectively.
 %
 % F = SET(F,PROP_1,VAL_1,...,PROP_n,VAL_n) modifies more than one property.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if numel(F)>1
     error('set currently does not work with quasi-matrices')

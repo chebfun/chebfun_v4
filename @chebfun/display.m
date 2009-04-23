@@ -7,8 +7,10 @@ function display(F)
 %
 % It is called automatically when the semicolon is not used at the
 % end of a statement that results in a chebfun.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 disp([inputname(1) ' = '])
 

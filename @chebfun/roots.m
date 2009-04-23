@@ -2,8 +2,10 @@ function rts = roots(f,option)
 % ROOTS	  Roots of a chebfun.
 % ROOTS(F) returns the roots of F in the interval where it is defined.
 % ROOTS(F,'all') returns all the roots.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 tol = 1e-14;
 

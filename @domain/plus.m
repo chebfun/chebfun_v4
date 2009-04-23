@@ -2,8 +2,10 @@ function d = plus(d,a)
 % +  Translate a domain to the right.
 % D+A and A+D for domain D and scalar A adds A to all of the domain D's
 % endpoints and breakpoints.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2002-2008 by The Chebfun Team. 
 
 % Swap if needed to make D a domain.
 if isnumeric(d)

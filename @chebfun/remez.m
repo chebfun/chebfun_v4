@@ -7,8 +7,11 @@ function [p,err] = remez(f,n);
 % approximation in the chebfun system" by Pachon and Trefethen, 2008). 
 %
 % [P,ERR] = REMEZ(F,N) also returns the maximum error ERR.    
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2009 by The Chebfun Team. 
+
 if n < 15, tol = 1e-15; elseif n < 100, tol = 1e-13; else tol = 1e-11; end
 xk = cos(pi*(n+1:-1:0)'/(n+1));         % initial reference 
 xo = xk;

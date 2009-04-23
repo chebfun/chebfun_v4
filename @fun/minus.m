@@ -2,8 +2,10 @@ function gout = minus(g1,g2)
 % -	Minus
 % G1 - G2 subtracts fun G1 from G2 or a scalar from a fun if either
 % G1 or G2 is a scalar.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if (isempty(g1) || isempty(g2)), gout=fun; return; end
 

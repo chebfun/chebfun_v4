@@ -20,8 +20,10 @@ function gout = cumsum(g)
 % with c_{n+1} = c_{n+2} = 0.
 %
 % See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 32-33.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2008 by The Chebfun Team. 
 
 if isempty(g), gout = g; return, end
 n = g.n;

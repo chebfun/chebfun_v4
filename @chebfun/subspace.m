@@ -5,6 +5,7 @@ function theta = subspace(A,B)
 %
 %   If the angle is small, the two spaces are nearly linearly dependent.
 %
+%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 %   References:
 %   [1] A. Bjorck & G. Golub, Numerical methods for computing
@@ -19,8 +20,7 @@ function theta = subspace(A,B)
 %       SIAM Journal on Scientific Computing, 23 (2002), no. 6, 2009-2041.
 %       http://epubs.siam.org:80/sam-bin/dbq/article/37733
 %
-
-% Copyright 2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2008 by The Chebfun Team. 
 
 if ~(isa(A,'chebfun') && isa(B,'chebfun'))
     error('chebfun:subspace:argin', ...
