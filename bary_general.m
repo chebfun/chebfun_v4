@@ -1,4 +1,5 @@
-function p = bary_general(x,xk,pk,w)   
+function p = bary_general(x,xk,pk,w)  
+% BARY_GENERAL  Barycentric interpolation with arbitrary weights.
 % P = BARY_GENERAL(X,XK,PK,W) interpolates the values PK at nodes XK in the
 % point X using the barycentric weights W. 
 %
@@ -8,7 +9,7 @@ function p = bary_general(x,xk,pk,w)
 
 p = zeros(size(x));
 numer = p; denom = p; exact = p;
-I = true(size(x));                         % x(i)=false if x(i)=xk(j), some j
+I = true(size(x));                 % x(i)=false if x(i)=xk(j), some j
 for j = 1:length(xk)
   xdiff = x-xk(j);
   ii = find(xdiff==0);
