@@ -1,7 +1,8 @@
 function x = chebpts(n)
-% X = CHEBPTS(N)  N Chebyshev points in [-1,1]
+%CHEBPTS  Chebyshev points in [-1,1].
+%   CHEBPTS(N) returns N Chebyshev points in [-1,1].
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
