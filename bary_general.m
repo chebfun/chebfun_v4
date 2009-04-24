@@ -1,5 +1,6 @@
 function p = bary_general(x,xk,pk,w)   
-% barycentric interpolation in "general" as opposed to Chebyshev points - Ricardo Pachon
+% P = BARY_GENERAL(X,XK,PK,W) interpolates the values PK at nodes XK in the
+% point X using the barycentric weights W. 
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

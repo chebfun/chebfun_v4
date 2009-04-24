@@ -22,7 +22,7 @@ while delta/normf > tol
     fk = feval(f,xk);
     w = bary_weights(xk);
     h = (w'*fk)/(w'*sigma);             % levelled reference error  
-    if h==0, h = 1e-19; end             % perturbe error if necessary
+    if h==0, h = 1e-19; end             % perturb error if necessary
     pk = fk - h*sigma;                  % polynomial vals in the reference         
     p=chebfun(@(x)bary_general(x,xk,pk,w),n+1); % chebfun of trial polynomial
     e = f - p;                          % chebfun of the error    
@@ -32,7 +32,7 @@ while delta/normf > tol
     end
     xo = xk;
     delta = err - abs(h);               % stopping value 
-    %delta                               % uncomment to see progress
+    %delta                              % uncomment to see progress
 end
 
 
