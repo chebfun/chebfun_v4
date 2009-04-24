@@ -1,20 +1,23 @@
 function [x,w] = legpts(n,method)
-% X = LEGPTS(N)  N Chebyshev points in (-1,1)
+%LEGPTS  Legendre points in (-1,1).
+%  LEGPTS(N) returns N Legendre points in (-1,1).
 %
-% [X,W] = LEGPTS(N) also includes vector of weights for Gauss quadrature
+%  [X,W] = LEGPTS(N) also returns a vector of weights for Gauss quadrature.
 %
-% [X,W] = LEGPTS(N,METHOD) choose which method to use.
-%       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue
-%       method, whereas 'FAST' will use Rohklin et al's fast algorithm.
+%  [X,W] = LEGPTS(N,METHOD) allows the user to select which method to use.
+%       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
+%       which is best suited for when N is small. METHOD = 'FAST' will use 
+%       Rokhlin et al's fast algorithm, which is much faster for large N.
+%       By default LEGPTS will use 'GW' when N < 128.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% 'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
-% 'FAST' by Nick Hale, April 2009 - algorithm adapted from [2].
+%  'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
+%  'FAST' by Nick Hale, April 2009 - algorithm adapted from [2].
 %
-% Copyright 2009 by The Chebfun Team. 
+%  Copyright 2009 by The Chebfun Team. 
 %
-% References:
+%  References:
 %   [1] G. H. Golub and J. A. Welsch, "Calculation of Gauss quadrature
 %       rules", Math. Comp. 23:221-230, 1969, 
 %   [2] A. Glaser, Xa Liu and V. Rokhlin, "A fast algorithm for the 
