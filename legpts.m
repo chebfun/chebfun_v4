@@ -1,21 +1,25 @@
 function [x,w] = legpts(n,method)
 % X = LEGPTS(N)  N Chebyshev points in (-1,1)
 %
-% [X,W] = LEGPTS(N)  also includes vector of weights for Gauss quadrature
+% [X,W] = LEGPTS(N) also includes vector of weights for Gauss quadrature
 %
-% [X,W] = LEGPTS(N,METHOD) choose which method to use to compute nodes and
-%       weights. METHOD = 'GW' will use the Golub-Welsh whereas 'FAST' will
-%       use Rohklin et al's fast algorithm.
+% [X,W] = LEGPTS(N,METHOD) choose which method to use.
+%       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue
+%       method, whereas 'FAST' will use Rohklin et al's fast algorithm.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Reference: G,L&R, "A fast algorithm for ...", SISC, 29(4):1420–1438, 2007.
+% 'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
+% 'FAST' by Nick Hale, April 2009 - algorithm adapted from [2].
 %
-% GW by Nick Trefethen, March 2009.
-% FAST by Nick Hale, April 2009.
+% Copyright 2009 by The Chebfun Team. 
 %
-% Copyright 2002-2008 by The Chebfun Team. 
-
+% References:
+%   [1] G. H. Golub and J. A. Welsch, "Calculation of Gauss quadrature
+%       rules", Math. Comp. 23:221-230, 1969, 
+%   [2] A. Glaser, Xa Liu and V. Rokhlin, "A fast algorithm for the 
+%       calculation of the roots of special functions", SIAM Journal  
+%       on Scientific Computing", 29(4):1420-1438:, 2007.
 
 if n<=0
     error('Input should be a positive number');
@@ -26,14 +30,14 @@ if nargin < 2
     method = 'default';
 end
 
-if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % Golub-Welsh
+if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
    m = n-1;
    beta = .5./sqrt(1-(2*(1:m)).^(-2));   % 3-term recurrence coeffs
    T = diag(beta,1) + diag(beta,-1);     % Jacobi matrix
    [V,D] = eig(T);                       % eigenvalue decomposition
    x = diag(D); [x,i] = sort(x);         % Legendre points
    w = 2*V(1,i).^2;                      % weights
-else                                                            % Fast
+else                                                            % Fast, see [2]
    [x ders] = alg0_Leg(n);
    w = 2./((1-x.^2).*ders.^2)';
 end
