@@ -15,7 +15,9 @@ function [x,w] = legpts(n,method)
 %  'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
 %  'FAST' by Nick Hale, April 2009 - algorithm adapted from [2].
 %
-%  Copyright 2009 by The Chebfun Team. 
+%  Copyright 2002-2008 by The Chebfun Team. 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 %
 %  References:
 %   [1] G. H. Golub and J. A. Welsch, "Calculation of Gauss quadrature
@@ -45,10 +47,11 @@ else                                                            % Fast, see [2]
    w = 2./((1-x.^2).*ders.^2)';          % weights
 end
 
-% -------------------------------------------------------------------------
+
+
+% -------------------- Routines for FAST algorithm ------------------------
 
 function [roots ders] = alg0_Leg(n) % driver for 'Fast'.
-
 % Compute coefficients of P_m(0), Pm'(0), m = 0,..,N
 Pm2 = 0; Pm1 = 1; Ppm2 = 0; Ppm1 = 0;
 for k = 0:n-1
@@ -59,7 +62,7 @@ end
 
 roots = zeros(n,1); ders = zeros(n,1);                      % allocate storage
 if mod(n,2),roots((n-1)/2) = 0; ders((n+1)/2) = Pp;         % zero is a root
-else   [roots(n/2+1) ders(n/2+1)] = alg2_Leg(P,n); end      % find first root
+else [roots(n/2+1) ders(n/2+1)] = alg2_Leg(P,n); end      % find first root
 
 [roots ders] = alg1_Leg(roots,ders); % compute roots and derivatives
 
@@ -73,32 +76,36 @@ else N = n/2; s = 0; end
 m = 30; % number of terms in Taylor expansion
 u = zeros(1,m+1); up = zeros(1,m);
 for j = N+1:n-1
-    x = roots(j);
+    x = roots(j); % previous root
 
     % advance ODE via Runge-Kutta for initial approx
     % h = x_new - x_old
     h = rk2_Leg(pi/2,-pi/2,x,n) - x;
-    
-    % recurrence relation for Legendre polynomials
-    u(1) = 0;   u(2) = ders(j);  up(1) = u(2);
+           
+    % scaling
+    M = 1/h;
+
+    % recurrence relation for Legendre polynomials (scaled)
+    u(1) = 0;   u(2) = ders(j)/M;  up(1) = u(2);
     for k = 0:m-2
-        u(k+3) = (2*x*(k+1)*u(k+2)+(k*(k+1)-n*(n+1))*u(k+1)/(k+1))./((1-x.^2)*(k+2));
-        up(k+2) = (k+2)*u(k+3);
+        u(k+3) = (2*x*(k+1)/M*u(k+2)+(k-n*(n+1)/(k+1))*u(k+1)/M^2)./((1-x.^2)*(k+2));
+        up(k+2) = (k+2)*u(k+3)*M;
     end
-   
-    % remove infs
-    u(isinf(u)) = 0;
-    up(isinf(up)) = 0;
-    
+
+    hh = [M ; ones(m,1)];
+    step = inf;
+    l = 0;
     % Newton iteration
-    for l = 1:5
-        hh = [1;cumprod(h*ones(m,1))]; % powers of h for Taylor series
-        h = h - (u*hh)/(up*hh(1:m));
+    while (abs(step) > eps) && (l < 10)
+        l = l + 1;
+        step = (u*hh)/(up*hh(1:m));
+        h = h - step;
+        hh = [M;cumprod(M*h+zeros(m,1))]; % powers of h (This is the fastest way!)
     end
     
     % update
     roots(j+1) = x + h;
-    ders(j+1) = up*[1;cumprod(h*ones(m-1,1))];    
+    ders(j+1) = up*hh(1:m);    
 end
 
 % nodes are symmetric
@@ -107,26 +114,34 @@ ders(1:N+s) = ders(n:-1:N+1);
 
 % -------------------------------------------------------------------------
 
-function [x1 d1] = alg2_Leg(Pn0,n) % find the first root (note of P_n'(0)==0)
+function [x1 d1] = alg2_Leg(Pn0,n) % find the first root (note P_n'(0)==0)
 % advance ODE via Runge-Kutta for initial approx
 x1 = rk2_Leg(0,-pi/2,0,n);
 
 m = 30; % number of terms in Taylor expansion
 
+% scaling
+M = 1/x1;
+    
 % recurrence relation for Legendre polynomials
 u = zeros(1,m+1); up = zeros(1,m);
 u(1) = Pn0;   u(2) = 0; 
 for k = 0:2:m-2
-    u(k+3) = (k*(k+1)-n*(n+1))*u(k+1)/((k+1)*(k+2)); 
-    up(k+2) = (k+2)*u(k+3);
+    u(k+3) = (k-n*(n+1)/(k+1))*u(k+1)/(M^2*(k+2)); 
+    up(k+2) = (k+2)*u(k+3)*M;
 end
 
+x1k = [1 ; ones(m,1)];
+step = inf;
+l = 0;
 % Newton iteration
-for l = 1:5
-    xk = [1;cumprod(x1*ones(m,1))]; % powers of xk for Taylor series
-    x1 = x1 - (u*xk)./(up*xk(1:m));
+while (abs(step) > eps) && (l < 10)
+    l = l + 1;
+    step = (u*x1k)/(up*x1k(1:m));
+    x1 = x1 - step;
+    x1k = [1;cumprod(M*x1+zeros(m,1))]; % powers of h (This is the fastest way!)
 end
-d1 = up*[1;cumprod(x1*ones(m-1,1))]; % P_n'(x1)
+d1 = up*x1k(1:m);
 
 % -------------------------------------------------------------------------
 
