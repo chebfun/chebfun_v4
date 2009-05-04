@@ -1,5 +1,7 @@
 		      Chebfun system, Version 2
 
+Chebfun Version 2 is compatible with MATLAB 7.4 (2007a) or a more recent version.
+
 Installation instructions:
 
 1. Unzip the contents of the zip file to a directory. We suggest the 
@@ -22,7 +24,10 @@ Installation instructions:
 4. To check whether the system appears to be working, type "chebtest" at 
    the command window prompt. If a problem is reported, please contact  
    chebfun@comlab.ox.ac.uk with the details (including output of the 
-   "ver" command).
+   "ver" command). 
+
+   Note: One of the tests in "chebtest" may crash if you are using 
+	 Matlab 7.4  because bvp5c is only available from version 7.5. 
 
 Point your web browser to the guide/html directory of the chebfun
 installation in order to read the user guides.

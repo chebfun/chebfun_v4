@@ -19,6 +19,13 @@ function failfun = chebtest(dirname)
 
 tol = chebfunpref('eps');
 
+matlabver = ver('matlab');
+if str2double(matlabver.Version) < 7.39
+    disp(['Matlab version: ',matlabver.Version])
+    error('chebfun:chebtest:version',['Chebfun is compatible' ...
+        ' with MATLAB 7.4 or a more recent version.'])
+end
+
 if nargin < 1
   % Attempt to find "chebtests" directory.
   w = which('chebtest.m');
