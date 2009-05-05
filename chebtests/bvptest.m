@@ -13,8 +13,9 @@ y = bvp4c(@twoode,@twobc,y0);         % Chebfun solution
 sol = bvp4c(@twoode,@twobc,solinit);  % Matlab's solution
 pass = max(max(abs(sol.y' - feval(y,sol.x')))) < 2e-2;
 
-%% Test bvp5c using default tolerance (RelTol = 1e-3)
+%% Test bvp5c using new tolerance 
 
+% Only test if Matlab ver > 7.4
 matlabver = ver('matlab');
 if str2double(matlabver.Version) > 7.45
     

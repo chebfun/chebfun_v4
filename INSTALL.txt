@@ -26,9 +26,6 @@ Installation instructions:
    chebfun@comlab.ox.ac.uk with the details (including output of the 
    "ver" command). 
 
-   Note: One of the tests in "chebtest" may crash if you are using 
-	 Matlab 7.4  because bvp5c is only available from version 7.5. 
-
 Point your web browser to the guide/html directory of the chebfun
 installation in order to read the user guides.
 
