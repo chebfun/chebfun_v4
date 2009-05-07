@@ -64,7 +64,7 @@ for j = 1:length(mfile)
       fprintf('FAILED\n')
     else
       fprintf('passed\n')
-      pause(0.1)
+      %pause(0.1)
       %fprintf( repmat('\b',1,numchar) )
     end
   catch
