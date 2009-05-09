@@ -9,6 +9,7 @@ function [x,w] = legpts(n,varargin)
 %       which is best suited for when N is small. METHOD = 'FAST' will use 
 %       the Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
 %       By default LEGPTS will use 'GW' when N < 128.
+%
 %  [X,W] = LEGPTS(N,[A,B]) scales the nodes and weights for the finite interval [A,B].
 %
 %  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
@@ -37,13 +38,15 @@ interval = [-1,1];
 method = 'default';
 
 % check inputs
-if isa(varargin{1},'double') && length(varargin{1}) == 2, interval = varargin{1}; end
-if isa(varargin{1},'char'), method = varargin{1}; end
-if length(varargin) == 2,
-    if isa(varargin{2},'double') && length(varargin{2}) == 2, interval = varargin{2}; end
-    if isa(varargin{2},'char'), method = varargin{2}; end
+if nargin > 1
+    if isa(varargin{1},'double') && length(varargin{1}) == 2, interval = varargin{1}; end
+    if isa(varargin{1},'char'), method = varargin{1}; end
+    if length(varargin) == 2,
+        if isa(varargin{2},'double') && length(varargin{2}) == 2, interval = varargin{2}; end
+        if isa(varargin{2},'char'), method = varargin{2}; end
+    end
 end
-    
+
 % decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
    m = n-1;
@@ -60,7 +63,7 @@ w = (2/sum(w))*w;                        % normalise so that sum(w) = 2
 
 % rescale to arbitrary interval
 a = interval(1); b = interval(2);
-x = .5*( (x+1)*b + (x-1)*a);
+x = .5*( (x+1)*b - (x-1)*a);
 w = .5*(b-a)*w;
 
 % -------------------- Routines for FAST algorithm ------------------------
