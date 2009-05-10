@@ -17,7 +17,7 @@ function [x,w] = legpts(n,varargin)
 %  'GW' by Nick Trefethen, March 2009 - algoarithm adapted from [1].
 %  'FAST' by Nick Hale, April 2009 - algorithm adapted from [2].
 %
-%  Copyright 2002-2008 by The Chebfun Team. 
+%  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 %
@@ -79,7 +79,7 @@ end
 
 roots = zeros(n,1); ders = zeros(n,1);                      % allocate storage
 if mod(n,2),roots((n-1)/2) = 0; ders((n+1)/2) = Pp;         % zero is a root
-else [roots(n/2+1) ders(n/2+1)] = alg2_Leg(P,n); end      % find first root
+else [roots(n/2+1) ders(n/2+1)] = alg2_Leg(P,n); end        % find first root
 
 [roots ders] = alg1_Leg(roots,ders); % compute roots and derivatives
 
@@ -91,9 +91,9 @@ if mod(n,2), N = (n-1)/2; s = 1;
 else N = n/2; s = 0; end
 
 % Approximate roots via asymptotic formula
-k = ceil(n/2):-1:1;
+k = (n-2+s)/2:-1:1;
 theta = pi*(4*k-1)/(4*n+2);
-roots(ceil((n+1)/2):end) = (1-(n-1)/(8*n^3)-1/(384*n^4)*(39-28./sin(theta).^2)).*cos(theta);
+roots(((n+4-s)/2):end) = (1-(n-1)/(8*n^3)-1/(384*n^4)*(39-28./sin(theta).^2)).*cos(theta);
 
 m = 30; % number of terms in Taylor expansion
 u = zeros(1,m+1); up = zeros(1,m+1);
@@ -143,7 +143,7 @@ ders(1:N+s) = ders(n:-1:N+1);
 
 function [x1 d1] = alg2_Leg(Pn0,n) % find the first root (note P_n'(0)==0)
 
-% % advance ODE via Runge-Kutta for initial approx (redundant)
+% % % advance ODE via Runge-Kutta for initial approx (redundant)
 % x1 = rk2_Leg(0,-pi/2,0,n)
 
 % Approximate first root via asymptotic formula
@@ -169,6 +169,7 @@ u = u(m+1:-1:1);
 up = up(m+1:-1:1);
 
 x1k = ones(m+1,1);
+
 step = inf;
 l = 0;
 % Newton iteration
@@ -180,6 +181,7 @@ while (abs(step) > eps) && (l < 10)
     x1k = x1k(end:-1:1);
 end
 d1 = up*x1k;
+
 
 % -------------------------------------------------------------------------
 
