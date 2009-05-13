@@ -46,10 +46,10 @@ int bary_mex(int N, double *fR, double *fI, int n, double *xR, double *xI, doubl
     }
     else
     {
-    	if (abs(xj) > 1)		/* real(x) > 1 */
-	{
-    		chebpt = 0;
-	}
+        if (fabs(xj) > 1)		/* real(x) > 1 */
+        {
+            chebpt = 0;
+        }
     }
    
     if (chebpt == 1)
@@ -139,7 +139,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
       /* Some constants */ 
       m = n-1;
       PiM = PI / (double)m;
-      Pi2M = 0.5 * PiM;      /* Allocate memory for Chebyshev points*/ 
+      Pi2M = 0.5 * PiM;
+      /* Allocate memory for Chebyshev points*/ 
       xk = (double*)malloc(n*sizeof(double));
       xkptr = &xk[0];
       /* Define Chebyshev Points */
@@ -180,7 +181,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
   if (xreal + greal < 2)	/* Complex output */
   {
   	/* Set the output pointer to the output matrix. */
-  	plhs[0] = mxCreateDoubleMatrix(N,1, mxCOMPLEX);  
+  	plhs[0] = mxCreateDoubleMatrix(N,1, mxCOMPLEX);
+  
   	/* Create a C pointer to a copy of the output matrix. */
   	fR = mxGetPr(plhs[0]);
   	fI = mxGetPi(plhs[0]);
@@ -188,7 +190,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
   else
   {
     	/* Set the output pointer to the output matrix. */
-  	plhs[0] = mxCreateDoubleMatrix(N,1, mxREAL);  
+  	plhs[0] = mxCreateDoubleMatrix(N,1, mxREAL);
+  
   	/* Create a C pointer to a copy of the output matrix. */
   	fR = mxGetPr(plhs[0]);
   	fI = (double*)malloc(N*sizeof(double));
