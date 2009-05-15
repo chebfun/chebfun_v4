@@ -112,6 +112,7 @@ if any(smooth)
             else
                 h.funs(k-1).vals(end) = h.funs(k).vals(1);
             end
+            h.imps(1,k) = h.funs(k-1).vals(end);
         end
     end  
 end
