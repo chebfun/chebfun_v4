@@ -80,7 +80,7 @@ end
 
 end  % min function
 
-function h = minfun(f,g,iscmpx)
+function h = minfun(f,g)
 % Return the function h(x)=min(f(x),g(x)) for all x.
 % If one is complex, use abs(f) and abs(g) to determine which function
 % values to keep. (experimental feature)
