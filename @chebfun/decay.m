@@ -15,8 +15,8 @@ function varargout = decay(u,varargin)
 %  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author: $: $Rev: $:
-%  $Date: $:
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 c = '-b';               % default linestyle/color
 k = 1;                  % plot first fun by default
