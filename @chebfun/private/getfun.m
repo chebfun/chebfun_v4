@@ -14,7 +14,6 @@ function [g, hpy, scl] = getfun(op, interval, maxn, scl)
 
 % Initial setup
 htol = 1e-14*scl.h;
-vtol = max(chebfunpref('eps'),1e-12);
 a = interval(1); b = interval(2);
 funscl = scl;
 funscl.h = scl.h*2/(b-a);
@@ -36,20 +35,19 @@ else
     else % In splitting ON mode, decide whether extrapolate values to the boundary
 
         % Get values at the boundary and close to it.
-        vne = op([a, a+eps(a), a+2*eps(a), b-2*eps(b), b-eps(b), b]');
-        funscl.v = max(funscl.v,norm(vne,inf));
+        vne = op([a, a+htol, a+2*htol, b-2*htol, b-htol, b]');
         
         % Check for NaN's or Inf's
         if any(isnan(vne)) || any(isinf(vne))
             error('CHEBFUN:getfun:naneval','Function returned NaN or Inf when evaluated.')
         end
         
-        if abs(vne(1)-vne(2)) < vtol*funscl.v
+        if abs(vne(1)-vne(2))<1e-14*funscl.v
             va = vne(1);                 % Extrapolation at x=a is not needed
         else
             va = 2*vne(2)-vne(3);        % Extrapolate to the left
         end
-        if abs(vne(6)-vne(5)) < vtol*funscl.v
+        if abs(vne(6)-vne(5))<1e-14*funscl.v
             vb = vne(6);                 % Extrapolation at x=b is not needed
         else
             vb = 2*vne(5)-vne(4);        % Extrapolate to the right

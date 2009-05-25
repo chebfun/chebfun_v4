@@ -51,42 +51,31 @@ end
 
 h = chebfun;
 
-%[f,g] = overlap(f,g);
-
 % Find all breakpoints in the convolution.
 [A,B] = meshgrid(f.ends,g.ends);
-ends = unique( A(:) + B(:) ).';
+h.ends = unique( A(:) + B(:) ).';
 
 % Coalesce breaks that are close due to roundoff.
-ends( diff(ends) < 10*eps*max(abs(ends([1,end]))) ) = [];
+h.ends( diff(h.ends) < 10*eps ) = [];
+h.nfuns = length(h.ends)-1;
 
-a = f.ends(1); b = f.ends(end); c = g.ends(1); d = g.ends(end);
-funs = [];
+% Define g(-t).
+gm = flipud(g); 
+[gleft gright] = domain(g);
+gm.ends = gm.ends - (gleft + gright);
 
-% Find maximum length of funs
-nf = 0;  for k = 1:f.nfuns, nf = max(nf,f.funs(k).n); end
-ng = 0;  for k = 1:g.nfuns, ng = max(ng,g.funs(k).n); end
-
-% the maximum possible length of the result is the sum of the lengths.
-n = nf+ng;
-scl.h = norm(ends([1,end]));
-scl.v = max(g.scl,f.scl);
-for k =1:length(ends)-1    
-    newfun = fun(@(x) integral(scale(x,ends(k),ends(k+1)),a,b,c,d,f,g,n), n+1);
-    scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
-    funs = [funs simplify(newfun)];
+% In each smooth interval, auto-construct the fun.
+for k = 1:h.nfuns
+  interval = h.ends([k k+1]);
+  h.funs = [h.funs fun( @(x) conv_val(x,f,gm,interval) )];
 end
- 
-h.scl = scl.v;
-h.funs = funs;
-h.ends = ends;
-h.nfuns = length(ends)-1;
-% function values in imps 
+
+% function values in imps % kludge!
 imps = 0*h.ends;
 for k = 1:h.nfuns
-    imps(k) = funs(k).vals(1);
+    imps(k) = h.funs(k).vals(1);
 end
-imps(k+1) =  funs(k).vals(end);
+imps(k+1) =  h.funs(k).vals(end);
 h.imps = imps; 
 h = update_vscl(h);
 h.trans = f.trans;
@@ -94,21 +83,17 @@ h.trans = f.trans;
 end   % conv()
 
 
-function out = integral(x,a,b,c,d,f,g,n)
-
-
-out = 0.*x;
-for k = 1:length(x)
-    A = max(a,x(k)-d); B = min(b,x(k)-c);
-    if A < B      
-        ends = union(x(k)-g.ends,f.ends);
-        ee = [A ends(A<ends & ends< B)  B];
-        for j = 1:length(ee)-1
-            u = fun(@(t) feval(f,scale(t,ee(j),ee(j+1))).*feval(g,scale(x(k)-t,ee(j),ee(j+1))), n);
-            out(k) = out(k) + diff(ee(j:j+1))*sum(u)/2;
-        end
-    end
+% For each x, integrate f(t)*g(x-t). Note that we may not assume that f and
+% g are single funs over the integraion interval.
+function I = conv_val(x,f,gm,interval)
+x = scale(x,interval(1),interval(2));  % from [-1,1] to f, gm variable
+I = NaN(size(x));
+for j = 1:numel(x)
+  g1 = gm;  g1.ends = g1.ends+x(j);    % translate to g(x-t)
+  dom = domain(g1);
+  dom = [ max(dom(1),f.ends(1)), min(dom(2),f.ends(end)) ];
+  I(j) = sum( restrict(f,dom).*restrict(g1,dom) );
 end
 
-end
+end   % conv_val()
 
