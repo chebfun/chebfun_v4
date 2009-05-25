@@ -15,8 +15,20 @@ function h = compose(f,g)
 %   $Date$:
 
 ma = max(g); mi = min(g);
-if f.ends(1) > mi || f.ends(end) < ma
+if f(1).ends(1) > min(mi) || f(1).ends(end) < max(ma)
     error('chebfun:compose:domain','Range of G must be in the domain of F')
 end
 
-h = comp(g,@(g) feval(f,g));
+if numel(f) == 1
+    h = comp(g,@(g) feval(f,g));
+elseif numel(f) > 1 && numel(g) == 1
+    for k = 1:numel(f)
+        h(k) = comp(g,@(g) feval(f(k),g));
+    end
+elseif size(f) == size(g)
+    for k = 1:numel(f)
+        h(k) = comp(g(k),@(g) feval(f(k),g));
+    end
+else
+    error('chebfun:compose:dim','Inconsistent quasimatrix dimensions')
+end

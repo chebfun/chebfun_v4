@@ -46,6 +46,10 @@ switch index(1).type
         elseif isa(s,'domain')
             f = restrict(f,s);            
             varargout = { f };
+        % RodP added this here for composition of chebfuns (May 2009) -----    
+        elseif isa(s,'chebfun')
+            varargout = { compose(f,s) };
+        % -----------------------------------------------------------------
         elseif isequal(s,':')
             varargout = { f }; 
         else
