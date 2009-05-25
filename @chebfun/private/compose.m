@@ -14,8 +14,10 @@ function h = compose(f,g)
 %   Last commit: $Author$: $Rev$:
 %   $Date$:
 
+tol = chebfunpref('eps');
+
 ma = max(g); mi = min(g);
-if f(1).ends(1) > min(mi) || f(1).ends(end) < max(ma)
+if f(1).ends(1) > min(mi)+100*tol || f(1).ends(end) < max(ma) - 100*tol
     error('chebfun:compose:domain','Range of G must be in the domain of F')
 end
 
