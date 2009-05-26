@@ -24,7 +24,9 @@ function Fout = conv(F1,F2)
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+%   Copyright 2002-2009 by The Chebfun Team. 
+%   Last commit: $Author$: $Rev$:
+%   $Date$:
 
 % Deal with quasi-matrices
 if size(F1) ~= size(F2)
@@ -53,29 +55,43 @@ h = chebfun;
 
 % Find all breakpoints in the convolution.
 [A,B] = meshgrid(f.ends,g.ends);
-h.ends = unique( A(:) + B(:) ).';
+ends = unique( A(:) + B(:) ).';
 
 % Coalesce breaks that are close due to roundoff.
-h.ends( diff(h.ends) < 10*eps ) = [];
-h.nfuns = length(h.ends)-1;
+ends( diff(ends) < 10*eps*max(abs(ends([1,end]))) ) = [];
 
-% Define g(-t).
-gm = flipud(g); 
-[gleft gright] = domain(g);
-gm.ends = gm.ends - (gleft + gright);
+a = f.ends(1); b = f.ends(end); c = g.ends(1); d = g.ends(end);
+funs = [];
 
-% In each smooth interval, auto-construct the fun.
-for k = 1:h.nfuns
-  interval = h.ends([k k+1]);
-  h.funs = [h.funs fun( @(x) conv_val(x,f,gm,interval) )];
+scl.h = norm(ends([1,end]));
+scl.v = max(g.scl,f.scl);
+
+% Avoid resampling for speed up!
+%res = chebfunpref('resampling');
+%resampling off
+nmax = chebfunpref('maxlength');
+% Construct funs
+for k =1:length(ends)-1  
+    newfun = fun(@(x) integral(scale(x,ends(k),ends(k+1)),a,b,c,d,f,g), nmax, scl);
+    scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
+    funs = [funs simplify(newfun)];
 end
 
-% function values in imps % kludge!
+% Restore resampling option
+%chebfunpref('resampling',res)
+
+% Construct chebfun
+h.scl = scl.v;
+h.funs = funs;
+h.ends = ends;
+h.nfuns = length(ends)-1;
+
+% function values in imps 
 imps = 0*h.ends;
 for k = 1:h.nfuns
-    imps(k) = h.funs(k).vals(1);
+    imps(k) = funs(k).vals(1);
 end
-imps(k+1) =  h.funs(k).vals(end);
+imps(k+1) =  funs(k).vals(end);
 h.imps = imps; 
 h = update_vscl(h);
 h.trans = f.trans;
@@ -83,17 +99,21 @@ h.trans = f.trans;
 end   % conv()
 
 
-% For each x, integrate f(t)*g(x-t). Note that we may not assume that f and
-% g are single funs over the integraion interval.
-function I = conv_val(x,f,gm,interval)
-x = scale(x,interval(1),interval(2));  % from [-1,1] to f, gm variable
-I = NaN(size(x));
-for j = 1:numel(x)
-  g1 = gm;  g1.ends = g1.ends+x(j);    % translate to g(x-t)
-  dom = domain(g1);
-  dom = [ max(dom(1),f.ends(1)), min(dom(2),f.ends(end)) ];
-  I(j) = sum( restrict(f,dom).*restrict(g1,dom) );
+function out = integral(x,a,b,c,d,f,g)
+
+
+out = 0.*x;
+for k = 1:length(x)
+    A = max(a,x(k)-d); B = min(b,x(k)-c);
+    if A < B      
+        ends = union(x(k)-g.ends,f.ends);
+        ee = [A ends(A<ends & ends< B)  B];
+        for j = 1:length(ee)-1
+            u = fun(@(t) feval(f,scale(t,ee(j),ee(j+1))).*feval(g,x(k)-scale(t,ee(j),ee(j+1))),length(x));
+            out(k) = out(k) + diff(ee(j:j+1))*sum(u)/2;
+        end
+    end
 end
 
-end   % conv_val()
+end
 
