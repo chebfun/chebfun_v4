@@ -4,7 +4,9 @@ function gout = simplify(g)
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+%   Copyright 2002-2009 by The Chebfun Team. 
+%   Last commit: $Author$: $Rev$:
+%   $Date$:
 
 % This is the code in the old fixedgrow.m by LNT
 
@@ -56,5 +58,9 @@ if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
         (length(c)-(1:Tend)');         % bang/buck of chopping at each pos
     [foo,Tchop] = max(Tbpb(3:Tend));  % Tchop = pos at which to chop
     v = chebpolyval(c(Tchop+3:end));  % chop the tail
-    gout = set(g,'vals',v);
+    if length(v) > 1
+        gout = set(g,'vals',[g.vals(1);v(2:end-1);g.vals(end)]);
+    else
+        gout = set(g,'vals',v);
+    end
 end

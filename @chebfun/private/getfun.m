@@ -9,8 +9,12 @@ function [g, hpy, scl] = getfun(op, interval, maxn, scl)
 %   The structure SCL gets uptdate within this function and is returned as
 %   an output.
 %
+%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+%   Copyright 2002-2009 by The Chebfun Team. 
+%   Last commit: $Author$: $Rev$:
+%   $Date$:
+
 
 % Initial setup
 htol = 1e-14*scl.h;
@@ -35,19 +39,20 @@ else
     else % In splitting ON mode, decide whether extrapolate values to the boundary
 
         % Get values at the boundary and close to it.
-        vne = op([a, a+htol, a+2*htol, b-2*htol, b-htol, b]');
+        vne = op([a, a+eps(a), a+2*eps(a), b-2*eps(b), b-eps(b), b]');
+        funscl.v = max(funscl.v,norm(vne,inf));
         
         % Check for NaN's or Inf's
         if any(isnan(vne)) || any(isinf(vne))
             error('CHEBFUN:getfun:naneval','Function returned NaN or Inf when evaluated.')
         end
         
-        if abs(vne(1)-vne(2))<1e-14*funscl.v
+        if abs(vne(1)-vne(2)) < 10*abs(vne(3)-vne(2))
             va = vne(1);                 % Extrapolation at x=a is not needed
         else
             va = 2*vne(2)-vne(3);        % Extrapolate to the left
         end
-        if abs(vne(6)-vne(5))<1e-14*funscl.v
+        if abs(vne(6)-vne(5)) < 10*abs(vne(5)-vne(4))
             vb = vne(6);                 % Extrapolation at x=b is not needed
         else
             vb = 2*vne(5)-vne(4);        % Extrapolate to the right
