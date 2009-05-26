@@ -41,7 +41,7 @@ function f = chebfun(varargin)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 persistent default_f
-if isempty(default_f)
+if isnumeric(default_f)
     default_f = ctor_ini;
     default_f = class(default_f,'chebfun');
 end

@@ -19,7 +19,7 @@ function g = fun(op,n,scl)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 persistent default_g
-if isempty(default_g)
+if isnumeric(default_g)
     default_g = ctor_ini;
     default_g = class(default_g,'fun');
 end
