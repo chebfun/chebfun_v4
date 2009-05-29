@@ -86,7 +86,13 @@ end
 
 % Transform the domain of g as needed.
 if ~isempty(g)                                   % translate
-  g.ends = subint(1) + (g.ends-g.ends(1))*diff(subint)/length(domain(g));
+  len = length(domain(g));
+  % Avoid translating an interval to what appears to be itself. Doing so
+  % can introduce FP errors that can change the domain in a way that breaks
+  % equality testing. (Arises in horzcat or subsasgn to a quasimatrix.)
+  if any( abs(g.ends-subint) > 4*eps*len )
+    g.ends = subint(1) + (g.ends-g.ends(1))*diff(subint)/len;
+  end
 end
 
 % Trivial return case.

@@ -12,7 +12,7 @@ if nargin==0
 end
 dom = domain(varargin{1});
 for k = 2:nargin
-  if ~eq(domain(varargin{2}),dom)
+  if ~eq(domain(varargin{k}),dom)
     error('chebop:domaincheck:nomatch','Function domains do not match.')
   end
 end
