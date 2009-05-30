@@ -1,4 +1,4 @@
-function fout = merge(f, bkpts, maxn)
+function fout = merge(f, bkpts, pref)
 % MERGE   Try to remove breakpoints.
 %   G = MERGE(F) returns a chebfun representation of F with the smallest 
 %   number of breakpoints possible such that each smooth piece has at
@@ -21,15 +21,15 @@ function fout = merge(f, bkpts, maxn)
 %
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+%   Copyright 2002-2008 by The Chebfun Team. 
 
-tol = 1e7*chebfunpref('eps');
+tol = 1e7*pref.eps;
 
 if numel(f) > 1
     error('MERGE does not handle chebfun quasi-matrices')
 end
 
-if nargin < 2
+if nargin < 3
     bkpts = 2:f.nfuns;
 end
 if isempty(bkpts)
@@ -38,12 +38,14 @@ if isempty(bkpts)
 end
 bkpts = unique(bkpts);
 
-if nargin < 3
-    if ~chebfunpref('splitting')
-        maxn = chebfunpref('maxdegree')+1; % default 2^16+1
-    else
-        maxn = chebfunpref('splitdegree')+1; % default 129
-    end
+if nargin < 2
+    pref = chebfunpref;
+end
+
+if ~pref.splitting
+    maxn =pref.maxdegree+1; % default 2^16+1
+else
+    maxn = pref.splitdegree+1; % default 129
 end
 
 if  bkpts(1) < 1 || bkpts(end) > f.nfuns+1 || any(round(bkpts)~=bkpts)
@@ -68,7 +70,7 @@ for k = bkpts
         % Prevent merging if there are jumps (very loose tolerance)
         if  norm(v(1) - v(2:3),inf) < tol*f.scl 
             [mergedfun, hpy] = getfun(@(x) feval(fout,x),  ... 
-                               [fout.ends(j-1), fout.ends(j+1)], maxn, scl);
+                               [fout.ends(j-1), fout.ends(j+1)], maxn, scl, pref);
             % merging successful                  
             if hpy 
                 fout.funs = [fout.funs(1:j-2) mergedfun fout.funs(j+1:end)];

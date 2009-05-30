@@ -1,4 +1,4 @@
-function g = ctor_1(g,op)
+function g = ctor_1(g,op,pref)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
@@ -23,4 +23,4 @@ switch class(op)
             'cannot be used to construct a fun object'])
 end
 
-g = growfun(op,g,chebfunpref('maxdegree')+1);
+g = growfun(op,g,chebfunpref('maxdegree')+1,pref);

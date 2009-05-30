@@ -1,5 +1,5 @@
-function [funs,ends,scl] = auto(op,ends,scl)
-% [FUNS,ENDS,SCL,SING] = AUTO(OP,ENDS,SCL)
+function [funs,ends,scl] = auto(op,ends,scl,pref)
+% [FUNS,ENDS,SCL,SING] = AUTO(OP,ENDS,SCL,PREF)
 %    AUTO generates a vector of FUNS used to construct a chebfun
 %    representation of the function handle OP. 
 %
@@ -10,8 +10,10 @@ function [funs,ends,scl] = auto(op,ends,scl)
 %    SCL is a structure with two fields: SCL.H and SCL.V corresponding to 
 %    the horizonatal and veritcal global scales. This vector is update 
 %    within AUTO and is returned as output. 
+% 
+%    PREF is the chebfun preference structure (see chebfunpref).
 %
-%    Note: this function is used in ctor_1.m and ctor_2.m
+%    Note: this function is used in ctor_2.m
 %
 %    See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -19,9 +21,6 @@ function [funs,ends,scl] = auto(op,ends,scl)
  
 % Initial setup.
 
-if nargin <3
-    scl.h = max(abs(ends)); scl.v = 0;
-end
 
 htol = 1e-14*scl.h;
 
@@ -30,9 +29,9 @@ htol = 1e-14*scl.h;
 % In SPLITTING OFF mode, seek only one piece with length no greater than
 % maxdegree (default is 2^16)
 
-if ~chebfunpref('splitting')
-     maxn = chebfunpref('maxdegree')+1;
-     [funs,hpy] = getfun(op,ends,maxn,scl);
+if ~pref.splitting
+     maxn = pref.maxdegree+1;
+     [funs,hpy] = getfun(op,ends,maxn,scl,pref);
      if ~hpy
         warning('CHEBFUN:auto',['Function not resolved, using ' int2str(maxn) ...
             ' pts. Have you tried ''splitting on''?']);
@@ -42,10 +41,10 @@ end
 % ------------------------------------------------------------------------
 
 % SPLITTING ON mode!
-maxn = chebfunpref('maxlength')+1;
-nsplit = chebfunpref('splitdegree')+1;            % Get maxn from preferences: default is 129.
+maxn = pref.maxlength+1;
+nsplit = pref.splitdegree+1;            % Get maxn from preferences: default is 129.
 
-[funs,hpy,scl] = getfun(op,ends,nsplit,scl);    % Try to get one smooth piece for the entire interval 
+[funs,hpy,scl] = getfun(op,ends,nsplit,scl,pref);    % Try to get one smooth piece for the entire interval 
 sad = ~hpy;                                     % before splitting interval
 
 % MAIN LOOP
@@ -70,8 +69,8 @@ while any(sad)
 
     % Try to obtain happy funs on each new subinterval.
     % ------------------------------------
-    [child1, hpy1, scl] = getfun(op, [a, edge], nsplit, scl);
-    [child2, hpy2, scl] = getfun(op, [edge, b], nsplit, scl);
+    [child1, hpy1, scl] = getfun(op, [a, edge], nsplit, scl, pref);
+    [child2, hpy2, scl] = getfun(op, [edge, b], nsplit, scl, pref);
     funs = [funs(1:i-1) child1 child2 funs(i+1:end)];
     ends = [ends(1:i) edge ends(i+1:end)];
     sad  = [sad(1:i-1) not(hpy1) not(hpy2) sad(i+1:end)];

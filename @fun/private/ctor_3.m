@@ -1,4 +1,4 @@
-function g = ctor_3(g,op,n,scl)
+function g = ctor_3(g,op,n,scl,pref)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
@@ -34,4 +34,4 @@ switch class(op)
             ' cannot be used to construct a fun object'])
 end
 
-g = growfun(op,g,n);
+g = growfun(op,g,n,pref);

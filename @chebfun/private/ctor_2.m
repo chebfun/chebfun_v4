@@ -1,4 +1,4 @@
-function f = ctor_2(f,ops,ends)
+function f = ctor_2(f,ops,ends,pref)
 
 % Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
@@ -33,12 +33,12 @@ for i = 1:length(ops)
             end
             op = inline(op);
             vectorcheck(op,ends(i:i+1));
-            [fs,es,scl] = auto(op,ends(i:i+1),scl);
+            [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];
             newends = [newends es(2:end)];
         case 'function_handle'
             vectorcheck(op,ends(i:i+1));
-            [fs,es,scl] = auto(op,ends(i:i+1),scl);
+            [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];
             newends = [newends es(2:end)];
         case 'chebfun'
@@ -70,5 +70,5 @@ imps = jumpvals(funs,newends,op); % Update values at jumps, first row of imps.
 f = set(f,'funs',funs,'ends',newends,'imps',imps,'trans',0);
 
 if length(f.ends)>2 
-    f = merge(f,find(~ismember(newends,ends))); % Avoid merging at specified breakpoints
+    f = merge(f,find(~ismember(newends,ends)),pref); % Avoid merging at specified breakpoints
 end

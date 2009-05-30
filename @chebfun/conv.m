@@ -69,10 +69,11 @@ scl.v = max(g.scl,f.scl);
 % Avoid resampling for speed up!
 %res = chebfunpref('resampling');
 %resampling off
-nmax = chebfunpref('maxlength');
+pref = chebfunpref;
+pref.sampletest = false;
 % Construct funs
 for k =1:length(ends)-1  
-    newfun = fun(@(x) integral(scale(x,ends(k),ends(k+1)),a,b,c,d,f,g), nmax, scl);
+    newfun = fun(@(x) integral(scale(x,ends(k),ends(k+1)),a,b,c,d,f,g), pref.maxdegree, scl, pref);
     scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
     funs = [funs simplify(newfun)];
 end

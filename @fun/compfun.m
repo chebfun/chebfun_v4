@@ -8,16 +8,16 @@ function gout = compfun(g1,op,g2)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
-
-if chebfunpref('splitting')
-    n = chebfunpref('splitdegree')+1;
+pref = chebfunpref;
+if pref.splitting
+    n = pref.splitdegree+1;
 else
-    n = chebfunpref('maxdegree')+1;
+    n = pref.maxdegree+1;
 end
 
 if nargin == 3
-    gout = growfun(op,g1,n,g1,g2);
+    gout = growfun(op,g1,n,pref,g1,g2);
 else
-    gout = growfun(op,g1,n,g1);
+    gout = growfun(op,g1,n,pref,g1);
 end
 

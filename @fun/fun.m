@@ -1,4 +1,4 @@
-function g = fun(op,n,scl)
+function g = fun(op,n,scl,pref)
 % FUN	Constructor
 % FUN(OP) constructs a fun object for the function OP.  If OP is a string,
 % such as '3*x.^2+1', or a function handle, FUN(OP) automatically determines 
@@ -12,6 +12,9 @@ function g = fun(op,n,scl)
 % adaptively.  Here SCL is a structure with fields SCL.H (horizontal scale)  
 % and SCL.V (vertical scale). 
 %
+% FUN(OP,N,SCL,PREF) uses the preferences provided in the structure PREF to
+% construct the fun. See CHEBFUNPREF for possible fields.
+%
 % FUN creates an empty fun.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
@@ -24,9 +27,19 @@ if isnumeric(default_g)
     default_g = class(default_g,'fun');
 end
 g = default_g;
-if      nargin == 1,    g = ctor_1(g,op);
-elseif  nargin == 2,    g = ctor_2(g,op,n);
-elseif  nargin == 3,    g = ctor_3(g,op,n,scl);
-elseif  nargin > 3, error(['Class fun cannot be constructed from '...
+
+if nargin<4             % Preferences provided ?
+    if nargin ~= 2      % This case is non-adaptive (no preference needed)
+        pref = chebfunpref;
+    end
+    narg = nargin;  
+else
+    narg = nargin - 1; % preference was provided
+end
+
+if      narg == 1,    g = ctor_1(g,op,pref);
+elseif  narg == 2,    g = ctor_2(g,op,n);           % Non adaptive case.
+elseif  narg == 3,    g = ctor_3(g,op,n,scl,pref);
+elseif  narg > 3, error(['Class fun cannot be constructed from '...
         num2str(nargin) ' input arguments.']);
 end

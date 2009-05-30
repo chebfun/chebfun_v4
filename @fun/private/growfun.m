@@ -1,29 +1,30 @@
-function g = growfun(op,g,n,g1,g2)
-% G = GROWFUN(OP,G,N,G1,G2)
+function g = growfun(op,g,n,pref,g1,g2)
+%  GROWFUN samples OP to generate a FUN adaptively
 %
-% G = GROWFUN(OP,G,N) returns the fun G representing the function handle OP.
+% G = GROWFUN(OP,G,N,PREF) returns the fun G representing the function handle OP.
 %   N is the maximum number of points allowed in the representation.
 %
-% G = GROWFUN(OP,G,N,G1) returns the fun G representing the composition 
+% G = GROWFUN(OP,G,N,PREF,G1) returns the fun G representing the composition 
 %   OP(G1), where G1 is a fun. 
 %
-% G = GROWFUN(OP,G,N,G1,G2) returns the fun G representing the composition 
+% G = GROWFUN(OP,G,N,PREF,G1,G2) returns the fun G representing the composition 
 %   OP(G1,G2), where G1 and G2 are funs.
 %
+% PREF is the chebfun preference structure (see chebfunpref).
+%
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 % Check preferences 
-split = chebfunpref('splitting');
-resample = chebfunpref('resampling');
+split = pref.splitting;
+resample = pref.resampling;
 
 % Set minn 
-if nargin == 4
+if nargin == 5
     minn = max(5, g1.n);
-elseif nargin == 5
+elseif nargin == 6
     minn = max([5, g1.n, g2.n]);
 else
-    minn = chebfunpref('minsamples');
+    minn = pref.minsamples;
 end
     
 % Sample using powers of 2.
@@ -41,17 +42,17 @@ end
     
 % ---------------------------------------------------
 % composition case, i.e., want gout = op(g) (see FUN/COMP.M)
-if nargin > 3
+if nargin > 4
     for k = kk
         v1 = get(prolong(g1,k),'vals');
-        if nargin == 5
+        if nargin == 6
             v2 = get(prolong(g2,k),'vals');
             v = op(v1,v2);
         else
             v = op(v1);
         end
         g = set(g,'vals', v);
-        g = simplify(g);
+        g = simplify(g,pref.eps);
         if g.n < k, break, end
     end
     return
@@ -62,11 +63,12 @@ if  ~resample && 2^npower+1 == n && nargin<4
     
     % single sampling
     ind =1;
-    v = op(chebpts(kk(ind)));
+    x = chebpts(kk(ind));
+    v = op(x);
     while kk(ind)<=kk(end)        
         g = set(g,'vals',v);
-        g = simplify(g);
-        if g.n < kk(ind) || ind==length(kk), break, end        
+        [ish, g] = ishappy(op,g,x,pref);
+        if ish || ind==length(kk), break, end        
         ind =ind+1;
         x = chebpts(kk(ind));
         v(1:2:kk(ind)) = v; 
@@ -84,9 +86,10 @@ else
     
     % double sampling (This is the standard way of growing a fun)
     for k = kk
-        g = set(g,'vals',op(chebpts(k)));
-        g = simplify(g);
-        if g.n < k, break, end
+        x = chebpts(k);
+        g = set(g,'vals',op(x));   
+        [ish, g] = ishappy(op,g,x,pref);
+        if ish, break, end
     end
     
      % Check for NaN's or Inf's    
@@ -95,3 +98,26 @@ else
      end
     
 end
+
+%-------------------------------------------------------------------------
+function  [ish,g] = ishappy(op,g,x,pref)
+% ISHAPPY happyness test for funs
+%   [ISH,G2] = ISHAPPY(OP,G,X,PREF) tests if the fun G is a good approximation to
+%   the function handle OP. X is the vector of Chebyshev nodes use to
+%   generate the values in G. ISH is either true or false. If ISH is true,
+%   G2 is the simplified version of G. PREF is the chebfunpref structure.
+
+% Antialiasing procedure
+if pref.sampletest
+    [mx indx] = max(abs(diff(g.vals))./diff(x));
+    xeval = (x(indx+1)+sqrt(2)*x(indx))/(1+sqrt(2));
+    v = op([-1;xeval;1]);
+    if abs(v(2)-bary(xeval,g.vals)) > 1e4*pref.eps*g.scl.v
+        ish =  false;
+        return
+    end
+end
+
+n = g.n;
+g = simplify(g,pref.eps);
+ish = g.n < n;

@@ -44,6 +44,9 @@ function varargout = chebfunpref(varargin)
 %
 % eps - Relative tolerance. Factory value is 2^-52 (eps).
 %
+% sampletest - Extra test in the construction of chebfuns to avoid
+%   aliasing.
+%
 % Examples
 %       chebfunpref
 %       chebfunpref('minn', 17)
@@ -68,15 +71,20 @@ if nargin == 1
         return
     catch
         % Move on to longer precess.
-    end        
+    end  
+    
+% Return preference structure if no input is provided.    
+elseif nargin == 0 && ~isempty(prefs)
+     varargout = { prefs };
 end        
 % -----------------------------------------------
+
 
 % If the above didn't work, go through the longer process:
 
 % These are the options
-options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps'};
-factoryvals = {false,       9,            2^16,      6000,      128,          true,         [-1 1],   2^-52};
+options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest'};
+factoryvals = {false,       9,            2^16,      6000,      128,          true,         [-1 1],   2^-52,        false};
 
 % Restore defaults ?
 factory_flag = false;

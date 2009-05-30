@@ -16,7 +16,7 @@ function f = chebfun(varargin)
 % 
 % CHEBFUN(f1,f2,...,fm,ends), where ends is an increasing vector of length
 % m+1, constructs a piecewise smooth chebfun from the functions f1,...,fm. 
-% Each funcion fi can be a string, a function handle or a doubles array, 
+% Each function fi can be a string, a function handle or a doubles array, 
 % and is defined in the interval [ends(i) ends(i+1)]. 
 %
 % CHEBFUN(f1,f2,...,fm,ends,np), where np is a vector of length m, specifies
@@ -36,6 +36,10 @@ function f = chebfun(varargin)
 % intervals where the funs apply, and a matrix 'imps' containing information
 % about possible delta functions at the breakpoints between funs.
 %
+% F = CHEBFUN(...,PREFNAME,PREFVAL) returns a chebfun using the preference 
+% PREFNAME with value specified by PREFVAL. See chebfunpref for possible
+% preferences.
+%
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
@@ -46,22 +50,48 @@ if isnumeric(default_f)
     default_f = class(default_f,'chebfun');
 end
 f = default_f;
-if      nargin == 1,    
-    f = ctor_1(f,varargin{1});
-elseif nargin > 1
-    
-    % deal with the domain class
-    if isa(varargin{2},'domain'), varargin{2}=double(varargin{2}); end
-    
-    if ~iscell(varargin{1})
-        varargin = unwrap_arg(varargin{:});
+
+% No arguments -> return empty chebfun
+if nargin == 0; return, end
+
+% Chebfun preferences:
+pref = chebfunpref;
+
+% Find out if call changes preferences
+argin = {varargin{1}};
+k = 2; j = 2;
+while k <= nargin
+    if ischar(varargin{k})
+        varargin{k} = lower(varargin{k});
+        if  any(strcmp(fieldnames(pref),varargin{k}))
+            pref.(varargin{k}) = varargin{k+1};
+            k = k+2;
+        else
+            argin{j} = varargin{k};
+            j = j+1; k = k+1;
+        end
+    else
+        argin{j} = varargin{k};
+        j = j+1; k = k+1;
     end
-    
-    
-    if  length(varargin) == 2,    
-        f = ctor_2(f,varargin{:});
-    elseif length(varargin) == 3,
-        f = ctor_3(f,varargin{:});
-    end
-    
+end
+
+% Get domain
+if  length(argin) == 1,
+    argin{2} = double(pref.domain);
+elseif isa(argin{2},'domain')
+    argin{2}=double(argin{2});
+end
+
+if ~iscell(argin{1})
+    argin = unwrap_arg(argin{:});
+end
+
+% Construct chebfun
+if  length(argin) == 2,
+    f = ctor_2(f,argin{:},pref); % adaptive call
+elseif length(argin) == 3,
+    f = ctor_3(f,argin{:});      % non-adaptive call
+end
+
 end

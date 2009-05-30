@@ -1,4 +1,4 @@
-function [g, hpy, scl] = getfun(op, interval, maxn, scl)
+function [g, hpy, scl] = getfun(op, interval, maxn, scl, pref)
 % [G, HPY, SCL] = GETFUN(OP, INTERVAL, MAXN, SCL)
 %   GETFUN returns a fun with length at most MAXN with respect to the
 %   horizonta and vertical scales in SCL (SCL.H and SCL.V).
@@ -8,6 +8,8 @@ function [g, hpy, scl] = getfun(op, interval, maxn, scl)
 %
 %   The structure SCL gets uptdate within this function and is returned as
 %   an output.
+%
+%   PREF is the chebfun preference structure (see chebfunpref).
 %
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -32,14 +34,14 @@ if (b-a) < 2*htol
     %warning('CHEBFUN:getfun:SmallInterval','Small interval, fun might be unhappy')
 else
 
-    if ~chebfunpref('splitting') % In splitting OFF mode, use values at end points
+    if ~(pref.splitting) % In splitting OFF mode, use values at end points
         % get fun!
-        g = fun(@(x) op(.5*((b-a)*x+b+a)), maxn, funscl);
+        g = fun(@(x) op(.5*((b-a)*x+b+a)), maxn, funscl, pref);
 
     else % In splitting ON mode, decide whether extrapolate values to the boundary
 
         % Get values at the boundary and close to it.
-        vne = op([a, a+eps(a), a+2*eps(a), b-2*eps(b), b-eps(b), b]');
+        vne = op([a, a+htol, a+2*htol, b-2*htol, b-htol, b]');
         funscl.v = max(funscl.v,norm(vne,inf));
         
         % Check for NaN's or Inf's
@@ -47,19 +49,19 @@ else
             error('CHEBFUN:getfun:naneval','Function returned NaN or Inf when evaluated.')
         end
         
-        if abs(vne(1)-vne(2)) < 10*abs(vne(3)-vne(2))
+        if abs(vne(1)-vne(2)) <= 10*abs(vne(3)-vne(2))
             va = vne(1);                 % Extrapolation at x=a is not needed
         else
             va = 2*vne(2)-vne(3);        % Extrapolate to the left
         end
-        if abs(vne(6)-vne(5)) < 10*abs(vne(5)-vne(4))
+        if abs(vne(6)-vne(5)) <= 10*abs(vne(5)-vne(4))
             vb = vne(6);                 % Extrapolation at x=b is not needed
         else
             vb = 2*vne(5)-vne(4);        % Extrapolate to the right
         end
 
         % get fun!
-        g = fun(@(x) eval_op(x,op,va,vb,a,b), maxn, funscl);
+        g = fun(@(x) eval_op(x,op,va,vb,a,b), maxn, funscl, pref);
 
     end
 
@@ -70,7 +72,7 @@ end
 
 % -------------------------------------------------------------------------
 function y = eval_op(x,op,va,vb,a,b)
+% Extrapolation.
 
-y = op(.5*((b-a)*x+b+a));
-y(1) = va;
-y(end) = vb;
+y= op(.5*((b-a)*x(2:end-1)+b+a));
+y = [va; y; vb];

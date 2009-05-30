@@ -1,6 +1,8 @@
-function gout = simplify(g)
+function gout = simplify(g, tol)
 % This function removes leading Chebyshev coefficients that are below 
-% epsilon, relative to the verical scale stored in g.scl.v
+% epsilon, relative to the verical scale stored in g.scl.v. TOL is the
+% tolerance used in this process. IF TOL is not provieded, it is retrived
+% from CHEBFUNPREF.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -10,7 +12,9 @@ function gout = simplify(g)
 
 % This is the code in the old fixedgrow.m by LNT
 
-tol = chebfunpref('eps');
+if nargin == 1
+    tol = chebfunpref('eps');
+end
 epstol = 2^-52;
 
 gout = g;
