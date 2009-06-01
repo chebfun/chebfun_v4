@@ -23,12 +23,12 @@ switch index(1).type
             s = idx{1}; % where to evaluate
         end     
         % ---- read input arguments -----------------------------
-        if length(idx) == 1
+        if length(idx) == 1 
             % f(s), where s can be vector, domain or ':'
             % syntaxis not allowed when f is a quasimatrix
-            if n ~= 1
-                error('chebfun:subsasgn:dimensions',...
-                    'Index missing for quasi-matrix assignment.')
+            if n ~= 1 && isnumeric(s)
+               error('chebfun:subsasgn:dimensions',...
+                   'Index missing for quasi-matrix assignment.')
             end
         elseif length(idx) == 2
             if get(f,'trans')
@@ -47,7 +47,7 @@ switch index(1).type
             f = restrict(f,s);            
             varargout = { f };
         % RodP added this here for composition of chebfuns (May 2009) -----    
-        elseif isa(s,'chebfun')
+        elseif isa(s,'chebfun') || isa(s,'function_handle')
             varargout = { compose(f,s) };
         % -----------------------------------------------------------------
         elseif isequal(s,':')
