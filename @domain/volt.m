@@ -1,9 +1,9 @@
-function F = fred(k,d)
-% FRED  Fredholm integral operator.
-% F = FRED(K,D) constructs a chebop representing the Fredholm integral
+function V = volt(k,d)
+% VOLT  Volterra integral operator.
+% V = VOLT(K,D) constructs a chebop representing the Volterra integral
 % operator with kernel K for functions in domain D=[a,b]:
 %    
-%      (F*v)(x) = int( K(x,y)*v(y), y=a..b )
+%      (F*v)(x) = int( K(x,y) v(y), y=a..x )
 %  
 % The kernel function K(x,y) should be smooth for best results.
 %
@@ -21,29 +21,29 @@ function F = fred(k,d)
 %   else
 %     K = exp(X-Y);
 %   end
-%
-%  See also volt, chebop.
+%  See also fred, chebop.
 
 % Copyright 2009 by Toby Driscoll.
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 % $Id$
 
-F = chebop(@matrix,@op,d);
+C = cumsum(d);
+V = chebop(@matrix,@op,d,-1);
 
 % Functional form. At each x, do an adaptive quadrature.
   function v = op(u)
-    v = chebfun( vec(@(x) sum( u.*chebfun(@(y) k(x,y),d)) ), d );
+    h = @(x) chebfun(@(y) u(y).*k(x,y),[d.ends(1) x]);  % integrand at any x
+    v = chebfun( vec(@(x) sum(h(x))), d );
   end
 
-C = cumsum(d);
-s = C(end,:);  % Clenshaw-Curtis weights for any n
-
-% Matrix form. At given n, multiply function values by CC quadrature
-% weights, then apply kernel as inner products. 
+% Matrix form. Each row of the result, when taken as an inner product with
+% function values, does the proper quadrature. Note that while C(n) would
+% be triangular for low-order quadrature, for spectral methods it is not.
   function A = matrix(n)
     x = chebpts(d,n);
     [X,Y] = ndgrid(x);
-    A = k(X,Y) * spdiags(s(n)',0,n,n);
+    A = k(X,Y).*C(n);
   end
     
+
 end

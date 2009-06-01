@@ -1,9 +1,13 @@
 function x = chebpts(d,n)
-%CHEBPTS Chebyshev points in a domain.
-% X = CHEBPTS(D,N) returns N Chebyshev points scaled to the domain D.
+%CHEBPTS  Return Chebyshev interpolation points in a domain.
+% CHEBPTS(D,N) returns a vector of N Chebyshev nodes in the domain D. The
+% points are ordered from left to right and include the endpoints of the
+% domain.
+%
+% See also domain/linspace.
 
-% Copyright 2009 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
- 
+% Copyright 2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+
 x = chebpts(n);
 ab = d.ends;
 x = (x+1)/2*diff(ab) + ab(1);
