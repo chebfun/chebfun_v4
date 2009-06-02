@@ -1,23 +1,48 @@
-function p = bary_general(x,xk,pk,w)  
-% BARY_GENERAL  Barycentric interpolation with arbitrary weights.
-% P = BARY_GENERAL(X,XK,PK,W) interpolates the values PK at nodes XK in the
-% point X using the barycentric weights W. 
+function x = bary_general(x,xk,gvals,ek)  
+% BARY_GENERAL  Barycentric interpolation with arbitrary weights/nodes.
+%  P = BARY_GENERAL(X,XK,GVALS,W) interpolates the values PK at nodes 
+%  XK in the point X using the barycentric weights EK. 
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+%  Copyright 2002-2009 by The Chebfun Team. 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
-p = zeros(size(x));
-numer = p; denom = p; exact = p;
-I = true(size(x));                 % x(i)=false if x(i)=xk(j), some j
-for j = 1:length(xk)
-  xdiff = x-xk(j);
-  ii = find(xdiff==0);
-  exact(ii) = j;
-  I(ii) = false;
-  tmp = w(j)./xdiff(I);
-  numer(I) = numer(I) + tmp*pk(j);
-  denom(I) = denom(I) + tmp;
+n = length(xk);
+
+% Default to Chebyshev nodes and weights
+if nargin < 3
+    gvals = xk;
+    xk = chebpts(n);
+    ek = [1/2; ones(n-2,1); 1/2].*(-1).^((0:n-1)'); 
 end
-p(~I) = pk(exact(~I));
-p(I) = numer(I)./denom(I);
+       
+if n == 1
+    % The function is a constant
+    x = gvals*ones(size(x));
+    return;
+end
+    
+[mem,loc] = ismember(x,xk);
+
+if length(x) < length(xk)
+    for i = 1:numel(x)
+        if ~mem(i)
+            xx = ek./(x(i)-xk);
+            x(i) = (xx.'*gvals)/sum(xx);
+        end
+    end      
+else
+     xnew = x(~mem);
+     num = zeros(size(xnew)); denom = num;
+     for i = 1:numel(xk)
+          y = ek(i)./(xnew-xk(i));
+          num = num+(gvals(i)*y);
+          denom = denom+y;
+     end
+     x(~mem) = num./denom;
+end
+
+x(mem) = gvals(loc(mem));
+
