@@ -26,7 +26,7 @@ while delta/normf > tol
     h = (w'*fk)/(w'*sigma);             % levelled reference error  
     if h==0, h = 1e-19; end             % perturb error if necessary
     pk = fk - h*sigma;                  % polynomial vals in the reference         
-    p=chebfun(@(x)bary_general(x,xk,pk,w),[a b], n+1); % chebfun of trial polynomial
+    p=chebfun(@(x)bary(x,pk,xk,w),[a b], n+1); % chebfun of trial polynomial
     e = f - p;                          % chebfun of the error    
     [xk,err] = exchange(xk,e,h,2);      % replace reference    
     if err/normf > 1e5                  % if overshoot, recompute with one-

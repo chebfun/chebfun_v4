@@ -30,4 +30,4 @@ function p = interp1(xk,yk,d)
 
 w = bary_weights(xk);
 a = d.ends;
-p = chebfun(@(x) bary_general(x,xk,yk,w),a([1 end]),length(xk));
+p = chebfun(@(x) bary(x,yk(:),xk(:),w(:)),a([1 end]),length(xk));

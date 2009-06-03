@@ -1,7 +1,11 @@
-function x = bary_general(x,xk,gvals,ek)  
-% BARY_GENERAL  Barycentric interpolation with arbitrary weights/nodes.
-%  P = BARY_GENERAL(X,XK,GVALS,W) interpolates the values PK at nodes 
+function x = bary(x,gvals,xk,ek)  
+% BARY  Barycentric interpolation with arbitrary weights/nodes.
+%  P = BARY(X,GVALS,XK,W) interpolates the values PK at nodes 
 %  XK in the point X using the barycentric weights EK. 
+%
+%  P = BARY(X,GVALS) assumes Chebyshev nodes and weights. 
+%
+%  All inputs should be column vectors.
 %
 %  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -9,23 +13,21 @@ function x = bary_general(x,xk,gvals,ek)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-n = length(xk);
+n = length(gvals);
 
-% Default to Chebyshev nodes and weights
-if nargin < 3
-    gvals = xk;
-    xk = chebpts(n);
-    ek = [1/2; ones(n-2,1); 1/2].*(-1).^((0:n-1)'); 
-end
-       
-if n == 1
-    % The function is a constant
+if n == 1               % The function is a constant
     x = gvals*ones(size(x));
     return;
 end
+
+if nargin < 3           % Default to Chebyshev nodes and weights
+    xk = chebpts(n);
+    ek = [1/2; ones(n-2,1); 1/2].*(-1).^((0:n-1)'); 
+end
+
     
 [mem,loc] = ismember(x,xk);
-
+    
 if length(x) < length(xk)
     for i = 1:numel(x)
         if ~mem(i)
@@ -45,4 +47,5 @@ else
 end
 
 x(mem) = gvals(loc(mem));
+
 
