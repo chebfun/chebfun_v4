@@ -15,9 +15,10 @@ function normA = norm(A,n)
 %    NORM(f,inf) = max(abs(f)).
 %    NORM(f,-inf) = min(abs(f)).
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+%   Copyright 2002-2009 by The Chebfun Team. 
+%   Last commit: $Author: nich $: $Rev: 489 $:
+%   $Date: 2009-06-04 22:25:42 +0100 (Thu, 04 Jun 2009) $:
 
 if nargin==1, n=2; end                  % 2-norm is the default
 
@@ -38,7 +39,7 @@ elseif min(size(A))==1                  % A is a chebfun
       case {inf,'inf'}
          if isreal(A)
              mm = minandmax(A);
-             normA = max(mm(1),-mm(2));
+             normA = max(mm(2),-mm(1));
          else
             normA = max(abs(A));
          end
