@@ -63,14 +63,14 @@ tol = 100*chebfunpref('eps');
 
 % Range of g must be in the domain of f.
 r = range(g);
-if f.ends(1) > r(1)+tol || f.ends(end) < r(2) - tol
+if f.ends(1) > r(1) + tol || f.ends(end) < r(2) - tol
     error('chebfun:compose:domain','F(G): range of G, [%g, %g], must be in the domain of F, [%g, %g].', mi, ma, f.ends(1), f.ends(2))
 end
 
 % If f has breakpoints, find the corresponding x-points in the domain of g.
 bkpts = [];
 if f.nfuns >1
-    bkf = f.ends(f.ends > min(mi)+tol & f.ends < max(ma)-tol);
+    bkf = f.ends(f.ends > r(1) + tol & f.ends < r(2) - tol);
     for k = 1:length(bkf)
         bkpts = [bkpts; roots(g-bkf(k))];
     end
