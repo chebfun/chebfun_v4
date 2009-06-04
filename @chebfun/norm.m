@@ -37,7 +37,8 @@ elseif min(size(A))==1                  % A is a chebfun
          end
       case {inf,'inf'}
          if isreal(A)
-            normA = max(max(A),-min(A));
+             mm = minandmax(A);
+             normA = max(mm(1),-mm(2));
          else
             normA = max(abs(A));
          end
