@@ -17,8 +17,8 @@ if isa(F1,'double')
 elseif isa(F2,'double')
     H = F2 + F1;
 else
-    if size(F1)~=size(F2)
-        error('size(F1)~=size(F2)')
+    if any(size(F1)~=size(F2))
+        error('chebfun:plus:size','Quasimatrix dimensions must agree.')
     end
     H = F2;
     for k = 1:numel(F2)
