@@ -43,6 +43,7 @@ mfile = {dirlist.name};
 
 fprintf('\nTesting %i functions:\n\n',length(mfile))
 failed = zeros(length(mfile),1);
+t = failed;    % vector to store times
 
 addpath(dirname)
 warnstate = warning;
@@ -91,5 +92,8 @@ else
   fprintf('\n%i failed and %i crashed\n\n',sum(failed>0),sum(failed<0))
   failfun = mfile(failed~=0);
 end
+
+ts = sum(t); tm = ts/60;
+fprintf('Total time:%6.1f seconds =%5.2f minutes \n',ts,tm)
 
 end
