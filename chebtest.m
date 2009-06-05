@@ -1,4 +1,4 @@
-function failfun = chebtest(dirname)
+function [failfun t] = chebtest(dirname)
 % CHEBTEST Probe chebfun system against standard test files.
 % CHEBTEST DIRNAME runs each M-file in the directory DIRNAME. Each M-file
 % should be a function that takes no inputs and returns a logical scalar 
@@ -59,11 +59,13 @@ for j = 1:length(mfile)
     close all
     chebfunpref('factory');
     chebfunpref('eps',tol);
+    tic
     failed(j) = ~ all(feval( fun ));
+    t(j) = toc;
     if failed(j)
       fprintf('FAILED\n')
     else
-      fprintf('passed\n')
+      fprintf('passed in %2.3fs \n',t(j))
       %pause(0.1)
       %fprintf( repmat('\b',1,numchar) )
     end
