@@ -5,4 +5,8 @@ function pass = rootspol
 p = chebfun( '(x-.1).*(x+.9).*x.*(x-.9) + 1e-14*x.^5' );
 r = roots(p);
 
-pass = length(r)==4 && norm(p(r),inf)<1e-13*chebfunpref('eps')/eps;
+pass(1) = length(r)==4 && norm(p(r),inf)<1e-13*chebfunpref('eps')/eps;
+
+f = chebfun(chebpolyval([0 0 0 0 1 0]));
+
+pass(2) = roots(f) == 0;

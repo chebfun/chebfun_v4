@@ -20,6 +20,8 @@ if (g.n<101)                                    % for small length funs
             return
         end
         c=c(ind:end);
+        g.vals = chebpolyval(c);
+        g.n = length(c);
     end
     if (g.n<=4)
         r=roots(poly(g));
