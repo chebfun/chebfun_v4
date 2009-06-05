@@ -17,6 +17,7 @@ if nargin==0
   v = [];
 elseif nargin==1
   v = varargin{1};
+  if isa(v,'domain'); v = v.ends; end
 else
   v = cat(2,varargin{:});
 end
