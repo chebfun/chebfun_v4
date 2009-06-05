@@ -23,15 +23,6 @@ function A = chebop(varargin)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
-pref = chebfunpref;
-if pref.splitting
-  warning('chebop:splitting','Splitting will now be turned OFF.')
-end
-if ~pref.resampling
-  warning('chebop:resampling','Resampling will now be turned ON.')
-end
-resampling on
-
 % Default properties.
 A.varmat = [];
 A.oparray = oparray;     % inf-dim representation

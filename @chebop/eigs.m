@@ -94,7 +94,7 @@ end
 % These assignments cause the nested function value() to overwrite them.
 V = [];  D = [];
 % Adaptively construct the sum of eigenfunctions.
-v = chebfun( @(x) A.scale + value(x) ) - A.scale;
+v = chebfun( @(x) A.scale + value(x), chebopdefaults) - A.scale;
 
 % Now V,D are already defined at the highest value of N used.
 
@@ -107,9 +107,9 @@ else
   for j = 1:k
     nrm2 = 0;
     for i = 1:m
-      f = chebfun( V(:,i,j), dom );
+      f = chebfun( V(:,i,j), dom, chebopdefaults);
       % This line is needed to simplify/compress the chebfuns.
-      f = chebfun( @(x) f(x), dom );
+      f = chebfun( @(x) f(x), dom, chebopdefaults);
       Vfun{i}(:,j) = f;  nrm2 = nrm2 + norm(f)^2;
     end
     % Normalization

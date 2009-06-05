@@ -45,7 +45,7 @@ function varargout = chebfunpref(varargin)
 % eps - Relative tolerance. Factory value is 2^-52 (eps).
 %
 % sampletest - Extra test in the construction of chebfuns to avoid
-%   aliasing.
+%   aliasing. Factory value is true.
 %
 % Examples
 %       chebfunpref
@@ -84,7 +84,7 @@ end
 
 % These are the options
 options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest'};
-factoryvals = {false,       9,            2^16,      6000,      128,          true,         [-1 1],   2^-52,        false};
+factoryvals = {false,       9,            2^16,      6000,      128,          true,         [-1 1],   2^-52,        true};
 
 % Restore defaults ?
 factory_flag = false;

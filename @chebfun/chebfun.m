@@ -55,37 +55,41 @@ f = default_f;
 if nargin == 0; return, end
 
 % Chebfun preferences:
-pref = chebfunpref;
-
-% Find out if call changes preferences
-argin = {varargin{1}};
-k = 2; j = 2;
-while k <= nargin
-    if ischar(varargin{k})
-        varargin{k} = lower(varargin{k});
-        % Is the argument a preference name?
-        if  any(strcmp(fieldnames(pref),varargin{k}))
-            % If ON or OFF used -> change to true or false
-            value = varargin{k+1};
-            if ischar(value)
-                if strcmpi(value,'on')
-                    value = true;
-                elseif strcmpi(value,'off')
-                    value = false;
-                else
-                    error('chebfun:chebfun:prefval', ...
-                        'Invalid chebfun preference value')
+if isstruct(varargin{nargin})
+    pref = varargin{nargin};
+    argin = varargin(1:end-1);
+else
+    pref = chebfunpref;
+    % Find out if call changes preferences
+    argin = varargin(1);
+    k = 2; j = 2;
+    while k <= nargin
+        if ischar(varargin{k})
+            varargin{k} = lower(varargin{k});
+            % Is the argument a preference name?
+            if  any(strcmp(fieldnames(pref),varargin{k}))
+                % If ON or OFF used -> change to true or false
+                value = varargin{k+1};
+                if ischar(value)
+                    if strcmpi(value,'on')
+                        value = true;
+                    elseif strcmpi(value,'off')
+                        value = false;
+                    else
+                        error('chebfun:chebfun:prefval', ...
+                            'Invalid chebfun preference value')
+                    end
                 end
+                pref.(varargin{k}) = value;
+                k = k+2;
+            else
+                argin{j} = varargin{k};
+                j = j+1; k = k+1;
             end
-            pref.(varargin{k}) = value;
-            k = k+2;
         else
             argin{j} = varargin{k};
             j = j+1; k = k+1;
         end
-    else
-        argin{j} = varargin{k};
-        j = j+1; k = k+1;
     end
 end
 

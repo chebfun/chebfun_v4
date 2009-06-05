@@ -67,7 +67,7 @@ if  ~resample && 2^npower+1 == n && nargin<4
     v = op(x);
     while kk(ind)<=kk(end)        
         g = set(g,'vals',v);
-        [ish, g] = ishappy(op,g,x,pref);
+        [ish, g] = ishappy(op,g,pref);
         if ish || ind==length(kk), break, end        
         ind =ind+1;
         x = chebpts(kk(ind));
@@ -88,7 +88,7 @@ else
     for k = kk
         x = chebpts(k);
         g = set(g,'vals',op(x));   
-        [ish, g] = ishappy(op,g,x,pref);
+        [ish, g] = ishappy(op,g,pref);
         if ish, break, end
     end
     
@@ -100,15 +100,20 @@ else
 end
 
 %-------------------------------------------------------------------------
-function  [ish,g] = ishappy(op,g,x,pref)
+function  [ish,g] = ishappy(op,g,pref)
 % ISHAPPY happyness test for funs
 %   [ISH,G2] = ISHAPPY(OP,G,X,PREF) tests if the fun G is a good approximation to
 %   the function handle OP. X is the vector of Chebyshev nodes use to
 %   generate the values in G. ISH is either true or false. If ISH is true,
 %   G2 is the simplified version of G. PREF is the chebfunpref structure.
 
+n = g.n;
+g = simplify(g,pref.eps);
+ish = g.n < n;
+
 % Antialiasing procedure
-if pref.sampletest
+if ish && pref.sampletest
+    x = chebpts(g.n);
     [mx indx] = max(abs(diff(g.vals))./diff(x));
     xeval = (x(indx+1)+sqrt(2)*x(indx))/(1+sqrt(2));
     v = op([-1;xeval;1]);
@@ -117,7 +122,3 @@ if pref.sampletest
         return
     end
 end
-
-n = g.n;
-g = simplify(g,pref.eps);
-ish = g.n < n;

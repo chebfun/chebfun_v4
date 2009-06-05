@@ -42,7 +42,7 @@ switch(class(B))
 
   case 'double'
     if length(B)==1  % scalar expansion
-      C = mldivide(A,chebfun(B,domain(A)));
+      C = mldivide(A,chebfun(B,domain(A),chebopdefaults));
     else
       error('chebop:mldivide:operand','Use scalar or chebfun with backslash.')
     end
@@ -57,16 +57,16 @@ switch(class(B))
     
     V = [];  % so that the nested function overwrites it
     if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
-      C = chebfun( @(x) A.scale(x)+value(x), dom ) - A.scale;
+      C = chebfun( @(x) A.scale(x)+value(x), dom, chebopdefaults) - A.scale;
     else
-      C = chebfun( @(x) A.scale+value(x), dom ) - A.scale;
+      C = chebfun( @(x) A.scale+value(x), dom, chebopdefaults) - A.scale;
     end
     
     % V has been overwritten by the nested value function.
     if m > 1
       for j = 1:m
-        c = chebfun( V(:,j), dom );
-        C(:,j) = chebfun( @(x) c(x), dom );
+        c = chebfun( V(:,j), dom, chebopdefaults);
+        C(:,j) = chebfun( @(x) c(x), dom, chebopdefaults);
       end
     end
     

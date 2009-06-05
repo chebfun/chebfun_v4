@@ -32,7 +32,7 @@ F = chebop(@matrix,@op,d);
 
 % Functional form. At each x, do an adaptive quadrature.
   function v = op(u)
-    v = chebfun( vec(@(x) sum( u.*chebfun(@(y) k(x,y),d)) ), d );
+    v = chebfun( vec(@(x) sum( u.*chebfun(@(y) k(x,y),d)) ), d, 'sampletest', false );
   end
 
 C = cumsum(d);

@@ -12,13 +12,23 @@ if isa(A,'double')
 end
 
 % Scalar expansion using identity.
-if isnumeric(B) && numel(B)==1
+if isnumeric(B) 
+ if numel(B)==1
   if diff(A.blocksize)~=0
     error('chebop:plus:expandsquare',...
       'Scalars can be added only to square chebops.')
   end
   m = A.blocksize(1);
   B = B*blockeye(domain(A),m);
+ elseif size(B,1) == size(B,2)
+  if A.numbc > 0
+    A = feval(A,size(B,1),'bc');
+  else
+    A = feval(A,size(B,1));
+  end
+ end
+  C = A + B;
+  return
 end
 
 if isa(B,'chebop')

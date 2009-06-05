@@ -20,9 +20,20 @@ end
 
 switch(class(B))
   case 'double'     % chebop * scalar
-    C = chebop(B*A.varmat, B*A.oparray, A.fundomain, A.difforder );
-    C.blocksize = A.blocksize;
-    
+    [m n] = size(B);
+    if max(m,n) == 1
+      C = chebop(B*A.varmat, B*A.oparray, A.fundomain, A.difforder );
+      C.blocksize = A.blocksize;
+    elseif n == 1
+      if A.numbc > 0
+        A = feval(A,m,'bc');
+      else
+        A = feval(A,m);
+      end
+      C = A*B;
+    else
+      error('chebop:mtimes:numericmatrix','Chebop-matrix multiplication is not well defined.')
+    end
   case 'chebop'     % chebop * chebop
     dom = domaincheck(A,B);
     if size(A,2) ~= size(B,1)
@@ -54,7 +65,7 @@ switch(class(B))
           Z = feval(A.oparray,B(:,k));
         else                     % matrix application
           combine = 1;  % no component combination required
-          Z = chebfun( @(x) value(x,B(:,k)), dom );
+          Z = chebfun( @(x) value(x,B(:,k)), dom, chebopdefaults );
         end
         C = [C Z]; 
       end
@@ -64,12 +75,12 @@ switch(class(B))
       else
         V = [];  % force nested function overwrite
         % For adaptation, combine solution components randomly.
-        combine = randn(A.blocksize(2),1);   
-        c = chebfun( @(x) value(x,B), dom );  % adapt
+        combine = randn(A.blocksize(2),1);  
+        c = chebfun( @(x) value(x,B), dom, chebopdefaults );  % adapt
         % Now V is defined with values of each component at cheb points.
         for k = 1:size(B,2)
-          c = chebfun( V(:,k), dom );
-          Z = chebfun( @(x) c(x), dom );  % to force simplification
+          c = chebfun( V(:,k), dom, chebopdefaults );
+          Z = chebfun( @(x) c(x), dom, chebopdefaults );  % to force simplification
           C = [C Z];
         end
       end
