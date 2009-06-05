@@ -8,7 +8,7 @@ function r = range(f,dim)
 %  The default for DIM is 1, unless F has a singleton dimension,
 %  in which case DIM is the continuous variable. 
 %
-%  For complex F, R = RANGE(F) is equivelent to RANGE(abs(F)).
+% %  For complex F, R = RANGE(F) is equivelent to RANGE(abs(F)).
 %
 %  See also chebfun/minandmax.
 %

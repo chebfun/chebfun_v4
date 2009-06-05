@@ -118,7 +118,7 @@ end
 [y(1),I1] = min(yy(:,1));
 [y(2),I2] = max(yy(:,2));
 
-x(1) = xx(I1); x(2) = xx(I2);
+x(1) = xx(I1,1); x(2) = xx(I2,2);
 
 %Check values at end break points
 ind = find(f.imps(1,:) < y(1));
@@ -136,7 +136,7 @@ end
 
 end
 
-function h = maxfun(f,g)
+function h = maxfun(f,g,ignored)
 % Return the function h(x)=max(f(x),g(x)) for all x.
 % If one is complex, use abs(f) and abs(g) to determine which function
 % values to keep. (experimental feature)
@@ -174,7 +174,7 @@ if any(smooth)
 end
 end
 
-function h = minfun(f,g)
+function h = minfun(f,g,ignored)
 % Return the function h(x)=min(f(x),g(x)) for all x.
 % If one is complex, use abs(f) and abs(g) to determine which function
 % values to keep. (experimental feature)

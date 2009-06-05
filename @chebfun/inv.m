@@ -11,7 +11,7 @@ if numel(f) > 1
     error('chebfun:inv:noquasi','no supprt for quasimatrices');
 end
 
-[d x] = domain(range(f));
+[d x] = domain(minandmax(f));
 
 g = chebfun(@(x) op(f,x),d,'resampling',0);
 

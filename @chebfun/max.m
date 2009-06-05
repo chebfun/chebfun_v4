@@ -58,7 +58,7 @@ else   % 1 or 3 inputs
         y(1,k) = yk;  x(1,k) = xk;
       else
         [yk,xk] = maxval(abs(f(k)));
-        x(1,k) = xk;  y(1,k) = feval(f(k),xk);  
+        x(1,k) = xk;  y(1,k) = feval(f(k),xk);
       end        
     end
     if f(1).trans
@@ -80,7 +80,7 @@ end
 
 end  % max function
 
-function h = maxfun(f,g)
+function h = maxfun(f,g,ignored)
 % Return the function h(x)=max(f(x),g(x)) for all x.
 % If one is complex, use abs(f) and abs(g) to determine which function
 % values to keep. (experimental feature)
