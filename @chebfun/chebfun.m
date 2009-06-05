@@ -63,8 +63,21 @@ k = 2; j = 2;
 while k <= nargin
     if ischar(varargin{k})
         varargin{k} = lower(varargin{k});
+        % Is the argument a preference name?
         if  any(strcmp(fieldnames(pref),varargin{k}))
-            pref.(varargin{k}) = varargin{k+1};
+            % If ON or OFF used -> change to true or false
+            value = varargin{k+1};
+            if ischar(value)
+                if strcmpi(value,'on')
+                    value = true;
+                elseif strcmpi(value,'off')
+                    value = false;
+                else
+                    error('chebfun:chebfun:prefval', ...
+                        'Invalid chebfun preference value')
+                end
+            end
+            pref.(varargin{k}) = value;
             k = k+2;
         else
             argin{j} = varargin{k};
