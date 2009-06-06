@@ -56,15 +56,19 @@ end
 
 % g must be a real-valued function
 if ~isreal(g)
-    error('chebfun:compose:complex', 'G must be real valued to construct F(G)')
+%     error('chebfun:compose:complex', 'G must be real valued to construct F(G).')
+%     warning('chebfun:compose:complex', 'G SHOULD be real valued to construct F(G).');
+    % Experimental feature allows composition when G has a complex range.
+    %   This is only really of any use when F is constructed from a
+    %   polynomial otherwise approximation off the real line is awful.
 end
 
 tol = 100*chebfunpref('eps');
 
 % Range of g must be in the domain of f.
 r = minandmax(g);
-if f.ends(1) > r(1) + tol || f.ends(end) < r(2) - tol
-    error('chebfun:compose:domain','F(G): range of G, [%g, %g], must be in the domain of F, [%g, %g].', mi, ma, f.ends(1), f.ends(2))
+if f.ends(1) > r(1) + tol || f.ends(end) < r(2) - tol && isreal(g)
+    error('chebfun:compose:domain','F(G): range of G, [%g, %g], must be in the domain of F, [%g, %g].', r(1), r(2), f.ends(1), f.ends(2))
 end
 
 % If f has breakpoints, find the corresponding x-points in the domain of g.
