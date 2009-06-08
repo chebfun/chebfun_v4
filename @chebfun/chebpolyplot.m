@@ -2,7 +2,8 @@ function varargout = chebpolyplot(u,varargin)
 % CHEBPOLYPLOT    Display chebyshev coefficients graphically.
 %   CHEBPOLYPLOT(U) plots the chebyshev coefficients of a chebfun U 
 %   on a semilogy scale. If U is a chebfun with more than one piece, 
-%   only the coefficients of the first will be displayed.
+%   only the coefficients of the first will be displayed. If U is a
+%   row (or column) quasimatrix, only the fist row (column) will be used.
 %
 %   CHEBPOLYPLOT(U,K) plots the coefficients of the Kth fun.
 %
@@ -31,11 +32,18 @@ if nargin > 1
     if isa(varargin{1},'char'),  s = varargin; end
 end
 if numel(k) > 1
-    error('chebfun/chebpolyplot: can only plot one piece at a time');
+    error('chebfun:chebpolyplot:onefuns', 'can only plot one fun at a time');
+end
+if numel(u) > 1
+%     error('chebfun:chebpolyplot:quasimatrix', 'no support for quasimatrices')
+    if u(1).trans, u = u(1,:);
+    else           u = u(:,1);
+    end
 end
 if k > u.nfuns
-    error('chebfun/chebpolyplot: input chebfun has only %d pieces', u.nfuns);
+    error('chebfun:chebpolyplot:outofbounds: input chebfun has only %d pieces', u.nfuns);
 end
+
 
 try
     uk = chebpoly(u,k);         % coefficients of kth fun
