@@ -74,7 +74,7 @@ end
 % If f has breakpoints, find the corresponding x-points in the domain of g.
 bkpts = [];
 if f.nfuns >1
-    bkf = f.ends(f.ends > r(1) + tol & f.ends < r(2) - tol);
+    bkf = f.ends(f.ends > r(1) - tol & f.ends < r(2) + tol);
     for k = 1:length(bkf)
         bkpts = [bkpts; roots(g-bkf(k))];
     end

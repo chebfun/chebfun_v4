@@ -14,8 +14,17 @@ function varargout = chebfunpref(varargin)
 % PREFVAL. If PREFVAL is 'factory', PREFNAME is set to its factory defined
 % value.
 %
+% S = CHEBFUNPREF will return the current preferences in a structure, which 
+% may then be used in the form CHEBFUNPREF(P) to reload them or be passed 
+% to the chebfun constructor.
+%
+% S = CHEBFUNPREF('factory') returns a structure S with the factory values
+% without restoring them. V = CHEBFUNPREF(PREFNAME,'factory') returns the 
+% factory value V for preference PREFNAME without changing it. 
+%
 % CHEBFUNPREF creates a persistent variable that stores the these preferences.
-% CLEAR ALL will not clear preferences, but quiting Matlab will.
+% CLEAR ALL will not clear preferences, but MUNLOCK CHEBFUNPREF will (as will
+% quitting Matlab).
 %
 % CHEBFUN PREFERENCES (case sensitive)
 %
@@ -88,9 +97,25 @@ factoryvals = {false,       9,            2^16,      6000,      128,          tr
 
 % Restore defaults ?
 factory_flag = false;
-if nargin == 1 && strncmpi(varargin{1},'factory',3)
-    prefs = [];
-    factory_flag = true;
+if nargin == 1 
+    if isstruct(varargin{1})
+        % Assign prefs from structure input
+        prefs = varargin{1};
+        return
+    elseif strncmpi(varargin{1},'factory',3)
+        if nargout == 0
+            % Restore defaults
+            prefs = [];
+            factory_flag = true;
+        else
+            % Return factory values without changing chebfunpref
+        	for k = 1:length(factoryvals)
+                varargout.(options{k}) = factoryvals{k};
+            end
+            varargout = {varargout};
+            return
+        end
+    end        
 elseif nargin>=1
     % Error catching ...
     [truepref, indpref] = ismember(varargin{1},options);
@@ -116,31 +141,52 @@ if nargin==0 || factory_flag
 elseif nargin==1 && not(factory_flag)
     varargout = { prefs.(varargin{1}) };
 elseif nargin==2
-
-    % Set preference to its factory value.
-    if strncmpi(varargin{2},'factory',3)
-        prefs.(options{indpref}) = factoryvals{indpref};
-    else
-        if ischar(varargin{2})
+    
+    
+    if ischar(varargin{2})
+        
+        if strncmpi(varargin{2},'factory',3)
+            val = factoryvals{indpref};
+            if nargout == 0
+                % Set preference to its factory value.
+                prefs.(options{indpref}) = val;
+            else
+                % Return factory value without changing chebfunpref variable
+                varargout = {val};
+            end
+            return
+            
+        elseif strcmpi(varargin{2},'on')
+            varargin{2} = true;
+        elseif strcmpi(varargin{2},'off')
+            varargin{2} = false;
+        else
+            %  if ischar(varargin{2})
             error('CHEBFUN:chebfunpref:argin','invalid second argument')
         end
-
-%         % If preference is 'minn', check for consistency!
-%         if strcmp(varargin{1},'minn')
-%             minn = varargin{2};
-%             varargin{2} = max(2,2^floor(log2(minn-1))+1);
-%         end
-        % If preference is 'eps', check for consistency!
-         if strcmp(varargin{1},'eps') & varargin{2}<2^-52
-             varargin{2} = 2^-52;
-             warning('CHEBFUN:chebfunpref:argin','eps value below machine precision. eps set to 2^-52');
-         end
-        % Set preference!
-        prefs.(varargin{1}) = varargin{2};
         
-
     end
-
+    
+    %         % If preference is 'minn', check for consistency!
+    %         if strcmp(varargin{1},'minn')
+    %             minn = varargin{2};
+    %             varargin{2} = max(2,2^floor(log2(minn-1))+1);
+    %         end
+    % If preference is 'eps', check for consistency!
+    if strcmp(varargin{1},'eps') & varargin{2}<2^-52
+        varargin{2} = 2^-52;
+        warning('CHEBFUN:chebfunpref:argin','eps value below machine precision. eps set to 2^-52');
+    end
+    % Set preference!
+    prefs.(varargin{1}) = varargin{2};
+    
+    % To avoid error messages
+    if nargout > 0
+        varargout = {};
+    end
+    
+    
+    
 else
     error('CHEBFUN:chebfunpref:argin','Check number of input arguments.')
 end

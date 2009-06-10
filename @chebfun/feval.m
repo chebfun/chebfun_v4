@@ -55,8 +55,27 @@ end
 
 x=x(:)';
 if size(f.imps,1) == 1
-  [val,loc,pos] = intersect(x,ends);
-  fx(loc) = f.imps(1,pos);
+    
+    % This doesn't work if repeated values of x intersect with ends.
+ %     [val,loc,pos] = intersect(x,ends);
+ %     fx(loc) = f.imps(1,pos);
+ 
+    % RodP and NickH replacing with this to fix the problem
+    if f.nfuns < 10
+        for k = 1:f.nfuns+1
+            fx( x==ends(k) ) = f.imps(1,k);
+        end
+    else
+        %    [val,loc,pos] = intersect(x,ends);
+        %    for k = 1:length(pos)
+        %        fx( x == ends(pos(k)) ) = f.imps(1,pos(k));
+        %    end
+        [xu i j] = unique(x);
+        [val,loc,pos] = intersect(xu,ends);
+        fx(j(loc)) = f.imps(1,pos);
+   end
+    % ---- End fix (to be revisited in the near future) ---
+
 elseif any(f.imps(2,:))
   [val,loc,pos] = intersect(x,ends);
   fx(loc(any(f.imps(2:end,pos)>0,1))) = inf;

@@ -75,6 +75,9 @@ else
                         value = true;
                     elseif strcmpi(value,'off')
                         value = false;
+                    % Factory values from chebfunpref
+                    elseif strcmpi(value,'factory')
+                        value = chebfunpref(varargin{k},'factory'); 
                     else
                         error('chebfun:chebfun:prefval', ...
                             'Invalid chebfun preference value')
