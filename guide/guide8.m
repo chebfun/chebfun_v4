@@ -324,6 +324,7 @@
 % in the usual factory mode, corresponding to resampling on:
 
   chebfunpref('factory');
+  chebfunpref('sampletest','off')
   splitting off
   tic, f = chebfun(@(x) sin(x),[0 2000]); toc
   length(f)

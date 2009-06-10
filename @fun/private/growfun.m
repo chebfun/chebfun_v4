@@ -35,7 +35,7 @@ npower = max(minpower,floor(log2(n-1)));
 if resample
   npn = min(npower,6);
   kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
-  if kk(end)~=n,  kk(end+1) = n; end
+%   if kk(end)~=n,  kk(end+1) = n; end
 else
   kk = 2.^(minpower:npower) + 1;
 end
@@ -59,7 +59,7 @@ if nargin > 4
 end
 % ---------------------------------------------------
 
-if  ~resample && 2^npower+1 == n && nargin<4
+if  ~resample && 2^npower+1 == n && nargin<5
     
     % single sampling
     ind =1;
