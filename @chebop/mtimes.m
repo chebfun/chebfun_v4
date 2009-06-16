@@ -25,12 +25,22 @@ switch(class(B))
       C = chebop(B*A.varmat, B*A.oparray, A.fundomain, A.difforder );
       C.blocksize = A.blocksize;
     elseif n == 1
+      % chebop * vector multiplication is being experimented with by nich.
+      % The below is not very general (ony for nonperiodic two-point bcs).
       if A.numbc > 0
-        A = feval(A,m,'bc');
+        
+        lbc = A.lbc.val;
+        rbc = A.rbc.val;
+        
+        A = feval(A,m+2,'bc');
+        V = [A(1,1) A(1,m+2) ; A(m+2,1) A(m+2,m+2)];
+        bc = V\[lbc-A(1,2:m+1)*B ; rbc-A(m+2,2:m+1)*B];
+        C = A(2:m+1,:)*[bc(1) ; B ; bc(2)];
+
       else
         A = feval(A,m);
+        C = A*B;
       end
-      C = A*B;
     else
       error('chebop:mtimes:numericmatrix','Chebop-matrix multiplication is not well defined.')
     end
