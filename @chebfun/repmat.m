@@ -1,17 +1,24 @@
 function Fout = repmat(F,M,N) 
 %REPMAT   Replicate and tile a chebfun.
-%    Fout = REPMAT(F,M,N) creates a large chebfun quasimatrix Fout 
-%    consisting of tiling of copies of F.
+%    Fout = REPMAT(F,M,N) creates a chebfun quasimatrix Fout 
+%    by tiling copies of F.
+%
 %    If F is a column quasimatrix, then REPMAT(F,1,N) returns a
-%    quasimatrix with N*size(F,2) chebfun columns. If F consists of row
-%    chebfuns, REPMAT(F,M,1) returns a quasimatrix with M*size(F,1).
+%    quasimatrix with N*size(F,2) chebfun columns. If F is a row
+%    quasimatrix, REPMAT(F,M,1) returns a quasimatrix with M*size(F,1).
+%
+%    REPMAT(F,[M,N]) is the same as REPMAT(F,M,N).
 %
 %    See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
-if nargin < 2
-    error('CHEBFUN:repmat:NotEnoughInputs', 'Requires 3 inputs.')
+if nargin==2
+  if length(M)~=2
+    error('CHEBFUN:repmat:NotEnoughInputs', ...
+      'Requires REPMAT(F,M,N) or REPMAT(F,[M,N]).')
+  end
+  N = M(2);  M = M(1);
 end
 
 Fout = chebfun;
