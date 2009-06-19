@@ -47,20 +47,33 @@ if any(diff(r)<1e-14*hs)
 end
 
 % -------------------------------------------
-
 % Make sure that the domain of definition is not changed
 % Rodp added this to fix a bug -- Wiki 22/4/08.
 r(end) = ends(end);
 r(1) = ends(1);
 %---------------------------------------------
 
+% check for double roots
+ind = find(diff(r) < 1e-7*hs);
+if ~isempty(ind)
+    remove = false(size(r));
+    for k = 1:length(ind)
+        if abs(feval(f,mean(r(ind(k):ind(k)+1)))) < chebfunpref('eps')*100*f.scl
+            remove(ind(k)+1) = true;
+        end
+    end
+    r(remove) = [];
+end
+            
 nr = length(r);
 newints = zeros(1,nr);
 newints(1) = ends(1);
 ff = [];
+% evaluate at an arbitrary point in [a,b]
+ c = 0.5912;
 for i = 1:nr-1
     a = r(i); b = r(i+1);
-    ff = [ff fun(sign(feval(f,(a+b)/2)))];
+    ff = [ff fun(sign(feval(f,(c*a+(1-c)*b))))];
     newints(i+1) = b;
 end
 fout = set(f,'funs',ff,'ends',newints,'scl',1,'imps',zeros(1,length(newints)));
