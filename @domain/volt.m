@@ -21,6 +21,7 @@ function V = volt(k,d)
 %   else
 %     K = exp(X-Y);
 %   end
+%
 %  See also fred, chebop.
 
 % Copyright 2009 by Toby Driscoll.

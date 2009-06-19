@@ -24,7 +24,7 @@ function F = fred(k,d)
 %
 %  See also volt, chebop.
 
-% Copyright 2009 by Toby Driscoll.
+% Copyright 2009 by Toby Driscoll and Folkmar Bornemann.
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 % $Id$
 
@@ -35,15 +35,13 @@ F = chebop(@matrix,@op,d);
     v = chebfun( vec(@(x) sum( u.*chebfun(@(y) k(x,y),d)) ), d, 'sampletest', false );
   end
 
-C = cumsum(d);
-s = C(end,:);  % Clenshaw-Curtis weights for any n
-
 % Matrix form. At given n, multiply function values by CC quadrature
 % weights, then apply kernel as inner products. 
   function A = matrix(n)
     x = chebpts(d,n);
     [X,Y] = ndgrid(x);
-    A = k(X,Y) * spdiags(s(n)',0,n,n);
+    s = clencurt(d.ends(1),d.ends(2),n);
+    A = k(X,Y) * spdiags(s',0,n,n);
   end
     
 end
