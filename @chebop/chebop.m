@@ -51,7 +51,8 @@ else
   end
   % Third argument supplies the function domain. 
   if nargin>=3 
-    A.fundomain = varargin{3};
+    d = domain( varargin{3}.ends );
+    A.fundomain = d;
   end
   % 4th argument is differential order
   if nargin>=4

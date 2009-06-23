@@ -10,4 +10,4 @@ function x = chebpts(d,n)
 
 x = chebpts(n);
 ab = d.ends;
-x = (x+1)/2*diff(ab) + ab(1);
+x = (x+1)/2*(ab(end)-ab(1)) + ab(1);

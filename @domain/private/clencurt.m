@@ -41,6 +41,7 @@ if m > length(table.w) || isempty(table.w{m})
     g0 = -ones(m,1); g0(1+l)=g0(1+l)+m; g0(1+n)=g0(1+n)+m;
     g = g0/(m^2-1+mod(m,2));
     w = ifft(v2+g); w(m+1) = w(1);
+    table.w{m+1} = w;
 else
     w = table.w{m};
 end

@@ -44,7 +44,7 @@ args = [varargin defaults(idx)];
 [L,f,m,tol,maxiter,M1inv,M2inv] = deal( args{:} );
 showtrace = (nargout>1);
 
-if m==0, m = Inf; end;                           % no restarts
+if m==0, m = intmax; end;                           % no restarts
 
 u = chebfun(0,domain(f));
 normb = norm(f);

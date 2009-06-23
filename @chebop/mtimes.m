@@ -15,7 +15,18 @@ function C = mtimes(A,B)
 % See www.comlab.ox.ac.uk/chebfun.
 
 if isa(A,'double')
-  C=A; A=B; B=C;    % swap to make sure A is a chebop
+   % We allow double*chebop if the inner dimensions match--i.e., the chebop
+   % is really a functional. Or (below) if A is scalar.
+  [m,n] = size(A);
+  if max(m,n)>1 && n==size( feval(B,11), 1 )
+    mat = A*B.varmat;
+    op = A*B.oparray;
+    order = B.difforder;
+    C = chebop(mat,op,domain(B),order);
+    return
+  else
+    C=A; A=B; B=C;    % swap to make sure A is a chebop
+  end
 end
 
 switch(class(B))
