@@ -37,17 +37,14 @@ switch(class(B))
       C.blocksize = A.blocksize;
     elseif n == 1
       % chebop * vector multiplication is being experimented with by nich.
-      % The below is not very general (ony for nonperiodic two-point bcs).
       if A.numbc > 0
-        
-        lbc = A.lbc.val;
-        rbc = A.rbc.val;
-        
-        A = feval(A,m+2,'bc');
-        V = [A(1,1) A(1,m+2) ; A(m+2,1) A(m+2,m+2)];
-        bc = V\[lbc-A(1,2:m+1)*B ; rbc-A(m+2,2:m+1)*B];
-        C = A(2:m+1,:)*[bc(1) ; B ; bc(2)];
-
+        numbc = A.numbc; m = length(B); N = m+numbc;
+        [A,BCmat,BCvals,BCrows] = feval(A,N,'bc');
+        intpts = 1:N;  intpts(BCrows) = [];
+        v = zeros(N,1);
+        v(intpts) = B;
+        v(BCrows) = BCmat(:,BCrows)\(BCvals - BCmat(:,intpts)*B);
+        C = A(intpts,:)*v;
       else
         A = feval(A,m);
         C = A*B;

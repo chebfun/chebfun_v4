@@ -59,6 +59,9 @@ switch s(1).type
       case 'scale'
         A = A.scale;
         valid = true;
+      case 'numbc'
+        A = A.numbc;
+        valid = true;            
     end
  end
 
