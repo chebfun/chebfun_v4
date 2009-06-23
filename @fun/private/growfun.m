@@ -33,7 +33,7 @@ npower = max(minpower,floor(log2(n-1)));
 
 % Number of nodes to be used 
 if resample
-  npn = min(npower,6);
+  npn = max(min(npower,6),minpower);
   kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
 %   if kk(end)~=n,  kk(end+1) = n; end
 else

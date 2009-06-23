@@ -20,12 +20,13 @@ if n == 1               % The function is a constant
     return;
 end
 
-if nargin < 3           % Default to Chebyshev nodes and weights
-    xk = chebpts(n);
+if nargin < 4           % Default to Chebyshev weights
     ek = [1/2; ones(n-2,1); 1/2].*(-1).^((0:n-1)'); 
 end
+if nargin < 3           % Default to Chebyshev nodes
+    xk = chebpts(n);
+end
 
-    
 [mem,loc] = ismember(x,xk);
     
 if length(x) < length(xk)
