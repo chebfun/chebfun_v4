@@ -22,7 +22,11 @@ else
    temp2=prolong(g2,g1.n+g2.n-1); 
    vals=temp.vals.*temp2.vals;
 end
-%scl.h = max(g1.scl.h,g2.scl.h);
-%scl.v = max(g1.scl.v,g2.scl.v);
+
+% Deal with scales:
+scl.h = max(g1.scl.h,g2.scl.h);
+scl.v = max(g1.scl.v,g2.scl.v); 
 gout = fun(vals); 
+scl.v = max(scl.v,gout.scl.v);
+gout.scl = scl;
 gout = simplify(gout);

@@ -27,8 +27,7 @@ while length(propertyArgIn) >= 2,
             g.scl.h = val;
         case 'scl.v'
             for k=1:numel(g)
-                gk=g(k);
-                gk.scl.v = val;
+                g(k).scl.v = val;
             end
         otherwise
             error('fun properties: val, n, or scl')
