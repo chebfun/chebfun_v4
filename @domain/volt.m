@@ -33,8 +33,11 @@ V = chebop(@matrix,@op,d,-1);
 
 % Functional form. At each x, do an adaptive quadrature.
   function v = op(u)
+    % Result can be resolved relative to norm(u).
+    scale = norm(u);
     h = @(x) chebfun(@(y) u(y).*k(x,y),[d.ends(1) x]);  % integrand at any x
-    v = chebfun( vec(@(x) sum(h(x))), d );
+    v = chebfun( vec(@(x) scale+sum(h(x))), d );
+    v = v-scale;
   end
 
 % Matrix form. Each row of the result, when taken as an inner product with

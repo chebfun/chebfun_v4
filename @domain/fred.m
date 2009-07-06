@@ -32,7 +32,11 @@ F = chebop(@matrix,@op,d);
 
 % Functional form. At each x, do an adaptive quadrature.
   function v = op(u)
-    v = chebfun( vec(@(x) sum( u.*chebfun(@(y) k(x,y),d)) ), d, 'sampletest', false );
+    % Result can be resolved relative to norm(u).
+    scale = norm(u);
+    int = @(x) sum(u.*chebfun(@(y) k(x,y),d,'resampling',false,'splitting',true));
+    v = chebfun( vec(@(x) scale+int(x)), d,'sampletest',false,'resampling',false );
+    v = v-scale;
   end
 
 % Matrix form. At given n, multiply function values by CC quadrature

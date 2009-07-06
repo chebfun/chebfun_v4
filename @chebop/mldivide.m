@@ -77,9 +77,11 @@ end
   function v = value(x)
     N = length(x);
     if N > 1025
-      error('failure to converge')
-    end
-    if N <= A.numbc+1
+      error('chebop:mldivide:NoConverge','Failed to converge with 1025 points.')
+    elseif N==1
+      error('chebop:mldivide:OnePoint',...
+        'Solution requested at a lone point. Check for a bug in the chebop definition.')
+    elseif N <= A.numbc+1
       % Too few points: force refinement
       v = (-1).^(0:N-1)';
       return
