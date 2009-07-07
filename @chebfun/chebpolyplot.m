@@ -5,12 +5,20 @@ function varargout = chebpolyplot(u,varargin)
 %   only the coefficients of the first will be displayed. If U is a
 %   row (or column) quasimatrix, only the fist row (column) will be used.
 %
-%   CHEBPOLYPLOT(U,K) plots the coefficients of the Kth fun.
+%   CHEBPOLYPLOT(U,K) plots the coefficients of the funs indexed by the vector K.
+%
+%   CHEBPOLYPLOT(U,0) plots the coefficients of all the funs in U.
 %
 %   H = CHEBPOLYPLOT(U) returns a handle H to the figure.
 %
 %   CHEBPOLYPLOT(U,S) and CHEBPOLYPLOT(U,K,S) allow further plotting 
-%   options, such as linestyle, linecolor, etc. 
+%   options, such as linestyle, linecolor, etc. If K is a vector, then
+%   use CHEBPOLYPLOT(U,K,'MARKER','.','LINESTYLE','none'), etc to alter
+%   plot styles for all of the funs given by K.
+%
+%   Example
+%     u = chebfun({@sin @cos @tan @cot},[-2,-1,0,1,2]);
+%     chebpolyplot(u,0,'marker','.','linestyle','none');
 %
 %   See also chebfun/chebpoly, plot
 %
@@ -31,30 +39,26 @@ if nargin > 1
     end
     if isa(varargin{1},'char'),  s = varargin; end
 end
-if numel(k) > 1
-    error('chebfun:chebpolyplot:onefuns', 'can only plot one fun at a time');
-end
+
+if k == 0, k = 1:get(u,'nfuns'); end
+
 if numel(u) > 1
-%     error('chebfun:chebpolyplot:quasimatrix', 'no support for quasimatrices')
     if u(1).trans, u = u(1,:);
     else           u = u(:,1);
     end
 end
-if k > u.nfuns
+if any(k > u.nfuns)
     error('chebfun:chebpolyplot:outofbounds: input chebfun has only %d pieces', u.nfuns);
 end
 
-
-try
-    uk = chebpoly(u,k);         % coefficients of kth fun
-    uk = uk(end:-1:1);          % flip
-    h = semilogy(abs(uk),s{:}); % plot
-catch
-    k = s{end};
-    uk = chebpoly(u,k);         % coefficients of kth fun
-    uk = uk(end:-1:1);          % flip
-    h = semilogy(abs(uk),s{1:(end-1)}); % plot
+UK = {};
+for j = 1:length(k)
+    uk = chebpoly(u,j);             % coefficients of kth fun
+    uk = abs(uk(end:-1:1));         % flip
+    UK = {UK{:}, 1:length(uk), uk}; % store
 end
+h = semilogy(UK{:},s{:});           % plot
+legend(int2str(k.'))
 
 % output handle
 if nargout ~=0
