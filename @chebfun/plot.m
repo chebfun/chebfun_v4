@@ -118,7 +118,7 @@ args_2 = [args_2, ax_props,{'linestyle','none'}];
 args_3 = [args_3, ax_props];
 
 h = ishold;
-if isempty(linespec) || any(strmatch('-',linespec)) || any(strmatch(':',linespec))
+if isempty(linespec) || any(strmatch('-',linespec.')) || any(strmatch(':',linespec.'))
     h1 = plot(args_1{:});  hold on
 else
     h1 = [];
