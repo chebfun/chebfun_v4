@@ -120,11 +120,13 @@ args_3 = [args_3, ax_props];
 h = ishold;
 if isempty(linespec) || any(strmatch('-',linespec.')) || any(strmatch(':',linespec.'))
     h1 = plot(args_1{:});  hold on
+    hv = 'off';
 else
     h1 = [];
+    hv = 'on';
 end
-h2 = plot(args_2{:}); hold on
-h3 = plot(args_3{:});
+h2 = plot(args_2{:},'handlevis',hv); hold on
+h3 = plot(args_3{:},'handlevis','off');
 if ~h, hold off; end
 
 if nargout == 1
