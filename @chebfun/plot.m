@@ -41,11 +41,9 @@ function varargout = plot(varargin)
 % lines and that the default is ':k'.
 %
 % H = PLOT(F, ...) returns a column vector of handles to line objects in 
-% the plot. In general, H(:,1) returns the handles for the 'curves' (i.e. 
+% the plot. H(:,1) returns the handles for the 'curves' (i.e. 
 % the function), H(:,2) returns a handle to the 'marks', (i.e. the values
-% at Chebyshev points) and H(:,3) returns a handle to the jump lines.
-% However, if no curves are plotted (e.g. via PLOT(F,'o')), then handles
-% for the curves are not returned.
+% at Chebyshev points), and H(:,3) returns a handle to the jump lines.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -119,13 +117,12 @@ args_3 = [args_3, ax_props];
 
 h = ishold;
 if isempty(linespec) || any(strmatch('-',linespec.')) || any(strmatch(':',linespec.'))
-    h1 = plot(args_1{:});  hold on
-    hv = 'off';
+    h1 = plot(args_1{:},'handlevis','on');  hold on
+    h2 = plot(args_2{:},'handlevis','off');
 else
-    h1 = [];
-    hv = 'on';
+    h1 = plot(args_1{:},'handlevis','off');  hold on
+    h2 = plot(args_2{:},'handlevis','on');
 end
-h2 = plot(args_2{:},'handlevis',hv); hold on
 if ~isempty(args_3)
     h3 = plot(args_3{:},'handlevis','off');
 end
@@ -197,7 +194,8 @@ end
 
 
 curve = {cf,cg,linespec}; mark = {mf,mg,linespec}; jump = [];
-if single_chebfun && isreal(curve{2})
+% if single_chebfun && isreal(curve{2})
+if isreal(curve{2})
     jloc = []; jval = [];
     for i = 1:g.nfuns - 1
         jp = g.ends(i+1);
