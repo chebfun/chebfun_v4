@@ -54,8 +54,8 @@ function varargout = plot(varargin)
 if nargin == 0, error('Not enough input arguments.'); end
 
 pos = 2;
-while pos <= nargin & (~isa(varargin{pos},'char') | (isa(varargin{pos},'char')...
-        & ~any(strcmp(lower(varargin{pos}),{'jumpline', 'linewidth','color', ...
+while pos <= nargin && (~isa(varargin{pos},'char') || (isa(varargin{pos},'char')...
+        && ~any(strcmpi(varargin{pos},{'jumpline', 'linewidth','color', ...
         'markeredgecolor', 'markerfacecolor','markersize','linestyle','marker'}))))
     pos = pos+1;
 end
@@ -77,7 +77,7 @@ if length(data)==1
         end
     end
     data = [];        
-elseif length(data)==2 & isa(data{2},'char')
+elseif length(data)==2 && isa(data{2},'char')
     f = []; g = data{1}; linespec = data{2};
     [args_1,args_2,args_3] =  unwrap_group(args_1, args_2, args_3, f, g, linespec);
     if ~isreal(data{1})
@@ -100,7 +100,7 @@ while ~isempty(data)
     if isa(data{2},'chebfun')
         f = data{1};
         g = data{2};            
-        if length(data)>=3 & isa(data{3},'char')
+        if length(data)>=3 && isa(data{3},'char')
             linespec = data{3};         
             data(1:3) = [];
         else
@@ -118,7 +118,7 @@ args_2 = [args_2, ax_props,{'linestyle','none'}];
 args_3 = [args_3, ax_props];
 
 h = ishold;
-if any(strmatch('-',linespec)) || any(strmatch(':',linespec))
+if isempty(linespec) || any(strmatch('-',linespec)) || any(strmatch(':',linespec))
     h1 = plot(args_1{:});  hold on
 else
     h1 = [];
@@ -147,9 +147,9 @@ if isempty(f)
         f = [f chebfun(vs, gends)];
     end
     single_chebfun = 1;
-elseif numel(f) == 1 & numel(g) > 1
+elseif numel(f) == 1 && numel(g) > 1
     f = repmat(f,1,numel(g));
-elseif numel(f) > 1 & numel(g) == 1
+elseif numel(f) > 1 && numel(g) == 1
     g = repmat(g,1,numel(f));
 elseif numel(f) ~= numel(g)
     error('Quasi-matrices must be the same lengths')
@@ -193,7 +193,7 @@ end
 
 
 curve = {cf,cg,linespec}; mark = {mf,mg,linespec}; jump = [];
-if single_chebfun & isreal(curve{2})
+if single_chebfun && isreal(curve{2})
     jloc = []; jval = [];
     for i = 1:g.nfuns - 1
         jp = g.ends(i+1);
