@@ -126,7 +126,9 @@ else
     hv = 'on';
 end
 h2 = plot(args_2{:},'handlevis',hv); hold on
-h3 = plot(args_3{:},'handlevis','off');
+if ~isempty(args_3)
+    h3 = plot(args_3{:},'handlevis','off');
+end
 if ~h, hold off; end
 
 if nargout == 1
