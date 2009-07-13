@@ -40,11 +40,12 @@ function varargout = plot(varargin)
 % line. Notice that it is not possible to modify other properties for jump
 % lines and that the default is ':k'.
 %
-% h = plot(F, ...) returns a column vector of handles to line objects in 
-% the plot. If F is a single chebfun (i.e. not a quasimatix), with no jumps,
-% then h(1) returns a handle to the 'curve', and h(2) returns a handle to
-% the 'marks'. If F does have jumps, the h(2) points to the jump lines, and
-% h(3) to the 'marks'. Handles for plots of quasimatices are similar.
+% H = PLOT(F, ...) returns a column vector of handles to line objects in 
+% the plot. In general, H(:,1) returns the handles for the 'curves' (i.e. 
+% the function), H(:,2) returns a handle to the 'marks', (i.e. the values
+% at Chebyshev points) and H(:,3) returns a handle to the jump lines.
+% However, if no curves are plotted (e.g. via PLOT(F,'o')), then handles
+% for the curves are not returned.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -60,11 +61,11 @@ while pos <= nargin & (~isa(varargin{pos},'char') | (isa(varargin{pos},'char')..
 end
 data = varargin(1:pos-1);
 ax_props = varargin(pos:end);
-args_1 = {}; args_2 = {};
+args_1 = {}; args_2 = {}; args_3 = {};
 if length(data)==1 
     f = []; g = data{1}; 
     linespec = '';    
-    [args_1,args_2] =  unwrap_group(args_1, args_2, f, g, linespec);
+    [args_1,args_2,args_3] =  unwrap_group(args_1, args_2, args_3, f, g, linespec);
     if ~isreal(data{1})
         for i = 1:3:length(args_1)
             args_1{i} = real(args_1{i+1});
@@ -78,7 +79,7 @@ if length(data)==1
     data = [];        
 elseif length(data)==2 & isa(data{2},'char')
     f = []; g = data{1}; linespec = data{2};
-    [args_1,args_2] =  unwrap_group(args_1, args_2, f, g, linespec);
+    [args_1,args_2,args_3] =  unwrap_group(args_1, args_2, args_3, f, g, linespec);
     if ~isreal(data{1})
         for i = 1:3:length(args_1)
             args_1{i} = real(args_1{i+1});
@@ -109,23 +110,29 @@ while ~isempty(data)
     else
         error([class(data{2}) ' argument is an unknown option.'])
     end
-    [args_1,args_2] =  unwrap_group(args_1, args_2, f, g, linespec);
+    [args_1,args_2,args_3] =  unwrap_group(args_1, args_2, args_3, f, g, linespec);
 end
 
 args_1 = [args_1, ax_props, {'marker','none'}];
 args_2 = [args_2, ax_props,{'linestyle','none'}];
-hh1 = plot(args_1{:});
-h = ishold; hold on
-hh2 = plot(args_2{:});
+args_3 = [args_3, ax_props];
+
+h = ishold;
+if any(strmatch('-',linespec)) || any(strmatch(':',linespec))
+    h1 = plot(args_1{:});  hold on
+else
+    h1 = [];
+end
+h2 = plot(args_2{:}); hold on
+h3 = plot(args_3{:});
 if ~h, hold off; end
 
-if nargout > 0
-    varargout = {[hh1 ; hh2]};
+if nargout == 1
+    varargout{1} = [h1 h2 h3];
 end
 
-
 %---------------------------------------------------------------------
-function [curves, marks] = unwrap_group(curves, marks, f, g, linespec)
+function [curves, marks, jumps] = unwrap_group(curves, marks, jumps, f, g, linespec)
 
 % RodP added this here to handle row quasimatrices (Jan 2009):
 if g(1).trans
@@ -149,11 +156,11 @@ elseif numel(f) ~= numel(g)
 end
 
 for i = 1:numel(f)
-    [c, m] = unwrap_column(f(i),g(i),linespec, single_chebfun);
-    curves = [curves, c]; marks = [marks, m];
+    [c, m, j] = unwrap_column(f(i),g(i),linespec, single_chebfun);
+    curves = [curves, c]; marks = [marks, m]; jumps = [jumps, j];
 end
 %---------------------------------------------------------------------
-function [curve, mark] = unwrap_column(f, g, linespec, single_chebfun)
+function [curve, mark, jump] = unwrap_column(f, g, linespec, single_chebfun)
 
 %if ~single_chebfun
     [f,g] = overlap(f,g);
@@ -185,7 +192,7 @@ if single_chebfun
 end
 
 
-curve = {cf,cg,linespec}; mark = {mf,mg,linespec};
+curve = {cf,cg,linespec}; mark = {mf,mg,linespec}; jump = [];
 if single_chebfun & isreal(curve{2})
     jloc = []; jval = [];
     for i = 1:g.nfuns - 1
@@ -194,7 +201,12 @@ if single_chebfun & isreal(curve{2})
         jval = [jval; g.funs(i).vals(end);g.funs(i+1).vals(1);nan];
     end
     %curve = [curve,{jloc},{jval},{linespec}];
-    curve = [curve,{jloc},{jval},{':k'}];
+%     curve = [curve,{jloc},{jval},{':k'}];
+    if isempty(jloc)
+        jloc = f.ends(1);
+        jval = f.funs(1).vals(1);
+    end
+    jump = [jump,{jloc},{jval},{':k'}];
 end
 
 %---------------------------------------------------------------------
