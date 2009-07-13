@@ -1,4 +1,4 @@
-function plot(varargin)
+function varargout = plot(varargin)
 % PLOT  Linear chebfun plot.
 % PLOT(F,G) plot chebfun G versus chebfun F. 
 %
@@ -39,6 +39,12 @@ function plot(varargin)
 % example, PLOT(F,'JumpLine','-r') will plot discontinuities as a solid red
 % line. Notice that it is not possible to modify other properties for jump
 % lines and that the default is ':k'.
+%
+% h = plot(F, ...) returns a column vector of handles to line objects in 
+% the plot. If F is a single chebfun (i.e. not a quasimatix), with no jumps,
+% then h(1) returns a handle to the 'curve', and h(2) returns a handle to
+% the 'marks'. If F does have jumps, the h(2) points to the jump lines, and
+% h(3) to the 'marks'. Handles for plots of quasimatices are similar.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -108,10 +114,15 @@ end
 
 args_1 = [args_1, ax_props, {'marker','none'}];
 args_2 = [args_2, ax_props,{'linestyle','none'}];
-plot(args_1{:})
+hh1 = plot(args_1{:});
 h = ishold; hold on
-plot(args_2{:})
+hh2 = plot(args_2{:});
 if ~h, hold off; end
+
+if nargout > 0
+    varargout = {[hh1 ; hh2]};
+end
+
 
 %---------------------------------------------------------------------
 function [curves, marks] = unwrap_group(curves, marks, f, g, linespec)

@@ -1,4 +1,4 @@
-function plot3(varargin)
+function varargout = plot3(varargin)
 % PLOT3 Plot a chebfun in 3-D space
 %    PLOT3(x,y,z), where x,y,z are three chebfuns, plots a curve in 3-space
 %    where z=f(x,y).
@@ -8,7 +8,9 @@ function plot3(varargin)
 %
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2008 by The Chebfun Team. 
+%  Copyright 2002-2009 by The Chebfun Team. 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 % This is a simple implementation that should be replaced soon! 
 % Rodp, June 2008.
@@ -23,5 +25,9 @@ for k = 1:nargin
     end
 end
 
-plot3(varargin{:})
+h = plot3(varargin{:});
+
+if nargout > 0 
+    varargout = h;
+end
     
