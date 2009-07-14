@@ -66,13 +66,16 @@ if size(f.imps,1) == 1
             fx( x==ends(k) ) = f.imps(1,k);
         end
     else
-        %    [val,loc,pos] = intersect(x,ends);
-        %    for k = 1:length(pos)
-        %        fx( x == ends(pos(k)) ) = f.imps(1,pos(k));
-        %    end
-        [xu i j] = unique(x);
-        [val,loc,pos] = intersect(xu,ends);
-        fx(j(loc)) = f.imps(1,pos);
+          [val,loc,pos] = intersect(x,ends);
+          for k = 1:length(pos)
+              fx( x == ends(pos(k)) ) = f.imps(1,pos(k));
+          end
+           
+%         % Below doesn't work with repeated multiple breakpoint evalutions. 
+%         % Would need to find indices where j == loc
+%         [xu i j] = unique(x);
+%         [val,loc,pos] = intersect(xu,ends);
+%         fx(j(loc)) = f.imps(1,pos);
    end
     % ---- End fix (to be revisited in the near future) ---
 
