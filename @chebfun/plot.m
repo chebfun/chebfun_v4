@@ -116,20 +116,17 @@ args_2 = [args_2, ax_props,{'linestyle','none'}];
 args_3 = [args_3, ax_props];
 
 h = ishold;
-if isempty(linespec) || any(strmatch('-',linespec.')) || any(strmatch(':',linespec.'))
-    h1 = plot(args_1{:},'handlevis','on');  hold on
-    h2 = plot(args_2{:},'handlevis','off');
-else
-    h1 = plot(args_1{:},'handlevis','off');  hold on
-    h2 = plot(args_2{:},'handlevis','on');
+hdummy = plot(args_1{1}(1),NaN,linespec); hold on   % dummy plot for legends
+h1 = plot(args_1{:},'handlevis','off');
+h2 = plot(args_2{:},'handlevis','off');
+if isempty(args_3)
+    args_3 = {NaN,NaN};
 end
-if ~isempty(args_3)
-    h3 = plot(args_3{:},'handlevis','off');
-end
+h3 = plot(args_3{:},'handlevis','off');
 if ~h, hold off; end
 
 if nargout == 1
-    varargout{1} = [h1 h2 h3];
+    varargout{1} = [h1 h2 h3 hdummy];
 end
 
 %---------------------------------------------------------------------
