@@ -206,6 +206,8 @@ if isreal(curve{2})
         jval = f.funs(1).vals(1);
     end
     jump = [jump,{jloc},{jval},{':k'}];
+else
+    jump = [{NaN},{NaN},jump];
 end
 
 %---------------------------------------------------------------------
