@@ -15,6 +15,6 @@ h = plot(varargin{:});
 set(gca,'XScale','log','YScale','log');
 
 if nargout > 0
-    varargout = h;
+    varargout = {h};
 end
     

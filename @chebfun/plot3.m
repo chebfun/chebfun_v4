@@ -28,6 +28,6 @@ end
 h = plot3(varargin{:});
 
 if nargout > 0 
-    varargout = h;
+    varargout = {h};
 end
     
