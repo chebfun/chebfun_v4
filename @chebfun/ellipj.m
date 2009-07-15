@@ -41,7 +41,7 @@ if nargout == 3
 end
 
 function cnout = cnfun(u,varargin)
-[~, cnout, ~] = ellipj(u,varargin{:});
+[ignored, cnout, ignored] = ellipj(u,varargin{:});
 
 function dnout = dnfun(u,varargin)
-[~, ~, dnout] = ellipj(u,varargin{:});
+[ignored, ignored, dnout] = ellipj(u,varargin{:});
