@@ -57,8 +57,9 @@ elseif min(size(A))>1                  % A is a quasimatrix
          s = svd(A,0);
          normA = s(1);
       case 'fro'
-         s = svd(A,0);
-         normA = norm(s);
+         % Find integration dimension: 1 if column, 2 if row
+         dim = 1 + double(A(1).trans);  
+         normA = sqrt( sum( sum(A.*conj(A),dim) ) );
       case {'inf',inf}
          normA = max(sum(abs(A),2));
       otherwise
