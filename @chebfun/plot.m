@@ -116,7 +116,14 @@ args_2 = [args_2, ax_props,{'linestyle','none'}];
 args_3 = [args_3, ax_props];
 
 h = ishold;
-hdummy = plot(args_1{1}(1),NaN,linespec); hold on   % dummy plot for legends
+
+% dummy plot for legends
+dummyargs = [];
+for k = 1:(length(args_1)-2)/3
+    dummyargs = [dummyargs {args_1{3*k-2}(1)} {NaN} {linespec}];
+end
+hdummy = plot(dummyargs{:}); hold on
+
 h1 = plot(args_1{:},'handlevis','off');
 h2 = plot(args_2{:},'handlevis','off');
 if isempty(args_3)
