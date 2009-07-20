@@ -210,7 +210,7 @@ if isreal(curve{2})
 %     curve = [curve,{jloc},{jval},{':k'}];
     if isempty(jloc)
         jloc = f.ends(1);
-        jval = f.funs(1).vals(1);
+        jval = NaN;
     end
     jump = [jump,{jloc},{jval},{':k'}];
 else
