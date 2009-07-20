@@ -26,9 +26,10 @@ end
 
 r = roots(f);
 ends = f.ends;
-hs = norm(f.ends,inf);
+hs = hscale(f);
+    
 if isempty(r), 
-    fout = chebfun(sign(feval(f.funs(1),rand)),[ends(1) ends(end)]);
+    fout = chebfun(sign(f.funs(1).vals(1)),[ends(1) ends(end)]);
     if f.trans, fout = transpose(fout); end
     return
 else
@@ -64,18 +65,18 @@ if ~isempty(ind)
     end
     r(remove) = [];
 end
-            
+
 nr = length(r);
 newints = zeros(1,nr);
 newints(1) = ends(1);
 ff = [];
-% evaluate at an arbitrary point in [a,b]
- c = 0.5912;
+c = 0.5912; % evaluate at an arbitrary point in [a,b]
 for i = 1:nr-1
     a = r(i); b = r(i+1);
-    ff = [ff fun(sign(feval(f,(c*a+(1-c)*b))))];
+    ff = [ff fun(sign(feval(f,c*a+(1-c)*b)),[a b])];
     newints(i+1) = b;
 end
 fout = set(f,'funs',ff,'ends',newints,'scl',1,'imps',zeros(1,length(newints)));
 fout.imps(1,1) = sign(feval(f,ends(1)));
 fout.imps(1,end) = sign(feval(f,ends(end)));
+

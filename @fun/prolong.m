@@ -1,31 +1,33 @@
-function gout = prolong(g,nout)
+function g = prolong(g,nout)
 % This function allows one to manually adjust the number of points.
 % The output gout has length(gout) = nout (number of points).
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author: rodp $: $Rev: 537 $:
+% $Date: 2009-07-17 16:15:29 +0100 (Fri, 17 Jul 2009) $:
 
 m = nout - g.n;
 
 % Trivial case
 if m == 0
-    gout = g;
     return
 end
 % Constant case
 if g.n ==1
-    gout = set(g,'vals', g.vals*ones(nout,1));
+    g.vals = g.vals*ones(nout,1);
+    g.n = nout;
     return
 end
 
 if  (m<0 && nout<129 && g.n<1000)% Use barycentric to prolong
-    gout = set(g,'vals',bary(chebpts(nout),g.vals));
+    g.vals = bary(chebpts(nout),g.vals); g.n = nout;
 else % Use FFTs to prolong
     c = chebpoly(g);  
     if m>=0
         % Simple case, add zeros as coeffs.
-        gout = set(g,'vals',chebpolyval( [zeros(m,1); c] )); 
+        g.vals = chebpolyval( [zeros(m,1); c] ); g.n = nout; 
     else
         % To shorten a fun, we need to consider aliasing
         c = flipud(c);
@@ -37,6 +39,6 @@ else % Use FFTs to prolong
         end
         calias(nout) = sum(c(nout:nn:end));
         calias = flipud(calias);
-        gout = set(g,'vals',chebpolyval(calias)); 
+        g.vals = chebpolyval(calias); g.n = nout; 
     end
 end

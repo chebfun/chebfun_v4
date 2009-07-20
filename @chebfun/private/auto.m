@@ -31,7 +31,7 @@ htol = 1e-14*scl.h;
 
 if ~pref.splitting
      maxn = pref.maxdegree+1;
-     [funs,hpy] = getfun(op,ends,maxn,scl,pref);
+     [funs,hpy] = getfun(op,ends,pref,scl);
      if ~hpy
         warning('CHEBFUN:auto',['Function not resolved, using ' int2str(maxn) ...
             ' pts. Have you tried ''splitting on''?']);
@@ -41,10 +41,8 @@ end
 % ------------------------------------------------------------------------
 
 % SPLITTING ON mode!
-maxn = pref.maxlength+1;
-nsplit = pref.splitdegree+1;            % Get maxn from preferences: default is 129.
 
-[funs,hpy,scl] = getfun(op,ends,nsplit,scl,pref);    % Try to get one smooth piece for the entire interval 
+[funs,hpy,scl] = getfun(op,ends,pref,scl);     % Try to get one smooth piece for the entire interval 
 sad = ~hpy;                                     % before splitting interval
 
 % MAIN LOOP
@@ -57,38 +55,49 @@ while any(sad)
     a = ends(i); b = ends(i+1);
 
     % Look for an edge between [a,b].
-    edge = detectedge(op,a,b,scl.h,scl.v);
-
-    if isempty(edge) % No edge found, split interval at the middle point
-        edge = 0.5*(a+b);
-    elseif (edge-a) <= htol % Edge is close to the left boundary, assume it is at x=a
+    if ~isinf(norm([a,b],inf))
+        edge = detectedge(op,a,b,scl.h,scl.v);
+        if isempty(edge)    % No edge found, split interval at the middle point
+            edge = (b+a)/2;
+        end
+    else 
+        % Unbounded case: must use map!
+         mapfor = funs(i).map.for; mapder = funs(i).map.der;
+         edge = detectedge(@(x) op(mapfor(x)),-1+eps,1-eps,scl.h,scl.v,mapder);
+         if isempty(edge)
+             edge = mapfor(0); % No edge found, split interval at the middle point
+         else
+             edge = mapfor(edge);
+         end
+    end
+    
+    if (edge-a) <= htol     % Edge is close to the left boundary, assume it is at x=a
         edge = a+(b-a)/100; % Split interval closer to the left boundary
     elseif (b-edge) <= htol % Edge is close to the right boundary, assume it is at x=b
         edge = b-(b-a)/100; % Split interval closer to the right boundary
     end
-
+    
+    % update horizontal scale!
+    scl.h = max(scl.h, abs(edge));
+    
     % Try to obtain happy funs on each new subinterval.
     % ------------------------------------
-    [child1, hpy1, scl] = getfun(op, [a, edge], nsplit, scl, pref);
-    [child2, hpy2, scl] = getfun(op, [edge, b], nsplit, scl, pref);
+    [child1, hpy1, scl] = getfun(op, [a, edge], pref, scl);
+    [child2, hpy2, scl] = getfun(op, [edge, b], pref, scl);
     funs = [funs(1:i-1) child1 child2 funs(i+1:end)];
     ends = [ends(1:i) edge ends(i+1:end)];
     sad  = [sad(1:i-1) not(hpy1) not(hpy2) sad(i+1:end)];
 
-    %% -------- Stop? check the length --------
+    %% -------- Stop? check length --------
     lenf = 0;
     for i = 1:numel(funs)
-        lenf = lenf+length(funs(i));
+        lenf = lenf+funs(i).n;
     end
     
-    if lenf > maxn
+    if lenf > pref.maxlength+1;
         warning('CHEBFUN:auto',['Chebfun representation may not be accurate:' ...
                 'using ' int2str(lenf) ' points'])
         return
     end
     %% ----------------------------------------
 end
-
-% Update vertical scale ?
-% funs=set(funs,'scl.v',scl.v);
-% Removed this, the scale will be updated when the chebfun is constructed.

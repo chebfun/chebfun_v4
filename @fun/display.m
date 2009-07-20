@@ -7,7 +7,8 @@ function display(g)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
-
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
 if isequal(get(0,'FormatSpacing'),'compact')
     if numel(g) == 1

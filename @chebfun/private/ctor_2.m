@@ -10,22 +10,42 @@ if any(diff(ends)<0),
     error(['Vector of endpoints should have increasing values'])
 end
 funs = [];
-imps = [];
-scl.v=0; scl.h=max(abs(ends([1,end])));
+hs = norm(ends([1,end]),inf);
+if hs == inf
+    hs = 1;
+end
+scl.v=0; scl.h= hs;
 newends = ends(1);
+
+if isa(ops,'chebfun')
+    if numel(ops) > 1
+        error('chebfun:ctor_2','Only one chebfun is allowed for this call');
+    end
+    if ops.ends(1) <= ends(1) && ops.ends(end) >= ends(end)
+        f = restrict(f,[ends(1) ends(end)]);
+    else
+        error('chebfun:c_tor2:domain','chebfun is not defined in the domain')
+    end
+    return
+end
+
 for i = 1:length(ops)
     op = ops{i};
     switch class(op)
         case 'double'
-            funs = [funs fun(op)];
+            funs = [funs fun(op,ends(i:i+1))];
             newends = [newends ends(i+1)];
         case 'fun'
             if numel(op) > 1
             error(['A vector of funs cannot be used to construct '...
                 ' a chebfun.'])
             end
-            funs = [funs op];
-            newends = [newends ends(i+1)];
+            if norm(op.map.par(1:2)-ends(i:i+1)) > scl.h*1e-15
+                error('chebfun:ctor_1:domain','Incosistent doamins')
+            else
+                funs = [funs op];
+                newends = [newends ends(i+1)];
+            end
         case 'char'
             if ~isempty(str2num(op))
                 error(['A chebfun cannot be constructed from a string with '...
@@ -41,15 +61,6 @@ for i = 1:length(ops)
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];
             newends = [newends es(2:end)];
-        case 'chebfun'
-            if op.ends(1) <= ends(1) && op.ends(end) >= ends(end)
-                x = chebfun(@(x) x, union(ends,op.ends));
-                [f, x] = overlap(op,x);
-                f = restrict(f,[ends(1) ends(end)]);
-            else
-                error('chebfun:c_tor2:domain','chebfun is not defined in the domain')
-            end
-            return
         case 'cell'
             error(['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])

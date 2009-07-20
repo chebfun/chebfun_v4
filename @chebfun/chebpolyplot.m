@@ -18,7 +18,7 @@ function varargout = chebpolyplot(u,varargin)
 %
 %   Example
 %     u = chebfun({@sin @cos @tan @cot},[-2,-1,0,1,2]);
-%     chebpolyplot(u,0,'marker','.','linestyle','none')
+%     chebpolyplot(u,0,'marker','.','linestyle','none');
 %
 %   See also chebfun/chebpoly, plot
 %
@@ -58,7 +58,7 @@ for j = 1:length(k)
     UK = {UK{:}, 1:length(uk), uk}; % store
 end
 h = semilogy(UK{:},s{:});           % plot
-% legend(int2str(k.'))
+%legend(int2str(k.'))
 
 % output handle
 if nargout ~=0

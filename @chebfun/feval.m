@@ -45,21 +45,27 @@ fx = zeros(size(x));
 
 funs=f.funs;
 ends = f.ends;
-[X,I] = rescale(x,ends);
+xin=x(:).';
+
+I = x < ends(1);
+if any(I)
+    fx(I) =  feval(funs(1),x(I));
+end
 for i = 1:f.nfuns
-   pos = find(I==i);
-   if ~isempty(pos)       
-       fx(pos) = feval(funs(i),X(pos));
+   I = x>=ends(i) & x<=ends(i+1);
+   if any(I)       
+       fx(I) = feval(funs(i),x(I));
    end
 end
+I = x > ends(f.nfuns+1);
+if any(I)
+    fx(I) =  feval(funs(f.nfuns),x(I));
+end
 
-x=x(:)';
 if size(f.imps,1) == 1
-    
     % This doesn't work if repeated values of x intersect with ends.
- %     [val,loc,pos] = intersect(x,ends);
- %     fx(loc) = f.imps(1,pos);
- 
+    %[val,loc,pos] = intersect(xin,ends);
+    %fx(loc) = f.imps(1,pos);
     % RodP and NickH replacing with this to fix the problem
     if f.nfuns < 10
         for k = 1:f.nfuns+1
@@ -79,8 +85,9 @@ if size(f.imps,1) == 1
    end
     % ---- End fix (to be revisited in the near future) ---
 
+  
 elseif any(f.imps(2,:))
-  [val,loc,pos] = intersect(x,ends);
+  [val,loc,pos] = intersect(xin,ends);
   fx(loc(any(f.imps(2:end,pos)>0,1))) = inf;
   fx(loc(any(f.imps(2:end,pos)<0,1))) = -inf;
 end

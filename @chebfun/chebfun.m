@@ -51,6 +51,8 @@ if isnumeric(default_f)
 end
 f = default_f;
 
+mapname =  mappref('name');
+
 % No arguments -> return empty chebfun
 if nargin == 0; return, end
 

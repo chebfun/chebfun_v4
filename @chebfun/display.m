@@ -60,9 +60,25 @@ function displaychebfun(f, columnstr)
         disp([columnstr ' (1 smooth piece)'])
     end    
     len = zeros(f.nfuns,1);
-    disp('          interval          length   values at Chebyshev points')
+
+    % Non-linear map used?
+    mapped = false;
+    for k = 1:f.nfuns
+        if ~strcmp(f.funs(k).map.name,'linear')
+            mapped = true;
+            break
+        end
+    end
+    
+    % If non-linear map, display "mapped Chebyshev instead"
+    if mapped        
+        disp('          interval          length   values at mapped Chebyshev points')
+    else
+        disp('          interval          length   values at Chebyshev points')
+    end
+     
     for j = 1:f.nfuns
-        len(j)=length(funs(j));
+        len(j)= funs(j).n;
         if ~isreal(funs(j).vals)
             fprintf('(%9.2g,%9.2g)   %7i       Complex values \n', ends(j), ends(j+1), len(j));
         else

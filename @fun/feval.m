@@ -8,5 +8,14 @@ function out = feval(g,x)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
-out = bary(x,g.vals);
+if isfield('inv',g.map)
+    out = bary(g.map.inv(x),g.vals);
+else
+    n = g.n;
+    xk = chebpts(n);
+    w =  [1/2; ones(n-2,1); 1/2].*(-1).^((0:n-1)'); 
+    out = bary(x,g.vals,g.map.for(xk),w);
+end

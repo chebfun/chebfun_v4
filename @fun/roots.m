@@ -6,11 +6,32 @@ function out = roots(g,all)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author: rodp $: $Rev: 537 $:
+% $Date: 2009-07-17 16:15:29 +0100 (Fri, 17 Jul 2009) $:
 
-tol = 100*eps;
 if nargin == 1
     all = 0;
 end
+out = g.map.for(rootsunit(g,all));
+
+
+function out = rootsunit(g,all)
+% Computes the roots on the unit interval
+
+% Assume that the map in g is the identity: compute the roots in the
+% interval [-1 1]!
+ends = g.map.par(1:2);
+g.map.for = @(y) y; 
+g.map.inv = @(x) x; 
+g.map.par(1:2) = [-1 1]; 
+g.map.name ='linear';
+
+% Update horizontal scale accordingly
+if norm(ends,inf) < inf;
+    g.scl.h = g.scl.h*2/diff(ends);
+end
+
+tol = 100*eps;
     
 if (g.n<101)                                    % for small length funs
     c=chebpoly(g);                              % compute Cheb coeffs
@@ -60,10 +81,10 @@ if (g.n<101)                                    % for small length funs
         out = r;
     end
 else
+    
     c = -0.004849834917525; % arbitrary splitting point to avoid a root at c
-    %c = rand*.2-.1;                             % split at a random point
-    g1 = restrict(g,[-1,c]);
-    g2 = restrict(g,[ c,1]);
-    out = [-1+(roots(g1)+1)*.5*(1+c);...          % find roots recursively 
-        c+(roots(g2)+1)*.5*(1-c)];              % and rescale them
+    g1 = restrict(g,[-1 c]);
+    g2 = restrict(g,[c,1]);
+    out = [-1+(rootsunit(g1,all)+1)*.5*(1+c);...        % find roots recursively 
+        c+(rootsunit(g2,all)+1)*.5*(1-c)];              % and rescale them
 end

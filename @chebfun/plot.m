@@ -130,11 +130,14 @@ if isempty(args_3)
     args_3 = {NaN,NaN};
 end
 h3 = plot(args_3{:},'handlevis','off');
-if ~h, hold off; end
 
+if ~h, hold off; end
+ 
 if nargout == 1
     varargout{1} = [h1 h2 h3 hdummy];
 end
+
+if ~h, hold off; end
 
 %---------------------------------------------------------------------
 function [curves, marks, jumps] = unwrap_group(curves, marks, jumps, f, g, linespec)
@@ -144,20 +147,53 @@ if g(1).trans
     f = f.'; g = g.'; % Only deal with column quasimatrices from this point
 end
 
+
 single_chebfun = 0;
 if isempty(f)
-    for i = 1:numel(g)
-        gends = g(i).ends;
-        vs = num2cell([gends(1:end-1);gends(2:end)],1);        
-        f = [f chebfun(vs, gends)];
+    
+    % Generate a chebfun representation of x 
+    for i = 1:numel(g) % For each column of g
+ 
+            % cannot plot unboundend intervals: 
+            if norm(g(i).ends([1,end]),inf) == inf
+                
+                % Unbounded intervals are restrict to intervals in [-10,10]             
+                if g(i).ends(1) == -inf && g(i).ends(end) == inf
+                    I(1) = -10; I(2) = 10;
+                elseif g(i).ends(end) == inf
+                    I(1) = g(i).ends(1); I(2) = max(10,10+I(1));
+                else 
+                    I(2) = g(i).ends(end); I(1) = min(-10,I(2)-10);
+                end
+                
+                g(i) = restrict(g(i),I);
+                
+            end
+            
+            % bounded domain
+            newx = g(i);
+            for k = 1:g(i).nfuns
+                % linear map
+                if strcmp(g(i).funs(k).map.name,'linear');
+                    newx.funs(k) = fun(@(x) x, g(i).ends(k:k+1),2);
+                % other maps
+                else
+                    newx.funs(k) = fun(@(x) x, g(i).funs(k).map);
+                end
+            end
+                
+        %end
+        f = [f newx];
     end
+        
     single_chebfun = 1;
+    
 elseif numel(f) == 1 && numel(g) > 1
     f = repmat(f,1,numel(g));
 elseif numel(f) > 1 && numel(g) == 1
     g = repmat(g,1,numel(f));
 elseif numel(f) ~= numel(g)
-    error('Quasi-matrices must be the same lengths')
+    error('Quasi-matrices must be the same size')
 end
 
 for i = 1:numel(f)
@@ -173,7 +209,7 @@ function [curve, mark, jump] = unwrap_column(f, g, linespec, single_chebfun)
 
 maxfg=zeros(1,f.nfuns);
 for i = 1:f.nfuns
-     maxfg(i) = max(length(f.funs(i)),length(g.funs(i))); 
+     maxfg(i) = max(f.funs(i).n,g.funs(i).n); 
 end
 nf = sum(maxfg);
 totalmax = max(2000,nf);
@@ -196,7 +232,6 @@ if single_chebfun
     cf(end) = g(1).ends(end); mf(end) = cf(end);
 end
 
-
 curve = {cf,cg,linespec}; mark = {mf,mg,linespec}; jump = [];
 % if single_chebfun && isreal(curve{2})
 if isreal(curve{2})
@@ -207,7 +242,7 @@ if isreal(curve{2})
         jval = [jval; g.funs(i).vals(end);g.funs(i+1).vals(1);nan];
     end
     %curve = [curve,{jloc},{jval},{linespec}];
-%     curve = [curve,{jloc},{jval},{':k'}];
+    %     curve = [curve,{jloc},{jval},{':k'}];
     if isempty(jloc)
         jloc = f.ends(1);
         jval = NaN;

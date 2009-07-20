@@ -93,9 +93,13 @@ for k = 1:nargin
       f = newf;
     else                    % append to current f
       delta = f.ends(end) - newf.ends(1);    
-      f.ends = [ f.ends delta+newf.ends(2:end) ];    % translate domain
+      newends = delta+newf.ends;
+      for j = 1:newf.nfuns  % update maps in funs!
+          newf.funs(j) = newdomain(newf.funs(j), newends(j:j+1));
+      end
+      f.ends = [f.ends newends(2:end)];    % translate domain
       f.funs = [f.funs, newf.funs];
-      f.imps = [f.imps(1:end-1) newf.imps(1:end) ];
+      f.imps = [f.imps(1:end-1) newf.imps(1:end)];
     end
   end
 end

@@ -24,9 +24,7 @@ function Fout = conv(F1,F2)
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2009 by The Chebfun Team. 
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+% Copyright 2002-2008 by The Chebfun Team. 
 
 % Deal with quasi-matrices
 if size(F1) ~= size(F2)
@@ -42,6 +40,8 @@ end %conv()
 % Deal with single column chebfun
 % ---------------------------------
 function h = convcol(f,g)
+
+% Note: f and g may be defined on different domains!
     
 if isempty(f) || isempty(g), h=chebfun; return, end
     
@@ -59,11 +59,12 @@ ends = unique( A(:) + B(:) ).';
 
 % Coalesce breaks that are close due to roundoff.
 ends( diff(ends) < 10*eps*max(abs(ends([1,end]))) ) = [];
+ends(isnan(ends)) = [];
 
 a = f.ends(1); b = f.ends(end); c = g.ends(1); d = g.ends(end);
 funs = [];
 
-scl.h = norm(ends([1,end]));
+scl.h = max([norm(ends,inf),hscale(f),hscale(g)]);
 scl.v = max(g.scl,f.scl);
 
 % Avoid resampling for speed up!
@@ -73,13 +74,10 @@ pref = chebfunpref;
 pref.sampletest = false;
 % Construct funs
 for k =1:length(ends)-1  
-    newfun = fun(@(x) integral(scale(x,ends(k),ends(k+1)),a,b,c,d,f,g), pref.maxdegree, scl, pref);
+    newfun = fun(@(x) integral(x,a,b,c,d,f,g), ends(k:k+1), pref, scl);
     scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
     funs = [funs simplify(newfun)];
 end
-
-% Restore resampling option
-%chebfunpref('resampling',res)
 
 % Construct chebfun
 h.scl = scl.v;
@@ -110,8 +108,8 @@ for k = 1:length(x)
         ends = union(x(k)-g.ends,f.ends);
         ee = [A ends(A<ends & ends< B)  B];
         for j = 1:length(ee)-1
-            u = fun(@(t) feval(f,scale(t,ee(j),ee(j+1))).*feval(g,x(k)-scale(t,ee(j),ee(j+1))),length(x));
-            out(k) = out(k) + diff(ee(j:j+1))*sum(u)/2;
+            u = fun(@(t) feval(f,t).*feval(g,x(k)-t), ee(j:j+1), length(x));
+            out(k) = out(k) + sum(u);
         end
     end
 end

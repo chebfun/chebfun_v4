@@ -132,7 +132,7 @@ for i = 1:f.nfuns
   a = ends(i); b = ends(i+1);
   [o,p] = max(f.funs(i));
   y(i) = o;
-  x(i) = scale(p,a,b);
+  x(i) = p;
 end
 [y,I] = max(y);
 x = x(I);

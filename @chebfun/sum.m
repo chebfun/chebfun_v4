@@ -58,11 +58,9 @@ function out = sumcol(f)
 
 if isempty(f), out = 0; return, end
 
-ends = f.ends;
 out = 0;
 for i = 1:f.nfuns
-    a = ends(i); b = ends(i+1);
-    out = out + (b-a)*sum(f.funs(i))/2;
+    out = out + sum(f.funs(i));
 end
 if not(isempty(f.imps(2:end,:)))
     out = out + sum(f.imps(end,:));

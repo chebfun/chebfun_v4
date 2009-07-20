@@ -10,5 +10,8 @@ function isemp = isempty(F)
 isemp = true;
 
 for k = 1:numel(F)
-    isemp = true && isempty(F(k).funs);
+    if ~isempty(F(k).ends)
+        isemp = false;       
+        return
+    end
 end

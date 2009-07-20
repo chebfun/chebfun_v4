@@ -1,27 +1,33 @@
-function g = growfun(op,g,n,pref,g1,g2)
-%  GROWFUN samples OP to generate a FUN adaptively
+function g = growfun(op,g,pref,g1,g2)
+% G = GROWFUN(OP,G,PREF,G1,G2)
 %
-% G = GROWFUN(OP,G,N,PREF) returns the fun G representing the function handle OP.
-%   N is the maximum number of points allowed in the representation.
+% G = GROWFUN(OP,G,PREF) returns the fun G representing the function handle OP.
+%   PREF is the chebfunpref structure.
 %
-% G = GROWFUN(OP,G,N,PREF,G1) returns the fun G representing the composition 
+% G = GROWFUN(OP,G,PREF,G1) returns the fun G representing the composition 
 %   OP(G1), where G1 is a fun. 
 %
-% G = GROWFUN(OP,G,N,PREF,G1,G2) returns the fun G representing the composition 
+% G = GROWFUN(OP,G,PREF,G1,G2) returns the fun G representing the composition 
 %   OP(G1,G2), where G1 and G2 are funs.
 %
-% PREF is the chebfun preference structure (see chebfunpref).
-%
 
+% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
 % Check preferences 
 split = pref.splitting;
 resample = pref.resampling;
+if split
+    n = pref.splitdegree + 1;
+else
+    n = pref.maxdegree + 1;
+end
 
 % Set minn 
-if nargin == 5
+if nargin == 4
     minn = max(5, g1.n);
-elseif nargin == 6
+elseif nargin == 5
     minn = max([5, g1.n, g2.n]);
 else
     minn = pref.minsamples;
@@ -42,17 +48,17 @@ end
     
 % ---------------------------------------------------
 % composition case, i.e., want gout = op(g) (see FUN/COMP.M)
-if nargin > 4
+if nargin > 3
     for k = kk
         v1 = get(prolong(g1,k),'vals');
-        if nargin == 6
+        if nargin == 5
             v2 = get(prolong(g2,k),'vals');
             v = op(v1,v2);
         else
             v = op(v1);
         end
         g = set(g,'vals', v);
-        g = simplify(g,pref.eps);
+        g = simplify(g, pref.eps);
         if g.n < k, break, end
     end
     return
@@ -60,13 +66,12 @@ end
 % ---------------------------------------------------
 
 if  ~resample && 2^npower+1 == n && nargin<5
-    
+        
     % single sampling
     ind =1;
-    x = chebpts(kk(ind));
-    v = op(x);
+    v = op(g.map.for(chebpts(kk(ind))));
     while kk(ind)<=kk(end)        
-        g = set(g,'vals',v);
+        g.vals = v; g.n = length(v); g.scl.v = max(g.scl.v,norm(v,inf));
         [ish, g] = ishappy(op,g,pref);
         if ish || ind==length(kk), break, end        
         ind =ind+1;
@@ -75,27 +80,60 @@ if  ~resample && 2^npower+1 == n && nargin<5
         
         % In splitting on mode, consider endpoints (see getfun.m)
         if split
-            newv = op([-1;x(2:2:end-1);1]); 
+            newv = op(g.map.for([-1;x(2:2:end-1);1])); 
             v(2:2:end-1) = newv(2:end-1);
         else
-            v(2:2:end-1) = op(x(2:2:end-1));
+            v(2:2:end-1) = op(g.map.for(x(2:2:end-1)));
         end
     end
 
 else
     
     % double sampling (This is the standard way of growing a fun)
-    for k = kk
-        x = chebpts(k);
-        g = set(g,'vals',op(x));   
-        [ish, g] = ishappy(op,g,pref);
-        if ish, break, end
-    end
     
-     % Check for NaN's or Inf's    
-     if any(isnan(g.vals)) || isinf(g.scl.v)
+    if ~(isinf(g.map.par(1)) || isinf(g.map.par(2)))
+        
+        for k = kk
+            g.vals = op(g.map.for(chebpts(k)));
+            g.n = k; g.scl.v = max(g.scl.v,norm(g.vals,inf));
+            [ish, g] = ishappy(op,g,pref);
+            if ish, break, end
+        end
+        
+    else
+        
+        adapt = mappref('adaptinf');
+        
+        % if unbouded intervals, catch horizontal scale
+        if ~adapt
+            if g.map.par(1) == -inf && g.map.par(2) == inf
+                g.scl.h = max(abs(diff(g.map.par(3:4))),abs(sum(g.map.par(3:4))));
+            elseif g.map.par(1) == -inf
+                g.scl.h = max(abs(g.map.par(2)), abs(g.map.par(2)-g.map.par(3)));
+            else
+                g.scl.h = max(abs(g.map.par(1)), abs(g.map.par(1)+g.map.par(3)));
+            end
+        end
+        for k = kk
+            if adapt
+                [map,v,hscl] = unbounded(g.map.par, op, k);
+                g.vals = v; g.map = map; g.n = k; 
+                g.scl.v = max(g.scl.v,norm(v,inf));
+                g.scl.h = hscl;
+            else
+                g.vals = op(g.map.for(chebpts(k))); g.n = k; 
+                g.scl.v = max(g.scl.v,norm(g.vals,inf));
+            end
+            [ish, g] = ishappy(op,g,pref);
+            if ish, break, end
+        end
+        
+    end
+          
+    % Check for NaN's or Inf's
+    if any(isnan(g.vals)) || isinf(g.scl.v)
         error('CHEBFUN:growfun:naneval','Function returned NaN or Inf when evaluated.')
-     end
+    end
     
 end
 
@@ -116,8 +154,8 @@ if ish && pref.sampletest
     x = chebpts(g.n);
     [mx indx] = max(abs(diff(g.vals))./diff(x));
     xeval = (x(indx+1)+sqrt(2)*x(indx))/(1+sqrt(2));
-    v = op([-1;xeval;1]);
-    if abs(v(2)-bary(xeval,g.vals)) > 1e4*pref.eps*g.scl.v
+    v = op(g.map.for([-1;xeval;1]));
+    if abs(v(2)-bary(xeval,g.vals,x)) > 1e4*pref.eps*g.scl.v
         ish =  false;
         return
     end

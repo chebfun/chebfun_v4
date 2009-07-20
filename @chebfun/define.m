@@ -93,6 +93,9 @@ if ~isempty(g)                                   % translate
   if any( abs(g.ends([1,end])-subint) > 4*eps*len )
     g.ends = subint(1) + (g.ends-g.ends(1))*diff(subint)/len;
   end
+  for j = 1:g.nfuns  % update maps in funs!
+      g.funs(j) = newdomain(g.funs(j), g.ends(j:j+1));
+  end
 end
 
 % Trivial return case.
@@ -106,14 +109,14 @@ domf = domain(f);
 if ~isempty(g)                                 % INSERTION/OVERWRITING
   if subint(2) < domf(1)                       % extension to the left
     f.ends = [ g.ends f.ends ];
-    f.funs = [ g.funs fun(0) f.funs ];
+    f.funs = [ g.funs fun(0,[g.ends(end) f.ends(1)]) f.funs ];
     f.imps = [ g.imps f.imps ];
   elseif subint(1) > domf(2)                   % extension to the right
     f.ends = [ f.ends g.ends ];
-    f.funs = [ f.funs fun(0) g.funs ];
+    f.funs = [ f.funs fun(0,[f.ends(end) g.ends(1)]) g.funs ];
     f.imps = [ f.imps g.imps ];
   else                                         % subint intersects domf
-    fleft = chebfun; fright = chebfun;
+      fleft = chebfun; fright = chebfun;
     % The following ifs are for checking the equality cases, since then you
     % get annoying functions defined at just one point. If the restriction
     % operation changes to make that empty, these if tests can disappear.
@@ -138,8 +141,12 @@ else                                             % DELETION
     elseif isempty(fleft), f = fright;
     else
       % Deletion strictly inside the domain--slide the right side over.
+      frightnewends = fright.ends-fright.ends(1)+fleft.ends(end);
+      for j = 1:fright.nfuns  % update maps in funs!
+        fright.funs(j) = newdomain(fright.funs(j), frightnewends(j:j+1));
+      end
       f.funs = [ fleft.funs fright.funs ];
-      f.ends = [ fleft.ends(1:end-1) fright.ends-fright.ends(1)+fleft.ends(end) ];
+      f.ends = [ fleft.ends(1:end-1) frightnewends ];
       f.imps = [ fleft.imps(1:end-1) fright.imps ];
     end
   end

@@ -21,11 +21,10 @@ end
 % -------------------------------------------------------------------------
 function F = diffcol(f,n)
 
-if isempty(f), F=chebfun; return, end
+if isempty(f.funs(1).vals), F=chebfun; return, end
 
 tol = max(chebfunpref('eps')*10, 1e-14) ;
 
-ends = f.ends;
 F = f;
 funs = f.funs;
 
@@ -33,16 +32,15 @@ for j = 1:n % loop n times for nth derivative
     
     % differentiate every piece and rescale
     for i = 1:f.nfuns 
-        a = ends(i); b = ends(i+1);
-        funs(i) = diff(funs(i))*(2/(b-a));
+        funs(i) = diff(funs(i));
     end
     F = set(F, 'funs', funs);
 
     % update function values in the first row of imps:
     for i=1:F.nfuns
-        F.imps(1,i)=feval(F.funs(i),-1);
+        F.imps(1,i) = F.funs(i).vals(1);
     end
-    F.imps(1,end)=feval(F.funs(F.nfuns),1);
+    F.imps(1,end) = F.funs(F.nfuns).vals(end);
     
     
     % Detect jumps in the function
@@ -50,7 +48,7 @@ for j = 1:n % loop n times for nth derivative
     newimps = zeros(1,f.nfuns+1);
     for i = 2:f.nfuns
         fleft = fright; fright = f.funs(i);
-        jmp = feval(fright,-1) - feval(fleft,1);
+        jmp = fright.vals(1) - fleft.vals(end);
         if abs(jmp) > tol*f.scl
            newimps(i) = jmp;
         end

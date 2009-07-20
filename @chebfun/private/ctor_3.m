@@ -24,19 +24,15 @@ for i = 1:length(ops)
     op = ops{i};
     switch class(op)
         case 'double'
-            warning(['Generating fun from a numerical vector. '...
+            error(['Generating fun from a numerical vector. '...
                 'Associated number of Chebyshev points is not used.']);
-            funs = [funs fun(op)];
-            scl = max(scl,norm(op,inf));
         case 'fun'
             if numel(op) > 1
             error(['A vector of funs cannot be used to construct '...
                 ' a chebfun.'])
             end
-            warning(['Generating fun from another. '...
+            error(['Generating fun from another. '...
                 'Associated number of Chebyshev points is not used.']);
-            funs = [funs op];
-            scl = max(scl,op.scl.v);
         case 'char'
             if ~isempty(str2num(op))
                 error(['A chebfun cannot be constructed from a string with '...
@@ -45,21 +41,21 @@ for i = 1:length(ops)
             a = ends(i); b = ends(i+1);
             op = inline(op);
             vectorcheck(op,[a b]);
-            g = fun(@(x) op(.5*((b-a)*x+b+a)), n(i));
+            g = fun(op, [a b], n(i));
             funs = [funs g];
-            scl = max(scl, norm(g.vals,inf));
+            scl = max(scl, g.scl.v);
         case 'function_handle'
             a = ends(i); b = ends(i+1);   
             vectorcheck(op,[a b]);
-            g = fun(@(x) op(.5*((b-a)*x+b+a)), n(i));
+            g = fun(op, [a b], n(i));
             funs = [funs g];
-            scl = max(scl, norm(g.vals,inf));
+            scl = max(scl, g.scl.v);
         case 'chebfun'
             a = ends(i); b = ends(i+1); 
             if op.ends(1) > a || op.ends(end) < b
                 error('chebfun:c_tor3:domain','chebfun is not defined in the domain')
             end
-            g = fun(@(x) feval(op,.5*((b-a)*x+b+a)), n(i));
+            g = fun(@(x) feval(op,x), [a b], n(i));
             funs = [funs g];
             scl = max(scl, norm(g.vals,inf));
         case 'cell'

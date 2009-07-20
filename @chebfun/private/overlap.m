@@ -24,7 +24,7 @@ if length(fends)==length(gends) && all(fends==gends)
 
 else
     
-    hs = max(abs([fends(1) fends(end)]));
+    hs = hscale(f);
     if norm([fends(1)-gends(1), fends(end)-gends(end)],inf) > 1e-15*hs
        error('domain(f) ~= domain(g)')
     end
@@ -36,14 +36,18 @@ else
             [delta,ind]=min(abs(gends-fends(k)));
             if delta < 1e-13*hs   % LNT has changed this frmo 1e-15
                 fends(k)=gends(ind);
+                % Also need to ajust ends in funs:
+                if k==1
+                    f.funs(1).map.par(1) = fends(1);
+                elseif k <= f.nfuns
+                    f.funs(k-1).map.par(2) = fends(k);
+                    f.funs(k).map.par(1) = fends(k);
+                else
+                    f.funs(f.nfuns).map.par(2) = fends(k);
+                end
             end
         end
         f.ends = fends;
-        
-       % This recursion is not ideal because g.ends(i) may be close to
-       % g.ends(i+1). RodP
-       % [fout,gout] = overlap(f,g);
-       % return;
         
        % replacing with this
        ends = union(fends,gends);
@@ -62,15 +66,13 @@ else
            fk=fk+1;
         else
             if fends(fk+1)<b, fk=fk+1; ffun=f.funs(fk); end
-            inter=(2*[a b]-fends(fk)-fends(fk+1))/(fends(fk+1)-fends(fk));
-            ffun=restrict(ffun,[max(inter(1),-1) min(inter(2),1)]);
+            ffun=restrict(ffun,[a,b]);
         end
         if  gends(gk)==a && gends(gk+1)==b
             gk=gk+1; 
         else
             if gends(gk+1)<b, gk=gk+1; gfun=g.funs(gk); end
-            inter=(2*[a b]-gends(gk)-gends(gk+1))/(gends(gk+1)-gends(gk));
-            gfun=restrict(gfun,[max(inter(1),-1) min(inter(2),1)]);
+            gfun=restrict(gfun,[a,b]);
         end
         foutfuns=[foutfuns ffun];  goutfuns=[goutfuns gfun];
     end

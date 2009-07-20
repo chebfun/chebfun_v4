@@ -113,7 +113,7 @@ for i = 1:f.nfuns
   a = ends(i); b = ends(i+1);
   [yk, xk] = minandmax(f.funs(i));
   yy(i,:) = yk;
-  xx(i,:) = scale(xk,a,b);
+  xx(i,:) = xk;
 end
 [y(1),I1] = min(yy(:,1));
 [y(2),I2] = max(yy(:,2));

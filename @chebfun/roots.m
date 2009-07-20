@@ -21,14 +21,13 @@ else
 end
 
 ends = f.ends;
-hs = max(abs([ends(1), ends(2)]));
+hs = hscale(f);
 rts = []; % all roots will be stored here
 for i = 1:f.nfuns
     a = ends(i); b = ends(i+1);
     lfun = f.funs(i);
-    r = roots(lfun,all);
-    if ~isempty(r)
-        rs = scale(r,a,b); % roots in a piece
+    rs = roots(lfun,all);
+    if ~isempty(rs)
         if ~isempty(rts)
             while length(rs)>=1 && abs(rts(end)-rs(1))<tol*hs
             rs=rs(2:end);

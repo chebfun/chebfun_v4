@@ -1,8 +1,6 @@
-function gout = simplify(g, tol)
+function g = simplify(g,tol)
 % This function removes leading Chebyshev coefficients that are below 
-% epsilon, relative to the verical scale stored in g.scl.v. TOL is the
-% tolerance used in this process. IF TOL is not provieded, it is retrived
-% from CHEBFUNPREF.
+% epsilon, relative to the verical scale stored in g.scl.v
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -12,14 +10,18 @@ function gout = simplify(g, tol)
 
 % This is the code in the old fixedgrow.m by LNT
 
+gn = g.n;
+if gn < 2  % cant be simpler than a constant!
+    return; 
+end
+
 if nargin == 1
     tol = chebfunpref('eps');
 end
 epstol = 2^-52;
 
-gout = g;
 if g.scl.v == 0, 
-    gout = set(g,'vals',0);               % is g the zero function?
+    g = set(g,'vals',0);               % is g the zero function?
     return;
     elseif isinf(g.scl.v)
         error('CHEBFUN:simplify:InfEval', ...
@@ -28,7 +30,7 @@ end
 
 c = chebpoly(g);                      % coeffs of Cheb expansion of g
 ac = abs(c)/g.scl.v;                  % abs value relative to scale of f
-Tlen = min(g.n,max(3,round((g.n-1)/8)));% length of tail to test
+Tlen = min(g.n,max(3,round((gn-1)/8)));% length of tail to test
 % which basically is the same as:
 % Tlen = n,             for n = 1:3
 % Tlen = 3,             for n = 4:25
@@ -37,8 +39,8 @@ Tlen = min(g.n,max(3,round((g.n-1)/8)));% length of tail to test
 % LNT's choice --------------------------------------
 %Tmax = 2e-16*Tlen^(2/3);             % maximum permitted size of tail
 % RodP's choice -------------------------------------
-mdiff =  (g.scl.h/g.scl.v)*norm(diff(g.vals)./diff(chebpts(g.n)),inf);
-
+xpts = g.map.for(chebpts(gn));
+mdiff =  (g.scl.h/g.scl.v)*norm(diff(g.vals)./diff(xpts),inf);
 % Choose maximum between prescribed tolerance and estimated rounding errors
 Tmax = max(tol,epstol*min(1e10,max(mdiff,Tlen^(2/3))));
 % ---------------------------------------------------
@@ -49,7 +51,7 @@ if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
             error('CHEBFUN:simplify:NaNEval', ...
                 'Function returned NaN when evaluated.')
         else
-            gout = set(g,'vals',0);
+            g = set(g,'vals',0);
             return;
         end
     end
@@ -63,8 +65,10 @@ if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
     [foo,Tchop] = max(Tbpb(3:Tend));  % Tchop = pos at which to chop
     v = chebpolyval(c(Tchop+3:end));  % chop the tail
     if length(v) > 1
-        gout = set(g,'vals',[g.vals(1);v(2:end-1);g.vals(end)]);
+         % forces interpolation at endpoints
+        g.vals = [g.vals(1);v(2:end-1);g.vals(end)];
     else
-        gout = set(g,'vals',v);
+        g.vals = v;
     end
+    g.n = length(v);
 end

@@ -5,6 +5,8 @@ function F = mrdivide(f,g)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
 F=f;
 if (isa(g,'double'))

@@ -5,6 +5,8 @@ function out = isempty(g)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
 if numel(g) > 1
     out = 0;

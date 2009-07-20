@@ -8,16 +8,27 @@ function gout = compfun(g1,op,g2)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+%   Last commit: $Author$: $Rev$:
+%   $Date$:
+
 pref = chebfunpref;
-if pref.splitting
-    n = pref.splitdegree+1;
-else
-    n = pref.maxdegree+1;
-end
 
 if nargin == 3
-    gout = growfun(op,g1,n,pref,g1,g2);
+    if ~samemap(g1,g2)
+        ends = g1.map.par(1:2);
+        if norm(ends-g2.map.par(1:2),inf) > 1e-15*max(g1.scl.h,g2.scl.h)
+            error('fun:minus:domain','Domains dont match')
+        else
+            scl.h = max(g1.scl.h,g2.scl.h);
+            scl.v = max(g1.scl.v,g2.scl.v);
+            gout = fun(@(x) op(feval(g1,x),feval(g2,x)), ...
+                g2.map.par([1,2]), pref, scl);
+            return
+        end
+    end
+    gout = growfun(op,g1,pref,g1,g2);
 else
-    gout = growfun(op,g1,n,pref,g1);
+    gout = growfun(op,g1,pref,g1);
 end
+
 

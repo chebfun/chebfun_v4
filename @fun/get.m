@@ -5,6 +5,8 @@ function val = get(a, propName)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
 switch propName
     case 'vals'
@@ -17,6 +19,8 @@ switch propName
         val = a.scl.v;
     case 'scl.h'
         val = a.scl.h;
+    case 'map'
+        val = a.map;
     otherwise
         error([propName,' Is not a valid fun property'])
 end

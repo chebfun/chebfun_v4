@@ -37,7 +37,6 @@ if subint(1)>subint(2)
 end
 
 g = f;
-
 dom = domain(f);
 if (subint(1)<dom(1)) || (subint(2)>dom(2))
   error('chebfun:restrict:badinterval','Given interval is not in the domain.')
@@ -45,9 +44,8 @@ end
 
 if subint(2)==subint(1)
   % Easiest to dispose of this case separately.
-  [a,j] = rescale(subint(1),f.ends);             % locn of new 'domain'
-  val = feval(f.funs(j),a);
-  g.funs = fun( val ) ;
+  val = feval(f,subint(1));
+  g.funs = fun( val , subint) ;
   g.nfuns = 1;
   g.ends = subint;
   g.imps = [ val val ];
@@ -55,13 +53,8 @@ if subint(2)==subint(1)
 end
 
 % We now know dom(1)<=subint(1)<subint(2)<=dom(2).
-[a,j] = rescale(subint(1),f.ends);               % locn of new left endpt
-[b,k] = rescale(subint(2),f.ends);               % locn of new right endpt
-
-% If we hit a breakpoint exactly, get at it from the left, not the right.
-if b==-1                                         
-  b = 1;  k = k-1;                               
-end
+j = find( f.ends > subint(1), 1, 'first' ) -1 ;
+k = find( f.ends >= subint(2), 1, 'first' ) - 1;
 
 % Prune data.
 g.funs = f.funs(j:k);
@@ -71,14 +64,14 @@ g.imps = f.imps(:,j:k+1);
 
 % Trim off the end funs.
 if j==k
-  g.funs = [restrict(g.funs(1),[a b]) g.funs(2:end)];       % only one left
+  g.funs = [restrict(g.funs(1),subint) g.funs(2:end)];       % only one left 
 else
-  g.funs = [restrict(g.funs(1),[a 1]) g.funs(2:end)];         
-  g.funs = [g.funs(1:end-1) restrict(g.funs(end),[-1 b])];
+  g.funs = [restrict(g.funs(1),g.ends(1:2)) g.funs(2:end)];         
+  g.funs = [g.funs(1:end-1) restrict(g.funs(end),g.ends(end-1:end))];
 end
 
 % Bug fix (18/12/08) RodP: correct imps matrix at endpoints: 
-% Note: deltas at new end poits will be lost!
+% Note: deltas at new endpoints will be lost!
 g.imps(:,1) = [g.funs(1).vals(1); zeros(size(g.imps,1)-1,1)];
 g.imps(:,end) = [g.funs(end).vals(end); zeros(size(g.imps,1)-1,1)];
 

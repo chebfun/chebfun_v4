@@ -7,12 +7,14 @@ function [y,x] = minandmax(g)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
+ends = g.map.par(1:2);
 r = roots(diff(g));
-r = [-1;r;1];
+r = [ends(1);r;ends(2)];
 
-[y(1),idx] = min(bary(r,g.vals));
+vals = feval(g,r);
+[y(1),idx] = min(vals);
 x(1,1) = r(idx);
 
-[y(1,2),idx] = max(bary(r,g.vals));
+[y(1,2),idx] = max(vals);
 x(1,2) = r(idx);
 

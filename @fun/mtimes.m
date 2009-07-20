@@ -5,6 +5,8 @@ function gout = mtimes(g1,g2)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
 if (isempty(g1) || isempty(g2)), gout=fun; return; end
 if (isa(g1,'double'))

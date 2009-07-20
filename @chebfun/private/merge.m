@@ -56,7 +56,7 @@ if bkpts(end)==length(f.ends), bkpts = bkpts(1:end-1); end
 
 fout = f;
 scl.v = f.scl;
-scl.h = norm(f.ends,inf);
+scl.h = hscale(f);
 
 for k = bkpts  
     
@@ -66,11 +66,14 @@ for k = bkpts
     % Prevent merging if there are impulses or chebfun lengths add to more
     % than maxn
     if ~any(f.imps(2:end,k),1) && length(fout.funs(j-1))+length(fout.funs(j)) < 1.05*maxn
-        v = feval(f, [xk, xk+eps(xk), xk-eps(xk)]);
+        %v = feval(f, [xk, xk+eps(xk), xk-eps(xk)]);
+        v(1) = f.imps(1,k);
+        v(2) = f.funs(k-1).vals(end);
+        v(3) = f.funs(k).vals(1);
         % Prevent merging if there are jumps (very loose tolerance)
         if  norm(v(1) - v(2:3),inf) < tol*f.scl 
             [mergedfun, hpy] = getfun(@(x) feval(fout,x),  ... 
-                               [fout.ends(j-1), fout.ends(j+1)], maxn, scl, pref);
+                               [fout.ends(j-1), fout.ends(j+1)], pref, scl);
             % merging successful                  
             if hpy 
                 fout.funs = [fout.funs(1:j-2) mergedfun fout.funs(j+1:end)];

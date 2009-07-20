@@ -5,7 +5,7 @@ function len = length(g)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
-len=0;
-if numel(g)>1, error('numel(g)>1'), end
-if ~isempty(g), len=g.n; end
+len = g.n;

@@ -28,16 +28,15 @@ end
 Fb = imps(1);
 funs = f.funs;
 for i = 1:f.nfuns
-    a = ends(i); b = ends(i+1);
-    funs(i) = ((b-a)/2)*cumsum(funs(i)) + Fb;
-    Fb = feval(funs(i),1) + imps(i+1);
+    funs(i) = cumsum(funs(i)) + Fb;
+    Fb = funs(i).vals(end) + imps(i+1);
 end
 
 vals = zeros(1,f.nfuns+1);
 for i = 2:f.nfuns
-    vals(i) = feval(funs(i),-1);
+    vals(i) = funs(i).vals(1);
 end
-vals(f.nfuns+1) = feval(funs(f.nfuns),1);
+vals(f.nfuns+1) = funs(f.nfuns).vals(end);
 
 fout = set(f, 'funs', funs); 
 fout.imps = [vals; f.imps(3:end,:)];

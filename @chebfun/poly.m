@@ -12,7 +12,8 @@ function out = poly(f,n)
 nfuns = f.nfuns;
 if nargin == 1
     if nfuns>1
-        warning('Chebfun has more than one fun. Only the polynomial coefficients of the first one are returned');
+        warning('chebfun:poly', ...
+            'Chebfun has more than one fun. Only the polynomial coefficients of the first one are returned');
     end
     n = 1;
 end
@@ -22,7 +23,7 @@ if n>nfuns
 else
 
     a = f.ends(n); b = f.ends(n+1);
-    x = chebfun(@(x) x,[a,b],length(f.funs(n))); % Chebyshev nodes
+    %x = chebfun(@(x) x,[a,b],f.funs(n).n); % Chebyshev nodes
         
     % Coefficients on the unit interval
     c = fliplr(poly(f.funs(n)));

@@ -6,8 +6,11 @@ function [out,idx] = max(g)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
 r = roots(diff(g));
-r = [-1;r;1];
-[out,idx]=max(bary(r,g.vals));
+ends = g.map.par(1:2);
+r = [ends(1);r;ends(end)];
+[out,idx]=max(feval(g,r));
 idx = r(idx);

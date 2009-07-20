@@ -6,5 +6,11 @@ function f = flipud(f)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
 
+ends = f.map.par(1:2);
+if isinf(ends(1)) ||isinf(ends(2))
+    error('fun:flipud:unbounded','FLIPUD cannot be used on unbounded domanins');
+end
 f.vals = flipud(f.vals);
