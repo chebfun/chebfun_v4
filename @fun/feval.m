@@ -11,7 +11,7 @@ function out = feval(g,x)
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
-if isfield('inv',g.map)
+if isfield(g.map,'inv')
     out = bary(g.map.inv(x),g.vals);
 else
     n = g.n;
