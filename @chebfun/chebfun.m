@@ -51,13 +51,11 @@ if isnumeric(default_f)
 end
 f = default_f;
 
-mapname =  mappref('name');
-
 % No arguments -> return empty chebfun
 if nargin == 0; return, end
 
 % Chebfun preferences:
-if isstruct(varargin{nargin})
+if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')
     pref = varargin{nargin};
     argin = varargin(1:end-1);
 else
@@ -86,6 +84,9 @@ else
                     end
                 end
                 pref.(varargin{k}) = value;
+                k = k+2;
+            elseif strcmp('map',varargin{k})
+                pref.map =  varargin{k+1};
                 k = k+2;
             else
                 argin{j} = varargin{k};

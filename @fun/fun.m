@@ -39,7 +39,7 @@ if nargin > 0
     end
     if ~isnumeric(ends)     % A map may optionally be passed in the second arg.
         g.map = ends;
-        ends = map.for([-1,1]);
+        ends = ends.for([-1,1]);
     elseif isinf(ends(1)) || isinf(ends(2))
         g.map = unbounded(ends);
     else
@@ -90,8 +90,7 @@ if nargin > 0
         case 5
             error('fun:constructor:nargin','A FUN call can have at most 4 input arguments')
     end
-    
-    
+      
     % Call constructor depending on narg
     if  nargin == 3,
         % non-adaptive case exact number of points provided
@@ -100,6 +99,11 @@ if nargin > 0
         g.vals = vals; g.n = n; g.scl.v = max(g.scl.v, norm(vals,inf));
     else
         % adaptive case
+        % If map was provided in the chebfun call, overwrite previous
+        % assignment.
+        if isfield(pref,'map')
+            g.map = pref.map;
+        end
         g = growfun(op,g,pref);
     end
     
