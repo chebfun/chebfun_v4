@@ -63,7 +63,7 @@ while any(sad)
     else 
         % Unbounded case: must use map!
          mapfor = funs(i).map.for; mapder = funs(i).map.der;
-         edge = detectedge(@(x) op(mapfor(x)),-1+eps,1-eps,scl.h,scl.v,mapder);
+         edge = detectedge(@(x) op(mapfor(x)),-1+scl.h*eps,1-scl.h*eps,scl.h,scl.v,mapder);
          if isempty(edge)
              edge = mapfor(0); % No edge found, split interval at the middle point
          else
