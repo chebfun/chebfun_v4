@@ -1,4 +1,4 @@
-function [fout,gout] = overlap(f,g)
+function [f,g] = overlap(f,g)
 % OVERLAP chebfuns
 %
 % [fout,gout] = OVERLAP(f,g) returns two chebfuns such that
@@ -18,9 +18,8 @@ fimps=f.imps; gimps=g.imps;
 
 if length(fends)==length(gends) && all(fends==gends)
 
-    fout=f; gout=g;    
-    fout.imps=[fimps; zeros(maxrows-frows,length(fends))];
-    gout.imps=[gimps; zeros(maxrows-grows,length(fends))];    
+    f.imps=[fimps; zeros(maxrows-frows,length(fends))];
+    g.imps=[gimps; zeros(maxrows-grows,length(fends))];    
 
 else
     
@@ -87,7 +86,7 @@ else
     goutimps(2:grows,goutind)=gimps(2:grows,gindex);
     goutimps(1,:)=feval(g,ends);
     
-    fout = set(f,'funs',foutfuns,'ends',ends,'imps',foutimps);
-    gout = set(g,'funs',goutfuns,'ends',ends,'imps',goutimps);    
+    f.funs = foutfuns; f.ends = ends; f.imps = foutimps; f.nfuns = length(ends)-1;
+    g.funs = goutfuns; g.ends = ends; g.imps = goutimps; g.nfuns = f.nfuns;   
 
 end

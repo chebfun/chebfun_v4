@@ -12,7 +12,7 @@ end
 funs = [];
 hs = norm(ends([1,end]),inf);
 if hs == inf
-    hs = 1;
+    hs = max(abs(ends(isfinite(ends))+1));
 end
 scl.v=0; scl.h= hs;
 newends = ends(1);
@@ -35,6 +35,7 @@ for i = 1:length(ops)
         case 'double'
             funs = [funs fun(op,ends(i:i+1))];
             newends = [newends ends(i+1)];
+            scl.v = max(scl.v, funs(end).scl.v);
         case 'fun'
             if numel(op) > 1
             error(['A vector of funs cannot be used to construct '...
@@ -45,6 +46,7 @@ for i = 1:length(ops)
             else
                 funs = [funs op];
                 newends = [newends ends(i+1)];
+                scl.v = max(scl.v, funs(end).scl.v);
             end
         case 'char'
             if ~isempty(str2num(op))
@@ -72,13 +74,19 @@ for i = 1:length(ops)
                 'cannot be used to construct a chebfun object.'])
     end
 end
-% switch class(op)
-%     case 'double', imps(end+1) = op(end);
-%     case 'fun'   , imps(end+1) = op.vals(end);
-% end
 
 imps = jumpvals(funs,newends,op); % Update values at jumps, first row of imps.
-f = set(f,'funs',funs,'ends',newends,'imps',imps,'trans',0);
+f.nfuns = length(newends)-1; 
+% update scale and check if simplification is needed.
+for k = 1:f.nfuns-1
+    funscl = funs(k).scl.v;
+    funs(k).scl = scl;      % update scale field
+    if  funscl < 100*scl.v  % if scales were significantly different, simplify!
+        funs(k) = simplify(funs(k),pref.eps);
+    end
+end
+% Assign fields to chebfuns.
+f.funs = funs; f.ends = newends; f.imps = imps; f.trans = false; f.scl = scl.v;
 
 if length(f.ends)>2 
     f = merge(f,find(~ismember(newends,ends)),pref); % Avoid merging at specified breakpoints

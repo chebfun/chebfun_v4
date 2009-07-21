@@ -38,6 +38,7 @@ if isa(f1,'double')
           h.funs(i) = f1 + f2.funs(i);  
     end
     h.imps(1,:) = f1 + f2.imps(1,:);
+    h.scl = max(h.scl, f1+h.scl);
     
 elseif isa(f2,'double')
     h=f1;
@@ -45,19 +46,26 @@ elseif isa(f2,'double')
         h.funs(i)=f1.funs(i) + f2;
     end
     h.imps(1,:) = f2 + f1.imps(1,:);
+    h.scl = max(h.scl, f2+h.scl);
 
 else    
 
     % chebfun + chebfun
     [f1,f2] = overlap(f1,f2);   
     h = f1;
+    scl = h.scl;
     for k = 1:f1.nfuns
         h.funs(k) = f1.funs(k) + f2.funs(k);
+        scl = max(scl, h.funs(k).scl.v);
     end
-    h = set(h,'imps',f1.imps+f2.imps);
+    h.imps=f1.imps+f2.imps;
 
+    % update scale
+    for k = 1:f1.nfuns
+        h.funs(k).scl.v = scl;
+    end
+    h.scl = scl;
+    
 end
-
-h = update_vscl(h);
 
 

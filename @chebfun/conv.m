@@ -64,17 +64,17 @@ ends(isnan(ends)) = [];
 a = f.ends(1); b = f.ends(end); c = g.ends(1); d = g.ends(end);
 funs = [];
 
-scl.h = max([norm(ends,inf),hscale(f),hscale(g)]);
-scl.v = max(g.scl,f.scl);
+scl.h = max(hscale(f),hscale(g));
+scl.v = 100*max(g.scl,f.scl);
 
 % Avoid resampling for speed up!
 %res = chebfunpref('resampling');
-%resampling off
 pref = chebfunpref;
 pref.sampletest = false;
+pref.resampling = false;
 % Construct funs
 for k =1:length(ends)-1  
-    newfun = fun(@(x) integral(x,a,b,c,d,f,g), ends(k:k+1), pref, scl);
+    newfun = fun(@(x) integral(x,a,b,c,d,f,g,pref,scl), ends(k:k+1), pref, scl);
     scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
     funs = [funs simplify(newfun)];
 end
@@ -98,7 +98,7 @@ h.trans = f.trans;
 end   % conv()
 
 
-function out = integral(x,a,b,c,d,f,g)
+function out = integral(x,a,b,c,d,f,g, pref,scl)
 
 
 out = 0.*x;
@@ -108,11 +108,11 @@ for k = 1:length(x)
         ends = union(x(k)-g.ends,f.ends);
         ee = [A ends(A<ends & ends< B)  B];
         for j = 1:length(ee)-1
-            u = fun(@(t) feval(f,t).*feval(g,x(k)-t), ee(j:j+1), length(x));
+            u = fun(@(t) feval(f,t).*feval(g,x(k)-t), ee(j:j+1), pref, scl);
+            u.scl.v = 1;
             out(k) = out(k) + sum(u);
         end
     end
 end
-
 end
 

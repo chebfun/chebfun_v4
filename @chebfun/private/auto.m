@@ -31,7 +31,7 @@ htol = 1e-14*scl.h;
 
 if ~pref.splitting
      maxn = pref.maxdegree+1;
-     [funs,hpy] = getfun(op,ends,pref,scl);
+     [funs,hpy,scl] = getfun(op,ends,pref,scl);
      if ~hpy
         warning('CHEBFUN:auto',['Function not resolved, using ' int2str(maxn) ...
             ' pts. Have you tried ''splitting on''?']);

@@ -19,20 +19,22 @@ if any(n-round(n))
 end
 
 funs = [];
-scl = 0;
+
+% Initial horizontal scale.
+hs = norm(ends([1,end]),inf);
+if hs == inf
+    hs = max(abs(ends(2:end-1)+1));
+end
+scl.v=0; scl.h= hs;
+
 for i = 1:length(ops)
     op = ops{i};
     switch class(op)
-        case 'double'
-            error(['Generating fun from a numerical vector. '...
-                'Associated number of Chebyshev points is not used.']);
-        case 'fun'
-            if numel(op) > 1
-            error(['A vector of funs cannot be used to construct '...
-                ' a chebfun.'])
-            end
-            error(['Generating fun from another. '...
-                'Associated number of Chebyshev points is not used.']);
+        case 'function_handle'
+            a = ends(i); b = ends(i+1);
+            vectorcheck(op,[a b]);
+            g = fun(op, [a b], n(i));
+            funs = [funs g];
         case 'char'
             if ~isempty(str2num(op))
                 error(['A chebfun cannot be constructed from a string with '...
@@ -43,36 +45,42 @@ for i = 1:length(ops)
             vectorcheck(op,[a b]);
             g = fun(op, [a b], n(i));
             funs = [funs g];
-            scl = max(scl, g.scl.v);
-        case 'function_handle'
-            a = ends(i); b = ends(i+1);   
-            vectorcheck(op,[a b]);
-            g = fun(op, [a b], n(i));
-            funs = [funs g];
-            scl = max(scl, g.scl.v);
         case 'chebfun'
-            a = ends(i); b = ends(i+1); 
+            a = ends(i); b = ends(i+1);
             if op.ends(1) > a || op.ends(end) < b
                 error('chebfun:c_tor3:domain','chebfun is not defined in the domain')
             end
             g = fun(@(x) feval(op,x), [a b], n(i));
             funs = [funs g];
-            scl = max(scl, norm(g.vals,inf));
+        case 'double'
+            error(['Generating fun from a numerical vector. '...
+                'Associated number of Chebyshev points is not used.']);
+        case 'fun'
+            if numel(op) > 1
+                error(['A vector of funs cannot be used to construct '...
+                    ' a chebfun.'])
+            end
+            error(['Generating fun from another. '...
+                'Associated number of Chebyshev points is not used.']);
         case 'cell'
             error(['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])
-        case 'chebfun'
-            error(['Unrecognized input sequence: Attempted to construct '...
-                'a chebfun from another in an inappropriate way.'])
         otherwise
             error(['The input argument of class ' class(op) ...
                 'cannot be used to construct a chebfun object.'])
     end
-end
-switch class(op)
-    case 'double', imps(end+1) = op(end);
-    case 'fun'   , imps(end+1) = op.vals(end);
+    scl.v = max(scl.v, g.scl.v);
+    scl.h = max(scl.h, g.scl.h);
 end
 
+% First row of imps contains function values
 imps = jumpvals(funs,ends,op); 
-f = set(f,'funs',funs,'ends',ends,'imps',imps,'trans',0,'scl',scl);
+
+% update scale field in funs
+f.nfuns = length(ends)-1; 
+for k = 1:f.nfuns
+    funs(k).scl = scl;   
+end
+
+% Assign fields to chebfuns.
+f.funs = funs; f.ends = ends; f.imps = imps; f.trans = false; f.scl = scl.v;

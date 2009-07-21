@@ -43,7 +43,7 @@ end
 
 %-------------------------------------------------------
 % Deal with a single chebfun (op needs only ONE input)
-function fout = compcol(f1, op, f2)
+function f1 = compcol(f1, op, f2)
     
 % Get preferences
 if chebfunpref('splitting'), n = chebfunpref('splitdegree')+1;    
@@ -87,4 +87,9 @@ for k = 1:f1.nfuns
        vscl = max(vscl,newfun.scl.v);    % Get new estimate for vscale
     end
 end
-fout=set(f1,'funs',ffuns,'ends',ends,'imps',imps);
+% Update scale of funs:
+f1.nfuns = length(ends)-1;
+for k = 1:f1.nfuns
+    ffuns(k).scl.v = vscl;
+end
+f1.funs = ffuns; f1.ends = ends; f1.imps = imps; f1.scl = vscl;

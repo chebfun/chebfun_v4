@@ -33,8 +33,9 @@ for j = 1:n % loop n times for nth derivative
     % differentiate every piece and rescale
     for i = 1:f.nfuns 
         funs(i) = diff(funs(i));
+        F.scl = max(F.scl, funs(i).scl.v);
     end
-    F = set(F, 'funs', funs);
+    F.funs = funs;
 
     % update function values in the first row of imps:
     for i=1:F.nfuns
@@ -63,4 +64,9 @@ for j = 1:n % loop n times for nth derivative
     
     f = F;
     
+end
+
+% update scale in funs
+for k = 1:F.nfuns
+    F.funs(k).scl.v = F.scl;
 end

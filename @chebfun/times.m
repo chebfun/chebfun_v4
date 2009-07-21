@@ -29,14 +29,16 @@ else
 end
 
 % -------------------------------
-function h = timescol(f,g)
+function f = timescol(f,g)
 
 
 % product of two chebfuns
 [f,g] = overlap(f,g);
 ffuns = [];
+scl = g.scl;
 for k = 1:length(f.ends)-1
     ffuns = [ffuns f.funs(k).*g.funs(k)];
+    scl = max(scl,ffuns(end).scl.v); % update scale variable
 end
 
 % Deal with impulse matrix:
@@ -86,5 +88,9 @@ imps(1,:) = f.imps(1,:).*g.imps(1,:);
 %     end
 % end
 
-% Set chebfun:
-h = set(chebfun, 'funs', ffuns,'ends', f.ends, 'imps', imps, 'trans', f.trans);
+% Set chebfun: (use f)
+% update scales in funs:
+for k = 1:f.nfuns
+    ffuns(k).scl.v = scl;
+end
+f.funs= ffuns; f.imps=imps; f.scl = scl;
