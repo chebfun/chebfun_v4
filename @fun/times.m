@@ -34,7 +34,8 @@ end
 
 % Deal with scales:
 scl.h = max(g1.scl.h,g2.scl.h);
-scl.v = norm([g1.scl.v; g2.scl.v; vals],inf);
+%scl.v = norm([g1.scl.v; g2.scl.v; vals],inf);
+scl.v = norm(vals,inf);
 g1.scl = scl;
 
 % Simplify:
