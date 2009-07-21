@@ -23,7 +23,7 @@ funs = [];
 % Initial horizontal scale.
 hs = norm(ends([1,end]),inf);
 if hs == inf
-    hs = max(abs(ends(2:end-1)+1));
+    hs = max(abs(ends(isfinite(ends))+1));
 end
 scl.v=0; scl.h= hs;
 
