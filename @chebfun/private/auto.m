@@ -59,24 +59,27 @@ while any(sad)
         edge = detectedge(op,a,b,scl.h,scl.v);
         if isempty(edge)    % No edge found, split interval at the middle point
             edge = (b+a)/2;
+        elseif (edge-a) <= htol     % Edge is close to the left boundary, assume it is at x=a
+            edge = a+(b-a)/100; % Split interval closer to the left boundary
+        elseif (b-edge) <= htol % Edge is close to the right boundary, assume it is at x=b
+            edge = b-(b-a)/100; % Split interval closer to the right boundary
         end
+
     else 
         % Unbounded case: must use map!
          mapfor = funs(i).map.for; mapder = funs(i).map.der;
          edge = detectedge(@(x) op(mapfor(x)),-1+scl.h*eps,1-scl.h*eps,scl.h,scl.v,mapder);
          if isempty(edge)
              edge = mapfor(0); % No edge found, split interval at the middle point
+         elseif (edge+1) <= htol     % Edge is close to the left boundary, assume it is at x=a
+            edge = mapfor(-1+1/50); % Split interval closer to the left boundary
+         elseif (1-edge) <= htol % Edge is close to the right boundary, assume it is at x=b
+            edge = mapfor(1-1/50); % Split interval closer to the right boundary
          else
              edge = mapfor(edge);
          end
     end
-    
-    if (edge-a) <= htol     % Edge is close to the left boundary, assume it is at x=a
-        edge = a+(b-a)/100; % Split interval closer to the left boundary
-    elseif (b-edge) <= htol % Edge is close to the right boundary, assume it is at x=b
-        edge = b-(b-a)/100; % Split interval closer to the right boundary
-    end
-    
+        
     % update horizontal scale!
     scl.h = max(scl.h, abs(edge));
     
