@@ -44,5 +44,28 @@ elseif nargin==3
 else
   error('wrong number of arguments in lebesgue');
 end
-L = sum(abs(interp1(x,eye(length(x)),d)),2);
+
+% barycentric weights
+w = bary_weights(x);
+% set preferences
+pref = chebfunpref; pref.resampling = false; pref.sampletest = false;
+pref.maxdegree = length(x)+1;
+% Lebesgue function (breakpoints at interpolation nodes)
+L = chebfun(@(t) lebfun(t,x(:),w), unique([x(:);d.ends.']), pref);
+
+% Lebesgue constant
 if nargout==2, Lconst = norm(L,inf); end
+
+
+function L = lebfun(t,xk,w)
+% Lebesgue function: xk are nodes, w are weights, t evaluation points
+% Based on barycentric formula.
+L = t;
+mem = ismember(t,xk);
+for i = 1:numel(t)
+    if ~mem(i)
+        xx = w./(t(i)-xk);
+        L(i) = sum(abs(xx))/abs(sum(xx));
+    end
+end
+L(mem) = 1;
