@@ -14,6 +14,10 @@ function map = linear(ends)
 %   Last commit: $Author$: $Rev$:
 %   $Date$:
 
-de = diff(ends); se = sum(ends);
-map = struct('for',@(y) 0.5*(de*y+se),'inv',@(x) (2*x-se)/de, ...
-             'der',@(y) .5*de + 0*y,'name','linear','par', ends) ;
+a = ends(1); b = ends(2);
+map = struct('for',@(y) b*(y+1)/2+a*(1-y)/2, ...
+             'inv',@(x) (x-a)/(b-a)-(b-x)/(b-a), ...
+             'der',@(y) (b-a)/2 + 0*y,'name','linear','par', ends) ;
+    
+% Note: writting the map in this form ensures that -1 is mapped to a and 1
+% is mapped to b (in the presence of rounding errors).

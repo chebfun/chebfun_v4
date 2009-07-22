@@ -86,7 +86,7 @@ f.nfuns = length(newends)-1;
 for k = 1:f.nfuns-1
     funscl = funs(k).scl.v;
     funs(k).scl = scl;      % update scale field
-    if  funscl < 100*scl.v  % if scales were significantly different, simplify!
+    if  funscl < 10*scl.v   % if scales were significantly different, simplify!
         funs(k) = simplify(funs(k),pref.eps);
     end
 end

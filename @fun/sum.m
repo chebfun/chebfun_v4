@@ -30,24 +30,24 @@ elseif any(isinf(g.map.par(1:2)))
     % non-constant case
 
     % Check if the function decays fast enough
-    gm = g;
-    gm.map = linear([-1,1]);
-    dgm = diff(gm);
-    diverge = false;
-    % is the derivative zero at the inf?
-    if isinf(g.map.par(2)) && abs(dgm.vals(end)) > 1e-8*gm.scl.v
-        diverge = true;
-    end
-    % is the derivative zero at the -inf?
-    if isinf(g.map.par(1)) && abs(dgm.vals(1)) > 1e-8*gm.scl.v
-        diverge = true;
-    end
+%    gm = g;
+%    gm.map = linear([-1,1]);
+%    dgm = diff(gm);
+%    diverge = false;
+%     % is the derivative zero at the inf?
+%     if isinf(g.map.par(2)) && abs(dgm.vals(end)) > 1e-8*gm.scl.v
+%         diverge = true;
+%     end
+%     % is the derivative zero at the -inf?
+%     if isinf(g.map.par(1)) && abs(dgm.vals(1)) > 1e-8*gm.scl.v
+%         diverge = true;
+%     end
     
-    if diverge
-        out = nan;
-    else
-        out = sum_unit_interval(changevar(g)); 
-    end
+%    if diverge
+%        out = nan;
+%    else
+     out = sum_unit_interval(changevar(g)); 
+%    end
   
 % General map case    
 else

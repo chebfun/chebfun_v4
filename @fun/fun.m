@@ -95,7 +95,9 @@ if nargin > 0
     if  nargin == 3,
         % non-adaptive case exact number of points provided
         % map might still be addapted for that number of points
-        vals = op(g.map.for(chebpts(n)));
+        xvals = g.map.for(chebpts(n)); 
+        xvals(1) = g.map.par(1);  xvals(end) = g.map.par(2);
+        vals = op(xvals);
         g.vals = vals; g.n = n; g.scl.v = max(g.scl.v, norm(vals,inf));
     else
         % adaptive case

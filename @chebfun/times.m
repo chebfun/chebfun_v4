@@ -35,7 +35,7 @@ function f = timescol(f,g)
 % product of two chebfuns
 [f,g] = overlap(f,g);
 ffuns = [];
-scl = g.scl;
+scl = 0;
 for k = 1:length(f.ends)-1
     ffuns = [ffuns f.funs(k).*g.funs(k)];
     scl = max(scl,ffuns(end).scl.v); % update scale variable
@@ -90,7 +90,12 @@ imps(1,:) = f.imps(1,:).*g.imps(1,:);
 
 % Set chebfun: (use f)
 % update scales in funs:
-for k = 1:f.nfuns
-    ffuns(k).scl.v = scl;
+for k = 1:f.nfuns-1
+    funscl = ffuns(k).scl.v;
+    ffuns(k).scl.v = scl;      % update scale field
+    if  funscl < 10*scl        % if scales are significantly different, simplify!
+        ffuns(k) = simplify(ffuns(k));
+    end
 end
+
 f.funs= ffuns; f.imps=imps; f.scl = scl;

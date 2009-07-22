@@ -65,11 +65,15 @@ if nargin > 3
 end
 % ---------------------------------------------------
 
+% End points: make sure the function gets evaluated at those:
+a = g.map.par(1); b = g.map.par(2);
+
 if  ~resample && 2^npower+1 == n && nargin<5
         
     % single sampling
     ind =1;
-    v = op(g.map.for(chebpts(kk(ind))));
+    xvals = g.map.for(chebpts(kk(ind))); xvals(1) = a; xvals(end) = b;
+    v = op(xvals);
     while kk(ind)<=kk(end)        
         g.vals = v; g.n = length(v); g.scl.v = max(g.scl.v,norm(v,inf));
         [ish, g] = ishappy(op,g,pref);
@@ -80,7 +84,7 @@ if  ~resample && 2^npower+1 == n && nargin<5
         
         % In splitting on mode, consider endpoints (see getfun.m)
         if split
-            newv = op(g.map.for([-1;x(2:2:end-1);1])); 
+            newv = op([a; g.map.for(x(2:2:end-1)); b]); 
             v(2:2:end-1) = newv(2:end-1);
         else
             v(2:2:end-1) = op(g.map.for(x(2:2:end-1)));
@@ -94,7 +98,8 @@ else
     if ~(isinf(g.map.par(1)) || isinf(g.map.par(2)))
         
         for k = kk
-            g.vals = op(g.map.for(chebpts(k)));
+            xvals = g.map.for(chebpts(k)); xvals(1) = a; xvals(end) = b;
+            g.vals = op(xvals);
             g.n = k; g.scl.v = max(g.scl.v,norm(g.vals,inf));
             [ish, g] = ishappy(op,g,pref);
             if ish, break, end
@@ -129,13 +134,14 @@ else
         end
         
     end
-          
-    % Check for NaN's or Inf's
-    if any(isnan(g.vals)) || isinf(g.scl.v)
-        error('CHEBFUN:growfun:naneval','Function returned NaN or Inf when evaluated.')
-    end
     
 end
+
+% Check for NaN's or Inf's
+if any(isnan(g.vals)) || isinf(g.scl.v)
+    error('CHEBFUN:growfun:naneval','Function returned NaN or Inf when evaluated.')
+end
+
 
 %-------------------------------------------------------------------------
 function  [ish,g] = ishappy(op,g,pref)

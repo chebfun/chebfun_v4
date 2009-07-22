@@ -21,6 +21,10 @@ end
 epstol = 2^-52;
 
 if g.scl.v == 0, 
+    % Check for NaN's or Inf's
+    if any(isnan(g.vals)) || isinf(g.scl.v)
+        error('CHEBFUN:growfun:naneval','Function returned NaN or Inf when evaluated.')
+    end
     g = set(g,'vals',0);               % is g the zero function?
     return;
     elseif isinf(g.scl.v)
