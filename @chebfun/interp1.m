@@ -7,6 +7,10 @@ function p = interp1(xk,f)
 %  domain, returns the chebfun P defined on D corresponding
 %  to the polynomial interpolant through data Y(j) at points X(j).
 %
+%  If Y is a matrix with more than one column or F is a chebfun
+%  quasimatrix with more than one column, then P is a quasimatrix
+%  with each column corresponding to the appropriate interpolant.
+%
 %  For example, these commands plot the interpolant in 11 equispaced
 %  points on [-1,1] through a hat function:
 %
