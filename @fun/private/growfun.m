@@ -41,11 +41,12 @@ npower = max(minpower,floor(log2(n-1)));
 if resample
   npn = max(min(npower,6),minpower);
   kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
-%   if kk(end)~=n,  kk(end+1) = n; end
 else
   kk = 2.^(minpower:npower) + 1;
 end
-    
+
+if kk(end)~=n,  kk(end+1) = n; resample = true; end
+
 % ---------------------------------------------------
 % composition case, i.e., want gout = op(g) (see FUN/COMP.M)
 if nargin > 3

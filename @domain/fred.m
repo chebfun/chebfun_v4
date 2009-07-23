@@ -42,7 +42,7 @@ F = chebop(@matrix,@op,d);
 % Matrix form. At given n, multiply function values by CC quadrature
 % weights, then apply kernel as inner products. 
   function A = matrix(n)
-    x = chebpts(d,n);
+    x = chebpts(n,d);
     [X,Y] = ndgrid(x);
     s = clencurt(d.ends(1),d.ends(2),n);
     A = k(X,Y) * spdiags(s',0,n,n);

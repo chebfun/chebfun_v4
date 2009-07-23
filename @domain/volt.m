@@ -44,7 +44,7 @@ V = chebop(@matrix,@op,d,-1);
 % function values, does the proper quadrature. Note that while C(n) would
 % be triangular for low-order quadrature, for spectral methods it is not.
   function A = matrix(n)
-    x = chebpts(d,n);
+    x = chebpts(n,d);
     [X,Y] = ndgrid(x);
     A = k(X,Y).*C(n);
   end

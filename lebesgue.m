@@ -48,10 +48,12 @@ end
 % barycentric weights
 w = bary_weights(x);
 % set preferences
-pref = chebfunpref; pref.resampling = false; pref.sampletest = false;
-pref.maxdegree = length(x)+1;
+pref = chebfunpref; pref.sampletest = false; pref.maxdegree = length(x)-1;
+% ill-conditioned computations may prevent convergence to high accuracy.
+warning('off','CHEBFUN:auto')
 % Lebesgue function (breakpoints at interpolation nodes)
 L = chebfun(@(t) lebfun(t,x(:),w), unique([x(:);d.ends.']), pref);
+warning('on','CHEBFUN:auto')
 
 % Lebesgue constant
 if nargout==2, Lconst = norm(L,inf); end
@@ -60,7 +62,7 @@ if nargout==2, Lconst = norm(L,inf); end
 function L = lebfun(t,xk,w)
 % Lebesgue function: xk are nodes, w are weights, t evaluation points
 % Based on barycentric formula.
-L = t;
+L = ones(size(t)); % Note: L(xk) = 1
 mem = ismember(t,xk);
 for i = 1:numel(t)
     if ~mem(i)
@@ -68,4 +70,3 @@ for i = 1:numel(t)
         L(i) = sum(abs(xx))/abs(sum(xx));
     end
 end
-L(mem) = 1;
