@@ -29,10 +29,10 @@ if a == -inf && b == inf
         x1 = xpts(find(dv>0.01*maxdv,1,'first'));
         x2 = xpts(find(dv>0.01*maxdv,1,'last'));
         h = (x2-x1)/2;
-        c = (x1+x2)/2;
         % avoid problems that don't decay quadratically at infinity
         if ~isempty(h) && h~=0
             s = h/2.3;
+            c = (x1+x2)/2;
         end
         if abs(c) == inf
             error('somthing is wrong')
