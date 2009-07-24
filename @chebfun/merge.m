@@ -54,36 +54,33 @@ else
 end
 
 % Deal with input arguments:
-switch nin
-    case 1
+if nin == 1;
+    bkpts = 2:f.nfuns;
+else % Index of endpoints was provided
+    bkpts = varargin{1};
+    if isempty(bkpts)
+        return;
+    elseif ischar(bkpts) % bkpts = 'all'
         bkpts = 2:f.nfuns;
-    case 2
-        bkpts = varargin{1};
-        if isempty(bkpts)
-            return;
-        elseif ischar(bkpts) % bkpts = 'all'
-            bkpts = 2:f.nfuns;
-        else
-            bkpts = unique(bkpts);
-            if  bkpts(1) < 1 || bkpts(end) > f.nfuns+1 || any(round(bkpts)~=bkpts)
-                error('chebfun:merge:bkpts','Break points must be integers between 2 and length(ends)-1')
-            end
-            if bkpts(1)==1, bkpts = bkpts(2:end); end
-            if bkpts(end)==length(f.ends), bkpts = bkpts(1:end-1); end
+    else
+        bkpts = unique(bkpts);
+        if  bkpts(1) < 1 || bkpts(end) > f.nfuns+1 || any(round(bkpts)~=bkpts)
+            error('chebfun:merge:bkpts','Break points must be integers between 2 and length(ends)-1')
         end
-    case 3
-        pref.splitting = false;
-        pref.maxdegree = varargin{2};
-    case 4
-        pref.eps = varargin{3};
-    otherwise
-        error('chebfun:merge:argin','Inconsistent number of input arguments')
+        if bkpts(1)==1, bkpts = bkpts(2:end); end
+        if ~isempty(bkpts) && bkpts(end)==length(f.ends), bkpts = bkpts(1:end-1); end
+    end
+    if nin > 2 % Maximum degree was provided
+        pref.splitting = true;
+        pref.splitdegree = varargin{2};
+        if nin > 3 % Tolerance was provided
+            pref.eps = varargin{3};
+        end
+    end
 end
 
-tol = 1e7*pref.eps;
-
 if ~pref.splitting
-    maxn =pref.maxdegree+1; 
+    maxn = pref.maxdegree+1; 
 else
     maxn = pref.splitdegree+1; 
 end
@@ -105,7 +102,7 @@ for k = bkpts
         v(2) = f.funs(k-1).vals(end);
         v(3) = f.funs(k).vals(1);
         % Prevent merging if there are jumps (very loose tolerance)
-        if  norm(v(1) - v(2:3),inf) < tol*f.scl 
+        if  norm(v(1) - v(2:3),inf) < 1e7*pref.eps*f.scl 
             [mergedfun, hpy] = getfun(@(x) feval(fout,x),  ... 
                                [fout.ends(j-1), fout.ends(j+1)], pref, scl);
             % merging successful                  
