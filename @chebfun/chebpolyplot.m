@@ -55,10 +55,12 @@ UK = {};
 for j = 1:length(k)
     uk = chebpoly(u,j);             % coefficients of kth fun
     uk = abs(uk(end:-1:1));         % flip
-    UK = {UK{:}, 1:length(uk), uk}; % store
+    UK = {UK{:}, 1:length(uk), uk, s{:}}; % store
 end
-h = semilogy(UK{:},s{:});           % plot
-%legend(int2str(k.'))
+h = semilogy(UK{:});           % plot
+if j > 1
+    legend(int2str(k.'))
+end
 
 % output handle
 if nargout ~=0
