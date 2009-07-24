@@ -38,7 +38,7 @@ if isa(f1,'double')
           h.funs(i) = f1 + f2.funs(i);  
     end
     h.imps(1,:) = f1 + f2.imps(1,:);
-    h.scl = max(h.scl, f1+h.scl);
+    h.scl = max(h.scl, abs(f1+h.scl));
     
 elseif isa(f2,'double')
     h=f1;
@@ -46,7 +46,7 @@ elseif isa(f2,'double')
         h.funs(i)=f1.funs(i) + f2;
     end
     h.imps(1,:) = f2 + f1.imps(1,:);
-    h.scl = max(h.scl, f2+h.scl);
+    h.scl = max(h.scl, abs(f2+h.scl));
 
 else    
 

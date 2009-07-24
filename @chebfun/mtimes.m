@@ -89,4 +89,4 @@ for i = 1:f.nfuns
     f.funs(i) = a*f.funs(i);
 end
 f.imps = a*f.imps;
-f.scl = a*f.scl;
+f.scl = abs(a)*f.scl;
