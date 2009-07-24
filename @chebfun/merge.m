@@ -1,12 +1,11 @@
 function [fout,mpts] = merge(f, varargin)
 % MERGE   Try to remove breakpoints.
-%   G = MERGE(F) returns a chebfun representation of F with the smallest 
-%   number of breakpoints possible such that each smooth piece has at
-%   most SPLITDEGREE number of points, SPLITDEGREE being specified in  
-%   CHEBFUNPREF. In SPLITTING OFF mode instead of SPLITDEGREE, the 
-%   parameter MAXDEGREE in CHEBFUNPREF is used.
+%   F = MERGE(F) attempts to remove unescessry breakpoints from F such that
+%   each smooth piece has at most SPLITDEGREE number of points, SPLITDEGREE 
+%   being specified in CHEBFUNPREF. In SPLITTING OFF mode instead of 
+%   SPLITDEGREE, the parameter MAXDEGREE in CHEBFUNPREF is used.
 %   
-%   [G, MPTS] = MERGE(F) returns the index of the merged endpoints in
+%   [F, MPTS] = MERGE(F) returns the index of the merged endpoints in
 %   MPTS.
 %  
 %   MERGE(F, INDEX) returns an equivalent chebfun representation of F
@@ -22,8 +21,7 @@ function [fout,mpts] = merge(f, varargin)
 %   MERGE(..., PREF) attempts elimination of breakpoints according to the
 %   chebfun preference structure PREF.
 %
-%   In all cases, if elimination of breakpoints is not successful, MERGE 
-%   will return F itself.
+%   In all cases, elimination is attempted from left to right.
 %
 %   Impulses will prevent merging at corresponding break points.
 %
@@ -74,7 +72,7 @@ switch nin
             if bkpts(end)==length(f.ends), bkpts = bkpts(1:end-1); end
         end
     case 3
-        pref.splitting = fase;
+        pref.splitting = false;
         pref.maxdegree = varargin{2};
     case 4
         pref.eps = varargin{3};
