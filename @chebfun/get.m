@@ -16,6 +16,8 @@ switch propName
         val = f.ends;
     case 'imps'
         val = f.imps;
+    case 'nfuns'
+        val = f.nfuns;        
     case 'points'
         % If f consists of many chebfuns, just use the first one. Check
         % what will happen if splitting is on and the solution is piecewise
