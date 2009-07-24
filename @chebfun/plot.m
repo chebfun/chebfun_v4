@@ -54,7 +54,7 @@ if nargin == 0, error('Not enough input arguments.'); end
 pos = 2;
 while pos <= nargin && (~isa(varargin{pos},'char') || (isa(varargin{pos},'char')...
         && ~any(strcmpi(varargin{pos},{'jumpline', 'linewidth','color', ...
-        'markeredgecolor', 'markerfacecolor','markersize','linestyle','marker'}))))
+        'markeredgecolor', 'markerfacecolor','markersize','linestyle','marker','noplot'}))))
     pos = pos+1;
 end
 data = varargin(1:pos-1);
@@ -109,6 +109,14 @@ while ~isempty(data)
         error([class(data{2}) ' argument is an unknown option.'])
     end
     [args_1,args_2,args_3] =  unwrap_group(args_1, args_2, args_3, f, g, linespec);
+end
+
+
+if ~isempty(ax_props) && strcmpi(ax_props{1},'noplot'), 
+    varargout{1} = args_1;
+    varargout{2} = args_2;
+    varargout{3} = args_3;
+    return
 end
 
 args_1 = [args_1, ax_props, {'marker','none'}];
@@ -214,7 +222,7 @@ end
 nf = sum(maxfg);
 totalmax = max(2000,nf);
 cf = []; cg = []; mf = []; mg = [];
-for i = 1:f.nfuns    
+for i = 1:f.nfuns
     fi = f.funs(i); gi = g.funs(i);
     % ... beginning with the markers on Chebyshev points...
     fi = prolong(fi,maxfg(i)); gi = prolong(gi,maxfg(i));
