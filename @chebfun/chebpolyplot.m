@@ -48,14 +48,14 @@ if numel(u) > 1
     end
 end
 if any(k > u.nfuns)
-    error('chebfun:chebpolyplot:outofbounds: input chebfun has only %d pieces', u.nfuns);
+    error('chebfun:chebpolyplot:outofbounds', 'input chebfun has only %d pieces', u.nfuns);
 end
 
 UK = {};
-for j = 1:length(k)
+for j = k
     uk = chebpoly(u,j);             % coefficients of kth fun
     uk = abs(uk(end:-1:1));         % flip
-    UK = {UK{:}, 1:length(uk), uk, s{:}}; % store
+    UK = [UK, {1:length(uk), uk}, s]; % store
 end
 h = semilogy(UK{:});           % plot
 if j > 1
