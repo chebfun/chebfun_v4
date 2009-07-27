@@ -18,14 +18,14 @@ if isempty(f)
         ends = [ends g(:,k).ends];
     end
     ends = unique(ends);         ends = ends(2:end-1);
-    
+
     % evaluation points
-    fl = [reshape(repmat(ends,3,1),3*length(ends),1) ; fl];
+    fl = [a ; reshape(repmat(ends,3,1),3*length(ends),1) ; b ; setdiff(fl,[a ; ends.' ; b])];
     [fl indx] = sort(fl);    [ignored indx2] = sort(indx);
     
     % line values of g
     gl = feval(g,fl);
-    
+
     % deal with marks breakpoints
     for k = 1:numel(g)
         gk = g(:,k);
@@ -35,6 +35,9 @@ if isempty(f)
         fmk = get(gk,'points');
         gmk = get(gk,'vals');
         
+        gl(1,k) = gk.funs(1).vals(1);
+        gl(end,k) = gk.funs(gk.nfuns).vals(end);
+        
         % breakpoints
         fjk = []; gjk = [];
         for j = 2:length(endsk)-1
@@ -43,7 +46,7 @@ if isempty(f)
                 % values on either side of jump
                 jmpvls = [ g(:,k).funs(j-1).vals(end); NaN ; g(:,k).funs(j).vals(1) ];
 %                 jmpvls = [ g(:,k).funs(j-1).vals(end); g(:,k).funs(j).vals(1) ; g(:,k).funs(j).vals(1) ];
-                gl(indx2(3*(loc-1)+(1:3)),k) = jmpvls;
+                gl(indx2(3*(loc-1)+(1:3)+1),k) = jmpvls;
                 
                 % collect jumps
                 fjk = [fjk ; endsk(j)*ones(3,1)];
@@ -78,6 +81,7 @@ if isempty(f)
         fl = real(gl);
         gl = imag(gl);
     end
+    
     lines = {fl, gl};
     
 elseif isempty(h)
@@ -89,6 +93,7 @@ elseif isempty(h)
     %     if  nf~=ng && nf~=1 && ng~=1
     %         error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
     %     end
+    
     if nf == 1
         couples = [ones(1,ng) ; 1:ng].';
     elseif ng == 1
@@ -218,7 +223,7 @@ fends = f.ends;
 fends = fends(2:end-1);
 out = zeros(length(x),1);
 for k = 1:3:length(x)
-    [TF loc] = ismember(x(k),fends)
+    [TF loc] = ismember(x(k),fends);
     if TF
         out(k:k+2) = [f.funs(loc).vals(end) f.funs(loc+1).vals(1) NaN];
     else

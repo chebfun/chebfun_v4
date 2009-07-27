@@ -5,7 +5,7 @@ function varargout = plotb(varargin)
 % and *some* support (in particular, no marks) for 
 %   plot(F,G,S1,...).
 
-numpts = 2000;
+numpts = 2001;
 
 linedata = {}; markdata = {}; jumpdata = {}; dummydata = {};
 while ~isempty(varargin)
