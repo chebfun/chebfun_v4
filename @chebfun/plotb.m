@@ -72,9 +72,7 @@ while ~isempty(varargin)
     else
         jumps = [jumps,{NaN,NaN}];
     end
-    
-    lines
-    
+
     markdata = [markdata, marks];
     linedata = [linedata, lines, s];
     jumpdata = [jumpdata, jumps];
@@ -82,13 +80,12 @@ while ~isempty(varargin)
 end
 
 h = ishold;
-hold on
 
 % dummy plot for legends
 hdummy = plot(dummydata{:});
 
-h1 = plot(linedata{:},'handlevis','off')
-h2 = plot(markdata{:},'linestyle','none','handlevis','off')
+h1 = plot(linedata{:},'handlevis','off'); hold on
+h2 = plot(markdata{:},'linestyle','none','handlevis','off');
 for k = 1:length(h1)
     set(h2(k),'color',get(h1(k),'color'));
     set(h2(k),'marker',get(h1(k),'marker'));
@@ -101,6 +98,7 @@ if ~h, hold off; end
 if nargout == 1
     varargout = {[h1 h2 h3]};
 end
+
 
 
 

@@ -22,14 +22,37 @@ if ~isreal(u) || ~all(isreal(t))
     u = real(u); t = real(t);
 end
 
-[data1 data2 data3] = plot(u,'noplot');
+% [data1 data2 data3] = plot(u,'noplot');
+% xx = []; uu = [];
+% for k = 1:3:length(data1);
+%     xx = [xx data1{k}];
+%     uu = [uu data1{k+1}];
+% end
+% tt = repmat(t,length(data1{1}),1);
+% waterfall(xx.',tt.',uu.',varargin{:})
+
+
+data1 = plotdata([],u,[],20);
 xx = []; uu = [];
 for k = 1:3:length(data1);
     xx = [xx data1{k}];
     uu = [uu data1{k+1}];
 end
 tt = repmat(t,length(data1{1}),1);
+xx = repmat(xx,1,length(t));
+
+size(uu)
+size(xx)
+size(tt)
 waterfall(xx.',tt.',uu.',varargin{:})
+
+
+
+
+
+
+
+
 
 % h = ishold;
 % hold on
