@@ -19,15 +19,11 @@ switch propName
     case 'nfuns'
         val = f.nfuns;        
     case 'points'
-        % If f consists of many chebfuns, just use the first one. Check
-        % what will happen if splitting is on and the solution is piecewise
-        % contious.
-        f1 = f(:,1);
-        ends = f1.ends;              % Get the endpoints of the function
-        intlen = ends(2)-ends(1);   % Get the interval length
-        % Map from [-1,1] to the correct interval
-        % Begin by shrinking/expanding the interval, then translate it
-        val =  chebpts(length(f1))*intlen/2 + (ends(1)+intlen/2);
+        % Returns mapped Chebyshev points (consistent with vals)
+        val = [];
+        for k = 1:f.nfuns
+            val = [val; f.funs(k).map.for(chebpts(f.funs(k).n))];
+        end
     case 'scl'
         val = f.scl;
     case 'vals'
