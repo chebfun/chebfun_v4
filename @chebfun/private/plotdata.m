@@ -1,8 +1,5 @@
 function [lines marks jumps indx2] = plotdata(f,g,h,numpts)
 
-if ~isempty(h)
-    error('chebfun:plotdata:plot3','plot3 not supported yet');
-end
 
 marks = {}; jumps = {};
 if isempty(f)
@@ -83,7 +80,8 @@ if isempty(f)
     end
     lines = {fl, gl};
     
-else
+elseif isempty(h)
+    
     % f and g are both chebfuns/quasimatrices
     nf = numel(f);
     ng = numel(g);
@@ -143,11 +141,77 @@ else
                 fkf = prolong(fk.funs(j), gk.funs(j).n);
                 fm = [fm; fkf.vals];
             end
-            marks{2*k-1} = fm;
-            marks{2*k} = gm;
         end
+        marks{2*k-1} = fm;
+        marks{2*k} = gm;
     end
+    
+else % Case of 3 quasimatrices (used in plot3)
+    
+    nf = numel(f); ng = numel(g); nh = numel(h);
+    if  nf~=ng && nf~=1 && ng~=1 && nh~=1
+        error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
+    end
+    
+    % Check domains
+    if any(f.ends([1,end]) ~= g.ends([1,end]) & f.ends([1,end]) ~= h.ends([1,end]))
+        error('chebfun:plot:domain','Inconsistent quasimatrix domains');
+    end
+    
+    % Deal with row quasimatrices
+    if length(unique([f(1).trans g(1).trans h(1).trans]))>1
+        error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
+    end
+    if f(1).trans
+        f = f.'; g = g.'; h = h.';
+    end
+    
+    lines = plotdata([],[f g h], [], numpts);
+    fl = lines{2}(:,1:nf);
+    gl = lines{2}(:,(nf+1):(nf+ng));
+    hl = lines{2}(:,(nf+ng+1):end);
+    lines = {fl, gl, hl};
+    
+    n = max([nf,ng,nh]);
+    if nf == 1, f = repmat(f,1,n); end
+    if ng == 1, g = repmat(g,1,n); end
+    if nh == 1, h = repmat(h,1,n); end
+   
+    % marks
+    for k = 1:n
+        [fk,gk] = overlap(f(k),g(k));
+        [fk,hk] = overlap(fk, h(k));
+        [gk,fk] = overlap(gk, fk);
+        fm = []; gm = []; hm = [];
+        for j = 1:fk.nfuns
+            maxn = max([fk.funs(j).n, gk.funs(j).n, hk.funs(j).n]);
+            if fk.funs(j).n == maxn
+                fm = [fm; fk.funs(j).vals];
+                gkf = prolong(gk.funs(j), fk.funs(j).n);
+                gm = [gm; gkf.vals];
+                hkf = prolong(hk.funs(j), fk.funs(j).n);
+                hm = [hm; hkf.vals];
+            elseif gk.funs(j).n == maxn
+                gm = [gm; gk.funs(j).vals];
+                fkf = prolong(fk.funs(j), gk.funs(j).n);
+                fm = [fm; fkf.vals];
+                hkf = prolong(hk.funs(j), gk.funs(j).n);
+                hm = [hm; hkf.vals];
+            else
+                hm = [hm; hk.funs(j).vals];
+                fkf = prolong(fk.funs(j), hk.funs(j).n);
+                fm = [fm; fkf.vals];
+                gkf = prolong(gk.funs(j), hk.funs(j).n);
+                gm = [gm; gkf.vals];
+            end
+        end
+        marks{3*k-2} = fm;
+        marks{3*k-1} = gm;
+        marks{3*k} = hm;    
+    end
+    
 end
+    
 
 function out = myfeval(f,x)
 fends = f.ends; 

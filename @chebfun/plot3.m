@@ -12,21 +12,25 @@ function varargout = plot3(varargin)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-% This is a simple implementation that should be replaced soon! 
-% Rodp, June 2008.
+k = 1;
 
-[a,b] = domain(varargin{1});
-
-t = linspace(a,b,1000)';
-
-for k = 1:nargin
-    if isa(varargin{k},'chebfun')
-        varargin{k} = feval(varargin{k},t);
+while k < nargin
+    if isa(varargin{k}, 'chebfun')
+        % Replace chebfun with vectors (evaluation at 1000 points)
+        [lines, marks] = plotdata(varargin{k:k+2},1000);
+        varargin{k} = lines{1};
+        varargin{k+1} = lines{2};
+        varargin{k+2} = lines{3};
+        k = k+3;
+    else
+        k = k+1;
     end
 end
 
 h = plot3(varargin{:});
-
+hold on
+plot3(marks{:},'.')
+hold off
 if nargout > 0 
     varargout = {h};
 end
