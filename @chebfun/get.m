@@ -21,8 +21,8 @@ switch propName
     case 'points'
         % Returns mapped Chebyshev points (consistent with vals)
         val = [];
-        for k = 1:f.nfuns
-            val = [val; f.funs(k).map.for(chebpts(f.funs(k).n))];
+        for k = 1:f(1).nfuns
+            val = [val; f(1).funs(k).map.for(chebpts(f(1).funs(k).n))];
         end
     case 'scl'
         val = f.scl;
