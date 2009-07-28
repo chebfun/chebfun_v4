@@ -61,23 +61,23 @@ if isempty(f)
                 jvalf(j) = NaN;
             end
         end
-        jval = [jval jvalf jvalg];
-        
-        % for complex plots
-        if ~greal
+        if greal
+            jval = [jval jvalf jvalg];
+        else
+            jval = [jval NaN NaN];
             % do not plot jumps
-            fjk = [];
-            gjk = [];
+            fjk = NaN;
+            gjk = NaN;
             
             % x = real data, y = imag data
             fmk = real(gmk);
             gmk = imag(gmk);
         end
         
-        if isempty(fjk)
-            fjk = NaN;
-            gjk = NaN;
-        end
+%         if isempty(fjk)
+%             fjk = NaN;
+%             gjk = NaN;
+%         end
         
         % store jumps and marks
         jumps = [jumps, fjk, gjk];
