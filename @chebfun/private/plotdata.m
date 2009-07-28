@@ -127,6 +127,7 @@ elseif isempty(h)
     end
     
     % marks
+    marks = {};
     for k = 1:max(nf,ng)
         if nf == 1
             [fk,gk] = overlap(f(1),g(k));
@@ -212,11 +213,34 @@ else % Case of 3 quasimatrices (used in plot3)
         end
         marks{3*k-2} = fm;
         marks{3*k-1} = gm;
-        marks{3*k} = hm;    
+        marks{3*k} = hm;           
     end
     
+    % Jump lines:
+    for k = 1:n
+        ends = unique([f(k).ends,g(k).ends,h(k).ends]);
+        jumps{3*k-2} = jumpvals(ends,f(k));
+        jumps{3*k-1} = jumpvals(ends,g(k));
+        jumps{3*k} = jumpvals(ends,h(k));
+    end
+  
 end
-    
+
+function fjump = jumpvals(ends,f)
+[ism, loc] = ismember(ends,f.ends);
+fjump = zeros(3*(length(ends)-2),1);
+for j = 2:length(ends)-1
+    if ism(j)
+        fjump(3*j-5) = f.funs(loc(j)-1).vals(end);
+        fjump(3*j-4) = f.funs(loc(j)).vals(1);
+        fjump(3*j-3) = NaN;
+    else
+        fjump(3*j-5) = feval(f,ends(j));
+        fjump(3*j-4) = fjump(3*j-5);
+        fjump(3*j-3) = NaN;
+    end
+end
+                
 
 function out = myfeval(f,x)
 fends = f.ends; 

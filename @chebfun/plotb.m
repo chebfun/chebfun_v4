@@ -82,9 +82,9 @@ end
 h = ishold;
 
 % dummy plot for legends
-hdummy = plot(dummydata{:});
+hdummy = plot(dummydata{:}); hold on
 
-h1 = plot(linedata{:},'handlevis','off'); hold on
+h1 = plot(linedata{:},'handlevis','off');
 h2 = plot(markdata{:},'linestyle','none','handlevis','off');
 for k = 1:length(h1)
     set(h2(k),'color',get(h1(k),'color'));
@@ -96,7 +96,7 @@ h3 = plot(jumpdata{:},'handlevis','off');
 if ~h, hold off; end
 
 if nargout == 1
-    varargout = {[h1 h2 h3]};
+    varargout = {[h1 h2 h3 hdummy]};
 end
 
 

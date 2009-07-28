@@ -14,24 +14,44 @@ function varargout = plot3(varargin)
 
 k = 1;
 
+dummyarg= varargin;
 while k < nargin
     if isa(varargin{k}, 'chebfun')
         % Replace chebfun with vectors (evaluation at 1000 points)
-        [lines, marks] = plotdata(varargin{k:k+2},1000);
+        [lines, marks, jumps] = plotdata(varargin{k:k+2},1000);
         varargin{k} = lines{1};
         varargin{k+1} = lines{2};
         varargin{k+2} = lines{3};
+        dummyarg{k} = lines{1}(1);
+        dummyarg{k+1} = NaN;
+        dummyarg{k+2} = NaN;
         k = k+3;
     else
         k = k+1;
     end
 end
 
-h = plot3(varargin{:});
-hold on
-plot3(marks{:},'.')
-hold off
-if nargout > 0 
-    varargout = {h};
+h = ishold;
+
+% dummy plot for legends
+hdummy = plot3(dummyarg{:}); hold on
+
+% plot lines
+h1 = plot3(varargin{:},'handlevis','off'); 
+
+% plot markers
+h2 = plot3(marks{:},'linestyle','none','handlevis','off');
+
+% Set markers in h2 and remove them from h1
+for k = 1:length(h1)
+    set(h2(k),'color',get(h1(k),'color'));
+    set(h2(k),'marker',get(h1(k),'marker'));
+    set(h1(k),'marker','none');
 end
-    
+h3 = plot3(jumps{:},'k:','handlevis','off');
+
+if ~h, hold off; end
+
+if nargout == 1
+    varargout = {[h1 h2 h3 hdummy]};
+end    

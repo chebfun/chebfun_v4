@@ -96,7 +96,7 @@ for k = bkpts
     
     % Prevent merging if there are impulses or chebfun lengths add to more
     % than maxn
-    if ~any(f.imps(2:end,k),1) && length(fout.funs(j-1))+length(fout.funs(j)) < 1.05*maxn
+    if ~any(f.imps(2:end,k),1) && length(fout.funs(j-1))+length(fout.funs(j)) < 1.2*maxn
         %v = feval(f, [xk, xk+eps(xk), xk-eps(xk)]);
         v(1) = f.imps(1,k);
         v(2) = f.funs(k-1).vals(end);
