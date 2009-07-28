@@ -1,4 +1,4 @@
-function [lines marks jumps indx2] = plotdata(f,g,h,numpts)
+function [lines marks jumps jval index2] = plotdata(f,g,h,numpts)
 
 
 marks = {}; jumps = {};
@@ -39,18 +39,34 @@ if isempty(f)
         gl(end,k) = gk.funs(gk.nfuns).vals(end);
         
         % breakpoints
-        fjk = []; gjk = [];
-        for j = 2:length(endsk)-1
-            [TL loc] = ismember(endsk(j),ends);
-            if TL
-                % values on either side of jump
-                jmpvls = [ g(:,k).funs(j-1).vals(end); NaN ; g(:,k).funs(j).vals(1) ];
-%                 jmpvls = [ g(:,k).funs(j-1).vals(end); g(:,k).funs(j).vals(1) ; g(:,k).funs(j).vals(1) ];
-                gl(indx2(3*(loc-1)+(1:3)+1),k) = jmpvls;
-                
-                % collect jumps
-                fjk = [fjk ; endsk(j)*ones(3,1)];
-                gjk = [gjk ; jmpvls([1 3 2].')];
+%         fjk = []; gjk = [];
+%         for j = 2:length(endsk)-1
+%             [TL loc] = ismember(endsk(j),ends);
+%             if TL
+%                 % values on either side of jump
+%                 jmpvls = [ g(:,k).funs(j-1).vals(end); NaN ; g(:,k).funs(j).vals(1) ];
+% %                 jmpvls = [ g(:,k).funs(j-1).vals(end); g(:,k).funs(j).vals(1) ; g(:,k).funs(j).vals(1) ];
+%                 gl(indx2(3*(loc-1)+(1:3)+1),k) = jmpvls;
+%                 
+%                 % collect jumps
+%                 fjk = [fjk ; endsk(j)*ones(3,1)];
+%                 gjk = [gjk ; jmpvls([1 3 2].')];
+%             end
+%         end
+
+        nends = length(endsk);
+        newendsk(3:3:3*nends) = endsk;
+        newendsk(2:3:3*nends-1) = endsk;
+        newendsk(1:3:3*nends-2) = endsk;
+        [jumps jvalg isjg] = jumpvals(g(k),endsk);
+        jvalf = endsk;
+        gjk = [gjk; jumps];
+        fjk = [fjk ; newendsk];
+        % Remove continuous breakpoints from jumps:
+        for j = 1:length(ends)
+            if ~isjg(j)
+                jvalg{k}(j) = NaN;
+                jvalf{k}(j) = NaN;
             end
         end
         
@@ -70,7 +86,6 @@ if isempty(f)
             gjk = NaN;
         end
         
-        
         % store jumps and marks
         jumps = [jumps, fjk, gjk];
         marks = [marks, fmk, gmk];
@@ -84,15 +99,29 @@ if isempty(f)
     
     lines = {fl, gl};
     
-elseif isempty(h)
+elseif isempty(h) % Two quasimatrices case
     
     % f and g are both chebfuns/quasimatrices
     nf = numel(f);
     ng = numel(g);
     
-    %     if  nf~=ng && nf~=1 && ng~=1
-    %         error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
-    %     end
+    % Check size
+    if  nf~=ng && nf~=1 && ng~=1
+        error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
+    end
+    
+    % Check domains
+    if any(f(1).ends([1,end]) ~= g(1).ends([1,end]))
+        error('chebfun:plot:domain','Inconsistent quasimatrix domains');
+    end
+    
+    % Deal with row quasimatrices
+    if f(1).trans ~= g(1).trans
+        error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
+    end
+    if f(1).trans
+        f = f.'; g = g.';
+    end
     
     if nf == 1
         couples = [ones(1,ng) ; 1:ng].';
@@ -102,30 +131,29 @@ elseif isempty(h)
         couples = [1:nf ; 1:ng].';
     end
     
+    % lines 
     h = [f g];
-    [lines marks jumps indx2] = plotdata([],h,[],numpts);
+    lines = plotdata([],h,[],numpts);
     fl = lines{2}(:,1:nf);
     gl = lines{2}(:,(nf+1):end);
     lines = {fl, gl};
     
-    tmp = jumps;
-    jumps = {};
-    for k = 1:nf
-        tmpk = tmp{2*k-1};
-        [i j v] = find(couples(:,1)==k);
-        for l = 1:length(i)
-            jumps = [jumps tmp{2*k} myfeval(g(:,couples(i(l),2)),tmpk)];
+    % Jump lines:
+    jumps = {}; jval = [];
+    for k = 1:max(nf,ng)
+        kf = couples(k,1); kg = couples(k,2);
+        ends = unique([f(kf).ends,g(kg).ends]);
+        [jumps{2*k-1},jval{2*k-1} isjf] = jumpvals(f(kf),ends);
+        [jumps{2*k},jval{2*k} isjg] = jumpvals(g(kg),ends); 
+        % Remove continuous breakpoints from jumps:
+        for j = 1:length(ends)
+            if ~isjf(j) && ~isjg(j)
+                jval{2*k-1}(j) = NaN;
+                jval{2*k}(j) = NaN;
+            end
         end
     end
-    
-    for k = nf+1:nf+ng
-        [i j v] = find(couples(:,2)==k-nf);
-        for l = 1:length(i)
-            tmpk = tmp{2*k-1};
-            jumps = [jumps myfeval(f(:,couples(i(l),1)),tmpk) tmp{2*k}];
-        end
-    end
-    
+       
     % marks
     marks = {};
     for k = 1:max(nf,ng)
@@ -160,18 +188,19 @@ else % Case of 3 quasimatrices (used in plot3)
     end
     
     % Check domains
-    if any(f.ends([1,end]) ~= g.ends([1,end]) & f.ends([1,end]) ~= h.ends([1,end]))
+    if any(f(1).ends([1,end]) ~= g(1).ends([1,end]) & f(1).ends([1,end]) ~= h(1).ends([1,end]))
         error('chebfun:plot:domain','Inconsistent quasimatrix domains');
     end
     
     % Deal with row quasimatrices
-    if length(unique([f(1).trans g(1).trans h(1).trans]))>1
+    if  f(1).trans ~= g(1).trans || f(1).trans ~= h(1).trans
         error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
     end
     if f(1).trans
         f = f.'; g = g.'; h = h.';
     end
     
+    % lines
     lines = plotdata([],[f g h], [], numpts);
     fl = lines{2}(:,1:nf);
     gl = lines{2}(:,(nf+1):(nf+ng));
@@ -182,8 +211,9 @@ else % Case of 3 quasimatrices (used in plot3)
     if nf == 1, f = repmat(f,1,n); end
     if ng == 1, g = repmat(g,1,n); end
     if nh == 1, h = repmat(h,1,n); end
-   
+    
     % marks
+    marks = {};
     for k = 1:n
         [fk,gk] = overlap(f(k),g(k));
         [fk,hk] = overlap(fk, h(k));
@@ -213,46 +243,59 @@ else % Case of 3 quasimatrices (used in plot3)
         end
         marks{3*k-2} = fm;
         marks{3*k-1} = gm;
-        marks{3*k} = hm;           
+        marks{3*k} = hm;
     end
     
     % Jump lines:
+    jumps = {};
     for k = 1:n
         ends = unique([f(k).ends,g(k).ends,h(k).ends]);
-        jumps{3*k-2} = jumpvals(ends,f(k));
-        jumps{3*k-1} = jumpvals(ends,g(k));
-        jumps{3*k} = jumpvals(ends,h(k));
+        jumps{3*k-2} = jumpvals(f(k),ends);
+        jumps{3*k-1} = jumpvals(g(k),ends);
+        jumps{3*k} = jumpvals(h(k),ends);
     end
-  
+    
 end
 
-function fjump = jumpvals(ends,f)
-[ism, loc] = ismember(ends,f.ends);
+
+
+function [fjump jval isjump] = jumpvals(f,ends)
+
+hs = max(abs(f.ends([1 end])));
 fjump = zeros(3*(length(ends)-2),1);
+jval = zeros(length(ends),1);
+isjump = jval;
+
+tol = 1e-4*f.scl;
+
+jval(1) = f.imps(1,1);
+if abs(jval(1)-f.funs(1).vals(1)) < tol
+    isjump(1) = false;
+else
+    isjump(1) = true;
+end
+
 for j = 2:length(ends)-1
-    if ism(j)
-        fjump(3*j-5) = f.funs(loc(j)-1).vals(end);
-        fjump(3*j-4) = f.funs(loc(j)).vals(1);
-        fjump(3*j-3) = NaN;
+    [MN loc] = min(abs(f.ends-ends(j)));
+    if MN < 1e4*eps*hs
+        lval = f.funs(loc-1).vals(end); rval = f.funs(loc).vals(1);
+        fjump(3*j-(5:-1:3)) = [lval; rval; NaN];
+        jval(j) = f.imps(1,loc);
+        if abs(lval-rval) < tol && abs(jval(j)-lval) < tol
+            isjump(j) = false;
+        else
+            isjump(j) = true;
+        end
     else
-        fjump(3*j-5) = feval(f,ends(j));
-        fjump(3*j-4) = fjump(3*j-5);
-        fjump(3*j-3) = NaN;
+        fval = feval(f,ends(j));
+        fjump(3*j-(5:-1:3)) = repmat(fval,3,1);
+        jval(j) = fval;
+        isjump(j) = false;
     end
 end
-                
-
-function out = myfeval(f,x)
-fends = f.ends; 
-fends = fends(2:end-1);
-out = zeros(length(x),1);
-for k = 1:3:length(x)
-    [MN loc] = min(abs(fends-x(k)));
-    if MN < 1e4*chebfunpref('eps'), TF = true; else TF  = false; end
-    if TF
-        out(k:k+2) = [f.funs(loc).vals(end) f.funs(loc+1).vals(1) NaN];
-    else
-        out(k:k+2) = repmat(feval(f,x(k)),3,1);
-    end
+jval(end) = f.imps(1,end);
+if abs(jval(end)-f.funs(end).vals(end)) < tol
+    isjump(end) = false;
+else
+    isjump(end) = true;
 end
-
