@@ -247,7 +247,8 @@ fends = f.ends;
 fends = fends(2:end-1);
 out = zeros(length(x),1);
 for k = 1:3:length(x)
-    [TF loc] = ismember(x(k),fends);
+    [MN loc] = min(abs(fends-x(k)));
+    if MN < 1e4*chebfunpref('eps'), TF = true; else TF  = false;
     if TF
         out(k:k+2) = [f.funs(loc).vals(end) f.funs(loc+1).vals(1) NaN];
     else
