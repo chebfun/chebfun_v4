@@ -1,7 +1,7 @@
 function [lines marks jumps jval index2] = plotdata(f,g,h,numpts)
 
 
-marks = {}; jumps = {};
+marks = {}; jumps = {}; jval = {};
 if isempty(f)
     % one real chebfun (or quasimatrix) input
     
@@ -39,36 +39,29 @@ if isempty(f)
         gl(end,k) = gk.funs(gk.nfuns).vals(end);
         
         % breakpoints
-%         fjk = []; gjk = [];
-%         for j = 2:length(endsk)-1
-%             [TL loc] = ismember(endsk(j),ends);
-%             if TL
-%                 % values on either side of jump
-%                 jmpvls = [ g(:,k).funs(j-1).vals(end); NaN ; g(:,k).funs(j).vals(1) ];
-% %                 jmpvls = [ g(:,k).funs(j-1).vals(end); g(:,k).funs(j).vals(1) ; g(:,k).funs(j).vals(1) ];
-%                 gl(indx2(3*(loc-1)+(1:3)+1),k) = jmpvls;
-%                 
-%                 % collect jumps
-%                 fjk = [fjk ; endsk(j)*ones(3,1)];
-%                 gjk = [gjk ; jmpvls([1 3 2].')];
-%             end
-%         end
+        for j = 2:length(endsk)-1
+            [TL loc] = ismember(endsk(j),ends);
+            if TL
+                % values on either side of jump
+                jmpvls = [ g(:,k).funs(j-1).vals(end); NaN ; g(:,k).funs(j).vals(1) ];
+                gl(indx2(3*(loc-1)+(1:3)+1),k) = jmpvls;
+             end
+        end
 
-        nends = length(endsk);
-        newendsk(3:3:3*nends) = endsk;
-        newendsk(2:3:3*nends-1) = endsk;
-        newendsk(1:3:3*nends-2) = endsk;
-        [jumps jvalg isjg] = jumpvals(g(k),endsk);
+        nends = length(endsk(2:end-1));
+        fjk(3:3:3*nends) = endsk(2:end-1);
+        fjk(2:3:3*nends-1) = endsk(2:end-1);
+        fjk(1:3:3*nends-2) = endsk(2:end-1);
+        [gjk jvalg isjg] = jumpvals(g(k),endsk);
         jvalf = endsk;
-        gjk = [gjk; jumps];
-        fjk = [fjk ; newendsk];
         % Remove continuous breakpoints from jumps:
-        for j = 1:length(ends)
+        for j = 1:length(endsk)
             if ~isjg(j)
-                jvalg{k}(j) = NaN;
-                jvalf{k}(j) = NaN;
+                jvalg(j) = NaN;
+                jvalf(j) = NaN;
             end
         end
+        jval = [jval jvalf jvalg];
         
         % for complex plots
         if ~greal
@@ -288,7 +281,7 @@ for j = 2:length(ends)-1
         end
     else
         fval = feval(f,ends(j));
-        fjump(3*j-(5:-1:3)) = repmat(fval,3,1);
+        fjump(3*j-(5:-1:3)) = [fval; fval; NaN];
         jval(j) = fval;
         isjump(j) = false;
     end
