@@ -1,6 +1,5 @@
 function [lines marks jumps jval index2] = plotdata(f,g,h,numpts)
 
-
 marks = {}; jumps = {}; jval = {};
 if isempty(f)
     % one real chebfun (or quasimatrix) input
@@ -74,10 +73,10 @@ if isempty(f)
             gmk = imag(gmk);
         end
         
-         if isempty(fjk)
-             fjk = NaN;
-             gjk = NaN;
-         end
+%          if isempty(fjk)
+%              fjk = NaN;
+%              gjk = NaN;
+%          end
         
         % store jumps and marks
         jumps = [jumps, fjk, gjk];
