@@ -132,12 +132,12 @@ elseif isempty(h) % Two quasimatrices case
     lines = {fl, gl};
     
     % Jump lines:
-    jumps = {}; jval = [];
+    jumps = {}; jval = {};
     for k = 1:max(nf,ng)
         kf = couples(k,1); kg = couples(k,2);
         ends = unique([f(kf).ends,g(kg).ends]);
-        [jumps{2*k-1},jval{2*k-1} isjf] = jumpvals(f(kf),ends);
-        [jumps{2*k},jval{2*k} isjg] = jumpvals(g(kg),ends); 
+        [jumps{2*k-1} jval{2*k-1} isjf] = jumpvals(f(kf),ends);
+        [jumps{2*k} jval{2*k} isjg] = jumpvals(g(kg),ends); 
         % Remove continuous breakpoints from jumps:
         for j = 1:length(ends)
             if ~isjf(j) && ~isjg(j)
