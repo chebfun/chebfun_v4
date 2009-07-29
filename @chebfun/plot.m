@@ -59,6 +59,8 @@ function varargout = plot(varargin)
 
 numpts = 2001;
 
+% varargin{:}
+
 % get jumpline style and jumpval markers
 jlinestyle = ':'; jmarker = 'x'; forcejmarks = false;
 for k = length(varargin)-1:-1:1
@@ -66,14 +68,11 @@ for k = length(varargin)-1:-1:1
     if ischar(varargin{k})
         if strcmpi(varargin{k},'JumpLine');            
             jlinestyle = varargin{k+1};
+            varargin(k:k+1) = [];
         elseif strcmpi(varargin{k},'JumpMarker');      
             jmarker = varargin{k+1}; 
             forcejmarks = true;
-        end
-        if strcmpi(varargin{k},'JumpLine') || strcmpi(varargin{k},'JumpMarker');
-            tmp = varargin;
-            if length(varargin) > k, varargin = {tmp{(k+2):end}}; end
-            if k > 1, varargin = {tmp{1:(k-1)}, varargin{:}}; end
+            varargin(k:k+1) = [];
         end
     end
 end
@@ -84,11 +83,7 @@ while ~isempty(varargin)
     if length(varargin)>1 && isa(varargin{2},'chebfun') % two chebfuns
         f = varargin{1};
         g = varargin{2};
-        if length(varargin) > 2
-            varargin = {varargin{3:end}};
-        else
-            varargin = [];
-        end
+        varargin(1:2) = [];
         if ~isreal(f) || ~isreal(g)
             warning('chebfun:plot:doubleimag',...
                 'Imaginary parts of complex X and/or Y arguments ignored.');
@@ -97,11 +92,7 @@ while ~isempty(varargin)
     else                                                % one chebfun
         f = [];
         g = varargin{1};
-        if length(varargin) > 1
-            varargin = {varargin{2:end}};
-        else
-            varargin = [];
-        end
+        varargin(1) = [];
     end
     
     % other data
@@ -114,11 +105,7 @@ while ~isempty(varargin)
     else
         s = [];
     end
-    if pos == length(varargin)
-        varargin = [];
-    else
-        varargin = {varargin{(pos+1):end}};
-    end
+    varargin(1:pos) = [];
     
     % get plot data
     [lines marks jumps jumpval] = plotdata(f,g,[],numpts);
@@ -130,7 +117,7 @@ while ~isempty(varargin)
             jumps = [jumps, {tmp{k},tmp{k+1}},jlinestyle];
         end
     else
-        jumps = {NaN,NaN};
+        jumps = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2))};
     end
     if ~isempty(jumpval)
         tmp = jumpval;         jumpval = {};
@@ -138,22 +125,15 @@ while ~isempty(varargin)
             jumpval = [jumpval, {tmp{k},tmp{k+1}},jmarker];
         end
     else
-        jumpval = {NaN,NaN};
+        jumpval = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2))};
     end
 
-    
-%     % deal with empty jumps
-%     if isempty(jumps), jumps = {NaN,NaN};   end
-%     % deal with empty jumps
-%     if isempty(jumpval), jumpval = {NaN,NaN};   end
-    
     markdata = [markdata, marks];
     linedata = [linedata, lines, s];
     jumpdata = [jumpdata, jumps];
     jvaldata = [jvaldata, jumpval];
     dummydata = [dummydata, lines{1}(1), NaN*ones(size(lines{2},2),1), s];
 end
-
 markdata = [markdata, s];
 
 h = ishold;
