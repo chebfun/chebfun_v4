@@ -40,9 +40,9 @@ function fout = eqcol(f1,f2)
 fout = sign(f1-f2);
 for k = 1:fout.nfuns
     if all(fout.funs(k).vals) == 0
-        fout.funs(k) = fun(1);
+        fout.funs(k) = fun(1,fout.ends(k:k+1));
     else 
-        fout.funs(k) = fun(0);
+        fout.funs(k) = fun(0,fout.ends(k:k+1));
     end
 end
 
