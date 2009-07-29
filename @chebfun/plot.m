@@ -32,22 +32,24 @@ function varargout = plot(varargin)
 % The F,G pairs (or F,G,S triples) can be followed by parameter/value pairs
 % to specify additional properties of the lines. For example,
 % PLOT(F1,G1,'-',F2,G2,'--','LineWidth',2,'Color',[.6 0 0]) will plot dark
-% red lines of width 2 points. Besides the usual parameters that control
-% the specifications of lines (see linespec), the parameters JumpLine and
-% JumpMarker determine respectively the type of line and the style
-% of markers for discontinuities of the chebfun. For example,
-% PLOT(F,'JumpLine','-r')  will plot discontinuities as a solid red line,
-% and PLOT(F,'-or','JumpMarker,'.') will plot the jump values with black dots.
-% Notice that it is not possible to modify other properties for jump lines
-% or markers, that the defaults are ':k' and 'o' respectively, and that the
-% jump values are only plotted when the Chebyshev points are also plotted
-% (as in the example above).
+% red lines of width 2 points. 
+%
+% Besides the usual parameters that control the specifications of lines 
+% (see linespec), the parameters JumpLine and JumpMarker determine the type 
+% of line and style of markers respectively for discontinuities of the 
+% chebfun. For example, PLOT(F,'JumpLine','-r')  will plot discontinuities 
+% as a solid red line, and PLOT(F,'-or','JumpMarker,'.k') will plot the jump 
+% values with black dots. Notice that it is not possible to modify other 
+% properties for jump lines or markers, that the defaults are ':' and 'x' 
+% respectively with colours  chosen to match the lines they correspond to, 
+% and that the jump values are  only plotted when the Chebyshev points are 
+% also plotted, unless an input 'JumpLine','S' is passed.
 %
 % H = PLOT(F, ...) returns a column vector of handles to line objects in
 % the plot. H(:,1) contains the handles for the 'curves' (i.e. the function),
-% H(:,2) contains handles for the 'marks', (i.e. the values at Chebyshev points),
-% H(:,3) for the jump lines, H(:,4) for the jump vals, and H(:,5) contains
-% the handle for a dummy plot used to supply correct legends.
+% H(:,2) contains handles for the 'marks', (i.e. the values at Chebyshev 
+% points), H(:,3) for the jump lines, H(:,4) for the jump vals, and H(:,5) 
+% contains the handle for a dummy plot used to supply correct legends.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -57,16 +59,16 @@ function varargout = plot(varargin)
 
 numpts = 2001;
 
-
 % get jumpline style and jumpval markers
-jlinestyle = ':'; jmarker = 'o';
+jlinestyle = ':'; jmarker = 'x'; forcejmarks = false;
 for k = length(varargin)-1:-1:1
     if isa(varargin,'chebfun'), break, end
     if ischar(varargin{k})
         if strcmpi(varargin{k},'JumpLine');            
             jlinestyle = varargin{k+1};
         elseif strcmpi(varargin{k},'JumpMarker');      
-            jmarker = varargin{k+1};     
+            jmarker = varargin{k+1}; 
+            forcejmarks = true;
         end
         if strcmpi(varargin{k},'JumpLine') || strcmpi(varargin{k},'JumpMarker');
             tmp = varargin;
@@ -122,15 +124,15 @@ while ~isempty(varargin)
     [lines marks jumps jumpval] = plotdata(f,g,[],numpts);
 
     % jump stuff
-    if ~isempty(jumps)
-        tmp = jumps;         jumps = {};
+    if ~isempty(jumps) && ~isempty(jumps{1})
+        tmp = jumps;
         for k = 1:2:length(tmp)-1
             jumps = [jumps, {tmp{k},tmp{k+1}},jlinestyle];
         end
     else
         jumps = {NaN,NaN};
     end
-    if ~isempty(jumps)
+    if ~isempty(jumpval)
         tmp = jumpval;         jumpval = {};
         for k = 1:2:length(tmp)-1
             jumpval = [jumpval, {tmp{k},tmp{k+1}},jmarker];
@@ -138,11 +140,12 @@ while ~isempty(varargin)
     else
         jumpval = {NaN,NaN};
     end
+
     
-    % deal with empty jumps
-    if isempty(jumps), jumps = {NaN,NaN};   end
-    % deal with empty jumps
-    if isempty(jumpval), jumpval = {NaN,NaN};   end
+%     % deal with empty jumps
+%     if isempty(jumps), jumps = {NaN,NaN};   end
+%     % deal with empty jumps
+%     if isempty(jumpval), jumpval = {NaN,NaN};   end
     
     markdata = [markdata, marks];
     linedata = [linedata, lines, s];
@@ -152,7 +155,6 @@ while ~isempty(varargin)
 end
 
 markdata = [markdata, s];
-jvaldata = [jvaldata];
 
 h = ishold;
 
@@ -164,16 +166,32 @@ h2 = plot(markdata{:},'linestyle','none','handlevis','off');
 h3 = plot(jumpdata{:},'handlevis','off');
 h4 = plot(jvaldata{:},'linestyle','none','handlevis','off');
 
+defjlcol = true;
+for k = 1:length(jlinestyle)
+    if ~isempty(strmatch(jlinestyle(k),'bgrcmykw'.'))
+        defjlcol = false; break
+    end
+end
+defjmcol = true;
+for k = 1:length(jmarker)
+    if ~isempty(strmatch(jmarker(k),'bgrcmykw'.'))
+        defjmcol = false; break
+    end
+end
+    
 for k = 1:length(h1)
     h1color = get(h1(k),'color');
     h1marker = get(h1(k),'marker');
     set(h2(k),'color',h1color);
     set(h2(k),'marker',h1marker);
-    if ~strcmp(h1marker,'none') && strcmp(jmarker,'o');
-        set(h4(k),'marker','o','color',h1color,'markerfacecolor',h1color,'markeredgecolor','k');
+    if defjlcol 
+        set(h3(k),'color',h1color);
     end
-    if strcmp(jlinestyle,':');
+    if defjmcol 
         set(h4(k),'color',h1color);
+    end
+    if strcmp(h1marker,'none') && ~forcejmarks
+        set(h4(k),'marker','none');
     end
     set(h1(k),'marker','none');
 end
