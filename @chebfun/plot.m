@@ -57,9 +57,7 @@ function varargout = plot(varargin)
 %  Last commit: $Author: nich $: $Rev: 458 $:
 %  $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
 
-numpts = 2001;
-
-% varargin{:}
+numpts = 21;
 
 % get jumpline style and jumpval markers
 jlinestyle = ':'; jmarker = 'x'; forcejmarks = false;
@@ -112,7 +110,7 @@ while ~isempty(varargin)
 
     % jump stuff
     if ~isempty(jumps) && ~isempty(jumps{1})
-        tmp = jumps;
+        tmp = jumps;           jumps = {};
         for k = 1:2:length(tmp)-1
             jumps = [jumps, {tmp{k},tmp{k+1}},jlinestyle];
         end
@@ -145,6 +143,7 @@ h1 = plot(linedata{:},'handlevis','off');
 h2 = plot(markdata{:},'linestyle','none','handlevis','off');
 h3 = plot(jumpdata{:},'handlevis','off');
 h4 = plot(jvaldata{:},'linestyle','none','handlevis','off');
+
 
 defjlcol = true;
 for k = 1:length(jlinestyle)
