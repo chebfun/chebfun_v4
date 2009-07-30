@@ -14,7 +14,8 @@ function varargout = chebpolyplot(u,varargin)
 %   CHEBPOLYPLOT(U,S) and CHEBPOLYPLOT(U,K,S) allow further plotting 
 %   options, such as linestyle, linecolor, etc. If K is a vector, then
 %   use CHEBPOLYPLOT(U,K,'MARKER','.','LINESTYLE','none'), etc to alter
-%   plot styles for all of the funs given by K.
+%   plot styles for all of the funs given by K. If S contains a string 
+%   'LOGLOG', the coefficients will be displayed on a log-log scale.
 %
 %   Example
 %     u = chebfun({@sin @cos @tan @cot},[-2,-1,0,1,2]);
@@ -30,14 +31,21 @@ function varargout = chebpolyplot(u,varargin)
 
 s = {};                     % default linestyle/color
 k = 1;                      % plot first fun by default
+ll = false;                 % default to semilogy plot
 
 % check inputs
 if nargin > 1
     if isa(varargin{1},'double'), 
         k = varargin{1};
-        if nargin > 2, s = {varargin{2:end}}; end
+        varargin(1) = [];
     end
-    if isa(varargin{1},'char'),  s = varargin; end
+    for j = 1:length(varargin)
+        if strcmpi(varargin{j},'loglog')
+            ll = true; 
+            varargin(j) = [];
+            break
+        end
+    end
 end
 
 if k == 0, k = 1:u.nfuns; end
@@ -55,9 +63,14 @@ UK = {};
 for j = k
     uk = chebpoly(u,j);             % coefficients of kth fun
     uk = abs(uk(end:-1:1));         % flip
-    UK = [UK, {1:length(uk), uk}, s]; % store
+    UK = [UK, {1:length(uk), uk}, varargin]; % store
 end
-h = semilogy(UK{:});           % plot
+if ~ll
+    h = semilogy(UK{:});            % semilogy plot
+else
+    h = loglog(UK{:});              % loglog plot
+end
+    
 if j > 1
     legend(int2str(k.'))
 end
