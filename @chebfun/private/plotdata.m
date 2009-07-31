@@ -7,6 +7,10 @@ if isempty(f)
     % is g real?
     greal = isreal(g);
     
+    if g(1).trans
+        g = g.';
+    end
+    
     % equispaced points over domain
     [a b] = domain(g);
     fl = linspace(a,b,numpts).';

@@ -31,7 +31,7 @@ switch index(1).type
         trans = 0;
         if get(f,'trans')
             trans = 1;
-            f = f';
+            f = f.';
             idx = fliplr(idx);
         end
         n = size(f,2);  
@@ -52,9 +52,15 @@ switch index(1).type
             if ischar(col) && col==':'
                 col = 1:n;
             elseif max(col) > n
-                f(:,n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);
+                % Domain check to make sure chebfuns have same domain
+                if isempty(f(:,1)) || all(f(:,1).ends([1,end]) == vin(:,1).ends([1,end]))
+                    f(:,n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);     
+                else
+                    error('chebfun:subsasgn:domain','Inconsistent domains')
+                end
+                
             end
-
+            
         else
             error('chebfun:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
@@ -63,32 +69,34 @@ switch index(1).type
         % ---- assign values/chebfuns at given points/domains ---        
         if isnumeric(s)
             if ~isa(vin,'numeric')
-                error('chebfun:subsref:conversion',...
+                error('chebfun:subsasgn:conversion',...
                         ['Conversion to numeric from ',class(vin),...
                         'is not possible.'])
             end
             if length(vin) == 1
                vin = vin*ones(length(s),length(col));
-            elseif length(col) == 1 & min(size(vin)) == 1 & ...
+            elseif length(col) == 1 && min(size(vin)) == 1 && ...
                     length(vin)==length(s)
                 vin = vin(:);
-            elseif length(s)~=size(vin,1) | length(col)~=size(vin,2)
-                error('chebfun:subsref:dimensions',...
-                        ['Subscripted assignment dimension mismatch.'])
+            elseif length(s)~=size(vin,1) || length(col)~=size(vin,2)
+                error('chebfun:subsasgn:dimensions',...
+                        'Subscripted assignment dimension mismatch.')
             end
             [a,b] = domain(fcol);
             if min(s) < a || max(s) > b
-                error('chebfun:subsref:outbounds',...
+                error('chebfun:subsasgn:outbounds',...
                     'Cannot introduce endpoints outside domain.')
             end
             stemp = s;
-            s(find(s==b)) = [];
+           % s(find(s==b)) = [];
+             s(s==b) = [];
             for i = 1:length(s)
                 fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
             end 
             for i = 1:length(col)   
                 [mem,loc] = ismember(stemp,fcol(i).ends);
-                fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
+               % fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
+                fcol(:,i).imps(1,loc) = vin(mem,i); 
             end
         elseif isa(s,'domain')
             fcol = define(fcol,s,vin);
@@ -96,22 +104,27 @@ switch index(1).type
             if isempty(fcol)
                 fcol = define(fcol,domain(vin),vin);
             else
-                fcol = define(fcol,domain(fcol),vin);
+                %fcol = define(fcol,domain(fcol),vin);
+                fcol = restrict(vin,domain(fcol));
             end
         else
-            error('chebfun:subsref:nonnumeric',...
+            error('chebfun:subsasgn:nonnumeric',...
               'Cannot evaluate chebfun for non-numeric type.')
         end
-        % --- assign modified column to original chebfun/quasimatrix ---
+        % --- assign modified column to original chebfun/quasimatrix --
+        % Check orientation
+        if fcol(1).trans ~= trans
+            error('chebfun:subsasgn:trans','Inconsistent chebfun transpose fields')
+        end
         f(:,col) = fcol;
-        if trans, f = f'; end
+        if trans, f = f.'; end
         varargout = { f };          
     case '{}'
         if length(idx) == 1
             if isequal(idx{1},':')
                 s = domain(f); 
             else
-                error('chebfun:subsref:baddomain',...
+                error('chebfun:subsasgn:baddomain',...
                     'Invalid domain syntax.')
             end
         elseif length(idx) == 2
@@ -122,5 +135,5 @@ switch index(1).type
         end
         varargout = { define(f,s,vin) };
     otherwise
-        error(['??? Unexpected index.type of ' index(1).type]);
+        error('chebfun:subsasgn:indextype',['??? Unexpected index.type of ' index(1).type]);
 end

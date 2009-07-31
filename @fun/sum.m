@@ -53,7 +53,7 @@ elseif any(isinf(g.map.par(1:2)))
 else
     map = g.map;
     g.map = linear([-1 1]);
-    out = sum_unit_interval(g.*fun(map.der,g.map));
+    out = sum_unit_interval(g.*fun(map.der,[-1,1]));
 end
 
 end

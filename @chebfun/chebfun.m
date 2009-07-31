@@ -117,4 +117,20 @@ elseif length(argin) == 3,
     f = ctor_3(f,argin{:});      % non-adaptive call
 end
 
+% Prune repeated endpoints and assign values to the imps matrix
+if any(diff(f.ends) == 0) && f.nfuns > 1
+    k = 1;
+    while k < length(f.ends)
+        if diff(f.ends(k:k+1)) == 0
+            f.ends(k+1) = [];
+            f.imps(k+1) = [];
+            f.nfuns = f.nfuns - 1;
+            f.imps(1,k) = f.funs(k).vals(1);
+            f.funs(k) = [];
+        else
+            k = k+1;
+        end
+    end
+end
+
 end
