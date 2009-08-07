@@ -109,7 +109,7 @@ if nargin == 1
             factory_flag = true;
         else
             % Return factory values without changing chebfunpref
-        	for k = 1:length(factoryvals)
+            for k = 1:length(factoryvals)
                 varargout.(options{k}) = factoryvals{k};
             end
             varargout = {varargout};
@@ -173,7 +173,7 @@ elseif nargin==2
     %             varargin{2} = max(2,2^floor(log2(minn-1))+1);
     %         end
     % If preference is 'eps', check for consistency!
-    if strcmp(varargin{1},'eps') & varargin{2}<2^-52
+    if strcmp(varargin{1},'eps') && varargin{2}<2^-52
         varargin{2} = 2^-52;
         warning('CHEBFUN:chebfunpref:argin','eps value below machine precision. eps set to 2^-52');
     end

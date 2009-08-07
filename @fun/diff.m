@@ -89,7 +89,7 @@ else
         g.vals = vals; g.scl.v = max(g.scl.v,norm(vals,inf));
         g.n = length(vals);
         map = g.map;
-        g.map = linear;
+        g.map = linear([-1,1]);
         g = fun(@(x) feval(g,x)./map.der(x),[-1 1]); % construct fun from {c_r}
         g.map = map;
         if i ~= k

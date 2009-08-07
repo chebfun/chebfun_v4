@@ -1,4 +1,4 @@
-function g = growfun(op,g,pref,g1,g2)
+function [g,ish] = growfun(op,g,pref,g1,g2)
 % G = GROWFUN(OP,G,PREF,G1,G2)
 %
 % G = GROWFUN(OP,G,PREF) returns the fun G representing the function handle OP.
@@ -68,6 +68,8 @@ end
 
 % End points: make sure the function gets evaluated at those:
 a = g.map.par(1); b = g.map.par(2);
+
+% --------------------------------------------------
 
 if  ~resample && 2^npower+1 == n && nargin<5
         
@@ -143,6 +145,32 @@ if any(isnan(g.vals)) || isinf(g.scl.v)
     error('CHEBFUN:growfun:naneval','Function returned NaN or Inf when evaluated.')
 end
 
+% if unhappy, change map and try again
+if ~ish && strcmp(g.map.name,'linear') && singmap
+    % Check singular ends and pick a map ---------------
+%     if g.scl.v == 0
+%         g.scl.v = norm(op(linspace(a,b,10).'),inf);
+%     end
+    isl = issing(op,a+eps(a),a+0.001*g.scl.h,g.scl.v);
+    isr = issing(op,b-0.001*g.scl.h,b-eps(b),g.scl.v);
+    if ~(isl || isr)
+        return;
+    elseif isl && isr
+        g.map = sing([a,b],'b');
+    elseif isl
+        g.map = sing([a,b],'l');
+    elseif isr
+        g.map = sing([a,b],'r');
+    end
+    if isl || isr
+        pref.sampletest = false;
+    end
+    [gnew,ish] = growfun(op,g,pref);
+    if ish
+        g = gnew;
+    end
+end
+
 
 %-------------------------------------------------------------------------
 function  [ish,g] = ishappy(op,g,pref)
@@ -167,3 +195,15 @@ if ish && pref.sampletest
         return
     end
 end
+
+% -------------------------------------------------------------------------
+function iss = issing(op,e1,e2,vs)
+% Tests for singular end points. The decision is based on whether
+% polynomials are good local approximations to the function near
+% endspoints.
+
+x = chebpts(10);
+A = cos(acos(x)*(0:4));
+xx = [e1; e2*(x+1)/2+e1*(1-x)/2; e2];
+v = op(xx); v = v(2:end-1);
+iss = norm(v-A*(A\v),inf)./vs > 1e-9;

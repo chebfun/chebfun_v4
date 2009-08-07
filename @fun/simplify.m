@@ -44,9 +44,10 @@ Tlen = min(g.n,max(3,round((gn-1)/8)));% length of tail to test
 %Tmax = 2e-16*Tlen^(2/3);             % maximum permitted size of tail
 % RodP's choice -------------------------------------
 xpts = g.map.for(chebpts(gn));
-mdiff =  (g.scl.h/g.scl.v)*norm(diff(g.vals)./diff(xpts),inf);
+df = max(diff(xpts),eps*g.scl.h);
+mdiff =  (g.scl.h/g.scl.v)*norm(diff(g.vals)./df,inf);
 % Choose maximum between prescribed tolerance and estimated rounding errors
-Tmax = max(tol,epstol*min(1e10,max(mdiff,Tlen^(2/3))));
+Tmax = max(tol,epstol*min(1e12,max(mdiff,Tlen^(2/3))));
 % ---------------------------------------------------
 if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
     Tend = find(ac>=Tmax,1,'first');  % pos of last entry below Tmax

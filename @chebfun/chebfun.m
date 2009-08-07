@@ -118,7 +118,7 @@ elseif length(argin) == 3,
 end
 
 % Prune repeated endpoints and assign values to the imps matrix
-if any(diff(f.ends) == 0) && f.nfuns > 1
+if f.nfuns > 1 && any(diff(f.ends) == 0) 
     k = 1;
     while k < length(f.ends)
         if diff(f.ends(k:k+1)) == 0
