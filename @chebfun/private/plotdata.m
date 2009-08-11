@@ -52,6 +52,7 @@ if isempty(f)
         end
 
         nends = length(endsk(2:end-1));
+        fjk = [];
         fjk(3:3:3*nends) = endsk(2:end-1);
         fjk(2:3:3*nends-1) = endsk(2:end-1);
         fjk(1:3:3*nends-2) = endsk(2:end-1);
