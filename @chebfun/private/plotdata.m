@@ -1,5 +1,26 @@
 function [lines marks jumps jval index2] = plotdata(f,g,h,numpts)
 
+% Simple restriction for plotting on unbounded domains
+if isinf(g(1).ends(1)) || isinf(g(1).ends(end))
+    
+    if isinf(g(1).ends(1)) && isinf(g(1).ends(end))    
+        newd = domain(-10,10);
+    elseif isinf(g(1).ends(end))
+        newd = domain(g(1).ends(1),g(1).ends(1)+10);
+    elseif isinf(g(1).ends(1))
+        newd = domain(-10+g(1).ends(end),g(1).ends(end));
+    end
+    
+    g = restrict(g,newd);
+    if ~isempty(f)
+        f = restrict(f,newd);
+    end
+    if ~isempty(g)
+        g = restrict(g,newd);
+    end
+    
+end
+
 marks = {}; jumps = {}; jval = {};
 if isempty(f)
     % one real chebfun (or quasimatrix) input
@@ -51,13 +72,19 @@ if isempty(f)
              end
         end
 
+        
         nends = length(endsk(2:end-1));
-        fjk = [];
-        fjk(3:3:3*nends) = endsk(2:end-1);
-        fjk(2:3:3*nends-1) = endsk(2:end-1);
-        fjk(1:3:3*nends-2) = endsk(2:end-1);
+        if nends > 0
+            fjk = NaN(3*nends,1);
+            fjk(3:3:3*nends,1) = endsk(2:end-1).';
+            fjk(2:3:3*nends-1,1) = endsk(2:end-1).';
+            fjk(1:3:3*nends-2,1) = endsk(2:end-1).';
+        else
+            fjk = NaN(3,1);
+        end
         [gjk jvalg isjg] = jumpvals(g(k),endsk);
-        jvalf = endsk;
+        jvalf = endsk.';
+
         % Remove continuous breakpoints from jumps:
         for j = 1:length(endsk)
             if ~isjg(j)
@@ -258,8 +285,14 @@ end
 
 function [fjump jval isjump] = jumpvals(f,ends)
 
+if f.nfuns == 1
+    fjump = [NaN; NaN; NaN];
+else
+    fjump = zeros(3*(length(ends)-2),1);
+end
+
 hs = max(abs(f.ends([1 end])));
-fjump = zeros(3*(length(ends)-2),1);
+%fjump = zeros(3*(length(ends)-2),1);
 jval = zeros(length(ends),1);
 isjump = jval;
 
