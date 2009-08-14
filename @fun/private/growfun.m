@@ -165,7 +165,7 @@ if ~ish && strcmp(g.map.name,'linear') && singmap
     if isl || isr
         pref.sampletest = false;
     end
-    [gnew,ish] = growfun(op,g,pref);
+    [gnew,ish] = growfun(@(x) op(max(a,min(x,b))),g,pref); 
     if ish
         g = gnew;
     end

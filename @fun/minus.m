@@ -30,7 +30,7 @@ if ~samemap(g1,g2)
     if pref.splitting 
         pref.splitdegree = 8*pref.splitdegree;
     end
-    pref.resample = false;
+    pref.resampling = false;
     [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),g1.map.par([1 2]),pref,scl);
     if ~ish
         warning('fun:minus:failtoconverge','Operation may have failed to converge');
