@@ -1,4 +1,4 @@
-function g = fun(op,ends,varargin)
+function [g,ish] = fun(op,ends,varargin)
 % FUN	Constructor
 % FUN(OP,ENDS) constructs a fun object for the function OP.  If OP is a string,
 % such as '3*x.^2+1', or a function handle, FUN(OP) automatically determines 
@@ -11,6 +11,10 @@ function g = fun(op,ends,varargin)
 % FUN(OP,ENDS,PREF,SCL) creates a fun for OP adaptively using the preferences
 % provided in the structure PREF (see chbfunpref).  Here SCL is a structure 
 % with fields SCL.H (horizontal scale) and SCL.V (vertical scale). 
+%
+% [G,ISH] = FUN(...) returns the constructed fun G and the boolean ISH,
+% which is true if the construction is believed to have converged and false
+% otherwise.
 %
 % FUN creates an empty fun.
 %
@@ -29,6 +33,7 @@ if isnumeric(default_g)
     default_g = class(default_g,'fun');
 end
 g = default_g;        
+ish = true;
 
 if nargin > 0
     % deal with endpoints
@@ -106,7 +111,7 @@ if nargin > 0
         if isfield(pref,'map')
             g.map = pref.map;
         end
-        g = growfun(op,g,pref);
+        [g,ish] = growfun(op,g,pref);
     end
     
 end

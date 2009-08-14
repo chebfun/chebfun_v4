@@ -22,7 +22,7 @@ if (subint(1)<ends(1)) || (subint(2)>ends(2)) || (subint(1)>subint(2))
   error('fun:restrict:badinterval','Not given a valid interval.')
 end
 
-% Separeta this in two cases:
+% split this in two cases:
 % 1) bounded 
 if norm(g.map.par(1:2),inf) <inf && ... 
         (~strcmp(mappref('name'),g.map.name) || mappref('adapt')) 

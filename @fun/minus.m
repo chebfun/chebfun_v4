@@ -24,7 +24,17 @@ end
 % Deal with maps
 % If two maps are different, call constructor.
 if ~samemap(g1,g2)
-    g1 = compfun(g1,@(f,g) f-g,g2);
+    scl.v = max(g1.scl.v,g2.scl.v);
+    scl.h = g1.scl.h;
+    pref = chebfunpref;
+    if pref.splitting 
+        pref.splitdegree = 8*pref.splitdegree;
+    end
+    pref.resample = false;
+    [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),g1.map.par([1 2]),pref,scl);
+    if ~ish
+        warning('fun:minus:failtoconverge','Operation may have failed to converge');
+    end
     return
 end
 
