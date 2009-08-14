@@ -1,24 +1,47 @@
-function [lines marks jumps jval index2] = plotdata(f,g,h,numpts)
+function [lines marks jumps jval] = plotdata(f,g,h,numpts)
+% PLOTDATA returns data (double) for plotting chebfuns.
+% This function is used in PLOT, PLOT3, WATERFALL, ...
+%
+% INPUT: F,G,H are quasimatrices (F and H are optional). NUMPTS is the
+% number of data points to be generated.
+%
+% OUTPUT: LINES cell array with line data. MARKS cell array for markers at
+% chebyshev data. JUMPS cell array to generate jump lines. JVAL function
+% value at jump points.
+%
+
+%  Copyright 2002-2009 by The Chebfun Team.
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+
+% Check domains: f,g,h must have the same domain
+if ~isempty(f)
+    if any(f(1).ends([1,end]) ~= g(1).ends([1,end]))
+        error('chebfun:plot:domain','Inconsistent domains');
+    end
+    if ~isempty(h)
+        if any(f(1).ends([1,end]) ~= h(1).ends([1,end]))
+            error('chebfun:plot:domain','Inconsistent domains');
+        end
+    end
+end
 
 % Simple restriction for plotting on unbounded domains
-if isinf(g(1).ends(1)) || isinf(g(1).ends(end))
-    
+if isinf(g(1).ends(1)) || isinf(g(1).ends(end))   
     if isinf(g(1).ends(1)) && isinf(g(1).ends(end))    
         newd = domain(-10,10);
     elseif isinf(g(1).ends(end))
         newd = domain(g(1).ends(1),g(1).ends(1)+10);
     elseif isinf(g(1).ends(1))
         newd = domain(-10+g(1).ends(end),g(1).ends(end));
-    end
-    
+    end  
     g = restrict(g,newd);
     if ~isempty(f)
         f = restrict(f,newd);
     end
-    if ~isempty(g)
-        g = restrict(g,newd);
-    end
-    
+    if ~isempty(h)
+        h = restrict(h,newd);
+    end 
 end
 
 marks = {}; jumps = {}; jval = {};
@@ -72,13 +95,10 @@ if isempty(f)
              end
         end
 
-        
+        % Jump lines (fjk,gjk) and jump values (jvalf,jvalg)
         nends = length(endsk(2:end-1));
         if nends > 0
-            fjk = NaN(3*nends,1);
-            fjk(3:3:3*nends,1) = endsk(2:end-1).';
-            fjk(2:3:3*nends-1,1) = endsk(2:end-1).';
-            fjk(1:3:3*nends-2,1) = endsk(2:end-1).';
+            fjk = reshape(repmat(endsk(2:end-1),3,1),3*nends,1); 
         else
             fjk = NaN(3,1);
         end
@@ -105,11 +125,6 @@ if isempty(f)
             gmk = imag(gmk);
         end
         
-%          if isempty(fjk)
-%              fjk = NaN;
-%              gjk = NaN;
-%          end
-        
         % store jumps and marks
         jumps = [jumps, fjk, gjk];
         marks = [marks, fmk, gmk];
@@ -132,11 +147,6 @@ elseif isempty(h) % Two quasimatrices case
     % Check size
     if  nf~=ng && nf~=1 && ng~=1
         error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
-    end
-    
-    % Check domains
-    if any(f(1).ends([1,end]) ~= g(1).ends([1,end]))
-        error('chebfun:plot:domain','Inconsistent quasimatrix domains');
     end
     
     % Deal with row quasimatrices
@@ -210,12 +220,7 @@ else % Case of 3 quasimatrices (used in plot3)
     if  nf~=ng && nf~=1 && ng~=1 && nh~=1
         error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
     end
-    
-    % Check domains
-    if any(f(1).ends([1,end]) ~= g(1).ends([1,end]) & f(1).ends([1,end]) ~= h(1).ends([1,end]))
-        error('chebfun:plot:domain','Inconsistent quasimatrix domains');
-    end
-    
+        
     % Deal with row quasimatrices
     if  f(1).trans ~= g(1).trans || f(1).trans ~= h(1).trans
         error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
@@ -270,13 +275,21 @@ else % Case of 3 quasimatrices (used in plot3)
         marks{3*k} = hm;
     end
     
-    % Jump lines:
-    jumps = {};
+    % Jump lines and values:
+    jumps = {}; jval = {};
     for k = 1:n
         ends = unique([f(k).ends,g(k).ends,h(k).ends]);
-        jumps{3*k-2} = jumpvals(f(k),ends);
-        jumps{3*k-1} = jumpvals(g(k),ends);
-        jumps{3*k} = jumpvals(h(k),ends);
+        [jumps{3*k-2} jval{3*k-2} isjf] = jumpvals(f(k),ends);
+        [jumps{3*k-1} jval{3*k-1} isjg] = jumpvals(g(k),ends); 
+        [jumps{3*k} jval{3*k} isjh] = jumpvals(h(k),ends); 
+        % Remove continuous breakpoints from jumps:
+        for j = 1:length(ends)
+            if ~isjf(j) && ~isjg(j) && ~isjh(j)
+                jval{3*k-2}(j) = NaN;
+                jval{3*k-1}(j) = NaN;
+                jval{3*k}(j) = NaN;
+            end
+        end
     end
     
 end
@@ -284,15 +297,19 @@ end
 
 
 function [fjump jval isjump] = jumpvals(f,ends)
+% JUMPVALS returns the vaules of F at jumps (JVAL) and the left and right 
+% limits (FJUMP) for plotting jump lines.
+% ISJUMP is true if the difference of multiple values at a jump location is
+% larger than a tolerace. 
+% ENDS is the vector with possible jump locations.
 
-if f.nfuns == 1
+if length(ends) == 2
     fjump = [NaN; NaN; NaN];
 else
     fjump = zeros(3*(length(ends)-2),1);
 end
 
 hs = max(abs(f.ends([1 end])));
-%fjump = zeros(3*(length(ends)-2),1);
 jval = zeros(length(ends),1);
 isjump = jval;
 
@@ -323,6 +340,7 @@ for j = 2:length(ends)-1
         isjump(j) = false;
     end
 end
+
 jval(end) = f.imps(1,end);
 if abs(jval(end)-f.funs(end).vals(end)) < tol
     isjump(end) = false;

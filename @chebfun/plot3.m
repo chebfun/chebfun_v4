@@ -8,31 +8,45 @@ function varargout = plot3(varargin)
 %
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+%   Copyright 2002-2009 by The Chebfun Team. 
+%   Last commit: $Author$: $Rev$:
+%   $Date$:
+
+%   This code is a modification of the code in chebfun/plot.
 
 numpts = 1001;
 
-linedata = {}; markdata = {}; jumpdata = {}; dummydata = {};
+% get jumpline style and jumpval markers
+jlinestyle = ':'; jmarker = 'x'; forcejmarks = false;
+for k = length(varargin)-1:-1:1
+    if isa(varargin,'chebfun'), break, end
+    if ischar(varargin{k})
+        if strcmpi(varargin{k},'JumpLine');            
+            jlinestyle = varargin{k+1};
+            varargin(k:k+1) = [];
+        elseif strcmpi(varargin{k},'JumpMarker');      
+            jmarker = varargin{k+1}; 
+            forcejmarks = true;
+            varargin(k:k+1) = [];
+        end
+    end
+end
+
+linedata = {}; markdata = {}; jumpdata = {}; dummydata = {}; jvaldata = {};
 while ~isempty(varargin)
     % grab the chebfuns
-    if length(varargin)>2 && isa(varargin{3},'chebfun') % three chebfuns
+    if length(varargin)>1 && isa(varargin{2},'chebfun') && isa(varargin{3},'chebfun') % two chebfuns
         f = varargin{1};
         g = varargin{2};
         h = varargin{3};
-        if length(varargin) > 3
-            varargin = {varargin{4:end}};
-        else
-            varargin = [];
-        end
-        if ~isreal(f) || ~isreal(g) ||  ~isreal(h) 
+        varargin(1:3) = [];
+        if ~isreal(f) || ~isreal(g) || ~isreal(h)
             warning('chebfun:plot:doubleimag',...
                 'Imaginary parts of complex X and/or Y arguments ignored.');
             f = real(f); g = real(g); h = real(h);
-        end    
+        end
     else                                                % one chebfun
-        error('chebfun:plot3:argin','First three arguments must be chebfuns')
+         error('chebfun:plot3:argin','First three arguments must be chebfuns')
     end
     
     % other data
@@ -45,41 +59,36 @@ while ~isempty(varargin)
     else
         s = [];
     end
-    if pos == length(varargin)
-        varargin = [];
-    else
-        varargin = {varargin{(pos+1):end}};
-    end
+    varargin(1:pos) = [];
     
     % get plot data
-    [lines marks jumps] = plotdata(f,g,h,numpts);
-    
-    % jumpline?
-    jlinestyle = ':k';    
-    for k = 1:length(s)-1
-        if ischar(s{k}) && strcmpi(s{k},'JumpLine');
-            jlinestyle = s{k+1};
-            tmp = s;
-            if length(s) > k, s = {tmp{(k+2):end}}; end
-            if k > 1, s = {tmp{1:(k-1)}, s{:}}; end
-        end
-    end
-    % insert jumpline style into jumps
-    if ~isempty(jumps)
-        tmp = jumps;
-        jumps = {};
+    [lines marks jumps jumpval] = plotdata(f,g,h,numpts);
+
+    % jump stuff
+    if ~isempty(jumps) && ~isempty(jumps{1})
+        tmp = jumps;           jumps = {};
         for k = 1:3:length(tmp)-1
             jumps = [jumps, {tmp{k},tmp{k+1},tmp{k+2}},jlinestyle];
         end
     else
-        jumps = [jumps,{NaN,NaN}];
+        jumps = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2),NaN(1,size(lines{3},2)))};
+    end
+    if ~isempty(jumpval)
+        tmp = jumpval;         jumpval = {};
+        for k = 1:3:length(tmp)-1
+            jumpval = [jumpval, {tmp{k},tmp{k+1},tmp{k+2}},jmarker];
+        end
+    else
+        jumpval = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2)),NaN(1,size(lines{3},2))};
     end
 
     markdata = [markdata, marks];
     linedata = [linedata, lines, s];
     jumpdata = [jumpdata, jumps];
-    dummydata = [dummydata, lines{1}(1)*ones(size(lines{2},2),1), NaN*ones(size(lines{2},2),1), NaN*ones(size(lines{3},2),1), s];
+    jvaldata = [jvaldata, jumpval];
+    dummydata = [dummydata, lines{1}(1), NaN, NaN, s];
 end
+markdata = [markdata, s];
 
 h = ishold;
 
@@ -88,15 +97,42 @@ hdummy = plot3(dummydata{:}); hold on
 
 h1 = plot3(linedata{:},'handlevis','off');
 h2 = plot3(markdata{:},'linestyle','none','handlevis','off');
+h3 = plot3(jumpdata{:},'handlevis','off');
+h4 = plot3(jvaldata{:},'linestyle','none','handlevis','off');
+
+defjlcol = true;
+for k = 1:length(jlinestyle)
+    if ~isempty(strmatch(jlinestyle(k),'bgrcmykw'.'))
+        defjlcol = false; break
+    end
+end
+defjmcol = true;
+for k = 1:length(jmarker)
+    if ~isempty(strmatch(jmarker(k),'bgrcmykw'.'))
+        defjmcol = false; break
+    end
+end
+    
 for k = 1:length(h1)
-    set(h2(k),'color',get(h1(k),'color'));
-    set(h2(k),'marker',get(h1(k),'marker'));
+    h1color = get(h1(k),'color');
+    h1marker = get(h1(k),'marker');
+    set(h2(k),'color',h1color);
+    set(h2(k),'marker',h1marker);
+    if defjlcol 
+        set(h3(k),'color',h1color);
+    end
+    if defjmcol 
+        set(h4(k),'color',h1color);
+    end
+    if strcmp(h1marker,'none') && ~forcejmarks
+        set(h4(k),'marker','none');
+    end
     set(h1(k),'marker','none');
 end
-h3 = plot3(jumpdata{:},'handlevis','off');
+
 
 if ~h, hold off; end
 
 if nargout == 1
-    varargout = {[h1 h2 h3 hdummy]};
+    varargout = {[h1 h2 h3 h4 hdummy]};
 end
