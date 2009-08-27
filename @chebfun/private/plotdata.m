@@ -26,6 +26,12 @@ if ~isempty(f)
     end
 end
 
+marks = {}; jumps = {}; jval = {};
+if isempty(f) && isempty(g)
+    lines = {};
+    return
+end
+
 % Simple restriction for plotting on unbounded domains
 if isinf(g(1).ends(1)) || isinf(g(1).ends(end))   
     if isinf(g(1).ends(1)) && isinf(g(1).ends(end))    
@@ -44,7 +50,6 @@ if isinf(g(1).ends(1)) || isinf(g(1).ends(end))
     end 
 end
 
-marks = {}; jumps = {}; jval = {};
 if isempty(f)
     % one real chebfun (or quasimatrix) input
     

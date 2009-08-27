@@ -114,25 +114,37 @@ while ~isempty(varargin)
         for k = 1:2:length(tmp)-1
             jumps = [jumps, {tmp{k},tmp{k+1}},jlinestyle];
         end
-    else
-        jumps = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2))};
+    elseif ~isempty(lines)
+            jumps = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2))};
     end
     if ~isempty(jumpval)
         tmp = jumpval;         jumpval = {};
         for k = 1:2:length(tmp)-1
             jumpval = [jumpval, {tmp{k},tmp{k+1}},jmarker];
         end
-    else
+    elseif ~isempty(lines)
         jumpval = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2))};
     end
 
     markdata = [markdata, marks];
-    linedata = [linedata, lines, s];
+    if ~isempty(lines)
+        linedata = [linedata, lines, s];
+    end
     jumpdata = [jumpdata, jumps];
     jvaldata = [jvaldata, jumpval];
-    dummydata = [dummydata, lines{1}(1), NaN*ones(size(lines{2},2),1), s];
+    if ~isempty(lines)
+        dummydata = [dummydata, lines{1}(1), NaN*ones(size(lines{2},2),1), s];
+    end        
 end
-markdata = [markdata, s];
+if isempty(markdata), 
+    markdata = {[]};
+else
+    markdata = [markdata, s];
+end
+if isempty(dummydata), dummydata = {[]}; end
+if isempty(linedata), linedata = {[]}; end
+if isempty(jumpdata), jumpdata = {[]}; end
+if isempty(jvaldata), jvaldata = {[]}; end
 
 h = ishold;
 
@@ -173,7 +185,6 @@ for k = 1:length(h1)
     end
     set(h1(k),'marker','none');
 end
-
 
 if ~h, hold off; end
 
