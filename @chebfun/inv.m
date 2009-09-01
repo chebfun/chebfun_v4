@@ -1,4 +1,4 @@
-function g = inv(f,split,split_yn)
+function g = inv(f,varargin)
 % INV Invert a chebfun
 %  G = INV(F) will attempt to invert the monotonic chebfun F.
 %  If F has zero derivatives at its endpoints, then it is advisable
@@ -24,11 +24,22 @@ if numel(f) > 1
     error('chebfun:inv:noquasi','no support for quasimatrices');
 end
 
+split_yn = [];
+tol = chebfunpref('eps');
+
+% parse input  
+while numel(varargin) > 1
+    if strcmpi(varargin{1},'splitting') && istrcmpi(varargin{2},'on')
+        split_yn = true; 
+    elseif strcmpi(varargin{1},'eps')
+        tol = varargin{2};
+    end
+    varargin(1:2) = [];       
+end
+
 % local splitting on
-if nargin < 3
+if isempty(split_yn)
     split_yn = chebfunpref('splitting');
-elseif ischar(split_yn) && strcmpi(split_yn,'on')
-    split_yn = true; 
 end
 
 domainf = domain(f);
@@ -45,7 +56,7 @@ if ~isempty(tpoints)
     for k = 1:length(tpoints)
         endtest(k) = min(abs(tpoints(k)-domainf.ends));
     end
-    if any(endtest > 100*abs(feval(f,tpoints))*chebfunpref('eps'))
+    if any(endtest > 100*abs(feval(f,tpoints))*tol)
         error('chebfun:inv:notmonotonic','chebfun F must be monotonic its domain.');
     elseif ~(chebfunpref('splitting') || split_yn)
          warning('chebfun:inv:singularendpoints', ['F is monotonic, but ', ...
@@ -55,7 +66,7 @@ end
 
 % compute the inverse
 [domaing x] = domain(minandmax(f));
-g = chebfun(@(x) op(f,x), domaing, 'resampling', 0,'splitting',split_yn);
+g = chebfun(@(x) op(f,x), domaing, 'resampling', 0,'splitting',split_yn,'eps',tol);
 
 % scale so that the range of g is the domain of f
 [rangeg gx] = minandmax(g);
