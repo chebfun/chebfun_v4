@@ -44,7 +44,7 @@ mask = unique([find(isnan(x)) find(logical(imag(y))) find(y==0) find(abs(x)>1.2)
 if ~isempty(mask)
     for k = mask
         if k == length(x)
-            x = gamma(end); y = sqrt(alpha(end).*beta(end));
+            x(k) = gamma(end); y(k) = sqrt(alpha(end).*beta(end));
         end
         [y(k) indx] = min(sqrt(alpha(k:k+1).*beta(k:k+1)));
         x(k) = gamma(k-1+indx);
@@ -78,9 +78,13 @@ if length(p) < 2,
     return
 end
 
-
 % mapped fun using pinch map
 fout = chebfun(@(x) feval(ff,x), [a,b], 'map', {'mpinch',scale(p)});
+
+% if length fout > length fin then compress has failed
+if length(fin.ends) == 2 && length(fout) > length(fin)
+    fin = fout;
+end
 
 
 
