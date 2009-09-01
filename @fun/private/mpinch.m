@@ -58,9 +58,12 @@ yk = asin(2*phi-1);
 
 try
     % fsolve
+    wq = warning('query','MATLAB:optimset:InvalidParamName');
+    warning('off','MATLAB:optimset:InvalidParamName');
     options = optimset('Display','off','Algorithm','Levenberg-marquardt');
     options = optimset(options, 'TolX',1e-3,'TolFun',(1e-3)*min(abs(imag(wk))));
     yk = fsolve(@(yk) pfun2(yk,ginv_wk,wk),yk,options);
+    warning(wq,'MATLAB:optimset:InvalidParamName');
 catch no_fsolve
     % nsold
     yk = nsold(yk,@(v) pfun2(v,ginv_wk,wk),1e-3*[1 min(abs(imag(wk)))]);

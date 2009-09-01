@@ -177,9 +177,9 @@ while(fnrm > stop_tol & itc < maxit)
        if jac_age > 0
           sol = xold;
           x = xold; f0 = fold;    
-          disp('Armijo failure; recompute Jacobian.');
+%           disp('Armijo failure; recompute Jacobian.');
        else
-          disp('Complete Armijo failure.');
+%           disp('Complete Armijo failure.');
           sol = xold;
           ierr = 2;
           return
@@ -364,7 +364,7 @@ xp = x; fp = f0;
         ffc = nft*nft;
         iarm = iarm+1;
         if iarm > maxarm
-            disp(' Armijo failure, too many reductions ');
+%             disp(' Armijo failure, too many reductions ');
             armflag = 1;
             sol = xold;
             return;
