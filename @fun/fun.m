@@ -109,7 +109,16 @@ if nargin > 0
         % If map was provided in the chebfun call, overwrite previous
         % assignment.
         if isfield(pref,'map')
-            g.map = pref.map;
+            if iscell(pref.map)
+                mapfun = str2func(pref.map{1});
+                par = g.map.par(1:2);
+                if length(pref.map) == 2
+                    par = [par pref.map{2}(:).'];
+                end
+                g.map = mapfun(par);
+            else
+                g.map = pref.map;
+            end
         end
         [g,ish] = growfun(op,g,pref);
     end
