@@ -7,8 +7,6 @@ function [r p q] = chebpade(F,m,n,type)
 % [R P Q] = CHEBPADE(F,M,N,'maehly') constructs R = P/Q, where P and Q are
 %   chebfuns corresponding to the [M/N] Chebyshev-Pade approximation of
 %   type Maehly, which satisfies the linear Pade condition. 
-% [R P Q] = CHEBPADE(A,M,N,'maehly') construct the [M/N] approximation to
-%   the function with Chebyshev coefficients A.
 %
 % In the Maehly type, ff F is a quasimatrix then so are the outputs P & Q, 
 % and R is a cell array of function handles.
