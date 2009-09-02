@@ -1,13 +1,17 @@
-function [r p q] = chebpade(F,m,n) 
+function [r p q] = chebpade(F,m,n,type) 
 %CHEBYSHEV-PADE APPROXIMATION
 % [R P Q] = CHEBPADE(F,M,N) constructs R = P/Q, where P and Q are
-%   chebfuns corresponding to the [M/N] Chebyshev-Pade approximation 
-%   chebfun F.
-% [R P Q] = CHEBPADE(A,M,N) construct the [M/N] approximation to
+%   chebfuns corresponding to the [M/N] Chebyshev-Pade approximation of
+%   type Clenshaw-Lord, i.e., the rational function has maximum contact
+%   with the Chebyshev series of the chebfun F.
+% [R P Q] = CHEBPADE(F,M,N,'maehly') constructs R = P/Q, where P and Q are
+%   chebfuns corresponding to the [M/N] Chebyshev-Pade approximation of
+%   type Maehly, which satisfies the linear Pade condition. 
+% [R P Q] = CHEBPADE(A,M,N,'maehly') construct the [M/N] approximation to
 %   the function with Chebyshev coefficients A.
 %
-% If F is a quasimatrix then so are the outputs P & Q, and R is a 
-% cell array of function handles.
+% In the Maehly type, ff F is a quasimatrix then so are the outputs P & Q, 
+% and R is a cell array of function handles.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -15,7 +19,39 @@ function [r p q] = chebpade(F,m,n)
 %  Last commit: $Author: nich $: $Rev: 493 $:
 %  $Date: 2009-06-05 15:56:23 +0100 (Fri, 05 Jun 2009) $:
 
-tol = 1e-14; % tolerance for testing singular matrices
+if (nargin == 3) || strcmp(type,'clenshawlord')
+ l = max(m,n);                                     % temp degree in case m < n
+ c = fliplr( chebpoly(F) )';                       % Chebyshev coeffs
+ c(1) = 2*c(1);
+ top = c(abs([m-n+1:m]) + 1);                      % top row of Hankel system
+ bot = c([m:m+n-1]      + 1);                      % bottom row of Hankel system
+ rhs = c([m+1:m+n]      + 1);                      % rhs of hankel system
+ beta = 1;
+ if n > 0,
+     beta = flipud( [ -hankel(top,bot)\rhs; 1] ) ; % denominator of Laurent-Pade
+ end
+ c(1) = c(1)/2;
+ alpha = conv( c(1:l+1), beta );                   % numerator of Laurent-Pade
+ alpha = alpha(1:l+1);
+ beta = beta';
+ D = zeros(l+1,l+1);                               % temporary matrix
+ D(1:l+1,1:n+1) = alpha(:,ones(n+1,1)).*...
+      beta(ones(l+1,1),:);
+ pk(1) = sum( diag(D) );
+ for k = 1:m
+     pk(k+1) = sum( [diag(D,k); diag(D,-k)] );    % numerator of Cheb-Pade
+ end
+ for k = 1:n+1
+     u = beta(1:n+2-k); v = beta(k:end);
+     qk(k) = u*v';                                % denominator of Cheb-Pade
+ end
+ pk = pk/qk(1); qk = 2*qk/qk(1); qk(1) = 1;
+ p = chebfun(chebpolyval(fliplr(pk)));            % chebfun of numerator
+ q = chebfun(chebpolyval(fliplr(qk)));            % chebfun of denominator
+ r = @(x) feval(p,x)./feval(q,x);   
+elseif strcmp(type,'maehly')
+    
+tol = 1e-10; % tolerance for testing singular matrices
 
 if numel(F) > 1, % Deal with quasimatrices    
     trans = false;
@@ -69,7 +105,6 @@ if rank(D,tol) < min(size(D)) % test for singularity of matrix
 else 
     qk = [1; -D\(2*a(m+2:m+n+1))];
 end
-
 % numerator
 col = (1:m)';
 B = a(col(:,ones(n,1))+row(ones(m,1),:)+1)+a(abs(col(:,ones(n,1))-row(ones(m,1),:))+1);
@@ -77,9 +112,14 @@ mask = 1:(m+1):min(m,n)*(m+1);
 B(mask) = B(mask) + a(1);
 if m == 1, B = B.'; end
 B = [a(2:n+1).' ;  B];
-pk = .5*B*qk(2:n+1)+qk(1)*a(1:m+1);
+if isempty(B)
+    pk = qk(1)*a(1:m+1);
+else
+    pk = .5*B*qk(2:n+1)+qk(1)*a(1:m+1);
+end
 
 % p, q and r
 p = chebfun(chebpolyval(flipud(pk)),d);
 q = chebfun(chebpolyval(flipud(qk)),d);
 r = @(x) p(x)./q(x);
+end
