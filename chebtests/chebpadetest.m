@@ -41,7 +41,7 @@ f = chebfun(op);
 err = norm(f-p./q,inf);
 pass3 = err < 1e-15;
 cp = chebpoly(p);
-pass4 = cp(end)-17/46 < 1e-13
+pass4 = cp(end)-17/46 < 1e-13;
 
 pass = pass1 && pass2 && pass3 & pass4;
 
