@@ -10,7 +10,9 @@ function [p,err,xk] = remez(f,n);
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
+%  Copyright 2002-2009 by The Chebfun Team. 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 if n < 15, tol = 1e-14; elseif n < 100, tol = 2e-14; elseif n <= 1000, tol = 1e-10; else tol = 2e-7; end
 maxit = 50; %tol = 1e-15; 

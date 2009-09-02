@@ -16,8 +16,8 @@ function [r p q] = chebpade(F,m,n,type)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author: nich $: $Rev: 493 $:
-%  $Date: 2009-06-05 15:56:23 +0100 (Fri, 05 Jun 2009) $:
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 if (nargin == 3) || strcmp(type,'clenshawlord')
  l = max(m,n);                                     % temp degree in case m < n
