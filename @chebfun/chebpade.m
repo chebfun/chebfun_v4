@@ -88,11 +88,11 @@ D = a(col(:,ones(n,1))+row(ones(n,1),:)+1)+a(abs(col(:,ones(n,1))-row(ones(n,1),
 if n > m,  D = D + a(1)*diag(ones(n-m,1),m); end
 if rank(D,tol) < min(size(D)) % test for singularity of matrix
     if m > 1
-        [r p q] = chebpade(F,m-1,n);
+        [r p q] = chebpade(F,m-1,n,'maehly');
         warning('chebfun:chebpade:singular_goingleft', ...
             ['Singular matrix encountered. Computing [',int2str(m-1),',',int2str(n),'] approximant.'])
     elseif n > 1
-        [r p q] = chebpade(F,m,n-1);
+        [r p q] = chebpade(F,m,n-1,'maehly');
         warning('chebfun:chebpade:singlar_goingup', ...
             ['Singular matrix encountered. Computing [',int2str(m),',',int2str(n-1),'] approximant.'])
     else
@@ -119,5 +119,5 @@ end
 % p, q and r
 p = chebfun(chebpolyval(flipud(pk)),d);
 q = chebfun(chebpolyval(flipud(qk)),d);
-r = @(x) p(x)./q(x);
+r = @(x) feval(p,x)./feval(q,x);
 end
