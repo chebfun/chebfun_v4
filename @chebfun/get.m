@@ -12,6 +12,10 @@ function val = get(f, propName)
 switch propName
     case 'funs'
         val = f.funs;
+    case 'map'
+        if f.nfuns == 1
+            val = f.funs(1).map;
+        end
     case 'ends'
         val = f.ends;
     case 'imps'
