@@ -46,12 +46,7 @@ function m = slitp(par,plotflag)
 
     m.par = [a b w(:).'];
     m.name = 'slitp';
-    m.extra_pars = [eta y(:).'];  
-    
-    %%%%%%
-    z = 3*pi*linspace(-1,1,1000)+.9*1i*eta;
-    plot(m.for(z))
-    
+    m.extra_pars = [eta y(:).'];      
 
 function [gout eta] = slitmap_p1(w,z,derflag) % single slits
 global pi2pi
@@ -137,7 +132,6 @@ fout = reshape(fout,sizez);                             % reshape to size of z
 if ~plotflag return, end
 
 %%%%%%%%%%%%%%%%%%%%% FOR TESTING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % unnecessary plotting for testing
 ish = ishold;
 LW = 'LineWidth'; MS = 'MarkerSize';

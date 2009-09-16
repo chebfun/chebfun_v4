@@ -1,12 +1,16 @@
-function m = smap(ends,d)
-%SMAP sausage map.
-%   SMAP(D) creates a sausage map of degree D that maps Chebyshev points 
+function m = sausage(pars)
+%SAUSAGE sausage map.
+%   SAUSAGE(D) creates a sausage map of degree D that maps Chebyshev points 
 %   into more evenly spaced ones. 
 %
 % See N.Hale and N. Trefthen, New quadrature formulas from conformal maps. 
 % SINUM, 2008.
 
-if nargin == 1, d = 9; end
+if length(pars) == 2, 
+    d = 9;
+else
+    d = pars(3);
+end
 
 [c cp] = sausagecoeffs(d);
 map.for = @(s) polyval(c,s);
@@ -21,7 +25,7 @@ map.der = @(s) polyval(cp,s);
 %     map.inv = @(x) sausagemap(x);
     %end
 
-a = ends(1); b= ends(2);
+a = pars(1); b = pars(2);
 scale = @(y) ((b-a)*y+b+a)/2;
 rescale = @(x) (2*x-b-a)/(b-a);
 scaleder = (b-a)/2;
@@ -30,10 +34,10 @@ scaleder = (b-a)/2;
 m.for = @(y) scale(map.for(y));
 m.der = @(y) scaleder*map.der(y);
 m.name = 'sausage';
-m.par = [ends(1) ends(2) d];
+m.par = [pars(1) pars(2) d];
 
 function [c cp] = sausagecoeffs(d)
-% Return the polynomial coefficients ofsausage map with degree D
+% Return the polynomial coefficients of sausage map with degree D
 c = zeros(1,d+1);
 c(d:-2:1) = [1 cumprod(1:2:d-2)./cumprod(2:2:d-1)]./(1:2:d);
 c = c/sum(c); 
