@@ -156,11 +156,11 @@ if ~ish && strcmp(g.map.name,'linear') && singmap
     if ~(isl || isr)
         return;
     elseif isl && isr
-        g.map = sing([a,b],'b');
+        g.map = sing([a,b,0]);
     elseif isl
-        g.map = sing([a,b],'l');
+        g.map = sing([a,b,-1]);
     elseif isr
-        g.map = sing([a,b],'r');
+        g.map = sing([a,b,1]);
     end
     if isl || isr
         pref.sampletest = false;

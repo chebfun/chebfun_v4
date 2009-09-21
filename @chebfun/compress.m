@@ -1,4 +1,4 @@
-function fout = compress(fin)
+function fout = compress(fin,fin2,flag,flag2)
 % Attempt to compress the length of a chebfun using pinch maps.
 
 eps = 1e-14;
@@ -6,7 +6,14 @@ eps = 1e-14;
 scale = @(y) .5*((b-a)*y+b+a);
 
 % split the interval
-ff = chebfun(@(x) feval(fin,x),[a,b],'map',{'linear'},'splitdegree',56,'eps',eps,'splitting','on');
+if nargin > 1,
+    ff = chebfun(@(x) feval(fin2,x),[a,b],'map',{'linear'},'splitdegree',56,'eps',eps,'splitting','on')
+else
+    ff = chebfun(@(x) feval(fin,x),[a,b],'map',{'linear'},'splitdegree',56,'eps',eps,'splitting','on');
+end
+if ff.nfuns == 1
+    fout = fin; return
+end
 
 % find intersections -----------------------------
 ends = (2*ff.ends-(b+a))/(b-a);
@@ -51,26 +58,32 @@ if ~isempty(mask)
     end
 end
 
-% xx = linspace(-sqrt(beta(1))/4+gamma(1),x(1),10000);
-% yy = sqrt(alpha(1).*(beta(1)-16*(xx-gamma(1)).^2));
-% for k = 1:length(x)-1
-%     xxk = linspace(x(k),x(k+1),10000);
-%     xx = [xx ; xxk];
-%     yy = [yy ; sqrt(alpha(k+1).*(beta(k+1)-16*(xxk-gamma(k+1)).^2))];
-% end
-% xxk = linspace(x(end),sqrt(beta(end))/4+gamma(end),10000);
-% xx = [xx ; xxk];
-% yy = [yy ; sqrt(alpha(end).*(beta(end)-16*(xxk-gamma(end)).^2))];
-% zz = [xx+1i*yy].';
-% plot(scale(zz),'--'); hold on
-% plot(scale(x+1i*y),'or')
+if nargin == 4
+xx = linspace(-sqrt(beta(1))/4+gamma(1),x(1),10000);
+yy = sqrt(alpha(1).*(beta(1)-16*(xx-gamma(1)).^2));
+for k = 1:length(x)-1
+    xxk = linspace(x(k),x(k+1),10000);
+    xx = [xx ; xxk];
+    yy = [yy ; sqrt(alpha(k+1).*(beta(k+1)-16*(xxk-gamma(k+1)).^2))];
+end
+xxk = linspace(x(end),sqrt(beta(end))/4+gamma(end),10000);
+xx = [xx ; xxk];
+yy = [yy ; sqrt(alpha(end).*(beta(end)-16*(xxk-gamma(end)).^2))];
+zz = [xx+1i*yy].';
+plot(scale(zz),'--'); hold on
+plot(scale(x+1i*y),'or')
+end
 
 [x indx] = sort(x); y = y(indx); 
+% add ends of first and last ellipses
+% x = [-sqrt(beta(1))/4+gamma(1) x sqrt(beta(end))/4+gamma(end)];
+% y = [sqrt(alpha(1).*beta(1))/100 y sqrt(alpha(end).*beta(end))/100];
 % (end of) find intersections -----------------------------
 
 % map parameters
 p = x+.8*1i*y;
 p(p==0) = [];
+if nargin == 3, fout = p; return, end
 
 if length(p) < 2,
     % use single slit map
@@ -83,7 +96,7 @@ fout = chebfun(@(x) feval(ff,x), [a,b], 'map', {'mpinch',scale(p)});
 
 % if length fout > length fin then compress has failed
 if length(fin.ends) == 2 && length(fout) > length(fin)
-    fin = fout;
+    fout = fin;
 end
 
 
