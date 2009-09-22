@@ -15,7 +15,14 @@ else
     end
 end
 
-in = varargin{1};
-mapname = in{1};
-pars = [ends in{2}(:).'];
-map = feval(mapname,pars);
+v1 = varargin{1};
+if isstruct(v1)
+    mapname = v1.name;
+    pars = v1.par(3:end);
+else
+    in = varargin{1};
+    mapname = v1{1};
+    pars = v1{2}(:).';
+end
+
+map = feval(mapname,[ends pars]);
