@@ -48,7 +48,7 @@ if nargin > 1
     end
 end
 
-if k == 0, k = 1:u.nfuns; end
+if k == 0, k = 1:u.nfuns(1); end
 
 if numel(u) > 1
     if u(1).trans, u = u(1,:);

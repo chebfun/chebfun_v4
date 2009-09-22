@@ -38,7 +38,11 @@ for i = 1:length(ops)
     op = ops{i};
     switch class(op)
         case 'double'
-            funs = [funs fun(op,ends(i:i+1))];
+            if ~isfield(pref,'map')
+                funs = [funs fun(op,ends(i:i+1))];
+            else
+                funs = [funs fun(op,maps(pref.map,ends(i:i+1)))];
+            end
             newends = [newends ends(i+1)];
             scl.v = max(scl.v, funs(end).scl.v);
         case 'fun'
