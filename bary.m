@@ -1,6 +1,6 @@
 function x = bary(x,gvals,xk,ek)  
 % BARY  Barycentric interpolation with arbitrary weights/nodes.
-%  P = BARY(X,GVALS,XK,W) interpolates the values PK at nodes 
+%  P = BARY(X,GVALS,XK,EK) interpolates the values PK at nodes 
 %  XK in the point X using the barycentric weights EK. 
 %
 %  P = BARY(X,GVALS) assumes Chebyshev nodes and weights. 

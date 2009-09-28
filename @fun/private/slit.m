@@ -37,7 +37,7 @@ function  m = slit(par,plotflag)
     else   % multiple slits
         % compute map paramters
         [ignored rho y] = slitmapm(linv(w),linv([a b]),[],1,0,plotflag);
-        m.for = @(z) l(slitmapm(linv(w),linv(z),y,0,0,0))
+        m.for = @(z) l(slitmapm(linv(w),linv(z),y,0,0,0));
         m.der = @(z) slitmapm(linv(w),linv(z),y,0,1,0);
     end
 

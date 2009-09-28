@@ -20,7 +20,6 @@ if isstruct(v1)
     mapname = v1.name;
     pars = v1.par(3:end);
 else
-    in = varargin{1};
     mapname = v1{1};
     pars = v1{2}(:).';
 end

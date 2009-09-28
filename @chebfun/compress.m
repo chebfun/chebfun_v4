@@ -1,4 +1,4 @@
-function fout = compress(fin,fin2,flag,flag2)
+function fout = compress(fin,fin2,failflag,plotflag,paramoutflag)
 % Attempt to compress the length of a chebfun using pinch maps.
 
 eps = 1e-14;
@@ -7,13 +7,17 @@ scale = @(y) .5*((b-a)*y+b+a);
 
 % split the interval
 if nargin > 1,
-    ff = chebfun(@(x) feval(fin2,x),[a,b],'map',{'linear'},'splitdegree',56,'eps',eps,'splitting','on')
+    ff = chebfun(@(x) feval(fin2,x),[a,b],'map',{'linear'},'splitdegree',56,'eps',eps,'splitting','on');
 else
     ff = chebfun(@(x) feval(fin,x),[a,b],'map',{'linear'},'splitdegree',56,'eps',eps,'splitting','on');
 end
 if ff.nfuns == 1
     fout = fin; return
 end
+
+if nargin < 3, failflag = 1; end
+if nargin < 4, plotflag = 0; end
+if nargin < 5, paramoutflag = 0; end
 
 % find intersections -----------------------------
 ends = (2*ff.ends-(b+a))/(b-a);
@@ -58,7 +62,7 @@ if ~isempty(mask)
     end
 end
 
-if nargin == 4
+if plotflag
 xx = linspace(-sqrt(beta(1))/4+gamma(1),x(1),10000);
 yy = sqrt(alpha(1).*(beta(1)-16*(xx-gamma(1)).^2));
 for k = 1:length(x)-1
@@ -83,7 +87,7 @@ end
 % map parameters
 p = x+.8*1i*y;
 p(p==0) = [];
-if nargin == 3, fout = p; return, end
+if paramoutflag, fout = p; return, end
 
 if length(p) < 2,
     % use single slit map
@@ -94,8 +98,9 @@ end
 % mapped fun using pinch map
 fout = chebfun(@(x) feval(ff,x), [a,b], 'map', {'mpinch',scale(p)});
 
+
 % if length fout > length fin then compress has failed
-if length(fin.ends) == 2 && length(fout) > length(fin)
+if length(fin.ends) == 2 && length(fout) > length(fin) && failflag
     fout = fin;
 end
 
