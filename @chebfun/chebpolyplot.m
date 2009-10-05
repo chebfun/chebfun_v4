@@ -64,7 +64,7 @@ for j = k
     uk = chebpoly(u,j);             % coefficients of kth fun
     uk = abs(uk(end:-1:1));         % flip
     uk(~uk) = eps*max(uk);          % remove zeros for LNT
-    UK = [UK, {1:length(uk), uk}, varargin]; % store
+    UK = [UK, {0:length(uk)-1, uk}, varargin]; % store
 end
 if ~ll
     h = semilogy(UK{:});            % semilogy plot
