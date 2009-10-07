@@ -14,6 +14,19 @@ if nargin == 1
 end
 out = g.map.for(rootsunit(g,all));
 
+% Check for roots at infinity
+if isinf(g.map.par(1)) && abs(g.vals(1))<1e-15*g.scl.v
+    if isempty(out)||~isinf(out(1))
+        out(1) = -inf;
+    end
+end
+if isinf(g.map.par(2)) && abs(g.vals(end))<1e-15*g.scl.v
+    if isempty(out)||~isinf(out(end))
+        out(end) = inf;
+    end
+end
+    
+
 
 function out = rootsunit(g,all)
 % Computes the roots on the unit interval
