@@ -1,9 +1,9 @@
 function p = legpoly(n,d,normalize)
 %LEGPOLY Legendre polynomials.
 %   P = LEGPOLY(N) computes a chebfun of the Legendre polynomial 
-%   of degree N on the interval [-1,1]. N must be a scalar integer.
+%   of degree N on the interval [-1,1]. N can be a vector of integers.
 %
-%   P = LEGPOLY(N,D) computes the Legendre polynomial as above, but
+%   P = LEGPOLY(N,D) computes the Legendre polynomials as above, but
 %   on the interval given by the domain D, which must be bounded.
 %
 %   LEGPOLY(N,D,normalize) or LEGPOLY(N,normalize) will use one
@@ -21,10 +21,21 @@ if nargin < 2, d = [-1,1]; end
 if isa(d,'char'), normalize = d; d = [-1,1]; end
 if isa(d,'domain'), d = d.ends; end
 
-x = chebpts(n+1);                       % Chebyshev points
-vals = legendre(n,x,normalize);         % Legendre values at Chebyshev points
-p = chebfun(vals(1,:)',d);              % nth Legendre polynomial
+nn = n;
+ln = length(nn);
+p = chebfun;
 
-if strcmp(normalize,'norm')
-    p = p*sqrt(2/diff(d));
+for k = 1:ln
+    n = nn(k);
+    
+    x = chebpts(n+1);                       % Chebyshev points
+    vals = legendre(n,x,normalize);         % Legendre values at Chebyshev points
+    p(:,k) = chebfun(vals(1,:)',d);              % nth Legendre polynomial
+
+    if strcmp(normalize,'norm')
+        p(:,k) = p(:,k)*sqrt(2/diff(d));
+    end
+    
 end
+    
+if size(n,2) > 1, p = p.'; end
