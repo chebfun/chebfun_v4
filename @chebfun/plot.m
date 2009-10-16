@@ -60,7 +60,7 @@ function varargout = plot(varargin)
 numpts = 2001;
 
 % get jumpline style and jumpval markers
-jlinestyle = ':'; jmarker = 'x'; forcejmarks = false;
+jlinestyle = ':'; jmarker = 'x'; forcejmarks = false; infy = false;
 for k = length(varargin)-1:-1:1
     if isa(varargin,'chebfun'), break, end
     if ischar(varargin{k})
@@ -71,11 +71,15 @@ for k = length(varargin)-1:-1:1
             jmarker = varargin{k+1}; 
             forcejmarks = true;
             varargin(k:k+1) = [];
+        elseif strcmpi(varargin{k},'NumPts');      
+            numpts = varargin{k+1}; 
+            varargin(k:k+1) = [];
         end
     end
 end
 
 linedata = {}; markdata = {}; jumpdata = {}; dummydata = {}; jvaldata = {};
+bot = inf; top = -inf;
 while ~isempty(varargin)
     % grab the chebfuns
     if length(varargin)>1 && isa(varargin{2},'chebfun') % two chebfuns
@@ -104,10 +108,18 @@ while ~isempty(varargin)
         s = [];
     end
     varargin(1:pos) = [];
+
+    if any(any(get(g,'exps'))), infy = true; end
     
     % get plot data
-    [lines marks jumps jumpval] = plotdata(f,g,[],numpts);
-
+    [lines marks jumps jumpval misc] = plotdata(f,g,[],numpts);
+    
+    % limits for inf plots
+    if ~isempty(misc)
+        bot = min(bot,misc(1)); 
+        top = max(top,misc(2));
+    end
+    
     % jump stuff
     if ~isempty(jumps) && ~isempty(jumps{1})
         tmp = jumps;           jumps = {};
@@ -184,6 +196,13 @@ for k = 1:length(h1)
         set(h4(k),'marker','none');
     end
     set(h1(k),'marker','none');
+end
+
+if all(~isinf([bot top])) && infy
+    try
+        xl = get(gca,'xlim');
+        axis([xl(1) xl(2) bot top]);
+    end
 end
 
 if ~h, hold off; end

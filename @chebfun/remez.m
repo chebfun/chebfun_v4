@@ -14,6 +14,12 @@ function [p,err,xk] = remez(f,n);
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
+if numel(f) > 1, error('CHEBFUN:remez:quasi',...
+        'Remez does not currently support quasimatrices'); end
+
+if any(get(f,'exps')), error('CHEBFUN:remez:inf',...
+        'Remez does not currently support functions which diverge to infinity'); end
+
 if n < 15, tol = 1e-14; elseif n < 100, tol = 2e-14; elseif n <= 1000, tol = 1e-10; else tol = 2e-7; end
 maxit = 50; %tol = 1e-15; 
 [a,b] = domain(f);

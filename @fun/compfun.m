@@ -28,7 +28,13 @@ if nargin == 3
     end
     gout = growfun(op,g1,pref,g1,g2);
 else
-    gout = growfun(op,g1,pref,g1);
+    if any(g1.exps) % Deal with blowup (exponents)
+        scl = g1.scl;
+        scl.v = op(scl.v);
+        gout = fun(@(x) op(feval(g1,x)), g1.map.par([1,2]), pref, scl);
+    else
+        gout = growfun(op,g1,pref,g1);
+    end
 end
 
 

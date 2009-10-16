@@ -27,6 +27,7 @@ tol = max(chebfunpref('eps')*10, 1e-14) ;
 
 F = f;
 funs = f.funs;
+exps = get(f,'exps');
 
 for j = 1:n % loop n times for nth derivative
     
@@ -38,11 +39,17 @@ for j = 1:n % loop n times for nth derivative
     F.funs = funs;
 
     % update function values in the first row of imps:
-    for i=1:F.nfuns
-        F.imps(1,i) = F.funs(i).vals(1);
+    if ~(isinf(F.imps(1,1)) && exps(1,1))
+        F.imps(1,1) = F.funs(1).vals(1);
     end
-    F.imps(1,end) = F.funs(F.nfuns).vals(end);
-    
+    for i=2:F.nfuns
+        if ~(isinf(F.imps(1,i)) && (exps(i-1,2) || exps(i-1,2)))       
+            F.imps(1,i) = F.funs(i).vals(1);
+        end
+    end
+    if ~(isinf(F.imps(1,end)) && exps(end,2))
+        F.imps(1,end) = F.funs(F.nfuns).vals(end);
+    end   
     
     % Detect jumps in the function
     fright = f.funs(1);

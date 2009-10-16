@@ -34,8 +34,8 @@ F = chebop(@matrix,@op,d);
   function v = op(u)
     % Result can be resolved relative to norm(u).
     scale = norm(u);
-    int = @(x) sum(u.*chebfun(@(y) k(x,y),d,'resampling',false,'splitting',true));
-    v = chebfun( vec(@(x) scale+int(x)), d,'sampletest',false,'resampling',false );
+    int = @(x) sum(u.*chebfun(@(y) k(x,y),d,'resampling',false,'splitting',true,'exps',{0 0}));
+    v = chebfun( vec(@(x) scale+int(x)), d,'sampletest',false,'resampling',false,'exps',{0 0});
     v = v-scale;
   end
 

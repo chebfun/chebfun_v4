@@ -28,8 +28,11 @@ if g.scl.v == 0,
     g = set(g,'vals',0);               % is g the zero function?
     return;
     elseif isinf(g.scl.v)
-        error('CHEBFUN:simplify:InfEval', ...
-                'Function returned Inf when evaluated.')
+%         error('CHEBFUN:simplify:InfEval', ...
+%                 'Function returned Inf when evaluated.')
+
+%     inf located, try markfun!
+    return
 end
 
 c = chebpoly(g);                      % coeffs of Cheb expansion of g

@@ -1,6 +1,12 @@
 function f = ctor_2(f,ops,ends,pref)
+%CTOR_2  Adaptive chebfun constructor
+% CTOR_2 handles adaptive construction of chebfuns.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. 
+% Last commit: $Author: nich $: $Rev: 458 $:
+% $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
 
 if length(ends) ~= length(ops)+1
     error(['Unrecognized input sequence: Number of intervals '...
@@ -34,6 +40,25 @@ if isa(ops,'chebfun')
     return
 end
 
+if isfield(pref,'exps') 
+    exps = pref.exps;
+    pref.blowup = true;
+    if numel(exps) == 1, 
+        exps = {exps{ones(1,2*numel(ends)-2)}};
+    elseif numel(exps) == 2, 
+        tmp = repmat({[]},1,2*numel(ends)-4);
+        exps = {exps{1} tmp{:} exps{2}};
+    elseif numel(exps) == numel(ends)
+        if numel(ends)~=2
+            warning('chebfun:ctor_2:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
+            'Assuming exps are the same on either side of break.']);
+            exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
+        end
+    elseif numel(exps) ~= 2*numel(ends)-2
+        error('chebfun:ctor_2:exps_input2','Length of vector exps must correspond to breakpoints');
+    end
+end
+
 for i = 1:length(ops)
     op = ops{i};
     switch class(op)
@@ -64,11 +89,13 @@ for i = 1:length(ops)
             end
             op = inline(op);
             vectorcheck(op,ends(i:i+1));
+            if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];
             newends = [newends es(2:end)];
         case 'function_handle'
             vectorcheck(op,ends(i:i+1));
+            if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];
             newends = [newends es(2:end)];
@@ -76,9 +103,10 @@ for i = 1:length(ops)
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)
                  warning('chebfun:c_tor2:domain','chebfun is not defined in the domain')
             end
-                [fs,es,scl] = auto(@(x) feval(op,x),ends(i:i+1),scl,pref);
-                funs = [funs fs];
-                newends = [newends es(2:end)];
+            if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
+            [fs,es,scl] = auto(@(x) feval(op,x),ends(i:i+1),scl,pref);
+            funs = [funs fs];
+            newends = [newends es(2:end)];
         case 'cell'
             error(['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])
@@ -104,6 +132,6 @@ end
 % Assign fields to chebfuns.
 f.funs = funs; f.ends = newends; f.imps = imps; f.trans = false; f.scl = scl.v;
 
-if length(f.ends)>2 
-    f = merge(f,find(~ismember(newends,ends)),pref); % Avoid merging at specified breakpoints
-end
+ if length(f.ends)>2 
+     f = merge(f,find(~ismember(newends,ends)),pref); % Avoid merging at specified breakpoints
+ end

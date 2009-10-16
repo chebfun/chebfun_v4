@@ -35,8 +35,8 @@ V = chebop(@matrix,@op,d,-1);
   function v = op(u)
     % Result can be resolved relative to norm(u).
     scale = norm(u);
-    h = @(x) chebfun(@(y) u(y).*k(x,y),[d.ends(1) x]);  % integrand at any x
-    v = chebfun( vec(@(x) scale+sum(h(x))), d );
+    h = @(x) chebfun(@(y) u(y).*k(x,y),[d.ends(1) x],'exps',{0 0});  % integrand at any x
+    v = chebfun( vec(@(x) scale+sum(h(x))), d ,'exps',{0 0});
     v = v-scale;
   end
 

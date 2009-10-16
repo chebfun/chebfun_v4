@@ -1,46 +1,51 @@
 function pass = NaNandInf
 
+% This test is no longer required?
+pass = 1;
+return
+
 % Rodrigo Platte
 
-% If an evaluation returns NaN or Inf, the constructro should give an error
-% message!
+% If an evaluation returns NaN the constructor should give an error
+% message! This is true also of Inf when `blowup' is off.
+
+blowup off
 
 splitting off
 % NaN
-pass1 = false;
+pass(1) = false;
 try 
     chebfun(@(x) x.^6.*sin(1./x.^2),[-1 1]);
 catch
-    pass1 = true;
+    pass(1) = true;
 end
 
 % Inf
-pass2 = false;
+pass(2) = false;
 try 
     chebfun(@(x) log(x+1));
 catch
-    pass2 = true;
+    pass(2) = true;
 end
 
 splitting on
 
 % NaN
-pass3 = false;
+pass(3) = false;
 try 
     chebfun(@(x) x.^6.*sin(1./x.^2),[-1 1]);
 catch
-    pass3 = true;
+    pass(3) = true;
 end
 
 % Inf
-pass4 = false;
+pass(4) = false;
 try 
-    chebfun(@(x) log(x+1));
+    chebfun(@(x) log(x+1))
 catch
-    pass4 = true;
+    pass(4) = true;
 end
 
-
-pass = pass1 && pass2 && pass3 && pass4;
+pass = all(pass);
 
 chebfunpref factory;

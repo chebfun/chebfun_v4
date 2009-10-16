@@ -61,43 +61,63 @@ function displaychebfun(f, columnstr)
     end    
     len = zeros(f.nfuns,1);
 
-    % Non-linear map used?
+    % Non-trivial map used?
+    % Non-trivial exponents used?
     mapped = false;
+    exps = false;
     for k = 1:f.nfuns
-        if ~strcmp(f.funs(k).map.name,'linear')
+        if ~(strcmp(f.funs(k).map.name,'linear') || strcmp(f.funs(k).map.name,'unbounded'))
             mapped = true;
-            break
+        end
+        if any(f.funs(k).exps)
+            exps = true;
         end
     end
     
+    % If any non-trivial exponents
+    extras =' ';
+    if exps
+        extras = '   exponents';
+    end
     % If non-linear map, display "mapped Chebyshev instead"
     if mapped        
-        disp('          interval          length   values at mapped Chebyshev points')
-    else
-        disp('          interval          length   values at Chebyshev points')
+        extras= [extras '     mapping'];
     end
      
+    fprintf('       interval          length    endpoint values %s \n',extras)
     for j = 1:f.nfuns
         len(j)= funs(j).n;
-        if ~isreal(funs(j).vals)
-            fprintf('(%9.2g,%9.2g)   %7i       Complex values \n', ends(j), ends(j+1), len(j));
-        else
-            switch len(j)
-                case 1
-                    fprintf('(%9.2g,%9.2g)   %7i   %10.2g \n', ends(j), ends(j+1), len(j), funs(j).vals)
-                case 2
-                    fprintf('(%9.2g,%9.2g)   %7i   %10.2g %10.2g\n', ends(j), ends(j+1), len(j), funs(j).vals)
-                case 3
-                    fprintf('(%9.2g,%9.2g)   %7i   %10.2g %10.2g %10.2g \n', ends(j), ends(j+1), len(j), funs(j).vals)
-                case 4
-                    fprintf('(%9.2g,%9.2g)   %7i   %10.2g %10.2g %10.2g %10.2g \n', ends(j), ends(j+1), len(j), funs(j).vals)
-                otherwise
-                    v = funs(j).vals;
-                    fprintf('(%9.2g,%9.2g)   %7i   %10.2g %10.2g %10.2g ... %10.2g\n', ends(j), ends(j+1), len(j), v(1:3), v(end))
+        
+        endvals(1) = funs(j).vals(1);
+        endvals(2) = funs(j).vals(end);
+        
+        if exps
+            exinfo = ['    ' num2str(funs(j).exps, '%5.2g') '  '];
+            endvals = feval(funs(j),funs(j).map.par(1:2));
+            if funs(j).exps(1)
+                endvals(1) = inf;
             end
+            if funs(j).exps(2)
+                endvals(2) = inf;
+            end
+        else
+            exinfo = ' ';
+        end
+        
+        if mapped
+            exinfo = [exinfo '    ' funs(j).map.name ' ' num2str(funs(j).map.par(3:end),'%5.2g')];    
+        end
+        
+        if ~isreal(funs(j).vals)
+            fprintf('(%9.2g,%9.2g)   %7i      Complex values %s \n', ends(j), ends(j+1), len(j), exinfo);
+        else
+            fprintf('(%9.2g,%9.2g)   %6i  %9.2g %9.2g %s \n', ends(j), ends(j+1), len(j), endvals, exinfo);
         end        
     end
+    
     if f.nfuns > 1
-        fprintf('Total length = %i \n', sum(len))
+        fprintf('Total length = %i   vertical scale = %3.2g \n', sum(len), f.scl)
+    else
+        fprintf('vertical scale = %3.2g \n', f.scl)
     end
     disp(' ')

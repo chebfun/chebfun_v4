@@ -45,7 +45,10 @@ else
   kk = 2.^(minpower:npower) + 1;
 end
 
-if kk(end)~=n,  kk(end+1) = n; resample = true; end
+if kk(end)~=n, kk(end+1) = n; resample = true; end
+
+% Store scale in case not happy
+old_scl = g.scl;
 
 % ---------------------------------------------------
 % composition case, i.e., want gout = op(g) (see FUN/COMP.M)
@@ -77,8 +80,22 @@ if  ~resample && 2^npower+1 == n && nargin<5
     ind =1;
     xvals = g.map.for(chebpts(kk(ind))); xvals(1) = a; xvals(end) = b;
     v = op(xvals);
-    while kk(ind)<=kk(end)        
-        g.vals = v; g.n = length(v); g.scl.v = max(g.scl.v,norm(v,inf));
+
+    while kk(ind)<=kk(end) 
+        
+        % Experimental feature for avoiding NaNs.
+        nans = isnan(v);
+        if any(nans)
+            xvals = xvals(nans); % Sample around NaN and extrapolate.
+            for j = 1:length(xvals)
+                xnans = repmat(xvals(j),1,6) + [0 -2 -1 1  2 0]*1e-14*g.scl.h;
+                vnans = op(xnans.');
+                v(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+            end
+        end
+        
+        g.vals = v;  g.n = length(v); 
+        g.scl.v = max(g.scl.v,norm(g.vals,inf));
         [ish, g] = ishappy(op,g,pref);
         if ish || ind==length(kk), break, end        
         ind =ind+1;
@@ -98,12 +115,24 @@ else
     
     % double sampling (This is the standard way of growing a fun)
     
-    if ~(isinf(g.map.par(1)) || isinf(g.map.par(2)))
+    if ~any(isinf(g.map.par(1:2)))
         
         for k = kk
             xvals = g.map.for(chebpts(k)); xvals(1) = a; xvals(end) = b;
-            g.vals = op(xvals);
-            g.n = k; g.scl.v = max(g.scl.v,norm(g.vals,inf));
+            g.vals = op(xvals); g.n = k; 
+            
+            % Experimental feature for avoiding NaNs.
+            nans = isnan(g.vals);
+            if any(nans)
+                xvals = xvals(nans); % Sample around NaN and extrapolate.
+                for j = 1:length(xvals)
+                    xnans = repmat(xvals(j),1,6) + [0 -2 -1 1  2 0]*1e-14*g.scl.h;
+                    vnans = op(xnans.');
+                    g.vals(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+                end
+            end
+            
+            g.scl.v = max(g.scl.v,norm(g.vals,inf));
             [ish, g] = ishappy(op,g,pref);
             if ish, break, end
         end
@@ -140,9 +169,25 @@ else
     
 end
 
+% Check for Inf's
+if isinf(g.scl.v) 
+    if ~pref.blowup
+        error('CHEBFUN:growfun:inf_blowup',['Function returned Inf when evaluated. ', ...
+        'Have you tried ''blowup on''?'])
+    elseif ~split
+        error('CHEBFUN:growfun:inf_split',['Function returned Inf when evaluated. ', ...
+        'Have you tried ''splitting on''?'])
+    else
+        ish = false;
+        g.scl = old_scl;
+        return
+    end
+         
+end
+
 % Check for NaN's or Inf's
-if any(isnan(g.vals)) || isinf(g.scl.v)
-    error('CHEBFUN:growfun:naneval','Function returned NaN or Inf when evaluated.')
+if any(isnan(g.vals))
+    error('CHEBFUN:growfun:naneval','Function returned NaN when evaluated.')
 end
 
 % if unhappy, change map and try again
@@ -171,6 +216,9 @@ if ~ish && strcmp(g.map.name,'linear') && singmap
     end
 end
 
+if ~ish && pref.blowup % If not happy, then we revert the scale (as the respresentation my change by using markfins
+    g.scl = old_scl;
+end
 
 %-------------------------------------------------------------------------
 function  [ish,g] = ishappy(op,g,pref)

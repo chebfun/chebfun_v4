@@ -56,6 +56,8 @@ function varargout = chebfunpref(varargin)
 % sampletest - Extra test in the construction of chebfuns to avoid
 %   aliasing. Factory value is true.
 %
+% blowup - Allow and check for functions which blow up on the domain.
+%
 % Examples
 %       chebfunpref
 %       chebfunpref('minn', 17)
@@ -92,8 +94,8 @@ end
 % If the above didn't work, go through the longer process:
 
 % These are the options
-options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest'};
-factoryvals = {false,       9,            2^16,      6000,      128,          true,         [-1 1],   2^-52,        true};
+options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest', 'blowup'};
+factoryvals = {false,       9,            2^16,      6000,      128,          true,         [-1 1],   2^-52,        true, true};
 
 % Restore defaults ?
 factory_flag = false;

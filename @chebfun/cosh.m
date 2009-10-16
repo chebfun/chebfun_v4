@@ -5,4 +5,9 @@ function Fout = cosh(F)
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
+for k = 1:numel(F)
+    if any(get(F(:,k),'exps')), error('CHEBFUN:sin:inf',...
+        'chebfun cannot handle exponential blowups'); end
+end
+
 Fout = comp(F, @(x) cosh(x));

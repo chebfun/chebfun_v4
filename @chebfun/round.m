@@ -21,6 +21,9 @@ function g = roundcol(f)
 
 if isempty(f), g=chebfun; return, end
 
+if any(get(f,'exps')), error('CHEBFUN:round:inf',...
+        'Round is not defined for functions which diverge to infinity'); end
+
 % Find all the half-integer crossings for f.
 range = round( [min(f) max(f)] );
 breakpts = [];

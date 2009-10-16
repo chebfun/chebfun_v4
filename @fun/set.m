@@ -33,7 +33,9 @@ while length(propertyArgIn) >= 2,
             end
         case 'map'
             g.map = val;
+        case 'exps'
+            g.exps = val;
         otherwise
-            error('fun properties: val, n, or scl')
+            error('fun properties: val, n, map, exps, or scl')
     end
 end

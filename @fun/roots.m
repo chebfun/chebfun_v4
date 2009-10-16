@@ -25,6 +25,17 @@ if isinf(g.map.par(2)) && abs(g.vals(end))<1e-15*g.scl.v
         out(end) = inf;
     end
 end
+
+% If there are exponents, then endpoints should not be roots?
+tol = 1e-14*g.scl.h;
+if g.exps(1) 
+    mask = find(abs(out-g.map.par(1))<tol);
+    out(mask) = [];
+end
+if g.exps(2) 
+    mask = find(abs(out-g.map.par(2))<tol);
+    out(mask) = [];
+end
     
 
 

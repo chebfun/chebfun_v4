@@ -17,6 +17,12 @@ function [r p q] = chebpade(F,m,n,type)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
+if numel(F) > 1, error('CHEBFUN:chebpade:quasi',...
+        'ChebPade does not currently support quasimatrices'); end
+
+if any(get(F,'exps')), error('CHEBFUN:chebpade:inf',...
+        'ChebPade does not currently support functions which diverge to infinity'); end
+
 if (nargin == 3) || strcmp(type,'clenshawlord')
  l = max(m,n);                                     % temp degree in case m < n
  c = fliplr( chebpoly(F) )';                       % Chebyshev coeffs

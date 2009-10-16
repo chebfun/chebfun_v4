@@ -5,55 +5,120 @@ function g1 = minus(g1,g2)
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2008 by The Chebfun Team.
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
 %if (isempty(g1) || isempty(g2)), gout=fun; return; end
 
+% The exponents of g1 and g2 are automatically summed. Perhaps
+% some checking should be done for cancellation??
+
 % Scalar case:
-if isa(g1,'double')
-  g2.vals = g1-g2.vals; g2.scl.v = max(g2.scl.v,norm(g2.vals,inf));
-  g1 = g2;
-  return;
-elseif isa(g2,'double')
-  g1.vals = g1.vals-g2; g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
-  return;
+if isa(g1,'double') 
+    if ~any(g2.exps)
+        g2.vals = g1-g2.vals; g2.scl.v = max(g2.scl.v,norm(g2.vals,inf)); 
+        g1 = g2;
+        return
+    else
+        g1 = fun(g1,g2.map);
+    end
+elseif isa(g2,'double') 
+    if ~any(g1.exps)
+        g1.vals = g1.vals-g2; g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
+        return;
+    else
+        g2 = fun(g2,g1.map);
+    end
 end
 
 % Deal with maps
-% If two maps are different, call constructor.
-if ~samemap(g1,g2)
+exps1 = g1.exps; exps2 = g2.exps;
+ends = g1.map.par(1:2);
+
+% Same maps and exponents are easy
+if samemap(g1,g2) && all(exps1==exps2);
+    % use standard procedure:
+    gn1 = g1.n;
+    gn2 = g2.n;
+    if (gn1 > gn2)
+        g2 = prolong(g2,gn1);
+        vals = g1.vals - g2.vals;
+    elseif gn1 < gn2
+        g1 = prolong(g1,gn2);
+        vals = g1.vals - g2.vals;
+    elseif (g1.vals == g2.vals)
+        vals = 0;
+    else
+        vals = g1.vals - g2.vals;
+    end
+    
+    g1.vals = vals;
+    g1.scl.h = max(g1.scl.h,g2.scl.h);
+    g1.scl.v = max([g1.scl.v,g2.scl.v,norm(vals,inf)]);
+    g1.n = length(vals);
+    return
+end
+
+% If two maps are different, but no exponents then call constructor.
+if ~samemap(g1,g2) && ~any([exps1 exps2])
     scl.v = max(g1.scl.v,g2.scl.v);
     scl.h = g1.scl.h;
     pref = chebfunpref;
-    if pref.splitting 
+    if pref.splitting
         pref.splitdegree = 8*pref.splitdegree;
     end
     pref.resampling = false;
-    [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),g1.map.par([1 2]),pref,scl);
+    [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),ends,pref,scl);
     if ~ish
         warning('fun:minus:failtoconverge','Operation may have failed to converge');
     end
     return
 end
 
-% Otherwise use standard procedure:
-gn1=g1.n;
-gn2=g2.n;
-if (gn1 > gn2)
-  g2=prolong(g2,gn1);
-  vals=g1.vals-g2.vals;
-elseif gn1 < gn2
-  g1=prolong(g1,gn2);
-  vals=g1.vals-g2.vals;
-elseif (g1.vals==g2.vals)
-  vals=0;
-else
-  vals=g1.vals-g2.vals;  
+% integer exponents is semi-easy special case.
+% (Linear map is an even simplier special case?)
+if round([exps1 exps2]) == [exps1 exps2]
+    g1.exps = [0 0]; g2.exps = [0 0];
+    pref = chebfunpref; 
+    pref.exps = {0 0};
+    pref.resampling = false;
+    
+    scl.h = max(g1.scl.h,g2.scl.h);
+    scl.v = max(g1.scl.v,g2.scl.v);
+
+    g1 = g1.*fun(@(x) (x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2),g1.map,pref,scl) - ...
+        g2.*fun(@(x) (x-ends(1)).^exps1(1).*(ends(2)-x).^exps1(2),g2.map,pref,scl);
+
+    g1.exps = sum([exps1 ; exps2]);
+    g1.scl = scl; 
+    g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
+    g1.n = length(g1.vals);
+    return
 end
 
-g1.vals = vals;
-g1.scl.h = max(g1.scl.h,g2.scl.h);
-g1.scl.v = max([g1.scl.v,g2.scl.v,norm(vals,inf)]);
-g1.n = length(vals);
+% Difficult case: non-integer exponents which don't match
+g1.exps = [0 0]; g2.exps = [0 0];
+pref = chebfunpref;
+pref.exps = {0 0};
+if pref.splitting
+    pref.splitdegree = 8*pref.splitdegree;
+end
+pref.resampling = false;
+
+scl.h = max(g1.scl.h,g2.scl.h);
+scl.v = max(g1.scl.v,g2.scl.v);
+
+x1 = g1.map.for(get(g1,'points')); x2 = g2.map.for(get(g2,'points'));
+
+g1 = fun(@(x) bary(x,g1.vals,x1).*(x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2) - ...
+              bary(x,g2.vals,x2).*(x-ends(1)).^exps1(1).*(ends(2)-x).^exps1(2),  ...
+              ends, pref, scl);
+
+g1.exps = sum([exps1 ; exps2]);
+g1.scl = scl; 
+g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
+g1.n = length(g1.vals);
+
+
+

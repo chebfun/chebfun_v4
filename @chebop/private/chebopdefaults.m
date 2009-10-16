@@ -9,4 +9,5 @@ pref = chebfunpref;
 pref.splitting = false;
 pref.sampletest = false;
 pref.resampling = true;
+pref.exps = {0 0};
 

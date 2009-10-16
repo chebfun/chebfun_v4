@@ -37,16 +37,54 @@ if (isa(f,'chebfun') && isa(b,'chebfun'))
     fout = comp(f,@power,b);
 
 else
-
     if isa(f,'chebfun') 
         if b == 0
+            % Trivial case
+            
             fout = chebfun(1,[f.ends(1) f.ends(end)]);
-        elseif b==2
-            fout = f.*f;
+            
+        elseif any(any(get(f,'exps'))) && ~chebfunpref('splitting')
+            % It's better to seperate out the markfun part if possible
+            %  -- does it really make a difference?
+            
+            exps = get(f,'exps');
+            for k = 1:f.nfuns
+                fk = f.funs(k);
+                fk = set(fk,'exps',[0 0]); 
+                f.funs(k) = fk;
+            end
+            
+            if b == 2
+                fout = f.*f;
+            else
+                fout = comp(f,@(x) power(x,b));
+            end
+            
+            if fout.nfuns ~= f.nfuns,
+                error('I didn''t think this could happen ...'); 
+            end
+            
+            exps = b*exps;
+            
+            for k = 1:f.nfuns
+                fk = fout.funs(k);
+                fk = set(fk,'exps',exps(k,:)); 
+                fout.funs(k) = fk;
+            end
+            
         else
-            fout = comp(f,@(x) power(x,b));
+            % The usual case
+            
+            if b == 2
+                fout = f.*f;
+            else
+                fout = comp(f,@(x) power(x,b));
+            end
+           
         end
+        
         fout.trans = f.trans;
+        
     else
         fout = comp(b, @(x) power(f,x));
         %fout = chebfun(@(x) f.^feval(b,x), b.ends);

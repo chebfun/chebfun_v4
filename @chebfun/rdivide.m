@@ -37,8 +37,24 @@ if (isempty(f1) || isempty(f2)), fout=chebfun; return; end
 if isa(f2,'double')
     if f2 ==  0, error('CHEBFUN:rdivide:DivisionByZero','Division by zero'), end
     fout = f1*(1/f2);  
-elseif ~isempty(roots(f2))
-       error('CHEBFUN:rdivide:DivisionByZero','Division by zero')
+    return
+end
+    
+r = roots(f2);    
+if isa(f1,'double')
+    [ends(1) ends(2)] = domain(f2);
+else
+    ends = get(f1,'ends');
+end
+newbkpts = setdiff(r,ends);
+
+if ~isempty(newbkpts)
+    d = union(ends,newbkpts);
+    d = union(d,get(f2,'ends'));
+    f1 = chebfun(f1,d);
+    f2 = chebfun(f2,d);
+    fout = rdividecol(f1,f2);
+%        error('CHEBFUN:rdivide:DivisionByZero','Division by zero')
 elseif isa(f1,'double')    
     if f1 == 0, fout = chebfun(0, f2.ends([1,end])); 
     else        

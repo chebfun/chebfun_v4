@@ -88,6 +88,7 @@ switch index(1).type
                     'Cannot introduce endpoints outside domain.')
             end
             stemp = s;
+           % s(find(s==b)) = [];
             s(s==a) = []; s(s==b) = [];             
             for i = 1:length(s)
                 fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];

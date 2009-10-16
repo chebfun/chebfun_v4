@@ -1,6 +1,12 @@
-function f = ctor_3(f,ops,ends,n)
+function f = ctor_3(f,ops,ends,n,pref)
+%CTOR_3  non-adaptive chebfun constructor
+% CTOR_3 handles non-adaptive construction of chebfuns.
+%
+% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. 
+% Last commit: $Author: nich $: $Rev: 458 $:
+% $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
 
 if length(ends) ~= length(ops)+1
     error(['Unrecognized input sequence: Number of intervals '...
@@ -18,6 +24,7 @@ if any(n-round(n))
         ' integers.'])
 end
 
+if nargin < 5, pref = chebfunpref; end
 funs = [];
 
 % Initial horizontal scale.
@@ -38,7 +45,11 @@ for i = 1:length(ops)
         case 'function_handle'
             a = ends(i); b = ends(i+1);
             vectorcheck(op,[a b]);
-            g = fun(op, [a b], n(i));
+            if ~isfield(pref,'map')
+                g = fun(op, [a b], n(i));
+            else
+                g = fun(op, maps(pref.map,ends(i:i+1)), n(i));
+            end
             funs = [funs g];
         case 'char'
             if ~isempty(str2num(op))
@@ -48,14 +59,22 @@ for i = 1:length(ops)
             a = ends(i); b = ends(i+1);
             op = inline(op);
             vectorcheck(op,[a b]);
-            g = fun(op, [a b], n(i));
+            if ~isfield(pref,'map')
+                g = fun(op, [a b], n(i));
+            else
+                g = fun(op, maps(pref.map,ends(i:i+1)), n(i));
+            end
             funs = [funs g];
         case 'chebfun'
             a = ends(i); b = ends(i+1);
             if op.ends(1) > a || op.ends(end) < b
                 error('chebfun:c_tor3:domain','chebfun is not defined in the domain')
             end
-            g = fun(@(x) feval(op,x), [a b], n(i));
+            if ~isfield(pref,'map')
+                g = fun(@(x) feval(op,x), [a b], n(i));
+            else
+                g = fun(@(x) feval(op,x), maps(pref.map,ends(i:i+1)), n(i));
+            end
             funs = [funs g];
         case 'double'
             error(['Generating fun from a numerical vector. '...

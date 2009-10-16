@@ -3,27 +3,27 @@ function f = chebfun(varargin)
 % CHEBFUN(f) constructs a chebfun object for the function f on the
 % interval [-1,1].  f can be a string, e.g 'sin(x)', a function handle, e.g
 % @(x) x.^2 + 2x +1, or a number.  If f is a doubles array, [a1;a2;...;an],
-% the numbers a1,...,an are used as the function values at Chebyshev 
-% points. 
+% the numbers a1,...,an are used as the function values at Chebyshev
+% points.
 %
 % CHEBFUN(f,[a b]) specifies an interval [a b] where the function is
-% defined. 
+% defined.
 %
 % CHEBFUN(f,np) overrides the adaptive construction process to specify
 % the number np of Chebyshev points to construct the chebfun.
 % CHEBFUN(f,[a b],np) specifies the interval of definition and the
-% number np of Chebyshev points. 
-% 
+% number np of Chebyshev points.
+%
 % CHEBFUN(f1,f2,...,fm,ends), where ends is an increasing vector of length
-% m+1, constructs a piecewise smooth chebfun from the functions f1,...,fm. 
-% Each function fi can be a string, a function handle or a doubles array, 
-% and is defined in the interval [ends(i) ends(i+1)]. 
+% m+1, constructs a piecewise smooth chebfun from the functions f1,...,fm.
+% Each function fi can be a string, a function handle or a doubles array,
+% and is defined in the interval [ends(i) ends(i+1)].
 %
 % CHEBFUN(f1,f2,...,fm,ends,np), where np is a vector of length m, specifies
 % the number np(i) of Chebyshev points for the construction of fi.
-% 
+%
 % CHEBFUN(chebs,ends) construct a piecewise smooth chebfun with m pieces
-% from a cell array chebs of size m x 1.  Each entry chebs{i} 
+% from a cell array chebs of size m x 1.  Each entry chebs{i}
 % is a function defined on [ends(i) ends(i+1)] represented by a
 % string, a function handle or a number.  CHEBFUN(chebs,ends,np)
 % specifies the number np(i) of Chebyshev points for the construction
@@ -32,17 +32,17 @@ function f = chebfun(varargin)
 % CHEBFUN creates an empty fun.
 %
 % F = CHEBFUN(...) returns an object F of type chebfun.  A chebfun consists
-% of a vector of 'funs', a vector 'ends' of length m+1 defining the 
+% of a vector of 'funs', a vector 'ends' of length m+1 defining the
 % intervals where the funs apply, and a matrix 'imps' containing information
 % about possible delta functions at the breakpoints between funs.
 %
-% F = CHEBFUN(...,PREFNAME,PREFVAL) returns a chebfun using the preference 
+% F = CHEBFUN(...,PREFNAME,PREFVAL) returns a chebfun using the preference
 % PREFNAME with value specified by PREFVAL. See chebfunpref for possible
 % preferences.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2008 by The Chebfun Team.
 
 persistent default_f
 if isnumeric(default_f)
@@ -75,9 +75,9 @@ else
                         value = true;
                     elseif strcmpi(value,'off')
                         value = false;
-                    % Factory values from chebfunpref
+                        % Factory values from chebfunpref
                     elseif strcmpi(value,'factory')
-                        value = chebfunpref(varargin{k},'factory'); 
+                        value = chebfunpref(varargin{k},'factory');
                     else
                         error('chebfun:chebfun:prefval', ...
                             'Invalid chebfun preference value')
@@ -87,6 +87,9 @@ else
                 k = k+2;
             elseif strcmp('map',varargin{k})
                 pref.map =  varargin{k+1};
+                k = k+2;
+            elseif strcmp('exps',varargin{k})
+                pref.exps = varargin{k+1};
                 k = k+2;
             else
                 argin{j} = varargin{k};
@@ -114,11 +117,11 @@ end
 if  length(argin) == 2,
     f = ctor_2(f,argin{:},pref); % adaptive call
 elseif length(argin) == 3,
-    f = ctor_3(f,argin{:});      % non-adaptive call
+    f = ctor_3(f,argin{:},pref);      % non-adaptive call
 end
 
 % Prune repeated endpoints and assign values to the imps matrix
-if f.nfuns > 1 && any(diff(f.ends) == 0) 
+if f.nfuns > 1 && any(diff(f.ends) == 0)
     k = 1;
     while k < length(f.ends)
         if diff(f.ends(k:k+1)) == 0
@@ -132,5 +135,18 @@ if f.nfuns > 1 && any(diff(f.ends) == 0)
         end
     end
 end
+
+end
+
+function f = ctor_ini() % Default fields for a chebfun
+% The following fields should always be allocated automatically with the function set.
+f = struct([]);
+f(1).funs = [];
+f(1).nfuns = 0;
+f(1).scl = 0;
+% The following fields can be manipulated manually.
+f(1).ends = [];
+f(1).imps = [];
+f(1).trans = false;
 
 end

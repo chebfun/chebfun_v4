@@ -40,6 +40,11 @@ for k = 1:nargin-3
     params{1} = t;
   end
 end
+
+for k = 1:numel(y0)
+    if any(get(y0(:,k),'exps')), error('CHEBFUN:bvp5c:inf',...
+        'Bvp5c does not currently support functions which diverge to infinity'); end
+end
     
 % Use a row quasimatrix.
 if isinf(size(y0,1)), y0 = y0.'; end

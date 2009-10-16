@@ -9,4 +9,9 @@ function g = ceil(f)
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
+for k = 1:numel(f)
+    if any(get(f(:,k),'exps')), error('CHEBFUN:ceil:inf',...
+        'Ceil is not defined for functions which diverge to infinity'); end
+end
+
 g = -floor(-f);

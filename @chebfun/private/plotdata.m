@@ -1,4 +1,4 @@
-function [lines marks jumps jval] = plotdata(f,g,h,numpts)
+function [lines marks jumps jval misc] = plotdata(f,g,h,numpts)
 % PLOTDATA returns data (double) for plotting chebfuns.
 % This function is used in PLOT, PLOT3, WATERFALL, ...
 %
@@ -13,6 +13,8 @@ function [lines marks jumps jval] = plotdata(f,g,h,numpts)
 %  Copyright 2002-2009 by The Chebfun Team.
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
+
+misc = [];
 
 % Check domains: f,g,h must have the same domain
 if ~isempty(f)
@@ -74,28 +76,70 @@ if isempty(f)
     % evaluation points
     fl = [a ; reshape(repmat(ends,3,1),3*length(ends),1) ; b ; setdiff(fl,[a ; ends.' ; b])];
     [fl indx] = sort(fl);    [ignored indx2] = sort(indx);
+
+    % where the breaks occur. Needed for yscaling in markfun plots
+    breaks = [0 ; indx2(3:3:3*length(ends))  ; length(fl)]; 
+    db = diff(breaks);
+    top = -inf; bot = inf;
     
     % line values of g
     gl = feval(g,fl);
-
+       
     % deal with marks breakpoints
     for k = 1:numel(g)
         gk = g(:,k);
         endsk = get(gk,'ends');
         
-        % get the marks
-        fmk = get(gk,'points');
-        gmk = get(gk,'vals');
+%         % get the marks
+%         fmk = get(gk,'points');
+%         gmk = get(gk,'vals');
+       
+        % With markfuns we need to adjust the vals when getting marks
+        fmk = []; gmk = []; expsk = [];
+        for j = 1:gk.nfuns
+            fmkj = get(gk.funs(j),'points');
+            gmkj = get(gk.funs(j),'vals');
+            nj = get(gk.funs(j),'n');
+            expskj = get(gk.funs(j),'exps');
+
+            gmkj = gmkj./((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
+            
+            expsk = [expsk ; expskj(1)];
+
+            fmk = [fmk ; fmkj]; % store global x-marks
+            gmk = [gmk ; gmkj]; % store global y-marks
+        end 
+        expsk = [expsk ; expskj(2)];
         
-        gl(1,k) = gk.funs(1).vals(1);
-        gl(end,k) = gk.funs(gk.nfuns).vals(end);
+        
+        val = 0.1; mintrim = 3;
+        nnl = max(round(val*db.*expsk(1:end-1)),mintrim);
+        nnr = max(round(val*db.*expsk(2:end)),mintrim);
+        mask = [];
+        for j = 1:length(breaks)-1
+            mask = [mask breaks(j)+nnl(j):breaks(j+1)-nnr(j)];
+        end
+        if ~isempty(mask)
+            mask([1 end]) = [];
+        end
+        masked = gl(mask);
+        sd = std(masked);
+        bot = min(bot,min(masked)-sd);
+        top = max(top,max(masked)+sd);
+%         
+        % Removed to make markfuns work. Not sure what this was for? 
+%         gl(1,k) = gk.funs(1).vals(1);
+%         gl(end,k) = gk.funs(gk.nfuns).vals(end);
         
         % breakpoints
         for j = 2:length(endsk)-1
             [TL loc] = ismember(endsk(j),ends);
-            if TL
+            if TL && ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
                 % values on either side of jump
-                jmpvls = [ g(:,k).funs(j-1).vals(end); NaN ; g(:,k).funs(j).vals(1) ];
+%                 jmpvls = [ gk.funs(j-1).vals(end); NaN ; gk.funs(j).vals(1) ];
+                jmpvls = [  gk.funs(j-1).vals(end)/diff(endsk(j-1:j)).^sum(gk.funs(j-1).exps)
+                            NaN
+                            gk.funs(j).vals(1)/diff(endsk(j:j+1)).^sum(gk.funs(j).exps)];
                 gl(indx2(3*(loc-1)+(1:3)+1),k) = jmpvls;
              end
         end
@@ -135,13 +179,16 @@ if isempty(f)
         marks = [marks, fmk, gmk];
     end
     
+    
+    
     % store lines
     if ~greal
         fl = real(gl);
         gl = imag(gl);
-    end
+    end 
     
     lines = {fl, gl};
+    misc = [bot top];
     
 elseif isempty(h) % Two quasimatrices case
     
@@ -321,7 +368,7 @@ isjump = jval;
 tol = 1e-4*f.scl;
 
 jval(1) = f.imps(1,1);
-if abs(jval(1)-f.funs(1).vals(1)) < tol
+if abs(jval(1)-f.funs(1).vals(1)) < tol && ~f.funs(1).exps(1)
     isjump(1) = false;
 else
     isjump(1) = true;
@@ -330,7 +377,10 @@ end
 for j = 2:length(ends)-1
     [MN loc] = min(abs(f.ends-ends(j)));
     if MN < 1e4*eps*hs
-        lval = f.funs(loc-1).vals(end); rval = f.funs(loc).vals(1);
+        lval = f.funs(loc-1).vals(end)/(ends(loc)-ends(loc-1)).^sum(f.funs(loc-1).exps);
+        if f.funs(loc-1).exps(2), lval = sign(lval)/eps; end  % 1/eps should be inf or realmax, but this doesn't work?
+        rval = f.funs(loc).vals(1)/(ends(loc+1)-ends(loc)).^sum(f.funs(loc).exps);
+        if f.funs(loc).exps(1), rval = sign(rval)/eps; end    % 1/eps should be inf or realmax, but this doesn't work?
         fjump(3*j-(5:-1:3)) = [lval; rval; NaN];
         jval(j) = f.imps(1,loc);
         if abs(lval-rval) < tol && abs(jval(j)-lval) < tol

@@ -72,6 +72,8 @@ scl.v = 100*max(g.scl,f.scl);
 pref = chebfunpref;
 pref.sampletest = false;
 pref.resampling = false;
+pref.splitting = false;
+pref.exps =num2cell(0*ends);  % avoid checking for blowup exponents.
 % Construct funs
 for k =1:length(ends)-1  
     newfun = fun(@(x) integral(x,a,b,c,d,f,g,pref,scl), ends(k:k+1), pref, scl);
@@ -100,7 +102,7 @@ end   % conv()
 
 function out = integral(x,a,b,c,d,f,g, pref,scl)
 
-
+pref.exps ={0,0}; % avoid checking for blowup exponents.
 out = 0.*x;
 for k = 1:length(x)
     A = max(a,x(k)-d); B = min(b,x(k)-c);

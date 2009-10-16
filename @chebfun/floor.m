@@ -17,6 +17,9 @@ end
 %------------------------------------------
 function g = floorcol(f)
 
+if any(get(f,'exps')), error('CHEBFUN:floor:inf',...
+        'Floor is not defined for functions which diverge to infinity'); end
+
 % Find all the integer crossings for f.
 range = floor( [min(f) max(f)] );
 breakpts = [];

@@ -17,6 +17,9 @@ function fout = cumsumcol(f)
 
 if isempty(f), fout = chebfun; return, end
 
+if any(get(f,'exps')), error('CHEBFUN:cumsum:inf',...
+        'Cumsum does not currently support functions which diverge to infinity'); end
+
 ends = f.ends;
 
 if size(f.imps,1)>1

@@ -61,6 +61,9 @@ g.funs = f.funs(j:k);
 g.ends = [subint(1) f.ends(j+1:k) subint(2)];
 g.nfuns = k-j+1;
 g.imps = f.imps(:,j:k+1);
+for l = 0:g.nfuns-1
+    g.funs(l+1).exps = f.funs(j+l).exps;
+end
 
 % Trim off the end funs.
 if j==k
@@ -72,7 +75,23 @@ end
 
 % Bug fix (18/12/08) RodP: correct imps matrix at endpoints: 
 % Note: deltas at new endpoints will be lost!
-g.imps(:,1) = [g.funs(1).vals(1); zeros(size(g.imps,1)-1,1)];
-g.imps(:,end) = [g.funs(end).vals(end); zeros(size(g.imps,1)-1,1)];
+%         (10/09/09) NicH: Must adjust also for infs and exps.
+imp1 = g.funs(1).vals(1);
+if g.funs(1).exps(1)
+    imp1 = inf;
+elseif g.funs(1).exps(2)
+    imp1 = imp1/diff(g.funs(1).map.par(1:2)).^g.funs(1).exps(2);
+end
+g.imps(:,1) = [imp1 ; zeros(size(g.imps,1)-1,1)];
+
+imp2 = g.funs(end).vals(end);
+if g.funs(end).exps(2)
+    imp2 = inf;
+elseif g.funs(end).exps(1)
+    imp2 = imp2./diff(g.funs(end).map.par(1:2)).^g.funs(end).exps(1);
+end
+g.imps(:,end) = [imp2 ; 
+                 zeros(size(g.imps,1)-1,1)];
+
 
 
