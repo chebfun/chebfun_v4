@@ -141,7 +141,7 @@ if pref.splitting && ~all(isinf(ends)) || any(g.exps)
     if isinf(b) % Only check the left end-point.
         
         % Check for NaN's
-        if any(isnan(vne))
+        if any(isnan(vne(1:3)))
             error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
         end
         
@@ -155,7 +155,7 @@ if pref.splitting && ~all(isinf(ends)) || any(g.exps)
     elseif isinf(a) % Only check the right end-point.
         
         % Check for NaN's
-        if any(isnan(vne(6)))
+        if any(isnan(vne(4:6)))
             error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
         end
         

@@ -47,7 +47,6 @@ end
 if isfield(pref,'exps'), exps = [pref.exps{:}]; end
 
 % Try to get one smooth piece for the entire interval before splitting interval
-ends
 [funs,hpy,scl] = getfun(op,ends,pref,scl);    
 sad = ~hpy; 
 

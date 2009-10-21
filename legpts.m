@@ -30,7 +30,7 @@ function [x,w] = legpts(n,varargin)
 
 
 if n <= 0
-    error('Input should be a positive number');
+    error('CHEBFUN:legpts:n','First input should be a positive number');
 end
 
 % defaults
@@ -49,8 +49,7 @@ end
 
 % decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
-   m = n-1;
-   beta = .5./sqrt(1-(2*(1:m)).^(-2));   % 3-term recurrence coeffs
+   beta = .5./sqrt(1-(2*(1:n-1)).^(-2));   % 3-term recurrence coeffs
    T = diag(beta,1) + diag(beta,-1);     % Jacobi matrix
    [V,D] = eig(T);                       % eigenvalue decomposition
    x = diag(D); [x,i] = sort(x);         % Legendre points

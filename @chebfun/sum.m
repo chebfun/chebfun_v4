@@ -66,10 +66,9 @@ if any(exps(:)>=1),
     return
 end
 
-if any(exps(:)),
-    warning('CHEBFUN:sum:inf','Sum does not yet support chebfuns which divergeon the domain.');
-    return
-end
+% if any(exps(:))
+%     warning('CHEBFUN:sum:inf','Sum does not yet support chebfuns which diverge on the domain.');
+% end
 
 out = 0;
 for i = 1:f.nfuns

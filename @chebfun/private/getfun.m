@@ -1,4 +1,4 @@
-function [g, hpy, scl] = getfun(op, interval, pref, scl, exps)
+function [g, hpy, scl] = getfun(op, interval, pref, scl)
 %GETFUN controls the constructin of funs
 % [G, HPY, SCL] = GETFUN(OP, INTERVAL, PREF, SCL)
 %   GETFUN returns a fun G for OP. INTERVAL is the doamin. PREF the
