@@ -3,7 +3,7 @@ function [x,w] = jacpts(n,alpha,beta,varargin)
 %  JACPTS(N) returns the roots of the Jacobi polynmial with parameters ALPHA
 %  and BETA (which must both be greater than or equal -1).
 
-if alpha<=-1 || beta <=-1,
+if alpha <= -1 || beta <= -1,
     error('CHEBFUN:jacpts:SizeAB','alpha and beta must be greater than -1')
 end
 a = alpha; b = beta;
@@ -11,9 +11,6 @@ a = alpha; b = beta;
 % defaults
 interval = [-1,1];
 method = 'default';
-
-% FORCING TO USE GW AT THE MOMENT AS FAST ISN'T WORKING!
-method = 'GW';
 
 % check inputs
 if nargin > 3
@@ -23,6 +20,16 @@ if nargin > 3
         if isa(varargin{2},'double') && length(varargin{2}) == 2, interval = varargin{2}; end
         if isa(varargin{2},'char'), method = varargin{2}; end
     end
+end
+
+if abs(alpha)>.5 || abs(beta) > .5
+    % FORCING TO USE GW AT THE MOMENT AS FAST ISN'T WORKING IN THIS CASE
+    method = 'GW';
+end    
+
+if alpha && beta
+    % FORCING TO USE GW AT THE MOMENT AS FAST ISN'T WORKING IN THIS CASE
+    method = 'GW';
 end
 
 % decide to use GW or FAST
@@ -37,17 +44,17 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') || abs(a)>.5 || 
     [v x] = eig( TT );                        % eigenvalue decomposition
     x = diag(x);                              % Jacobi points
     w = v(1,:).^2*( 2^(ab + 1) * gamma(a + 1) * gamma(b + 1) / gamma(2 + ab) ); %weights
-else                                                            % Fast, see [2]
-   [x ders] = alg0_Jac(n,a,b);               % nodes and P_n'(x)
-   g = gamma([n+a+1,n+b+1,n+a+b+1])
-   w = g(1)*g(2)/g(3)*2^(a+b+1)./(factorial(n)*(1-x.^2).*ders.^2)';              % weights
+
+else   % Fast, see [2]
+   [x ders] = alg0_Jac(n,a,b);                % nodes and P_n'(x)
+   w = 2^(a+b+1)./((1-x.^2).*ders.^2)';       % weights
+   
 end
 
 % rescale to arbitrary interval
 a = interval(1); b = interval(2);
 x = .5*( (x+1)*b - (x-1)*a);
 w = .5*(b-a)*w;
-
 
 function [roots ders] = alg0_Jac(n,a,b)
 if abs(a)<=.5 && abs(b)<=.5 % use asymptotic formula
