@@ -64,11 +64,11 @@ if abs(a)<=.5 && abs(b)<=.5 % use asymptotic formula
     x1 = cos(T);
     
     % Make accurate using Newton
-    for k = 1:10
-        [u up] = eval_Jac(x1,n,a,b);
-        x1 = x1 - u/up;
-    end
     [u up] = eval_Jac(x1,n,a,b);
+	while abs(u) > eps
+        x1 = x1 - u/up;
+        [u up] = eval_Jac(x1,n,a,b);      
+    end
 
     [rootsl dersl] = alg1_Jac_as(n,x1,up,a,b,1); % Get roots to the left
     if a ~= b 
@@ -79,8 +79,6 @@ if abs(a)<=.5 && abs(b)<=.5 % use asymptotic formula
     end
     roots = [rootsl(end:-1:2) ; rootsr];
     ders = [dersl(end:-1:2) dersr].';
-    
-    
 else
     % this one needs more thinking !!!
     [x1 up] = alg3_Jac(n,0,a,b); 
@@ -136,7 +134,7 @@ end
 
 % -------------------------------------------------------------------------
 
-function [roots ders] = alg1_Jac_as(n,x1,ders,a,b,flag) % if |a|<=.5 && |b|<=.5 use asymptotic formula
+function [roots ders] = alg1_Jac_as(n,x1,up,a,b,flag) % if |a|<=.5 && |b|<=.5 use asymptotic formula
 ab = a + b;
 
 % Approximate roots via asymptotic formula
@@ -145,6 +143,7 @@ if flag, r = (nx1+1):n; else r = (nx1-1):-1:1; end
 C = (2*r+a-.5)*pi/(2*n+ab+1);
 T = C + 1/(2*n+a+b+1)^2*((.25-a^2)*cot(.5*C)-(.25-b^2)*tan(.5*C));
 roots = [x1 ; cos(T).'];
+ders = [up zeros(1,length(T))];
 
 m = 30; % number of terms in Taylor expansion
 u = zeros(1,m+1); up = zeros(1,m+1);
@@ -215,7 +214,7 @@ end
 for k = 1:n-1
     A = 2*(k+1)*(k+ab+1)*(2*k+ab);
     B = (2*k+ab+1)*(a^2-b^2);
-    C = prod(2*k+ab+[0:2]');
+    C = prod(2*k+ab+(0:2)');
     D = 2*(k+a)*(k+b)*(2*k+ab+2);
     
     Pa1 = ( (B+C*x).*P - D*Pm1 ) / A;

@@ -14,7 +14,7 @@ if strcmp(g.map.name,'linear')
         out = sum_unit_interval(g)*g.map.der(1);
     else
         exps = g.exps;
-        [x w] = jacpts(g.n,-exps(2),-exps(1));  % Huh!?
+        [x w] = jacpts(ceil(g.n/2)+1,-exps(2),-exps(1));  % Huh!?
         g.exps = [0 0];
         out = w*bary(x,g.vals)*g.map.der(1).^(1-sum(exps));
     end
@@ -59,11 +59,16 @@ elseif any(isinf(g.map.par(1:2)))
 % General map case    
 else
     if ~any(g.exps)
-        error('CHEBFUN:fun:sum:inf','Sum does not yet fully support chebfuns which diverge on the domain.');
+        map = g.map;
+        g.map = linear([-1 1]);
+        out = sum_unit_interval(g.*fun(map.der,[-1,1]));
+    else
+        exps = g.exps;
+        [x w] = jacpts(ceil(g.n/2)+1,-exps(2),-exps(1));  % Huh!?
+        g.exps = [0 0];
+        out = w*bary(x,g.vals,g.map.for(chebpts(g.n)))*g.map.der(1).^(1-sum(exps));
     end
-    map = g.map;
-    g.map = linear([-1 1]);
-    out = sum_unit_interval(g.*fun(map.der,[-1,1]));
+    
 end
 
 end
