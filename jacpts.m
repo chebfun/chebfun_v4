@@ -22,15 +22,10 @@ if nargin > 3
     end
 end
 
-if abs(alpha)>.5 || abs(beta) > .5
+if abs(a)>.5 || abs(a) > .5
     % FORCING TO USE GW AT THE MOMENT AS FAST ISN'T WORKING IN THIS CASE
     method = 'GW';
 end    
-
-if alpha && beta
-    % FORCING TO USE GW AT THE MOMENT AS FAST ISN'T WORKING IN THIS CASE
-    method = 'GW';
-end
 
 % decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') || abs(a)>.5 || abs(b) > .5 
@@ -44,10 +39,15 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') || abs(a)>.5 || 
     [v x] = eig( TT );                        % eigenvalue decomposition
     x = diag(x);                              % Jacobi points
     w = v(1,:).^2*( 2^(ab + 1) * gamma(a + 1) * gamma(b + 1) / gamma(2 + ab) ); %weights
-
 else   % Fast, see [2]
    [x ders] = alg0_Jac(n,a,b);                % nodes and P_n'(x)
-   w = 2^(a+b+1)./((1-x.^2).*ders.^2)';       % weights
+   w = 1./((1-x.^2).*ders.^2)';       % weights
+   if a && b
+       C = 2^(a+b+1)*gamma(2+a)*gamma(2+b)/(gamma(2+a+b)*(a+1)*(b+1)); % Get the right constant
+       w = C*w/sum(w);
+   else
+       w = 2^(a+b+1)*w;
+   end
    
 end
 
@@ -74,9 +74,11 @@ if abs(a)<=.5 && abs(b)<=.5 % use asymptotic formula
     if a ~= b 
         [rootsr dersr] = alg1_Jac_as(n,x1,up,a,b,0); % To the right
     else
-        rootsr = -rootsl(2:end); % Use symmetry.
-        dersr = dersl(2:end);
+        rootsr = -rootsl; % Use symmetry.
+        dersr = dersl;
+        if rootsl(1) > 0, rootsl(1) = []; dersl(1) = []; end
     end
+    
     roots = [rootsl(end:-1:2) ; rootsr];
     ders = [dersl(end:-1:2) dersr].';
 else
