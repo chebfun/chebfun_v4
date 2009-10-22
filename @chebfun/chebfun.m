@@ -115,9 +115,9 @@ end
 
 % Construct chebfun
 if  length(argin) == 2,
-    f = ctor_2(f,argin{:},pref); % adaptive call
+    f = ctor_adapt(f,argin{:},pref);        % adaptive call
 elseif length(argin) == 3,
-    f = ctor_3(f,argin{:},pref);      % non-adaptive call
+    f = ctor_nonadapt(f,argin{:},pref);     % non-adaptive call
 end
 
 % Prune repeated endpoints and assign values to the imps matrix

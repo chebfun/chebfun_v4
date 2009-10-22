@@ -1,6 +1,6 @@
 function f = ctor_2(f,ops,ends,pref)
-%CTOR_2  Adaptive chebfun constructor
-% CTOR_2 handles adaptive construction of chebfuns.
+%CTOR_ADAPT  Adaptive chebfun constructor
+% CTOR_ADAPT handles adaptive construction of chebfuns.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -30,12 +30,12 @@ newends = ends(1);
 
 if isa(ops,'chebfun')
     if numel(ops) > 1
-        error('chebfun:ctor_2','Only one chebfun is allowed for this call');
+        error('chebfun:ctor_adapt','Only one chebfun is allowed for this call');
     end
     if ops.ends(1) <= ends(1) && ops.ends(end) >= ends(end)
         f = restrict(f,[ends(1) ends(end)]);
     else
-        error('chebfun:c_tor2:domain','chebfun is not defined in the domain')
+        error('chebfun:ctor_adapt:domain','chebfun is not defined in the domain')
     end
     return
 end
@@ -50,12 +50,12 @@ if isfield(pref,'exps')
         exps = {exps{1} tmp{:} exps{2}};
     elseif numel(exps) == numel(ends)
         if numel(ends)~=2
-            warning('chebfun:ctor_2:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
+            warning('chebfun:ctor_adapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
             'Assuming exps are the same on either side of break.']);
             exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
         end
     elseif numel(exps) ~= 2*numel(ends)-2
-        error('chebfun:ctor_2:exps_input2','Length of vector exps must correspond to breakpoints');
+        error('chebfun:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
 end
 

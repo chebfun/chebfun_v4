@@ -9,18 +9,18 @@ function f = ctor_3(f,ops,ends,n,pref)
 % $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
 
 if length(ends) ~= length(ops)+1
-    error(['Unrecognized input sequence: Number of intervals '...
+    error('CHEBFUN:ctor_nonadapt:input_intsfun',['Unrecognized input sequence: Number of intervals '...
         'do not agree with number of funs'])
 end
 if length(n) ~= length(ops)
-    error(['Unrecognized input sequence: Number of Chebyshev '...
-        'poins was not specified for all the funs.'])
+    error('CHEBFUN:ctor_nonadapt:input_ptsfun',['Unrecognized input sequence: Number of Chebyshev '...
+        'points was not specified for all the funs.'])
 end
 if any(diff(ends)<0), 
-    error(['Vector of endpoints should have increasing values.'])
+    error('CHEBFUN:ctor_nonadapt:input_endsvals',['Vector of endpoints should have increasing values.'])
 end
 if any(n-round(n))
-    error(['Vector with number of Chebyshev points should consist of'...
+    error('CHEBFUN:ctor_nonadapt:input_numpts',['Vector with number of Chebyshev points should consist of'...
         ' integers.'])
 end
 
@@ -53,7 +53,7 @@ for i = 1:length(ops)
             funs = [funs g];
         case 'char'
             if ~isempty(str2num(op))
-                error(['A chebfun cannot be constructed from a string with '...
+                error('CHEBFUN:ctor_nonadapt:input_strvals',['A chebfun cannot be constructed from a string with '...
                     ' numerical values.'])
             end
             a = ends(i); b = ends(i+1);
@@ -68,7 +68,7 @@ for i = 1:length(ops)
         case 'chebfun'
             a = ends(i); b = ends(i+1);
             if op.ends(1) > a || op.ends(end) < b
-                error('chebfun:c_tor3:domain','chebfun is not defined in the domain')
+                error('chebfun:ctor_nonadapt:domain','chebfun is not defined in the domain')
             end
             if ~isfield(pref,'map')
                 g = fun(@(x) feval(op,x), [a b], n(i));
