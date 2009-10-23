@@ -93,7 +93,7 @@ if  ~resample && 2^npower+1 == n && nargin<5
                 v(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
             end
         end
-        
+                
         g.vals = v;  g.n = length(v); 
         g.scl.v = max(g.scl.v,norm(g.vals,inf));
         [ish, g] = ishappy(op,g,pref);
@@ -158,7 +158,21 @@ else
                 g.scl.v = max(g.scl.v,norm(v,inf));
                 g.scl.h = hscl;
             else
-                g.vals = op(g.map.for(chebpts(k))); g.n = k; 
+                
+                xvals = g.map.for(chebpts(k));
+                g.vals = op(xvals); g.n = k;              
+                
+                % Experimental feature for avoiding NaNs.
+                nans = isnan(g.vals);
+                if any(nans)
+                    xvals = xvals(nans); % Sample around NaN and extrapolate.
+                    for j = 1:length(xvals)
+                        xnans = repmat(xvals(j),1,6) + [0 -2 -1 1  2 0]*1e-14*g.scl.h;
+                        vnans = op(xnans.');
+                        g.vals(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+                    end
+                end
+                
                 g.scl.v = max(g.scl.v,norm(g.vals,inf));
             end
             [ish, g] = ishappy(op,g,pref);

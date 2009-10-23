@@ -136,7 +136,7 @@ if pref.splitting && ~all(isinf(ends)) || any(g.exps)
     htol = 1e-14*g.scl.h;
     
     % Get values at the boundary and close to it.
-    vne = op([a ; a+htol ; a+2*htol ; b-2*htol ; b-htol ; b]);
+    vne = op([a ; a+htol ; a+2*htol ; b-2*htol ; b-htol ; b])
        
     if isinf(b) % Only check the left end-point.
         
@@ -169,10 +169,6 @@ if pref.splitting && ~all(isinf(ends)) || any(g.exps)
     else % In splitting ON mode, decide whether extrapolate values to the boundary
          % (This is needed when the function blows up, i.e. exps~=0).
         
-        % Check for NaN's or Inf's
-%         if any(isnan(vne)) && ~any(g.exps)
-%             error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
-%         end
         if any(isinf(vne)) && ~pref.blowup
             error('CHEBFUN:getfun:infeval',['Function returned Inf when evaluated at/near boundary. ', ...
                 'Have you tried ''blowup on''']);
@@ -187,6 +183,10 @@ if pref.splitting && ~all(isinf(ends)) || any(g.exps)
             vb = vne(6);                 % Extrapolation at x=b is not needed
         else
             vb = 2*vne(5)-vne(4);        % Extrapolate to the right
+        end
+        
+        if any(isnan([va vb]))
+            error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
         end
         op = @(x) [va;op(x(2:end-1));vb];
     end

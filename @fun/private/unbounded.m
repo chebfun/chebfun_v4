@@ -90,8 +90,19 @@ else
 end
 
 if nargout > 1
-    xpts = m.for(chebpts(n));
-    v = fh(xpts);
+    xvals = m.for(chebpts(n));
+    v = fh(xvals);
+    
+    % Experimental feature for avoiding NaNs.
+    nans = isnan(v);
+    if any(nans)
+        xvals = xvals(nans); % Sample around NaN and extrapolate.
+        for j = 1:length(xvals)
+            xnans = repmat(xvals(j),1,6) + [0 -2 -1 1  2 0]*1e-14*scl;
+            vnans = fh(xnans.');
+            v(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+        end
+    end
 end
 
 m.name = 'unbounded';
