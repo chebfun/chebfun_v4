@@ -303,12 +303,6 @@ function x = rk2_Jac(t,tn,x,n,a,b)
 ab = a + b;
 m = 10; h = (tn-t)/m;
 for j = 1:m
-%     f1 = (1-x.^2);
-%     k1 = -h*f1./(sqrt(n*(n+ab+1)*f1) + 0.25*(2*x+b-a-(ab+2)*(x-1)).*sin(2*t));
-%     t = t+h;  f2 = (1-(x+k1).^2);
-%     k2 = -h*f2./(sqrt(n*(n+ab+1)*f2) + 0.25*(2*(x+k1)+b-a-(ab+2)*(x+k1-1)).*sin(2*t));
-%     x = x+.5*real(k1+k2);
-    
     f1 = (1-x.^2);
     k1 = -4*h*f1./(4*sqrt(n*(n+ab+1)*f1) + (b-a-(ab+1)*x).*sin(2*t));
     t = t+h;
@@ -317,13 +311,4 @@ for j = 1:m
     x = x+.5*real(k1+k2);
 end
 
-% function x = rk2_Leg(t,tn,x,n) % Runge-Kutta for Legendre Equation (redundant)
-% m = 10; h = (tn-t)/m;
-% for j = 1:m
-%     f1 = (1-x.^2);
-%     k1 = -h*sqrt(f1)./(sqrt(n*(n+1)) - 0.5*x.*sin(2*t));
-%     t = t+h;  f2 = (1-(x+k1).^2);
-%     k2 = -h*sqrt(f2)./(sqrt(n*(n+1)) - 0.5*(x+k1).*sin(2*t));   
-%     x = x+.5*(k1+k2);
-% end
 

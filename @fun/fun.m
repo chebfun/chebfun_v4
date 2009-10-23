@@ -137,29 +137,29 @@ if pref.splitting && ~all(isinf(ends)) || any(g.exps)
        
     if isinf(b) % Only check the left end-point.
         
-        % Check for NaN's
-        if any(isnan(vne(1:3)))
-            error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
-        end
-        
-        if abs(vne(1)-vne(2))<=10*abs(vne(3)-vne(2))
+        if ~isnan(vne(1)) && abs(vne(1)-vne(2))<=10*abs(vne(3)-vne(2))
             va = vne(1);                 % Extrapolation at x=a is not needed
         else
             va = 2*vne(2)-vne(3);        % Extrapolate to the left
+        end
+        
+        % Check for NaN's
+        if isnan(va)
+            error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
         end
         op = @(x) [va;op(x(2:end))];
         
     elseif isinf(a) % Only check the right end-point.
         
-        % Check for NaN's
-        if any(isnan(vne(4:6)))
-            error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
-        end
-        
-        if abs(vne(6)-vne(5))<=10*abs(vne(4)-vne(5))
+        if ~isnan(vne(6)) && abs(vne(6)-vne(5))<=10*abs(vne(4)-vne(5))
             vb = vne(6);                 % Extrapolation at x=b is not needed
         else
             vb = 2*vne(5)-vne(4);        % Extrapolate to the right
+        end
+        
+        % Check for NaN's
+        if isnan(vb)
+            error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
         end
         op = @(x) [op(x(1:end-1));vb];
         

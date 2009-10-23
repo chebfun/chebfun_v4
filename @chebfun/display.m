@@ -94,10 +94,10 @@ function displaychebfun(f, columnstr)
         if exps
             exinfo = ['    ' num2str(funs(j).exps, '%5.2g') '  '];
             endvals = feval(funs(j),funs(j).map.par(1:2));
-            if funs(j).exps(1)
+            if funs(j).exps(1) < 0
                 endvals(1) = inf;
             end
-            if funs(j).exps(2)
+            if funs(j).exps(2) < 0
                 endvals(2) = inf;
             end
         else
