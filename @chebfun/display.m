@@ -92,6 +92,7 @@ function displaychebfun(f, columnstr)
         endvals(2) = funs(j).vals(end);
         
         if exps
+            funs(j).exps(~logical(funs(j).exps)) = 0; % This prevents the display of -0 (a bug in matlab)
             exinfo = ['    ' num2str(funs(j).exps, '%5.2g') '  '];
             endvals = feval(funs(j),funs(j).map.par(1:2));
             if funs(j).exps(1) < 0
