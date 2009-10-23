@@ -136,7 +136,7 @@ if pref.splitting && ~all(isinf(ends)) || any(g.exps)
     htol = 1e-14*g.scl.h;
     
     % Get values at the boundary and close to it.
-    vne = op([a ; a+htol ; a+2*htol ; b-2*htol ; b-htol ; b])
+    vne = op([a ; a+htol ; a+2*htol ; b-2*htol ; b-htol ; b]);
        
     if isinf(b) % Only check the left end-point.
         
