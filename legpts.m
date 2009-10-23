@@ -1,6 +1,6 @@
 function [x,w] = legpts(n,varargin)
 %LEGPTS  Legendre points and Gauss Quadrature Weights.
-%  LEGPTS(N) returns N Legendre points in (-1,1).
+%  X = LEGPTS(N) returns N Legendre points X in (-1,1).
 %
 %  [X,W] = LEGPTS(N) also returns a vector of weights for Gauss quadrature.
 %
@@ -14,7 +14,7 @@ function [x,w] = legpts(n,varargin)
 %
 %  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-%  'GW' by Nick Trefethen, March 2009 - algoarithm adapted from [1].
+%  'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
 %  'FAST' by Nick Hale, April 2009 - algorithm adapted from [2].
 %
 %  Copyright 2002-2009 by The Chebfun Team. 

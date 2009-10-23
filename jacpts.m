@@ -1,12 +1,44 @@
 function [x,w] = jacpts(n,alpha,beta,varargin)
-%JACPTS  Jacobi points
-%  JACPTS(N) returns the roots of the Jacobi polynmial with parameters ALPHA
-%  and BETA (which must both be greater than or equal -1).
+%JACPTS  Legendre points and Gauss Quadrature Weights.
+%  X = JACPTS(N,ALPHA,BETA) returns the N roots of the degree N Jacobi 
+%       polynomial with parameters ALPHA and BETA (which must both be 
+%       greater than or equal -1)
+%
+%  [X,W] = JACPTS(NALPHA,BETA,) also returns a vector of weights for 
+%       Gauss-Jacobi quadrature.
+%
+%  [X,W] = JACPTS(N,ALPHA,BETA,METHOD) allows the user to select which method to use.
+%       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
+%       which is best suited for when N is small. METHOD = 'FAST' will use 
+%       the Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
+%       By default JACPTS will use 'GW' when N < 128.
+%
+%  [X,W] = JACPTS(N,ALPHA,BETA,[A,B]) scales the nodes and weights for the 
+%       finite interval [A,B].
+%
+%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+
+%  'FAST' by Nick Hale, April 2009 - algorithm adapted from [1].
+%
+%  Copyright 2002-2009 by The Chebfun Team. 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+%
+%  References:
+%   [1] A. Glaser, X. Liu and V. Rokhlin, "A fast algorithm for the 
+%       calculation of the roots of special functions", SIAM Journal  
+%       on Scientific Computing", 29(4):1420-1438:, 2007.
 
 if alpha <= -1 || beta <= -1,
     error('CHEBFUN:jacpts:SizeAB','alpha and beta must be greater than -1')
 end
 a = alpha; b = beta;
+
+if ~(a || b) % The case alpha = beta = 0 is treated by legpts
+    [x w] = legpts(n,varargin);
+    return
+end
+% Should there also be a -0.5, -0.5 (i.e. Chebyshev) case?
 
 % defaults
 interval = [-1,1];
@@ -22,13 +54,8 @@ if nargin > 3
     end
 end
 
-if abs(a)>.5 || abs(a) > .5
-    % FORCING TO USE GW AT THE MOMENT AS FAST ISN'T WORKING IN THIS CASE
-    method = 'GW';
-end    
-
 % decide to use GW or FAST
-if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') || abs(a)>.5 || abs(b) > .5 
+if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast')
     ab = a + b;
     ii = (2:n-1)';
     abi = 2*ii + ab;
@@ -41,7 +68,7 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') || abs(a)>.5 || 
     w = v(1,:).^2*( 2^(ab + 1) * gamma(a + 1) * gamma(b + 1) / gamma(2 + ab) ); %weights
 else   % Fast, see [2]
    [x ders] = alg0_Jac(n,a,b);                % nodes and P_n'(x)
-   w = 1./((1-x.^2).*ders.^2)';       % weights
+   w = 1./((1-x.^2).*ders.^2)';               % weights
    if a && b
        C = 2^(a+b+1)*gamma(2+a)*gamma(2+b)/(gamma(2+a+b)*(a+1)*(b+1)); % Get the right constant
        w = C*w/sum(w);
@@ -69,6 +96,8 @@ if abs(a)<=.5 && abs(b)<=.5 % use asymptotic formula
         x1 = x1 - u/up;
         [u up] = eval_Jac(x1,n,a,b);      
     end
+    
+    if n == 1, roots = x1; ders = up; return, end
 
     [rootsl dersl] = alg1_Jac_as(n,x1,up,a,b,1); % Get roots to the left
     if a ~= b 
@@ -80,28 +109,69 @@ if abs(a)<=.5 && abs(b)<=.5 % use asymptotic formula
     end
     
     roots = [rootsl(end:-1:2) ; rootsr];
-    ders = [dersl(end:-1:2) dersr].';
+    ders = [dersl(end:-1:2) ; dersr];
 else
-    % this one needs more thinking !!!
-    [x1 up] = alg3_Jac(n,0,a,b); 
-    [roots ders] = alg1_Jac(n,x1,up,a,b);
+
+%    % Attempt 1: Starts at the left and works through
+%     [x1 up] = alg3_Jac(n,1-eps,a,b) ;
+%     d1 = up;
+%     if n == 1, roots = x1; ders = up; return, end   
+%     if n > 1 % Get the 2nd root
+%         % Initial guess
+%         x2 = rk2_Jac(pi/2,-pi/2,x1,n,a,b);
+%         % Make accurate using Newton
+%         [u up] = eval_Jac(x2,n,a,b);
+%         while abs(u) > eps
+%             x2 = x2 - u/up;
+%             [u up] = eval_Jac(x2,n,a,b);      
+%         end
+%     
+%         if a ~= b 
+%             [roots ders] = alg1_Jac(n,x2,up,a,b,1);
+%             roots = [x1 ; roots];
+%             ders = [d1 ; ders];
+%         else
+%             [roots ders] = alg1_Jac(n,x2,up,a,b,0);
+%             roots = [x1 ; roots ; -roots((end-mod(n,2):-1:1)) ; x1];
+%             ders = [d1 ; ders ; ders((end-mod(n,2):-1:1)) ; d1];
+%         end
+%     end
+
+%    % Attempt 2: Starts at the middle (more accurate)
+    [x1 up] = alg3_Jac(n,0,a,b);
+    
+    if n == 1, roots = x1; ders = up; return, end
+    
+   [rootsl dersl] = alg1_Jac(n,x1,up,a,b,1); % Get roots to the left
+    if a ~= b 
+        [rootsr dersr] = alg1_Jac(n,x1,up,a,b,0); % To the right
+    else
+        rootsr = -rootsl(1+mod(n,2):end); % Use symmetry.
+        dersr = dersl(1+mod(n,2):end);
+        if rootsl(1) > 0, rootsl(1) = []; dersl(1) = []; end
+    end
+    
+    roots = [rootsl(end:-1:2) ; rootsr];    
+    ders = [dersl(end:-1:2) ; dersr];
 end
 
 
 % ---------------------------------------------------------------------
 
-function [roots ders] = alg1_Jac(n,roots,ders,a,b)
-N = ceil(n/2);
-
+function [roots ders] = alg1_Jac(n,x1,up,a,b,flag)
 ab = a + b;
-
+% if flag, N = n-2; else N = ceil(n/2)-2; end
+if flag, sgn = -1; else sgn = 1; end
+N = n-1;
+roots = [x1 ; zeros(N,1)]; ders = [up ; zeros(N,1)];
 m = 30; % number of terms in Taylor expansion
 u = zeros(1,m+1); up = zeros(1,m+1);
 for j = 1:N
     x = roots(j);
-    h = rk2_Jac(pi/2,-pi/2,x,n,a,b) - x;
-%     h = rk2_Jac(-pi/2,pi/2,x,n,a,b) - x;
-
+    h = rk2_Jac(sgn*pi/2,-sgn*pi/2,x,n,a,b) - x;
+    
+    if abs(x+h) > 1, roots(j+1:end) = []; ders(j+1:end) = []; return, end
+    
     % scaling
     M = 1/h;
 
@@ -128,10 +198,13 @@ for j = 1:N
         hh = [M;cumprod(M*h+zeros(m,1))]; % powers of h (This is the fastest way!)
         hh = hh(end:-1:1);
     end
-        
+    
+    
+    if abs(h) < eps, roots(j+1:end) = []; ders(j+1:end) = []; return, end
+    
     % update
-    roots(j+1,1) = x + h;
-    ders(j+1,1) = up*hh;   
+    roots(j+1) = x + h;
+    ders(j+1) = up*hh;   
 end
 
 % -------------------------------------------------------------------------
@@ -144,8 +217,7 @@ nx1 = ceil(n/2);
 if flag, r = (nx1+1):n; else r = (nx1-1):-1:1; end
 C = (2*r+a-.5)*pi/(2*n+ab+1);
 T = C + 1/(2*n+a+b+1)^2*((.25-a^2)*cot(.5*C)-(.25-b^2)*tan(.5*C));
-roots = [x1 ; cos(T).'];
-ders = [up zeros(1,length(T))];
+roots = [x1 ; cos(T).']; ders = [up ; zeros(length(T),1)];
 
 m = 30; % number of terms in Taylor expansion
 u = zeros(1,m+1); up = zeros(1,m+1);
@@ -231,11 +303,27 @@ function x = rk2_Jac(t,tn,x,n,a,b)
 ab = a + b;
 m = 10; h = (tn-t)/m;
 for j = 1:m
+%     f1 = (1-x.^2);
+%     k1 = -h*f1./(sqrt(n*(n+ab+1)*f1) + 0.25*(2*x+b-a-(ab+2)*(x-1)).*sin(2*t));
+%     t = t+h;  f2 = (1-(x+k1).^2);
+%     k2 = -h*f2./(sqrt(n*(n+ab+1)*f2) + 0.25*(2*(x+k1)+b-a-(ab+2)*(x+k1-1)).*sin(2*t));
+%     x = x+.5*real(k1+k2);
+    
     f1 = (1-x.^2);
-    k1 = -h*f1./(sqrt(n*(n+ab+1)*f1) + 0.25*(2*x+b-a-(ab+2)*(x-1)).*sin(2*t));
-    t = t+h;  f2 = (1-(x+k1).^2);
-    k2 = -h*f2./(sqrt(n*(n+ab+1)*f2) + 0.25*(2*(x+k1)+b-a-(ab+2)*(x+k1-1)).*sin(2*t));
+    k1 = -4*h*f1./(4*sqrt(n*(n+ab+1)*f1) + (b-a-(ab+1)*x).*sin(2*t));
+    t = t+h;
+    f2 = (1-(x+k1).^2);
+    k2 = -4*h*f2./(4*sqrt(n*(n+ab+1)*f2) + (b-a-(ab+1)*(x+k1)).*sin(2*t));
     x = x+.5*real(k1+k2);
 end
 
+% function x = rk2_Leg(t,tn,x,n) % Runge-Kutta for Legendre Equation (redundant)
+% m = 10; h = (tn-t)/m;
+% for j = 1:m
+%     f1 = (1-x.^2);
+%     k1 = -h*sqrt(f1)./(sqrt(n*(n+1)) - 0.5*x.*sin(2*t));
+%     t = t+h;  f2 = (1-(x+k1).^2);
+%     k2 = -h*sqrt(f2)./(sqrt(n*(n+1)) - 0.5*(x+k1).*sin(2*t));   
+%     x = x+.5*(k1+k2);
+% end
 
