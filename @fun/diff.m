@@ -35,26 +35,6 @@ c = chebpoly(g);                        % obtain Cheb coeffs {C_r}
 n = g.n;
 ends = g.map.par(1:2);
 
-%     for i = 1:k                             % loop for higher derivatives
-%         if n == 1,
-%             g = set(g,'vals',0); g.scl.v = 0;
-%             return
-%         end                                 % derivative of constant is zero
-%         cout = newcoeffs_der(c);
-%         vals = chebpolyval(cout);
-%         g.vals = vals; g.scl.v = max(g.scl.v,norm(vals,inf));
-%         g.n = length(vals);
-%         map = g.map;
-%         g.map = linear([-1,1]);
-%         g = fun(@(x) feval(g,x)./map.der(x),[-1 1]); % construct fun from {c_r}
-%         g.map = map;
-%         if i ~= k
-%             c = chebpoly(g);
-%             n = length(c);
-%         end
-%     end
-
-
 % Separate in 3 cases:
 % 1 Linear map!
 if strcmp(g.map.name,'linear')
@@ -83,17 +63,17 @@ if strcmp(g.map.name,'linear')
             exps = g.exps;
 
             if exps(1) && ~exps(2)
-                g = fun([0 diff(ends)],ends).*fun(chebpolyval(c)/g.map.der(1), ends) - g.exps(1).*g;
+                g = fun([0 diff(ends)],ends).*fun(chebpolyval(c)/g.map.der(1), ends) + g.exps(1).*g;
                 exps(1) = exps(1) + 1;
             end
             
             if ~exps(1) && exps(2)
-                g = fun([diff(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) + g.exps(2).*g;
+                g = fun([diff(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) - g.exps(2).*g;
                 exps(2) = exps(2) + 1;
             end
             
             if all(exps)               
-                g = fun([0 -prod(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) + ...
+                g = fun([0 -prod(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) - ...
                     (g.exps(2)*fun([0 diff(ends)],ends) - g.exps(1)*fun([diff(ends) 0],ends)).*g;
                 exps = exps + 1;
             end
@@ -182,23 +162,23 @@ else
                 gp = @(x) (map.for(x)-ends(1)).*bary(x,vals)./map.der(x);
                 gp = fun(gp,[-1 1]);
                 gp.map = map;
-                g = gp - exps(1).*g;
-                exps(1) = exps(1) + 1;
+                g = gp + exps(1).*g;
+                exps(1) = exps(1) - 1;
             end
             
             if ~exps(1) && exps(2)
                 gp = @(x) (ends(2)-map.for(x)).*bary(x,vals)./map.der(x);
                 gp = fun(gp,[-1 1]);
                 gp.map = map;
-                g = gp + exps(2).*g;
-                exps(2) = exps(2) + 1;
+                g = gp - exps(2).*g;
+                exps(2) = exps(2) - 1;
             end
 
             if all(exps)      
                 gp = @(x) (map.for(x)-ends(1)).*(ends(2)-map.for(x)).*bary(x,vals)./map.der(x);
                 gp = fun(gp,[-1 1]);
                 gp.map = map;
-                g = gp + (exps(2)*fun(@(x) x-ends(1),map) - exps(1)*fun(@(x) ends(2)-x,map)).*g;
+                g = gp - (exps(2)*fun(@(x) x-ends(1),map) - exps(1)*fun(@(x) ends(2)-x,map)).*g;
                 exps = exps + 1;
             end
             

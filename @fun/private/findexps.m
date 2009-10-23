@@ -17,3 +17,6 @@ end
 if flag >= 0
     exps = [exps determineExponentR(g)];  % Get exponent at right point
 end
+
+% Temporary fix in making blowup exps negative
+exps = -exps;

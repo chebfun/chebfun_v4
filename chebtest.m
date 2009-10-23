@@ -17,7 +17,8 @@ function [failfun t] = chebtest(dirname)
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
-tol = chebfunpref('eps');
+pref = chebfunpref;
+tol = pref.eps;
 
 matlabver = ver('matlab');
 if str2double(matlabver.Version) < 7.39
@@ -83,7 +84,7 @@ end
 rmpath(dirname)
 warning(warnstate)
 chebfunpref('factory');
-chebfunpref('eps',tol);
+chebfunpref(pref);
 
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')

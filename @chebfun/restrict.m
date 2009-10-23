@@ -80,7 +80,7 @@ imp1 = g.funs(1).vals(1);
 if g.funs(1).exps(1)
     imp1 = inf;
 elseif g.funs(1).exps(2)
-    imp1 = imp1/diff(g.funs(1).map.par(1:2)).^g.funs(1).exps(2);
+    imp1 = imp1.*diff(g.funs(1).map.par(1:2)).^g.funs(1).exps(2);
 end
 g.imps(:,1) = [imp1 ; zeros(size(g.imps,1)-1,1)];
 
@@ -88,7 +88,7 @@ imp2 = g.funs(end).vals(end);
 if g.funs(end).exps(2)
     imp2 = inf;
 elseif g.funs(end).exps(1)
-    imp2 = imp2./diff(g.funs(end).map.par(1:2)).^g.funs(end).exps(1);
+    imp2 = imp2.*diff(g.funs(end).map.par(1:2)).^g.funs(end).exps(1);
 end
 g.imps(:,end) = [imp2 ; 
                  zeros(size(g.imps,1)-1,1)];

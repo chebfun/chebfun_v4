@@ -59,7 +59,7 @@ function out = sumcol(f)
 if isempty(f), out = 0; return, end
 
 exps = get(f,'exps');
-if any(exps(:)>=1),
+if any(exps(:)<=-1),
     out = inf; % We could probably figure out the sign though?
     warning('CHEBFUN:sum:inf',['Integrand diverges to infinity on domain. ', ...
         'Assuming integral is infinite.']);

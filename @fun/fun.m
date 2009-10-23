@@ -102,11 +102,8 @@ end
 
 %% Find 'exps' - the exponents in markfuns 
 % If op has blow up, we represent it by 
-%  (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) * op(x)
-% if ~any(isinf(op(ends)))
-%     % Nasty hack to avoid looking for exps. To be changed.
-%     exps = [0 0];
-% else
+%  op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
+% (Note that for blowup exponents are now negative!)
 if isfield(pref,'exps') && ~isempty([pref.exps{:}])
     if numel([pref.exps{:}]) == 2
         exps = [pref.exps{:}];
@@ -124,7 +121,7 @@ else
 end
 
 if any(exps)
-    op = @(x) (x-ends(1)).^exps(1).*(ends(2)-x).^exps(2).*op(x); % new op
+    op = @(x) op(x)./((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)); % new op
 end
 g.exps = exps;
 

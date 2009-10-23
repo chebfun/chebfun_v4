@@ -14,9 +14,11 @@ if strcmp(g.map.name,'linear')
         out = sum_unit_interval(g)*g.map.der(1);
     else
         exps = g.exps;
-        [x w] = jacpts(ceil(g.n/2)+1,-exps(2),-exps(1));  % Huh!?
+        [x w] = jacpts(ceil(g.n/2)+1,exps(2),exps(1));
+        % (Our exps are the reverse of Jacobi polynomials,
+        %   i.e. exps(1) = beta, exps(2) = alpha.)
         g.exps = [0 0];
-        out = w*bary(x,g.vals)*g.map.der(1).^(1-sum(exps));
+        out = w*bary(x,g.vals)*g.map.der(1).^(1+sum(exps));
     end
 
 % Unbounded domain map. This works somewhat as domain truncation.
@@ -63,10 +65,13 @@ else
         g.map = linear([-1 1]);
         out = sum_unit_interval(g.*fun(map.der,[-1,1]));
     else
-        exps = g.exps;
-        [x w] = jacpts(ceil(g.n/2)+1,-exps(2),-exps(1));  % Huh!?
-        g.exps = [0 0];
-        out = w*bary(x,g.vals,g.map.for(chebpts(g.n)))*g.map.der(1).^(1-sum(exps));
+        warning('CHEBFUN:fun:sum:nonlinmap&exps',...
+            ['Warning sum for funs with nontirivial maps and exponents is not properly ', ...
+            'implemented and may be slow!']);
+        pref = chebfunpref;
+        pref.exps = g.exps;
+        g = fun(@(x) feval(g,x),linear(g.map.par(1:2)), pref, g.scl);
+        out = sum(g);
     end
     
 end

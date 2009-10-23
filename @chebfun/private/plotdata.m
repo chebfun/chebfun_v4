@@ -102,7 +102,7 @@ if isempty(f)
             nj = get(gk.funs(j),'n');
             expskj = get(gk.funs(j),'exps');
 
-            gmkj = gmkj./((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
+            gmkj = gmkj.*((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
             
             expsk = [expsk ; expskj(1)];
 
@@ -113,8 +113,8 @@ if isempty(f)
         
         
         val = 0.1; mintrim = 3;
-        nnl = max(round(val*db.*expsk(1:end-1)),mintrim);
-        nnr = max(round(val*db.*expsk(2:end)),mintrim);
+        nnl = max(round(-val*db.*expsk(1:end-1)),mintrim);
+        nnr = max(round(-val*db.*expsk(2:end)),mintrim);
         mask = [];
         for j = 1:length(breaks)-1
             mask = [mask breaks(j)+nnl(j):breaks(j+1)-nnr(j)];
@@ -137,9 +137,9 @@ if isempty(f)
             if TL && ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
                 % values on either side of jump
 %                 jmpvls = [ gk.funs(j-1).vals(end); NaN ; gk.funs(j).vals(1) ];
-                jmpvls = [  gk.funs(j-1).vals(end)/diff(endsk(j-1:j)).^sum(gk.funs(j-1).exps)
+                jmpvls = [  gk.funs(j-1).vals(end)*diff(endsk(j-1:j)).^sum(gk.funs(j-1).exps)
                             NaN
-                            gk.funs(j).vals(1)/diff(endsk(j:j+1)).^sum(gk.funs(j).exps)];
+                            gk.funs(j).vals(1)*diff(endsk(j:j+1)).^sum(gk.funs(j).exps)];
                 gl(indx2(3*(loc-1)+(1:3)+1),k) = jmpvls;
              end
         end
@@ -377,9 +377,9 @@ end
 for j = 2:length(ends)-1
     [MN loc] = min(abs(f.ends-ends(j)));
     if MN < 1e4*eps*hs
-        lval = f.funs(loc-1).vals(end)/(ends(loc)-ends(loc-1)).^sum(f.funs(loc-1).exps);
+        lval = f.funs(loc-1).vals(end)*(ends(loc)-ends(loc-1)).^sum(f.funs(loc-1).exps);
         if f.funs(loc-1).exps(2), lval = sign(lval)/eps; end  % 1/eps should be inf or realmax, but this doesn't work?
-        rval = f.funs(loc).vals(1)/(ends(loc+1)-ends(loc)).^sum(f.funs(loc).exps);
+        rval = f.funs(loc).vals(1)*(ends(loc+1)-ends(loc)).^sum(f.funs(loc).exps);
         if f.funs(loc).exps(1), rval = sign(rval)/eps; end    % 1/eps should be inf or realmax, but this doesn't work?
         fjump(3*j-(5:-1:3)) = [lval; rval; NaN];
         jval(j) = f.imps(1,loc);

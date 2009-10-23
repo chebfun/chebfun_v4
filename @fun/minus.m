@@ -87,10 +87,11 @@ if round([exps1 exps2]) == [exps1 exps2]
     scl.h = max(g1.scl.h,g2.scl.h);
     scl.v = max(g1.scl.v,g2.scl.v);
 
+    exps1 = -exps1; exps2 = -exps2;
     g1 = g1.*fun(@(x) (x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2),g1.map,pref,scl) - ...
         g2.*fun(@(x) (x-ends(1)).^exps1(1).*(ends(2)-x).^exps1(2),g2.map,pref,scl);
 
-    g1.exps = sum([exps1 ; exps2]);
+    g1.exps = -sum([exps1 ; exps2]);
     g1.scl = scl; 
     g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
     g1.n = length(g1.vals);
@@ -111,8 +112,8 @@ scl.v = max(g1.scl.v,g2.scl.v);
 
 x1 = g1.map.for(get(g1,'points')); x2 = g2.map.for(get(g2,'points'));
 
-g1 = fun(@(x) bary(x,g1.vals,x1).*(x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2) - ...
-              bary(x,g2.vals,x2).*(x-ends(1)).^exps1(1).*(ends(2)-x).^exps1(2),  ...
+g1 = fun(@(x) bary(x,g1.vals,x1)./((x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2)) - ...
+              bary(x,g2.vals,x2)./((x-ends(1)).^exps1(1).*(ends(2)-x).^exps1(2)),  ...
               ends, pref, scl);
 
 g1.exps = sum([exps1 ; exps2]);
