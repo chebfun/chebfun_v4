@@ -28,11 +28,11 @@ elseif (subint(1) > ends(1) && g.exps(1)) || (subint(2) < ends(2) && g.exps(2)) 
     
     op = @(x) 1+0*x;
     if g.exps(1) && (subint(1) > ends(1)) % Left exp has been removed
-        op = @(x) op(x).*(x-ends(1)).^(-g.exps(1));
+        op = @(x) op(x).*(x-ends(1)).^(g.exps(1));
         g.exps(1) = 0;
     end
     if g.exps(2) && (subint(2) < ends(2)) % Right exp has been removed
-        op = @(x) op(x).*(ends(2)-x).^(-g.exps(2));
+        op = @(x) op(x).*(ends(2)-x).^(g.exps(2));
         g.exps(2) = 0; 
     end
     exps = g.exps;

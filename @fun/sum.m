@@ -65,11 +65,14 @@ else
         g.map = linear([-1 1]);
         out = sum_unit_interval(g.*fun(map.der,[-1,1]));
     else
-        warning('CHEBFUN:fun:sum:nonlinmap&exps',...
-            ['Warning sum for funs with nontirivial maps and exponents is not properly ', ...
-            'implemented and may be slow!']);
+        disp('Warning sum is not properly for implemented for funs')
+        disp('which have both nontrivial maps and exponents.')
+        disp('It may be very slow!');
+%         warning('CHEBFUN:fun:sum:nonlinmap&exps',...
+%             ['Warning sum for funs with nontirivial maps and exponents is not properly ', ...
+%             'implemented and may be slow!']);
         pref = chebfunpref;
-        pref.exps = g.exps;
+        pref.exps = {g.exps};
         g = fun(@(x) feval(g,x),linear(g.map.par(1:2)), pref, g.scl);
         out = sum(g);
     end
