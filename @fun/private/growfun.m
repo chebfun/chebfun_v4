@@ -86,14 +86,24 @@ if  ~resample && 2^npower+1 == n && nargin<5
         % Experimental feature for avoiding NaNs.
         nans = isnan(v);
         if any(nans)
+            ends = g.map.par(1:2);
             xvals = xvals(nans); % Sample around NaN and extrapolate.
             for j = 1:length(xvals)
-                xnans = repmat(xvals(j),1,6) + [0 -2 -1 1  2 0]*1e-14*g.scl.h;
-                vnans = op(xnans.');
-                v(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+                xnans = repmat(xvals(j),6,1) + [0 -2 -1 1  2 0]'*1e-14*g.scl.h;
+                % Need to make sure all evaluation points are within interval
+                if any(xnans < ends(1)), 
+                    vnans = op(xnans([1 4:6]));
+                    v(nans) = vnans(3)-.5*vnans(2);
+                elseif any(xnans > ends(2)), 
+                    vnans = op(xnans([1:3 6]));
+                    v(nans) = vnans(2)-.5*vnans(3);
+                else % Use double sided extrapolation if we can              
+                    vnans = op(xnans);
+                    v(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+                end
             end
         end
-                
+        
         g.vals = v;  g.n = length(v); 
         g.scl.v = max(g.scl.v,norm(g.vals,inf));
         [ish, g] = ishappy(op,g,pref);
@@ -124,11 +134,21 @@ else
             % Experimental feature for avoiding NaNs.
             nans = isnan(g.vals);
             if any(nans)
+                ends = g.map.par(1:2);
                 xvals = xvals(nans); % Sample around NaN and extrapolate.
                 for j = 1:length(xvals)
-                    xnans = repmat(xvals(j),1,6) + [0 -2 -1 1  2 0]*1e-14*g.scl.h;
-                    vnans = op(xnans.');
-                    g.vals(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+                    xnans = repmat(xvals(j),6,1) + [0 -2 -1 1  2 0]'*1e-14*g.scl.h;
+                    % Need to make sure all evaluation points are within interval
+                    if any(xnans < ends(1)), 
+                        vnans = op(xnans([1 4:6]));
+                        g.vals(nans) = vnans(3)-.5*vnans(2);
+                    elseif any(xnans > ends(2)), 
+                        vnans = op(xnans([1:3 6]));
+                        g.vals(nans) = vnans(2)-.5*vnans(3);
+                    else % Use double sided extrapolation if we can              
+                        vnans = op(xnans);
+                        g.vals(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+                    end
                 end
             end
             

@@ -109,7 +109,7 @@ while ~isempty(varargin)
     end
     varargin(1:pos) = [];
 
-    if any(any(get(g,'exps'))), infy = true; end
+    if any(any(get(g,'exps')<0)), infy = true; end
     
     % get plot data
     [lines marks jumps jumpval misc] = plotdata(f,g,[],numpts);

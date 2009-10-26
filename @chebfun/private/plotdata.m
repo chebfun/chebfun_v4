@@ -111,22 +111,23 @@ if isempty(f)
         end 
         expsk = [expsk ; expskj(2)];
         
-        
-        val = 0.1; mintrim = 3;
-        nnl = max(round(-val*db.*expsk(1:end-1)),mintrim);
-        nnr = max(round(-val*db.*expsk(2:end)),mintrim);
-        mask = [];
-        for j = 1:length(breaks)-1
-            mask = [mask breaks(j)+nnl(j):breaks(j+1)-nnr(j)];
+        if any(expsk<0)
+            val = 0.1; mintrim = 3;
+            nnl = max(round(-val*db.*expsk(1:end-1)),mintrim);
+            nnr = max(round(-val*db.*expsk(2:end)),mintrim);
+            mask = [];
+            for j = 1:length(breaks)-1
+                mask = [mask breaks(j)+nnl(j):breaks(j+1)-nnr(j)];
+            end
+            if ~isempty(mask)
+                mask([1 end]) = [];
+            end
+            masked = gl(mask);
+            sd = std(masked);
+            bot = min(bot,min(masked)-sd);
+            top = max(top,max(masked)+sd);
         end
-        if ~isempty(mask)
-            mask([1 end]) = [];
-        end
-        masked = gl(mask);
-        sd = std(masked);
-        bot = min(bot,min(masked)-sd);
-        top = max(top,max(masked)+sd);
-%         
+         
         % Removed to make markfuns work. Not sure what this was for? 
 %         gl(1,k) = gk.funs(1).vals(1);
 %         gl(end,k) = gk.funs(gk.nfuns).vals(end);
