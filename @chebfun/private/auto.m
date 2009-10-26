@@ -44,7 +44,7 @@ end
 
 % ----------------------------SPLITTING ON--------------------------------
 
-if isfield(pref,'exps'), exps = [pref.exps{:}]; end
+if isfield(pref,'exps'), exps = {pref.exps{:}}; end
 
 % Try to get one smooth piece for the entire interval before splitting interval
 [funs,hpy,scl] = getfun(op,ends,pref,scl);    
@@ -95,13 +95,13 @@ while any(sad)
     % Construct child funs
     %  left
     if isfield(pref,'exps')                   % exps were passed to the constructor 
-        if i == 1, pref.exps = {exps(1), []}; % We should keep these at the ends.
+        if i == 1, pref.exps = {exps{1}, []}; % We should keep these at the ends.
         else pref.exps = {[] []}; end         % But not if an interior split.
     end
     [child1, hpy1, scl] = getfun(op, [a, edge], pref, scl);
     %  right
     if isfield(pref,'exps')                   % As above
-        if i+1 == length(ends), pref.exps = {[], exps(2)};
+        if i+1 == length(ends), pref.exps = {[], exps{2}};
         else pref.exps = {[] []}; end  
     end
       
