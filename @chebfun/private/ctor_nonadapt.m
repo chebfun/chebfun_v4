@@ -27,6 +27,25 @@ end
 if nargin < 5, pref = chebfunpref; end
 funs = [];
 
+if isfield(pref,'exps') 
+    exps = pref.exps;
+    pref.blowup = true;
+    if numel(exps) == 1, 
+        exps = {exps{ones(1,2*numel(ends)-2)}};
+    elseif numel(exps) == 2, 
+        tmp = repmat({[]},1,2*numel(ends)-4);
+        exps = {exps{1} tmp{:} exps{2}};
+    elseif numel(exps) == numel(ends)
+        if numel(ends)~=2
+            warning('chebfun:ctor_adapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
+            'Assuming exps are the same on either side of break.']);
+            exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
+        end
+    elseif numel(exps) ~= 2*numel(ends)-2
+        error('chebfun:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
+    end
+end
+
 % Initial horizontal scale.
 hs = norm(ends([1,end]),inf);
 if hs == inf
@@ -45,10 +64,12 @@ for i = 1:length(ops)
         case 'function_handle'
             a = ends(i); b = ends(i+1);
             vectorcheck(op,[a b]);
+            pref.n = n(i);
+            if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             if ~isfield(pref,'map')
-                g = fun(op, [a b], n(i));
+                g = fun(op, [a b], pref);
             else
-                g = fun(op, maps(pref.map,ends(i:i+1)), n(i));
+                g = fun(op, maps(pref.map,ends(i:i+1)), pref);
             end
             funs = [funs g];
         case 'char'
@@ -59,10 +80,12 @@ for i = 1:length(ops)
             a = ends(i); b = ends(i+1);
             op = inline(op);
             vectorcheck(op,[a b]);
+            pref.n = n(i);
+            if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             if ~isfield(pref,'map')
-                g = fun(op, [a b], n(i));
+                g = fun(op, [a b], pref);
             else
-                g = fun(op, maps(pref.map,ends(i:i+1)), n(i));
+                g = fun(op, maps(pref.map,ends(i:i+1)), pref);
             end
             funs = [funs g];
         case 'chebfun'
@@ -70,6 +93,8 @@ for i = 1:length(ops)
             if op.ends(1) > a || op.ends(end) < b
                 error('chebfun:ctor_nonadapt:domain','chebfun is not defined in the domain')
             end
+            pref.n = n(i);
+            if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             if ~isfield(pref,'map')
                 g = fun(@(x) feval(op,x), [a b], n(i));
             else

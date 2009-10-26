@@ -12,6 +12,10 @@ function [g,ish] = fun(op,ends,varargin)
 % provided in the structure PREF (see chbfunpref).  Here SCL is a structure
 % with fields SCL.H (horizontal scale) and SCL.V (vertical scale).
 %
+% Additionally, exponents can be pass within PREF by attaching them in a cell
+% array to PREF.EXPS, and a non-adaptive call can be forced by setting
+% PREF.N to be a positive integer.
+%
 % [G,ISH] = FUN(...) returns the constructed fun G and the boolean ISH,
 % which is true if the construction is believed to have converged and false
 % otherwise.
@@ -46,12 +50,20 @@ end
 if nargin == 2
      % Preferences not provided
      pref = chebfunpref;
+     pref.n = 0;
 else
     pref = varargin{1};
-    % Non-adaptive case (preferences not needed)
     if ~isa(pref,'struct'), 
+        % Non-adaptive case (preferences not needed)
         n = pref;
         pref = chebfunpref;
+        pref.n = n;
+    elseif isfield(pref,'n')
+        % Non-adaptive case (preferences passed)
+        n = pref.n;
+    else
+        % Adaptive case
+        pref.n = 0;
     end
 end
 
@@ -188,10 +200,9 @@ if pref.splitting && ~all(isinf(ends)) || any(g.exps)
         op = @(x) [va;op(x(2:end-1));vb];
     end
 end
-
     
 %% Call constructor depending on narg
-if nargin == 3,
+if pref.n
     % non-adaptive case exact number of points provided
     % map might still be adapted for that number of points
     xvals = g.map.for(chebpts(n));

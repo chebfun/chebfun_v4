@@ -20,7 +20,7 @@ if nargin == 1
     if f.nfuns>1
         warning(['Chebfun has more than one fun. Only the Chebyshev' ...
                  ' coefficients of the first one are returned.' ...
-                 ' Use CHEBPOLY(F,1) to suppress this warning.'])
+                 ' Use LEGPOLY(F,1) to suppress this warning.'])
     end
     g = f.funs(1);
     ends = [f.ends(1) f.ends(2)];

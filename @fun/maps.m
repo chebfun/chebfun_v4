@@ -21,7 +21,11 @@ if isstruct(v1)
     pars = v1.par(3:end);
 else
     mapname = v1{1};
-    pars = v1{2}(:).';
+    if numel(v1) == 2
+        pars = v1{2}(:).';
+    else
+        pars = []; 
+    end    
 end
 
 map = feval(mapname,[ends pars]);
