@@ -6,6 +6,9 @@ function rts = roots(f,varargin)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+% Last commit: $Author$: $Rev$:
+% $Date$:
+ 
 
 tol = 1e-14;
 
