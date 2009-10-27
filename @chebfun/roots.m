@@ -1,4 +1,4 @@
-function rts = roots(f,option)
+function rts = roots(f,varargin)
 % ROOTS	  Roots of a chebfun.
 % ROOTS(F) returns the roots of F in the interval where it is defined.
 % ROOTS(F,'all') returns all the roots.
@@ -12,13 +12,25 @@ tol = 1e-14;
 if numel(f)>1
     error('roots does not work with chebfun quasi-matrices')
 end
-if nargin == 1
-    all = 0;    
-elseif strcmp(option,'all')
-    all = 1;
-else
-    error('Unknown option')
+all = 0; recurse = 1; prune = 0;
+for k = 1:nargin-1
+    argin = varargin{k};
+    if strcmp(argin,'all'), 
+        all = 1;
+        prune = 0;
+    elseif strcmp (argin,'nonrecurse'),
+        recurse = 0;
+    elseif strcmp (argin,'recurse'),
+        recurse = 1;
+    elseif strcmp (argin,'complex'),
+        prune = 1;
+        all = 1;
+    else
+        error('Unknown option.')
+    end
 end
+
+
 
 ends = f.ends;
 hs = hscale(f);
@@ -26,7 +38,7 @@ rts = []; % all roots will be stored here
 for i = 1:f.nfuns
     a = ends(i); b = ends(i+1);
     lfun = f.funs(i);
-    rs = roots(lfun,all);
+    rs = roots(lfun,all,recurse,prune);
     if ~isempty(rs)
         if ~isempty(rts)
             while length(rs)>=1 && abs(rts(end)-rs(1))<tol*hs
