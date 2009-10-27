@@ -1,7 +1,17 @@
 function rts = roots(f,varargin)
 % ROOTS	  Roots of a chebfun.
 % ROOTS(F) returns the roots of F in the interval where it is defined.
-% ROOTS(F,'all') returns all the roots.
+% ROOTS(F,'all') returns the roots of all the polynomials representing the
+% smooth pieces of F.
+% ROOTS(F,'norecurence') deactivates the recursion procedure used to
+% compute roots (see the Guide 3: Rootfinding and minima and maxima for
+% more information of this recursion procedure).
+% ROOTS(F,'complex') returns the roots of all the polynomials representing
+% the smooth pieces of F that are inside a chebfun ellipse. This capability
+% may remove some spurious roots that can appear if using ROOTS(F,'all').
+% ROOTS(F,'all','norecurence') and ROOTS(F,'complex','norecurence')
+% deactivates the recursion procedure to compute the roots as explained in
+% the 'all' and 'complex' modes.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -21,7 +31,7 @@ for k = 1:nargin-1
     if strcmp(argin,'all'), 
         all = 1;
         prune = 0;
-    elseif strcmp (argin,'nonrecurse'),
+    elseif strcmp (argin,'norecurse'),
         recurse = 0;
     elseif strcmp (argin,'recurse'),
         recurse = 1;
