@@ -41,6 +41,7 @@ npower = max(minpower,floor(log2(n-1)));
 if resample
   npn = max(min(npower,6),minpower);
   kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
+  kk = kk + 1 - mod(kk,2);
 else
   kk = 2.^(minpower:npower) + 1;
 end
@@ -131,6 +132,8 @@ else
             xvals = g.map.for(chebpts(k)); xvals(1) = a; xvals(end) = b;
             g.vals = op(xvals); g.n = k; 
             
+            xx = xvals;
+            
             % Experimental feature for avoiding NaNs.
             nans = isnan(g.vals);
             if any(nans)
@@ -151,7 +154,6 @@ else
                     end
                 end
             end
-            
             g.scl.v = max(g.scl.v,norm(g.vals,inf));
             [ish, g] = ishappy(op,g,pref);
             if ish, break, end
