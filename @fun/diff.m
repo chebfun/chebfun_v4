@@ -61,21 +61,22 @@ if strcmp(g.map.name,'linear')
             end
             
             exps = g.exps;
-
+            g.exps = [0 0];
+            
             if exps(1) && ~exps(2)
-                g = fun([0 diff(ends)],ends).*fun(chebpolyval(c)/g.map.der(1), ends) + g.exps(1).*g;
-                exps(1) = exps(1) + 1;
+                g = fun([0 diff(ends)],ends).*fun(chebpolyval(c)/g.map.der(1), ends) + exps(1).*g;
+                exps(1) = exps(1) - 1;
             end
             
             if ~exps(1) && exps(2)
-                g = fun([diff(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) - g.exps(2).*g;
-                exps(2) = exps(2) + 1;
+                g = fun([diff(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) - exps(2).*g;
+                exps(2) = exps(2) - 1;
             end
             
             if all(exps)               
                 g = fun([0 -prod(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) - ...
-                    (g.exps(2)*fun([0 diff(ends)],ends) - g.exps(1)*fun([diff(ends) 0],ends)).*g;
-                exps = exps + 1;
+                    (exps(2)*fun([0 diff(ends)],ends) - exps(1)*fun([diff(ends) 0],ends)).*g;
+                exps = exps - 1;
             end
             
             g.exps = exps;
