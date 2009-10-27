@@ -9,13 +9,13 @@ function [out,idx] = max(g)
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
-if (g.exps(1) && g.vals(1) > 0) 
+if (g.exps(1) < 0 && g.vals(1) >= 0) 
     out = inf; 
     idx = 1;
     return
 end
 
-if (g.exps(2) && g.vals(end) > 0) 
+if (g.exps(2) < 0 && g.vals(end) >= 0) 
     out = inf;
     idx = g.n;
     return

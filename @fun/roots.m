@@ -28,11 +28,11 @@ end
 
 % If there are exponents, then endpoints should not be roots?
 tol = 1e-14*g.scl.h;
-if g.exps(1) 
+if g.exps(1) < 0
     mask = find(abs(out-g.map.par(1))<tol);
     out(mask) = [];
 end
-if g.exps(2) 
+if g.exps(2) < 0
     mask = find(abs(out-g.map.par(2))<tol);
     out(mask) = [];
 end

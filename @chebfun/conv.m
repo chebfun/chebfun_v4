@@ -73,7 +73,7 @@ pref = chebfunpref;
 pref.sampletest = false;
 pref.resampling = false;
 pref.splitting = false;
-pref.exps =num2cell(0*ends);  % avoid checking for blowup exponents.
+pref.exps = num2cell(0*ends);  % avoid checking for blowup exponents.
 % Construct funs
 for k =1:length(ends)-1  
     newfun = fun(@(x) integral(x,a,b,c,d,f,g,pref,scl), ends(k:k+1), pref, scl);

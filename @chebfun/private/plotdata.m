@@ -369,7 +369,7 @@ isjump = jval;
 tol = 1e-4*f.scl;
 
 jval(1) = f.imps(1,1);
-if abs(jval(1)-f.funs(1).vals(1)) < tol && ~f.funs(1).exps(1)
+if abs(jval(1)-f.funs(1).vals(1)) < tol && f.funs(1).exps(1) >= 0
     isjump(1) = false;
 else
     isjump(1) = true;
@@ -379,9 +379,9 @@ for j = 2:length(ends)-1
     [MN loc] = min(abs(f.ends-ends(j)));
     if MN < 1e4*eps*hs
         lval = f.funs(loc-1).vals(end)*(ends(loc)-ends(loc-1)).^sum(f.funs(loc-1).exps);
-        if f.funs(loc-1).exps(2), lval = sign(lval)/eps; end  % 1/eps should be inf or realmax, but this doesn't work?
+        if f.funs(loc-1).exps(2) < 0, lval = sign(lval)/eps; end  % 1/eps should be inf or realmax, but this doesn't work?
         rval = f.funs(loc).vals(1)*(ends(loc+1)-ends(loc)).^sum(f.funs(loc).exps);
-        if f.funs(loc).exps(1), rval = sign(rval)/eps; end    % 1/eps should be inf or realmax, but this doesn't work?
+        if f.funs(loc).exps(1) < 0, rval = sign(rval)/eps; end    % 1/eps should be inf or realmax, but this doesn't work?
         fjump(3*j-(5:-1:3)) = [lval; rval; NaN];
         jval(j) = f.imps(1,loc);
         if abs(lval-rval) < tol && abs(jval(j)-lval) < tol

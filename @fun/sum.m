@@ -14,6 +14,12 @@ if strcmp(g.map.name,'linear')
         out = sum_unit_interval(g)*g.map.der(1);
     else
         exps = g.exps;
+        if any(exps<=-1)
+             warning('CHEBFUN:sum:inf',['Integrand diverges to infinity on domain. ', ...
+            'Assuming integral is infinite.']);
+            out = inf;
+            return
+        end
         [x w] = jacpts(ceil(g.n/2)+1,exps(2),exps(1));
         % (Our exps are the reverse of Jacobi polynomials,
         %   i.e. exps(1) = beta, exps(2) = alpha.)

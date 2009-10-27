@@ -201,6 +201,9 @@ end
 if all(~isinf([bot top])) && infy
     try
         xl = get(gca,'xlim');
+        yl = get(gca,'ylim');
+        bot = min(yl(1),bot);
+        top = max(yl(2),top);
         axis([xl(1) xl(2) bot top]);
     end
 end

@@ -9,7 +9,7 @@ function [y,x] = minandmax(g)
 
 x = [0 0]; y = [0 0];
 
-if g.exps(2)
+if g.exps(2) < 0
     if g.vals(end) >= 0, 
         y(2) = inf;   x(2) = g.n;
     else
@@ -17,7 +17,7 @@ if g.exps(2)
     end
 end
 
-if g.exps(1)
+if g.exps(1) < 0
     if g.vals(1) >= 0,
         y(2) = inf;    x(2) = 1;
     else
