@@ -12,6 +12,7 @@ function out = roots(g,all,recurse,prune)
 if nargin == 1
     all = 0;
     recurse = 1;
+    prune = 0;
 end
 out = g.map.for(rootsunit(g,all,recurse,prune));
 
