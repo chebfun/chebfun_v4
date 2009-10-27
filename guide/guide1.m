@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 1: INTRODUCTION
-% Lloyd N. Trefethen, April 2008
+% Lloyd N. Trefethen, October 2009
 
 %% 1.1  What is a chebfun?
 % A chebfun is a function of one variable defined on
@@ -7,8 +7,7 @@
 % almost exactly the same as the usual Matlab syntax for vectors, 
 % with the familiar Matlab commands for vectors overloaded in natural ways. 
 % Thus, for example, whereas sum(f) returns the sum of the
-% entries when f is a vector, when f is a chebfun
-% it returns a definite integral.
+% entries when f is a vector, it returns a definite integral when f is a chebfun.
 
 %%
 % The aim of
@@ -39,17 +38,28 @@
 % figure, for example, was Bernstein in the 1910s.
 % Nevertheless it is hard to find the relevant material
 % collected in one place.  A new reference on this subject
-% will be [Trefethen 2009].  A printed book adapted from this Guide
-% is also being prepared [Trefethen et al. 2009].
+% will be the chebfun-based book [Trefethen 2010].
 
 %%
 % The chebfun system was originally created by Zachary Battles
 % and Nick Trefethen at Oxford during 2002-2005
 % [Battles & Trefethen 2004].  Battles left the project
-% in 2005, and meanwhile three new 
+% in 2005, and meanwhile four new 
 % members have been added to the team: Ricardo
-% Pachon (from 2006), Rodrigo Platte (from 2007), and
-% Toby Driscoll (from 2008).  
+% Pachon (from 2006), Rodrigo Platte (from 2007), 
+% and Toby Driscoll and Nick Hale (from 2008).
+% Beginning in 2009, Asgeir Birkisson and Mark Richardson
+% are also getting involved.  In addition to these people we have
+% been helped by many users as well as students and colleagues
+% at Oxford and elsewhere, including Phil Assheton, Folkmar
+% Bornemann, Sheehan Olver, and Simon Scheuring.
+
+%%
+% This Guide is based on Chebfun Version 3, to be released
+% in December 2009.  The chebfun website is
+% http://www.comlab.ox.ac.uk/chebfun/ (to be moved soon to
+% Oxford's Mathematical Institute).  Chebfun is also available
+% from the MathWorks File Exchange.
 
 %% 1.2  Constructing simple chebfuns
 % The "chebfun" command constructs a chebfun from a specification
@@ -74,8 +84,8 @@
 
 %%
 % These results tell us that f is represented by a polynomial
-% interpolant through 51 Chebyshev points, i.e., a polynomial of
-% degree 50.  These numbers have been determined by an
+% interpolant through 49 Chebyshev points, i.e., a polynomial of
+% degree 48.  These numbers have been determined by an
 % adaptive process.  We can see the data points by plotting f with
 % the '.-' option:
   plot(f,'.-')
@@ -152,7 +162,7 @@
   clf, plot(f)
 
 %% 1.3  Operations on chebfuns
-% There are more than 100 commands that can be applied to
+% There are about 150 commands that can be applied to
 % a chebfun.  For a complete list you can type
 % "methods":
   methods chebfun
@@ -162,10 +172,10 @@
   help chebfun/domain
 
 %%
-% Every command in the list exists in ordinary Matlab,
-% with the exceptions of "domain", "restrict",
-% "chebpoly", "define", and the
-% chebfun constructor "chebfun".  We have already seen
+% Most of the commands in the list exist in ordinary Matlab;
+% some exceptions are "domain", "restrict",
+% "chebpoly", "define", and "remez".
+% We have already seen
 % "length" and "sum" in action.  In fact we have already
 % seen "subsref" too, since that is the Matlab command
 % for (among other things) evaluating arguments in parentheses.
@@ -195,7 +205,8 @@
 % called a "fun", and funs are implemented as a subclass
 % of chebfuns.  This enhancement of the chebfun system
 % was developed initially by Ricardo Pachon during 2006-2007, then
-% also by Rodrigo Platte starting in 2007.
+% also by Rodrigo Platte starting in 2007 [Pachon, Platte and
+% Trefethen 2009].
 % Essentially funs consist of the "classic chebfuns" for smooth
 % functions on [-1,1] originally implemented by Zachary Battles.
 
@@ -204,14 +215,19 @@
 % the moment let us see some examples.  One way to get a piecewise
 % smooth function is directly from the constructor, taking advantage
 % of its capability of automatic edge detection.  For example,
-  splitting on
-  f = chebfun('abs(x-.3)'); plot(f,'.-')
+% in the default "splitting off" mode a function with a jump in
+% its derivative produces a warning message,
+  f = chebfun('abs(x-.3)');
+
+%%
+% but the same function can be successfully captured with splitting on:
+  f = chebfun('abs(x-.3)','splitting','on');
 %%
 % The "length" command reveals that f is defined by four data points,
 % namely two for each linear interval:
   length(f)
 %%
-% We can can the definition of f in detail by typing
+% We can see the definition of f in more detail by typing
 % f without a semicolon:
   f
 %%
@@ -284,37 +300,64 @@
 
 %%
 % A final note about piecewise smooth chebfuns is that
-% the automatic edge detection or "splitting" feature
-% can be turned on and  off.  (Earlier we used "splitting on"
-% to make sure we were in the right mode.)  For example, if we compute
-% sin(x) over [0,1000] with automatic edge detection, 
+% the automatic edge detection or "splitting" feature, when it
+% is turned on, may subdivide functions even though they do not
+% have clean point singularities, and this may be desirable or
+% undesirable depending on the application.  For example,
+% considering sin(x) over [0,1000] with splitting on,
 % we end up with a chebfun with many pieces:
-  tic, f = chebfun('sin(x)',[0 1000*pi]); toc
+  tic, f = chebfun('sin(x)',[0 1000*pi],'splitting','on'); toc
   struct(f)
 
 %%
-% In such a case it is more efficient -- and more interesting
-% mathematically -- to turn off the splitting and construct one
+% In this case it is more efficient -- and more interesting
+% mathematically -- to omit the splitting and construct one
 % global chebfun:
 
-  splitting off
   tic, f2 = chebfun('sin(x)',[0 1000*pi]); toc
   struct(f2)
 
 %%
-% On the other hand with splitting off there is no hope
-% for a function like the absolute value:
-  warning on
-  tic, f = chebfun('abs(x-.3)'); toc
+% In a chebfun computation,
+% splitting can be turned on and off freely to handle different
+% functions appropriately.  The default or "factory" value is splitting off;
+% see Chapter 8.
+
+%% 1.5  Infinite intervals and infinite function values
+% A major change from Version 2 to Version 3 is the generalization of
+% chebfuns to allow certain functions on infinite intervals or which
+% diverge to infinity: the credit for these innovations belongs to
+% Nick Hale, Rodrigo Platte, and Mark Richardson.
+% For example, here is a function on the whole real axis,
+f = chebfun('exp(-x.^2/16).*(1+.2*cos(10*x))',[-inf,inf]);
+plot(f)
 
 %%
-% So we had better turn it on again.  In a chebfun computation,
-% splitting can be turned on and off freely to handle different
-% functions appropriately.  The default or "factory" value is splitting off.
-  splitting on
-  tic, f = chebfun('abs(x-.3)'); toc
+% and here is its integral:
+sum(f)
 
-%% 1.5  Rows, columns, and quasimatrices
+%%
+% Here's the integral of a function on [1,inf]:
+sum(chebfun('1./x.^4',[1 inf]))
+
+%%
+% Notice that several digits of accuracy have been lost here.  Be careful! --
+% operations involving infinities in the chebfun system are not always as accurate
+% and robust as their finite counterparts.
+
+%%
+% Here is an example of a function that diverges to infinity:
+h = chebfun('(1/pi)./sqrt(1-x.^2)');
+plot(h)
+
+%%
+% In this case the integral comes out just right:
+sum(h)
+
+%%
+% For more on infinities in the chebfun system, see Chapter 9.
+
+%% 1.6  Rows, columns, and quasimatrices
 % Matlab doesn't only deal with column vectors: there are
 % also row vectors and matrices.  The same is true of chebfuns.
 % The chebfuns shown so far have all been in column orientation, which
@@ -337,10 +380,10 @@
   A'*A
 
 %%
-% These are called "quasimatrices", and will be discussed in
-% a later section.
+% These are called "quasimatrices", and they are discussed in
+% Chapter 6.
 
-%% 1.6  References
+%% 1.7  References
 % [Battles & Trefethen 2004] Z. Battles and L. N. Trefethen,
 % "An extension of Matlab to continuous functions and
 % operators", SIAM Journal on Scientific Computing 25 (2004),
@@ -354,6 +397,10 @@
 % of barycentric Lagrange interpolation", IMA Journal of
 % Numerical Analysis 24 (2004), 547-556.
 %
+% [Pachon, Platte & Trefethen 2009] R. Pachon, R. B. Platte
+% and L. N. Trefethen, "Piecewise smooth chebfuns",
+% IMA J. Numer. Anal., to appear.
+%
 % [Salzer 1972] H. E. Salzer, "Lagrangian interpolation at the 
 % Chebyshev points cos(nu pi/n), nu = 0(1)n; some unnoted
 % advantages", Computer Journal 15 (1972), 156-159.
@@ -362,9 +409,6 @@
 % with functions instead of numbers", Mathematics in Computer
 % Science 1 (2007), 9-19.
 %
-% [Trefethen 2009] L. N. Trefethen, Neoclassical Numerics, book
-% in preparation.
-%
-% [Trefethen et al. 2009] L. N. Trefethen et al., Chebfun, Chebop, and
-% Chebyshev Technology, book in preparation.
-
+% [Trefethen 2010] L. N. Trefethen, Approximation Theory and
+% Approximation Practice: A 21st-Century Treatment in
+% the Form of 32 Executable Chebfun M-Files, book in preparation.
