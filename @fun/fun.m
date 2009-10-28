@@ -138,7 +138,7 @@ end
 g.exps = exps;
 
 %% Deal with endpoints involving infinities
-if pref.splitting && ~all(isinf(ends)) || any(g.exps)
+if ~pref.n && pref.splitting && ~all(isinf(ends)) || any(g.exps)
         
     % Initial setup
     a = ends(1); b = ends(2);

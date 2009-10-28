@@ -94,10 +94,10 @@ if  ~resample && 2^npower+1 == n && nargin<5
                 % Need to make sure all evaluation points are within interval
                 if any(xnans < ends(1)), 
                     vnans = op(xnans([1 4:6]));
-                    v(nans) = vnans(3)-.5*vnans(2);
+                    v(nans) = 2*vnans(3)-vnans(2);
                 elseif any(xnans > ends(2)), 
                     vnans = op(xnans([1:3 6]));
-                    v(nans) = vnans(2)-.5*vnans(3);
+                    v(nans) = 2*vnans(2)-vnans(3);
                 else % Use double sided extrapolation if we can              
                     vnans = op(xnans);
                     v(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
@@ -130,9 +130,7 @@ else
         
         for k = kk
             xvals = g.map.for(chebpts(k)); xvals(1) = a; xvals(end) = b;
-            g.vals = op(xvals); g.n = k; 
-            
-            xx = xvals;
+            g.vals = op(xvals); g.n = k;
             
             % Experimental feature for avoiding NaNs.
             nans = isnan(g.vals);
@@ -143,17 +141,18 @@ else
                     xnans = repmat(xvals(j),6,1) + [0 -2 -1 1  2 0]'*1e-14*g.scl.h;
                     % Need to make sure all evaluation points are within interval
                     if any(xnans < ends(1)), 
-                        vnans = op(xnans([1 4:6]));
-                        g.vals(nans) = vnans(3)-.5*vnans(2);
+                        vnans = op(xnans([1 4:6]))
+                        g.vals(nans) = 2*vnans(3)-vnans(2);
                     elseif any(xnans > ends(2)), 
                         vnans = op(xnans([1:3 6]));
-                        g.vals(nans) = vnans(2)-.5*vnans(3);
+                        g.vals(nans) = 2*vnans(2)-vnans(3);
                     else % Use double sided extrapolation if we can              
                         vnans = op(xnans);
                         g.vals(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
                     end
                 end
             end
+            
             g.scl.v = max(g.scl.v,norm(g.vals,inf));
             [ish, g] = ishappy(op,g,pref);
             if ish, break, end

@@ -17,7 +17,7 @@ function fout = cumsumcol(f)
 
 if isempty(f), fout = chebfun; return, end
 
-if any(get(f,'exps')), error('CHEBFUN:cumsum:inf',...
+if any(get(f,'exps')<=-1), error('CHEBFUN:cumsum:inf',...
         'Cumsum does not currently support functions which diverge to infinity'); end
 
 ends = f.ends;
@@ -37,9 +37,9 @@ end
 
 vals = zeros(1,f.nfuns+1);
 for i = 2:f.nfuns
-    vals(i) = funs(i).vals(1);
+    vals(i) = funs(i).vals(1)./diff(ends(k:k+1)).^funs(k).exps(2);
 end
-vals(f.nfuns+1) = funs(f.nfuns).vals(end);
+vals(f.nfuns+1) = funs(f.nfuns).vals(end).*diff(ends(end-1:end)).^funs(end).exps(1);
 
 fout = set(f, 'funs', funs); 
 fout.imps = [vals; f.imps(3:end,:)];
