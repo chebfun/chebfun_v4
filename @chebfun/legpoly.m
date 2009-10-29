@@ -1,10 +1,18 @@
 function out = legpoly(f,n)
 % LEGPOLY   Legendre polynomial coefficients.
 % A = LEGPOLY(F) returns the coefficients such that
-% F_1 = a_N P_N(x)+...+a_1 P_1(x)+a_0 P_0(x) where P_N(x) denotes the N-th
-% normalized Legendre polynomial and F_1 denotes the first fun of chebfun F.
+% F_1 = A(1) P_N(x) + ... + A(N) P_1(x) + A(N+1) P_0(x) where P_N(x) denotes 
+% the N-th Legendre polynomial and F_1 denotes the first fun of chebfun F.
 %
-% A = LEGPOLY(F,i) returns the coefficients for the i-th fun.
+% A = LEGPOLY(F,I) returns the coefficients for the I-th fun.
+
+
+% F_1 = A(1) T_N(x)+...+a(N) T_1(x)+A(N+1) T_0(x) where T_N(x) denotes the 
+% N-th Chebyshev polynomial and F_1 denotes the first fun of chebfun F.
+%
+% A = CHEBPOLY(F,I) returns the coefficients for the I-th fun.
+
+
 %
 % There is also a LEGPOLY command in the chebfun trunk directory, which
 % computes the chebfun corresponding to the Legendre polynomial P_n.
@@ -13,7 +21,7 @@ function out = legpoly(f,n)
 
 % Copyright 2009 by The Chebfun Team. 
  
-if numel(f)>1, error('CHEBPOLY does not handle chebfun quasi-matrices'), end
+if numel(f)>1, error('LEGPOLY does not handle chebfun quasi-matrices'), end
  
 % Select fun!
 if nargin == 1
@@ -22,24 +30,11 @@ if nargin == 1
                  ' coefficients of the first one are returned.' ...
                  ' Use LEGPOLY(F,1) to suppress this warning.'])
     end
-    g = f.funs(1);
-    ends = [f.ends(1) f.ends(2)];
+    out = legpoly(f.funs(1));
 else
     if n>f.nfuns
         error(['Chebfun only has ',num2str(f.nfuns),' funs'])
     else
-        g = f.funs(n);
-        ends = [f.ends(n) f.ends(n+1)];
+        out = legpoly(f.funs(n));
     end
 end
-
-% Legendre matrix
-for k = 0:g.n-1
-    E(:,k+1) = legpoly(k,ends);  
-end
-
-% Coefficients are computed using inner products.
-norm2 = (ends(end)-ends(1))./(2*(0:g.n-1)+1).'; % 2-norm squared
-out = flipud((E'*chebfun(g,ends))./norm2).';
-
-

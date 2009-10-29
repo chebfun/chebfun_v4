@@ -1,8 +1,8 @@
 function out = chebpoly(g)
-% CHEBPOLY	Chebyshev polynomial coefficients
-% C = CHEBPOLY(G) returns the coefficients such that
-% G = C_N T_N(x)+...+C_1 T_1(x)+C_0 T_0(x) where T_N(x) denotes the N-th
-% Chebyshev polynomial.
+% CHEBPOLY   Chebyshev polynomial coefficients.
+% A = CHEBPOLY(F) returns the coefficients such that
+% G = A(1) T_N(x) + ... + A(N) T_1(x) + A(N+1) T_0(x) where T_N(x) denotes 
+% the N-th Chebyshev polynomial.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

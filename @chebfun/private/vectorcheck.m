@@ -7,7 +7,7 @@ try
   if any(size(v) ~= size(x(:)))
     if nargout == 1
         warning('chebfun:vectorwrap:shape',...
-          'Your function may need to be vectorized. Attempting to vectorise it.')
+          'Your function may need to be vectorized. Attempting to vectorize it.')
         f = vec(f);
         vectorcheck(f,x);
     else
@@ -18,7 +18,7 @@ try
 catch %ME
     if nargout == 1
         warning('chebfun:vectorwrap:vecfail',...
-          'Your function gives an error for vector input. Attempting to vectorise it.')
+          'Your function gives an error for vector input. Attempting to vectorize it.')
         f = vec(f);
         vectorcheck(f,x);
     else

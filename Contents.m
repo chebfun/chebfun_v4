@@ -10,5 +10,5 @@
 % recursive zerofinding.
 %
 % To get started on the chebfun system, see the user guides in the Help
-% brower window or in the guide/html subdirectory of the chebfun
+% browser window or in the guide/html subdirectory of the chebfun
 % installation directory. 

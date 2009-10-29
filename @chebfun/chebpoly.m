@@ -1,10 +1,10 @@
 function out = chebpoly(f,n)
 % CHEBPOLY   Chebyshev polynomial coefficients.
 % A = CHEBPOLY(F) returns the coefficients such that
-% F_1 = a_N T_N(x)+...+a_1 T_1(x)+a_0 T_0(x) where T_N(x) denotes the N-th
-% Chebyshev polynomial and F_1 denotes the first fun of chebfun F.
+% F_1 = A(1) T_N(x) + ... + A(N) T_1(x) + A(N+1) T_0(x) where T_N(x) denotes 
+% the N-th Chebyshev polynomial and F_1 denotes the first fun of chebfun F.
 %
-% A = CHEBPOLY(F,i) returns the coefficients for the i-th fun.
+% A = CHEBPOLY(F,I) returns the coefficients for the I-th fun.
 %
 % There is also a CHEBPOLY command in the chebfun trunk directory, which
 % computes the chebfun corresponding to the Chebyshev polynomial T_n.

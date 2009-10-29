@@ -99,14 +99,14 @@ exps = f.exps;
 a = exps(2); b = exps(1);
 
 % Compute Jacobi coefficients of F
-j = jacpoly(chebfun(f),a,b);
+j = jacpoly(chebfun(f),a,b).';
 
 % Integrate the nonconstant terms exactly to get new coefficients
 k = (length(j)-1:-1:1).';
 jhat = -.5*j(1:end-1)./k;
 
 % Convert back to Chebyshev series
-c = jac2cheb2(a+1,b+1,[0 ; jhat]);
+c = jac2cheb2(a+1,b+1,jhat);
 
 % Construct fun
 f.vals = chebpolyval(c);
@@ -121,9 +121,6 @@ else
     G.scl.h = 2; G.scl.v = G.vals; 
     G.n = 1; G.exps = [exps(1)+1 0];
 end
-
-length(f)
-length(G)
 
 % For testing when the righthand exponent is nonzero
 if exps(2)
@@ -162,6 +159,7 @@ end
 if ~exps(2)
     fexps = f.exps; f.exps = [0 0];
     pref.exps = {0 0}; pref.n = 2;
+    if all(f.vals==0), f.vals = 0; F.n = 0; end
     f = f.*fun(@(x) 1-x,[-1,1],pref); 
     f.exps(1) = fexps(1);
     f = f + G;

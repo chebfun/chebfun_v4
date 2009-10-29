@@ -141,7 +141,7 @@ else
                     xnans = repmat(xvals(j),6,1) + [0 -2 -1 1  2 0]'*1e-14*g.scl.h;
                     % Need to make sure all evaluation points are within interval
                     if any(xnans < ends(1)), 
-                        vnans = op(xnans([1 4:6]))
+                        vnans = op(xnans([1 4:6]));
                         g.vals(nans) = 2*vnans(3)-vnans(2);
                     elseif any(xnans > ends(2)), 
                         vnans = op(xnans([1:3 6]));
