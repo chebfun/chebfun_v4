@@ -99,7 +99,7 @@ function displaychebfun(f, columnstr)
                 endvals(2) = inf;
             end
         else
-            endvals = [funs(j).vals(1) funs(j).vals(end)]
+            endvals = [funs(j).vals(1) funs(j).vals(end)];
             exinfo = ' ';
         end
         endvals(~logical(endvals)) = 0;

@@ -37,9 +37,15 @@ end
 
 vals = zeros(1,f.nfuns+1);
 for i = 2:f.nfuns
-    vals(i) = funs(i).vals(1)./diff(ends(k:k+1)).^funs(k).exps(2);
+    if ~funs(i).exps(2)
+        vals(i) = funs(i).vals(1);
+    else
+        vals(i) = funs(i).vals(1)./diff(ends(i:i+1)).^funs(i).exps(2);
+    end
+        
 end
 vals(f.nfuns+1) = funs(f.nfuns).vals(end).*diff(ends(end-1:end)).^funs(end).exps(1);
 
 fout = set(f, 'funs', funs); 
 fout.imps = [vals; f.imps(3:end,:)];
+
