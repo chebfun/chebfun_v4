@@ -5,4 +5,21 @@ function Fout = besselj(nu,F)
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
-Fout = comp(F, @(x) besselj(nu,x));
+[r,c] = size(nu);
+if r > 1 && c > 1    
+    error('The first argument of besselj must be a vector of real numbers');
+end
+
+if c==1 && r == 1
+    Fout = comp(F, @(x) real(besselj(nu,x)));
+elseif c==1 && F.trans
+    for k = 1:length(nu)
+        Fout(k,:) = comp(F, @(x) real(besselj(nu(k),x)));
+    end
+elseif r==1 && ~F.trans    
+    for k = 1:length(nu)
+        Fout(:,k) = comp(F, @(x) real(besselj(nu(k),x)));
+    end
+else
+    error('The parameters of besselj must be a row vector and a column chebfun, or a column vector and a row chebfun.')
+end
