@@ -88,13 +88,13 @@ for i = 1:length(ops)
                     ' numerical values.'])
             end
             op = inline(op);
-            vectorcheck(op,ends(i:i+1));
+            op = vectorcheck(op,ends(i:i+1));
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];
             newends = [newends es(2:end)];
         case 'function_handle'
-            vectorcheck(op,ends(i:i+1));
+            op = vectorcheck(op,ends(i:i+1));
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];

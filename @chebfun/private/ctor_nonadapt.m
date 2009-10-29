@@ -63,7 +63,7 @@ for i = 1:length(ops)
     switch class(op)
         case 'function_handle'
             a = ends(i); b = ends(i+1);
-            vectorcheck(op,[a b]);
+            op = vectorcheck(op,[a b]);
             pref.n = n(i);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             if ~isfield(pref,'map')
@@ -79,7 +79,7 @@ for i = 1:length(ops)
             end
             a = ends(i); b = ends(i+1);
             op = inline(op);
-            vectorcheck(op,[a b]);
+            op = vectorcheck(op,[a b]);
             pref.n = n(i);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             if ~isfield(pref,'map')
