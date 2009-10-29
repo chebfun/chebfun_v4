@@ -20,3 +20,7 @@ elseif (isa(g2,'double'))
 elseif(isa(g1,'fun') && isa(g2,'fun'))
   error('Use .* to multiply funs.');
 end
+if gout.scl.v == 0;
+    gout.vals = 0;
+    gout.n = 1;
+end

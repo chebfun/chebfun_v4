@@ -42,12 +42,17 @@ if norm(ends,inf) < inf;
 end
 
 tol = 100*eps;
-    
+
+if g.vals == 0
+   out = zeros(0,1);
+   return
+end    
+   
 if ~recurse || (g.n<101)                                    % for small length funs
     c=chebpoly(g);                              % compute Cheb coeffs
     if abs(c(1)) < 1e-14*norm(c,inf)
         ind= find(abs(c)>1e-14*norm(c,inf),1,'first');
-        if isempty(ind), out = zeros(length(c),1);
+        if isempty(ind), out = zeros(0,1);
             return
         end
         c=c(ind:end);
