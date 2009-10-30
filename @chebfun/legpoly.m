@@ -5,14 +5,6 @@ function out = legpoly(f,n)
 % the N-th Legendre polynomial and F_1 denotes the first fun of chebfun F.
 %
 % A = LEGPOLY(F,I) returns the coefficients for the I-th fun.
-
-
-% F_1 = A(1) T_N(x)+...+a(N) T_1(x)+A(N+1) T_0(x) where T_N(x) denotes the 
-% N-th Chebyshev polynomial and F_1 denotes the first fun of chebfun F.
-%
-% A = CHEBPOLY(F,I) returns the coefficients for the I-th fun.
-
-
 %
 % There is also a LEGPOLY command in the chebfun trunk directory, which
 % computes the chebfun corresponding to the Legendre polynomial P_n.

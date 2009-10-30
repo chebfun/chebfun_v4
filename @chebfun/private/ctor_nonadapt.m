@@ -1,6 +1,6 @@
-function f = ctor_3(f,ops,ends,n,pref)
-%CTOR_3  non-adaptive chebfun constructor
-% CTOR_3 handles non-adaptive construction of chebfuns.
+function f = ctor_nonadapt(f,ops,ends,n,pref)
+%CTOR_NONADAPT  non-adaptive chebfun constructor
+% CTOR_NONADAPT handles non-adaptive construction of chebfuns.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -63,7 +63,7 @@ for i = 1:length(ops)
     switch class(op)
         case 'function_handle'
             a = ends(i); b = ends(i+1);
-            op = vectorcheck(op,[a b]);
+            op = vectorcheck(op,[a b],pref.vec);
             pref.n = n(i);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             if ~isfield(pref,'map')
@@ -79,7 +79,7 @@ for i = 1:length(ops)
             end
             a = ends(i); b = ends(i+1);
             op = inline(op);
-            op = vectorcheck(op,[a b]);
+            op = vectorcheck(op,[a b],pref.vec);
             pref.n = n(i);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             if ~isfield(pref,'map')

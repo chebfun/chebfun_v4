@@ -108,16 +108,15 @@ while ~isempty(varargin)
         s = [];
     end
     varargin(1:pos) = [];
-
-    if any(any(get(g,'exps')<0)), infy = true; end
     
     % get plot data
     [lines marks jumps jumpval misc] = plotdata(f,g,[],numpts);
     
     % limits for inf plots
-    if ~isempty(misc)
-        bot = min(bot,misc(1)); 
-        top = max(top,misc(2));
+    if ~isempty(misc) 
+        infy = max(infy,misc(1));
+        bot = min(bot,misc(2)); 
+        top = max(top,misc(3));
     end
     
     % jump stuff

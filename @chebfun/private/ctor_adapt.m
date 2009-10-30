@@ -1,4 +1,4 @@
-function f = ctor_2(f,ops,ends,pref)
+function f = ctor_adapt(f,ops,ends,pref)
 %CTOR_ADAPT  Adaptive chebfun constructor
 % CTOR_ADAPT handles adaptive construction of chebfuns.
 %
@@ -88,13 +88,13 @@ for i = 1:length(ops)
                     ' numerical values.'])
             end
             op = inline(op);
-            op = vectorcheck(op,ends(i:i+1));
+            op = vectorcheck(op,ends(i:i+1),pref.vec);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];
             newends = [newends es(2:end)];
         case 'function_handle'
-            op = vectorcheck(op,ends(i:i+1));
+            op = vectorcheck(op,ends(i:i+1),pref.vec);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
             funs = [funs fs];

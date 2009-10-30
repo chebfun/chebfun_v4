@@ -14,7 +14,7 @@ function [lines marks jumps jval misc] = plotdata(f,g,h,numpts)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-misc = [];
+misc = []; infy = false;
 
 % Check domains: f,g,h must have the same domain
 if ~isempty(f)
@@ -112,6 +112,7 @@ if isempty(f)
         expsk = [expsk ; expskj(2)];
         
         if any(expsk<0)
+            infy = true;
             val = 0.1; mintrim = 3;
             nnl = max(round(-val*db.*expsk(1:end-1)),mintrim);
             nnr = max(round(-val*db.*expsk(2:end)),mintrim);
@@ -189,7 +190,7 @@ if isempty(f)
     end 
     
     lines = {fl, gl};
-    misc = [bot top];
+    misc = [infy bot top];
     
 elseif isempty(h) % Two quasimatrices case
     

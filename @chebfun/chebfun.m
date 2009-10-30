@@ -2,7 +2,7 @@ function f = chebfun(varargin)
 % CHEBFUN   Constructor for chebfuns.
 % CHEBFUN(F) constructs a chebfun object for the function F on the
 % interval [-1,1]. F can be a string, e.g 'sin(x)', a function handle, e.g
-% @(x) x.^2 + 2x +1, or a vector of numbers. In the first two cases, F
+% @(x) x.^2 + 2*x +1, or a vector of numbers. In the first two cases, F
 % should be "vectorized" in the sense that it may be evaluated at a column
 % vector of points x(:) and return an output of size length(x(:)). 
 % If F is a doubles array, [A1;A2;...;An], the numbers A1,...,An are used 
@@ -69,6 +69,7 @@ if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')
     argin = varargin(1:end-1);
 else
     pref = chebfunpref;
+    pref.vec = 0;
     % Find out if call changes preferences
     argin = varargin(1);
     k = 2; j = 2;
@@ -94,12 +95,15 @@ else
                 end
                 pref.(varargin{k}) = value;
                 k = k+2;
-            elseif strcmp('map',varargin{k})
+            elseif strcmpi('map',varargin{k})
                 pref.map =  varargin{k+1};
                 k = k+2;
-            elseif strcmp('exps',varargin{k})
+            elseif strcmpi('exps',varargin{k})
                 pref.exps = varargin{k+1};
                 k = k+2;
+            elseif strcmpi('vectorize',varargin{k}) || strcmp('vectorise',varargin{k})
+                pref.vec = 1;
+                k = k+1;                
             else
                 argin{j} = varargin{k};
                 j = j+1; k = k+1;
