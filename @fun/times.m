@@ -10,10 +10,20 @@ function g1 = times(g1,g2)
 % $Date: 2009-07-17 16:15:29 +0100 (Fri, 17 Jul 2009) $:
 
 if (isempty(g1) || isempty(g2)), g1=fun; return; end
+
+% Deal with scalars
 if (isa(g1,'double') || isa(g2,'double'))
   g1 = mtimes(g1,g2);
   return;
 end  
+
+% Deal with scalar funs
+if length(g1.vals) == 1 && ~any(g1.exps)
+    g1 = mtimes(g1.vals,g2); return, 
+end
+if length(g2.vals) == 1 && ~any(g2.exps)
+    g1 = mtimes(g1,g2.vals); return
+end
 
 % Deal with exps (just have to add!)
 exps = sum([g1.exps ; g2.exps]);

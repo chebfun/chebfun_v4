@@ -21,6 +21,7 @@ if isa(g1,'double')
         g1 = g2;
         return
     else
+        if g1 == 0, g1 = g2; return, end
         g1 = fun(g1,g2.map);
     end
 elseif isa(g2,'double') 
@@ -28,6 +29,7 @@ elseif isa(g2,'double')
         g1.vals = g1.vals-g2; g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
         return;
     else
+        if g2 == 0; return, end
         g2 = fun(g2,g1.map);
     end
 end

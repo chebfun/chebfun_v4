@@ -21,6 +21,10 @@ function g = cumsum(g)
 %
 % See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 32-33.
 %
+% For functions with exponents, things are more complicated. We switch to 
+% a Jacobi polynomial representation with the correct weights. W can then
+% integrate all the terms for r > 0 exactly,
+%
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
@@ -62,6 +66,20 @@ elseif norm(g.map.par(1:2),inf) == inf
 % General map case    
 else
     
+    if any(g.exps)
+        warning('chebfun:fun:cumsum',['Cumsum does not support functions ', ...
+            'with both maps an exponents. Resorting to a linear map']);
+        pref = chebfunpref;
+        pref.splitting = false;
+        pref.resampling = false;
+        pref.blowup = false;
+        exps = g.exps; g.exps = [0 0];
+        g = fun(@(x) feval(g,x),linear(g.map.par(1:2)),pref);
+        g.exps = exps;
+        g = cumsum(g);
+    end
+        
+    
     map = g.map; g.map = linear([-1 1]);
     g = cumsum_unit_interval(g.*fun(map.der,g.map));
     g.map = map;
@@ -72,7 +90,7 @@ end
 
 function g = cumsum_unit_interval(g)
 
-    n = g.n;
+n = g.n;
     c = [0;0;chebpoly(g)];                        % obtain Cheb coeffs {c_r}
     cout = zeros(n-1,1);                          % initialize vector {C_r}
     cout(1:n-1) = (c(3:end-1)-c(1:end-3))./...    % compute C_(n+1) ... C_2
@@ -86,20 +104,22 @@ function g = cumsum_unit_interval(g)
 end
 
 function f = jacsum(f)
-if f.map.par(1:2) ~= [-1 1]
-    error('CHEBFUN:fun:cumsum',['Cumsum cannot deal with functions which have ',...
-    'endpoint singularities on intervals other than [-1,1] yet']);
-end
-
 % for testing - delete this eventually
 h = f; h.exps = [0 0];
 
 % Get the exponents
+ends = f.map.par(1:2);
 exps = f.exps;
 a = exps(2); b = exps(1);
 
 % Compute Jacobi coefficients of F
-j = jacpoly(chebfun(f),a,b).';
+j = jacpoly(f,a,b).';
+
+if abs(j(end)) < chebfunpref('eps'), j(end) = 0; end
+if exps(2) && j(end) ~= 0
+    error('CHEBFUN:fun:cumsum',['Cumsum does not yet support functions with ', ...
+        'singularities at the righthand endpoint.']);
+end
 
 % Integrate the nonconstant terms exactly to get new coefficients
 k = (length(j)-1:-1:1).';
@@ -110,20 +130,22 @@ c = jac2cheb2(a+1,b+1,jhat);
 
 % Construct fun
 f.vals = chebpolyval(c);
+f.n = length(f.vals);
 f.exps = f.exps + 1;
 f.scl.v = max(f.scl.v, norm(f.vals,inf));
 
 % Deal with the constant part
-if exps(2)
+if j(end) == 0
+    G = 0;
+elseif exps(2)
     G = j(end)*2^(a+b+1)*beta(b+1,a+1)*chebfun(@(x) betainc(.5*(x+1),b+1,a+1),'map',{'sing',0},'exps',{exps(1) exps(2)},'splitting','off');
 else
-    G = fun(j(end)/(1+exps(1)),[-1,1]);
-    G.scl.h = 2; G.scl.v = G.vals; 
-    G.n = 1; G.exps = [exps(1)+1 0];
+    G = fun(j(end)/(1+exps(1)),f.map.par(1:2));
+    G.exps = [exps(1)+1 0];
 end
 
 % For testing when the righthand exponent is nonzero
-if exps(2)
+if exps(2) && j(end) ~=0
     figure
     F = chebfun(f);
     plot(F,'-b'); hold on
@@ -131,11 +153,11 @@ if exps(2)
     plot(G,'--b')
     plot(xx,F(xx)+feval(G,xx),'k','linewidth',2)
 
-    % % testing for others within interval
+    % testing within interval
     h = @(x) feval(h,x);
     ff = chebfun(@(x) h(x).*((1-x).^a.*(x+1).^b),[-.9,.9]);
     gg = cumsum(ff)+feval(F,ff.ends(1))+feval(G,ff.ends(1));
-    xx = linspace(ff.ends(1),ff.ends(2),100000);
+    xx = linspace(ff.ends(1),ff.ends(2),1000);
     plot(xx,gg(xx),'--r')
 
     xx = linspace(-ff.ends(1),ff.ends(2),1000);
@@ -154,15 +176,39 @@ if exps(2)
     set(gcf,'position',A)
     A(1) = A(1)-1.2*A(3);
     set(1,'position',A)
-end
 
-if ~exps(2)
-    fexps = f.exps; f.exps = [0 0];
+else
+    
+    % We can do this situation! 
+    fexps = f.exps; 
+    f.exps = [0 0];
+    pref = chebfunpref;
     pref.exps = {0 0}; pref.n = 2;
-    if all(f.vals==0), f.vals = 0; F.n = 0; end
-    f = f.*fun(@(x) 1-x,[-1,1],pref); 
+    f = f.*fun(@(x) ends(2)-x,ends,pref);
     f.exps(1) = fexps(1);
-    f = f + G;
+    f = 2/diff(ends)*f + G;
+    
+%     % testing within interval
+%     xx = linspace(ends(1),ends(2),1000);
+%     plot(xx,feval(f,xx),'k','linewidth',2); 
+%     hold on
+% 
+%     h = @(x) feval(h,x);
+%     ff = chebfun(@(x) h(x).*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)),.9*ends);
+%     gg = cumsum(ff)+feval(f,ff.ends(1));
+%     xx = linspace(ff.ends(1),ff.ends(2),1000);
+%     plot(xx,gg(xx),'.r')
+%     legend('f','true')
+%     
+%     xx = linspace(ff.ends(1),ff.ends(2),1000);
+%     norm(feval(f,xx)-gg(xx),inf)
+%     
+%     figure
+%     subplot(2,1,1)
+%     semilogy(xx,abs(feval(f,xx)-gg(xx)))
+%     subplot(2,1,2)
+%     plot(xx,abs(feval(f,xx)-gg(xx)))
+
 end
 
 end

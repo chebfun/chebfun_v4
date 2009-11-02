@@ -3,8 +3,8 @@ function f = chebfun(varargin)
 % CHEBFUN(F) constructs a chebfun object for the function F on the
 % interval [-1,1]. F can be a string, e.g 'sin(x)', a function handle, e.g
 % @(x) x.^2 + 2*x +1, or a vector of numbers. In the first two cases, F
-% should be "vectorized" in the sense that it may be evaluated at a column
-% vector of points x(:) and return an output of size length(x(:)). 
+% should in most cases be "vectorized" in the sense that it may be evaluated 
+% at a column vector of points x(:) and return an output of size length(x(:)).
 % If F is a doubles array, [A1;A2;...;An], the numbers A1,...,An are used 
 % as the function values at n Chebyshev points.
 %
@@ -50,6 +50,9 @@ function f = chebfun(varargin)
 % PREFNAME with value specified by PREFVAL. See chebfunpref for possible
 % preferences.
 %
+% CHEBFUN(F,'vectorized') prevents the warning message from being displayed
+% when F does not appear to be a vectorized input.
+%
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 % Copyright 2002-2008 by The Chebfun Team.
 
@@ -66,10 +69,11 @@ if nargin == 0; return, end
 % Chebfun preferences:
 if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')
     pref = varargin{nargin};
+    pref.vecwarn = 1;
     argin = varargin(1:end-1);
 else
     pref = chebfunpref;
-    pref.vec = 0;
+    pref.vecwarn = 1;
     % Find out if call changes preferences
     argin = varargin(1);
     k = 2; j = 2;
@@ -102,7 +106,7 @@ else
                 pref.exps = varargin{k+1};
                 k = k+2;
             elseif strcmpi('vectorize',varargin{k}) || strcmp('vectorise',varargin{k})
-                pref.vec = 1;
+                pref.vecwarn = 0;
                 k = k+1;                
             else
                 argin{j} = varargin{k};

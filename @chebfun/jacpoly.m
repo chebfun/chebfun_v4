@@ -11,9 +11,9 @@ function out = jacpoly(f,a,b,n)
 
 % Copyright 2009 by The Chebfun Team. 
  
-if numel(f) > 1, error('JACPOLY requires 3 inputs: F, ALPHA, and BETA.'), end
+if numel(f) > 1, error('JACPOLY does not handle chebfun quasi-matrices'), end
 
-if nargin < 3, error('JACPOLY does not handle chebfun quasi-matrices'), end
+if nargin < 3, error('JACPOLY requires 3 inputs: F, ALPHA, and BETA.'), end
  
 % Select fun!
 if nargin == 3
