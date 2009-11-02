@@ -102,7 +102,9 @@ function displaychebfun(f, columnstr)
             endvals = [funs(j).vals(1) funs(j).vals(end)];
             exinfo = ' ';
         end
-        endvals(~logical(abs(endvals))) = 0;
+        if ~any(isnan(endvals))
+            endvals(~logical(abs(endvals))) = 0;
+        end
         
         if mapped
             exinfo = [exinfo '    ' funs(j).map.name ' ' num2str(funs(j).map.par(3:end),'%5.2g')];    
