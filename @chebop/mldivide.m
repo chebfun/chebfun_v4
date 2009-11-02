@@ -33,6 +33,7 @@ function C = mldivide(A,B)
 persistent storage
 if isempty(storage), storage = struct([]); end
 use_store = cheboppref('storage');
+maxdegree = cheboppref('maxdegree');
 
 switch(class(B))
   case 'chebop'
@@ -76,8 +77,9 @@ end
 
   function v = value(x)
     N = length(x);
-    if N > 1025
-      error('chebop:mldivide:NoConverge','Failed to converge with 1025 points.')
+    if N > maxdegree+1
+      msg = sprintf('Failed to converge with %i points.',maxdegree+1);
+      error('chebop:mldivide:NoConverge',msg)
     elseif N==1
       error('chebop:mldivide:OnePoint',...
         'Solution requested at a lone point. Check for a bug in the chebop definition.')

@@ -57,6 +57,7 @@ while (nargin > j)
   j = j+1;
 end
 
+maxdegree = cheboppref('maxdegree');
 m = A.blocksize(2);
 if m~=A.blocksize(1)
   error('chebop:eigs:notsquare','Block size must be square.')
@@ -125,9 +126,11 @@ end
   % "interesting" eigenfunctions. 
   function v = value(x)
     N = length(x);
-    if N > 1025
-      error('chebop:eigs:converge',...
-      'Not converging. Check the sigma argument, or ask for fewer modes.')
+    if N > maxdegree+1
+      msg = sprintf(...
+        'No convergence with %i points. Check sigma, or ask for fewer modes.',...
+        maxdegree+1);
+      error('chebop:eigs:NoConverge',msg)
     end
     if N-A.numbc < k
       % Not enough eigenvalues. Return a sawtooth to ensure refinement.

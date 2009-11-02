@@ -24,6 +24,8 @@ function E = expm(A)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
+maxdegree = cheboppref('maxdegree');
+
 % Check for warnings/errors.
 [L,B,c,rowrep] = feval(A,10,'bc');
 if any(c~=0)
@@ -50,6 +52,11 @@ E.blocksize = [m m];
       E = eye(n*m);
       return
     end
+    if n > maxdegree+1
+      msg = sprintf('Failed to converge with %i points.',maxdegree+1);
+      error('chebop:expm:NoConverge',msg)
+    end
+
     [L,B,c,rowrep] = feval(A,n,'bc');
     elim = false(n*m,1);  elim(rowrep) = true;
     % Use algebra with the BCs to remove degrees of freedom.
