@@ -61,7 +61,10 @@ switch s(1).type
         valid = true;
       case 'numbc'
         A = A.numbc;
-        valid = true;            
+        valid = true; 
+      case 'ID'
+        A = A.ID;
+        valid = true;         
     end
  end
 

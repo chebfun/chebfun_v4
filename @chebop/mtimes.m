@@ -14,6 +14,11 @@ function C = mtimes(A,B)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
+persistent storage
+if isempty(storage), storage = struct([]); end
+% use_store = cheboppref('storage');
+use_store = 1;
+
 if isa(A,'double')
    % We allow double*chebop if the inner dimensions match--i.e., the chebop
    % is really a functional. Or (below) if A is scalar.
@@ -35,16 +40,49 @@ switch(class(B))
     if max(m,n) == 1
       C = chebop(B*A.varmat, B*A.oparray, A.fundomain, A.difforder );
       C.blocksize = A.blocksize;
+      
     elseif n == 1
+        
       % chebop * vector multiplication is being experimented with by nich.
       if A.numbc > 0
+        ID = A.ID;  
         numbc = A.numbc; m = length(B); N = m+numbc;
-        [A,BCmat,BCvals,BCrows] = feval(A,N,'bc');
-        intpts = 1:N;  intpts(BCrows) = [];
+        
+        % Retrieve or compute matrix.
+        if use_store && N > 5 && length(storage) >= ID ...
+           && length(storage(ID).A)>=N && ~isempty(storage(ID).A{N})
+            A = storage(ID).A{N};
+            BCmat = storage(ID).BCmat{N};
+            BCvals = storage(ID).BCvals{N};
+            BCrows = storage(ID).BCrows{N};
+        else
+           [A,BCmat,BCvals,BCrows] = feval(A,N,'bc');
+        end
+       
+        % Sort out the boundary conditions
+        intpts = 1:N;  
+        intpts(BCrows) = [];
         v = zeros(N,1);
         v(intpts) = B;
         v(BCrows) = BCmat(:,BCrows)\(BCvals - BCmat(:,intpts)*B);
+        
+        % Do the mulitplication
         C = A(intpts,:)*v;
+        
+         % Store matrices if necessary.
+        if use_store && N > 5
+%           % This is very crude garbage collection! 
+%           % If over capacity, clear out everything.
+%           ssize = whos('storage');
+%           if ssize.bytes > cheboppref('maxstorage')
+%             storage = struct([]); 
+%           end
+          storage(ID).A{N} = A;
+          storage(ID).BCmat{N} = BCmat;
+          storage(ID).BCvals{N} = BCvals;
+          storage(ID).BCrows{N} = BCrows;
+        end
+
       else
         A = feval(A,m);
         C = A*B;
