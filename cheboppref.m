@@ -16,6 +16,7 @@ function varargout = cheboppref(varargin)
 persistent prefs
 
 if isempty(prefs)  % first call, default values
+  prefs.maxdegree = 1024;
   prefs.storage = true;
   prefs.maxstorage = 50e6;
 end
