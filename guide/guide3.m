@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 3: ROOTFINDING AND MINIMA AND MAXIMA
-% Lloyd N. Trefethen, April 2008
+% Lloyd N. Trefethen, October 2009
 
 %% 3.1 roots
 % Chebfuns come with a global rootfinding capability -- the
@@ -44,10 +44,10 @@
 
 %%
 % The chebfun system finds roots by a method due to Boyd and Battles
-% [Boyd 2002, Battles 2006].  If the chebfun is of degree much greater than about 100,
+% [Boyd 2002, Battles 2006].  If the chebfun is of degree greater than 100,
 % it is broken into smaller pieces recursively.  On each small piece
 % zeros are then found as eigenvalues of a "colleague matrix", the analogue
-% for Chebyshev polynomials of a companion matrix for monomials [Good 1961].
+% for Chebyshev polynomials of a companion matrix for monomials [Specht 1960, Good 1961].
 % This method can be startlingly fast and accurate.  For example,
 % here is a sine function with 11 zeros:
 
@@ -64,14 +64,11 @@
   fprintf('%22.14f\n',r(end-4:end))
 
 %%
-% And here is the same on an interval with 1001 zeros.  We
-% turn splitting off so as to work with pure global polynomials.
-  splitting off
+% And here is the same on an interval with 1001 zeros.
   f = chebfun('sin(pi*x)',[0 1000]);
   lengthf = length(f)
   tic, r = roots(f); toc
   fprintf('%22.13f\n',r(end-4:end))
-  splitting on
 
 %%
 % With the ability to find zeros, we can solve a variety of
@@ -224,8 +221,103 @@
   norm(f,inf)
   norm(f,1)
 
+%% 3.6 Roots in the complex plane
+% Chebfuns live on real intervals, and the funs from which
+% they are made live on real subintervals.  But a polynomial
+% representing a fun may have roots outside the interval of definition,
+% which may be complex.  Sometimes we may want to get our hands on these
+% roots, and the "roots" command makes this possible in various
+% ways through the flags 'all', 'complex', and 'norecurse'.
 
-%% 3.6 References
+%%
+% The simplest example is a chebfun that is truly intended to
+% correspond to a polynomial.  For example, the chebfun
+f = 1+16*x.^2;
+
+%%
+% has no roots in [-1,1]:
+roots(f)
+
+%%
+% But we can extract its complex roots with the command
+roots(f,'all')
+
+%%
+% The situation for more general chebfuns is more complicated.  For example,
+% the chebfun
+g = exp(x).*f(x);
+
+%% 
+% also has no roots in [-1,1],
+roots(g)
+
+%%
+% but it has plenty of roots in the complex plane:
+roots(g,'all')
+
+%%
+% Most of these are spurious.
+% What has happened is that g is represented by a polynomial chosen
+% for its approximation properties on [-1,1].
+% Inevitably that polynomial will have roots
+% in the complex plane, even if they have little to do with g.
+
+%%
+% One cannot expect the chebfun system to solve this problem perfectly -- after all,
+% it is working on a real interval, not in the complex plane, and analytic continuation 
+% from the one to the other is
+% well known to be an ill-posed problem.  Nevertheless, chebfun may do do a pretty good job of
+% selecting genuine complex (and real)
+% roots near the interval of definition if you use the
+% 'complex' flag:
+roots(g,'complex')
+
+%%
+% We will not go into detail here of how this is done, but the idea is that associated
+% with any fun is a family of "chebfun ellipses" in the complex plane, with foci at
+% the endpoints, inside which
+% one may expect reasonably good accuracy of the fun.  Assuming the interval is
+% [-1,1] and the fun has length L, the chebfun ellipse associated with a parameter
+% delta<<1 is the region in the complex plane bounded by the image under the map
+% (z+1/z)/2 of the circle |z|=r, where r is defined by r^(-L)=delta.  The
+% command roots(g,'complex') first effectively does roots(g,'all'), then returns only
+% those roots lying inside a particular chebfun ellipse -- we take the one corresponding
+% to delta equal to the square root of the chebfun tolerance parameter eps.
+
+%%
+% One must expect complex roots of chebfuns to lose accuracy as one moves away from
+% the interval of definition.  Here's an example:
+f = exp(exp(x)).*(x-0.1i).*(x-.3i).*(x-.6i).*(x-1i);
+roots(f,'complex')
+%%
+% Notice that the first three imaginary roots are located with
+% about 10, 8, and 6 digits of accuracy, while the fourth does not appear
+% in the list at all.
+
+%%
+% Here is a more complicated example:
+F = @(x) 4+sin(x)+sin(sqrt(2)*x)+sin(pi*x);
+f = chebfun(F,[-100,100]);
+
+%%
+% This function has a lot of complex roots lying in strips on either side
+% of the real axis.  Our first attempt to plot them, however, gives
+% a crazy result. 
+r = roots(f,'complex');
+hold off, plot(r,'.','markersize',6)
+
+%%
+% The 'norecurse' flag turns off the Boyd-Battles recursion mentioned
+% above, fixing the problem:
+r = roots(f,'complex','norecurse');
+hold off, plot(r,'.m','markersize',6)
+
+%%
+% Here is a verification that the roots we have found are
+% pretty good ones:
+norm(F(r),inf)
+
+%% 3.7 References
 %
 % [Battles 2006] Z. Battles, Numerical Linear Algebra for
 % Continuous Functions, DPhil thesis, Oxford University
@@ -238,3 +330,6 @@
 % [Good 1961] I. J. Good, "The colleague matrix, a Chebyshev
 % analogue of the companion matrix", Quarterly Journal of 
 % Mathematics 12 (1961), 61-68.
+%
+% [Specht 1960] W. Specht, Die Lage der Nullstellen eines Polynoms.
+% IV, Math. Nachr. 21 (1960), 201-222.
