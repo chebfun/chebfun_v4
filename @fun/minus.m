@@ -59,6 +59,10 @@ if samemap(g1,g2) && all(exps1==exps2);
     g1.scl.h = max(g1.scl.h,g2.scl.h);
     g1.scl.v = max([g1.scl.v,g2.scl.v,norm(vals,inf)]);
     g1.n = length(vals);
+    
+    if any(g1.exps < 0)
+        g1 = checkzero(g1);
+    end
     return
 end
 
@@ -97,6 +101,10 @@ if round([exps1 exps2]) == [exps1 exps2]
     g1.scl = scl; 
     g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
     g1.n = length(g1.vals);
+    
+    if any(g1.exps < 0)
+        g1 = checkzero(g1);
+    end
     return
 end
 
@@ -122,6 +130,19 @@ g1.exps = sum([exps1 ; exps2]);
 g1.scl = scl; 
 g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
 g1.n = length(g1.vals);
+
+if any(g1.exps < 0)
+    g1 = checkzero(g1);
+end
+
+function g1 = checkzero(g1)
+% With exps, if the relative deifference is O(eps) we set it to zero.
+if all(abs(g1.vals) < 10*g1.scl.v*chebfunpref('eps'))
+    g1.vals = 0;
+    g1.n = 1; 
+    g1.exps = [0 0];
+    g1.scl.v = 0;
+end
 
 
 
