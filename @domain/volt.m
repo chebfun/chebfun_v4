@@ -1,26 +1,28 @@
-function V = volt(k,d)
+function V = volt(k,d,onevar)
 % VOLT  Volterra integral operator.
 % V = VOLT(K,D) constructs a chebop representing the Volterra integral
 % operator with kernel K for functions in domain D=[a,b]:
 %    
-%      (F*v)(x) = int( K(x,y) v(y), y=a..x )
+%      (V*v)(x) = int( K(x,y) v(y), y=a..x )
 %  
 % The kernel function K(x,y) should be smooth for best results.
 %
 % K must be defined as a function of two inputs X and Y. These may be
 % scalar and vector, or they may be matrices defined by NDGRID to represent
-% a tensor product of points in DxD, so K must be vectorized accordingly.
-% In the matrix case, some kernels can be evaluated much more efficiently
-% using X(:,1) and Y(1,:) instead of the full matrices. For example, the
-% separable kernel K(x,y) = exp(x-y) might be coded as
+% a tensor product of points in DxD. 
 %
-%   function K = kernel(X,Y)
-%   if all(size(X)>1)       % matrix input
-%     x = X(:,1);  y = Y(1,:);
-%     K = exp(x)*exp(-y);   % vector outer product
-%   else
-%     K = exp(X-Y);
-%   end
+% VOLT(K,D,'onevar') will avoid calling K with tensor product matrices X 
+% and Y. Instead, the kernel function K should interpret a call K(x) as 
+% a vector x defining the tensor product grid. This format allows a 
+% separable or sparse representation for increased efficiency in
+% some cases.
+%
+% Example:
+%
+% To solve u(x) + x*int(exp(x-y)*u(y),y=0..x) = f(x):
+% [d,x] = domain(0,2);
+% V = volt(@(x,y) exp(x-y),d);  
+% u = (1+diag(x)*V) \ sin(exp(3*x)); 
 %
 %  See also fred, chebop.
 
@@ -43,10 +45,16 @@ V = chebop(@matrix,@op,d,-1);
 % Matrix form. Each row of the result, when taken as an inner product with
 % function values, does the proper quadrature. Note that while C(n) would
 % be triangular for low-order quadrature, for spectral methods it is not.
+if nargin==2, onevar=false; end
   function A = matrix(n)
     x = chebpts(n,d);
-    [X,Y] = ndgrid(x);
-    A = k(X,Y).*C(n);
+    if onevar  
+      A = k(x);
+    else
+      [X,Y] = ndgrid(x);
+      A = k(X,Y);
+    end
+    A = A.*C(n);
   end
     
 

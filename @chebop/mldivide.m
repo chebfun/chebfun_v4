@@ -92,15 +92,27 @@ end
     % Retrieve or compute LU factors of the matrix.
     if use_store && N > 5 && length(storage)>=A.ID ...
         && length(storage(A.ID).L)>=N && ~isempty(storage(A.ID).L{N})
-     L = storage(A.ID).L{N};
-     U = storage(A.ID).U{N};
-     c = storage(A.ID).c{N};
-     rowidx = storage(A.ID).rowidx{N};
-    else
+      L = storage(A.ID).L{N};
+      U = storage(A.ID).U{N};
+      c = storage(A.ID).c{N};
+      rowidx = storage(A.ID).rowidx{N};
+    else  % have to compute L and U
       Amat = feval(A,N);
       [Bmat,c,rowidx] = bdyreplace(A,N);
       Amat(rowidx,:) = Bmat;
       [L,U] = lu(Amat);
+      if use_store && N>5   % store L and U
+        % Very crude garbage collection! If over capacity, clear out
+        % everything.
+        ssize = whos('storage');
+        if ssize.bytes > cheboppref('maxstorage')
+          storage = struct([]);
+        end
+        storage(A.ID).L{N} = L;
+        storage(A.ID).U{N} = U;
+        storage(A.ID).c{N} = c;
+        storage(A.ID).rowidx{N} = rowidx;
+      end        
     end
     
     % Evaluate and modify RHS as needed.
@@ -110,21 +122,7 @@ end
       
     % Solve.
     v = U\(L\f);
-    
-    % Store factors if necessary.
-    if use_store && N > 5
-      % This is very crude garbage collection! If over capacity, clear out
-      % everything.
-      ssize = whos('storage');
-      if ssize.bytes > cheboppref('maxstorage')
-        storage = struct([]); 
-      end
-      storage(A.ID).L{N} = L;
-      storage(A.ID).U{N} = U;
-      storage(A.ID).c{N} = c;
-      storage(A.ID).rowidx{N} = rowidx;
-    end
-    
+     
     V = reshape(v,N,m);
     v = sum(V,2);
     v = filter(v,1e-8);

@@ -1,4 +1,4 @@
-function F = fred(k,d)
+function F = fred(k,d,onevar)
 % FRED  Fredholm integral operator.
 % F = FRED(K,D) constructs a chebop representing the Fredholm integral
 % operator with kernel K for functions in domain D=[a,b]:
@@ -9,18 +9,35 @@ function F = fred(k,d)
 %
 % K must be defined as a function of two inputs X and Y. These may be
 % scalar and vector, or they may be matrices defined by NDGRID to represent
-% a tensor product of points in DxD, so K must be vectorized accordingly.
-% In the matrix case, some kernels can be evaluated much more efficiently
-% using X(:,1) and Y(1,:) instead of the full matrices. For example, the
-% separable kernel K(x,y) = exp(x-y) might be coded as
+% a tensor product of points in DxD. 
+%
+% FRED(K,D,'onevar') will avoid calling K with tensor product matrices X 
+% and Y. Instead, the kernel function K should interpret a call K(x) as 
+% a vector x defining the tensor product grid. This format allows a 
+% separable or sparse representation for increased efficiency in
+% some cases.
+%
+% Example:
+%
+% To solve u(x) - x*int(exp(x-y)*u(y),y=0..2) = f(x), in a way that 
+% exploits exp(x-y)=exp(x)*exp(-y), first write:
 %
 %   function K = kernel(X,Y)
-%   if all(size(X)>1)       % matrix input
-%     x = X(:,1);  y = Y(1,:);
-%     K = exp(x)*exp(-y);   % vector outer product
-%   else
+%   if nargin==1   % tensor product call
+%     K = exp(x)*exp(-x');   % vector outer product
+%   else  % normal call
 %     K = exp(X-Y);
 %   end
+%
+% At the prompt:
+%
+% [d,x] = domain(0,2);
+% F = fred(@kernel,d);  % slow way
+% tic, u = (1-diag(x)*F) \ sin(exp(3*x)); toc
+%   %(Elapsed time is 0.265166 seconds.)
+% F = fred(@kernel,d,'onevar');  % fast way
+% tic, u = (1-diag(x)*F) \ sin(exp(3*x)); toc
+%   %(Elapsed time is 0.205714 seconds.)
 %
 %  See also volt, chebop.
 
@@ -41,11 +58,16 @@ F = chebop(@matrix,@op,d);
 
 % Matrix form. At given n, multiply function values by CC quadrature
 % weights, then apply kernel as inner products. 
+if nargin==2, onevar=false; end
   function A = matrix(n)
     x = chebpts(n,d);
-    [X,Y] = ndgrid(x);
     s = clencurt(d.ends(1),d.ends(2),n);
-    A = k(X,Y) * spdiags(s',0,n,n);
+    if onevar  % experimental
+      A = k(x)*spdiags(s',0,n,n);
+    else
+      [X,Y] = ndgrid(x);
+      A = k(X,Y) * spdiags(s',0,n,n);
+    end
   end
     
 end
