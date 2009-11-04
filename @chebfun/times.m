@@ -11,9 +11,7 @@ if (isempty(F1) || isempty(F2)), Fout = chebfun; return; end
 
 % scalar times chebfun
 if isa(F1,'double') || isa(F2,'double')
-    
     Fout = F1 * F2;
-
 else 
 % product of two chebfuns
 
@@ -89,6 +87,9 @@ imps(1,:) = f.imps(1,:).*g.imps(1,:);
 % end
 
 % Set chebfun: (use f)
+f.jacobian = anon('@(u) diag(f)*jacobian(g,u) + diag(g)*jacobian(f,u)',{'f' 'g'},{f g});
+f.ID = newIDnum();
+
 % update scales in funs:
 for k = 1:f.nfuns-1
     funscl = ffuns(k).scl.v;

@@ -7,3 +7,7 @@ function Fout = sqrt(F)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 Fout = comp(F, @(x) sqrt(x));
+for k = 1:numel(F)
+    Fout(k).jacobian = anon('@(u) (1/2)*diag(1./Fout)*jacobian(F,u)',{'Fout','F'},{Fout(k) F(k)});
+    Fout(k).ID = newIDnum;
+end

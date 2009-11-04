@@ -49,3 +49,5 @@ vals(f.nfuns+1) = funs(f.nfuns).vals(end).*diff(ends(end-1:end)).^funs(end).exps
 fout = set(f, 'funs', funs); 
 fout.imps = [vals; f.imps(3:end,:)];
 
+fout.jacobian = anon('@(u) cumsum(domain(f))*jacobian(f,u)',{'f'},{f});
+fout.ID = newIDnum();

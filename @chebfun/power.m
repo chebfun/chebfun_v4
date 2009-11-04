@@ -19,12 +19,16 @@ elseif isa(F1,'chebfun')
        Fout = F1;
        for k = 1:numel(F1)
             Fout(k) = powercol(F1(k),F2);
+            Fout(k).jacobian = anon('@(u) F2*diag(F1.^(F2-1))*jacobian(F1,u)',{'F1', 'F2'},{F1(k) F2});
+			Fout(k).ID = newIDnum();
        end
 else
        Fout = F2;
        for k = 1:numel(F2)
         	Fout(k) = powercol(F1,F2(k));
-       end
+            Fout(k).jacobian = anon('@(u) diag(diag(w{1}.^w{2})*log(w{1}))*jacobian(w{2},u)',{F1 F2(k)});
+       		Fout(k).ID = newIDnum();
+	   end
 end
 
 % -----------------------------------------------------    

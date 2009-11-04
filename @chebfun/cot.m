@@ -11,3 +11,7 @@ for k = 1:numel(F)
 end
 
 Fout = comp(F, @(x) cot(x));
+for k = 1:numel(F)
+    Fout(k).jacobian = anon(@(u) -diag(csc(F).^2)*jacobian(F,u),{'F'},{F(k)});
+    Fout(k).ID = newIDnum();
+end

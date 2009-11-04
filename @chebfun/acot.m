@@ -6,3 +6,7 @@ function Fout = acot(F)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 Fout = comp(F, @(x) acot(x));
+for k = 1:numelf(F)
+    Fout(k).jacobian = anon(@(u) diag(-1./(1+F.^2))*jacobian(F,u),{'F'},{F(k)});
+    Fout(k).ID = newIDnum();  
+end

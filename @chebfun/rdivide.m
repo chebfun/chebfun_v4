@@ -56,11 +56,17 @@ if ~isempty(newbkpts)
     fout = rdividecol(f1,f2);
 %        error('CHEBFUN:rdivide:DivisionByZero','Division by zero')
 elseif isa(f1,'double')    
-    if f1 == 0, fout = chebfun(0, f2.ends([1,end])); 
+    if f1 == 0
+		fout = chebfun(0, f2.ends([1,end])); 
+      	fout.jacobian = anon('@(u) 0*jacobian(f2,u)',{'f2'},{f2});
+      	fout.ID = newIDnum();
     else        
         fout = comp(f2,@(x) rdivide(f1,x));
         %fout = chebfun(@(x) f1./feval(f2,x), f2.ends);
         %fout.trans = f2.trans;
+
+        fout.jacobian = anon('@(u) diag(-f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});
+		fout.ID = newIDnum();
     end
 else
     if f1.trans~=f2.trans
@@ -69,5 +75,7 @@ else
     fout = comp(f1, @rdivide, f2);
     %chebfun(@(x) feval(f1,x)./feval(f2,x), union(f1.ends,f2.ends));
     %fout.trans = f1.trans;
+    fout.jacobian = anon('@(u) diag(1./f2)*jacobian(f1,u) - diag(f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});
+    fout.ID = newIDnum();
 end
 

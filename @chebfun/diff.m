@@ -12,9 +12,13 @@ function Fout = diff(F,n)
 
 if nargin==1, n=1; end
 
-Fout = F;
-for k = 1:numel(F)
-    Fout(k) = diffcol(F(k),n);
+if isa(n,'chebfun')
+    Fout = jacobian(F,n);
+else
+    Fout = F;
+    for k = 1:numel(F)
+        Fout(k) = diffcol(F(k),n);
+    end
 end
 
 
@@ -29,11 +33,12 @@ F = f;
 funs = f.funs;
 exps = get(f,'exps');
 ends = get(f,'ends');
-
+F.jacobian = anon(' @(u) diff(domain(f))^n * jacobian(f,u)',{'f' 'n'},{f n});
+F.ID = newIDnum;
 for j = 1:n % loop n times for nth derivative
     
     % differentiate every piece and rescale
-    for i = 1:f.nfuns 
+    for i = 1:f.nfuns
         funs(i) = diff(funs(i));
         F.scl = max(F.scl, funs(i).scl.v);
     end

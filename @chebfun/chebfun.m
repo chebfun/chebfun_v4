@@ -165,5 +165,6 @@ f(1).scl = 0;
 f(1).ends = [];
 f(1).imps = [];
 f(1).trans = false;
-
+f(1).jacobian = anon('@(u) []','',[]);
+f(1).ID = newIDnum();
 end

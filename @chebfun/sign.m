@@ -79,4 +79,3 @@ end
 fout = set(f,'funs',ff,'ends',newints,'scl',1,'imps',zeros(1,length(newints)));
 fout.imps(1,1) = sign(feval(f,ends(1)));
 fout.imps(1,end) = sign(feval(f,ends(end)));
-

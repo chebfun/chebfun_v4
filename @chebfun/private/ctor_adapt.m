@@ -76,7 +76,7 @@ for i = 1:length(ops)
                 ' a chebfun.'])
             end
             if norm(op.map.par(1:2)-ends(i:i+1)) > scl.h*1e-15
-                error('chebfun:ctor_1:domain','Incosistent doamins')
+                error('chebfun:ctor_1:domain','Incosistent domains')
             else
                 funs = [funs op];
                 newends = [newends ends(i+1)];

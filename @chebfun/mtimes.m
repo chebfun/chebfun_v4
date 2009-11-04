@@ -90,3 +90,6 @@ for i = 1:f.nfuns
 end
 f.imps = a*f.imps;
 f.scl = abs(a)*f.scl;
+
+f.jacobian = anon('@(u) a*jacobian(f,u)',{'a' 'f'},{a f});
+f.ID = newIDnum;

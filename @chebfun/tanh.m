@@ -6,3 +6,7 @@ function Fout = tanh(F)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 Fout = comp(F, @(x) tanh(x));
+for k = 1:numel(F)
+    Fout(k).jacobian = anon(@(u) diag(sech(F).^2)*jacobian(F,u),{'F'},{F(k)});
+    Fout(k).ID = newIDnum;
+end

@@ -23,5 +23,6 @@ for k = 1:numel(F)
     else
         Fout(k) = comp(F(k),@abs);
     end
-    
+    Fout(k).jacobian = anon(@(u) diag(sign(fout))*jacobian(fout,u),{'fout'},{Fout});
+	Fout(k).ID = newIDnum;
 end
