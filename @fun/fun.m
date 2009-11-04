@@ -109,7 +109,12 @@ switch class(op)
         end
         return
     case 'char'
-        op = inline(op);
+%         op = inline(op);
+        depvar = symvar(op); 
+        if numel(depvar) ~= 1, 
+            error('Incorrect number of dependent variables in string input'); 
+        end
+        op = eval(['@(' depvar{:} ')' op]);
 end
 
 %% Find 'exps' - the exponents in markfuns 

@@ -87,7 +87,12 @@ for i = 1:length(ops)
                 error(['A chebfun cannot be constructed from a string with '...
                     ' numerical values.'])
             end
-            op = inline(op);
+%             op = inline(op);
+            depvar = symvar(op); 
+            if numel(depvar) ~= 1, 
+                error('Incorrect number of dependent variables in string input'); 
+            end
+            op = eval(['@(' depvar{:} ')' op]);
             op = vectorcheck(op,ends(i:i+1),pref.vecwarn);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);

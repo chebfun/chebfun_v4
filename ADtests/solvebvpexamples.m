@@ -43,7 +43,7 @@ set(gca,'XTick',[1:4])
 f = @(u) 0.01*diff(u,4) + 10.*diff(u,2) + 100*sin(u);
 g.left = @(u) u-1;
 g.right = { @(u) u, @(u) diff(u), @(u) diff(u,2) };
-[u nrmduvec] = solveTAD(f,g,domain(0,1));
+[u nrmduvec] = solvebvp(f,g,domain(0,1));
 figure;subplot(1,2,1),plot(u),title('u(x) vs. x');
 box on, grid on, xlabel('x'), ylabel('u(x)'), %set(gca,'Ytick',[0:0.2:1.2])
 subplot(1,2,2),semilogy(nrmduvec,'-*');title('Norm of update vs. iteration no.');
