@@ -1,0 +1,11 @@
+
+--This line, and those below, will be ignored--
+
+A    blowuptests
+A    blowuptests/SumTest.m
+A    blowuptests/NaNavoidance.m
+A    blowuptests/DiffTest.m
+A    blowuptests/CumsumTest.m
+A    blowuptests/TestExps.m
+A    blowuptests/FindExpsTest.m
+M    @chebfun/display.m
