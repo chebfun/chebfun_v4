@@ -13,22 +13,22 @@ if isa(F1,'chebfun') && isa(F2,'chebfun')
     end
     Fout = F1;
     for k = 1:numel(F1)
-         Fout(k) = powercol(F1(k),F2(k));
+        Fout(k) = powercol(F1(k),F2(k));
     end
 elseif isa(F1,'chebfun')
-       Fout = F1;
-       for k = 1:numel(F1)
-            Fout(k) = powercol(F1(k),F2);
-            Fout(k).jacobian = anon('@(u) F2*diag(F1.^(F2-1))*jacobian(F1,u)',{'F1', 'F2'},{F1(k) F2});
-			Fout(k).ID = newIDnum();
-       end
+    Fout = F1;
+    for k = 1:numel(F1)
+        Fout(k) = powercol(F1(k),F2);
+        Fout(k).jacobian = anon('@(u) F2*diag(F1.^(F2-1))*jacobian(F1,u)',{'F1', 'F2'},{F1(k) F2});
+        Fout(k).ID = newIDnum();
+    end
 else
-       Fout = F2;
-       for k = 1:numel(F2)
-        	Fout(k) = powercol(F1,F2(k));
-            Fout(k).jacobian = anon('@(u) diag(diag(w{1}.^w{2})*log(w{1}))*jacobian(w{2},u)',{F1 F2(k)});
-       		Fout(k).ID = newIDnum();
-	   end
+    Fout = F2;
+    for k = 1:numel(F2)
+        Fout(k) = powercol(F1,F2(k));
+        Fout(k).jacobian = anon('@(u) diag(diag(F1.^F2)*log(F1))*jacobian(F2,u)',{'F1', 'F2'},{F1 F2(k)});
+        Fout(k).ID = newIDnum();
+    end
 end
 
 % -----------------------------------------------------    
