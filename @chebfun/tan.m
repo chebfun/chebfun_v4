@@ -12,7 +12,7 @@ end
 
 Fout = comp(F, @(x) tan(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon(@(u) diag(sec(F).^2)*jacobian(F,u),{'F'},{F(k)});
+    Fout(k).jacobian = anon('@(u) diag(sec(F).^2)*jacobian(F,u)',{'F'},{F(k)});
     Fout(k).ID = newIDnum;
 end
     

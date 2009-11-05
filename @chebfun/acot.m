@@ -7,6 +7,6 @@ function Fout = acot(F)
 
 Fout = comp(F, @(x) acot(x));
 for k = 1:numelf(F)
-    Fout(k).jacobian = anon(@(u) diag(-1./(1+F.^2))*jacobian(F,u),{'F'},{F(k)});
+    Fout(k).jacobian = anon('@(u) diag(-1./(1+F.^2))*jacobian(F,u)',{'F'},{F(k)});
     Fout(k).ID = newIDnum();  
 end

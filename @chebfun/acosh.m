@@ -6,5 +6,5 @@ function Fout = acosh(F)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 Fout = comp(F, @(x) acosh(x));
-Fout.jacobian = anon(@(u) diag(1./sqrt(F.^2-1))*jacobian(F,u),{'F'},{F});
+Fout.jacobian = anon('@(u) diag(1./sqrt(F.^2-1))*jacobian(F,u)',{'F'},{F});
 Fout.ID = newIDnum();

@@ -7,6 +7,6 @@ function Fout = asec(F)
 
 Fout = comp(F, @(x) asec(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon(@(u) diag(1./(abs(F)*sqrt(F.^2-1)))*jacobian(F,u),{'F'},{F(k)});
+    Fout(k).jacobian = anon('@(u) diag(1./(abs(F).*sqrt(F.^2-1)))*jacobian(F,u)',{'F'},{F(k)});
     Fout(k).ID = newIDnum();  
 end
