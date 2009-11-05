@@ -119,8 +119,7 @@
 
 %%
 % Here is another example, now with the chebfun defined by
-% an anonymous function instead of a string.  (The construction process
-% is often faster if you use anonymous functions.)
+% an anonymous function instead of a string.
 % In this case the interval is specified as [0,100].
   g = chebfun(@(t) besselj(0,t),[0,100]);
   plot(g), ylim([-.5 1])

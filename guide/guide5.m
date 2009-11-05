@@ -98,7 +98,6 @@ subplot(1,2,2), plot(z.^2), axis equal, grid on
 % between intersecting curves.
 
 %%
-% One can illustrate such maps with chebfuns.
 % For example, suppose we define R to be
 % a chebfun corresponding to the four sides of a rectangle, and
 % we define X to be another chebfun corresponding to a cross inside R. 
@@ -167,7 +166,7 @@ for j = 1:3
 end
 plot(S)
 hold on, axis equal
-plot((sqrt(5)-1)/2,0,'.k','markersize',6)
+plot((sqrt(5)-1)/2,0,'.k','markersize',4)
 
 %%
 % Here's a prettier version of the same image using the
@@ -175,11 +174,11 @@ plot((sqrt(5)-1)/2,0,'.k','markersize',6)
 
 S = [-.5i+s; 1-.5i+1i*s; 1+.5i-s; .5i-1i*s];
 clf
-fill(real(S),imag(S),'b'), axis equal, hold on
-S = moebius(S); fill(real(S),imag(S),'g')
-S = moebius(S); fill(real(S),imag(S),'r')
-S = moebius(S); fill(real(S),imag(S),'c')
-plot((sqrt(5)-1)/2,0,'.k','markersize',5)
+fill(real(S),imag(S),[.5 .5 1]), axis equal, hold on
+S = moebius(S); fill(real(S),imag(S),[.5 1 .5])
+S = moebius(S); fill(real(S),imag(S),[1 .5 .5])
+S = moebius(S); fill(real(S),imag(S),[.5 1 1 ])
+plot((sqrt(5)-1)/2,0,'.k','markersize',4)
 axis off
 
 %% 5.3 Contour integrals
@@ -345,8 +344,7 @@ f = sin(z).^3 + cos(z).^3;
 r = sum(z.*(diff(f)./f))/(2i*pi)
 
 %%
-% Since this zero happens to be real, we can check the result
-% by a more ordinary real chebfun calculation:
+% We can check the result by a more ordinary chebfun calculation:
 
 x = chebfun('x');
 f = sin(x).^3 + cos(x).^3;
@@ -357,35 +355,52 @@ r = roots(f)
 
 %% 5.5 Alphabet soup
 % 
-% One can do some silly things with piecewise smooth chebfuns.  
-% For example, here is a chebfun defined
-% on the interval [0,7] that prints the initials LNT.  One could polish
-% up and extend this construction by defining 26 suitable M-functions.
-
-LW = 'linewidth'; lw = 2.5;
-s = chebfun('s',[0 1]);
-w = [1+.8i-.8i*s; 1+.6*s;                     % L
-     2+.8i*s; 2+.8i+(-.8i+.6)*s; 2.6+.8i*s;   % N
-     3.3+.8i*s; 3+.8i+.6*s];                  % T
-clf, plot(w,'k',LW,lw), axis equal, axis off
+% The chebfun command "scribble" returns a piecewise linear complex chebfun
+% corresponding to a word spelled out in capital letters.  For example:
+f = scribble('Oxford University');
+LW = 'linewidth'; lw = 2;
+plot(f,LW,lw), axis equal
 
 %%
-% As always, this is a precisely defined mathematical function:
-
-sum(w)
-max(abs(w))
-w(3.5)
+% This chebfun happens to have 67 pieces:
+domain(f)
 
 %%
-% We can transform the function in various ways:
-
-subplot(1,2,1), plot(sqrt(w),'k',LW,lw), axis equal, axis off
-subplot(1,2,2), plot(1./w,'k',LW,lw), axis equal, axis off
+% Though its applications are unlikely to be mathematical,
+% f is a precisely defined mathematical object just like any other
+% chebfun.  If we wish, we can compute with it:
+f(10), norm(f)
 
 %%
+% Perhaps more interesting is that we can apply functions to it
+% and learn something in the process:
 
-subplot(1,2,1), plot(cosh(w),'k',LW,lw), axis equal, axis off
-subplot(1,2,2), plot( cos(w),'k',LW,lw), axis equal, axis off
+plot(exp(3i*f),'m',LW,lw), axis equal
+
+%%
+% Does putting a box around enhance the image?
+% (We do this by adding a second column of a chebfun
+% quasimatrix -- see Chapter 6.)
+ 
+L = f.ends(end);
+s = chebfun(@(x) 4*x/L,[0 L/4]);
+box = [-1.1-.05i+2.2*s;1.1-.05i+.22i*s;1.1+.17i-2.2*s;-1.1+.17i-.22i*s];
+f = [f box];
+plot(f,LW,lw), axis equal
+
+%%
+subplot(1,2,1), plot(exp((1+.2i)*f),LW,lw), axis equal, axis off
+subplot(1,2,2), plot(sin(2*f),LW,lw), axis equal, axis off
+
+%%
+% Next May 16, you might wish to write a greeting card for
+% Pafnuty Lvovich Chebyshev, accurate as always to 15 digits:
+f = scribble('Happy Birthday Pafnuty!');
+g = @(z) exp(2i*z)/1i;
+clf, plot(g(f),'r',LW,lw), axis equal, axis off
+circle = 1.12*chebfun(@(x) exp(2i*pi*x/L),[0 L]);
+ellipse = 1.2*(circle + 1./circle)/2 + 1i*mean(imag(f));
+hold on, plot(g(ellipse),'b',LW,lw)
 
 %% 5.6  References
 %

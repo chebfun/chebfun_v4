@@ -412,7 +412,7 @@ toc
 %%
 % For Legendre polynomials, Legendre points, and Gauss quadrature, use
 % LEGPOLY and LEGPTS.
-% For Chebyshev polynomials, Chebyshev points and Clenshaw-Curtis quadrature,
+% For Chebyshev polynomials, Chebyshev points, and Clenshaw-Curtis quadrature,
 % use CHEBPOLY and CHEBPTS and the built-in chebfun commands such as SUM.
 % A third variant is also available: for
 % Jacobi polynomials, Gauss-Jacobi points, and
@@ -439,7 +439,8 @@ toc
 % calculation fo the roots of special functions, SIAM Journal of
 % Scientific Computing 29 (2007), 1420-1438.
 %
-% [G. H. Golub and J. H. Welsch, Calculation of Gauss quadrture rules,
+% [Golub & Welsch 1969]
+% G. H. Golub and J. H. Welsch, Calculation of Gauss quadrature rules,
 % Mathematics of Computation 23 (1969), 221-230.
 %
 % [Gonnet 2009] P. Gonnet, Adaptive Quadrature Re-Revisited,
