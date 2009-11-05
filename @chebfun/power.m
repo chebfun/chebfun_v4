@@ -26,7 +26,7 @@ else
     Fout = F2;
     for k = 1:numel(F2)
         Fout(k) = powercol(F1,F2(k));
-        Fout(k).jacobian = anon('@(u) diag(diag(F1.^F2)*log(F1))*jacobian(F2,u)',{'F1', 'F2'},{F1 F2(k)});
+        Fout(k).jacobian = anon('@(u) (diag(F1.^F2)*log(F1))*jacobian(F2,u)',{'F1', 'F2'},{F1 F2(k)});
         Fout(k).ID = newIDnum();
     end
 end

@@ -48,7 +48,7 @@ uu(mm) = .5*(uu(mm+1)+uu(mm-1));
 if ~trans
     h = surf(xx.',tt.',uu.',varargin{:});
 else
-    h = surf(xx,tt,uu,varargin{:});
+    h = surf(xx.',tt.',uu,varargin{:});
 end
 
 if nargout > 0

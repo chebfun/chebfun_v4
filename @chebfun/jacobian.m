@@ -40,7 +40,6 @@ for k = 1:numel(F)
     end
     J = [ J; row ];
 end
-end
 
 function J =  jacReset(d,m,k)
 I = eye(d);
@@ -52,5 +51,4 @@ end
 J = [ J, I ];
 for j = k+1:m
     J = [ J, Z ];
-end
 end
