@@ -14,7 +14,7 @@ if nargin == 1
     recurse = 1;
     prune = 0;
 end
-r = rootsunit(g,all,recurse);
+r = rootsunit(g,all,recurse,prune);
 if prune
     rho = sqrt(eps)^(-1/g.n);
     rho_roots = abs(r+sqrt(r.^2-1));
@@ -25,7 +25,7 @@ else
 end
 out = g.map.for(out);
 
-function out = rootsunit(g,all,recurse)
+function out = rootsunit(g,all,recurse,prune)
 % Computes the roots on the unit interval
 
 % Assume that the map in g is the identity: compute the roots in the
@@ -42,17 +42,12 @@ if norm(ends,inf) < inf;
 end
 
 tol = 100*eps;
-
-if g.vals == 0
-   out = zeros(0,1);
-   return
-end    
-   
+    
 if ~recurse || (g.n<101)                                    % for small length funs
     c=chebpoly(g);                              % compute Cheb coeffs
     if abs(c(1)) < 1e-14*norm(c,inf)
         ind= find(abs(c)>1e-14*norm(c,inf),1,'first');
-        if isempty(ind), out = zeros(0,1);
+        if isempty(ind), out = zeros(length(c),1);
             return
         end
         c=c(ind:end);
@@ -92,6 +87,11 @@ if ~recurse || (g.n<101)                                    % for small length f
             out(1) = max(out(1),-1);                % correct root -1
             out(end) = min(out(end),1);             % correct root  1
         end
+    elseif prune
+        rho = sqrt(eps)^(-1/g.n);
+        rho_roots = abs(r+sqrt(r.^2-1));
+        rho_roots(rho_roots<1) = 1./rho_roots(rho_roots<1);
+        out = r(rho_roots<=rho);
     else
         out = r;
     end
@@ -100,6 +100,6 @@ else
     c = -0.004849834917525; % arbitrary splitting point to avoid a root at c
     g1 = restrict(g,[-1 c]);
     g2 = restrict(g,[c,1]);
-    out = [-1+(rootsunit(g1,all,recurse)+1)*.5*(1+c);...        % find roots recursively 
-        c+(rootsunit(g2,all,recurse)+1)*.5*(1-c)];              % and rescale them
+    out = [-1+(rootsunit(g1,all,recurse,prune)+1)*.5*(1+c);...        % find roots recursively 
+        c+(rootsunit(g2,all,recurse,prune)+1)*.5*(1-c)];              % and rescale them
 end

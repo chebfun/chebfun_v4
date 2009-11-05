@@ -10,10 +10,14 @@ function w = bary_weights(xk)
 %  $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
 
 n = length(xk);
-C = 4/(max(xk)-min(xk)); % Capacity of interval
-if n < 300          % for small n using matrices is faster
+if isreal(xk)
+    C = 4/(max(xk)-min(xk)); % Capacity of interval
+else
+    C = 1;  % Scaling by capacity doesn't apply if using complex nodes
+end
+if n < 300 || ~isreal(xk)       % for small n using matrices is faster
    XK = repmat(xk(:),1,n);
-   V = C*(XK-XK');
+   V = C*(XK-XK.');
    V(logical(eye(n))) = 1;
    VV = exp(sum(log(abs(V))));
    w = 1./(prod(sign(V)).*VV).';
