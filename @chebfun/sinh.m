@@ -6,7 +6,7 @@ function Fout = sinh(F)
 % Copyright 2002-2008 by The Chebfun Team.
 
 for k = 1:numel(F)
-    if any(get(F(:,k),'exps')), error('CHEBFUN:sin:inf',...
+    if any(get(F(:,k),'exps')), error('CHEBFUN:sinh:inf',...
         'chebfun cannot handle exponential blowups'); end
 end
 

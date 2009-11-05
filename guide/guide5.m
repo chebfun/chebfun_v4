@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 5: COMPLEX CHEBFUNS
-% Lloyd N. Trefethen, April 2008
+% Lloyd N. Trefethen, November 2009
 
 %% 5.1  Complex functions of a real variable
 
@@ -20,7 +20,7 @@ axis equal
 % 1i instead (just as one might write,
 % for example, 3+2i or 2.2-1.1i).  Writing the imaginary unit
 % in this fashion is a common trick among Matlab programmers,
-% for it avoids the risk of surprises caused by i or j being
+% for it avoids the risk of surprises caused by i or j having been
 % overwritten by other values.
 % The "axis equal" command ensures that the real and
 % imaginary axes are scaled equally.
@@ -105,18 +105,19 @@ subplot(1,2,2), plot(z.^2), axis equal, grid on
 
 s = chebfun('s',[0 1]);
 R = [1+s; 2+2i*s; 2+2i-s; 1+2i-2i*s];
-clf, subplot(1,2,1), plot(R), grid on, axis equal
+LW = 'linewidth'; lw1 = 2; lw2 = 3;
+clf, subplot(1,2,1), plot(R,LW,lw2), grid on, axis equal
 X = [1.3+1.5i+.4*s; 1.5+1.3i+.4i*s];
-hold on, plot(X,'r')
+hold on, plot(X,'r',LW,lw2)
 
 %%
 % Here we see what happens to R and X under the maps z^2 and exp(z):
 
 clf
-subplot(1,2,1), plot(R.^2), grid on, axis equal
-hold on, plot(X.^2,'r')
-subplot(1,2,2), plot(exp(R)), grid on, axis equal
-hold on, plot(exp(X),'r')
+subplot(1,2,1), plot(R.^2,LW,lw1), grid on, axis equal
+hold on, plot(X.^2,'r',LW,lw2)
+subplot(1,2,2), plot(exp(R),LW,lw1), grid on, axis equal
+hold on, plot(exp(X),'r',LW,lw2)
 
 %%
 % We can take the same idea further and construct a grid in the
@@ -166,12 +167,20 @@ for j = 1:3
 end
 plot(S)
 hold on, axis equal
-plot((sqrt(5)-1)/2,0,'.k')
+plot((sqrt(5)-1)/2,0,'.k','markersize',6)
 
 %%
-% One could make more beautiful pictures along these lines with
-% commands of the form fill(chebfun), but Matlab's "fill" command
-% has not yet been overloaded for chebfuns.
+% Here's a prettier version of the same image using the
+% chebfun "fill" command.
+
+S = [-.5i+s; 1-.5i+1i*s; 1+.5i-s; .5i-1i*s];
+clf
+fill(real(S),imag(S),'b'), axis equal, hold on
+S = moebius(S); fill(real(S),imag(S),'g')
+S = moebius(S); fill(real(S),imag(S),'r')
+S = moebius(S); fill(real(S),imag(S),'c')
+plot((sqrt(5)-1)/2,0,'.k','markersize',5)
+axis off
 
 %% 5.3 Contour integrals
 % If s is a real parameter and z(s) is a complex function of s,
