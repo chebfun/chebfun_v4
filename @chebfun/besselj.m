@@ -23,3 +23,8 @@ elseif r==1 && ~F.trans
 else
     error('The parameters of besselj must be a row vector and a column chebfun, or a column vector and a row chebfun.')
 end
+
+for k = 1:numel(F)
+  Fout(k).jacobian = anon('@(u) diag(-besselj(nu+1,F)+nu*Fout./F)*jacobian(F,u)',{'nu' 'F' 'Fout'},{nu F(k) Fout(k)});
+  Fout(k).ID = newIDnum();
+end

@@ -7,7 +7,6 @@ function Fout = erfc(F)
 
 Fout = comp(F, @(x) erfc(x));
 for k = 1:numel(F)
-  g = -2*exp(-F(k).^2)/sqrt(pi);
-  Fout(k).jacobian = anon('@(u) diag(g)*jacobian(F,u)',{'F' 'g'},{F(k) g});
+  Fout(k).jacobian = anon('@(u) diag(-2*exp(-F.^2)/sqrt(pi))*jacobian(F,u)',{'F'},{F(k)});
   Fout(k).ID = newIDnum();
 end

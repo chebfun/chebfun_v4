@@ -92,7 +92,7 @@ if strcmp(g.map.name,'linear')
     % Unbounded map
 elseif norm(g.map.par(1:2),inf) == inf
     
-    if ~any(g.exps) error('chebfun:fun:diff','Cannot diff inf interval funs with exps yet'); end
+    if any(g.exps) error('chebfun:fun:diff','Cannot diff inf interval funs with exps yet'); end
     
     nz = 2; % number of zeros needed to augment coefficients due chain rule
     infboth = false;

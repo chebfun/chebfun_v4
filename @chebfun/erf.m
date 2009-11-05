@@ -6,3 +6,9 @@ function Fout = erf(F)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 Fout = comp(F, @(x) erf(x));
+
+Fout = comp(F, @(x) erf(x));
+for k = 1:numel(F)
+  Fout(k).jacobian = anon('@(u) diag(2*exp(-F.^2)/sqrt(pi))*jacobian(F,u)',{'F'},{F(k)});
+  Fout(k).ID = newIDnum();
+end
