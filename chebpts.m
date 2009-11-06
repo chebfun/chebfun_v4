@@ -3,8 +3,10 @@ function x = chebpts(n,d)
 %   CHEBPTS(N) returns N Chebyshev points in [-1,1].
 %
 %   CHEBPTS(N,D) scales the nodes and weights for the domain D. D can be
-%   either a domain object or a vector with two components.
-%
+%   either a domain object or a vector with two components. If the interval
+%   is infinite, the map is chosen to be the default unbounded map with
+%   mappref('parinf') = [1 0], and mappref('adaptinf') = 0.
+%   
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
@@ -22,5 +24,14 @@ end
 if nargin > 1
     d = domain(d);
     ab = d.ends;
-    x = (x+1)/2*(ab(end)-ab(1)) + ab(1); 
+    
+    if ~any(isinf(ab))
+        x = (x+1)/2*(ab(end)-ab(1)) + ab(1); 
+        
+    else
+        m = maps({'unbounded'},ab);
+        x = m.for(x);
+        x([1 end]) = ab([1 end]);
+    end
+        
 end
