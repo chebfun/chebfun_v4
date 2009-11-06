@@ -31,7 +31,7 @@ ll = false;                 % default to semilogy plot
 
 % check inputs
 if nargin > 1
-    if isa(varargin{1},'double'), 
+    if isnumeric(varargin{1}), 
         k = varargin{1};
         varargin(1) = [];
     end
