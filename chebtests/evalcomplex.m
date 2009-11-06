@@ -9,8 +9,8 @@ xa = -1.1; xb = 1.1; ya = -.5; yb= .5;
 [xx, yy]= meshgrid(linspace(xa,xb,pts),linspace(ya,yb,pts)); 
 zz = xx+1i*yy;
 f = chebfun(op);
-fzz = f(zz)
-fzz = bary(zz,f.vals)
+fzz = f(zz);
+%fzz = bary(zz,f.vals)
 pass = true;
 for k = 1:pts^2
     if f(zz(k)) ~= fzz(k)
