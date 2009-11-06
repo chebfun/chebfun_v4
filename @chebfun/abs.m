@@ -21,8 +21,26 @@ for k = 1:numel(F)
         Fout(k) = abs(1i*F(k));
         % Complex case
     else
-        Fout(k) = comp(F(k),@abs);
+        r = roots(F(k));
+        if isempty(r)
+            Fout(k) = comp(F(k),@abs);
+        else
+            % Break points are the union of roots and F.ends
+            ends = F(k).ends;
+            hs =  hscale(F(k));
+            for j = 1:length(r)
+                % Make sure a root is not too close to a bkpoint
+                if min(abs(ends-r(j))) > 1e-14*hs 
+                    ends = union(ends,r(j));
+                end
+            end            
+            f1 = ones(domain(ends),1);
+            newf = overlap(F(k),f1);
+            Fout(k) = sqrt(conj(newf).*newf);                
+        end
     end
+    
     Fout(k).jacobian = anon('@(u) diag(sign(fout))*jacobian(fout,u)',{'fout'},{Fout});
 	Fout(k).ID = newIDnum;
+    
 end

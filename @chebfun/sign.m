@@ -37,14 +37,19 @@ else
     if abs(r(end)- ends(end)) > 1e-14*hs, r = [r; ends(end)];  end
 end
 
-% Get rid of multiple roots:
-if any(diff(r)<1e-14*hs)
-    rcp = r; r=r(1);
-    for i = 2:length(rcp)
-        if abs(r(end)-rcp(i)) > 1e-14*hs
-            r(end+1) = rcp(i);
+% check for double roots (double roots may be quite far apart)
+ind = find(diff(r) < 1e-7*hs); cont = 1; 
+while ~isempty(ind) && cont < 3
+    remove = false(size(r));
+    for k = 1:length(ind)
+        % Check whether a double root or two single roots close close
+        if abs(feval(f,mean(r(ind(k):ind(k)+1)))) < chebfunpref('eps')*100*f.scl
+           remove(ind+1) = true;
         end
     end
+    r(remove) = [];
+    cont = cont+1;
+    ind = find(diff(r) < 1e-7*hs);
 end
 
 % -------------------------------------------
@@ -53,18 +58,6 @@ end
 r(end) = ends(end);
 r(1) = ends(1);
 %---------------------------------------------
-
-% check for double roots
-ind = find(diff(r) < 1e-7*hs);
-if ~isempty(ind)
-    remove = false(size(r));
-    for k = 1:length(ind)
-        if abs(feval(f,mean(r(ind(k):ind(k)+1)))) < chebfunpref('eps')*100*f.scl
-            remove(ind(k)+1) = true;
-        end
-    end
-    r(remove) = [];
-end
 
 nr = length(r);
 newints = zeros(1,nr);

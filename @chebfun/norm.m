@@ -41,7 +41,7 @@ elseif min(size(A))==1                  % A is a chebfun
              mm = minandmax(A);
              normA = max(mm(2),-mm(1));
          else
-            normA = max(abs(A));
+            normA = sqrt(max(conj(A).*A));
          end
       case {-inf,'-inf'}
          normA = min(abs(A));

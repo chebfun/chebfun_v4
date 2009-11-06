@@ -12,6 +12,7 @@ for k = 1:numel(F)
         funs(j) = conj(funs(j));
     end
     F(k).funs = funs;
+    F(k).imps = conj(F(k).imps);
     
     F(k).jacobian = anon('@(u) conj(F).jacobian(F,u)',{'F'},F(k));
     F(k).ID = newIDnum();
