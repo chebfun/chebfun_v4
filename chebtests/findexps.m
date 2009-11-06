@@ -10,6 +10,5 @@ for k = 1:10
     pass(k) = ~(abs(f.exps(1)+k) + abs(g.exps(2)+k));
 end
 
-
 f = chebfun(@(x) x.^10,[0,1]);
 pass(k+1) = (f.exps(1) == 0);
