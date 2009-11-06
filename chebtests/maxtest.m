@@ -24,4 +24,3 @@ pass(4) = (y==1);
 y = max([z.'; -z.'; 0.5]);
 pass(5) = (sum(y)==1.25);
 
-pass = all(pass);
