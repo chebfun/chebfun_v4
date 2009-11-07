@@ -1,4 +1,4 @@
-function [u,normres,Q] = gmres(varargin)
+function [u,flag,normres,Q] = gmres(varargin)
 % GMRES  Iterative solution of chebfun operator equations.
 % U = GMRES(A,F) attempts to solve the operator equation A(U)=F, where F 
 % and U are chebfuns and A is a function handle defining a linear operator 
@@ -19,7 +19,11 @@ function [u,normres,Q] = gmres(varargin)
 % approximate the inverse of A. Note that this usage of preconditioners
 % differs from that in the built-in GMRES.
 %
-% [U,NORMRES] = GMRES(A,F,...) also returns a vector of the relative
+% [U,FLAG] = GMRES(A,F,...) also returns a convergence FLAG:
+%     0 GMRES converged to the desired tolerance TOL within MAXIT iterations.
+%     1 GMRES iterated MAXIT times but did not converge.
+%
+% [U,FLAG,NORMRES] = GMRES(A,F,...) also returns a vector of the relative
 % residual norms for all iterations. Note the output ordering is not the 
 % same as for built-in GMRES. This calling sequence will also print out
 % updates on the progress of the iteration.
@@ -42,7 +46,7 @@ defaults = {[],[],Inf,1e-10,36,[],[]};
 idx = nargin+1:length(defaults);
 args = [varargin defaults(idx)];
 [L,f,m,tol,maxiter,M1inv,M2inv] = deal( args{:} );
-showtrace = (nargout>1);
+showtrace = (nargout>2);
 
 if m==0, m = Inf; end;                           % no restarts
 m = min(m,maxiter+1);  % avoid warning about Inf in for loop
@@ -82,6 +86,7 @@ while (normres(j) > tol) && (j<maxiter)          % outer iterations
     % Done?
     if normres(j) < tol
       showtrace = false;
+      flag = 0;
       break
     end
     
@@ -114,7 +119,12 @@ while (normres(j) > tol) && (j<maxiter)          % outer iterations
   if showtrace, fprintf('  (restart)\n'), end
 end   % outer iterations
 
-fprintf('\n  Final relative residual: %.3e\n\n',normres(end))
+if j >= maxiter
+    flag = 1;
+end
+if nargout < 2
+    fprintf('\n  Final relative residual: %.3e\n\n',normres(end))
+end
 
 end   % main function
 

@@ -60,7 +60,7 @@ if samemap(g1,g2) && all(exps1==exps2);
     g1.scl.v = max([g1.scl.v,g2.scl.v,norm(vals,inf)]);
     g1.n = length(vals);
     
-    if any(g1.exps < 0)
+    if any(g1.exps < 0) || any(isinf(ends))
         g1 = checkzero(g1);
     end
     return
@@ -102,7 +102,7 @@ if round([exps1 exps2]) == [exps1 exps2]
     g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
     g1.n = length(g1.vals);
     
-    if any(g1.exps < 0)
+    if any(g1.exps < 0) || any(isinf(ends))
         g1 = checkzero(g1);
     end
     return
@@ -137,6 +137,7 @@ end
 
 function g1 = checkzero(g1)
 % With exps, if the relative deifference is O(eps) we set it to zero.
+% Same goes for unbounded domains.
 if all(abs(g1.vals) < 10*g1.scl.v*chebfunpref('eps'))
     g1.vals = 0;
     g1.n = 1; 

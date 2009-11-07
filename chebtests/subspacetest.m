@@ -11,5 +11,5 @@ alpha = [1e-10 pi/5 pi/2-1e-10];
 for k = 1:length(alpha)
     B = cos(alpha(k))*A(:,1)+sin(alpha(k))*f;
     angle = subspace(A,B);
-    pass = pass && (abs(angle-alpha(k)) < 1e4*chebfunpref('eps'));
+    pass(k) = (abs(angle-alpha(k)) < 1e4*chebfunpref('eps'));
 end

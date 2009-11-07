@@ -13,9 +13,29 @@ function [failfun t] = chebtest(dirname)
 % FAILED = CHEBTEST('DIRNAME') returns a cell array of all functions that
 % either failed or crashed. 
 %
+% CHEBTEST RESTORE restores user preferences prior to CHEBTEST
+% execution. CHEBTEST modifies path, warning state, and chebfunpref during
+% execution. If a CHEBTEST execution is interrupted, the RESTORE option can
+% be used to reset these values. 
+%
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+
+persistent userpref
+
+if nargin ==1 && strcmpi(dirname,'restore')
+    if isempty(userpref)
+        disp('First excution of chebtests (or information has been cleared), preferences unchanged')
+        return
+    end
+    warning(userpref.warnstate)
+    rmpath(userpref.dirname)
+    path(path,userpref.path)
+    chebfunpref(userpref.pref);
+    disp('Restored values of warning, path, and chebfunpref')
+    return
+end
 
 pref = chebfunpref;
 tol = pref.eps;
@@ -46,9 +66,16 @@ fprintf('\nTesting %i functions:\n\n',length(mfile))
 failed = zeros(length(mfile),1);
 t = failed;    % vector to store times
 
-addpath(dirname)
 warnstate = warning;
 warning off
+
+% Store user preferences for warning and chebfunpref
+userpref.warnstate = warnstate;
+userpref.path = path;
+userpref.pref = pref;
+userpref.dirname = dirname;
+addpath(dirname)
+
 for j = 1:length(mfile)
   
   fun = mfile{j}(1:end-2);
@@ -82,6 +109,7 @@ for j = 1:length(mfile)
   
 end
 rmpath(dirname)
+path(path,userpref.path); % If dirname was already in path, put it back.
 warning(warnstate)
 chebfunpref('factory');
 chebfunpref(pref);

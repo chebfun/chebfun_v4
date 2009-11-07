@@ -4,5 +4,5 @@ function pass = sinx
 % Tests for uniform splitting (bisection)
 % ends must be equispaced.
 
-f = chebfun(@(x) sin(x), [0 1e4]);
+f = chebfun(@(x) sin(x), [0 1e3],'splitting','on');
 pass = all(diff(diff(f.ends)) == 0);
