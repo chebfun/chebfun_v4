@@ -20,6 +20,14 @@ edge = [];
 nder = 4; % Number of derivatives to be tested
 N = 15;   % grid size for finite difference computations in loop.
 
+% if vertical scale is zero, estimate it (evaluate at arbitrary nodes)
+% this may happen in blowup mode
+if vs == 0
+    xx = [-.85441 -0.333331 0.0012 0.2212129 0.766652];
+    xx = b*(xx+1)/2+a*(1-xx)/2;
+    vs = norm(f(xx),inf);
+end
+
 % Interval too small for edge detection, switch to bisection!
 if (b-a)^nder < 10*realmin
     return
