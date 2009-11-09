@@ -28,6 +28,7 @@ end
 if isreal(u)
     % SN
     sn = comp(u, @(x) ellipj(x,m,tol));
+    
     % CN
     if nargout >= 2
         cn = comp(u, @(x) cnfun(x,m,tol));
@@ -36,7 +37,7 @@ if isreal(u)
     if nargout == 3
         dn = comp(u, @(x) dnfun(x,m,tol));
     end
-    
+        
 else
     % Use imaginary transformations
     [s c d] = ellipj(real(u),m,tol);        % real values
@@ -49,6 +50,23 @@ else
     % DN
     if nargout == 3, dn = (d.*c1.*d1-1i*m*s.*c.*s1)./denom; end  
     
+end
+
+for k = 1:numel(sn)
+    switch nargout
+        case 3
+            sn(k).jacobian = anon('@(u) diag(cn.*dn)*jacobian(F,u)',{'cn' 'dn' 'F'},{cn(k) dn(k) u(k)}); 
+            cn(k).jacobian = anon('@(u) diag(-sn.*dn)*jacobian(F,u)',{'sn' 'dn' 'F'},{sn(k) dn(k) u(k)}); 
+            dn(k).jacobian = anon('@(u) diag(-m*sn.*cn)*jacobian(F,u)',{'sn' 'cn' 'm' 'F'},{sn(k) cn(k) m u(k)}); 
+            sn(k).ID = newIDnum();         cn(k).ID = newIDnum();        dn(k).ID = newIDnum();
+    	case 2
+            sn(k).jacobian = anon('@(u) diag(cn.*dnfun(F,v{:}))*jacobian(F,u)',{'v' 'F' 'cn'},{{m tol} u(k) cn(k)});
+            cn(k).jacobian = anon('@(u) diag(-sn.*dnfun(F,v{:}))*jacobian(F,u)',{'v' 'F' 'sn'},{{m tol} u(k) sn(k)});
+            sn(k).ID = newIDnum();         cn(k).ID = newIDnum();
+        case 1
+            sn(k).jacobian = anon('@(u) diag(cnfun(F,v{:}).*dnfun(F,v{:}))*jacobian(F,u)',{'v' 'F'},{{m tol} u(k)});
+            sn(k).ID = newIDnum();
+    end
 end
 
 function cnout = cnfun(u,varargin)
