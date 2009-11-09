@@ -73,7 +73,7 @@ f = 2*f/L-1;
 function cf = c(v)
     cf = chebfun;
     for k = 2:length(v)
-       cf = [cf; chebfun(v([k-1 k]))];
+       cf = [cf; chebfun(v([k-1 k]),[0 1])];
     end
 end
 

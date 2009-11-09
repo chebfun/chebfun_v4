@@ -1,17 +1,17 @@
 %% CHEBFUN GUIDE 4: CHEBFUNS AND APPROXIMATION THEORY
-% Lloyd N. Trefethen, April 2008
+% Lloyd N. Trefethen, November 2009
 
 %% 4.1  Chebyshev series and interpolants
 % The chebfun system is founded on the mathematical
 % subject of approximation theory, and in particular, on 
 % Chebyshev series and interpolants.  
 % Conversely, it provides a simple environment in
-% which to demonstrate these approximants.
+% which to demonstrate these approximants and other approximation ideas.
 
 %%
 % The history of "Chebyshev technology" goes back to
 % the 19th century Russian mathematician P. L. Chebyshev (1821-1894)
-% and his mathematical descendants such as Zolotarev, Achieser, and
+% and his mathematical descendants such as Zolotarev and
 % Bernstein (1880-1968).  These men realized that
 % just as Fourier series provide an efficient way to represent
 % a smooth periodic function, series of Chebyshev polynomials can
@@ -21,9 +21,11 @@
 % and Powell [Powell, 1981],
 % and in addition there are books devoted entirely to Chebyshev polynomials:
 % [Rivlin 1974] and [Mason & Handscomb 2003].
+% A chebfun-based book on approximation theory and its
+% computational applications is in preparation [Trefethen 2010].  
 
 %%
-% From these dates of publication it will be clear that
+% From the dates of publication above it will be clear that
 % approximation theory flourished in the early computer era, and
 % in the 1950s and 1960s a number of numerical methods were developed based
 % on Chebyshev polynomials by Lanczos [Lanczos 1957], Fox [Fox & Parker 1966],
@@ -40,11 +42,9 @@
 % We must be clear about terminology.  We shall rarely use the
 % term *Chebyshev approximation*, for that expression refers specifically to
 % an approximation that is optimal in the minimax sense.
-% (To compute polynomial or rational Chebyshev approximations
-% by a Remez algorithm
-% in the chebfun system, see [Pachon & Trefethen 2008].)
-% Chebyshev approximations are fascinating, but 
-% the chebfun system is built on the different techniques of polynomial
+% Chebyshev approximations are fascinating, and in Section 4.6 we
+% shall see that the chebfun system makes it easy to compute them, but 
+% the core of chebfun is built on the different techniques of polynomial
 % interpolation in Chebyshev points and expansion in Chebyshev
 % polynomials.  These approximations are not quite optimal, but
 % they are nearly optimal and much easier to compute.
@@ -120,7 +120,8 @@
 
 %% 4.2 chebpoly and poly
 %
-% Throughout this section of the Chebfun Guide, we set
+% Throughout this section of the Chebfun Guide, we must be sure
+% to use the "factory" setting
 
 splitting off
 %%
@@ -270,10 +271,10 @@ subplot(1,2,2), plot(f1000), grid on
 
 %%
 % Such plots look good to the eye, but they do not achieve machine precision.
-% We can confirm this by setting "splitting on" for a moment
+% We can confirm this by using "splitting on"
 % to compute a true absolute value and then measuring some norms.
 
-splitting on, fexact = chebfun('abs(x)'); splitting off
+fexact = chebfun('abs(x)','splitting','on');
 err10 = norm(f10-fexact,inf)
 err100 = norm(f100-fexact,inf)
 err1000 = norm(f1000-fexact,inf)
@@ -291,7 +292,7 @@ err1000 = norm(f1000-fexact,inf)
   length(chebfun('abs(x).*x.^4'))
 
 %%
-% Of course, these particular functions are easily
+% Of course, these particular functions would be easily
 % approximated by piecewise smooth chebfuns.
 
 %%
@@ -300,22 +301,23 @@ err1000 = norm(f1000-fexact,inf)
 % next function from the sequence above.
 
 s = 'abs(x).^5';
-exact = chebfun(s);
+exact = chebfun(s,'splitting','off');
 NN = 1:100; e = [];
 for N = NN
   e(N) = norm(chebfun(s,N)-exact);
 end
 clf
 subplot(1,2,1)
-loglog(e), ylim([1e-10 10])
-hold  on, loglog(NN,NN.^(-5),'--r'), grid on
+loglog(e), ylim([1e-10 10]), title('loglog scale')
+hold  on, loglog(NN.^(-5),'--r'), grid on
 text(6,4e-7,'N^{-5}','color','r','fontsize',16)
 subplot(1,2,2)
-semilogy(e), ylim([1e-10 10]), grid on
+semilogy(e), ylim([1e-10 10]), grid on, title('semilog scale')
+hold  on, semilogy(NN.^(-5),'--r'), grid on
 
 %%
 % The figure reveals very clean convergence at the rate
-% N^(-5).  According to Theorem 2 to the next section, this
+% N^(-5).  According to Theorem 2 of the next section, this
 % happens because f has a fifth derivative of
 % bounded variation.
 
@@ -325,7 +327,7 @@ semilogy(e), ylim([1e-10 10]), grid on
 % f is analytic, its Chebyshev interpolants converge geometrically.
 % In this example we take f to be the Runge function, for which
 % interpolants in equally spaced points would not converge at all
-% (in fact they would diverge exponentially).
+% (in fact they would diverge exponentially -- see Section 4.7).
 
 %%
 s = '1./(1+25*x.^2)';
@@ -334,11 +336,12 @@ for N = NN
   e(N) = norm(chebfun(s,N)-exact);
 end
 clf, subplot(1,2,1)
-loglog(e), ylim([1e-10 10]), grid on
-subplot(1,2,2)
-semilogy(e), ylim([1e-10 10])
+loglog(e), ylim([1e-10 10]), grid on, title('loglog scale')
 c = 1/5 + sqrt(1+1/25);
-hold  on, semilogy(NN,c.^(-NN),'--r'), grid on
+hold  on, loglog(c.^(-NN),'--r'), grid on
+subplot(1,2,2)
+semilogy(e), ylim([1e-10 10]), title('semilog scale')
+hold  on, semilogy(c.^(-NN),'--r'), grid on
 text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 
 %%
@@ -351,7 +354,7 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 % The mathematics of the chebfun system can be captured in five
 % theorems about interpolants in Chebyshev points.  The first three
 % can be found in [Battles & Trefethen 2004], and all will be
-% discussed in [Trefethen 2009].  Let f be a
+% discussed in [Trefethen 2010].  Let f be a
 % continuous function on [-1,1], and let p denote its interpolant
 % in N Chebyshev points and p* its best degree N approximation with
 % respect to the maximum norm *||* *||*.
@@ -367,9 +370,7 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 % This theorem implies that even if N is as large as 100,000, one can lose
 % no more than one digit by using p instead of p*.  Whereas the chebfun system
 % will readily compute such a p, it is unlikely that anybody has ever computed
-% a nontrivial p* for a value of N so large.  (Still, as mentioned earlier,
-% true best approximations p* can be computed in the chebfun system by a 
-% chebfun Remes algorithm; see [Pachon & Trefethen 2008].)
+% a nontrivial p* for a value of N so large. 
 
 %%
 % The next theorem asserts that if f is k times differentiable, roughly
@@ -390,7 +391,8 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 % I do not know where an explicit statement first appeared in print.
 
 %%
-% *THEOREM 3*.  If f is analytic and bounded in the ellipse of foci 1 and -1 with
+% *THEOREM 3*.  If f is analytic and bounded in the 
+% "Bernstein ellipse" of foci 1 and -1 with
 % semimajor and semiminor axis lengths summing to r, then
 % *||* f - p *||* = O(r^(-N)) as N -> infty.
 
@@ -407,8 +409,7 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 % *THEOREM 4*.  p(x) = SUM" (-1)^k f(x_k)/(x-x_k) / SUM" (-1)^k/(x-x_k).
 
 %%
-% See [Berrut & Trefethen 2005] for general information
-% about barycentric interpolation.
+% See [Berrut & Trefethen 2005] for information about barycentric interpolation.
 
 %%
 % The final theorem asserts that the barycentric formula has no difficulty with
@@ -426,7 +427,84 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 % to some x_k, then one bypasses the formula and returns the exact value
 % p(x) = f(x_k).
 
-%% 4.6  References
+%% 4.6  Best approximations and the Remez algorithm
+% For practical computations, it is rarely worth the trouble
+% to compute a best (minimax) approximation rather than simply a
+% Chebyshev interpolant.  Nevertheless best approximations are
+% a beautiful and well-established idea, and it is certainly interesting
+% to be able to compute them.  The chebfun system makes this 
+% possible with the command "remez", named after Evgeny Remez,
+% who devised the basic algorithm for computing these approximations
+% in 1934.
+% This capability is due to Ricardo Pachon;
+% see [Pachon & Trefethen 2009].
+
+%%
+% For example, here is a function on the interval [0,4] together with
+% its best approximation by a polynomial of degree 20:
+f = chebfun('sqrt(abs(x-3))',[0,4],'splitting','on');
+p = remez(f,20);
+clf, plot(f,'b',p,'r'), grid on
+
+%%
+% A plot of the error curve (p-f)(x) shows that it
+% equioscillates between 20+2 = 22 alternating
+% extreme values.  Note that a second output argument from remez returns
+% the error as well as the polynomial.
+[p,err] = remez(f,20);
+plot(f-p,'m'), hold on
+plot([0 4],err*[1 1],'--k'), plot([0 4],-err*[1 1],'--k')
+
+%%
+% Let's add the error curve for the degree 20 (i.e. 21-point)
+% Chebyshev interpolant to the same plot:
+pinterp = chebfun(f,[0,4],21);
+plot(f-pinterp,'b')
+
+%%
+% Notice that although the best approximation has a smaller
+% maximum error, it is a worse approximation for almost all x.
+
+%% 4.7  The Runge phenomenon
+% The chebfun system is based on polynomial interpolants in Chebyshev
+% points, not equispaced points.   It has been known for over a century
+% that the latter choice is disastrous, even for interpolation of
+% smooth functions.  One should never use equispaced polynomial interpolants
+% for practical work, but like best
+% approximations, they are certainly interesting.
+
+%%
+% In the chebfun system, we can compute them with the overloaded
+% INTERP1 command.  For example, here is an analytic function and
+% its equispaced interpolant of degree 9:
+f = tanh(10*x);
+s = linspace(-1,1,10);
+p = interp1(s,f); hold off
+plot(f), hold on, plot(p,'r'), grid on, plot(s,p(s),'.r')
+
+%%
+% Perhaps this doesn't look too bad, but here is what happens
+% for degree 19.  Note the vertical scale.
+s = linspace(-1,1,20);
+p = interp1(s,f); hold off
+plot(f), hold on, plot(p,'r'), grid on, plot(s,p(s),'.r')
+
+%%
+% As the degree increases, the interpolant diverges exponentially.
+
+%% 4.8  Splines, CF approximants, rational approximants
+% The chebfun system contains a number of approximation facilities
+% besides those mentioned here, and more are being developed.
+% For example there are codes for least-squares fitting, CF approximation,
+% Chebyshev-Pade approximation, and rational interpolation.
+% Approximation codes to be aware of at the time of this
+% writing include
+%
+% CF, CHEBPADE, INTERP1, POLYFIT, REMEZ.
+%
+% More are being added.
+
+%% 4.9  References
 % 
 % [Battles & Trefethen 2004] Z. Battles and L. N. Trefethen,
 % "An extension of Matlab to continuous functions and
@@ -479,16 +557,16 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 % [Meinardus 1967] G. Meinardus, Approximation of Functions:
 % Theory and Numerical Methods, Springer, 1967.
 %
-% [Pachon & Trefethen 2008] R. Pachon and L. N. Trefethen,
+% [Pachon & Trefethen 2009] R. Pachon and L. N. Trefethen,
 % "Barycentric-Remez algorithms for best polynomial approximation in the
-% chebfun system", to appear.
+% chebfun system", BIT Numerical Mathematics 49 (2009), ?-?.
 %
 % [Powell 1981] M. J. D. Powell, Approximation Theory and Methods,
 % Cambridge University Press, 1981.
 %
-% [Rack & Reimer 1982] H.-J. Rack and M. Reimer, The numerical stability 
+% [Rack & Reimer 1982] H.-J. Rack and M. Reimer, "The numerical stability 
 % of evaluation schemes for polynomials based on the Lagrange
-% interpolation form, BIT 22 (1982), 101-107.
+% interpolation form", BIT 22 (1982), 101-107.
 %
 % [Rivlin 1974] T. J. Rivlin, The Chebyshev Polynomials, Wiley, 1974 and 1990.
 %
@@ -498,6 +576,6 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 %
 % [Trefethen 2000] L. N. Trefethen, Spectral Methods in Matlab,  SIAM, 2000.
 %
-% [Trefethen 2008] L. N. Trefethen, Neoclassical Numerics, book
-% in preparation.
+% [Trefethen 2010] L. N. Trefethen, Approximation Theory and Approximation
+% Practice, book in preparation.
 

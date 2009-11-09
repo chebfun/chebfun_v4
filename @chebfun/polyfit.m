@@ -1,7 +1,8 @@
 function f = polyfit(y,n)  
 %POLYFIT Fit polynomial to a chebfun.
-%   F = POLYFIT(Y,N) returns a chebfun F of degree N that fits the chebfun 
-%   Y in least-squares sense.
+%   F = POLYFIT(Y,N) returns a chebfun F corresponding to the
+%   polynomial of degree N that fits the chebfun Y in
+%   the least-squares sense.
 %
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

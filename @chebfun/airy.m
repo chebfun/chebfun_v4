@@ -1,7 +1,7 @@
 function Fout = airy(K,F)
-% AIRY   Airy chebfun of a chebfun.
+% AIRY   Airy functino of a chebfun.
 % AIRY(F) returns the Airy function of a chebfun F. 
-% AIRY(K,F) uses the parameter K as the standard MATLAB command AIRY to 
+% AIRY(K,F) uses the parameter K as in the standard MATLAB command AIRY to 
 % compute different results based on the Airy function
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
