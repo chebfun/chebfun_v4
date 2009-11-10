@@ -389,8 +389,10 @@ f = [f box];
 plot(f,LW,lw), axis equal
 
 %%
-subplot(1,2,1), plot(exp((1+.2i)*f),LW,lw), axis equal, axis off
-subplot(1,2,2), plot(sin(2*f),LW,lw), axis equal, axis off
+clf, plot(exp((1+.2i)*f),LW,lw), axis equal, axis off
+
+%%
+plot(sin(2*f),LW,lw), axis equal, axis off
 
 %%
 % Next May 16, you might wish to write a greeting card for

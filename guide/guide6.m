@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 6: QUASIMATRICES AND LEAST-SQUARES
-% Lloyd N. Trefethen, May 2008
+% Lloyd N. Trefethen, November 2009
 
 %% 6.1  Quasimatrices and "spy"
 % A chebfun can have more than one column, or if it is transposed, it can
@@ -155,12 +155,12 @@
 
 %%
 % The spy command confirms the shape of these various matrices.
-% One sees fewer dots in the spy(R) plot than one may expect at first,
+% One sees fewer dots in the spy plot than one may expect at first,
 % the reason being that half its entries in the upper-triangle should
 % be zero because of the columns of A alternate even and odd functions.
 % In fact, because of rounding or truncation errors, not all those mathematical
 % zeros are zero on the computer, so the upper half of
-% spy(R) appears as an imperfect checkerboard.
+% spy (R) appears as an imperfect checkerboard.
 
   subplot(1,3,1), spy(A), title A
   subplot(1,3,2), spy(Q), title Q
@@ -179,16 +179,20 @@
     Q(:,j) = Q(:,j)/Q(1,j);
   end
   clf, plot(Q), grid on
+
+%%
+% (A slicker way to produce this plot in chebfun would be
+% simply to type plot(legpoly(0:5)).)
   
 %%
-% If A=QR, then A*inv(R) = Q, and here is inv(R):
+% If A=QR, then A*inv (R) = Q, and here is inv (R):
   format short, inv(R), format long
 
 %%
-% The kth column of inv(R) is the vector of coefficients for the 
+% The kth column of inv (R) is the vector of coefficients for the 
 % expansion of the kth column of Q as a linear combination of the
 % columns of A, that is, the monomials 1, x, x^2,....  In other words,
-% the kth column of inv(R) is the vector of coefficients of the kth
+% the kth column of inv (R) is the vector of coefficients of the kth
 % Legendre polynomial.  For example, we see from the matrix
 % that P_3(x) = 2.5x^3 - 1.5x.
 
@@ -242,7 +246,7 @@
   [U,S,V] = svd(A);
 
 %%
-% First we use spy to confirm the shapes of the matrices.  As with spy(R) earlier, here
+% First we use spy to confirm the shapes of the matrices.  As with spy (R) earlier, here
 % spy(V) should in principle show a checkerboard, but some of its blanks are turned into
 % dots by rounding or truncation errors.
 
@@ -302,18 +306,18 @@
   cond([1 x x.^2 x.^3 x.^4 x.^5 x.^6 x.^7 x.^8 x.^9 x.^10])
 
 %%
-% By contrast a quasimatrix formed of suitably normalized Legendre polynomials would
-% have condition number 1, since they are orthonormal.  A quasimatrix of
-% Chebyshev polynomials doesn't quite achieve condition number 1, but it comes close.
+% By contrast a quasimatrix formed of suitably normalized Legendre polynomials has
+% condition number 1, since they are orthonormal:
+cond(legpoly(0:10,'norm'))
+
+%%
+% A quasimatrix of Chebyshev polynomials doesn't quite achieve
+% condition number 1, but it comes close:
+cond(chebpoly(0:10))
+
+%%
 % Chebyshev polynomials form an excellent basis for expansions on [-1,1], a fact
 % that is the starting point of the whole chebfun system.
-
-Acheb = chebfun;
-for n = 0:10
-  Tn = chebfun((-1).^(n:-1:0));   % Chebyshev polynomial Tn(x)
-  Acheb = [Acheb Tn];
-end
-cond(Acheb)
 
 %% 6.5 Other norms
 
@@ -406,9 +410,8 @@ cond(Acheb)
 % [Stewart 1998] G. W. Stewart, Afternotes Goes to Graduate School:
 % Lectures on Advanced Numerical Analysis, SIAM, 1998.
 %
-%
 % [Trefethen 2008] L. N. Trefethen, "Householder triangularization of
-% a quasimatrix", manuscript submitted to IMA Journal on Numerical Analysis, 2008.
+% a quasimatrix", IMA Journal on Numerical Analysis 29 (2009), ?-?.
 %
 % [Trefethen 1997] L. N. Trefethen and D. Bau, III, Numerical Linear
 % Algebra, SIAM, 1997.
