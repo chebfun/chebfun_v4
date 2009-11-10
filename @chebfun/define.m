@@ -90,7 +90,7 @@ if ~isempty(g)                                   % translate
   % Avoid translating an interval to what appears to be itself. Doing so
   % can introduce FP errors that can change the domain in a way that breaks
   % equality testing. (Arises in horzcat or subsasgn to a quasimatrix.)
-  if any( abs(g.ends([1,end]).'-subint) > 4*eps*len )
+  if any( abs(g.ends([1,end])-subint) > 4*eps*len )
     g.ends = subint(1) + (g.ends-g.ends(1))*diff(subint)/len;
   end
   for j = 1:g.nfuns  % update maps in funs!
