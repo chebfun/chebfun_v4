@@ -19,7 +19,7 @@ n = min(size(u,2));
 t = 1:n;
 
 if nargin > 1 && isnumeric(varargin{1}) && length(varargin{1}) == size(u,2)
-    t = varargin{1}; t = t(:);
+    t = varargin{1}; t = t(:).';
     varargin = {varargin{2:end}};
 end
 

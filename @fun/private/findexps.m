@@ -10,6 +10,18 @@ a = ends(1); b = ends(2);     % Endpoints
 s=@(x) b*(x+1)/2+a*(1-x)/2;   % Rescale to [-1,1]
 g = @(x) op(s(x));
 
+gends = g([-1,1]);
+if ~any(isinf(gends))
+    xvals = [ -0.616227322745569
+               0.718984852785806];
+    gvals = g(xvals);
+    if norm(gends,inf) < 1e4*norm(gvals,inf), 
+        if ~flag, exps = [0 0];, else exps = 0; end
+        return
+    end
+           
+end
+
 exps = [];
 if flag <= 0
     exps = [exps determineExponentL(g)];  % Get exponent at left point

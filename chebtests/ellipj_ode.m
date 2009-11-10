@@ -3,7 +3,7 @@ function pass = ellipj_ode
 tol = 50*chebfunpref('eps');
 
 % Elliptic parameter
-m = .9;
+m = .1;
 K = ellipke(m);
 [d,x] = domain(0,K);
 
@@ -29,7 +29,7 @@ g.left = @(u) u - 1 ;
 g.right = @(u) u ;
 u = solvebvp(f,g,d);
 
-pass(2) = norm(u-sn,inf) < tol;
+pass(2) = norm(u-cn,inf) < tol;
 
 % DN
 f = @(u) diff(u,2) - (2-m)*u + 2*u.^3;
@@ -37,6 +37,6 @@ g.left = @(u) u - 1 ;
 g.right = @(u) u - sqrt(1-m);
 u = solvebvp(f,g,d);
 
-pass(3) = norm(u-sn,inf) < tol;
+pass(3) = norm(u-dn,inf) < tol;
 
 
