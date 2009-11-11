@@ -7,6 +7,6 @@ function Fout = log10(F)
 
 Fout = comp(F, @(x) log10(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('@(u) (1/log(10))*diag(1./F)*jacobian(F,u)',{'F'},{F(k));
+    Fout(k).jacobian = anon('@(u) (1/log(10))*diag(1./F)*jacobian(F,u)',{'F'},{F(k)});
     Fout(k).ID = newIDnum();
 end
