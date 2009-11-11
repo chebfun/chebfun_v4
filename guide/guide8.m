@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 8: CHEBFUN PREFERENCES
-% Lloyd N. Trefethen, January 2009
+% Lloyd N. Trefethen, November 2009
 
 %% 8.1  Introduction
 % Like any software system, the chebfun system is based on certain
@@ -22,6 +22,16 @@
 % review will also serve to deepen the user's understanding of the system by poking
 % about a bit at its edges.
 
+%%
+% A general point to be emphasized is the distinction between creating a
+% chebfun directly from the constructor and creating one by operating on
+% previous chebfuns.  In the former case we can include preferences directly
+% in the constructor command, and we recommend this as good practice:
+f = chebfun('abs(x)','splitting','on');
+
+%%
+% In the latter case, however, 
+
 %% 8.2  chebfunpref('domain'): the default domain
 % Like Chebyshev polynomials themselves, chebfuns are defined by default
 % on the domain [-1,1] if no other domain is specified.  However, this
@@ -34,9 +44,9 @@
   plot(f,g), axis equal, axis off
 
 %% 8.3  chebfunpref('splitting'): splitting off and splitting on
-% The most important variable a user can control in using
-% the chebfun system is the choice of
-% splitting off or splitting on.  Splitting off is currently the factory default,
+% Perhaps the preference that users wish to control most often in the chebfun
+% system is the choice of
+% splitting off or splitting on.  Splitting off is the factory default,
 % though splitting on was the default in chebfun versions released in 2008.
 
 %%
@@ -65,7 +75,6 @@
 % by sampling an anonymous function, in splitting off mode.  We get a warning message:
 
   ff = @(x) min(abs(x),exp(x)/6);
-  splitting off
   f = chebfun(ff);
 
 %%

@@ -28,35 +28,49 @@ function varargout = chebfunpref(varargin)
 %
 % CHEBFUN PREFERENCES (case sensitive)
 %
-% splitting - Spliting option. Must be either true (1) or false (0).
-%        Factory value is false.
+% splitting - Splitting option, true (1) or false (0).
+%        If true, breakpoints between funs may be introduced where a
+%        discontinuity in a function or a low-order derivative is detected,
+%        or if a global polynomial representation will be too long.
+%        If false, breakpoints will be introduced only at points where 
+%        discontinuities are being created, e.g. by ABS(F) at points where
+%        a chebfun F passes through zero.  Factory value is false.
 %
 % minsamples - Minimum number of points used by the constructor. The 
 %        contructed fun or chebfun might be shorter as a result of the 
-%        simplify command. MUST BE 2^n+1 to conform with fun/growfun.
-%        Factory value is 9.
+%        simplify command. Must be of the form 2^n+1.  Factory value is 9.
 %
 % maxdegree - Maximum degree used by the constructor in SPLITTING OFF mode.
 %        Factory value is 2^16.
 %
 % maxlength - Maximum number of points used by the constructor in SPLITTING
-%        ON mode. Factory value is 6000.
+%        ON mode.  Factory value is 6000.
 %
 % splitdegree - Maximum degree per fun used by the constructor in SPLITTING
-%        ON mode. Note: 2^n conforms with the way fun/growfun
-%        works. Factory value is 128.
+%        ON mode.  Values should normally be of the form 2^n.
+%        Factory value is 128.
 %
-% resampling -  Resample option. Must be either true (1) or false (0).
+% resampling -  Resample option, true (1) or false (0).
+%        If true, every function value is computed afresh as the constructor
+%        tries grids of size 9, 17, 33, etc.  If false, old values are
+%        reused.  (This sounds like an obvious speedup for most applications
+%        but in fact often does not result in an improvement.)
 %        Factory value is true.
 %
-% domain - Domain of definition of a chebfun. Factory definition is [-1 1].
+% domain - Default interval of definition of a chebfun. Factory definition is [-1 1].
 %
-% eps - Relative tolerance. Factory value is 2^-52 (eps).
+% eps - Relative tolerance. Factory value is 2^-52 (Matlab's factory value
+%        of machine epsilon).
 %
-% sampletest - Extra test in the construction of chebfuns to avoid
-%   aliasing. Factory value is true.
+% sampletest - Safety test option, true (1) or false (0).
+%        If true, the constructor tests the function at one more arbitrary
+%        point to minimize the risk of missing signals between gridpoints.
+%        Factory value is true.
 %
-% blowup - Allow and check for functions which blow up on the domain.
+% blowup - Blowup option, true (1) or false (0).  If true, the constructor
+%        checks for possible blowups to infinity and attempts to act accordingly
+%        by introducing algebraic factors.  If false, only a pure polynomial
+%        representation is attempted.  Factor value is true.
 %
 % Examples
 %       chebfunpref
