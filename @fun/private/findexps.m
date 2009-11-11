@@ -2,7 +2,8 @@ function exps = findexps(op,ends,flag)
 % EXPS markfun exponents
 % EXPS = FINDEXPS(H,ENDS) returns a vector EXPS such that
 % H(X).*(X-ENDS(1)).^EXPS(1).*(X+ENDS(2)).^EXPS(2) is a bounded function
-%
+
+% Rodrigo Platte?  2009
 
 if nargin == 2, flag = 0; end
 
@@ -19,7 +20,6 @@ if ~any(isinf(gends))
         if ~flag, exps = [0 0];, else exps = 0; end
         return
     end
-           
 end
 
 exps = [];
