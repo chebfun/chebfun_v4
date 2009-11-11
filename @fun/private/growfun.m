@@ -75,15 +75,16 @@ a = g.map.par(1); b = g.map.par(2);
 
 % --------------------------------------------------
 
-if  ~resample && 2^npower+1 == n && nargin<5
+if  ~resample && 2^npower+1 == n && nargin<5 && ~any(isinf(g.map.par(1:2)))
         
     % single sampling
-    ind =1;
-    xvals = g.map.for(chebpts(kk(ind))); xvals(1) = a; xvals(end) = b;
+    ind = 1;
+    xvals = g.map.for(chebpts(kk(ind))); 
+    if ~isinf(a), xvals(1) = a; end
+    if ~isinf(b), xvals(end) = b; end
     v = op(xvals);
 
     while kk(ind)<=kk(end) 
-        
         % Experimental feature for avoiding NaNs.
         nans = isnan(v);
         if any(nans)
@@ -105,20 +106,26 @@ if  ~resample && 2^npower+1 == n && nargin<5
             end
         end
         
-        g.vals = v;  g.n = length(v); 
+        g.vals = v;  g.n = length(v);
         g.scl.v = max(g.scl.v,norm(g.vals,inf));
         [ish, g] = ishappy(op,g,pref);
         if ish || ind==length(kk), break, end        
-        ind =ind+1;
+        ind = ind+1;
         x = chebpts(kk(ind));
-        v(1:2:kk(ind)) = v; 
+        v(1:2:kk(ind)) = v;
         
         % In splitting on mode, consider endpoints (see getfun.m)
         if split
             newv = op([a; g.map.for(x(2:2:end-1)); b]); 
             v(2:2:end-1) = newv(2:end-1);
         else
-            v(2:2:end-1) = op(g.map.for(x(2:2:end-1)));
+            xvals = g.map.for(x);
+            if ~isempty(pref.eps) 
+                tmp = op([a ; xvals(2:2:end-1) ; b]);
+                v(2:2:end-1) = tmp(2:end-1);
+            else
+                v(2:2:end-1) = op(xvals(2:2:end-1));
+            end
         end
     end
 
@@ -179,10 +186,9 @@ else
                 g.scl.v = max(g.scl.v,norm(v,inf));
                 g.scl.h = hscl;
             else
-                
                 xvals = g.map.for(chebpts(k));
-                g.vals = op(xvals); g.n = k;              
-                
+                g.vals = op(xvals); g.n = k;   
+
                 % Experimental feature for avoiding NaNs.
                 nans = isnan(g.vals);
                 if any(nans)
