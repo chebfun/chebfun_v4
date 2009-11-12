@@ -132,19 +132,6 @@ if isempty(f)
         % Removed to make markfuns work. Not sure what this was for? 
 %         gl(1,k) = gk.funs(1).vals(1);
 %         gl(end,k) = gk.funs(gk.nfuns).vals(end);
-        
-        % breakpoints
-        for j = 2:length(endsk)-1
-            [TL loc] = ismember(endsk(j),ends);
-            if TL && ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
-                % values on either side of jump
-%                 jmpvls = [ gk.funs(j-1).vals(end); NaN ; gk.funs(j).vals(1) ];
-                jmpvls = [  gk.funs(j-1).vals(end)*diff(endsk(j-1:j)).^sum(gk.funs(j-1).exps)
-                            NaN
-                            gk.funs(j).vals(1)*diff(endsk(j:j+1)).^sum(gk.funs(j).exps)];
-                gl(indx2(3*(loc-1)+(1:3)+1),k) = jmpvls;
-             end
-        end
 
         % Jump lines (fjk,gjk) and jump values (jvalf,jvalg)
         nends = length(endsk(2:end-1));
@@ -154,6 +141,7 @@ if isempty(f)
             fjk = NaN(3,1);
         end
         [gjk jvalg isjg] = jumpvals(g(k),endsk);
+        gjk2 = gjk;
         jvalf = endsk.';
 
         % Remove continuous breakpoints from jumps:
@@ -176,19 +164,32 @@ if isempty(f)
             gmk = imag(gmk);
         end
         
+        % breakpoints
+        for j = 2:length(endsk)-1
+            [TL loc] = ismember(endsk(j),ends);
+            if TL && ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
+                % values on either side of jump
+%                 jmpvls = [ gk.funs(j-1).vals(end); NaN ; gk.funs(j).vals(1) ];
+%                 jmpvls = [  gk.funs(j-1).vals(end)*diff(endsk(j-1:j)).^sum(gk.funs(j-1).exps)
+%                             NaN
+%                             gk.funs(j).vals(1)*diff(endsk(j:j+1)).^sum(gk.funs(j).exps)];
+%                 [jmpvls ignored ignored] = jumpvals(g(k),endsk(j-1:j+1));
+                jmpvls = gjk2(3*(j-2)+[1:3]);
+                gl(indx2(3*(loc-1)+[1 3 2]+1),k) = jmpvls;
+             end
+        end
+
         % store jumps and marks
         jumps = [jumps, fjk, gjk];
         marks = [marks, fmk, gmk];
     end
-    
-    
-    
+
     % store lines
     if ~greal
         fl = real(gl);
         gl = imag(gl);
     end 
-    
+
     lines = {fl, gl};
     misc = [infy bot top];
     
@@ -381,8 +382,10 @@ for j = 2:length(ends)-1
     if MN < 1e4*eps*hs
         lval = f.funs(loc-1).vals(end)*(ends(loc)-ends(loc-1)).^sum(f.funs(loc-1).exps);
         if f.funs(loc-1).exps(2) < 0, lval = sign(lval)/eps; end  % 1/eps should be inf or realmax, but this doesn't work?
+        if f.funs(loc-1).exps(2) > 0, lval = 0; end  % This is a hack?
         rval = f.funs(loc).vals(1)*(ends(loc+1)-ends(loc)).^sum(f.funs(loc).exps);
         if f.funs(loc).exps(1) < 0, rval = sign(rval)/eps; end    % 1/eps should be inf or realmax, but this doesn't work?
+        if f.funs(loc).exps(1) > 0, rval = 0; end    % This is a hack?        
         fjump(3*j-(5:-1:3)) = [lval; rval; NaN];
         jval(j) = f.imps(1,loc);
         if abs(lval-rval) < tol && abs(jval(j)-lval) < tol

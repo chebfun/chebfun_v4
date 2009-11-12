@@ -8,16 +8,16 @@ function Fout = power(F1,F2)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 if isa(F1,'chebfun') && isa(F2,'chebfun')
+    % chebfun.^chebfun
     if size(F1)~=size(F2)
         error('Chebfun quasi-matrix dimensions must agree.')
     end
     Fout = F1;
     for k = 1:numel(F1)
         Fout(k) = powercol(F1(k),F2(k));
-%                 Fout(k).jacobian = anon('@(u) diag(diag(F2)*F1.^(F2-1))*F1.jacobian(u) + diag(diag(F1.^F2)*log(F1))*F2.jacobian(u)',{'F1','F2'},{F1(k) F2(k)});
-
     end
 elseif isa(F1,'chebfun')
+    % chebfun.^double
     Fout = F1;
     for k = 1:numel(F1)
         Fout(k) = powercol(F1(k),F2);
@@ -25,6 +25,7 @@ elseif isa(F1,'chebfun')
         Fout(k).ID = newIDnum();
     end
 else
+    % double.^chebfun
     Fout = F2;
     for k = 1:numel(F2)
         Fout(k) = powercol(F1,F2(k));
@@ -47,48 +48,73 @@ else
     if isa(f,'chebfun') 
         if b == 0
             % Trivial case
-            
             fout = chebfun(1,[f.ends(1) f.ends(end)]);
-            
-        elseif any(any(get(f,'exps'))) && ~chebfunpref('splitting')
-            % It's better to seperate out the markfun part if possible
-            %  -- does it really make a difference?
-            
-            exps = get(f,'exps');
-            for k = 1:f.nfuns
-                fk = f.funs(k);
-                fk = set(fk,'exps',[0 0]); 
-                f.funs(k) = fk;
-            end
-            
-            if b == 2
-                fout = f.*f;
-            else
-                fout = comp(f,@(x) power(x,b));
-            end
-            
-            if fout.nfuns ~= f.nfuns,
-                error('I didn''t think this could happen ...'); 
-            end
-            
-            exps = b*exps;
-            
-            for k = 1:f.nfuns
-                fk = fout.funs(k);
-                fk = set(fk,'exps',exps(k,:)); 
-                fout.funs(k) = fk;
-            end
-            
+        elseif b == .5
+            % Sqrt
+            fout = sqrt(f);
+        elseif b == 2
+            % Square
+            fout = f.*f;
         else
-            % The usual case
-            
-            if b == 2
-                fout = f.*f;
-            else
-                fout = comp(f,@(x) power(x,b));
+            % General case
+            f = add_breaks_at_roots(f);
+            fout = f;
+            % Loop through funs
+            for k = 1:f.nfuns
+                fk = extract_roots(f.funs(k));
+                exps = fk.exps;
+                fk.exps = [0 0];
+                foutk = compfun(fk, @(x) power(x,b));
+                foutk.exps = b*exps;
+                foutk = replace_roots(foutk);
+                fout.funs(k) = foutk;
             end
-           
+            fout.imps = power(fout.imps,b);
+            
         end
+        
+% %         old     
+%         elseif any(any(get(f,'exps'))) && ~chebfunpref('splitting')
+%             % It's better to seperate out the markfun part if possible
+%             %  -- does it really make a difference?
+%             
+%             exps = get(f,'exps');
+%             for k = 1:f.nfuns
+%                 fk = f.funs(k);
+%                 fk = set(fk,'exps',[0 0]); 
+%                 f.funs(k) = fk;
+%             end
+%             
+%             if b == 2
+%                 fout = f.*f;
+%             else
+%                 fout = comp(f,@(x) power(x,b));
+%             end
+%             
+%             if fout.nfuns ~= f.nfuns,
+%                 error('I didn''t think this could happen ...'); 
+%             end
+%             
+%             exps = b*exps;
+%             
+%             for k = 1:f.nfuns
+%                 fk = fout.funs(k);
+%                 fk = set(fk,'exps',exps(k,:)); 
+%                 fout.funs(k) = fk;
+%             end
+%             
+%         else
+%             % The usual case
+%             
+%             if b == 2
+%                 fout = f.*f;
+%             elseif b == .5
+%                 fout = sqrt(f);                
+%             else
+%                 fout = comp(f,@(x) power(x,b));
+%             end
+%            
+%         end
         
         fout.trans = f.trans;
         

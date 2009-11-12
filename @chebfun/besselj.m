@@ -12,19 +12,16 @@ end
 
 if c==1 && r == 1
     Fout = comp(F, @(x) real(besselj(nu,x)));
-elseif c==1 && F.trans
+    nu = repmat(nu,numel(F),1);
+elseif (c==1 && F.trans) || (r==1 && ~F.trans)
     for k = 1:length(nu)
         Fout(k,:) = comp(F, @(x) real(besselj(nu(k),x)));
-    end
-elseif r==1 && ~F.trans    
-    for k = 1:length(nu)
-        Fout(:,k) = comp(F, @(x) real(besselj(nu(k),x)));
     end
 else
     error('The parameters of besselj must be a row vector and a column chebfun, or a column vector and a row chebfun.')
 end
 
 for k = 1:numel(F)
-  Fout(k).jacobian = anon('@(u) diag(-besselj(nu+1,F)+nu*Fout./F)*jacobian(F,u)',{'nu' 'F' 'Fout'},{nu F(k) Fout(k)});
+  Fout(k).jacobian = anon('@(u) diag(-besselj(nu+1,F)+nu*Fout./F)*jacobian(F,u)',{'nu' 'F' 'Fout'},{nu(k) F(k) Fout(k)});
   Fout(k).ID = newIDnum();
 end

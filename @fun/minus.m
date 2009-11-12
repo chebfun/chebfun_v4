@@ -92,6 +92,10 @@ if round([exps1 exps2]) == [exps1 exps2]
     
     scl.h = max(g1.scl.h,g2.scl.h);
     scl.v = max(g1.scl.v,g2.scl.v);
+    
+    % Reduce exponents greater that +1
+    g1 = replace_roots(g1);
+    g2 = replace_roots(g2);
 
     exps1 = -exps1; exps2 = -exps2;
     g1 = g1.*fun(@(x) (x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2),g1.map,pref,scl) - ...
