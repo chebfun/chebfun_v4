@@ -9,14 +9,14 @@
 % system gives up trying to resolve it to machine precision.  A starting point in
 % exploring these matters is to type the command help chebfunpref.
 % (For chebops, there is help cheboppref.)
-% Or more simply, we can execute chebfunpref itself.  Here we execute it with
-% the argument 'factory' to ensure that all preferences are set to their
-% 'factory values':
+% Or just to see the list of preferences, you can simply execute chebfunpref.
+% Here we execute it with the argument 'factory' to ensure that all preferences are set to their
+% factory values:
 
   chebfunpref('factory')
 
 %%
-% In this section of the Chebfun Guide we explore these
+% In this section of the Chebfun Guide we explore some of these
 % adjustable preferences, showing how special effects can be achieved
 % by modifying them.  Besides showing off some useful techniques, this
 % review will also serve to deepen the user's understanding of the system by poking
@@ -30,9 +30,14 @@
 f = chebfun('abs(x)','splitting','on');
 
 %%
-% In the latter case, however, 
+% In the latter case, however, one must (say) turn the preference 
+% on and off again.
+x = chebfun('x');
+splitting on
+f = abs(x);
+splitting off
 
-%% 8.2  chebfunpref('domain'): the default domain
+%% 8.2  domain: the default domain
 % Like Chebyshev polynomials themselves, chebfuns are defined by default
 % on the domain [-1,1] if no other domain is specified.  However, this
 % default choice of the default domain can be modified.  For example, we can work with
@@ -43,10 +48,10 @@ f = chebfun('abs(x)','splitting','on');
   g = chebfun(@(t) cos(20*t));
   plot(f,g), axis equal, axis off
 
-%% 8.3  chebfunpref('splitting'): splitting off and splitting on
-% Perhaps the preference that users wish to control most often in the chebfun
-% system is the choice of
-% splitting off or splitting on.  Splitting off is the factory default,
+%% 8.3  splitting: splitting on/off
+% Perhaps the preference that users wish to control most often
+% is the choice of
+% splitting off or on.  Splitting off is the factory default,
 % though splitting on was the default in chebfun versions released in 2008.
 
 %%
@@ -64,8 +69,7 @@ f = chebfun('abs(x)','splitting','on');
 % One breakpoint is introduced at x=0, where the
 % constructor recognizes that abs(x) has a zero, and
 % two more breakpoints are introduced at -0.1443 and at 0.2045,
-% where the constructor recognizes that
-% abs(x) and exp(x)/6 will intersect.
+% where it recognizes that abs(x) and exp(x)/6 will intersect.
 
 %%
 % The difference between splitting off and splitting on pertains to additional
@@ -78,10 +82,9 @@ f = chebfun('abs(x)','splitting','on');
   f = chebfun(ff);
 
 %%
-% In splitting on mode, chebfun's built-in edge detector quickly finds
+% With splitting on, chebfun's built-in edge detector quickly finds
 % the singular points and introduces breakpoints there:
-  splitting on
-  f = chebfun(ff);
+  f = chebfun(ff,'splitting','on');
   f.ends
 
 %%
@@ -90,20 +93,17 @@ f = chebfun('abs(x)','splitting','on');
 % in splitting on mode the constructor will subdivide intervals recursively
 % at non-singular points when
 % convergence is not taking place fast enough.  For example, with splitting off
-% we cannot successfully construct a chebfun for the square root function on [0,1]:
+% we cannot successfully construct a chebfun for the square root function on [0,1]
+% (unless we use mappings as described in Chapter 10):
 
-  splitting off
   f = chebfun(@(x) sqrt(x),[0 1]);
-  format long
-  f((.1:.1:.5)'.^2)
 
 %%
 % With splitting on, however, all is well:
 
-  splitting on
-  f = chebfun(@(x) sqrt(x),[0 1]);
+  f = chebfun(@(x) sqrt(x),[0 1],'splitting','on');
   length(f)
-  f((.1:.1:.5)'.^2)
+  format long, f((.1:.1:.5)'.^2)
 
 %%
 % Inspection reveals that the system has broken the interval into a
@@ -123,7 +123,6 @@ f = chebfun('abs(x)','splitting','on');
 %%
 % With splitting off, it gets resolved by a global polynomial of rather high degree.
 
-  splitting off
   f = chebfun(ff);
   length(f)
   plot(f)
@@ -132,19 +131,18 @@ f = chebfun('abs(x)','splitting','on');
 % With splitting on, the function is broken up into pieces, and there is some
 % reduction in the overall length:
 
-  splitting on
-  f = chebfun(ff);
+  f = chebfun(ff,'splitting','on');
   length(f)
   format short, f.ends
+
 
 %%
 % When should one use splitting off, and when splitting on?  If the goal
 % is simply to represent complicated functions, especially when they are
-% more complicated in some regions than others, splitting on has its advantages.
+% more complicated in some regions than others, splitting on sometimes has advantages.
 % An example is given by the function above posed on [-3,3] instead of [-1,1].
-% With splitting off, the global polynomial has degree in the tens of thousands:
+% With splitting off, the global polynomial has a degree in the tens of thousands:
 
-  splitting off
   f3 = chebfun(ff,[-3 3]);
   length(f3)
   plot(f3)
@@ -152,19 +150,18 @@ f = chebfun('abs(x)','splitting','on');
 %%
 % With splitting on the representation is much more compact:
 
-  splitting on
-  f3 = chebfun(ff,[-3 3]);
+  f3 = chebfun(ff,[-3 3],'splitting','on');
   length(f3)
 
 %%
-% On the other hand, splitting off mode has its advantages too.  In particular,
+% On the other hand, splitting off mode has advantages of robustness.  In particular,
 % operations involving derivatives generally work better when functions
 % are represented by global polynomials, and the chebop system for the most
 % part requires this.  Also, for educational purposes,
 % it is very convenient that the chebfun system can be used so easily
 % to study the properties of pure polynomial representations.
 
-%% 8.4  chebfunpref('splitdegree'): degree limit in splitting on mode
+%% 8.4  splitdegree: degree limit in splitting on mode
 % When intervals are subdivided in splitting on mode, as just illustrated, 
 % the parameter splitdegree determines where this will happen.  With the factory
 % value splitdegree=128, splitting will take place if a polynomial of degree 128
@@ -178,13 +175,12 @@ f = chebfun('abs(x)','splitting','on');
 % Alternatively, suppose we wish to allow individual funs to
 % have degree up to 512.  We can do that like this:
 
-  chebfunpref('splitdegree',512);
-  f = chebfun(ff);
+  f = chebfun(ff,'splitting','on','splitdegree',512);
   length(f)
   format short, f.ends
   f.funs
 
-%% 8.5  chebfunpref('maxdegree'): maximum degree
+%% 8.5  maxdegree: maximum degree
 % As just mentioned, in
 % splitting off mode, the constructor tries to make a global chebfun
 % from the given string or anonymous function.  For a function like
@@ -194,8 +190,6 @@ f = chebfun('abs(x)','splitting','on');
 %%
 % For example, here's what happens normally if we try to make a chebfun for sign(x).
 
-  chebfunpref('factory');
-  splitting off
   f = chebfun('sign(x)');
 
 %%
@@ -211,26 +205,28 @@ f = chebfun('abs(x)','splitting','on');
 % to this number (or more precisely the default degree to one less than this number),
 % and then there would be a warning message:
 
-  chebfunpref('maxdegree',49);
-  f = chebfun('sign(x)');
+  f = chebfun('sign(x)','maxdegree',49);
 
 %%
 % Perhaps more often one might wish to adjust this preference to enable use of
-% especially high degrees.  On the machines of 2008, the chebfun system is perfectly
+% especially high degrees.  On the machines of 2009, the chebfun system is perfectly
 % capable of working with polynomials of degrees in the millions.
 % The function abs(x)^(3/2) on [-1,1] provides a nice example, for it is
 % smooth enough to be resolved by a global polynomial, provided it is
 % of rather high degree:
 
-  chebfunpref('maxdegree',1e6);
   tic
-  f = chebfun('abs(x).^1.5');
+  f = chebfun('abs(x).^1.5','maxdegree',1e6);
   lengthf = length(f)
   format long, sumf = sum(f)
   plot(f)
   toc
 
-%% 8.6  chebfunpref('minsamples'): minimum number of sample points
+%%
+% (Much more efficient ways of resolving this function, by eliminating the
+% singularity, are described in Chapter 10.)
+
+%% 8.6  minsamples: minimum number of sample points
 % At the other end of the spectrum, the parameter minsamples determines the minimum
 % number of points at which a function is sampled during the chebfun construction
 % process, and the factory value of this parameter is 9.  This does not
@@ -308,78 +304,39 @@ f = chebfun('abs(x)','splitting','on');
   f = chebfun('round(.55*sin(x+x.^2))',[0 10]);
   plot(f), axis off
     
-%% 8.7  chebfunpref('resampling'): resampling off and on
-% We now turn to a chebfun preference with some rather deep significance, relating
+%% 8.7  resampling: resampling on/off
+% We now turn to a particularly interesting preference for chebfun geeks, relating
 % to the very idea of what it means to sample a function.
 
 %%
 % When a chebfun is constructed, a function is normally sampled at 9, 17, 33,...
 % Chebyshev points until convergence is achieved.  Now Chebyshev grids are nested,
 % so the 17-point grid, for example, only contains 8 points that are not in the
-% 9-point grid.  It may seem obvious that the chebfun constructor should take advantage
-% of this property and not recompute
-% values that have already been computed.  By the time we get to 65 points, for example,
-% it may seem obvious that
-% we should have done 65 evaluations, not 9+17+33+65 = 114.  A factor of approximately 2
-% would seem to be at stake.
+% 9-point grid.  By default, the chebfun constructor takes advantage
+% of this property so as not to recompute
+% values that have already been computed.  (The default went the other
+% way until 2009.)
 
-%% 
-% Nevertheless, the chebfun system DOES by default recompute values when
-% the grid is refined, or as we say,
-% resample.  Why?  Part of the reason is historical.
-% The original version by Zachary Battles in 2002 resampled, and we never found a compelling
-% reason to change this.  Although the speed difference can be a factor of 2 in certain
-% circumstances, often it is a smaller factor.  For example, here is a chebfun constructed
-% in the usual factory mode, corresponding to resampling on:
+%%
+% For example, here is a chebfun constructed in the usual factory mode:
 
   chebfunpref('factory');
-  chebfunpref('sampletest','off')
-  splitting off
-  tic, f = chebfun(@(x) sin(x),[0 2000]); toc
+  resampling off    % we'll remove this line after default is fixed
+  ff = @(x) besselj(x,exp(x))
+  tic, f = chebfun(ff,[0 8]); toc
   length(f)
 
 %%
-% Now let us see what happens if we turn off resampling, so that previously
-% computed values will be reused.  We can do this with
-% the command resampling off:
+% Let us see what happens if we set 'resampling on', so that previously
+% computed values are not reused:
 
-  resampling off
-  chebfunpref
-
-%%
-% If we construct the same chebfun as before, we find that there is a little
-% speedup, but it is not very great:
-
-  tic, f = chebfun(@(x) sin(x),[0 2000]); toc
+  tic, f = chebfun(ff,[0 8],'resampling','on'); toc
   length(f)
 
 %%
-% The reason there is so little improvement is that evaluating sin(x) is nearly as
-% quick as the other operations involved.
-% To see more of an effect, we need a function whose sample values take
-% longer to compute.  The chebfun representation of sin(x) over this long interval
-% is a good candidate,
-% so let us try the same experiment as before, but now sampling
-% f(x) rather than sin(x):
-
-  resampling on
-  tic, g = chebfun(@(x) f(x),[0 2000]); toc
-  length(g)
-
-%%
-
-  resampling off
-  tic, g = chebfun(@(x) f(x),[0 2000]); toc
-  length(g)
-
-%%
-% Now we see a speedup by a factor closer to 2.
-% Users dealing with challenging functions may wish to try "resampling off" in hopes
-% of obtaining a similar speedup.
-
-%%
-% The other reason why the chebfun system resamples is that this introduces 
-% very interesting new possibilities.  What if the "function" being sampled is not
+% One might wonder why 'resampling on' is an option at all, but in fact, it
+% introduces some very interesting
+% possibilities.  What if the "function" being sampled is not
 % actually a fixed function, but depends on the grid?  For example, consider this prescription:
 
   ff = @(x) length(x)*sin(2*x);
@@ -413,6 +370,8 @@ f = chebfun('abs(x)','splitting','on');
 
   kk = @(x) sin(length(x).^(2/3)*x);
   k = chebfun(kk);
+  length(k)                               % Why does this matter here
+  k = chebfun(kk,'sampletest',0);         % but not in the last example?
   length(k)
   plot(k,'.-')
 
@@ -430,14 +389,27 @@ f = chebfun('abs(x)','splitting','on');
 % We do not currently know the answer and would be pleased to hear from users who
 % may have ideas.
 
-%% 8.8 chebfunpref('eps'): chebfun constructor tolerance
-% An experimental feature has been included in recent versions of the chebfun
-% system: the ability to weaken the tolerance in constructing a chebfun.
-% The chebfunpref parameter eps is set by default to machine precision,
-% i.e., Matlab's eps value 2.2204e-16.  However, one can weaken this with
-% a command like chebfunpref('eps',1e-6).
-% After further development we
-% intend to discuss this in a separate section of this Guide.  We recommend
-% that users not change eps unless they are having real problem with standard
-% precision.  Also we ask: if you have interesting experience with the eps parameter,
-% please get in touch with us at chebfun@comlab.ox.ac.uk 
+%% 8.8 eps: chebfun constructor tolerance
+% One of the controllable preferences is all too tempting: you can
+% weaken the tolerance used in constructing a chebfun.
+% The chebfunpref parameter eps is set by default to machine precision:
+chebfunpref('eps')
+
+%%
+% However, one can change this with a command like chebfunpref('eps',1e-6).
+
+%%
+% There are certainly cases where weakening the tolerance makes a big difference.
+% For example, this happens in certain applications in 2D and in certain applications
+% involving differential equations.  (Indeed, the chebfun differential
+% equations commands have their own tolerance control strategies.)
+% However, chebfun does such a good job at resolving
+% many functions that eps-adjustment feature is not as useful as you might imagine, and we recommend
+% that users not change eps unless they are having real problem with standard precision.
+
+%% 8.9 Additional preferences
+% Information about additional chebfun preferences can be found by typing
+% help chebfunpref.  In particular, the 'blowup' preference relates to chebfuns
+% that diverge to infinity or have other singularities, described in Chapter 10, and
+% the 'sampletest' preference controls whether a function is evaluated at an extra
+% point as a safety check of convergence.
