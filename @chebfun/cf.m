@@ -1,4 +1,4 @@
-function [p,q,s] = cf_test(f,m,n,M)
+function [p,q,s] = cf(f,m,n,M)
 % Caratheodory-Fejer approximation
 %
 % [P,Q] = CF(F,M,N): degree (M/N) rational CF approximant to chebfun F
@@ -28,8 +28,6 @@ function [p,q,s] = cf_test(f,m,n,M)
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% This code was put together by Joris Van Deun based partly
-% on an earlier polynomial CF code by Nick Trefethen.
 % Copyright 2009 by The Chebfun Team. 
 
 if numel(f) > 1, error('CHEBFUN:cf:quasi',...
@@ -70,31 +68,36 @@ if (n == 0) | isempty(n),         % polynomial case
 else                              % rational case
   a(end) = 2*a(end);
   c = a(M+1-abs(m-n+1:M));
-  H = hankel(c);
-  [U,S,V] = svd(H); s = S(n+1,n+1);
-  u = U(end:-1:1,n+1); v = V(:,n+1);
+  [U,S,V] = svd(hankel(c));
+  s = S(n+1,n+1); v = V(:,n+1); u = U(:,n+1);
   
   zr = roots(v); zr = zr(abs(zr)>1); zr = .5*(zr+1./zr);
   qt = chebfun(@(x) real(prod(x-zr)/prod(-zr)),length(zr)+1,'vectorise');
-  q = chebfun; q{d,:} = qt;
-  
-%   u1 = u(1); uu = u(2:M+n-m);
-%   b = c;
-%   if 2*m+1 <= n,
-%     b = b(n-2*m:end);
-%   else
-%     for k = m-n:-1:-m,
-%       b = [-(b(1:M+n-m-1)*uu)/u1 b];
-%     end
-%   end
-%   ct = a(M-m+1:M+1) - b(1:m+1) -  b(2*m+1:-1:m+1);
-%   ct = ct(end:-1:1);
-  
+  q = chebfun; q{d,:} = qt; n = length(zr);
+
+  u = u(end:-1:1);
   bt = chebfun(@(x) real(exp(1i*acos(x)*M).*polyval(u,exp(1i*acos(x))) ...
     ./polyval(v,exp(1i*acos(x))))); b = chebfun; b{d,:} = bt;
   Rt = f - s*b;
-  
-  ct = chebpoly(Rt); ct = ct(end:-1:end-m); ct(1) = 2*ct(1);
+  ct = chebpoly(Rt);
+  ct = ct(end:-1:end-m); ct(1) = 2*ct(1);
+
+% The code below computes the first chebcoeffs of 1./q by solving a linear
+%  system. Does not work because of ill-conditioning...
+%  
+%   qtc = chebpoly(qt); qtc = qtc(end:-1:1); qtc(1) = 2*qtc(1);
+%   qtc = [qtc, zeros(1,2*m)];
+%   A = [qtc(1)/2, qtc(2:end)];
+%   for i = 1:n-1,
+%     tmp = [qtc(i+1:-1:2), qtc(1:n+1+min(0,2*m-i)), zeros(1,2*m-i)] + ...
+%       [0, qtc(i+2:n+1), zeros(1,2*m+i)];
+%     A = [A; tmp];
+%   end
+%   for i = n:2*m+n,
+%     tmp = [qtc(i+1:-1:2), qtc(1:min(2*m+n-i,i)+1), zeros(1,2*m+n-2*i)];
+%     A = [A; tmp];
+%   end
+%   gam = A\[2;zeros(2*m+n,1)]; gam = gam(1:2*m+1).';
   
   gam = chebpoly(1./q); gam = [zeros(1,2*m+1-length(gam)),gam];
   gam = gam(end:-1:end-2*m); gam(1) = 2*gam(1);
