@@ -55,7 +55,7 @@ function varargout = chebfunpref(varargin)
 %        tries grids of size 9, 17, 33, etc.  If false, old values are
 %        reused.  (This sounds like an obvious speedup for most applications
 %        but in fact often does not result in an improvement.)
-%        Factory value is true.
+%        Factory value is false.
 %
 % domain - Default interval of definition of a chebfun. Factory definition is [-1 1].
 %
@@ -109,7 +109,7 @@ end
 
 % These are the options
 options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest', 'blowup'};
-factoryvals = {false,       9,            2^16,      6000,      128,          true,         [-1 1],   2^-52,        true, true};
+factoryvals = {false,       9,            2^16,      6000,      128,          false,         [-1 1],   2^-52,        true, true};
 
 % Restore defaults ?
 factory_flag = false;
