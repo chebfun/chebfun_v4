@@ -24,6 +24,16 @@ else
     n = pref.maxdegree + 1;
 end
 
+% If maxdegree is ot a power of 2, we over sample and then trim
+% back to maxdegree
+l2n = log2(n-1);
+maxdegflag = 0;
+if ~resample && l2n ~= round(l2n)
+    maxdegflag = 1;
+    maxdeg = n;
+    n = 2.^ceil(l2n)+1;
+end
+
 % Set minn 
 if nargin == 4
     minn = max(5, g1.n);
@@ -46,7 +56,7 @@ else
   kk = 2.^(minpower:npower) + 1;
 end
 
-if kk(end)~=n, kk(end+1) = n; resample = true; end
+if kk(end)~=n, kk(end+1) = n; end
 
 % Store scale in case not happy
 old_scl = g.scl;
@@ -120,13 +130,19 @@ if  ~resample && 2^npower+1 == n && nargin<5 && ~any(isinf(g.map.par(1:2)))
             v(2:2:end-1) = newv(2:end-1);
         else
             xvals = g.map.for(x);
-            if ~isempty(pref.eps) 
+            if any(g.exps) 
                 tmp = op([a ; xvals(2:2:end-1) ; b]);
                 v(2:2:end-1) = tmp(2:end-1);
             else
                 v(2:2:end-1) = op(xvals(2:2:end-1));
             end
         end
+    end
+    
+    % a maximum degree was specified which wasn't a power of 2
+    if maxdegflag && g.n > maxdeg
+        g = prolong(g,maxdeg);
+        ish = false;
     end
 
 else

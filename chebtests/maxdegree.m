@@ -7,7 +7,7 @@ warning('off','CHEBFUN:auto')
 f = chebfun(@(x) sin(200*x),pref);
 pass(1) = length(f) == 101;
 
-pref.resmapling = false;
+pref.resampling = false;
 f = chebfun(@(x) sin(200*x),pref);
 pass(2) = length(f) == 101;
 

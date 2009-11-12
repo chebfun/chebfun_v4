@@ -12,7 +12,7 @@ r = roots(F);
 % Prune out ones that are near to existing breakpoints
 
 for k = 1:length(r)
-    [nearends j] = min(abs(r(k)-ends));
+    nearends = min(abs(r(k)-ends));
     if nearends < tol, r(k) = NaN; end
 end
 r(isnan(r)) = [];

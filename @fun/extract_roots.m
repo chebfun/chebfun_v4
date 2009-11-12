@@ -7,6 +7,11 @@ exps = get(f,'exps');
 % Get the map
 map = f.map;
 
+if ~strcmp(map.name,'linear')
+    error('CHEBFUN:extract_roots:linear', ...
+        'Extract roots currently only works for a linear map!'); 
+end
+
 % Tolerance for a root
 tol = 1000*chebfunpref('eps')*f.scl.v;
 
