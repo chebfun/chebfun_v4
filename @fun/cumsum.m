@@ -186,7 +186,10 @@ else
     pref.exps = {0 0}; pref.n = 2;
     f = f.*fun(@(x) ends(2)-x,ends,pref);
     f.exps(1) = fexps(1);
-    f = 2/diff(ends)*f + G;
+    
+    % Changed this to make it scale invariant
+%    f = 2/diff(ends)*f + G;
+    f = f + (diff(ends)/2)*G;
     
 %     % testing within interval
 %     xx = linspace(ends(1),ends(2),1000);
@@ -210,6 +213,7 @@ else
 %     plot(xx,abs(feval(f,xx)-gg(xx)))
 
 end
+
 
 end
 

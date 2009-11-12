@@ -13,12 +13,14 @@ for k = 1:3
     exps = floor(M*randn(1,2))/M;
     ends = sort(randn(1,2));
   
+    rescl = (2/diff(ends))^-sum(exps); % To compensate for the rescalling in the fun constructor (Rodrigo 2009)
+    
     f = chebfun(@(x) F(x).*(-ends(1)+x).^exps(1).*(ends(2)-x).^exps(2),ends,'exps',{exps(1) exps(2)});
     g = chebfun(F,ends);
 
     ff = f.funs(1); ff.exps = [0 0]; f.funs(1) = ff; f.imps = [f.vals(1) f.vals(end)];
     
-    pass(k) = norm(f-g,inf) < 500*tol;
+    pass(k) = norm(f/rescl-g,inf) < 500*tol;
     
 end
 
