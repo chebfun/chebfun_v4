@@ -19,6 +19,7 @@ f.exps = [0 0];
 f0 = abs(feval(f,d));
 
 if all(f0 > tol),
+    f.exps = exps;
     return
 end
 
@@ -57,4 +58,3 @@ while any(f0 < tol) && f.n >1
     f.exps = exps;
 
 end
-

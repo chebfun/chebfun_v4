@@ -10,6 +10,8 @@ function val = get(f, propName)
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
+val = [];
+
 switch propName
     case 'funs'
         val = f.funs;
