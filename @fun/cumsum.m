@@ -77,8 +77,7 @@ else
         g = fun(@(x) feval(g,x),linear(g.map.par(1:2)),pref);
         g.exps = exps;
         g = cumsum(g);
-    end
-        
+    end        
     
     map = g.map; g.map = linear([-1 1]);
     g = cumsum_unit_interval(g.*fun(map.der,g.map));
@@ -187,7 +186,7 @@ else
     f = f.*fun(@(x) ends(2)-x,ends,pref);
     f.exps(1) = fexps(1);
     
-    % Changed this to make it scale invariant
+    % Changed this to make it scale invariant (Rodrigo Nov 09)
 %    f = 2/diff(ends)*f + G;
     f = f + (diff(ends)/2)*G;
     

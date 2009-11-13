@@ -87,19 +87,15 @@ function displaychebfun(f, columnstr)
     fprintf('       interval          length    endpoint values %s \n',extras)
     for j = 1:f.nfuns
         len(j)= funs(j).n;
-              
+        
+        % values at endpoints
+        endvals(1) = get(funs(j),'lval');
+        endvals(2) = get(funs(j),'rval');
+        
         if exps
             funs(j).exps(~logical(funs(j).exps)) = 0; % This prevents the display of -0 (a bug in matlab)
-            exinfo = ['    ' num2str(funs(j).exps, '%5.2g') '  '];
-            endvals = feval(funs(j),funs(j).map.par(1:2));
-            if funs(j).exps(1) < 0
-                endvals(1) = inf;
-            end
-            if funs(j).exps(2) < 0
-                endvals(2) = inf;
-            end
+            exinfo = ['    ' num2str(funs(j).exps, '%5.2g') '  '];            
         else
-            endvals = [funs(j).vals(1) funs(j).vals(end)];
             exinfo = ' ';
         end
         if ~any(isnan(endvals))

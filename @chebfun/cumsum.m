@@ -36,15 +36,10 @@ for i = 1:f.nfuns
 end
 
 vals = zeros(1,f.nfuns+1);
-for i = 2:f.nfuns
-    if ~funs(i).exps(2)
-        vals(i) = funs(i).vals(1);
-    else
-        vals(i) = funs(i).vals(1)./diff(ends(i:i+1)).^funs(i).exps(2);
-    end
-        
+for i = 2:f.nfuns    
+    vals(i) = get(funs(i),'lval');    
 end
-vals(f.nfuns+1) = funs(f.nfuns).vals(end).*diff(ends(end-1:end)).^funs(end).exps(1);
+vals(f.nfuns+1) = get(funs(f.nfuns),'rval');
 
 fout = set(f, 'funs', funs); 
 fout.imps = [vals; f.imps(3:end,:)];

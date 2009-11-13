@@ -10,6 +10,21 @@ for k = 1:numel(F)
         'chebfun cannot handle exponential blowups'); end
 end
 
+% Check for blowups (+inf)
+pos_blowup = false;
+for k = 1:numel(F)
+    for j = 1:F(k).nfuns
+        if get(F(k).funs(j),'lval') == inf || get(F(k).funs(j),'rval') == inf
+            pos_blowup = true;
+            break
+        end
+    end
+end
+if pos_blowup
+     error('CHEBFUN:exp:inf',...
+        'chebfun cannot handle exponential blowups'); 
+end
+
 Fout = comp(F, @(x) exp(x));
 for k = 1:numel(F)
     Fout(k).jacobian = anon('@(u) diag(exp(F))*jacobian(F,u)',{'F'},{F(k)});
