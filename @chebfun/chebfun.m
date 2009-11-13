@@ -69,7 +69,7 @@ if nargin == 0; return, end
 % Chebfun preferences:
 if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')
     pref = varargin{nargin};
-    pref.vecwarn = 1;
+    if ~isfield(pref,'vecwarn'), pref.vecwarn = 1; end
     argin = varargin(1:end-1);
 else
     pref = chebfunpref;
@@ -123,7 +123,7 @@ end
 if  length(argin) == 1,
     argin{2} = double(pref.domain);
 elseif isa(argin{2},'domain')
-    argin{2}=double(argin{2});
+    argin{2} = double(argin{2});
 end
 
 if ~iscell(argin{1})

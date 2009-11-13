@@ -14,11 +14,11 @@ function [x w] = chebpts(n,d)
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
+w = 2;
 if n <= 0, 
     error('CHEBFUN:chebpts:posinpt','Input should be a positive number');
 elseif n == 1,
     x = 0; 
-    w = 2;
 else
     m = n-1;
     x = sin(pi*(-m:2:m)/(2*m))';

@@ -10,4 +10,6 @@ pref.splitting = false;
 pref.sampletest = false;
 pref.resampling = true;
 pref.exps = {0 0};
+pref.blowup = 0;
+pref.vecwarn = 0;
 
