@@ -50,7 +50,7 @@ if strcmp(g.map.name,'linear')
         end
         g = fun(chebpolyval(c)/g.map.der(1).^k, g.map.par(1:2));
         
-    else % function which blows up, need chain rule
+    else % function which blows up, need product rule
 
         for i = 1:k % loop for higher derivatives
             % Perhaps treat 2nd derivatives as a special case?
@@ -62,20 +62,22 @@ if strcmp(g.map.name,'linear')
             
             exps = g.exps;
             g.exps = [0 0];
-            
-            if exps(1) && ~exps(2)
-                g = fun([0 diff(ends)],ends).*fun(chebpolyval(c)/g.map.der(1), ends) + exps(1).*g;
+             
+             k = 2/diff(ends); % rescale vertical scale because of exps
+            if exps(1) && ~exps(2)               
+                g = fun([0 diff(ends)],ends).*fun(k*chebpolyval(c)/g.map.der(1), ends) + (k*exps(1)).*g;                
                 exps(1) = exps(1) - 1;
             end
             
             if ~exps(1) && exps(2)
-                g = fun([diff(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) - exps(2).*g;
+                g = fun([diff(ends) 0],ends).*fun(k*chebpolyval(c)/g.map.der(1), ends) - (k*exps(2)).*g;
                 exps(2) = exps(2) - 1;
             end
             
-            if all(exps)               
-                g = fun([0 -prod(ends) 0],ends).*fun(chebpolyval(c)/g.map.der(1), ends) - ...
-                    (exps(2)*fun([0 diff(ends)],ends) - exps(1)*fun([diff(ends) 0],ends)).*g;
+            if all(exps)      
+                k = k^2;
+                g = fun([0 -prod(ends) 0],ends).*fun(k*chebpolyval(c)/g.map.der(1), ends) - ...
+                    ((k*exps(2))*fun([0 diff(ends)],ends) - (k*exps(1))*fun([diff(ends) 0],ends)).*g;
                 exps = exps - 1;
             end
             

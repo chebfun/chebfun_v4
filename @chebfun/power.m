@@ -57,20 +57,24 @@ else
             fout = f.*f;
         else
             % General case
-            f = add_breaks_at_roots(f);
-            fout = f;
-            % Loop through funs
-            for k = 1:f.nfuns
-                fk = extract_roots(f.funs(k));
-                exps = fk.exps;
-                fk.exps = [0 0];
-                foutk = compfun(fk, @(x) power(x,b));
-                foutk.exps = b*exps;
-                foutk = replace_roots(foutk);
-                fout.funs(k) = foutk;
+            % Integer and positive powers (exps not needed)
+            if round(b) == b && b>0 
+                fout = comp(f,@(x) power(x,b));
+            else % Introduce exps
+                f = add_breaks_at_roots(f);
+                fout = f;
+                % Loop through funs
+                for k = 1:f.nfuns
+                    fk = extract_roots(f.funs(k));
+                    exps = fk.exps;
+                    fk.exps = [0 0];
+                    foutk = compfun(fk, @(x) power(x,b));
+                    foutk.exps = b*exps;
+                    foutk = replace_roots(foutk);
+                    fout.funs(k) = foutk;
+                end
+                fout.imps = power(fout.imps,b);
             end
-            fout.imps = power(fout.imps,b);
-            
         end
         
 % %         old     

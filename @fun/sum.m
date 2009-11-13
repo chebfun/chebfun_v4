@@ -24,7 +24,10 @@ if strcmp(g.map.name,'linear')
         % (Our exps are the reverse of Jacobi polynomials,
         %   i.e. exps(1) = beta, exps(2) = alpha.)
         g.exps = [0 0];
-        out = w*bary(x,g.vals)*g.map.der(1).^(1+sum(exps));
+        
+        % Mutliply by (diff(ends)/2)^-sum(exps) to make h-scale invariant
+        out = w*bary(x,g.vals)*g.map.der(1).^(1+sum(exps))*(diff(g.map.par(1:2))/2)^-sum(exps);
+        
     end
 
 % Unbounded domain map. This works somewhat as domain truncation.

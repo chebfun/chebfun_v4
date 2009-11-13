@@ -138,7 +138,8 @@ else
 end
 
 if any(exps)
-    op = @(x) op(x)./((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)); % new op
+    rescl = (2/diff(ends))^-sum(exps);
+    op = @(x) rescl*op(x)./((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)); % new op
 end
 g.exps = exps;
 
