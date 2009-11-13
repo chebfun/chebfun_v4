@@ -73,7 +73,7 @@ else                              % rational case
   
   zr = roots(v); zr = zr(abs(zr)>1); zr = .5*(zr+1./zr);
   qt = chebfun(@(x) real(prod(x-zr)/prod(-zr)),length(zr)+1,'vectorise');
-  q = chebfun; q{d,:} = qt; n = length(zr);
+  q = chebfun; q = define(q,d,qt); n = length(zr);
 
   u = u(end:-1:1);
   bt = chebfun(@(x) real(exp(1i*acos(x)*M).*polyval(u,exp(1i*acos(x))) ...
