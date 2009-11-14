@@ -398,7 +398,8 @@ plot(sin(2*f),LW,lw), axis equal, axis off
 % Next May 16, you might wish to write a greeting card for
 % Pafnuty Lvovich Chebyshev, accurate as always to 15 digits:
 f = scribble('Happy Birthday Pafnuty!');
-g = @(z) exp(2i*z)/1i;
+L = f.ends(end);
+g = @(z) exp((2.5i+.4)*z)/1i;
 clf, plot(g(f),'r',LW,lw), axis equal, axis off
 circle = 1.12*chebfun(@(x) exp(2i*pi*x/L),[0 L]);
 ellipse = 1.2*(circle + 1./circle)/2 + 1i*mean(imag(f));

@@ -49,17 +49,17 @@
 % Pachon (from 2006), Rodrigo Platte (from 2007), 
 % and Toby Driscoll and Nick Hale (from 2008).
 % Beginning in 2009, Asgeir Birkisson and Mark Richardson
-% are also getting involved.  In addition to these people we have
+% have also become involved.  In addition to these people we have
 % been helped by many users as well as students and colleagues
 % at Oxford and elsewhere, including Phil Assheton, Folkmar
-% Bornemann, Sheehan Olver, and Simon Scheuring.
+% Bornemann, Pedro Gonnet, Sheehan Olver, Simon Scheuring, and
+% Joris Van Deun.
 
 %%
 % This Guide is based on Chebfun Version 3, to be released
 % in December 2009.  The chebfun website is
-% http://www.comlab.ox.ac.uk/chebfun/ (to be moved soon to
-% Oxford's Mathematical Institute).  Chebfun is also available
-% from the MathWorks File Exchange.
+% http://www.maths.ox.ac.uk/chebfun/.
+% Chebfun is also available from the MathWorks File Exchange.
 
 %% 1.2  Constructing simple chebfuns
 % The "chebfun" command constructs a chebfun from a specification
