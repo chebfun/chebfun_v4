@@ -40,11 +40,11 @@ if nargin > 1
     else
         % infinite interval
         m = maps({'unbounded'},ab); % use default map
+        if nargout > 1
+            w = w.*m.der(x.');
+        end
         x = m.for(x);
         x([1 end]) = ab([1 end]);
-        if nargout > 1
-            w = w.*m.der(m.inv(x.'));
-        end
         
     end
         

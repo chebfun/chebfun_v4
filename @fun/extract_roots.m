@@ -8,8 +8,10 @@ exps = get(f,'exps');
 map = f.map;
 
 if ~strcmp(map.name,'linear')
-    error('CHEBFUN:extract_roots:linear', ...
+    warning('CHEBFUN:extract_roots:linear', ...
         'Extract roots currently only works for a linear map!'); 
+    f = f; 
+    return
 end
 
 % Tolerance for a root
