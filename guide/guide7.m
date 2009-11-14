@@ -239,7 +239,6 @@ end
 % with a complex initial function obtained from the scribble command introduced
 % in Chapter 5:
 
-chebfunpref('eps',1e-4);
 f = scribble('BLUR');
 d = domain(f.ends([1 end])); D = diff(d,2); clf
 k = 0;
