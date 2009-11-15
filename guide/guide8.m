@@ -366,7 +366,7 @@ splitting off
   h = chebfun(hh,'sampletest',0,'resampling','on');
 
 %%
-% Here is an in-between case where convergence is achieved on the grid of length 65:
+% Here is an in-between case where convergence is achieved on the grid of length 44:
 
   kk = @(x) sin(length(x).^(2/3)*x);
   k = chebfun(kk);
