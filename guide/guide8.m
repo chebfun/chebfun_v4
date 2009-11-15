@@ -321,7 +321,6 @@ splitting off
 % For example, here is a chebfun constructed in the usual factory mode:
 
   chebfunpref('factory');
-  resampling off    % we'll remove this line after default is fixed
   ff = @(x) besselj(x,exp(x))
   tic, f = chebfun(ff,[0 8]); toc
   length(f)
@@ -344,14 +343,15 @@ splitting off
 %%
 % The values of f at any particular point will
 % depend on the length of the vector in which it is embedded!
-% What will happen if we try to make a chebfun?  The constructor tries
+% What will happen if we try to make a chebfun, disabling the "sampletest"
+% feature that is usually applied by the constructor as a safety test?
+% The constructor tries
 % the 9-point Chebyshev grid, then the 17-point grid, then the 33-point grid.  On
 % the last of these it finds the Chebyshev coefficients are sufficiently small, and
 % proceeds to truncate to length 18.
 % We end up with a chebfun of length 18 that precisely matches the function 33sin(2x).
 
-  resampling on
-  f = chebfun(ff);
+  f = chebfun(ff,'sampletest',0);
   length(f)
   max(f)
   plot(f,'.-')
@@ -363,15 +363,15 @@ splitting off
 % function is underresolved.
 
   hh = @(x) sin(length(x)*x);
-  h = chebfun(hh);
+  h = chebfun(hh,'sampletest',0);
 
 %%
 % Here is an in-between case where convergence is achieved on the grid of length 65:
 
   kk = @(x) sin(length(x).^(2/3)*x);
   k = chebfun(kk);
-  length(k)                               % Why does this matter here
-  k = chebfun(kk,'sampletest',0);         % but not in the last example?
+  length(k)      
+  k = chebfun(kk,'sampletest',0);
   length(k)
   plot(k,'.-')
 
