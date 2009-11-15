@@ -51,11 +51,10 @@ while any(f0 < tol) && f.n >1
     D(1,1) = 1;
 
     % The new coefficients
-    c = sgn*flipud(D\c(2:end))*(2./diff(d));
+    c = sgn*flipud(D\c(2:end));
 
     % Construct new f
-    f = fun(chebpolyval(c),d);
-    f.map = map;
+    f = fun(chebpolyval(c),map);
     f0 = abs(feval(f,d));
     f.exps = exps;
 
