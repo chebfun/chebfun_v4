@@ -351,7 +351,7 @@ splitting off
 % proceeds to truncate to length 18.
 % We end up with a chebfun of length 18 that precisely matches the function 33sin(2x).
 
-  f = chebfun(ff,'sampletest',0,'maxdegree',128);
+  f = chebfun(ff,'sampletest',0,'resampling','on');
   length(f)
   max(f)
   plot(f,'.-')
@@ -363,7 +363,7 @@ splitting off
 % function is underresolved.
 
   hh = @(x) sin(length(x)*x);
-  h = chebfun(hh,'sampletest',0);
+  h = chebfun(hh,'sampletest',0,'resampling','on');
 
 %%
 % Here is an in-between case where convergence is achieved on the grid of length 65:
@@ -371,7 +371,7 @@ splitting off
   kk = @(x) sin(length(x).^(2/3)*x);
   k = chebfun(kk);
   length(k)      
-  k = chebfun(kk,'sampletest',0);
+  k = chebfun(kk,'sampletest',0,'resampling','on');
   length(k)
   plot(k,'.-')
 
