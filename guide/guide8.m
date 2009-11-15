@@ -351,7 +351,7 @@ splitting off
 % proceeds to truncate to length 18.
 % We end up with a chebfun of length 18 that precisely matches the function 33sin(2x).
 
-  f = chebfun(ff,'sampletest',0);
+  f = chebfun(ff,'sampletest',0,'maxdegree',128);
   length(f)
   max(f)
   plot(f,'.-')
