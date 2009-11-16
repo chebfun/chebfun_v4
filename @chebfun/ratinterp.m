@@ -70,11 +70,9 @@ if strcmp(type,'chebyshev')
     alfa = null( Z );
     % did we get only one solution? try to restrict alfa if we did...
     if size(alfa,2) > 1
-        warning('chebfun:ratinterp','ill-posed interpolation nodes! reducing ''n'' from %i to %i.',n,n-size(alfa,2)+1);
-        for i=2:size(alfa,2)
-            alfa(:,1) = alfa(:,1) - alfa(:,i) * ( alfa(n-i+3,1) / alfa(n-i+3,i) );
-        end;
-        alfa = alfa(:,1);
+        warning('CHEBFUN:RATINTERP','Ill-posed interpolation nodes! reducing ''n'' from %i to %i.',n,n-size(alfa,2)+1);
+        R = qr( flipud( alfa )' );
+    	alfa = flipud( R(end,size(alfa,2):end)' );
     end;
     % construct q
     q = chebfun( chebpolyval( flipud( alfa ) ) , [a,b] );
