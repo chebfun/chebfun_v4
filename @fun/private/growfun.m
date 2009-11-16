@@ -87,7 +87,7 @@ a = g.map.par(1); b = g.map.par(2);
 
 if  ~resample && 2^npower+1 == n && nargin<5 && ~any(isinf(g.map.par(1:2)))
         
-    % single sampling
+    % single sampling  (This is the standard way of growing a fun)
     ind = 1;
     xvals = g.map.for(chebpts(kk(ind))); 
     if ~isinf(a), xvals(1) = a; end
@@ -147,7 +147,7 @@ if  ~resample && 2^npower+1 == n && nargin<5 && ~any(isinf(g.map.par(1:2)))
 
 else
     
-    % double sampling (This is the standard way of growing a fun)
+    % double sampling
     
     if ~any(isinf(g.map.par(1:2)))
         

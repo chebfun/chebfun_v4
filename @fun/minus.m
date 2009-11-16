@@ -113,31 +113,54 @@ if round([exps1 exps2]) == [exps1 exps2]
 end
 
 % Difficult case: non-integer exponents which don't match
-g1.exps = [0 0]; g2.exps = [0 0];
+% (It could be the case that the exponents differ by an integer,
+%  and then we could do something clever, but we don't do that yet
+%  and let findexps try to sort it out).
 pref = chebfunpref;
-pref.exps = {0 0};
 if pref.splitting
     pref.splitdegree = 8*pref.splitdegree;
 end
 pref.resampling = false;
+pref.blowup = 1;
 
 scl.h = max(g1.scl.h,g2.scl.h);
 scl.v = max(g1.scl.v,g2.scl.v);
 
-x1 = g1.map.for(get(g1,'points')); x2 = g2.map.for(get(g2,'points'));
-
-g1 = fun(@(x) bary(x,g1.vals,x1)./((x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2)) - ...
-              bary(x,g2.vals,x2)./((x-ends(1)).^exps1(1).*(ends(2)-x).^exps1(2)),  ...
-              ends, pref, scl);
-
-g1.exps = sum([exps1 ; exps2]);
-g1.scl = scl; 
-g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
-g1.n = length(g1.vals);
-
+[g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),ends,pref,scl);
+if ~ish
+    warning('fun:minus:failtoconverge','Operation may have failed to converge');
+end
+    
 if any(g1.exps < 0)
     g1 = checkzero(g1);
 end
+
+% % Difficult case: non-integer exponents which don't match
+% g1.exps = [0 0]; g2.exps = [0 0];
+% pref = chebfunpref;
+% pref.exps = {0 0};
+% if pref.splitting
+%     pref.splitdegree = 8*pref.splitdegree;
+% end
+% pref.resampling = false;
+% 
+% scl.h = max(g1.scl.h,g2.scl.h);
+% scl.v = max(g1.scl.v,g2.scl.v);
+% 
+% x1 = g1.map.for(get(g1,'points')); x2 = g2.map.for(get(g2,'points'));
+% 
+% g1 = fun(@(x) bary(x,g1.vals,x1)./((x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2)) - ...
+%               bary(x,g2.vals,x2)./((x-ends(1)).^exps1(1).*(ends(2)-x).^exps1(2)),  ...
+%               ends, pref, scl);
+% 
+% g1.exps = sum([exps1 ; exps2]);
+% g1.scl = scl; 
+% g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
+% g1.n = length(g1.vals);
+% 
+% if any(g1.exps < 0)
+%     g1 = checkzero(g1);
+% end
 
 function g1 = checkzero(g1)
 % With exps, if the relative deifference is O(eps) we set it to zero.
