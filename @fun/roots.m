@@ -15,7 +15,7 @@ if nargin == 1
     prune = 0;
 end
 r = rootsunit(g,all,recurse,prune);
-if prune
+if prune & ~recurse
     rho = sqrt(eps)^(-1/g.n);
     rho_roots = abs(r+sqrt(r.^2-1));
     rho_roots(rho_roots<1) = 1./rho_roots(rho_roots<1);
