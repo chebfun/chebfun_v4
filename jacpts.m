@@ -4,7 +4,7 @@ function [x,w] = jacpts(n,alpha,beta,varargin)
 %       polynomial with parameters ALPHA and BETA (which must both be 
 %       greater than or equal -1)
 %
-%  [X,W] = JACPTS(NALPHA,BETA,) also returns a vector of weights for 
+%  [X,W] = JACPTS(N,ALPHA,BETA,) also returns a vector of weights for 
 %       Gauss-Jacobi quadrature.
 %
 %  [X,W] = JACPTS(N,ALPHA,BETA,METHOD) allows the user to select which method to use.
@@ -38,7 +38,6 @@ if ~(a || b) % The case alpha = beta = 0 is treated by legpts
     [x w] = legpts(n,varargin);
     return
 end
-% Should there also be a -0.5, -0.5 (i.e. Chebyshev) case?
 
 % defaults
 interval = [-1,1];
@@ -46,11 +45,21 @@ method = 'default';
 
 % check inputs
 if nargin > 3
-    if isa(varargin{1},'double') && length(varargin{1}) == 2, interval = varargin{1}; end
-    if isa(varargin{1},'char'), method = varargin{1}; end
+    if isa(varargin{1},'double') && length(varargin{1}) == 2
+        interval = varargin{1};
+    elseif isa(varargin{1},'domain')
+        interval = varargin{1}.ends;
+    elseif isa(varargin{1},'char')
+        method = varargin{1}; 
+    end
     if length(varargin) == 2,
-        if isa(varargin{2},'double') && length(varargin{2}) == 2, interval = varargin{2}; end
-        if isa(varargin{2},'char'), method = varargin{2}; end
+        if isa(varargin{2},'double') && length(varargin{2}) == 2
+            interval = varargin{2};
+        elseif isa(varargin{1},'domain')
+            interval = varargin{2}.ends;
+        elseif isa(varargin{2},'char')
+            method = varargin{2}; 
+        end
     end
 end
 
@@ -79,9 +88,23 @@ else   % Fast, see [2]
 end
 
 % rescale to arbitrary interval
-a = interval(1); b = interval(2);
-x = .5*( (x+1)*b - (x-1)*a);
-w = .5*(b-a)*w;
+if ~all(interval == [-1 1])
+    dab = diff(interval);
+    
+    if ~any(isinf(interval))
+        % finite interval
+        x = (x+1)/2*dab + interval(1);
+        w = dab*w/2;
+    else
+        % infinite interval
+        m = maps({'unbounded'},interval); % use default map
+        if nargout > 1
+            w = w.*m.der(x.');
+        end
+        x = m.for(x);
+        x([1 end]) = interval([1 end]);
+    end
+end
 
 function [roots ders] = alg0_Jac(n,a,b)
 if abs(a)<=.5 && abs(b)<=.5 % use asymptotic formula
