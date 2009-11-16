@@ -22,8 +22,14 @@ function [p, q, r] = chebpade(F,m,n,type)
 
 if any(get(F,'exps')), error('CHEBFUN:chebpade:inf',...
         'ChebPade does not currently support functions with nonzero exponents'); end
+if nargin == 2, n = 0; type = 'clenshawlord'; end
 
-if nargin == 3, type = 'clenshawlord'; end
+if nargin == 3, 
+    type = 'clenshawlord';
+    if ~isnumeric(n)
+        n = 0;
+    end
+end
 
 if numel(F) > 1, % Deal with quasimatrices    
     trans = false;
