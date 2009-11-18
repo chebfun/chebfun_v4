@@ -17,8 +17,7 @@ map = f.map;
 % Tolerance for a root
 tol = 1000*chebfunpref('eps')*f.scl.v;
 
-f.exps = [0 0];
-f0 = abs(feval(f,d));
+f0 = abs(f.vals([1 end]));
 
 if all(f0 > tol),
     f.exps = exps;
@@ -51,7 +50,7 @@ if strcmp(map.name,'linear')
         c = sgn*flipud(D\c(2:end));
         % Construct new f
         f = fun(chebpolyval(c),map);
-        f0 = abs(feval(f,d));
+        f0 = abs(f.vals([1 end]));
     end
     f.exps = exps;
 
@@ -75,7 +74,7 @@ elseif ~all(isinf(d))
         % The 1.5*f.n is hand-wavy.
         pref = chebfunpref; pref.blowup = 0; pref.n = f.n;
         f = fun(@(x) newfun(x,f,d,sgn)*diff(d)/2,map,pref);
-        f0 = abs(feval(f,d));
+        f0 = abs(f.vals([1 end]));
     end
     f.exps = exps;
         

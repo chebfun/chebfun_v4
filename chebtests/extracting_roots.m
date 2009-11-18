@@ -1,5 +1,5 @@
 function pass = extracting_roots
-tol = 100*chebfunpref('eps');
+tol = 500*chebfunpref('eps');
 
 F = @(x) cos(x);
 var = {};
