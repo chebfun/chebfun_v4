@@ -46,7 +46,8 @@ function m = slitp(par,plotflag)
 
     m.par = [a b w(:).'];
     m.name = 'slitp';
-    m.extra_pars = [eta y(:).'];      
+    m.extra_pars = [eta y(:).'];   
+    m.inherited = false;
 
 function [gout eta] = slitmap_p1(w,z,derflag) % single slits
 global pi2pi

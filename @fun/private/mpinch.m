@@ -39,6 +39,7 @@ m.name = 'mpinch';
 m.for = @(y) scale(G(y));
 m.der = @(y) scaleder*Gp(y);
 m.inv = @(x) Gi(scaleinv(x));
+m.inherited = false;
 m.extra_pars = rho;
 
 end

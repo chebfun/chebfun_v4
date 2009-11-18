@@ -35,6 +35,7 @@ m.for = @(y) scale(map.for(y));
 m.der = @(y) scaleder*map.der(y);
 m.name = 'sausage';
 m.par = [pars(1) pars(2) d];
+m.inherited = true;
 
 function [c cp] = sausagecoeffs(d)
 % Return the polynomial coefficients of sausage map with degree D

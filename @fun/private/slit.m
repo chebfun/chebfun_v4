@@ -44,6 +44,7 @@ function  m = slit(par,plotflag)
     m.par = [a b w(:).'];
     m.name = 'slit';
     m.extra_pars = [rho y(:).'];
+    m.inherited = false;
 end
 
 % ---------------------------------------------------------

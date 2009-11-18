@@ -45,6 +45,7 @@ end
 % map identification
 m.name = 'kte';
 m.par = [a b alpha];
+m.inherited = true;
 
 % computed function values at mapped points if needed
 if nargout > 1

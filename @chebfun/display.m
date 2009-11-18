@@ -103,7 +103,9 @@ function displaychebfun(f, columnstr)
         end
         
         if mapped
-            exinfo = [exinfo '    ' funs(j).map.name ' ' num2str(funs(j).map.par(3:end),'%5.2g')];    
+            pars = funs(j).map.par(3:end);
+            if numel(pars) > 2, pars = []; end
+            exinfo = [exinfo '    ' funs(j).map.name ' ' num2str(pars,'%5.2g')];    
         end
         
         if ~isreal(funs(j).vals)

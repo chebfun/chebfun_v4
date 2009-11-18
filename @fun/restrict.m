@@ -25,6 +25,13 @@ if norm(g.map.par(1:2),inf) == inf %&& mappref('adaptinf')
 % bounded cases
 elseif (subint(1) > ends(1) && g.exps(1)) || (subint(2) < ends(2) && g.exps(2)) || ~strcmp(g.map.name,'linear')
     % exps removed or non-linear map
+
+    if isfield(g.map,'inherited') && g.map.inherited
+        pars = g.map.par; pars(1:2) = [];
+        map = maps({g.map.name,pars},subint);
+    else
+        map = linear(subint);
+    end
     
     op = @(x) 1+0*x;
     if g.exps(1) && (subint(1) > ends(1)) % Left exp has been removed
@@ -38,7 +45,7 @@ elseif (subint(1) > ends(1) && g.exps(1)) || (subint(2) < ends(2) && g.exps(2)) 
     exps = g.exps;
 
     xcheb = chebpts(g.n);
-    g = fun(@(x) op(x).*bary(x,g.vals,g.map.for(xcheb)), subint, chebfunpref, g.scl);
+    g = fun(@(x) op(x).*bary(x,g.vals,g.map.for(xcheb)), map, chebfunpref, g.scl);
     g.exps = exps;
 
 else % Linear case with no removed exps is simple
