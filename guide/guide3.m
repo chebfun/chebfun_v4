@@ -268,8 +268,7 @@ roots(g,'all')
 % from the one to the other is
 % well known to be an ill-posed problem.  Nevertheless, chebfun may do do a pretty good job of
 % selecting genuine complex (and real)
-% roots near the interval of definition if you use the
-% 'complex' flag:
+% roots near the interval of definition if you use the 'complex' flag:
 roots(g,'complex')
 
 %%
