@@ -2,7 +2,7 @@
 function exponent = determineExponentL(OP)
 
 % Given a function OP defined on [-1,1], finds an exponent
-% E such that OP*(1+x)^E is bounded at -1+eps(-1).
+% E such that OP*(1+x)^(-E) is bounded at -1+eps(-1).
 
 % Mark Richardson, 2009
 
@@ -45,25 +45,28 @@ else
     end
     switch path
         case 1
-            exponent = b;
+            exponent = -b;
         case 2
-            exponent = b+1;
+            exponent = -b-1;
     end
 end
 end
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Function performs two consecutive tests on the input operator to %%%%%
-%%%% determine whether it blows up (1) or not (0) %%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 function [diverge,path] = blowupL(OP,path)
 % For a given function and endpoint, the exponent estimator
-% uses other blowup test A or blowup test B.  This code fixes which
+% uses either blowup test A or blowup test B.  This code fixes which
 % of the two it will be.  The preference is to use A if it detects
 % blowup, since it is more accurate than B; but if only B detects blowup
 % then we use B.
+% 
+% diverge=0 : apparently no blowup (bounded at -1+eps)
+% diverge=1 : apparent blowup (unbounded there)
+%
+% path=0 : initial value before a path has been chosen for this function
+% path=1 : we've chosen to use blowupA for this function
+% path=2 : we've chosen to use blowupB for this function
+
 switch path
     case 0                  % First time function is executed sets the path
         if blowupA(OP)==0 && blowupB(OP)==0
@@ -137,6 +140,6 @@ end
 
 function softenedFun = softenL(OP,exponent)
 % This function takes Op and exponent as inputs and returns the operator
-% multiplied by (1-x)^exponent.
+% multiplied by (1+x)^exponent.
 softenedFun = @(x) (1+x).^exponent.*OP(x);
 end

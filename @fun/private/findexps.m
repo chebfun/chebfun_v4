@@ -24,11 +24,8 @@ end
 
 exps = [];
 if flag <= 0
-    exps = [exps determineExponentL(g)];  % Get exponent at left point
+    exps = determineExponentL(g);         % Get exponent at left point
 end
 if flag >= 0
-    exps = [exps determineExponentR(g)];  % Get exponent at right point
+    exps = [exps determineExponentL(@(x) g(-x))];  % Get exponent at right point
 end
-
-% Temporary fix in making blowup exps negative
-exps = -exps;
