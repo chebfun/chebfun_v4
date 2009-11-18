@@ -123,6 +123,8 @@ switch index(1).type
         if length(idx) == 1
             if isequal(idx{1},':')
                 s = domain(f); 
+            elseif isa(idx{1},'domain')
+                s = idx{1};                 
             else
                 error('chebfun:subsasgn:baddomain',...
                     'Invalid domain syntax.')

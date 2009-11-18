@@ -4,10 +4,10 @@ function [g,ish] = growfun(op,g,pref,g1,g2)
 % G = GROWFUN(OP,G,PREF) returns the fun G representing the function handle OP.
 %   PREF is the chebfunpref structure.
 %
-% G = GROWFUN(OP,G,PREF,G1) returns the fun G representing the composition 
-%   OP(G1), where G1 is a fun. 
+% G = GROWFUN(OP,G,PREF,G1) returns the fun G representing the composition
+%   OP(G1), where G1 is a fun.
 %
-% G = GROWFUN(OP,G,PREF,G1,G2) returns the fun G representing the composition 
+% G = GROWFUN(OP,G,PREF,G1,G2) returns the fun G representing the composition
 %   OP(G1,G2), where G1 and G2 are funs.
 %
 
@@ -15,7 +15,7 @@ function [g,ish] = growfun(op,g,pref,g1,g2)
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
-% Check preferences 
+% Check preferences
 split = pref.splitting;
 resample = pref.resampling;
 if split
@@ -34,7 +34,7 @@ if ~resample && l2n ~= round(l2n)
     n = 2.^ceil(l2n)+1;
 end
 
-% Set minn 
+% Set minn
 if nargin == 4
     minn = max(5, g1.n);
 elseif nargin == 5
@@ -42,18 +42,18 @@ elseif nargin == 5
 else
     minn = pref.minsamples;
 end
-    
+
 % Sample using powers of 2.
 minpower = max(2,ceil(log2(minn-1)));
 npower = max(minpower,floor(log2(n-1)));
 
-% Number of nodes to be used 
+% Number of nodes to be used
 if resample
-  npn = max(min(npower,6),minpower);
-  kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
-  kk = kk + 1 - mod(kk,2);
+    npn = max(min(npower,6),minpower);
+    kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
+    kk = kk + 1 - mod(kk,2);
 else
-  kk = 2.^(minpower:npower) + 1;
+    kk = 2.^(minpower:npower) + 1;
 end
 
 if kk(end)~=n, kk(end+1) = n; end
@@ -79,167 +79,156 @@ if nargin > 3
     return
 end
 % ---------------------------------------------------
-
 % End points: make sure the function gets evaluated at those:
 a = g.map.par(1); b = g.map.par(2);
 
-% --------------------------------------------------
+% ---------------------------------------------------
+% if unbouded intervals, catch horizontal scale
+adapt = false;
+if any(isinf([a b]))
+    adapt = mappref('adaptinf');
+    if ~adapt
+        if a == -inf && b == inf
+            g.scl.h = max(abs(diff(g.map.par(3:4))),abs(sum(g.map.par(3:4))));
+        elseif g.map.par(1) == -inf
+            g.scl.h = max(abs(g.map.par(2)), abs(g.map.par(2)-g.map.par(3)));
+        else
+            g.scl.h = max(abs(g.map.par(1)), abs(g.map.par(1)+g.map.par(3)));
+        end
+    end
+end
 
-if  ~resample && 2^npower+1 == n && nargin<5 && ~any(isinf(g.map.par(1:2)))
-        
+% --------------------------------------------------
+if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
     % single sampling  (This is the standard way of growing a fun)
+    
+    % finite & infinite intervals
     ind = 1;
-    xvals = g.map.for(chebpts(kk(ind))); 
+    xvals = g.map.for(chebpts(kk(ind)));
     if ~isinf(a), xvals(1) = a; end
     if ~isinf(b), xvals(end) = b; end
-    v = op(xvals);
-
-    while kk(ind)<=kk(end) 
+    vnew = op(xvals); v = [];
+    
+    while kk(ind)<=kk(end)
+        
         % Experimental feature for avoiding NaNs.
-        nans = isnan(v);
+        nans = isnan(vnew);
         if any(nans)
-            ends = g.map.par(1:2);
             xvals = xvals(nans); % Sample around NaN and extrapolate.
             for j = 1:length(xvals)
                 xnans = repmat(xvals(j),6,1) + [0 -2 -1 1  2 0]'*1e-14*g.scl.h;
                 % Need to make sure all evaluation points are within interval
-                if any(xnans < ends(1)), 
+                if any(xnans < a),
                     vnans = op(xnans([1 4:6]));
-                    v(nans) = 2*vnans(3)-vnans(2);
-                elseif any(xnans > ends(2)), 
+                    vnew(nans) = 2*vnans(3)-vnans(2);
+                elseif any(xnans > b),
                     vnans = op(xnans([1:3 6]));
-                    v(nans) = 2*vnans(2)-vnans(3);
-                else % Use double sided extrapolation if we can              
+                    vnew(nans) = 2*vnans(2)-vnans(3);
+                else % Use double sided extrapolation if we can
                     vnans = op(xnans);
-                    v(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
+                    vnew(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
                 end
             end
         end
         
+        % update v
+        if isempty(v)
+            v = vnew;
+        else
+            v(1:2:kk(ind)) = v;
+            v(2:2:end-1) = vnew;
+        end
+        
+        %update g
         g.vals = v;  g.n = length(v);
         g.scl.v = max(g.scl.v,norm(g.vals,inf));
         [ish, g] = ishappy(op,g,pref);
-        if ish || ind==length(kk), break, end        
+        if ish || ind == length(kk), break, end
         ind = ind+1;
-        x = chebpts(kk(ind));
-        v(1:2:kk(ind)) = v;
         
-        % In splitting on mode, consider endpoints (see getfun.m)
-        if split
-            newv = op([a; g.map.for(x(2:2:end-1)); b]); 
-            v(2:2:end-1) = newv(2:end-1);
+        % new points
+        x = chebpts(kk(ind));
+        xvals = g.map.for(x(2:2:end-1));
+        
+        % Consider endpoints (set in fun.m)
+        if split || any(g.exps)
+            vnew = op([a ; xvals ; b]);
+            vnew = vnew(2:end-1);
+        elseif isinf(a) && ~isinf(b)
+            vnew = op([xvals ; b]);
+            vnew = vnew(1:end-1);
+        elseif ~isinf(a) && isinf(b)
+            vnew = op([a ; xvals]);
+            vnew = vnew(2:end);
         else
-            xvals = g.map.for(x);
-            if any(g.exps) 
-                tmp = op([a ; xvals(2:2:end-1) ; b]);
-                v(2:2:end-1) = tmp(2:end-1);
-            else
-                v(2:2:end-1) = op(xvals(2:2:end-1));
-            end
+            vnew = op(xvals);
         end
+        
     end
+    
     
     % a maximum degree was specified which wasn't a power of 2
     if maxdegflag && g.n > maxdeg
         g = prolong(g,maxdeg);
         ish = false;
     end
+    
+else % double sampling
+    
+    for k = kk
+        if adapt % adaptive infinite intervals
+            [map,v,hscl] = unbounded(g.map.par, op, k);
+            g.vals = v; g.map = map; g.n = k;
+            g.scl.v = max(g.scl.v,norm(v,inf));
+            g.scl.h = hscl;
+        else
 
-else
-    
-    % double sampling
-    
-    if ~any(isinf(g.map.par(1:2)))
-        
-        for k = kk
-            xvals = g.map.for(chebpts(k)); xvals(1) = a; xvals(end) = b;
+            xvals = g.map.for(chebpts(k));
+            xvals(1) = a; xvals(end) = b;
             g.vals = op(xvals); g.n = k;
-            
+
             % Experimental feature for avoiding NaNs.
             nans = isnan(g.vals);
             if any(nans)
-                ends = g.map.par(1:2);
                 xvals = xvals(nans); % Sample around NaN and extrapolate.
                 for j = 1:length(xvals)
                     xnans = repmat(xvals(j),6,1) + [0 -2 -1 1  2 0]'*1e-14*g.scl.h;
                     % Need to make sure all evaluation points are within interval
-                    if any(xnans < ends(1)), 
+                    if any(xnans < a),
                         vnans = op(xnans([1 4:6]));
                         g.vals(nans) = 2*vnans(3)-vnans(2);
-                    elseif any(xnans > ends(2)), 
+                    elseif any(xnans > b),
                         vnans = op(xnans([1:3 6]));
                         g.vals(nans) = 2*vnans(2)-vnans(3);
-                    else % Use double sided extrapolation if we can              
+                    else % Use double sided extrapolation if we can
                         vnans = op(xnans);
                         g.vals(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
                     end
                 end
             end
-            
-            g.scl.v = max(g.scl.v,norm(g.vals,inf));
-            [ish, g] = ishappy(op,g,pref);
-            if ish, break, end
-        end
-        
-    else
-        
-        adapt = mappref('adaptinf');
-        
-        % if unbouded intervals, catch horizontal scale
-        if ~adapt
-            if g.map.par(1) == -inf && g.map.par(2) == inf
-                g.scl.h = max(abs(diff(g.map.par(3:4))),abs(sum(g.map.par(3:4))));
-            elseif g.map.par(1) == -inf
-                g.scl.h = max(abs(g.map.par(2)), abs(g.map.par(2)-g.map.par(3)));
-            else
-                g.scl.h = max(abs(g.map.par(1)), abs(g.map.par(1)+g.map.par(3)));
-            end
-        end
-        for k = kk
-            if adapt
-                [map,v,hscl] = unbounded(g.map.par, op, k);
-                g.vals = v; g.map = map; g.n = k; 
-                g.scl.v = max(g.scl.v,norm(v,inf));
-                g.scl.h = hscl;
-            else
-                xvals = g.map.for(chebpts(k));
-                g.vals = op(xvals); g.n = k;   
 
-                % Experimental feature for avoiding NaNs.
-                nans = isnan(g.vals);
-                if any(nans)
-                    xvals = xvals(nans); % Sample around NaN and extrapolate.
-                    for j = 1:length(xvals)
-                        xnans = repmat(xvals(j),1,6) + [0 -2 -1 1  2 0]*1e-14*g.scl.h;
-                        vnans = op(xnans.');
-                        g.vals(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
-                    end
-                end
-                
-                g.scl.v = max(g.scl.v,norm(g.vals,inf));
-            end
-            [ish, g] = ishappy(op,g,pref);
-            if ish, break, end
+            g.scl.v = max(g.scl.v,norm(g.vals,inf));
         end
-        
+        [ish, g] = ishappy(op,g,pref);
+        if ish, break, end
     end
-    
+           
 end
 
 % Check for Inf's
-if isinf(g.scl.v) 
+if isinf(g.scl.v)
     if ~pref.blowup
         error('CHEBFUN:growfun:inf_blowup',['Function returned Inf when evaluated. ', ...
-        'Have you tried ''blowup on''?'])
+            'Have you tried ''blowup on''?'])
     elseif ~split
         error('CHEBFUN:growfun:inf_split',['Function returned Inf when evaluated. ', ...
-        'Have you tried ''splitting on''?'])
+            'Have you tried ''splitting on''?'])
     else
         ish = false;
         g.scl = old_scl;
         return
     end
-         
+    
 end
 
 % Check for NaN's or Inf's
@@ -250,9 +239,9 @@ end
 % if unhappy, change map and try again
 if ~ish && strcmp(g.map.name,'linear') && singmap
     % Check singular ends and pick a map ---------------
-%     if g.scl.v == 0
-%         g.scl.v = norm(op(linspace(a,b,10).'),inf);
-%     end
+    %     if g.scl.v == 0
+    %         g.scl.v = norm(op(linspace(a,b,10).'),inf);
+    %     end
     isl = issing(op,a+eps(a),a+0.001*g.scl.h,g.scl.v);
     isr = issing(op,b-0.001*g.scl.h,b-eps(b),g.scl.v);
     if ~(isl || isr)
@@ -267,7 +256,7 @@ if ~ish && strcmp(g.map.name,'linear') && singmap
     if isl || isr
         pref.sampletest = false;
     end
-    [gnew,ish] = growfun(@(x) op(max(a,min(x,b))),g,pref); 
+    [gnew,ish] = growfun(@(x) op(max(a,min(x,b))),g,pref);
     if ish
         g = gnew;
     end
