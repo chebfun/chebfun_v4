@@ -66,23 +66,30 @@ elseif norm(g.map.par(1:2),inf) == inf
 % General map case    
 else
     
+    map = g.map;
     if any(g.exps)
-        warning('chebfun:fun:cumsum',['Cumsum does not support functions ', ...
-            'with both maps an exponents. Resorting to a linear map']);
+        warning('chebfun:fun:cumsum',['Cumsum does not fully support functions ', ...
+            'with both maps an exponents. Switching to a linear map (which may be slow!)']);
         pref = chebfunpref;
         pref.splitting = false;
         pref.resampling = false;
         pref.blowup = false;
+        % make the map linear
         exps = g.exps; g.exps = [0 0];
         g = fun(@(x) feval(g,x),linear(g.map.par(1:2)),pref);
         g.exps = exps;
+        % do cumsum in linear case
         g = cumsum(g);
-    end        
+        % change the map back
+        exps = g.exps; g.exps = [0 0];
+        g = fun(@(x) feval(g,x),map,pref);
+        g.exps = exps;
+    else      
+        g.map = linear([-1 1]);
+        g = cumsum_unit_interval(g.*fun(map.der,g.map));
+        g.map = map;
+    end
     
-    map = g.map; g.map = linear([-1 1]);
-    g = cumsum_unit_interval(g.*fun(map.der,g.map));
-    g.map = map;
-   
 end
 
 end
