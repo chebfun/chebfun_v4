@@ -1,4 +1,4 @@
-function [lines marks jumps jval misc] = plotdata(f,g,h,numpts)
+function [lines marks jumps jval misc] = plotdata(f,g,h,numpts,interval)
 % PLOTDATA returns data (double) for plotting chebfuns.
 % This function is used in PLOT, PLOT3, WATERFALL, ...
 %
@@ -15,6 +15,7 @@ function [lines marks jumps jval misc] = plotdata(f,g,h,numpts)
 %  $Date$:
 
 misc = []; infy = false;
+if nargin < 5, interval = []; end
 
 % Check domains: f,g,h must have the same domain
 if ~isempty(f)
@@ -34,22 +35,24 @@ if isempty(f) && isempty(g)
     return
 end
 
-% Simple restriction for plotting on unbounded domains
-if isinf(g(1).ends(1)) || isinf(g(1).ends(end))   
-    if isinf(g(1).ends(1)) && isinf(g(1).ends(end))    
-        newd = domain(-10,10);
+% Set the plotting interval
+dom = domain(g); % by default use the whole domain
+if ~isempty(interval) && isreal(g)
+    % user defined
+    if isa(interval,'domain'); interval = interval.ends; end
+    if interval(1) < dom(1), interval(1) = dom(1); end
+    if interval(2) > dom(2), interval(2) = dom(2); end
+    dom = domain(interval);
+elseif any(isinf(g(1).ends([1 end]))) 
+    % defaults for unbounded domains
+    if all(isinf(g(1).ends([1 end])))
+        c = g.map.par(4); % get the shift from the map
+        dom = domain(c-10,c+10);
     elseif isinf(g(1).ends(end))
-        newd = domain(g(1).ends(1),g(1).ends(1)+10);
+        dom = domain(g(1).ends(1),g(1).ends(1)+10);
     elseif isinf(g(1).ends(1))
-        newd = domain(-10+g(1).ends(end),g(1).ends(end));
-    end  
-    g = restrict(g,newd);
-    if ~isempty(f)
-        f = restrict(f,newd);
-    end
-    if ~isempty(h)
-        h = restrict(h,newd);
-    end 
+        dom = domain(-10+g(1).ends(end),g(1).ends(end));
+    end     
 end
 
 if isempty(f)
@@ -63,7 +66,7 @@ if isempty(f)
     end
     
     % equispaced points over domain
-    [a b] = domain(g);
+    ab = dom.ends; a = ab(1); b = ab(2);
     fl = linspace(a,b,numpts).';
     
     % find all the ends
@@ -99,8 +102,10 @@ if isempty(f)
         for j = 1:gk.nfuns
             fmkj = get(gk.funs(j),'points');
             gmkj = get(gk.funs(j),'vals');
-            nj = get(gk.funs(j),'n');
             expskj = get(gk.funs(j),'exps');
+            
+            mask = (fmkj < a) | (fmkj > b);
+            fmkj(mask) = []; gmkj(mask) = [];
 
             gmkj = gmkj.*((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
             
@@ -188,10 +193,13 @@ if isempty(f)
     if ~greal
         fl = real(gl);
         gl = imag(gl);
-    end 
+    end
 
     lines = {fl, gl};
     misc = [infy bot top];
+    
+    % With 'interval', there mightnot actually be any marks.
+    if numel(marks) == 0, marks = {[NaN] [NaN]}; end
     
 elseif isempty(h) % Two quasimatrices case
     

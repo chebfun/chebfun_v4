@@ -45,6 +45,13 @@ function varargout = plot(varargin)
 % and that the jump values are  only plotted when the Chebyshev points are 
 % also plotted, unless an input 'JumpLine','S' is passed.
 %
+% PLOT(F,'interval',[A B]) when F is real restricts the plot to the interval
+% [A,B] which can be useful when the domain of F is infinite, or for
+% 'zooming in' on, say, oscillatory chebfuns. PLOT(F,'numpts',N) will plot
+% the chebfun F at N equally spaced points, rather than the default 2001.
+% If plotting quasimatrices or more that one F,G pair these properties
+% (as with JumpLine and JumpMarker) are applied globally.
+%
 % H = PLOT(F, ...) returns a column vector of handles to line objects in
 % the plot. H(:,1) contains the handles for the 'curves' (i.e. the function),
 % H(:,2) contains handles for the 'marks', (i.e. the values at Chebyshev 
@@ -60,7 +67,8 @@ function varargout = plot(varargin)
 numpts = 2001;
 
 % get jumpline style and jumpval markers
-jlinestyle = ':'; jmarker = 'x'; forcejmarks = false; infy = false;
+jlinestyle = ':'; jmarker = 'x'; forcejmarks = false; 
+infy = false; interval = [];
 for k = length(varargin)-1:-1:1
     if isa(varargin,'chebfun'), break, end
     if ischar(varargin{k})
@@ -74,6 +82,9 @@ for k = length(varargin)-1:-1:1
         elseif strcmpi(varargin{k},'NumPts');      
             numpts = varargin{k+1}; 
             varargin(k:k+1) = [];
+        elseif strcmpi(varargin{k},'Interval');      
+            interval = varargin{k+1}; 
+            varargin(k:k+1) = [];            
         end
     end
 end
@@ -110,7 +121,7 @@ while ~isempty(varargin)
     varargin(1:pos) = [];
     
     % get plot data
-    [lines marks jumps jumpval misc] = plotdata(f,g,[],numpts);
+    [lines marks jumps jumpval misc] = plotdata(f,g,[],numpts,interval);
     
     % limits for inf plots
     if ~isempty(misc) 
