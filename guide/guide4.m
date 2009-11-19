@@ -36,7 +36,7 @@
 % application of Chebyshev and Fourier technology to the solution of
 % PDEs.  The subject grew rapidly, and it is in the context of spectral
 % methods that Chebyshev techniques are best known today
-% [Boyd 2000], [Trefethen 2000], [Canuto et al. 2006/7].
+% [Boyd 2001], [Trefethen 2000], [Canuto et al. 2006/7].
 
 %%
 % We must be clear about terminology.  We shall rarely use the
@@ -515,8 +515,8 @@ plot(f), hold on, plot(p,'r'), grid on, plot(s,p(s),'.r')
 % "Barycentric Lagrange interpolation", SIAM Review 46 (2004),
 % 501-517.
 %
-% [Boyd 2000] J. P. Boyd, Chebyshev and Fourier Spectral Methods,
-% 2nd ed., Dover, 2000.
+% [Boyd 2001] J. P. Boyd, Chebyshev and Fourier Spectral Methods,
+% 2nd ed., Dover, 2001.
 %
 % [Canuto et al. 2006/7] C. Canuto, M. Y. Hussaini, A. Quarteroni
 % and T. A. Zang, Spectral Methods, 2 vols., Springer, 2006 and 2007.
