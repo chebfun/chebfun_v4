@@ -46,7 +46,7 @@ if ~isempty(interval) && isreal(g)
 elseif any(isinf(g(1).ends([1 end]))) 
     % defaults for unbounded domains
     if all(isinf(g(1).ends([1 end])))
-        c = g.map.par(4); % get the shift from the map
+        c = g.funs(1).map.par(4); % get the shift from the map
         dom = domain(c-10,c+10);
     elseif isinf(g(1).ends(end))
         dom = domain(g(1).ends(1),g(1).ends(1)+10);
