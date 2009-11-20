@@ -107,7 +107,10 @@ else
                 k = k+2;
             elseif strcmpi('vectorize',varargin{k}) || strcmp('vectorise',varargin{k})
                 pref.vecwarn = 0;
-                k = k+1;                
+                k = k+1;  
+            elseif strcmpi('degree',varargin{k})
+                pref.n = varargin{k+1};
+                k = k+2;
             else
                 argin{j} = varargin{k};
                 j = j+1; k = k+1;
@@ -128,6 +131,10 @@ end
 
 if ~iscell(argin{1})
     argin = unwrap_arg(argin{:});
+end
+
+if isfield(pref,'n')
+    argin = [argin {pref.n}];
 end
 
 % Construct chebfun

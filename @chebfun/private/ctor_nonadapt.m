@@ -13,8 +13,12 @@ if length(ends) ~= length(ops)+1
         'do not agree with number of funs'])
 end
 if length(n) ~= length(ops)
-    error('CHEBFUN:ctor_nonadapt:input_ptsfun',['Unrecognized input sequence: Number of Chebyshev '...
+    if length(n) == 1
+        n = repmat(n,length(ops));
+    else
+        error('CHEBFUN:ctor_nonadapt:input_ptsfun',['Unrecognized input sequence: Number of Chebyshev '...
         'points was not specified for all the funs.'])
+    end
 end
 if any(diff(ends)<0), 
     error('CHEBFUN:ctor_nonadapt:input_endsvals',['Vector of endpoints should have increasing values.'])

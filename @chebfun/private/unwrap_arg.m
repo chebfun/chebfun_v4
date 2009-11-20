@@ -47,9 +47,15 @@ else
     elseif length(temp) == length(varargin)-2
         temp2 = varargin{end-1};
         if length(temp2) ~= length(varargin)-1
-            error(['Unrecognized input sequence: Intervals should '...
-            'be specified when defining the chebfun with two or'...
-            ' more funs.'])
+            if length(temp)~=1, 
+                error(['Unrecognized input sequence: Intervals should '...
+                'be specified when defining the chebfun with two or'...
+                ' more funs.'])
+            elseif length(varargin(1:end-2))==1
+                ops = cell(1,length(temp)-1);
+                for k = 1:length(temp2)-1, ops(k) = varargin(1); end            
+                varargin = [ops varargin(end-1:end)];
+            end
         end
         NewInputArg = {varargin(1:end-2), temp2, temp};
     else
