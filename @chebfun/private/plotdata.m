@@ -151,7 +151,10 @@ if isempty(f)
         [gjk jvalg isjg] = jumpvals(g(k),endsk);
         gjk2 = gjk;
         jvalf = endsk.';
-        jvalf(jvalf<a) = NaN; jvalf(jvalf>b) = NaN;
+        
+        % remove jval data outside of 'interval'
+        mask = jvalf<a | jvalf>b;
+        jvalf(mask) = NaN; jvalg(mask) = NaN;
 
         % Remove continuous breakpoints from jumps:
         for j = 1:length(endsk)
