@@ -45,10 +45,10 @@ function varargout = plot(varargin)
 % and that the jump values are  only plotted when the Chebyshev points are 
 % also plotted, unless an input 'JumpLine','S' is passed.
 %
-% PLOT(F,'interval',[A B]) when F is real restricts the plot to the interval
-% [A,B] which can be useful when the domain of F is infinite, or for
-% 'zooming in' on, say, oscillatory chebfuns. PLOT(F,'numpts',N) will plot
-% the chebfun F at N equally spaced points, rather than the default 2001.
+% PLOT(F,'interval',[A B]) restricts the plot to the interval [A,B] which 
+% can be useful when the domain of F is infinite, or for 'zooming in' 
+% on, say, oscillatory chebfuns. PLOT(F,'numpts',N) will plot the 
+% chebfun F at N equally spaced points, rather than the default 2001.
 % If plotting quasimatrices or more that one F,G pair these properties
 % (as with JumpLine and JumpMarker) are applied globally.
 %

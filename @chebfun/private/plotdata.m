@@ -53,6 +53,8 @@ elseif any(isinf(g(1).ends([1 end])))
         dom = domain(-10+g(1).ends(end),g(1).ends(end));
     end     
 end
+% Don't exclude anything
+if isempty(interval), interval = [-inf,inf]; end
 
 if isempty(f)
     % one real chebfun (or quasimatrix) input
@@ -166,6 +168,9 @@ if isempty(f)
             % x = real data, y = imag data
             fmk = real(gmk);
             gmk = imag(gmk);
+            
+            mask = (fmk < interval(1)) | (fmk > interval(2));
+            fmk(mask) = []; gmk(mask) = [];
         end
         
         % breakpoints
@@ -192,6 +197,10 @@ if isempty(f)
     if ~greal
         fl = real(gl);
         gl = imag(gl);
+        
+        % remove data outside of 'interval'
+        mask = (fl < interval(1)) | (fl > interval(2));
+        fl(mask) = []; gl(mask) = [];
     end
 
     lines = {fl, gl};
