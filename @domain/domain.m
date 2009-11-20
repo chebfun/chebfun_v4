@@ -1,4 +1,4 @@
-function [d,x] = domain(varargin)
+function [d,x,N] = domain(varargin)
 % DOMAIN  Domain object constructor.
 % D = DOMAIN(A,B) or DOMAIN([A,B]) creates a domain object for the
 % real interval [A,B].
@@ -31,8 +31,14 @@ d.ends = v;
 superiorto('double');
 d = class(d,'domain');
 
-if nargout > 1
+if nargout == 2
   x = chebfun(@(x) x,d);
+end
+
+
+if nargout == 3
+  x = chebfun(@(x) x,d);
+  N = nonlinop(d);
 end
 
 end
