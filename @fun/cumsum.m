@@ -102,7 +102,8 @@ n = g.n;
     cout(1:n-1) = (c(3:end-1)-c(1:end-3))./...    % compute C_(n+1) ... C_2
         (2*(n:-1:2)');
     cout(n,1) = c(end) - c(end-2)/2;              % compute C_1
-    cout(n+1,1) = (-1).^(n+1:-1:2)*cout;          % compute C_0
+    v = ones(1,n); v(end-1:-2:1) = -1;
+    cout(n+1,1) = v*cout;                         % compute C_0
     g.vals = chebpolyval(cout);
     g.scl.v = max(g.scl.v, norm(g.vals,inf));
     g.n = n+1;

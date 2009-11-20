@@ -21,7 +21,9 @@ if n == 1               % The function is a constant
 end
 
 if nargin < 4           % Default to Chebyshev weights
-    ek = [1/2; ones(n-2,1); 1/2].*(-1).^((0:n-1)'); 
+    ek = [.5 ; ones(n-1,1)]; 
+    ek(2:2:end) = -1;
+    ek(end) = .5*ek(end);
 end
 if nargin < 3           % Default to Chebyshev nodes
     xk = chebpts(n);

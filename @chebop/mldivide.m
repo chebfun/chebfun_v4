@@ -85,7 +85,8 @@ end
         'Solution requested at a lone point. Check for a bug in the chebop definition.')
     elseif N <= A.numbc+1
       % Too few points: force refinement
-      v = (-1).^(0:N-1)';
+      v = ones(N,1); 
+      v(2:2:end) = -1;
       return
     end
     

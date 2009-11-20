@@ -20,7 +20,8 @@ Tinv = cd2cpm(N);
 k = 1:N;
 k2 = 2*(k-1);  k2(1) = 1;  % avoid divide by zero
 B = diag(1./(2*k),-1) - diag(1./k2,1);
-B(1,:) = sum( diag((-1).^(0:N-1))*B(2:N+1,:), 1 );
+v = ones(N,1); v(2:2:end) = -1;
+B(1,:) = sum( diag(v)*B(2:N+1,:), 1 );
 B(:,1) = 2*B(:,1); 
 
 Q = T*B*Tinv;               

@@ -23,10 +23,13 @@ if any(get(f,'exps')), error('CHEBFUN:remez:inf',...
 if n < 15, tol = 1e-14; elseif n < 100, tol = 2e-14; elseif n <= 1000, tol = 1e-10; else tol = 2e-7; end
 maxit = 50; %tol = 1e-15; 
 [a,b] = domain(f);
-xk = cos(pi*(n+1:-1:0)'/(n+1));         % initial reference 
-xk = (b*(xk+1)-a*(xk-1))/2;
+% xk = cos(pi*(n+1:-1:0)'/(n+1));       % initial reference 
+% xk = (b*(xk+1)-a*(xk-1))/2;
+xk = chebpts(n+2,[a b]);                % initial reference 
 xo = xk;
-sigma = (-1).^[0:n+1]';                 % alternating signs
+% sigma = (-1).^[0:n+1]';               % alternating signs
+sigma = ones(n+2,1); 
+sigma(2:2:end) = -1;                    % alternating signs
 normf = norm(f);
 delta = 1;
 it = 1;
@@ -67,7 +70,8 @@ else                                      % full exchange
     pos = find(abs(feval(e,rr))>=abs(h)); % vals above leveled error
 end
 [r,m] = sort([rr(pos); xk]);   
-er = [feval(e,rr(pos));(-1).^(0:length(xk)-1)'*h];
+v = ones(length(xk),1); v(2:2:end) = -1;
+er = [feval(e,rr(pos));v*h];
 er = er(m);                             
 s = r(1); es = er(1);                     % pts and vals to be kept
 for i = 2:length(r)

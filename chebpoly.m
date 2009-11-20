@@ -19,7 +19,8 @@ end
 ln = length(n);
 f = chebfun;
 for k = 1:ln
-    f(:,k) = chebfun((-1).^(n(k):-1:0),d);
+    vk = ones(1,n(k)+1); vk(end-1:-2:1) = -1;
+    f(:,k) = chebfun(vk,d);
 end
 
 if size(n,1) > 1, f = f.'; end

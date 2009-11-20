@@ -53,12 +53,22 @@ end
 function w = weights(n)
 % Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis 
 % quadrature rules", BIT Numerical Mathematics 43 (1), p. 001-018 (2004).
-if n == 1
-     w = 2;
-else
+w = 2;
+if n~=1
     m = n-1;  
     c = zeros(1,n);
     c(1:2:n) = 2./[1 1-(2:2:m).^2 ]; 
     f = real(ifft([c(1:n) c(m:-1:2)]));
     w = [f(1) 2*f(2:m) f(n)];
+end
+
+function w = weights_1stkind(n)
+% Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis 
+% quadrature rules", BIT Numerical Mathematics 43 (1), p. 001-018 (2004).
+w = 2;
+if n~=1
+    l = floor(n/2)+1; 
+    K = 0:n-l;   
+    v = [2*exp(1i*pi*K/n)./(1-4*K.^2)  zeros(1,l)];
+    w = real(ifft(v(1:n) + conj(v(n+1:-1:2)))); 
 end

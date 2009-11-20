@@ -80,7 +80,10 @@ if strcmp(type,'chebyshev')
     % construct p
     p = chebfun( qi.* fx , [a,b] );
     % construct f
-    w =  ([1/2; ones(N-1,1); 1/2].*(-1).^((0:N)')) .* qi;
+    w = [.5 ; ones(N,1)]; 
+    w(2:2:end) = -1;
+    w(end) = .5*w(end);
+    w = w.* qi;
     r = @(x) bary(x,fx,xi,w);
 elseif strcmp(type,'arbitrary')
     xi = xi(:);

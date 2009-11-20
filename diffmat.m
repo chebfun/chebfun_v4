@@ -12,7 +12,7 @@ function D = diffmat(N)
 N = N-1;  % to be compatible with SMM definitions
 if N==0, D=0; return, end
 x = sin(pi*(N:-2:-N)/(2*N))';
-c = [2; ones(N-1,1); 2] .* (-1).^(0:N)';
+c = [2 ; ones(N,1)];  c(2:2:end) = -1; c(end) = 2*c(end);
 X = repmat( x, [1,N+1] );
 dX = X-X.';
 D = (c*(1./c)') ./ (dX+eye(N+1));

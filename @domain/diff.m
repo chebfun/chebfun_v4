@@ -84,7 +84,9 @@ if N == 0
 end
 
 if nargin < 2           % Default to Chebyshev weights
-    w = [1/2; ones(N-1,1); 1/2].*(-1).^((0:N)'); 
+    w = [.5 ; ones(N,1)]; 
+    w(2:2:end) = -1;
+    w(end) = .5*w(end);
 end
 
 ii = (1:N+2:(N+1)^2)';

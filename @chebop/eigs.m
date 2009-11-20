@@ -134,7 +134,8 @@ end
     end
     if N-A.numbc < k
       % Not enough eigenvalues. Return a sawtooth to ensure refinement.
-      v = (-1).^(0:N-1)';
+      v = ones(N,1); 
+      v(2:2:end) = -1;
     else
       [V,D] = bc_eig(A,B,N,k,sigma);
       v = sum( sum( reshape(V,[N,m,k]),2), 3);
