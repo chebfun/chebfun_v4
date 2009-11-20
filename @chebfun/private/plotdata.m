@@ -149,6 +149,7 @@ if isempty(f)
         [gjk jvalg isjg] = jumpvals(g(k),endsk);
         gjk2 = gjk;
         jvalf = endsk.';
+        jvalf(jvalf<a) = NaN; jvalf(jvalf>b) = NaN;
 
         % Remove continuous breakpoints from jumps:
         for j = 1:length(endsk)
@@ -187,7 +188,7 @@ if isempty(f)
                 gl(indx2(3*(loc-1)+[1 3 2]+1),k) = jmpvls;
              end
         end
-
+        
         % store jumps and marks
         jumps = [jumps, fjk, gjk];
         marks = [marks, fmk, gmk];
@@ -202,7 +203,7 @@ if isempty(f)
         mask = (fl < interval(1)) | (fl > interval(2));
         fl(mask) = []; gl(mask) = [];
     end
-
+    
     lines = {fl, gl};
     misc = [infy bot top];
     
