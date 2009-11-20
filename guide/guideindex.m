@@ -8,39 +8,45 @@
 % [Only a beginning so far.]
 
 %% A
-%  ABS, 1.4, 2.1
+%  ABS, 1.4, 2.1, 3.2
 %  accuracy, 1.1, 2.4
+%  Airy function, 3.1
 %  Assheton, Phil, 1.1, 2.1
 %% B
 %  barycentric interpolation, 1.2
-%  Battles, Zachary, 1.1
+%  Battles, Zachary, 1.1, 3.1
 %  Bernstein, Sergey, 1.1
 %  Bessel functions, 1.2
 %  Birkisson, Asgeir, 1.1
 %  blowup, see infinite function values
 %  Bornemann, Folkmar, 1.1
-%  breakpoints, 1.4
+%  Boyd, John, 3.1
+%  breakpoints, 1.4, 3.2
 %% C
+%  CEIL, 3.2
 %  CHEBFUN, 1.2
 %  Chebyshev points, 1.2
 %  Chebyshev polynomial, 1.1
 %  Clenshaw-Curtis quadrature, 1.2, 2.1
+%  colleague matrix, 3.1
 %  COTEDA, 2.1
 %  CUMSUM, 2.3, 2.4
 %% D
 %  DBLQUAD, 205
 %  delta functions, 2.4
 %  diverging functions, 1.5
-%  DIFF, 2.4
+%  DIFF, 2.4, 3.3
 %  DOMAIN, 1.3
 %  Driscoll, Toby, 1.1
 %% E
 %  edge detection, 1.4
 %  error function, 2.1
+%  extrema, 3.3
 %% F
 %  factory values, 1.4
 %  FFT, 1.1
 %  File Exchange, 1.1
+%  FLOOR, 3.2
 %  funs, 1.4
 %% G
 %  Gauss quadrature, 2.6
@@ -68,6 +74,8 @@
 %  Mathematica, 2.1
 %  MEAN, 2.3
 %  METHODS, 1.3
+%  MAX, 3.2, 3.4
+%  MIN, 3.2, 3.4
 %% N
 %  norm, 2.1
 %% O
@@ -85,14 +93,16 @@
 %  quadrature, see integration
 %  quasimatrices, 1.6
 %% R
+%  RDIVIDE, 1.3
 %  Richardson, Mark, 1.1, 1.5
-%  ROOTS, 1.1
+%  ROOTS, 1.1, 3.1
+%  ROUND, 3.2
 %  rounding error, 1.1
 %  row vs. column chebfuns, 1.6
-%  RDIVIDE, 1.3
 %  Runge functions, 1.2
 %% S
 %  Salzer, Herbert, 1.2
+%  SIGN, 3.2
 %  singularities, 2.6
 %  splitting, 1.4
 %  STD, 2.1

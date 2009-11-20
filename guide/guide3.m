@@ -204,6 +204,13 @@
   plot(minpos,minval,'.b','markersize',30)
   plot(maxpos,maxval,'.r','markersize',30)
 
+%%
+% For larger chebfuns, it is inefficient to compute
+% the global minimum and maximum separately like this -- each
+% one must compute the derivative and find all its zeros.
+% An alternative code is offered that computes both at once:
+  [extemevalues,extremepositions] = minandmax(f)
+
 %% 3.5 norm(f,1) and norm(f,inf)
 % The default, 2-norm form of the "norm" command was considered in Section 2.2.
 % In standard Matlab one can also compute 1-, infinity-, and Frobenius norms

@@ -39,13 +39,13 @@ plot(r,f(r),'.k')
 % the location and value of the minimum:
 g = chebfun(@(x) tanh(x-1),[-inf inf]);
 g = abs(g-1/3);
-clf  %, plot(g)     % NICK - this is broken!
+clf, plot(g)
 [minval,minpos] = min(g)
 
 %%
 % Notice that a function on an infinite domain is by default plotted
 % on an interval like [0,10] or [-10,10].  You can use an extra
-% 'invterval' flag to plot
+% 'interval' flag to plot
 % on other intervals, as shown by this example of a function
 % of small norm whose largest values are near x=30:
 hh = @(x) cos(x)./(1e5+(x-30).^6);
@@ -85,11 +85,16 @@ norm(sinc)
 
 %%
 % Chebfun's capability of handling infinite intervals was introduced by
-% Rodrigo Platte in 2009.  The basis of these computations is a change
+% Rodrigo Platte in 2008-09.  The basis of these computations is a change
 % of variables, or mapping, which reduces the infinite interval to
 % [-1,1].  Let's take a look at what is going on in the case
-% of the function g just constructed.  First we look at
-% the different fields that make up a chebfun:
+% of the function g just constructed.  We'll do this by digging inside
+% the chebfun system a bit -- with a warning that the details
+% of these inner workings are by no means fixed, but may differ
+% from one chebfun version to the next.
+
+%%
+% First we look at the different fields that make up a chebfun:
 struct(g)
 
 %%
@@ -117,7 +122,7 @@ m.inv
 
 %%
 % The derivative of the forward map is used in the calculation
-% of integrals:
+% of integrals and derivatives:
 m.der
 
 %%
@@ -129,7 +134,7 @@ m.par
 %%
 % The use of mappings to reduce an unbounded domain to a bounded one
 % is an idea that has been employed many times
-% over the years.  One of the references we have benefitted esepcially from, which
+% over the years.  One of the references we have benefitted especially from, which
 % also contains pointers to other works in this area, is the book [Boyd 2001].
 
 %% 9.2 Infinite function values and singularities
@@ -138,7 +143,7 @@ m.par
 % to an algebraic power.  If you know the nature of the blowup,
 % it is a good idea to specify it using the 'exps' flag.
 % For example, here's a function with a pole at 0.  We can use
-% 'exps' to tell the constructor that th efunctionlooks like x^(-1)
+% 'exps' to tell the constructor that the function looks like x^(-1)
 % at the left endpoint and x^0 (i.e., smooth) at the right
 % endpoint.
 f = chebfun('sin(50*x) + 1./x',[0 4],'exps',{-1,0});
