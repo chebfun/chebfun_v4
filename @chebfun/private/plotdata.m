@@ -37,7 +37,7 @@ end
 
 % Set the plotting interval
 dom = domain(g); % by default use the whole domain
-if ~isempty(interval) && isreal(g)
+if ~isempty(interval)
     % user defined
     if isa(interval,'domain'); interval = interval.ends; end
     if interval(1) < dom(1), interval(1) = dom(1); end
@@ -80,6 +80,7 @@ if isempty(f)
     % evaluation points
     fl = [a ; reshape(repmat(ends,3,1),3*length(ends),1) ; b ; setdiff(fl,[a ; ends.' ; b])];
     [fl indx] = sort(fl);    [ignored indx2] = sort(indx);
+    
 
     % where the breaks occur. Needed for yscaling in markfun plots
     breaks = [0 ; indx2(3:3:3*length(ends))  ; length(fl)]; 
@@ -106,7 +107,8 @@ if isempty(f)
             expskj = get(gk.funs(j),'exps');
             
             mask = (fmkj < a) | (fmkj > b);
-            fmkj(mask) = []; gmkj(mask) = [];
+            fmkj(mask) = [];
+            gmkj(mask) = [];
 
             gmkj = gmkj.*((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
             
@@ -196,12 +198,17 @@ if isempty(f)
 
     % store lines
     if ~greal
+        mask = (fl < a) | (fl > b);
+            
         fl = real(gl);
         gl = imag(gl);
         
-        % remove data outside of 'interval'
-        mask = (fl < interval(1)) | (fl > interval(2));
-        fl(mask) = []; gl(mask) = [];
+        fl(mask) = [];
+        gl(mask) = [];
+        
+%         % remove data outside of real 'interval'
+%         mask = (fl < interval(1)) | (fl > interval(2));
+%         fl(mask) = []; gl(mask) = [];
     end
     
     lines = {fl, gl};
