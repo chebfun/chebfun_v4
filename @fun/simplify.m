@@ -37,7 +37,7 @@ end
 
 c = chebpoly(g);                      % coeffs of Cheb expansion of g
 ac = abs(c)/g.scl.v;                  % abs value relative to scale of f
-Tlen = min(g.n,max(3,round((gn-1)/8)));% length of tail to test
+Tlen = min(g.n,max(4,round((gn-1)/8)));% length of tail to test
 % which basically is the same as:
 % Tlen = n,             for n = 1:3
 % Tlen = 3,             for n = 4:25

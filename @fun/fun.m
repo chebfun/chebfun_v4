@@ -143,78 +143,17 @@ if any(exps)
 end
 g.exps = exps;
 
-%% Deal with endpoints involving infinities
-if ~pref.n && pref.splitting && ~all(isinf(ends)) || any(g.exps)
-        
-    % Initial setup
-    a = ends(1); b = ends(2);
-    htol = 1e-14*g.scl.h;
-    
-    % Get values at the boundary and close to it.
-    vne = op([a ; a+htol ; a+2*htol ; b-2*htol ; b-htol ; b]);
-       
-    if isinf(b) % Only check the left end-point.
-        
-        if ~isnan(vne(1)) && abs(vne(1)-vne(2))<=10*abs(vne(3)-vne(2))
-            va = vne(1);                 % Extrapolation at x=a is not needed
-        else
-            va = 2*vne(2)-vne(3);        % Extrapolate to the left
-        end
-        
-        % Check for NaN's
-        if isnan(va)
-            error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
-        end
-        op = @(x) [va;op(x(2:end))];
-        
-    elseif isinf(a) % Only check the right end-point.
-        
-        if ~isnan(vne(6)) && abs(vne(6)-vne(5))<=10*abs(vne(4)-vne(5))
-            vb = vne(6);                 % Extrapolation at x=b is not needed
-        else
-            vb = 2*vne(5)-vne(4);        % Extrapolate to the right
-        end
-        
-        % Check for NaN's
-        if isnan(vb)
-            error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
-        end
-        op = @(x) [op(x(1:end-1));vb];
-        
-    else % In splitting ON mode, decide whether extrapolate values to the boundary
-         % (This is needed when the function blows up, i.e. exps~=0).
-        
-        if any(isinf(vne)) && ~pref.blowup
-            error('CHEBFUN:getfun:infeval',['Function returned Inf when evaluated at/near boundary. ', ...
-                'Have you tried ''blowup on''']);
-        end
-        
-        if ~isnan(vne(1)) && ~g.exps(1) && abs(vne(1)-vne(2))<=10*abs(vne(3)-vne(2))
-            va = vne(1);                 % Extrapolation at x=a is not needed
-        else
-            va = 2*vne(2)-vne(3);        % Extrapolate to the left
-        end
-        if ~isnan(vne(1)) && ~g.exps(2) && abs(vne(6)-vne(5))<=10*abs(vne(4)-vne(5))
-            vb = vne(6);                 % Extrapolation at x=b is not needed
-        else
-            vb = 2*vne(5)-vne(4);        % Extrapolate to the right
-        end
-        
-        if any(isnan([va vb]))
-            error('CHEBFUN:getfun:naneval','Function returned NaN when evaluated at/near boundary.')
-        end
-        op = @(x) [va;op(x(2:end-1));vb];
-    end
-end
     
 %% Call constructor depending on narg
 if pref.n
     % non-adaptive case exact number of points provided
     % map might still be adapted for that number of points
-    xvals = g.map.for(chebpts(n));
+    x = chebpts(n);
+    xvals = g.map.for(x);
     xvals(1) = g.map.par(1);  xvals(end) = g.map.par(2);
     vals = op(xvals);
-    g.vals = vals; g.n = n; g.scl.v = max(g.scl.v, norm(vals,inf));
+    g.vals = vals; g.n = n; 
+    g = extrapolate(g,pref,x);
 else
     % adaptive case
     % If map was provided in the chebfun call, overwrite previous assignment.

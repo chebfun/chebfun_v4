@@ -36,9 +36,9 @@ end
 
 % Set minn
 if nargin == 4
-    minn = max(5, g1.n);
+    minn = max(9, g1.n);
 elseif nargin == 5
-    minn = max([5, g1.n, g2.n]);
+    minn = max([9, g1.n, g2.n]);
 else
     minn = pref.minsamples;
 end
@@ -73,6 +73,7 @@ if nargin > 3
             v = op(v1);
         end
         g = set(g,'vals', v);
+        g = extrapolate(g,pref);
         g = simplify(g, pref.eps);
         if g.n < k, break, end
     end
@@ -104,7 +105,8 @@ if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
     
     % finite & infinite intervals
     ind = 1;
-    xvals = g.map.for(chebpts(kk(ind)));
+    x = chebpts(kk(ind));
+    xvals = g.map.for(x);
     if ~isinf(a), xvals(1) = a; end
     if ~isinf(b), xvals(end) = b; end
     vnew = op(xvals); v = [];
@@ -141,7 +143,8 @@ if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
         
         %update g
         g.vals = v;  g.n = length(v);
-        g.scl.v = max(g.scl.v,norm(g.vals,inf));
+        
+        g = extrapolate(g,pref,x);
         [ish, g] = ishappy(op,g,pref);
         if ish || ind == length(kk), break, end
         ind = ind+1;
@@ -149,20 +152,7 @@ if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
         % new points
         x = chebpts(kk(ind));
         xvals = g.map.for(x(2:2:end-1));
-        
-        % Consider endpoints (set in fun.m)
-        if split || any(g.exps)
-            vnew = op([a ; xvals ; b]);
-            vnew = vnew(2:end-1);
-        elseif isinf(a) && ~isinf(b)
-            vnew = op([xvals ; b]);
-            vnew = vnew(1:end-1);
-        elseif ~isinf(a) && isinf(b)
-            vnew = op([a ; xvals]);
-            vnew = vnew(2:end);
-        else
-            vnew = op(xvals);
-        end
+        vnew = op(xvals);            
         
     end
     
@@ -179,14 +169,15 @@ else % double sampling
         if adapt % adaptive infinite intervals
             [map,v,hscl] = unbounded(g.map.par, op, k);
             g.vals = v; g.map = map; g.n = k;
-            g.scl.v = max(g.scl.v,norm(v,inf));
+            g = extrapolate(g,pref);
             g.scl.h = hscl;
         else
-
-            xvals = g.map.for(chebpts(k));
+            
+            x = chebpts(k);
+            xvals = g.map.for(x);
             xvals(1) = a; xvals(end) = b;
             g.vals = op(xvals); g.n = k;
-
+            
             % Experimental feature for avoiding NaNs.
             nans = isnan(g.vals);
             if any(nans)
@@ -206,8 +197,9 @@ else % double sampling
                     end
                 end
             end
-
-            g.scl.v = max(g.scl.v,norm(g.vals,inf));
+            
+            % Deal with endpoint values
+            g = extrapolate(g,pref,x);
         end
         [ish, g] = ishappy(op,g,pref);
         if ish, break, end
@@ -275,6 +267,7 @@ function  [ish,g] = ishappy(op,g,pref)
 %   G2 is the simplified version of G. PREF is the chebfunpref structure.
 
 n = g.n;
+
 g = simplify(g,pref.eps);
 ish = g.n < n;
 
@@ -283,12 +276,12 @@ if ish && pref.sampletest
     x = chebpts(g.n);
     [mx indx] = max(abs(diff(g.vals))./diff(x));
     xeval = (x(indx+1)+sqrt(2)*x(indx))/(1+sqrt(2));
-    v = op(g.map.for([-1;xeval;1]));
-    if abs(v(2)-bary(xeval,g.vals,x)) > 1e4*pref.eps*g.scl.v
+    v = op(g.map.for([-1+1e-4;xeval;1-1e-4]));
+    if norm(v-bary([-1+1e-4;xeval;1-1e-4],g.vals,x),inf) > 1e4*pref.eps*g.scl.v
         ish =  false;
-        return
     end
 end
+
 
 % -------------------------------------------------------------------------
 function iss = issing(op,e1,e2,vs)

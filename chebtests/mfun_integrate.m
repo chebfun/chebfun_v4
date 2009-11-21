@@ -23,4 +23,4 @@ pass(5) = 1;
 % pass(5) = abs(sum(f)-4*(log(2)-1)) < tol
 
 f = chebfun('log(1+x)+log(1-x)','splitting','on','exps',{0 0});
-pass(6) = abs(sum(f)-4*(log(2)-1)) < tol;
+pass(6) = abs(sum(f)-4*(log(2)-1)) < 5*tol;
