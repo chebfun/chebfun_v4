@@ -24,7 +24,7 @@ f = chebfun(@(x) exp(-(100*x).^2),[-inf inf]);
 pass(5) = abs(sum(f)-sqrt(pi)/100)<tol*.1;
 
 f = chebfun(@(x) sin(10*x).*exp(-x), [0 inf]);
-pass(6) = abs(sum(f) - 990/9999)<tol*10;
+pass(6) = abs(sum(f) - 990/9999)<tol*50;
 
 % Algebraic decay
 

@@ -21,7 +21,7 @@ if a == -inf && b == inf
     
     % Note: scale map with s*(x-c)+c, where c is the location of the max.
     if nargin == 3 && n > 32
-        m.for = @(y) (5*s)*trim(y./(1-min(y.^2,1)))+c;
+        m.for = @(y) (5*s)*y./(1-min(y.^2,1))+c;
         xpts = m.for(chebpts(n));
         dv = abs(diff(fh(xpts))./diff(xpts));
         xpts = (xpts(1:end-1)+xpts(2:end))/2;
@@ -40,7 +40,7 @@ if a == -inf && b == inf
     end
 
     m.inv = @(x) mfor_inf_inf(x,s,c);
-    m.for = @(y) (5*s)*trim(y./(1-min(y.^2,1)))+c;
+    m.for = @(y) (5*s)*y./(1-min(y.^2,1))+c;
     m.der = @(y) (5*s)*(1+y.^2)./(1-y.^2).^2;
     m.par = [par(1:2) s c];
     scl = max(abs(c-s),abs(c+s));
@@ -49,7 +49,7 @@ elseif a == -inf
     
 %  Note: scale map with s*(x-b)+b
      if nargin == 3 %&& n > 36
-         m.for = @(y) 15*s*trim((y-1)./(y+1))+b;
+         m.for = @(y) 15*s*(y-1)./(y+1)+b;
          xpts = m.for(chebpts(n));
          v = fh(xpts); v = abs(v - v(1));
          h = xpts(find(v>0.01*max(v),1,'first'));
@@ -60,7 +60,7 @@ elseif a == -inf
      end
      
      m.inv = @(x) (15*s+x-b)./(15*s-x+b);
-     m.for = @(y) 15*s*trim((y-1)./(y+1))+b;
+     m.for = @(y) 15*s*(y-1)./(y+1)+b;
      m.der = @(y) 15*s*2./(y+1).^2;
      m.par = [par(1:2) s];
      scl = max(abs(b),abs(b-s));
@@ -69,7 +69,7 @@ elseif a == -inf
 elseif b == inf
     
      if nargin == 3 %&& n > 36
-         m.for = @(y) 15*s*trim((y+1)./(1-y))+a;
+         m.for = @(y) 15*s*(y+1)./(1-y)+a;
          xpts = m.for(chebpts(n));
          v = fh(xpts); v = abs(v - v(end));
          h = xpts(find(v>0.01*max(v),1,'last'));
@@ -80,7 +80,7 @@ elseif b == inf
      end
      
      m.inv = @(x) (-15*s+x-a)./(15*s+x-a);
-     m.for = @(y) 15*s*trim((y+1)./(1-y))+a;
+     m.for = @(y) 15*s*(y+1)./(1-y)+a;
      m.der = @(y) 15*s*2./(y-1).^2;
      m.par = [par(1:2) s];
      scl = max(abs(a),abs(a+s));
@@ -119,8 +119,8 @@ x2 = x(~mask);                                    % Small x
 y(mask) = 1/2*(sign(x1).*sqrt(a^2./x1.^2+4)-a./x1); % good for large x
 y(~mask) = 2*x2./(a+sqrt(a^2+4*x2.^2));             % good for small x
 
-function y = trim(x)
+%function y = trim(x)
 % This function forces x to be in [-10^16,10^16]
-y = x;
-y(y==inf) = 1e18;
-y(y==-inf) = -1e18;
+%y = x;
+%y(y==inf) = 1e18;
+%y(y==-inf) = -1e18;

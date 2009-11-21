@@ -153,7 +153,11 @@ if pref.n
     xvals(1) = g.map.par(1);  xvals(end) = g.map.par(2);
     vals = op(xvals);
     g.vals = vals; g.n = n; 
-    g = extrapolate(g,pref,x);
+    if any(g.exps) || any(isnan(g.vals)) % Extrapolate only in special cases
+        g = extrapolate(g,pref,x);
+    else
+        g.scl.v = max(g.scl.v,norm(vals,inf));
+    end
 else
     % adaptive case
     % If map was provided in the chebfun call, overwrite previous assignment.

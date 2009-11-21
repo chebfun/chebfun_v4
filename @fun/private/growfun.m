@@ -113,26 +113,6 @@ if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
     
     while kk(ind)<=kk(end)
         
-        % Experimental feature for avoiding NaNs.
-        nans = isnan(vnew);
-        if any(nans)
-            xvals = xvals(nans); % Sample around NaN and extrapolate.
-            for j = 1:length(xvals)
-                xnans = repmat(xvals(j),6,1) + [0 -2 -1 1  2 0]'*1e-14*g.scl.h;
-                % Need to make sure all evaluation points are within interval
-                if any(xnans < a),
-                    vnans = op(xnans([1 4:6]));
-                    vnew(nans) = 2*vnans(3)-vnans(2);
-                elseif any(xnans > b),
-                    vnans = op(xnans([1:3 6]));
-                    vnew(nans) = 2*vnans(2)-vnans(3);
-                else % Use double sided extrapolation if we can
-                    vnans = op(xnans);
-                    vnew(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
-                end
-            end
-        end
-        
         % update v
         if isempty(v)
             v = vnew;
@@ -176,27 +156,7 @@ else % double sampling
             x = chebpts(k);
             xvals = g.map.for(x);
             xvals(1) = a; xvals(end) = b;
-            g.vals = op(xvals); g.n = k;
-            
-            % Experimental feature for avoiding NaNs.
-            nans = isnan(g.vals);
-            if any(nans)
-                xvals = xvals(nans); % Sample around NaN and extrapolate.
-                for j = 1:length(xvals)
-                    xnans = repmat(xvals(j),6,1) + [0 -2 -1 1  2 0]'*1e-14*g.scl.h;
-                    % Need to make sure all evaluation points are within interval
-                    if any(xnans < a),
-                        vnans = op(xnans([1 4:6]));
-                        g.vals(nans) = 2*vnans(3)-vnans(2);
-                    elseif any(xnans > b),
-                        vnans = op(xnans([1:3 6]));
-                        g.vals(nans) = 2*vnans(2)-vnans(3);
-                    else % Use double sided extrapolation if we can
-                        vnans = op(xnans);
-                        g.vals(nans) = .5*(2*vnans(2)-vnans(3) + 2*vnans(5)-vnans(4));
-                    end
-                end
-            end
+            g.vals = op(xvals); g.n = k;           
             
             % Deal with endpoint values
             g = extrapolate(g,pref,x);
