@@ -17,7 +17,7 @@
 % boundary condition.  In this chapter we outline the use of
 % these methods; for fuller details, see the "help"
 % documentation.  The last of the methods listed, nonlinear backslash
-% and SOLVEBVP, is a "pure chebfun" approach in which Newton's method
+% and SOLVEBVP, is an experimental "pure chebfun" approach in which Newton's method
 % is applied on chebfuns, with the necessary derivative operators calculated
 % by chebfun's built-in capabilities of Automatic Differentiation (AD).
 
@@ -25,7 +25,7 @@
 % For time-dependent PDEs, see the next chapter.
 
 %% 10.1 ODE45, ODE15S, ODE113
-% Matlab has a well-known and highly successful suite of
+% Matlab has a highly successful suite of
 % ODE IVP solvers introduced originally by Shampine
 % and Reichelt [Shampine & Reichelt 1997].
 % The codes are called ODE23, ODE45, ODE113,
@@ -89,7 +89,7 @@ v = ode113(fun,domain(0,10*pi),[1 0],opts);
 minandmax(v(:,1))
 
 %%
-% As a third example let us solve the van der Pol equation
+% As a third example we solve the van der Pol equation
 % for a nonlinear oscillator.  Following the example
 % in Matlab's ODE documentation, we take u" = 1000(1-u^2)u' = u
 % with initial conditions u=2, u'=0.  This is a highly stiff
@@ -142,7 +142,7 @@ u = v(:,1); plot(u,LW,lw)
 %
 %   ep u" + 2(1-x^2)u + u^2 = 1 ,  u(-1) = u(1) = 0.
 %
-% with ep=0.01.  Here is a solution with BVP5C.  It is just one of many
+% with ep=0.01.  Here is a solution with BVP5C, just one of many
 % solutions of this problem.
 ep = 0.01;
 ode = @(x,v) [v(2); (1-v(1)^2-2*(1-x^2)*v(1))/ep];
@@ -155,33 +155,32 @@ u = v(:,1); plot(u,LW,lw)
 
 %% 10.3 Automatic Differentiation
 % The options described in the last two sections rely on
-% standard numerical methods, whose results are then converted
-% to chebfun form.  It is natural,  however, to attempt to solve
+% standard numerical discretizations, whose results are then converted
+% to chebfun form.  It is natural, however, to want to be able to try solving
 % ODEs fully within the chebfun context, operating always at the level
 % of functions.  If the ODE is nonlinear, this will lead to Newton
 % iterations for functions, also known as Newton-Kantorovich
 % iterations.  As with any Newton method, this will require a 
 % derivative, which in this case becomes an
 % operator: an infinite-dimensional Jacobian, or more properly a
-% Frechet derivative. 
+% Frechet derivative.
 
 %%
-% To enable computations like this, the chebfun system contains
+% The chebfun system contains experimental codes for making such
+% explorations possible.  So far, at least, what we offer probably does not compete
+% in speed and robustness with BVP4C/BVP5C.  Even so, it offers the
+% entirely new possibility of enabling one to explore iterations at the function level.
+% The crucial tool for making all this possible are the chebfun
 % capabilities for Automatic Differentiation (AD) introduced in
-% 2009 by Toby Driscoll and Asgeir Birkisson.  To illustrate these features,
-% consider the sequence of computations
-%
-%    u = x^2
-%    v = exp(x) + u^3
-%    w = u + diff(v)
-%
-% In chebfun we can realize them readily enough on a chosen interval:
+% 2009 by Toby Driscoll and Asgeir Birkisson.
+
+% To illustrate chebfun AD, consider the sequence of computations
 [d,x] = domain(0,1);
 u = x.^2;
 v = exp(x) + u.^3;
 w = u + diff(v);
 %%
-% Now suppose we ask, how does one of these variables 
+% Suppose we ask, how does one of these variables 
 % depend on another one earlier in the sequence?  If the function
 % u is perturbed by an infinitesimal function du, for example, what
 % will the effect be on v? 
@@ -204,7 +203,7 @@ plot(dvdu*x,LW,lw)
 %%
 % Notice that dvdu is a "diagonal operator", acting on a
 % function just by pointwise multiplication.  (The proper term
-is "multiplier operator".  You can
+% is "multiplier operator".  You can
 % extract the chebfun corresponding to its diagonal part with
 % the command f=diag(dvdu).)  This will not be
 % true of dw/dv, however.  If w = u+diff(v), then w+dw = u+diff(v+dv),
@@ -341,21 +340,39 @@ u = N\1; plot(u,'m',LW,lw)
 
 %%
 % We get a different solution from the one we got before!
-% This one is correct too; the Carrier problem has
-% many solutions.  In fact, if we multiply this solution by
-% sin(x) we converge to the earlier one:
+% This one is correct too; the Carrier problem has many solutions. 
+% We can verify its validity like this:
+norm(N(u)-1)
+
+%%
+% If we multiply this solution by
+% sin(x) and take the result as a new initial guess,
+% we converge to another new solution:
 N.guess = u.*sin(x);
 u = N\1; plot(u,'m',LW,lw)
 
 %%
-% If we negate this solution we converge to the solution found
-% by BVP5C:
+% If we negate this solution we converge to the solution found by BVP5C.
 N.guess = -u;
-u = N\1; plot(u,'m',LW,lw)
+[u,nrmdu] = N\1; plot(u,'m',LW,lw)
 
 %%
-% They are all valid, as can be confirmed by checks like this:
-norm(N(u)-1)
+% This time, we executed the backslash command with
+% two output arguments.  The second
+% contains data showing the norms of the updates during the Newton iteration,
+% revealing in this case a troublsome initial phase followed by eventual
+% rapid convergence.
+semilogy(nrmdu,'.-k',LW,lw), ylim([1e-14,1e2])
+
+%%
+% Another way to get information about the Newton iteration with
+% nonlinop backlash is by setting
+nonlinoppref('plotting',1)
+
+%%
+% Type help nonlinoppref for details.  Here we shall not pursue this
+% option and thus return the system to its factory state:
+nonlinoppref('plotting',0)
 
 %%
 % Notice that if N is a nonlinop and u is a chebfun on the same domain,
@@ -363,6 +380,15 @@ norm(N(u)-1)
 % We could have overloaded N*u also, giving it the same meaning as
 % N(u), but it seemed wiser to keep with the familiar usage of L*u
 % for a linear operator and N(u) for a nonlinear one.  
+
+%%
+% The heading of this section refers to the command SOLVEBVP.
+% This is the code that is actually invoked by nonlinop backslash to do
+% the work, and by calling SOLVEBVP directly, you can control the
+% computation in ways not accessible
+% through backslash.  See the help documentation for details.
+% This situation is just like the relationship
+% between \ and LINSOLVE in standard Matlab.
 
 %% 10.5 References
 %
