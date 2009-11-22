@@ -5,16 +5,16 @@ tol = 50*chebfunpref('eps');
 % Elliptic parameter
 m = .1;
 K = ellipke(m);
-[d,x] = domain(0,K);
+[d,x,N] = domain(0,K);
 
 % jacobi elliptic functions
 [sn cn dn] = ellipj(x,m); 
 
 % SN is the solution of an ODE
-f = @(u) diff(u,2) + (1+m)*u - 2*m*u.^3;
-g.left = @(u) u;
-g.right = @(u) u - 1 ;
-u = solvebvp(f,g,d);
+N.op = @(u) diff(u,2) + (1+m)*u - 2*m*u.^3;
+N.lbc = @(u) u;
+N.rbc = @(u) u - 1 ;
+u = N\0;
 
 pass(1) = norm(u-sn,inf) < tol;
 

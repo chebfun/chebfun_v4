@@ -2,7 +2,7 @@
 % Lloyd N. Trefethen, November 2009
 
 %%
-% Chapter 7 described the chebfun "chebop" capability for solving
+% Chapter 7 described the "chebop" capability for solving
 % linear ODEs (ordinary differential equations) by a backslash command.
 % The chebfun system also offers several options for nonlinear ODEs:
 %
@@ -64,7 +64,7 @@ roots(u-4)
 
 %%
 % As a second example let us consider
-% the linear second-order equation u" = -u, whose solutions are
+% the linear second-order equation u"=-u, whose solutions are
 % sines and cosines.  We convert this to 
 % first-order form by using a vector v with v(1)=u
 % and v(2)=u', and solve the problem again using ode45:
@@ -89,7 +89,7 @@ v = ode113(fun,domain(0,10*pi),[1 0],opts);
 minandmax(v(:,1))
 
 %%
-% As a third example let us solve the van der Pol equation,
+% As a third example let us solve the van der Pol equation
 % for a nonlinear oscillator.  Following the example
 % in Matlab's ODE documentation, we take u" = 1000(1-u^2)u' = u
 % with initial conditions u=2, u'=0.  This is a highly stiff
@@ -109,7 +109,7 @@ diff(roots(u))
 
 %% 10.2 BVP4C, BVP5C
 % Matlab also has well-established codes BVP4C and BVP5C for solving BVPs,
-% and these two have been overloaded in the chebfun system.
+% and these too have been overloaded in the chebfun system.
 % Again the chebfun usage becomes somewhat simpler than the
 % original.  In particular, there is no need to call BVPINIT;
 % the initial guess and associated mesh are both determined by
@@ -130,7 +130,7 @@ v = bvp4c(twoode,twobc,v0);
 u = v(:,1); plot(u,LW,lw)
 
 %%
-% The initial guess u=-1 gives another equally valid solution:
+% The initial guess u=-1 gives another valid solution:
 v0 = [-one 0*one];
 v = bvp4c(twoode,twobc,v0);
 u = v(:,1); plot(u,LW,lw)
@@ -142,7 +142,8 @@ u = v(:,1); plot(u,LW,lw)
 %
 %   ep u" + 2(1-x^2)u + u^2 = 1 ,  u(-1) = u(1) = 0.
 %
-% with ep=0.01.  Here is a solution with BVP5C:
+% with ep=0.01.  Here is a solution with BVP5C.  It is just one of many
+% solutions of this problem.
 ep = 0.01;
 ode = @(x,v) [v(2); (1-v(1)^2-2*(1-x^2)*v(1))/ep];
 bc = @(va,vb) [va(1); vb(1)];
@@ -159,8 +160,8 @@ u = v(:,1); plot(u,LW,lw)
 % ODEs fully within the chebfun context, operating always at the level
 % of functions.  If the ODE is nonlinear, this will lead to Newton
 % iterations for functions, also known as Newton-Kantorovich
-% iterations.  As with any Newton method this will require a 
-% derivative, which in this case becomes an infinite-dimensional
+% iterations.  As with any Newton method, this will require a 
+% derivative, which in this case becomes an
 % operator: an infinite-dimensional Jacobian, or more properly a
 % Frechet derivative. 
 
@@ -183,7 +184,7 @@ w = u + diff(v);
 % Now suppose we ask, how does one of these variables 
 % depend on another one earlier in the sequence?  If the function
 % u is perturbed by an infinitesimal function du, for example, what
-% will the effect be on w?  
+% will the effect be on v? 
 
 %%
 % As mathematicians we can answer this question as follows.
@@ -202,7 +203,8 @@ plot(dvdu*x,LW,lw)
 
 %%
 % Notice that dvdu is a "diagonal operator", acting on a
-% function just by pointwise multiplication.  (You can
+% function just by pointwise multiplication.  (The proper term
+is "multiplier operator".  You can
 % extract the chebfun corresponding to its diagonal part with
 % the command f=diag(dvdu).)  This will not be
 % true of dw/dv, however.  If w = u+diff(v), then w+dw = u+diff(v+dv),
@@ -224,7 +226,7 @@ plot(dwdv*x,LW,lw)
 % where I is the identity operator and D is the differentiation operator with
 % respect to x.  If we apply dw/du to x, for example, the result will be 
 % x + (3x^5)' = x + 15x^4.  The following computation confirms that chebfun
-% find this automatically.
+% reaches this result automatically.
 dwdu = diff(w,u);
 norm(dwdu*x - (x+15*x.^4))
 
@@ -245,12 +247,12 @@ norm(dwdu*x - (x+15*x.^4))
 L = 0.0001*diff(d,2) + diag(x);
 
 %%
-% We could then solve a BVP, for example, with commands like these:
+% We could then solve a BVP:
 L.lbc = 0;
 L.rbc = 1;
 u = L\0; plot(u,'m',LW,lw)
 %%
-% What's going on in such a calculation is the L is a prescription for
+% What's going on in such a calculation is that L is a prescription for
 % constructing matrices of arbitrary dimensions which are spectral
 % approximations to the operator in question.  When backslash is
 % executed, the problem is solved on successively finer grids until
@@ -268,13 +270,13 @@ u = N\0; plot(u,'m',LW,lw)
 
 %%
 % The object N we have created is called a nonlinop.
-% Here are its pieces (subject to change):
+% Here are its pieces (subject to change in the future):
 struct(N)
 
 %%
 % We have a domain, three anonymous functions defining the differential
 % operator and the boundary conditions, and a fifth field for an initial
-% guess in the form of a chebfun; if this is not specified the
+% guess in the form of a chebfun; if this is not specified then
 % the initial guess is taken as the zero function.
 
 %%
@@ -284,23 +286,42 @@ struct(N)
 % the iteration requires the solution of a linear problem specified by a
 % Jacobian operator (Frechet derivative) evaluated at the current estimated
 % solution.  This is provided by the AD facility, and the linear problem
-% is then solved by the chebop system.
+% is then solved by chebops.
 
 %%
-% Let us repeat the examples of the last two sections.  First we had
-% the nonlinear IVP u' = u^2, u(0)=0.9:
+% Let us reconsider the examples of the last two sections.  First in
+% Section 10.1 we had the nonlinear IVP u' = u^2, u(0)=0.9.  This can
+% be solved in nonlinop formulation like this:
 [d,x,N] = domain(0,1);
 N.op = @(u) diff(u)-u.^2;  
 N.lbc = @(u) u-0.9;
-%u = N\0;                 
-%plot(u,LW,lw)
+u = N\0;                 
+plot(u,'m',LW,lw)
 
 %%
-% (This doesn't seem to work yet, so for the moment I'll skip to the BVPs.)
+% Next came the linear equation u"=-u.  With nonlinops, there is
+% no need to reformulate the problem as a first-order system.  There
+% are two boundary conditions at the left, which can be imposed
+% by making N.lbc a cell array.
+[d,t,N] = domain(0,10*pi);
+N.op = @(u) diff(u,2)+u;
+N.lbc = {@(u) u-1, @(u) diff(u) };
+u = N\0;
+plot(u,'m',diff(u),'c',LW,lw)
 
 %%
-% Next came the "twoode" problem u"+abs(u)=0, u(0)=0, u(4)=-2.  Here
-% is a nonlinop solution starting from the initial guess -x/2.
+% The van der Pol problem of Section 10.1 cannot be solved by
+% nonlinops; the stiffness quickly causes failure of the Newton
+% iteration.
+
+%%
+% Now we come to the BVPs of Section 10.1.
+% First came the "twoode" problem u"+abs(u)=0, u(0)=0, u(4)=-2.  
+% If we start from the initial guess u=1 as before, there is
+% no convergence; nonlinop currently uses a pure Newton iteration,
+% which is more fragile than the methods of BVP4C/BVP5C.
+% On the other hand we converge to a solution if we start
+% from the guess u(x)=-x/2:
 [d,x,N] = domain(0,4);
 N.op = @(u) diff(u,2)+abs(u);
 N.lbc = @(u) u;
@@ -310,21 +331,7 @@ u = N\0;
 plot(u,'m',LW,lw)
 
 %%
-% (But alas it doesn't converge if we start from 1.)
-
-%%
-% We get the other solution if we start from -x/2 + 2*sin(4*x/(1.5*pi)):
-%N.guess = -x/2 + 2*sin(4*x/(1.5*pi));
-%u = N\0;
-%plot(u,'m',LW,lw)
-
-%%
-% (Alas this doesn't converge at all.)
-
-%%
-% Finally here is the Carrier problem,
-%
-%   ep u" + 2(1-x^2)u + u^2 = 1 ,  u(-1) = u(1) = 0.
+% Finally here again is the Carrier problem of section 10.2:
 ep = 0.01;
 [d,x,N] = domain(-1,1);
 N.op = @(u) ep*diff(u,2) + 2*(1-x.^2).*u + u.^2;
@@ -334,14 +341,15 @@ u = N\1; plot(u,'m',LW,lw)
 
 %%
 % We get a different solution from the one we got before!
-% This one is correct too; the Carrier problem has infinitely
+% This one is correct too; the Carrier problem has
 % many solutions.  In fact, if we multiply this solution by
-% 1-x^2 we converge to the earlier one:
+% sin(x) we converge to the earlier one:
 N.guess = u.*sin(x);
 u = N\1; plot(u,'m',LW,lw)
 
 %%
-% If we negate this solution we converge to yet another:
+% If we negate this solution we converge to the solution found
+% by BVP5C:
 N.guess = -u;
 u = N\1; plot(u,'m',LW,lw)
 
@@ -350,7 +358,8 @@ u = N\1; plot(u,'m',LW,lw)
 norm(N(u)-1)
 
 %%
-% Notice that the command N(u) has been overloaded for nonlinops.
+% Notice that if N is a nonlinop and u is a chebfun on the same domain,
+% we can write N(u) to get the chebfun corresponding to N's action on u.
 % We could have overloaded N*u also, giving it the same meaning as
 % N(u), but it seemed wiser to keep with the familiar usage of L*u
 % for a linear operator and N(u) for a nonlinear one.  
