@@ -345,7 +345,7 @@
 % functions via Automatic Differentiation.  Here is an example:
 x = chebfun('x');
 f = sin(30*exp(x));
-g = f(x).*exp(x);
+g = f.*exp(x);
 gprime = diag(diff(g,x));
 subplot(1,2,1), plot(g), title g
 subplot(1,2,2), plot(gprime), title('g''')

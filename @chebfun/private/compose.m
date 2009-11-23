@@ -3,14 +3,14 @@ function h = compose(f,g)
 %   COMPOSE(F,G) returns the composition of the chebfuns F and G, F(G). The
 %   range of G must be in the domain of F.
 %
-%   Example: 
+%   Example:
 %           f = chebfun(@(x) 1./(1+100*x.^2));
 %           g = chebfun(@(x) asin(.99*x)/asin(.99));
 %           h = compose(f,g);
 %
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2009 by The Chebfun Team. 
+%   Copyright 2002-2009 by The Chebfun Team.
 %   Last commit: $Author$: $Rev$:
 %   $Date$:
 
@@ -19,16 +19,23 @@ if isa(g,'chebfun') && f(1).trans ~= g(1).trans
 end
 
 if numel(g) == 1
-   for k = 1:numel(f)
+    for k = 1:numel(f)
         h(k) = composecol(f(k),g);
-   end
+        % AD information when using compose
+        h(k).jacobian = anon('@(u) jacobian(f,g)*jacobian(g,u)',{'f' 'g'},{f(k),g});
+        h(k).ID = newIDnum;
+    end
 elseif numel(f) == 1
     for k = 1:numel(g)
         h(k) = composecol(f,g(k));
+        h(k).jacobian = anon('@(u) jacobian(f,g)*jacobian(g,u)',{'f' 'g'},{f,g(k)});
+        h(k).ID = newIDnum;
     end
 elseif size(f) == size(g)
     for k = 1:numel(f)
         h(k) = composecol(f(k),g(k));
+        h(k).jacobian = anon('@(u) jacobian(f,g)*jacobian(g,u)',{'f' 'g'},{f(k),g(k)});
+        h(k).ID = newIDnum;
     end
 else
     error('chebfun:compose:dim','Inconsistent quasimatrix dimensions')
@@ -56,8 +63,8 @@ end
 
 % g must be a real-valued function
 if ~isreal(g)
-%     error('chebfun:compose:complex', 'G must be real valued to construct F(G).')
-%     warning('chebfun:compose:complex', 'G SHOULD be real valued to construct F(G).');
+    %     error('chebfun:compose:complex', 'G must be real valued to construct F(G).')
+    %     warning('chebfun:compose:complex', 'G SHOULD be real valued to construct F(G).');
     % Experimental feature allows composition when G has a complex range.
     %   This is only really of any use when F is constructed from a
     %   polynomial otherwise approximation off the real line is awful.
@@ -80,7 +87,7 @@ if f.nfuns >1
     end
 end
 
-ends = union(g.ends, bkpts);    
+ends = union(g.ends, bkpts);
 
 if gischeb
     
@@ -99,7 +106,7 @@ else
         ends =union(g.ends([1, end]), bkpts);
     end
     
-        % Construct the chebfun of the composition using horizontal concatenation
+    % Construct the chebfun of the composition using horizontal concatenation
     h = chebfun;
     for k = 1:length(ends)-1
         h = [h; chebfun(@(x) feval(f,ghandle(x)),ends(k:k+1))];
