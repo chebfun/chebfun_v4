@@ -1,4 +1,4 @@
-%% CHEBFUN GUIDE 2: INTEGRATION AND DIFFERENTIATION
+%% oHEBFUN GUIDE 2: INTEGRATION AND DIFFERENTIATION
 % Lloyd N. Trefethen, November 2009
 
 %% 2.1 sum
@@ -58,10 +58,10 @@
 
 %%
 % Here is a similar comparison for a function that is 
-% more difficult, because of the absolute value, which leads to
-% a chebfun consisting of a number of funs.
+% more difficult, because of the absolute value, which leads 
+% with "splitting on" to a chebfun consisting of a number of funs.
   F = @(x) abs(besselj(0,x));
-  f = chebfun(@(x) abs(besselj(0,x)),[0 20]);
+  f = chebfun(@(x) abs(besselj(0,x)),[0 20],'splitting','on');
   plot(f)
 
 %%
@@ -72,7 +72,7 @@
     fprintf('  QUADL:  I = %17.15f  time = %5.3f secs\n',I,t)
   tic, I = quadgk(F,0,20,'abstol',tol,'reltol',tol); t = toc;
     fprintf(' QUADGK:  I = %17.15f  time = %5.3f secs\n',I,t)
-  tic, I = sum(chebfun(@(x) abs(besselj(0,x)),[0,20])); t = toc;
+  tic, I = sum(chebfun(@(x) abs(besselj(0,x)),[0,20],'splitting','on')); t = toc;
     fprintf('CHEBFUN:  I = %17.15f  time = %5.3f secs\n',I,t)
 
 %%
@@ -119,6 +119,11 @@
   sum(f)
 
 %%
+% Incidentally, if you are dealing with functions with narrow
+% spikes like this, it is safer to increase the value of
+% "minsamples" as described in Section 8.6.
+
+%%
 % As mentioned in Chapter 1, the chebfun system has a (somewhat limited)
 % capability of dealing with functions that blow up to infinity.  Here
 % for example is a familiar integral:
@@ -129,7 +134,7 @@
 %%
 % Certain integrals over infinite domains can also be computed,
 % though the error is often large:
-  f = chebfun(@(x) 1./x.^1.5,[1 inf]);
+  f = chebfun(@(x) 1./x.^2.5,[1 inf]);
   sum(f)
 
 %%
@@ -140,10 +145,10 @@
 % Oxford MSc thesis by Phil Assheton [Assheton 2008], which compared chebfun experimentally to
 % quadrature codes including Matlab's quad and quadl, Gander and Gautschi's
 % adaptsim and adaptlob, Espelid's modsim, modlob, coteda, and coteglob, 
-% QUADPACK's d01ak and d01aj, and the NAG Library's d01ah.  In both reliability
+% QUADPACK's QAG and QAGS, and the NAG Library's d01ah.  In both reliability
 % and speed, chebfun was found to be competitive with these alternatives.  The overall
 % winner was coteda [Espelid 2003], which was typically about twice as fast as chebfun.  
-% For further comparisions of quadrature codes, together with the development
+% For further comparisons of quadrature codes, together with the development
 % of some improved codes based on a philosophy that has something in common
 % with chebfun, see [Gonnet 2009].
 
@@ -156,7 +161,7 @@
 
 %%
 % If we take the sign of the sine, the norm increases to sqrt(2):
-  norm(chebfun('sign(sin(pi*theta))'))
+  norm(chebfun('sign(sin(pi*theta))','splitting','on'))
 
 %%
 % Here is a function that is infinitely differentiable
@@ -335,6 +340,16 @@
 % differentiation, the errors in these stable operations accumulate
 % exponentially as successive derivatives are taken.
 
+%%
+% Section 10.3 describes an alternative method of differentiating
+% functions via Automatic Differentiation.  Here is an example:
+x = chebfun('x');
+f = sin(30*exp(x));
+g = f(x).*exp(x);
+gprime = diag(diff(g,x));
+subplot(1,2,1), plot(g), title g
+subplot(1,2,2), plot(gprime), title('g''')
+
 %% 2.5 Integrals in two dimensions
 % Chebfun can often do a pretty good job with integrals over rectangles.
 % Here for example is a colorful function:
@@ -342,13 +357,13 @@
 r = @(x,y) sqrt(x.^2+y.^2); theta = @(x,y) atan2(y,x);
 f = @(x,y) sin(5*(theta(x,y)-r(x,y))).*sin(x);
 x = -2:.02:2; y = 0.5:.02:2.5; [xx,yy] = meshgrid(x,y);
-contour(x,y,f(xx,yy),-1:.2:1),
+clf, contour(x,y,f(xx,yy),-1:.2:1),
 axis([-2 2 0.5 2.5]), colorbar, grid on
 
 %%
 % We can compute the integral over the box like this:
 Iy = @(y) sum(chebfun(@(x) f(x,y),[-2 2]));
-tic; I = sum(chebfun(vec(@(y) Iy(y)),[0.5 2.5])); t = toc;
+tic; I = sum(chebfun(@(y) Iy(y),[0.5 2.5],'vectorize')); t = toc;
 fprintf('CHEBFUN:  I = %16.14f  time = %5.3f secs\n',I,t)
 
 %%
@@ -365,7 +380,7 @@ fprintf('DBLQUAD/QUADL:  I = %16.14f  time = %5.3f secs\n',I,t)
 % by the chebfunpref command, as described in Chapter 8.  For this
 % example, however, there is no speedup:
 
-tic; I = sum(chebfun(vec(@(y) Iy(y)),[0.5 2.5],'eps',1e-6)); t = toc;
+tic; I = sum(chebfun(@(y) Iy(y),[0.5 2.5],'vectorize','eps',1e-6)); t = toc;
 fprintf('CHEBFUN:  I = %16.14f  time = %5.3f secs\n',I,t)
 
 %% 2.6 Gauss and Gauss-Jacobi quadrature

@@ -50,7 +50,7 @@ function f = chebfun(varargin)
 % PREFNAME with value specified by PREFVAL. See chebfunpref for possible
 % preferences.
 %
-% CHEBFUN(F,'vectorized') prevents the warning message from being displayed
+% CHEBFUN(F,'vectorize') prevents the warning message from being displayed
 % when F does not appear to be a vectorized input.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.

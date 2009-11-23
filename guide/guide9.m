@@ -115,8 +115,6 @@ m = f.map
 m.for
 
 %%
-% (The "trim" command replaces Inf by a suitably scaled multiple
-% of 10^18 to avoid attempts to evaluate functions at infinity.)
 % The inverse map is another anonymous function,
 m.inv
 
@@ -264,7 +262,8 @@ w1 = w+1;
 % [Boyd 2001] J. P. Boyd, Chebyshev and Fourier Spectral Methods,
 % 2nd ed., Dover, 2001.
 %
-% [Richardson 2009] M. Richardson, thesis title?, thesis, MSc
+% [Richardson 2009] M. Richardson, Approximating Divergent
+% Functions in the Chebfun System, thesis, MSc
 % in Mathematical Modelling and Scientific Computing,
 % Oxford University, 2009.
 % 
