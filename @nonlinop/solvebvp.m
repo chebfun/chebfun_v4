@@ -1,7 +1,24 @@
 function [u nrmduvec] = solvebvp(BVP,rhs)
-% Should do check whether any of these fields are empty
+% Begin by obtaining the nonlinop preferences
 pref = nonlinoppref;
-problemFun = @(u) BVP.op(u)-rhs;
+
+% Check whether the operator is empty, or whether both BC are empty
+if isempty(BVP.op)
+    error('Operator empty');
+end
+
+if isempty(BVP.lbc) && isempty(BVP.rbc)
+    error('Both BC empty');
+end
+
+% If RHS of the \ is 0, keep the original DE. If not, update it
+if isnumeric(rhs) && rhs == 0
+    problemFun = BVP.op;
+else
+    problemFun = @(u) BVP.op(u)-rhs;
+end
+
+% Extract BC functions
 bcFunLeft = BVP.lbc;
 bcFunRight = BVP.rbc;
 
@@ -12,6 +29,7 @@ rightEmpty = isempty(bcFunRight);
 
 tol = 1e-10;
 
+% Construct initial guess if missing
 if isempty(BVP.guess) % No initial guess given
     if isempty(BVP.dom)
         error('Error in nonlinear backslash. Neither domain nor initial guess is given')
@@ -23,14 +41,6 @@ else
     u = BVP.guess;
     dom = domain(u);
 end
-
-% % Construct initial guess if missing
-% if isa(dom,'domain')
-%     u = chebfun(0,dom);
-% else
-%     u = dom;
-%     dom = domain(u);
-% end
 
 ab = dom.ends;
 a = ab(1);  b = ab(end);
@@ -77,7 +87,7 @@ while nrmdu > tol && normr > tol
     
     
     nrmdu = norm(delta,'fro');
-    normr = norm(r,2);
+    normr = norm(r,'fro');
     %     nrmdu = sqrt(sum( sum(delta.^2,1)));
     %     normr = sqrt(sum( sum(r.^2,1)));
     % In case of a quasimatrix, the norm calculations are taking the

@@ -1,4 +1,4 @@
-function val = get(f, propName)
+function val = get(N, propName)
 % GET   Get nonlinop properties.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
@@ -7,13 +7,17 @@ function val = get(f, propName)
 
 switch propName
     case 'dom'
-        val = f.dom;
+        val = N.dom;
     case 'op'
-        val = f.op;
+        val = N.op;
     case 'bc'
-        val = f.bc;
+        val = struct('left',N.lbc,'right',N.rbc);
+    case 'lbc'
+        val = N.lbc;
+    case 'rbc'
+        val = N.rbc;
     case 'guess'
-        val = f.guess;
+        val = N.guess;
     otherwise
         error([propName,' is not a valid chebbvp property'])
 end

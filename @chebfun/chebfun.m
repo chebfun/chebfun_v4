@@ -173,5 +173,5 @@ f(1).ends = [];
 f(1).imps = [];
 f(1).trans = false;
 f(1).jacobian = anon('@(u) []','',[]);
-f(1).ID = newIDnum();
+f(1).ID = []; % ID gets assigned in ctor_adapt and ctor_nonadapt, so leave empty here
 end

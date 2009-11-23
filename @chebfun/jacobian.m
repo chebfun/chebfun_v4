@@ -9,25 +9,11 @@ function J = jacobian(F,u)
 % returns the joint Jacobian of the functions consisting of m x n block
 % definitions.
 %
-% NOTE: In order to be able to calculate the Jacobians, the variables in
-% the chebfuns must be updated using the jacvar function, e.g. [x1 x2]=
-% jacvar(x1, x2).
-% global jacCalls
-% nargin
-% jacCalls = jacCalls +1
-% u
 IDlist = cat(1,u.ID);
 J = [];
 for k = 1:numel(F)
     idx = find((F(k).ID(1) == IDlist(:,1)) == (F(k).ID(2) == IDlist(:,2)));
-    if isempty(idx)
-        
-        % New method
-%         Fkjac = F(k).jacobian;
-%         w = Fkjac.workspace;
-%         Fkjac_fun = eval(Fkjac.function);
-%         row = Fkjac_fun(u);
-        
+    if isempty(idx)              
         % Using subsref and feval
         row = F(k).jacobian(u);
         % Old method 

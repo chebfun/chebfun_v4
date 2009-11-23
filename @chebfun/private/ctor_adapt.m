@@ -136,7 +136,7 @@ for k = 1:f.nfuns-1
 end
 % Assign fields to chebfuns.
 f.funs = funs; f.ends = newends; f.imps = imps; f.trans = false; f.scl = scl.v;
-
+f.ID = newIDnum();
  if length(f.ends)>2 
      f = merge(f,find(~ismember(newends,ends)),pref); % Avoid merging at specified breakpoints
  end

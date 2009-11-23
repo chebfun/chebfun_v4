@@ -3,11 +3,7 @@ function F = set(F,varargin)
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team.
-
-if numel(F)>1
-    error('set currently does not work with quasi-matrices')
-end
+% Copyright 2002-2009 by The Chebfun Team.
 
 propertyArgIn = varargin;
 while length(propertyArgIn) >= 2,
@@ -49,6 +45,6 @@ while length(propertyArgIn) >= 2,
         case 'guess'
             F.guess = val;
         otherwise
-            error('Unknown chebbvp property')
+            error('Unknown nonlinop property')
     end
 end

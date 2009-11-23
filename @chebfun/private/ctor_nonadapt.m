@@ -141,3 +141,4 @@ end
 
 % Assign fields to chebfuns.
 f.funs = funs; f.ends = ends; f.imps = imps; f.trans = false; f.scl = scl.v;
+f.ID = newIDnum();
