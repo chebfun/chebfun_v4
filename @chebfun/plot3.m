@@ -14,7 +14,7 @@ function varargout = plot3(varargin)
 
 %   This code is a modification of the code in chebfun/plot.
 
-numpts = 1001;
+numpts = 3001;   % more care needs to be taken with this
 
 % get jumpline style and jumpval markers
 jlinestyle = ':'; jmarker = 'x'; forcejmarks = false;

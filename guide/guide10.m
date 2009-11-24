@@ -12,9 +12,7 @@
 %
 %   Both kinds of problems:  nonlinear backslash ( = SOLVEBVP)
 %
-% As usual we use the abbreviations IVP for initial-value
-% problem and BVP for boundary-value problem, as well as BC for
-% boundary condition.  In this chapter we outline the use of
+% In this chapter we outline the use of
 % these methods; for fuller details, see the "help"
 % documentation.  The last of the methods listed, nonlinear backslash
 % and SOLVEBVP, is an experimental "pure chebfun" approach in which Newton's method
@@ -22,7 +20,12 @@
 % by chebfun's built-in capabilities of Automatic Differentiation (AD).
 
 %%
-% For time-dependent PDEs, see the next chapter.
+% We use the abbreviations IVP for initial-value
+% problem and BVP for boundary-value problem, as well as BC for
+% boundary condition.
+
+%%
+% For time-dependent PDEs, try PDE15S.
 
 %% 10.1 ODE45, ODE15S, ODE113
 % Matlab has a highly successful suite of
@@ -34,7 +37,7 @@
 
 %%
 % Chebfun contains overloads of ODE45 (for medium
-% accuracy), ODE113 (for high accuracy), and ODE15S (for stiff problems),
+% accuracy), ODE113 (for high accuracy), and ODE15S (for stiff problems)
 % created by Toby Driscoll and Rodrigo Platte.
 % These codes operate by calling their
 % Matlab counterparts, then converting the result to a chebfun.
@@ -107,6 +110,14 @@ u = v(:,1); plot(u,LW,lw)
 % the oscillator:
 diff(roots(u))
 
+%%
+% Finally here is an illustration of the Lorenz equations:
+fun = @(t,u) [10*(u(2)-u(1)); 28*u(1)-u(2)-u(1)*u(3); u(1)*u(2)-(8/3)*u(3)];
+u = ode15s(fun,domain(0,30),[-5 -7 21],opts);
+plot3(u(:,1),u(:,2),u(:,3)), view(-5,9)
+axis([-30 30 -50 50 5 45])
+xlabel x, ylabel y, zlabel z
+
 %% 10.2 BVP4C, BVP5C
 % Matlab also has well-established codes BVP4C and BVP5C for solving BVPs,
 % and these too have been overloaded in the chebfun system.
@@ -174,6 +185,7 @@ u = v(:,1); plot(u,LW,lw)
 % capabilities for Automatic Differentiation (AD) introduced in
 % 2009 by Toby Driscoll and Asgeir Birkisson.
 
+%%
 % To illustrate chebfun AD, consider the sequence of computations
 [d,x] = domain(0,1);
 u = x.^2;
@@ -268,14 +280,16 @@ N.rbc = @(u) u-1;
 u = N\0; plot(u,'m',LW,lw)
 
 %%
+% (More simply we could also have written N.lbc=0 and N.rbc=1.)
 % The object N we have created is called a nonlinop.
-% Here are its pieces (subject to change in the future):
+% Here are its pieces (subject to change as the code is further
+% developed in the future):
 struct(N)
 
 %%
 % We have a domain, three anonymous functions defining the differential
 % operator and the boundary conditions, and a fifth field for an initial
-% guess in the form of a chebfun; if this is not specified then
+% guess in the form of a chebfun.  If this is not specified then
 % the initial guess is taken as the zero function.
 
 %%
@@ -288,7 +302,7 @@ struct(N)
 % is then solved by chebops.
 
 %%
-% Let us reconsider the examples of the last two sections.  First in
+% Let us reconsider some of the examples of the last two sections.  First in
 % Section 10.1 we had the nonlinear IVP u' = u^2, u(0)=0.9.  This can
 % be solved in nonlinop formulation like this:
 [d,x,N] = domain(0,1);
@@ -377,18 +391,22 @@ nonlinoppref('plotting',0)
 %%
 % Notice that if N is a nonlinop and u is a chebfun on the same domain,
 % we can write N(u) to get the chebfun corresponding to N's action on u.
-% We could have overloaded N*u also, giving it the same meaning as
+% In developing the nonlinop class we
+% could have overloaded N*u also, giving it the same meaning as
 % N(u), but it seemed wiser to keep with the familiar usage of L*u
 % for a linear operator and N(u) for a nonlinear one.  
 
 %%
 % The heading of this section refers to the command SOLVEBVP.
-% This is the code that is actually invoked by nonlinop backslash to do
-% the work, and by calling SOLVEBVP directly, you can control the
+% When you apply backslash to a nonlinop, it invokes the overloaded
+% Matlab command mldivide; this in turn calls a command called
+% SOLVEBVP to do the actual work.
+% By calling SOLVEBVP directly, you can control the
 % computation in ways not accessible
-% through backslash.  See the help documentation for details.
+% through backslash.
 % This situation is just like the relationship
-% between \ and LINSOLVE in standard Matlab.
+% in standard Matlab between \ and LINSOLVE.
+% See the help documentation for details.
 
 %% 10.5 References
 %
