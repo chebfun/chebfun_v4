@@ -4,8 +4,8 @@ function cheblogo
 % Copyright 2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
 
 figure
-x = linspace(-1,0.957,300)';
-plot(x,cos(10*acos(x)),'linew',5), hold on
+f = chebpoly(10);
+plot(f,'interval',[-1,.957],'linew',5), hold on
 
 t = - cos(pi*(2:8)'/10) *0.99;  % cheb extrema (tweaked)
 y = 0*t; 
@@ -28,5 +28,6 @@ set(gcf,'unit','cent','pos',pos,...
   'menuBar','none','name','Chebfun logo','numbertitle','off')
 
 shg
+comet(f)
 
 end
