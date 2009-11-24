@@ -32,20 +32,22 @@ elseif (subint(1) > ends(1) && g.exps(1)) || (subint(2) < ends(2) && g.exps(2)) 
     else
         map = linear(subint);
     end
-    
-    op = @(x) 1+0*x;
-    if g.exps(1) && (subint(1) > ends(1)) % Left exp has been removed
-        op = @(x) op(x).*(x-ends(1)).^(g.exps(1));
-        g.exps(1) = 0;
-    end
-    if g.exps(2) && (subint(2) < ends(2)) % Right exp has been removed
-        op = @(x) op(x).*(ends(2)-x).^(g.exps(2));
-        g.exps(2) = 0; 
-    end
-    exps = g.exps;
 
+    exps = g.exps;
+    op = @(x) 1+0*x;
+    if exps(1) && (subint(1) > ends(1)) % Left exp has been removed
+        op = @(x) op(x).*(x-ends(1)).^exps(1);
+        exps(1) = 0;
+    end
+    if exps(2) && (subint(2) < ends(2)) % Right exp has been removed
+        op = @(x) op(x).*(ends(2)-x).^exps(2);
+        exps(2) = 0;
+    end
+
+    scl = (2/diff(ends))^sum(g.exps)./(2/diff(subint))^sum(exps);
+    
     xcheb = chebpts(g.n);
-    g = fun(@(x) op(x).*bary(x,g.vals,g.map.for(xcheb)), map, chebfunpref, g.scl);
+    g = scl*fun(@(x) op(x).*bary(x,g.vals,g.map.for(xcheb)), map, chebfunpref, g.scl);
     g.exps = exps;
 
 else % Linear case with no removed exps is simple
