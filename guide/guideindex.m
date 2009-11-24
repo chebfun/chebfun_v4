@@ -11,7 +11,8 @@
 %  ABS, 1.4, 2.1, 3.2
 %  accuracy, 1.1, 2.4, 4.2
 %  Airy function, 3.1
-%  analytic function, 4.5
+%  analytic functions, 4.5, 5.2
+%  ANGLE, 5.4
 %  approximation theory, chap. 4
 %  Assheton, Phil, 1.1, 2.1
 %% BBB
@@ -27,6 +28,7 @@
 %  Boyd, John, 3.1
 %  breakpoints, 1.4, 3.2
 %% CCC
+%  Cauchy integral, see contour integral
 %  CEIL, 3.2
 %  CHEBFUN, 1.2
 %  CHEBPADE, 4.8
@@ -34,12 +36,15 @@
 %  Chebyshev approximation, see best or minimax approximation
 %  Chebyshev coefficients, 4.1, 4.2
 %  Chebyshev interpolant, 4.1
-%  Chebyshev, Pafnuty Lvovich, 4.1
+%  Chebyshev, Pafnuty Lvovich, 4.1, 5.5
 %  Chebyshev points, 1.2, 4.2
 %  Chebyshev polynomial, 1.1, 4.1
 %  Chebyshev series, 4.1
 %  Clenshaw-Curtis quadrature, 1.2, 2.1
 %  colleague matrix, 3.1
+%  complex chebfuns, chap. 5
+%  conformal map, 5.2
+%  contour integral, 5.3, 5.4
 %  COTEDA, 2.1
 %  CUMSUM, 2.3, 2.4
 %% DDD
@@ -57,6 +62,7 @@
 %  factory values, 1.4
 %  FFT, 1.1
 %  File Exchange, 1.1
+%  FILL, 5.2
 %  FLOOR, 3.2
 %  funs, 1.4
 %% GGG
@@ -89,6 +95,7 @@
 %  METHODS, 1.3
 %  MAX, 3.2, 3.4
 %  MIN, 3.2, 3.4
+%  Moebius transformation, 5.2
 %  monomial basis, 4.2
 %% NNN
 %  norm, 2.1
@@ -97,7 +104,7 @@
 %  overloading, 1.1
 %% PPP
 %  Pachon, Ricardo, 1.1, 1.4, 4.6
-%  piecewise smooth chebfuns, 1.4
+%  piecewise smooth chebfuns, 1.4, 5.1
 %  Platte, Rodrigo, 1.1, 1.4, 1.5
 %  PLOT, 1.2
 %  PLUS, 1.3
@@ -107,7 +114,7 @@
 %% QQQ
 %  QUAD, QUADL, QUADGK, 2.1
 %  quadrature, see integration
-%  quasimatrices, 1.6
+%  quasimatrices, 1.6, 5.1
 %% RRR
 %  RATINTERP,
 %  RDIVIDE, 1.3
@@ -122,6 +129,7 @@
 %  Runge phenomenon, 4.7
 %% SSS
 %  Salzer, Herbert, 1.2
+%  SCRIBBLE, 5.5
 %  SIGN, 3.2
 %  singularities, 2.6
 %  smoothness, 4.4
@@ -133,9 +141,10 @@
 %  SUBSREF, 1.3
 %  SUM, 1.2, 2.1
 %% TTT
-%  Taylor series, 4.2
+%  Taylor coefficients, 4.2, 5.3, 5.4
 %  transpose, 1.6
 %% UUU
+%  UNWRAP, 5.4
 %% VVV
 %  Van Deun, Joris, 1.1
 %  VAR

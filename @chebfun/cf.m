@@ -10,7 +10,8 @@ function [p,q,s] = cf(f,m,n,M)
 % ... = CF(F,M,N,K): use only K-th partial sum in Chebyshev expansion of F
 %
 % For polynomial CF approximation, use N = 0 or N = [] or only provide two
-% input arguments.
+% input arguments. If P and S are required, three output arguments must be
+% specified.
 %
 % Example:
 %   f = chebfun('log(1.2+cos(exp(2*x)))');
@@ -34,15 +35,17 @@ if numel(f) > 1, error('CHEBFUN:cf:quasi',...
   'CF does not currently support quasimatrices'); end
 
 if any(get(f,'exps')), error('CHEBFUN:cf:inf',...
-  'CF does not currently support functions with nonzero exponents'); end
+  'CF does not support functions with nonzero exponents'); end
 
 if (nargin < 4), M = length(f) - 1; end
 if (nargin < 3), n = 0; end
 
+tolfft = 1e-14; maxnfft = 2^18;
+
 d = domain(f);
 
 if m >= M,
-  p = f; q = chebfun(1,d);
+  p = f; q = chebfun(1,d); s = 0;
   return
 end
 
@@ -67,42 +70,104 @@ if (n == 0) | isempty(n),         % polynomial case
   q = chebfun(1,d);
 else                              % rational case
   a(end) = 2*a(end);
-  c = a(M+1-abs(m-n+1:M));
-  [U,S,V] = svd(hankel(c));
-  s = S(n+1,n+1); v = V(:,n+1); u = U(:,n+1);
   
-  zr = roots(v); zr = zr(abs(zr)>1); zr = .5*(zr+1./zr);
-  qt = chebfun(@(x) real(prod(x-zr)/prod(-zr)),length(zr)+1,'vectorise');
-  q = chebfun; q = define(q,d,qt); n = length(zr);
-
-  u = u(end:-1:1);
-  bt = chebfun(@(x) real(exp(1i*acos(x)*M).*polyval(u,exp(1i*acos(x))) ...
-    ./polyval(v,exp(1i*acos(x))))); b = chebfun; b{d,:} = bt;
-  Rt = f - s*b;
-  ct = chebpoly(Rt);
-  ct = ct(end:-1:end-m); ct(1) = 2*ct(1);
-
-% The code below computes the first chebcoeffs of 1./q by solving a linear
-%  system. Does not work because of ill-conditioning...
-%  
-%   qtc = chebpoly(qt); qtc = qtc(end:-1:1); qtc(1) = 2*qtc(1);
-%   qtc = [qtc, zeros(1,2*m)];
-%   A = [qtc(1)/2, qtc(2:end)];
-%   for i = 1:n-1,
-%     tmp = [qtc(i+1:-1:2), qtc(1:n+1+min(0,2*m-i)), zeros(1,2*m-i)] + ...
-%       [0, qtc(i+2:n+1), zeros(1,2*m+i)];
-%     A = [A; tmp];
-%   end
-%   for i = n:2*m+n,
-%     tmp = [qtc(i+1:-1:2), qtc(1:min(2*m+n-i,i)+1), zeros(1,2*m+n-2*i)];
-%     A = [A; tmp];
-%   end
-%   gam = A\[2;zeros(2*m+n,1)]; gam = gam(1:2*m+1).';
+  % obtain eigenvalues and block structure
+  [s,u,k,l,rflag] = getblock(a,m,n,M);
+  if (k>0) | (l>0),
+    if rflag, % f is rational function (at least up to machine precision)
+      [p,q] = chebpade(f,m-k,n-k);
+      s = eps;
+      return;
+    end
+    nnew = n - k;
+    [s,u,knew,lnew] = getblock(a,m+l,nnew,M);
+    if (knew>0) | (lnew>0),
+      n = n + l;
+      [s,u,k,l] = getblock(a,m-k,n,M);
+    else
+      n = nnew;
+    end
+  end
   
-  gam = chebpoly(1./q); gam = [zeros(1,2*m+1-length(gam)),gam];
+  % obtain polynomial q from Laurent coefficients using fft
+  N = max(2^nextpow2(length(u)),256);
+  ud = polyder(u(end:-1:1)); ud = ud(end:-1:1).';
+  ac = fft(conj(fft(ud,N)./fft(u,N)))/N;
+  act = zeros(N,1);
+  while (norm(1-act(end-n:end-1)./ac(end-n:end-1),inf) > tolfft) && (N < maxnfft),
+    act = ac; N = 2*N;
+    ac = fft(conj(fft(ud,N)./fft(u,N)))/N;
+  end
+  ac = real(ac);
+  b = ones(1,n+1);
+  for j = 1:n,
+    b(j+1) = -(b(1:j)*ac(end-j:end-1))/j;
+  end
+  rho = 1/max(abs(roots(b)));
+  b = hankel(b)*b.'/sum(b.^2); b = b(end:-1:1); b(end) = b(end)/2;
+  q = simplify(chebfun(chebpolyval(b),d));
+ 
+  % compute Chebyshev coeffs of approximation Rt from Laurent coeffs of
+  % Blaschke product using fft
+  v = u(end:-1:1); N = max(2^nextpow2(length(u)),256);
+  ac = fft(exp(2*pi*1i*M*(0:N-1)'/N).*conj(fft(u,N)./fft(v,N)))/N;
+  act = zeros(N,1);
+  while (norm(1-act(1:m+1)./ac(1:m+1),inf) > tolfft) && ...
+      (norm(1-act(end-m+1:end)./ac(end-m+1:end),inf) > tolfft) && (N < maxnfft),
+    act = ac; N = 2*N;
+    ac = fft(exp(2*pi*1i*M*(0:N-1)'/N).*conj(fft(u,N)./fft(v,N)))/N;
+  end
+  ac = s*real(ac);
+  ct = a(end:-1:end-m) - ac(1:m+1)' - [ac(1), ac(end:-1:end-m+1)'];  
+  s = abs(s);
+  
+  % compute numerator polynomial from Chebyshev expansion of 1./q and Rt
+  % we know the exact ellipse of analyticity for 1./q so use this knowledge
+  % to obtain its Chebyshev coeffs (see line below)
+  gam = chebpoly(chebfun(@(x) 1./feval(q,x),d,ceil(log(4/eps/(rho-1))/log(rho))));
+  gam = [zeros(1,2*m+1-length(gam)),gam];
   gam = gam(end:-1:end-2*m); gam(1) = 2*gam(1);
   gam = toeplitz(gam);
-  bc = 2*[ct(m+1:-1:2) ct(1:m+1)]/gam;
-  bc = bc(m+1:2*m+1); bc(1) = bc(1)/2;
+  % the following steps reduce the Toeplitz system of size 2*m+1 to a
+  % system of size m, and then solve it; if q has zeros close to the
+  % domain, then G is ill-conditioned and accuracy is lost
+  A = gam(1:m,1:m); B = gam(1:m,m+1);
+  C = gam(1:m,end:-1:m+2); G = A+C-2*B*B'/gam(1,1); % cond(G)
+  bc = G\(-2*(B*ct(1)/gam(1,1)-ct(m+1:-1:2)'));
+  bc0 = (ct(1)-B'*bc)/gam(1,1); bc = [bc0, bc(end:-1:1)'];
   p = chebfun(chebpolyval(bc(end:-1:1)),d);
 end
+
+
+function [s,u,k,l,rflag] = getblock(a,m,n,M)
+% each hankel matrix corresponds to one diagonal m - n = const in the 
+% CF-table; when a diagonal intersects a square block, the eigenvalues
+% on the intersection are all equal; k and l tell you how many entries on
+% the intersection appear before and after the eigenvalue s under
+% consideration; u is the corresponding eigenvector
+
+tol = 1e-14;
+if n > M + m + 1,
+  c = zeros(1,n-m-M-1); nn = M + m + 1;
+else
+  c = []; nn = n;
+end
+c = [c,a(M+1-abs(m-nn+1:M))];
+if length(c) > 1024,
+  opts.disp = 0; opts.issym = 1; opts.isreal = 1;
+  opts.v0 = ones(length(c),1)/length(c);
+  [V,D] = eigs(hankel(c),min(n+10,length(c)),'lm',opts);
+else
+  [V,D] = eig(hankel(c));
+end
+[S,i] = sort(abs(diag(D)),'descend');
+s = D(i(n+1),i(n+1)); u = V(:,i(n+1));
+tmp = abs(S - abs(s)) < tol;
+k = 0; l = 0;
+while (k<n) && tmp(n-k),
+  k = k + 1;
+end
+while ((n+l+2) < length(tmp)) && tmp(n+l+2),
+  l = l + 1;
+end
+if (n+l+2) == length(tmp), rflag = 1; else rflag = 0; end
