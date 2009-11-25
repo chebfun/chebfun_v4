@@ -15,32 +15,40 @@ while length(propertyArgIn) >= 2,
             F.dom = val;
         case 'bc'
             if isequal(val,'neumann')
-                    F.lbc = @(u) diff(u);
-                    F.rbc = @(u) diff(u);
+                F.lbc = @(u) diff(u);
+                F.rbc = @(u) diff(u);
             elseif isequal(val,'dirichlet')
-                    F.lbc = @(u) u;
-                    F.rbc = @(u) u;
+                F.lbc = @(u) u;
+                F.rbc = @(u) u;
             else
-                    F.lbc = val;
-                    F.rbc = val;
+                F.lbc = val;
+                F.rbc = val;
             end
         case 'lbc'
             if isequal(val,'neumann')
-                    F.lbc = @(u) diff(u);
+                F.lbc = @(u) diff(u);
             elseif isequal(val,'dirichlet')
-                    F.lbc = @(u) u;
+                F.lbc = @(u) u;
             else
-                    F.lbc = val;
+                F.lbc = val;
             end
         case 'rbc'
             if isequal(val,'neumann')
-                    F.rbc = @(u) diff(u);
+                F.rbc = @(u) diff(u);
             elseif isequal(val,'dirichlet')
-                    F.rbc = @(u) u;
+                F.rbc = @(u) u;
             else
-                    F.rbc = val;
+                F.rbc = val;
             end
         case 'op'
+            if isa(val,'function_handle') || (isa(val,'cell') && isa(val{1},'function_handle'))
+                F.optype = 'an_fun';
+            elseif isa(val,'chebop') || (isa(val,'cell') && isa(val{1},'chebop'))
+                F.optype = 'chebop';
+            else
+                error(['nonlinop:set: Illegal type of operator. Allowed types are ' ...
+                    'anonymous functions and chebops.']);
+            end
             F.op = val;
         case 'guess'
             F.guess = val;

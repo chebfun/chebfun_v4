@@ -1,44 +1,58 @@
-function cbvp = nonlinop(varargin)
+function Nop = nonlinop(varargin)
 
-cbvp = struct([]);
-if nargin == 0
-    % Should we allow empty constructor?
-    cbvp(1).dom =[];
-    cbvp(1).op = [];
-    cbvp(1).lbc = [];
-    cbvp(1).rbc = [];
-    cbvp(1).guess = [];
-elseif nargin == 1
-    cbvp(1).dom = varargin{1};
-    cbvp(1).op = [];
-    cbvp(1).lbc = [];
-    cbvp(1).rbc = [];
-    cbvp(1).guess = [];
-elseif nargin == 2
-    cbvp(1).dom = varargin{1};
-    cbvp(1).op = varargin{2};
-    cbvp(1).lbc = [];
-    cbvp(1).rbc = [];
-    cbvp(1).guess = [];
-elseif nargin == 3
-    cbvp(1).dom = varargin{1};
-    cbvp(1).op = varargin{2};
-    cbvp(1).lbc = varargin{3};
-    cbvp(1).rbc = [];
-    cbvp(1).guess = [];
-elseif nargin == 4
-    cbvp(1).dom = varargin{1};
-    cbvp(1).op = varargin{2};
-    cbvp(1).lbc = varargin{3};
-    cbvp(1).rbc = varargin{4};
-    cbvp(1).guess = [];
-elseif nargin == 5
-    cbvp(1).dom = varargin{1};
-    cbvp(1).op = varargin{2};
-    cbvp(1).lbc = varargin{3};
-    cbvp(1).rbc = varargin{4};
-    cbvp(1).guess = varargin{5};
+
+persistent default_N
+if isnumeric(default_N)
+    default_N = Nop_ini;
+    default_N = class(default_N,'nonlinop');
+end
+Nop = default_N;
+
+switch nargin
+    case 0
+        % Empty constructor
+    case 1
+        Nop.dom = varargin{1};
+    case 2
+        Nop.dom = varargin{1};
+        Nop.op = varargin{2};
+    case 3
+        Nop.dom = varargin{1};
+        Nop.op = varargin{2};
+        Nop.lbc = varargin{3};
+    case 4        
+        Nop.dom = varargin{1};
+        Nop.op = varargin{2};
+        Nop.lbc = varargin{3};
+        Nop.rbc = varargin{4};
+    case 5       
+        Nop.dom = varargin{1};
+        Nop.op = varargin{2};
+        Nop.lbc = varargin{3};
+        Nop.rbc = varargin{4};
+        Nop.guess = varargin{5};
 end
 
-cbvp = class(cbvp,'nonlinop');
+% Determine the type of the operator
+if nargin > 1
+    if isa(varargin{2},'function_handle')
+        Nop.optype = 'an_fun';
+    elseif isa(varargin{2},'chebop')
+        Nop.optype = 'chebop';        
+    else
+        error(['nonlinop:nonlinop: Illegal type of operator. Allowed types are ' ...
+            'anonymous functions and chebops.']);
+    end
+end
+
+end
+
+function N = Nop_ini()
+N = struct([]);
+N(1).dom =[];
+N(1).op = [];
+N(1).lbc = [];
+N(1).rbc = [];
+N(1).guess = [];
+N(1).optype = [];
 end

@@ -1,6 +1,7 @@
 function [u nrmduvec] = solvebvp(BVP,rhs)
 % Begin by obtaining the nonlinop preferences
 pref = nonlinoppref;
+tol = pref.tolerance;
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(BVP.op)
@@ -9,6 +10,14 @@ end
 
 if isempty(BVP.lbc) && isempty(BVP.rbc)
     error('Both BC empty');
+end
+
+% Check which type the operator is (anonymous function or a chebop).
+% If it's an anonymous function, opType = 1. Else, opType = 2.
+if strcmp(BVP.optype,'an_fun')
+    opType = 1;
+else
+    opType = 2;
 end
 
 % If RHS of the \ is 0, keep the original DE. If not, update it
@@ -27,7 +36,7 @@ bcFunRight = BVP.rbc;
 leftEmpty = isempty(bcFunLeft);
 rightEmpty = isempty(bcFunRight);
 
-tol = 1e-10;
+
 
 % Construct initial guess if missing
 if isempty(BVP.guess) % No initial guess given
@@ -50,10 +59,16 @@ if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
 
 counter = 0;
 % u = jacvar(u);
-r = problemFun(u);
+
+% An. fun. and chebops differ whether we do N(u) or L*u
+if opType == 1
+    r = problemFun(u);
+else
+    r = problemFun*u;
+end
 nrmdu = Inf;
 normr = Inf;
-nrmduvec = [];
+nrmduvec = zeros(10,1);
 alpha = 1;      % Stepsize in Newton iteration
 while nrmdu > tol && normr > tol
     %     u = jacvar(u);
@@ -75,7 +90,13 @@ while nrmdu > tol && normr > tol
             bc.right(j) = struct('op',jacobian(v,u),'val',v(b));
         end
     end
-    A = jacobian(r,u) & bc;
+    % If the operator is a chebop, we don't need to linearize. Else, do the
+    % linearization using diff
+    if opType == 1
+        A = diff(r,u) & bc;
+    else
+        A = problemFun & bc; % problemFun is a chebop
+    end
     A.scale = sqrt(sum( sum(u.^2,1)));
     delta = -(A\r);
     
@@ -83,7 +104,12 @@ while nrmdu > tol && normr > tol
     
     u = u + alpha*delta;
     u = jacvar(u);      % Reset the Jacobian of the function
-    r = problemFun(u);
+    
+    if opType == 1
+        r = problemFun(u);
+    else
+        r = problemFun*u;
+    end
     
     
     nrmdu = norm(delta,'fro');
@@ -97,8 +123,7 @@ while nrmdu > tol && normr > tol
     % columnwise and use the sum of those inner products as an estimate for
     % the residuals (this is certainly correct if the preferred norm would
     % be the Frobenius norm).
-    %     u = chebfun(@(y) u(y)+delta(y),d);
-    if pref.plotting == 1
+    if strcmp(pref.plotting,'on')
         subplot(2,1,1),plot(u);title('Current solution');
         subplot(2,1,2),plot(delta,'r'),title('Latest update');
         drawnow,pause
@@ -109,6 +134,5 @@ while nrmdu > tol && normr > tol
     %     end
     nrmduvec(counter) = nrmdu;
 end
-% disp(['Converged in ', num2str(counter), ' iterations']);
-% toc;
+
 end
