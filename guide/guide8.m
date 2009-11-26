@@ -94,7 +94,7 @@ splitting off
 % at non-singular points when
 % convergence is not taking place fast enough.  For example, with splitting off
 % we cannot successfully construct a chebfun for the square root function on [0,1]
-% (unless we use mappings as described in Chapter 10):
+% (unless we use mappings as described in Chapter 9):
 
   f = chebfun(@(x) sqrt(x),[0 1]);
 
@@ -224,7 +224,7 @@ splitting off
 
 %%
 % (Much more efficient ways of resolving this function, by eliminating the
-% singularity, are described in Chapter 10.)
+% singularity, are described in Chapter 9.)
 
 %% 8.6  minsamples: minimum number of sample points
 % At the other end of the spectrum, the parameter minsamples determines the minimum
@@ -357,7 +357,7 @@ splitting off
   plot(f,'.-')
 
 %%
-% This rather bizarre example tempts us to play further.
+% This rather bizarre example encourages us to play further.
 % What if we change length(x)*sin(2*x) to sin(length(x)*x)?
 % Now there is no convergence, for no matter how fine the grid is, the
 % function is underresolved.
@@ -404,12 +404,12 @@ chebfunpref('eps')
 % involving differential equations.  (Indeed, the chebfun differential
 % equations commands have their own tolerance control strategies.)
 % However, chebfun does such a good job at resolving
-% many functions that eps-adjustment feature is not as useful as you might imagine, and we recommend
-% that users not change eps unless they are having real problem with standard precision.
+% many functions that the eps-adjustment feature is not as useful as you might imagine, and we recommend
+% that users not change eps unless they are having real problems with standard precision.
 
 %% 8.9 Additional preferences
 % Information about additional chebfun preferences can be found by typing
 % help chebfunpref.  In particular, the 'blowup' preference relates to chebfuns
-% that diverge to infinity or have other singularities, described in Chapter 10, and
+% that diverge to infinity or have other singularities, described in Chapter 9, and
 % the 'sampletest' preference controls whether a function is evaluated at an extra
 % point as a safety check of convergence.

@@ -307,21 +307,25 @@ f = chebfun(F,[-100,100]);
 
 %%
 % This function has a lot of complex roots lying in strips on either side
-% of the real axis.  Our first attempt to plot them, however, gives
-% a crazy result. 
+% of the real axis.
 r = roots(f,'complex');
 hold off, plot(r,'.','markersize',6)
 
 %%
-% The 'norecurse' flag turns off the Boyd-Battles recursion mentioned
-% above, fixing the problem:
-r = roots(f,'complex','norecurse');
-hold off, plot(r,'.m','markersize',6)
+% If you are dealing with complex roots of complicated chebfuns like this,
+% it may be safer to add a flag 'nonrecurse' to the roots call, at the
+% cost of slowing down the computation.
+% This turns off the Boyd-Battles recursion mentioned
+% above, lowering the chance of missing a few roots near interfaces of the
+% recursion.  If we try that here we find that the results look almost the
+% same as before in a plot:
+r2 = roots(f,'complex','norecurse');
+hold on, plot(r,'om','markersize',8)
 
 %%
-% Here is a verification that the roots we have found are
-% pretty good ones:
-norm(F(r),inf)
+% However, the accuracy has improved:
+norm(F(r))
+norm(F(r2))
 
 %% 3.7 References
 %

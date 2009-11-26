@@ -16,6 +16,7 @@
 %  approximation theory, chap. 4
 %  Assheton, Phil, 1.1, 2.1
 %% BBB
+%  backslash, 6.2
 %  barycentric interpolation, 1.2, 4.5
 %  Battles, Zachary, 1.1, 3.1
 %  Bernstein ellipse, 4.5
@@ -38,11 +39,12 @@
 %  Chebyshev interpolant, 4.1
 %  Chebyshev, Pafnuty Lvovich, 4.1, 5.5
 %  Chebyshev points, 1.2, 4.2
-%  Chebyshev polynomial, 1.1, 4.1
+%  Chebyshev polynomials, 1.1, 4.1, 6.4
 %  Chebyshev series, 4.1
 %  Clenshaw-Curtis quadrature, 1.2, 2.1
 %  colleague matrix, 3.1
 %  complex chebfuns, chap. 5
+%  COND, 6.4
 %  conformal map, 5.2
 %  contour integral, 5.3, 5.4
 %  COTEDA, 2.1
@@ -86,25 +88,31 @@
 %% JJJ
 %% KKK
 %% LLL
-%  Legendre polynomials, 2.6
+%  least-squares, 6.2
+%  Legendre polynomials, 2.6, 6.3, 6.4
+%  LEGPOLY, 6.3
 %  LEGPTS, 2.6
 %  LENGTH, 1.2, 1.4
 %% MMM
 %  Mathematica, 2.1
-%  MEAN, 2.3
+%  MEAN, 2.2
 %  METHODS, 1.3
 %  MAX, 3.2, 3.4
 %  MIN, 3.2, 3.4
 %  Moebius transformation, 5.2
 %  monomial basis, 4.2
 %% NNN
-%  norm, 2.1
+%  NORM, 2.2, 6.4, 6.5
+%  NULL, 6.6
 %% OOO
 %  Olver, Sheehan, 1.1
+%  ORTH, 6.6
+%  orthogonal polynomials, 6.3
 %  overloading, 1.1
 %% PPP
 %  Pachon, Ricardo, 1.1, 1.4, 4.6
 %  piecewise smooth chebfuns, 1.4, 5.1
+%  PINV, 6.6
 %  Platte, Rodrigo, 1.1, 1.4, 1.5
 %  PLOT, 1.2
 %  PLUS, 1.3
@@ -112,9 +120,11 @@
 %  POLYFIT, 4.8
 %  POWER, 1.3
 %% QQQ
+%  QR, 6.3
+%  QR factorization, 6.3
 %  QUAD, QUADL, QUADGK, 2.1
 %  quadrature, see integration
-%  quasimatrices, 1.6, 5.1
+%  quasimatrices, 1.6, 5.1, chap. 6
 %% RRR
 %  RATINTERP,
 %  RDIVIDE, 1.3
@@ -124,7 +134,7 @@
 %  ROOTS, 1.1, 3.1
 %  ROUND, 3.2
 %  rounding errors, 1.1, 4.5
-%  row vs. column chebfuns, 1.6
+%  row vs. column chebfuns, 1.6, 6.1
 %  Runge functions, 1.2
 %  Runge phenomenon, 4.7
 %% SSS
@@ -135,11 +145,14 @@
 %  smoothness, 4.4
 %  spectral accuracy, 4.4
 %  spectral methods, 4.1
+%  spline, 6.2
 %  splitting, 1.4, 4.1
-%  STD, 2.1
+%  SPY, 6.1. 6.3, 6.6
+%  STD, 2.2
 %  STRUCT, 1.4
 %  SUBSREF, 1.3
 %  SUM, 1.2, 2.1
+%  SVD, 6.4
 %% TTT
 %  Taylor coefficients, 4.2, 5.3, 5.4
 %  transpose, 1.6
@@ -147,7 +160,7 @@
 %  UNWRAP, 5.4
 %% VVV
 %  Van Deun, Joris, 1.1
-%  VAR
+%  VAR, 2.2
 %% WWW
 %% XXX
 %% YYY

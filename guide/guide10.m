@@ -94,7 +94,7 @@ minandmax(v(:,1))
 %%
 % As a third example we solve the van der Pol equation
 % for a nonlinear oscillator.  Following the example
-% in Matlab's ODE documentation, we take u" = 1000(1-u^2)u' = u
+% in Matlab's ODE documentation, we take u" = 1000(1-u^2)u'-u
 % with initial conditions u=2, u'=0.  This is a highly stiff
 % problem whose solution contains very rapid transitions,
 % so we use ode15s with splitting on:
@@ -124,7 +124,7 @@ xlabel x, ylabel y, zlabel z
 % Again the chebfun usage becomes somewhat simpler than the
 % original.  In particular, there is no need to call BVPINIT;
 % the initial guess and associated mesh are both determined by
-% an input initial guess chebfun u0. 
+% an input initial guess u0. 
 
 %%
 % For example, here is the problem labeled "twoode" in the Matlab
@@ -172,7 +172,7 @@ u = v(:,1); plot(u,LW,lw)
 % of functions.  If the ODE is nonlinear, this will lead to Newton
 % iterations for functions, also known as Newton-Kantorovich
 % iterations.  As with any Newton method, this will require a 
-% derivative, which in this case becomes an
+% derivative, which in this case becomes a linear
 % operator: an infinite-dimensional Jacobian, or more properly a
 % Frechet derivative.
 
@@ -181,8 +181,8 @@ u = v(:,1); plot(u,LW,lw)
 % explorations possible.  So far, at least, what we offer probably does not compete
 % in speed and robustness with BVP4C/BVP5C.  Even so, it offers the
 % entirely new possibility of enabling one to explore iterations at the function level.
-% The crucial tool for making all this possible are the chebfun
-% capabilities for Automatic Differentiation (AD) introduced in
+% The crucial tool for making all this possible is the chebfun
+% capability for Automatic Differentiation (AD) introduced in
 % 2009 by Toby Driscoll and Asgeir Birkisson.
 
 %%
@@ -199,7 +199,7 @@ w = u + diff(v);
 
 %%
 % As mathematicians we can answer this question as follows.
-% The variation in question takes the form dv/du = 3u^2 = 3x^4.  In other
+% The variation takes the form dv/du = 3u^2 = 3x^4.  In other
 % words, dv/du is the linear operator that multiplies a function on [0,1]
 % by 3x^4.  In chebfun, we can compute this operator automatically by
 % typing diff with two arguments:
@@ -328,7 +328,7 @@ plot(u,'m',diff(u),'c',LW,lw)
 % iteration.
 
 %%
-% Now we come to the BVPs of Section 10.1.
+% Now we come to the BVPs of Section 10.2.
 % First came the "twoode" problem u"+abs(u)=0, u(0)=0, u(4)=-2.  
 % If we start from the initial guess u=1 as before, there is
 % no convergence; nonlinop currently uses a pure Newton iteration,
@@ -374,7 +374,7 @@ N.guess = -u;
 % This time, we executed the backslash command with
 % two output arguments.  The second
 % contains data showing the norms of the updates during the Newton iteration,
-% revealing in this case a troublsome initial phase followed by eventual
+% revealing in this case a troublesome initial phase followed by eventual
 % rapid convergence.
 semilogy(nrmdu,'.-k',LW,lw), ylim([1e-14,1e2])
 
@@ -399,7 +399,7 @@ nonlinoppref('plotting',0)
 %%
 % The heading of this section refers to the command SOLVEBVP.
 % When you apply backslash to a nonlinop, it invokes the overloaded
-% Matlab command mldivide; this in turn calls a command called
+% Matlab command mldivide; this in turn calls a command
 % SOLVEBVP to do the actual work.
 % By calling SOLVEBVP directly, you can control the
 % computation in ways not accessible

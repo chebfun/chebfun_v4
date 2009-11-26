@@ -15,7 +15,7 @@ function f = scribble(s)
 %  $Date$:
 
 L = length(s);
-f = chebfun;
+f0 = chebfun;
 for j = 1:L
    switch upper(s(j))
       case {'A'}, t = c([0 .4+1i .8 .6+.5i .2+.5i]);
@@ -65,10 +65,12 @@ for j = 1:L
       otherwise, 
    end
    if ~isempty(t)
-       f = [f; t+(j-1)];
+       f0 = [f0; t+(j-1)];
    end
 end
-f = 2*f/L-1;
+f0 = 2*f0/L-1;     % rescale real part of range to [-1,1]
+f = chebfun;
+f{-1,1} = f0;      % rescale domain to [-1,1]
 
 function cf = c(v)
     cf = chebfun;

@@ -1,4 +1,4 @@
-%% oHEBFUN GUIDE 2: INTEGRATION AND DIFFERENTIATION
+%% CHEBFUN GUIDE 2: INTEGRATION AND DIFFERENTIATION
 % Lloyd N. Trefethen, November 2009
 
 %% 2.1 sum
@@ -261,11 +261,25 @@
   fprime = diff(f);
   hold off, plot(f)
   hold on, plot(fprime,'r')
+
+%%
+% Here's an example of how differentiation can be used in 
+% a numerical computation.  In Chapter 1 we computed some zeros
+% of a Bessel function, which came out to about 13 digits of accuracy:
+  g = chebfun(@(t) besselj(0,t),[0,100]);
+  r = roots(g); r = r(1:5)
+  Jr = besselj(0,r)
+
+%%
+% We can get a couple more digits of accuracy by taking one
+% step of Newton's method:
+  gprime = diff(g);
+  r2 = r - besselj(0,r)./gprime(r)
+  Jr2 = besselj(0,r2)
 %%
 % If the derivative of a function with a jump is computed, then
-% a delta function is introduced, which shows up as an arrow in
-% in the "plot" command.  Consider for example this
-% function defined piecewise:
+% a delta function is introduced.
+% Consider for example this function defined piecewise:
 
   f = chebfun('x.^2',1,'4-x','4./x',0:4);
   hold off, plot(f)
@@ -434,7 +448,7 @@ toc
 % Gauss-Jacobi quadrature, see JACPOLY and JACPTS.
 % These arise in integration of functions with singularities at
 % one or both endpoints, and are used internally in the chebfun system
-% for integration of chebfuns with singularities (Chapter 10).
+% for integration of chebfuns with singularities (Chapter 9).
 
 %% 2.7 References
 %
