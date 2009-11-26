@@ -132,7 +132,7 @@ else                              % rational case
   % system of size m, and then solve it; if q has zeros close to the
   % domain, then G is ill-conditioned and accuracy is lost
   A = gam(1:m,1:m); B = gam(1:m,m+1);
-  C = gam(1:m,end:-1:m+2); G = A+C-2*B*B'/gam(1,1); % cond(G)
+  C = gam(1:m,end:-1:m+2); G = A+C-2*B*B'/gam(1,1);
   bc = G\(-2*(B*ct(1)/gam(1,1)-ct(m+1:-1:2)'));
   bc0 = (ct(1)-B'*bc)/gam(1,1); bc = [bc0, bc(end:-1:1)'];
   p = chebfun(chebpolyval(bc(end:-1:1)),d);
