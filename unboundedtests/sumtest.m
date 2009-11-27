@@ -12,7 +12,7 @@ f = chebfun(@(x) exp(-x), [0 inf]);
 pass(1) = abs(sum(f)-1)<tol*10;
 
 f = chebfun(@(x) exp(-0.001*x), [0 inf]);
-pass(2) = abs(sum(f)-1000)<tol*10000;
+pass(2) = abs(sum(f)-1000)<tol*5e4;
 
 f = chebfun(@(x) exp(-1000*x), [0 inf]);
 pass(3) = abs(sum(f)-0.001)<tol*.1;

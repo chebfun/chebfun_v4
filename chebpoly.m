@@ -19,7 +19,9 @@ end
 ln = length(n);
 f = chebfun;
 for k = 1:ln
-    vk = ones(1,n(k)+1); vk(end-1:-2:1) = -1;
+    %vk = ones(1,n(k)+1); vk(end-1:-2:1) = -1;
+    vk = cos(n(k)*acos(chebpts(n(k)+1)));
+    g = chebfun(vk,d);
     f(:,k) = chebfun(vk,d);
 end
 

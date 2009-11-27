@@ -45,11 +45,7 @@ RelTol = max(RelTol(:),AbsTol(:)./scl(:));
 
 y = chebfun;
 for j = 1:ncols
-  chebfunpref('eps', RelTol(j))
-  y(:,j) = chebfun(@(x) deval(sol,x,j).', [ends(1) ends(end)]);
+  y(:,j) = chebfun(@(x) deval(sol,x,j).', [ends(1) ends(end)],'eps', RelTol(j));
 end
-
-% Return to user tolerance
-chebfunpref('eps',usertol)
 
 end

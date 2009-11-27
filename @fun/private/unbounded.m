@@ -22,7 +22,7 @@ if a == -inf && b == inf
     % Note: scale map with s*(x-c)+c, where c is the location of the max.
     if nargin == 3 && n > 32
         m.for = @(y) (5*s)*y./(1-min(y.^2,1))+c;
-        xpts = m.for(chebpts(n));
+        xpts = m.for(chebpts(n,1));
         dv = abs(diff(fh(xpts))./diff(xpts));
         xpts = (xpts(1:end-1)+xpts(2:end))/2;
         maxdv = max(dv);
@@ -50,7 +50,7 @@ elseif a == -inf
 %  Note: scale map with s*(x-b)+b
      if nargin == 3 %&& n > 36
          m.for = @(y) 15*s*(y-1)./(y+1)+b;
-         xpts = m.for(chebpts(n));
+         xpts = m.for(chebpts(n,1));
          v = fh(xpts); v = abs(v - v(1));
          h = xpts(find(v>0.01*max(v),1,'first'));
 %         % avoid problems that don't decay quadratically at infinity
@@ -70,7 +70,7 @@ elseif b == inf
     
      if nargin == 3 %&& n > 36
          m.for = @(y) 15*s*(y+1)./(1-y)+a;
-         xpts = m.for(chebpts(n));
+         xpts = m.for(chebpts(n,1));
          v = fh(xpts); v = abs(v - v(end));
          h = xpts(find(v>0.01*max(v),1,'last'));
 %         % avoid problems that don't decay quadratically at infinity
@@ -90,7 +90,7 @@ else
 end
 
 if nargout > 1
-    xvals = m.for(chebpts(n));
+    xvals = m.for(chebpts(n,1));
     v = fh(xvals);
     
     % Experimental feature for avoiding NaNs.

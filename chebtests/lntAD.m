@@ -16,6 +16,5 @@ pass(2) = dgdx1(2)==16;
 dhdy = diff(h,y);
 q = dhdy*one; 
 w = dhdy*x;  
-
 pass(3) = q(2)==4;
 pass(4) = w(2)==16;

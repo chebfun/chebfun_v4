@@ -3,7 +3,7 @@ function pass = diffexp
 tol = chebfunpref('eps');
 
 f = chebfun('exp(x)',[-sqrt(7),pi]);
-pass(1) = norm(f-diff(f),inf) < 1000*tol;
+pass(1) = norm(f-diff(f),inf) < 2000*tol;
 
 f = chebfun('exp(x)',[-inf,0]);
 pass(2) = norm(f-diff(f),inf) < 1000*tol;

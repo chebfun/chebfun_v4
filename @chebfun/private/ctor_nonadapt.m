@@ -131,7 +131,8 @@ for i = 1:length(ops)
 end
 
 % First row of imps contains function values
-imps = jumpvals(funs,ends,op); 
+imps = jumpvals(funs,ends,op,pref,scl.v); 
+scl.v = max(scl.v,norm(imps(~isinf(imps)),inf));
 
 % update scale field in funs
 f.nfuns = length(ends)-1; 

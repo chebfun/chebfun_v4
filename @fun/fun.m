@@ -148,15 +148,21 @@ g.exps = exps;
 if pref.n
     % non-adaptive case exact number of points provided
     % map might still be adapted for that number of points
-    x = chebpts(n);
+    x = chebpts(n,pref.chebkind);
     xvals = g.map.for(x);
-    xvals(1) = g.map.par(1);  xvals(end) = g.map.par(2);
+    if pref.chebkind == 2
+        xvals = adjustends(xvals,g.map.par(1),g.map.par(2));
+    end
     vals = op(xvals);
     g.vals = vals; g.n = n; 
     if any(g.exps) || any(isnan(g.vals)) % Extrapolate only in special cases
         g = extrapolate(g,pref,x);
     else
         g.scl.v = max(g.scl.v,norm(vals,inf));
+    end
+    if pref.chebkind == 1
+        % place values back in chebpoints of second kind
+        g.vals = chebpolyval(chebpoly(g,1),2);
     end
 else
     % adaptive case
@@ -175,5 +181,3 @@ else
     end
     [g,ish] = growfun(op,g,pref);
 end
-
-

@@ -17,12 +17,12 @@ if any(diff(ends)<0),
 end
 funs = [];
 hs = norm(ends([1,end]),inf);
-if hs == inf
-   inends = isfinite(ends);
+if isinf(hs)
+   inends = ~isinf(ends);
    if any(inends)
-       hs = max(max(abs(ends(inends)+1)));
+       hs = max(max(abs(ends(inends))+1));
    else
-       hs = 1;
+       hs = 2;
    end
 end
 scl.v=0; scl.h= hs;
@@ -124,13 +124,15 @@ for i = 1:length(ops)
     end
 end
 
-imps = jumpvals(funs,newends,op); % Update values at jumps, first row of imps.
+
+imps = jumpvals(funs,newends,op,pref,scl.v); % Update values at jumps, first row of imps.
+scl.v = max(scl.v,norm(imps(~isinf(imps)),inf));
 f.nfuns = length(newends)-1; 
 % update scale and check if simplification is needed.
-for k = 1:f.nfuns-1
+for k = 1:f.nfuns
     funscl = funs(k).scl.v;
     funs(k).scl = scl;      % update scale field
-    if  funscl < 10*scl.v   % if scales were significantly different, simplify!
+    if  funscl < scl.v/10   % if scales were significantly different, simplify!
         funs(k) = simplify(funs(k),pref.eps);
     end
 end

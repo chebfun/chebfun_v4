@@ -1,4 +1,4 @@
-function vals = jumpvals(funs,ends,op)
+function vals = jumpvals(funs,ends,op,pref,scl)
 % Updates the values at breakpoints, i.e., the first row of imps.
 % If there is a singular point, op is evaluated in order to obtain a 
 % value at the breakpoint.
@@ -7,28 +7,74 @@ function vals = jumpvals(funs,ends,op)
 
 nfuns = numel(funs);
 vals = 0*ends;
-
+% Endpoint values
 vals(1) = get(funs(1),'lval');
-if nargin == 3 && ~isa(op,'double') % Function handle is provided
+vals(nfuns+1) = get(funs(nfuns),'rval');
 
-    if isa(op,'chebfun')
+if nargin >2 && ~isa(op,'double') % Function handle is provided
+    
+    if isa(op,'chebfun') || isa(op,'fun')
         op = @(x) feval(op,x);
-    end    
-    for k = 2:nfuns
-        if funs(k).exps(1)
-            vals(k) = get(funs(k),'lval');
-        else
-            vals(k) = op(ends(k));
+    end
+    
+    if pref.chebkind == 2       
+        for k = 2:nfuns
+            if funs(k).exps(1) < 0
+                vals(k) = get(funs(k),'lval');
+            else
+                vals(k) = op(ends(k));
+            end
+        end
+        
+    else
+        
+        % If first kind points were used in construction, make sure
+        % representation is continuous.
+        
+        tol = max(10*pref.eps,3e-12)*scl;
+        dbz_state = warning('off','MATLAB:divideByZero');   % turn off warning because of removable sings
+        vals = op(ends);          
+        warning(dbz_state);
+        
+        lval = get(funs(1),'lval'); % Check left endpoint of the domain
+        if abs(lval-vals(1)) > tol || isnan(vals(1)) % if difference is large, use limit from interior
+            vals(1) = lval;
+        end
+        for k = 2:nfuns
+            rval = get(funs(k),'lval');
+            lval = get(funs(k-1),'rval');
+            if abs(rval-lval) < tol        % is the function contiuous?
+                if abs(vals(k)-lval) < tol || abs(vals(k)-rval) < tol  % use handle value if close enough
+                    funs(k-1).vals(end) =  vals(k);
+                    funs(k).vals(1) =  vals(k);
+                else
+                    if funs(k).n < funs(k-1).n % assume shorter fun is more accurate
+                        funs(k-1).vals(end) =  rval;
+                    else
+                        funs(k).vals(1) = lval;
+                    end
+                end
+            elseif funs(k).exps(1) < 0
+                vals(k) = get(funs(k),'lval');
+            end
+            % If none of the above keep val from function handle            
+        end       
+        rval =  get(funs(nfuns),'rval'); % Check right endpoint of domain
+        if abs(rval-vals(end)) > tol || isnan(vals(end)) % if difference is large, use limit from interior
+            vals(end) = rval;
         end
     end
     
 else % Function handle is not provided
-    for k = 1:nfuns
+    for k = 2:nfuns
         vals(k) = get(funs(k),'lval');
-    end    
+    end
 end
 
-vals(nfuns+1) = get(funs(nfuns),'rval');
+vals = vals(:).';
+
+
+
 
 % OLD CODE
 % if isa(op,'chebfun')

@@ -1,5 +1,5 @@
 function pass = extracting_roots
-tol = 500*chebfunpref('eps');
+tol = 1000*chebfunpref('eps');
 
 F = @(x) cos(x);
 var = {};
@@ -19,6 +19,9 @@ for k = 1:2
             h.funs(1) = extract_roots(f.funs(1));
             xx = linspace(d);
             pass(l) = norm(f(xx)-h(xx),inf) < tol;
+            if ~pass(l)
+                pause
+            end
             
             % right root
             f = chebfun(@(x) (ab(2)-x).^i.*F(x),d,var{:});
@@ -26,7 +29,11 @@ for k = 1:2
             h.funs(1) = extract_roots(f.funs(1));
             xx = linspace(d);
             pass(l+1) = norm(f(xx)-h(xx),inf);
+            if ~pass(l+1)
+                pause
+            end
         end
     end
     var = {'map',{'kte',.99}};
 end
+    %disp('disabled maps in this test for the moment')

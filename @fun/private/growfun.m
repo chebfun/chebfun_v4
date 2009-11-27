@@ -48,15 +48,24 @@ minpower = max(2,ceil(log2(minn-1)));
 npower = max(minpower,floor(log2(n-1)));
 
 % Number of nodes to be used
-if resample
-    npn = max(min(npower,6),minpower);
-    kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
-    kk = kk + 1 - mod(kk,2);
+if resample   
+    if pref.chebkind == 2
+        npn = max(min(npower,6),minpower);
+        kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*npower)/2 ]);
+        kk = kk + 1 - mod(kk,2);
+    else
+        kk = 2.^(minpower:npower);
+    end
 else
+    if pref.chebkind == 1        
+        pref.chebkind = 2;
+        warning('chebfun:resampling_kind','In RESAMPLING OFF mode, Chebyshev points of 2nd kind are used')        
+    end
     kk = 2.^(minpower:npower) + 1;
 end
 
 if kk(end)~=n, kk(end+1) = n; end
+
 
 % Store scale in case not happy
 old_scl = g.scl;
@@ -64,6 +73,7 @@ old_scl = g.scl;
 % ---------------------------------------------------
 % composition case, i.e., want gout = op(g) (see FUN/COMP.M)
 if nargin > 3
+    % This uses chebpts of 2nd kind!
     for k = kk
         v1 = get(prolong(g1,k),'vals');
         if nargin == 5
@@ -73,7 +83,7 @@ if nargin > 3
             v = op(v1);
         end
         g = set(g,'vals', v);
-        g = extrapolate(g,pref);
+        g = extrapolate(g,pref);        
         g = simplify(g, pref.eps);
         if g.n < k, break, end
     end
@@ -101,14 +111,13 @@ end
 
 % --------------------------------------------------
 if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
+    %error('resampling off has been desabled for now')
     % single sampling  (This is the standard way of growing a fun)
     
     % finite & infinite intervals
     ind = 1;
-    x = chebpts(kk(ind));
-    xvals = g.map.for(x);
-    if ~isinf(a), xvals(1) = a; end
-    if ~isinf(b), xvals(end) = b; end
+    x = chebpts(kk(ind),2);
+    xvals = g.map.for(x);        
     vnew = op(xvals); v = [];
     
     while kk(ind)<=kk(end)
@@ -118,24 +127,22 @@ if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
             v = vnew;
         else
             v(1:2:kk(ind)) = v;
-            v(2:2:end-1) = vnew;
+            v([1,2:2:end-1,end]) = vnew;
         end
         
         %update g
         g.vals = v;  g.n = length(v);
-        
-        g = extrapolate(g,pref,x);
+        g = extrapolate(g,pref,x); 
         [ish, g] = ishappy(op,g,pref);
         if ish || ind == length(kk), break, end
         ind = ind+1;
         
         % new points
-        x = chebpts(kk(ind));
-        xvals = g.map.for(x(2:2:end-1));
+        x = chebpts(kk(ind),pref.chebkind);
+        xvals = g.map.for(x([1,2:2:end-1,end]));
         vnew = op(xvals);            
         
-    end
-    
+    end   
     
     % a maximum degree was specified which wasn't a power of 2
     if maxdegflag && g.n > maxdeg
@@ -146,17 +153,18 @@ if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
 else % double sampling
     
     for k = kk
+  
         if adapt % adaptive infinite intervals
+            pref.kind = 1; % Foce 1st kind for now.
             [map,v,hscl] = unbounded(g.map.par, op, k);
             g.vals = v; g.map = map; g.n = k;
             g = extrapolate(g,pref);
             g.scl.h = hscl;
         else
             
-            x = chebpts(k);
+            x = chebpts(k,pref.chebkind);
             xvals = g.map.for(x);
-            xvals(1) = a; xvals(end) = b;
-            g.vals = op(xvals); g.n = k;           
+            g.vals = op(xvals); g.n = k;
             
             % Deal with endpoint values
             g = extrapolate(g,pref,x);
@@ -164,7 +172,7 @@ else % double sampling
         [ish, g] = ishappy(op,g,pref);
         if ish, break, end
     end
-           
+    
 end
 
 % Check for Inf's
@@ -227,17 +235,16 @@ function  [ish,g] = ishappy(op,g,pref)
 %   G2 is the simplified version of G. PREF is the chebfunpref structure.
 
 n = g.n;
-
-g = simplify(g,pref.eps);
+g = simplify(g,pref.eps,pref.chebkind);
 ish = g.n < n;
 
 % Antialiasing procedure
 if ish && pref.sampletest
-    x = chebpts(g.n);
+    x = chebpts(g.n); % points of second kind (as simplify returns second kind "point values")
     [mx indx] = max(abs(diff(g.vals))./diff(x));
-    xeval = (x(indx+1)+sqrt(2)*x(indx))/(1+sqrt(2));
-    v = op(g.map.for([-1+1e-4;xeval;1-1e-4]));
-    if norm(v-bary([-1+1e-4;xeval;1-1e-4],g.vals,x),inf) > 1e4*pref.eps*g.scl.v
+    xeval = (x(indx+1)+1.41*x(indx))/(2.41); 
+    v = op(g.map.for([1e-4;xeval]));    
+    if norm(v-bary([1e-4;xeval],g.vals,x),inf) > 1e4*g.n*pref.eps*g.scl.v
         ish =  false;
     end
 end

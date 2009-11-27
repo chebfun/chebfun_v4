@@ -13,14 +13,14 @@ Q = chebfun(chebpolyval([0.5246   -0.2679   -0.8573    0.1155    1]),d);
 R = P./Q;
 [p q r] = chebpade(R,M,N,'maehly');
 err = norm(chebfun(P.funs(1),d(1:2))-p)+norm(chebfun(Q.funs(1),d(1:2))-q);
-pass1 = err < 100*tol*R.scl;
+pass(1) = err < 100*tol*R.scl;
 
 
 M = 6;
 N = 5;
 [p q r] = chebpade( P./Q,M,N,'maehly');
 err = norm(chebfun(P.funs(1),d(1:2))-p)+norm(chebfun(Q.funs(1),d(1:2))-q);
-pass2 = err < 100*tol*R.scl;
+pass(2) = err < 100*tol*R.scl;
 
 % an example by Geddes
 a0 = 9703/34000;
@@ -39,9 +39,8 @@ op = @(x) (a0+a1*x+a2*x.^2+a3*x.^3+a4*x.^4+a5*x.^5+a6*x.^6+a7*x.^7)./...
 f = chebfun(op);
 [p q r] = chebpade(f,7,2);
 err = norm(f-p./q,inf);
-pass3 = err < 1e-15;
+pass(3) = err < 2e-15;
 cp = chebpoly(p);
-pass4 = cp(end)-17/46 < 1e-13;
+pass(4) = cp(end)-17/46 < 1e-13;
 
-pass = pass1 && pass2 && pass3 & pass4;
 

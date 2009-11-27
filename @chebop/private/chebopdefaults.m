@@ -12,4 +12,5 @@ pref.resampling = true;
 pref.exps = {0 0};
 pref.blowup = 0;
 pref.vecwarn = 0;
+pref.chebkind = 2;
 

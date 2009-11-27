@@ -2,10 +2,14 @@ function g = extrapolate(g,pref,x)
 % Extrapolate at endpoints if needed using "Fejer's 2nd rule" type of
 % barycentric formula. Also updates the vertical scale of g.
 
-% Update scale - first part
-g.scl.v = max(g.scl.v,norm(g.vals(2:end-1),inf));
-
-if pref.sampletest || pref.splitting || any(g.exps) || any(isnan(g.vals)) || any(isinf(g.vals))
+if pref.chebkind == 2
+    
+    % Update scale - first part
+    g.scl.v = max(g.scl.v,norm(g.vals(2:end-1),inf));
+    
+    %if pref.sampletest || pref.splitting || any(g.exps) || any(isnan(g.vals)) || any(isinf(g.vals))    
+    % Always extrapolate! But put endpoint values back in if they seem
+    % right!
     
     if nargin < 3
         x = chebpts(g.n);
@@ -13,7 +17,7 @@ if pref.sampletest || pref.splitting || any(g.exps) || any(isnan(g.vals)) || any
     
     % Force extrapolation at endpoints!
     vends = g.vals([1 end]);
-    
+       
     % Look for nans in the interior
     mask = isnan(g.vals(2:end-1));
     if any(mask)
@@ -45,14 +49,43 @@ if pref.sampletest || pref.splitting || any(g.exps) || any(isnan(g.vals)) || any
     
     %plot(x,g.vals,'.'); pause
     % Revert endpoint values?
-    if ~isnan(vends(1)) && abs(g.vals(1)-vends(1)) < 1e4*pref.eps*g.scl.v && ~g.exps(1) && ~isinf(g.map.par(1))
+    if ~isnan(vends(1)) && abs(g.vals(1)-vends(1)) < 1e3*g.n*pref.eps*g.scl.v && ~g.exps(1) && ~isinf(g.map.par(1))
         g.vals(1) = vends(1);
     end
-    if ~isnan(vends(2)) && abs(g.vals(end)-vends(2)) < 1e4*pref.eps*g.scl.v && ~g.exps(2) && ~isinf(g.map.par(2))
+    if ~isnan(vends(2)) && abs(g.vals(end)-vends(2)) < 1e3*g.n*pref.eps*g.scl.v && ~g.exps(2) && ~isinf(g.map.par(2))
         g.vals(end) = vends(end);
-    end
+    end   
     
-end
+    g.scl.v = max(g.scl.v,norm(g.vals([1 end]),inf));
+    
+    
+else % For first kind points, no need to check endpoints
+        
+    if  any(isnan(g.vals))
+        if nargin < 3
+            x = chebpts(g.n,pref.chebkind);
+        end
+        mask = isnan(g.vals);
+        xgood = x(~mask);
+        if isempty(xgood)
+            error('CHEBFUN:extrapolate:nans','Too many nans to handle. Increasing minsamples may help')
+        end
+        xnan = x(mask);
+                
+        w = sin((2*(0:g.n-1)+1)*pi/(2*g.n)).';
+        w(mask) = [];
+        for k=1:length(xnan)
+            w =  w.*abs(xnan(k)-xgood);
+        end
+        w(2:2:end) = - w(2:2:end);
+        for k =1:length(xnan)
+            w2 = w./(xnan(k)-xgood);
+            xnan(k) = sum(w2.*g.vals(~mask))/sum(w2);
+        end
+        g.vals(mask) = xnan;
+    end            
+    
+    g.scl.v = max(g.scl.v,norm(g.vals,inf));
 
-% Update scale - second part
-g.scl.v = max(g.scl.v,norm(g.vals([1 end]),inf));
+end
+    

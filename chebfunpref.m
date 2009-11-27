@@ -108,8 +108,10 @@ end
 % If the above didn't work, go through the longer process:
 
 % These are the options
-options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest', 'blowup'};
-factoryvals = {false,       9,            2^16,      6000,      128,          false,         [-1 1],   2^-52,        true, true};
+options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest', 'blowup', 'chebkind'};
+factoryvals = {false,       9,            2^16,         6000,        128,           false,         [-1 1],   2^-52,     true,  false,  2};
+% Note: The proper number of points for Chebyshev points of the first kind
+% is 2^k (not 2^k+1 as for the second kind).
 
 % Restore defaults ?
 factory_flag = false;
@@ -201,6 +203,10 @@ elseif nargin==2
         varargout = {};
     end
     
+    if ~prefs.resampling && prefs.chebkind == 1
+        warning('chebfun:resampling_kind','RESAMPLING has been turned ON. Chebyshev points of 1st kind are being used')
+        prefs.resampling = true;
+    end
     
     
 else

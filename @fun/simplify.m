@@ -1,4 +1,4 @@
-function g = simplify(g,tol)
+function g = simplify(g,tol,kind)
 % This function removes leading Chebyshev coefficients that are below 
 % epsilon, relative to the verical scale stored in g.scl.v
 %
@@ -9,7 +9,6 @@ function g = simplify(g,tol)
 %   $Date$:
 
 % This is the code in the old fixedgrow.m by LNT
-
 gn = g.n;
 if gn < 2  % cant be simpler than a constant!
     return; 
@@ -17,6 +16,9 @@ end
 
 if nargin == 1
     tol = chebfunpref('eps');
+end
+if nargin < 3
+    kind = 2; % Second kind is default
 end
 epstol = 2^-52;
 
@@ -34,8 +36,7 @@ if g.scl.v == 0,
 %     inf located, try markfun!
     return
 end
-
-c = chebpoly(g);                      % coeffs of Cheb expansion of g
+c = chebpoly(g,kind);                      % coeffs of Cheb expansion of g
 ac = abs(c)/g.scl.v;                  % abs value relative to scale of f
 Tlen = min(g.n,max(4,round((gn-1)/8)));% length of tail to test
 % which basically is the same as:
@@ -46,7 +47,7 @@ Tlen = min(g.n,max(4,round((gn-1)/8)));% length of tail to test
 % LNT's choice --------------------------------------
 %Tmax = 2e-16*Tlen^(2/3);             % maximum permitted size of tail
 % RodP's choice -------------------------------------
-xpts = g.map.for(chebpts(gn));
+xpts = g.map.for(chebpts(gn,kind));
 df = max(diff(xpts),eps*g.scl.h);
 mdiff =  (g.scl.h/g.scl.v)*norm(diff(g.vals)./df,inf);
 % Choose maximum between prescribed tolerance and estimated rounding errors
@@ -71,10 +72,14 @@ if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
     Tbpb = log(1000*Tmax./ac)./ ...
         (length(c)-(1:Tend)');         % bang/buck of chopping at each pos
     [foo,Tchop] = max(Tbpb(3:Tend));  % Tchop = pos at which to chop
-    v = chebpolyval(c(Tchop+3:end));  % chop the tail
-    if length(v) > 1
-         % forces interpolation at endpoints
-        g.vals = [g.vals(1);v(2:end-1);g.vals(end)];
+    v = chebpolyval(c(Tchop+3:end),2);  % chop the tail 
+                                        % store values at 2nd kind points
+   % if mod(length(v),2) == 1
+   %     v = chebpolyval(c(Tchop+2:end));  % chop the tail
+   % end
+    if length(v) > 1 && kind == 2
+        % forces interpolation at endpoints
+        g.vals = [g.vals(1);v(2:end-1);g.vals(end)];              
     else
         g.vals = v;
     end

@@ -1,4 +1,4 @@
-function val = get(g, propName)
+function val = get(g, propName, kind)
 % GET Get asset properties from the specified object
 % and return the value
 %
@@ -8,12 +8,24 @@ function val = get(g, propName)
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
+if nargin < 3
+    kind = 2;
+end
+
 switch propName
     case 'vals'
-        val = g.vals;
+        if kind == 1
+            val = bary(chebpts(g.n,1), g.vals); % is this right for general maps?
+        else
+            val = g.vals;
+        end
     case 'points'
         % Returns mapped Chebyshev points (consistent with vals)
-        val = g.map.for(chebpts(g.n));
+        if kind == 1
+             val = g.map.for(chebpts(g.n,1));
+        else
+            val = g.map.for(chebpts(g.n));
+        end
     case 'n'
         val = g.n;
     case 'scl'
@@ -35,8 +47,8 @@ switch propName
             end
         elseif g.exps(1) > 0, val = 0;
         else
-%            rescl = (2/diff(g.map.par(1:2)))^-g.exps(2); % scale (see feval)
-%            val = g.vals(1).*diff(g.map.par(1:2)).^g.exps(2)/rescl;
+            %rescl = (2/diff(g.map.par(1:2)))^-g.exps(2); % scale (see feval)
+            %val = g.vals(1).*diff(g.map.par(1:2)).^g.exps(2)/rescl;
             val = g.vals(1)*2^g.exps(2);
         end
     case 'rval' % value at right endpoint 
@@ -48,8 +60,8 @@ switch propName
             end
         elseif g.exps(2) > 0, val = 0;
         else          
-            %rescl = (2/diff(g.map.par(1:2)))^-g.exps(1); % scale (see feval) 
-            %val = g.vals(end)*diff(g.map.par(1:2)).^g.exps(1)/rescl;
+           % rescl = (2/diff(g.map.par(1:2)))^-g.exps(1); % scale (see feval) 
+           % val = g.vals(end)*diff(g.map.par(1:2)).^g.exps(1)/rescl;
             val = g.vals(end)*2^g.exps(1);
         end
     otherwise
