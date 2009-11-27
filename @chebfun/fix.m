@@ -20,7 +20,7 @@ function g = fixcol(f)
 
 if isempty(f), g=chebfun; return, end
 
-if any(get(f,'exps')), error('CHEBFUN:fix:inf',...
+if any(get(f,'exps')<0), error('CHEBFUN:fix:inf',...
         'Fix is not defined for functions which diverge to infinity'); end
 
 % Find all the integer crossings for f.

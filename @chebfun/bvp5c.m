@@ -42,7 +42,7 @@ for k = 1:nargin-3
 end
 
 for k = 1:numel(y0)
-    if any(get(y0(:,k),'exps')), error('CHEBFUN:bvp5c:inf',...
+    if any(get(y0(:,k),'exps')<0), error('CHEBFUN:bvp5c:inf',...
         'Bvp5c does not currently support functions which diverge to infinity'); end
 end
     

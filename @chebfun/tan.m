@@ -6,7 +6,7 @@ function Fout = tan(F)
 % Copyright 2002-2008 by The Chebfun Team. 
 
 for k = 1:numel(F)
-    if any(get(F(:,k),'exps')), error('CHEBFUN:tan:inf',...
+    if any(get(F(:,k),'exps')<0), error('CHEBFUN:tan:inf',...
         'Tan is not defined for functions which diverge to infinity'); end
 end
 
