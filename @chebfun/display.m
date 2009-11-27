@@ -103,8 +103,8 @@ function displaychebfun(f, columnstr)
         end
         
         if mapped
-            pars = funs(j).map.par(3:end);
-            if numel(pars) > 2, pars = []; end
+            pars = funs(j).map.par(3:end)
+            if numel(pars) > 2 && ~strcmpi(funs(j).map.name,'sing'), pars = []; end
             exinfo = [exinfo '    ' funs(j).map.name ' ' num2str(pars,'%5.2g')];    
         end
         
