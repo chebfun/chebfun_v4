@@ -35,7 +35,10 @@ while length(propertyArgIn) >= 2,
     case 'imps'
         F.imps = val;
     case 'scl'
-        F.scl = val;  
+        F.scl = val; 
+        for k = 1:F.nfuns
+            F.funs(k).scl.v = val;
+        end
     case 'trans'
         F.trans = val;     
     otherwise
