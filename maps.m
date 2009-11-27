@@ -14,7 +14,7 @@ function map = maps(varargin)
 %  map.
 %  Examples;
 %    chebfun(@(x) sin(1000*x), 'map', {'kte',.9});
-%    chebfun(@(x) (1-x).^sqrt(3), 'map', {'sing',1});
+%    chebfun(@(x) 1 + (1-x).^sqrt(3), 'map', {'sing',[1 sqrt(3)]});
 %    chebfun(@(x) tanh(100*pi*x/2), 'map', {'slit',1i/100});
 %  (A keen user might want to compare the lengths of these chebfuns with
 %  those not using maps!)
