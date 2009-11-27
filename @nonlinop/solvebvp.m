@@ -14,14 +14,17 @@ end
 
 % Check which type the operator is (anonymous function or a chebop).
 % If it's an anonymous function, opType = 1. Else, opType = 2.
-if strcmp(BVP.optype,'an_fun')
+if strcmp(BVP.optype,'anon_fun')
     opType = 1;
 else
     opType = 2;
 end
 
-% If RHS of the \ is 0, keep the original DE. If not, update it
-if isnumeric(rhs) && rhs == 0
+% If RHS of the \ is 0, keep the original DE. If not, update it. Also check
+% whether we have a chebop, if so, perform subtraction otherwise.
+if opType == 2  % Operator is a chebop
+    problemFun = BVP.op - rhs;
+elseif isnumeric(rhs) && all(rhs == 0)
     problemFun = BVP.op;
 else
     problemFun = @(u) BVP.op(u)-rhs;
@@ -35,8 +38,6 @@ bcFunRight = BVP.rbc;
 % iteration.
 leftEmpty = isempty(bcFunLeft);
 rightEmpty = isempty(bcFunRight);
-
-
 
 % Construct initial guess if missing
 if isempty(BVP.guess) % No initial guess given
@@ -58,9 +59,8 @@ if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
 if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
 
 counter = 0;
-% u = jacvar(u);
 
-% An. fun. and chebops differ whether we do N(u) or L*u
+% Anon. fun. and chebops differ whether we use N(u) or L*u
 if opType == 1
     r = problemFun(u);
 else
@@ -76,9 +76,9 @@ while nrmdu > tol && normr > tol
     if leftEmpty
         bc.left = [];
     else
-        for j = 1:length(bcFunLeft) - isempty(bcFunLeft{1})
+        for j = 1:length(bcFunLeft)
             v = bcFunLeft{j}(u);
-            bc.left(j) = struct('op',jacobian(v,u),'val',v(a));
+            bc.left(j) = struct('op',diff(v,u),'val',v(a));
         end
     end
     % Check whether a boundary happens to have no BC attached
@@ -87,7 +87,7 @@ while nrmdu > tol && normr > tol
     else
         for j = 1:length(bcFunRight)
             v = bcFunRight{j}(u);
-            bc.right(j) = struct('op',jacobian(v,u),'val',v(b));
+            bc.right(j) = struct('op',diff(v,u),'val',v(b));
         end
     end
     % If the operator is a chebop, we don't need to linearize. Else, do the
@@ -113,7 +113,7 @@ while nrmdu > tol && normr > tol
     
     
     nrmdu = norm(delta,'fro');
-    normr = norm(r,'fro');
+    normr = solNorm;
     %     nrmdu = sqrt(sum( sum(delta.^2,1)));
     %     normr = sqrt(sum( sum(r.^2,1)));
     % In case of a quasimatrix, the norm calculations are taking the
@@ -135,4 +135,30 @@ while nrmdu > tol && normr > tol
     nrmduvec(counter) = nrmdu;
 end
 
+% Function that measures how far away we are from the solving the BVP.
+% This function takes into account the differential equation and the
+% boundary values.
+    function sn = solNorm()
+        sn = 0;
+        if ~leftEmpty
+            for bcCount = 1:length(bcFunLeft)
+                v = bcFunLeft{bcCount}(u);
+                sn = sn + v(a)^2;
+            end
+        end
+        % Check whether a boundary happens to have no BC attached
+        if rightEmpty
+            bc.right = [];
+        else
+            for bcCount = 1:length(bcFunRight)
+                v = bcFunRight{bcCount}(u);
+                sn = sn + v(b)^2;
+            end
+        end
+        sn = sn + norm(r,'fro').^2;
+        sn = sqrt(sn);
+    end
+
+% Clear up norm vector
+nrmduvec(counter+1:end) = [];
 end

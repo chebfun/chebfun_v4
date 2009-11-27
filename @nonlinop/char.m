@@ -6,44 +6,58 @@ if isempty(A)
     s = '   (empty nonlinop)';
 else
     s = '   operating on chebfuns defined on:';
-    s = char(s,' ');
     s = char(s,['  ' char(A.dom)],' ');
     
-    %   if all(A.blocksize==[1 1])
-    %     if ~isempty(A.varmat)
-    %       s = char(s,char(A.varmat),' ');
-    %     end
     if ~isempty(A.op)
-        opchar = char(A.op);
-        %         s = char(s, '   representing the operator:',' ',...
-        %             ['     ' char(A.op)]);
-        %         opchar = char(A.op);
-        s = char(s, '   representing the operator:',' ',...
-            ['     ' opchar(3) ' |-> ' opchar(5:end), ' ']);
+        % First check whether we have a chebop or an. functions.
+        if strcmp(A.optype,'chebop')
+            % Since char(chebop) displays information about the domain,
+            % start all over again with the output string.
+            s = 'Represented by the chebop: ';
+            s = char(s, char(A.op));
+            % Print chebop?
+        else
+            % Need to treat the cell case differently from the an. fun. case
+            if isa(A.op,'function_handle')
+                opchar = char(A.op);
+                firstRPar = min(strfind(opchar,')'));
+                s = char(s, '   representing the operator:',...
+                    ['     ' opchar(3:firstRPar-1) ' |-> ' opchar(firstRPar+1:end), ' ']);
+            else
+                s = char(s, '   representing the operator:');
+                for funCounter =1:length(A.op)
+                    opchar = char(A.op{funCounter});
+                    firstRPar = min(strfind(opchar,')'));
+                    s = char(s, ...
+                        ['     ' opchar(3:firstRPar-1) ' |-> ' opchar(firstRPar+1:end), ' ']);
+                end
+            end
+        end
     end
     
     if ~isempty(A.lbc)
-        s = char(s, '   left boundary condition:',' ',...
-                    ['     ' char(A.lbc) ' = 0']);
+        if isa(A.lbc,'function_handle')
+            s = char(s, ' ', '   left boundary condition:',...
+                ['     ' char(A.lbc) ' = 0']);
+        else
+                s = char(s, '   left boundary conditions:');
+                for funCounter =1:length(A.lbc)
+                    s = char(s, ...
+                        ['     ' char(A.lbc{funCounter}) ' = 0']);
+                end
+        end
     end
     
     if ~isempty(A.rbc)
-        s = char(s, '   right boundary condition:',' ',...
-                    ['     ' char(A.rbc) ' = 0']);
+        if isa(A.rbc,'function_handle')
+            s = char(s, ' ', '   left boundary condition:',...
+                ['     ' char(A.rbc) ' = 0']);
+        else
+                s = char(s, '   left boundary conditions:');
+                for funCounter =1:length(A.rbc)
+                    s = char(s, ...
+                        ['     ' char(A.rbc{funCounter}) ' = 0']);
+                end
+        end
     end
-    %   else
-    %     s = char(s,sprintf('   with %ix%i block definitions',A.blocksize),' ');
-    %   end
-    %
-    %   if A.difforder~=0
-    %     s = char(s, ['   and differential order ' num2str(A.difforder)],' ');
-    %   end
-    %
-    %   if A.numbc > 0
-    %     if A.numbc==1
-    %       s = char(s,['   and ' int2str(A.numbc) ' boundary condition'],' ' );
-    %     else
-    %       s = char(s,['   and ' int2str(A.numbc) ' boundary conditions'],' ' );
-    %     end
-    %   end
 end

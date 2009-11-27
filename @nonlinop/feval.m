@@ -1,6 +1,13 @@
 function Narg = feval(Nin,argument,varargin)
 % Evaluate the anonymous function in Nin.op with the argument passed.
 
+% Check whether the operator is a chebop
+if strcmp(Nin.optype,'chebop')
+    disp('chebop');
+    Narg = Nin.op*argument;
+    return
+end
+
 % Need to do a trick if the operator is a cell
 if ~isa(Nin.op,'cell')
     Narg = Nin.op(argument);

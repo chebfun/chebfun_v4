@@ -36,7 +36,7 @@ end
 % Determine the type of the operator
 if nargin > 1
     if isa(varargin{2},'function_handle')
-        Nop.optype = 'an_fun';
+        Nop.optype = 'anon_fun';
     elseif isa(varargin{2},'chebop')
         Nop.optype = 'chebop';        
     else

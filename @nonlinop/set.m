@@ -14,35 +14,42 @@ while length(propertyArgIn) >= 2,
         case 'dom'
             F.dom = val;
         case 'bc'
-            if isequal(val,'neumann')
+            if strcmp(val,'neumann')
                 F.lbc = @(u) diff(u);
                 F.rbc = @(u) diff(u);
-            elseif isequal(val,'dirichlet')
+            elseif strcmp(val,'dirichlet')
                 F.lbc = @(u) u;
                 F.rbc = @(u) u;
+            elseif isnumeric(val)
+                F.lbc = @(u) u-val;
+                F.rbc = @(u) u-val;
             else
                 F.lbc = val;
                 F.rbc = val;
             end
         case 'lbc'
-            if isequal(val,'neumann')
+            if strcmp(val,'neumann')
                 F.lbc = @(u) diff(u);
-            elseif isequal(val,'dirichlet')
+            elseif strcmp(val,'dirichlet')
                 F.lbc = @(u) u;
+            elseif isnumeric(val)
+                F.lbc = @(u) u-val;
             else
                 F.lbc = val;
             end
         case 'rbc'
-            if isequal(val,'neumann')
+            if strcmp(val,'neumann')
                 F.rbc = @(u) diff(u);
-            elseif isequal(val,'dirichlet')
+            elseif strcmp(val,'dirichlet')
                 F.rbc = @(u) u;
+            elseif isnumeric(val)
+                F.rbc = @(u) u-val;
             else
                 F.rbc = val;
             end
         case 'op'
             if isa(val,'function_handle') || (isa(val,'cell') && isa(val{1},'function_handle'))
-                F.optype = 'an_fun';
+                F.optype = 'anon_fun';
             elseif isa(val,'chebop') || (isa(val,'cell') && isa(val{1},'chebop'))
                 F.optype = 'chebop';
             else
