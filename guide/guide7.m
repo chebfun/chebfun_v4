@@ -240,14 +240,14 @@ end
 % in Chapter 5:
 
 f = scribble('BLUR');
-d = domain(f.ends([1 end])); D = diff(d,2); clf
+d = domain(-1,1); D = diff(d,2); clf
 k = 0;
-for t = [0 .01 .1 1]
+for t = [0 .0001 .001 .01]
 k = k+1; subplot(2,2,k)
   if t==0, Lf = f; else L = expm(t*D & 'neumann'); Lf = L*f; end
-  plot(Lf,'linewidth',3,'color',[.7 0 1])
-  xlim([-1 1]), axis equal
-  text(.3,.7,sprintf('t = %5.2f',t),'fontsize',12), axis off
+  plot(Lf,'linewidth',3,'color',[.6 0 1])
+  xlim(1.05*[-1 1]), axis equal
+  text(.3,.7,sprintf('t = %6.4f',t),'fontsize',12), axis off
 end
 
 %%

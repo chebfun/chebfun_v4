@@ -216,10 +216,10 @@ sumf = sum(f)
 %%
 % If you have a function that blows up but you don't know the
 % nature of the singularities, chebfun will try to figure them
-% out automatically.  Here's an example
+% out automatically if you run in 'blowup on' mode.  Here's an example
 
 %%
-f = chebfun('x.*(1+x).^(-exp(1)).*(1-x).^(-pi)')
+f = chebfun('x.*(1+x).^(-exp(1)).*(1-x).^(-pi)','blowup','on')
 
 %%
 % Notice that the 'exps' field shows values close
@@ -228,9 +228,9 @@ f = chebfun('x.*(1+x).^(-exp(1)).*(1-x).^(-pi)')
 f.funs.exps
 
 %%
-% With splitting on, we can even find blowups in the middle
+% With splitting and blowup both on, we can even find blowups in the middle
 % of a domain:
-f = chebfun('tan(x)',[0 10],'splitting','on');
+f = chebfun('tan(x)',[0 10],'splitting','on','blowup','on');
 plot(f), ylim([-20 20])
 
 %%

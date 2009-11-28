@@ -345,8 +345,9 @@ sum(chebfun('1./x.^4',[1 inf]))
 % and robust as their finite counterparts.
 
 %%
-% Here is an example of a function that diverges to infinity:
-h = chebfun('(1/pi)./sqrt(1-x.^2)');
+% Here is an example of a function that diverges to infinity,
+% which we can capture by including the flag 'blowup on':
+h = chebfun('(1/pi)./sqrt(1-x.^2)','blowup','on');
 plot(h)
 
 %%
