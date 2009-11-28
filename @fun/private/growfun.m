@@ -245,7 +245,7 @@ if ish && pref.sampletest
     xeval = (x(indx+1)+1.41*x(indx))/(2.41);
     xvals = [-1+1e-4;xeval;1-1e-4];
     v = op(g.map.for(xvals));    
-    if norm(v-bary(xvals,g.vals,x),inf) > 1e4*g.n*pref.eps*g.scl.v
+    if norm(v-bary(xvals,g.vals,x),inf) > max(pref.eps,1e3*eps)*g.n*g.scl.v
         ish =  false;
     end
 end

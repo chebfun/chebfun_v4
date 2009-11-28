@@ -5,6 +5,8 @@ function pass = NaNavoidance
 
 tol = chebfunpref('eps');
 
+pref = chebfunpref; chebfunpref('avoidnans',true);
+
 f = chebfun(@(x) x./sin(x));
 pass(1) = norm(f(0) - 1,inf) < tol*5000;
 
@@ -25,5 +27,7 @@ pass(6) = norm(f(0) - 1,inf) < tol*5000;
 
 f = chebfun(@(x) sin(x)./x./(1+x.^10),[-inf inf]);
 pass(7) = norm(f(0) - 1,inf) < tol*5000;
+
+chebfunpref(pref);
 
 

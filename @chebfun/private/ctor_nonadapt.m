@@ -88,6 +88,7 @@ for i = 1:length(ops)
             end
             op = eval(['@(' depvar{:} ')' op]);
             op = vectorcheck(op,[a b],pref.vecwarn);
+            ops{i} = op;
             pref.n = n(i);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             if ~isfield(pref,'map')
@@ -131,7 +132,7 @@ for i = 1:length(ops)
 end
 
 % First row of imps contains function values
-imps = jumpvals(funs,ends,op,pref,scl.v); 
+imps = jumpvals(funs,ends,ops,pref,scl.v); 
 scl.v = max(scl.v,norm(imps(~isinf(imps)),inf));
 
 % update scale field in funs

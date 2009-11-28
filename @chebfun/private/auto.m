@@ -44,6 +44,8 @@ end
 
 % ----------------------------SPLITTING ON--------------------------------
 
+pref.avoidnans = true;
+
 if isfield(pref,'exps'), exps = {pref.exps{:}}; end
 
 % Try to get one smooth piece for the entire interval before splitting interval

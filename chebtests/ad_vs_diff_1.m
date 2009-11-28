@@ -46,4 +46,4 @@ norms(23) = norm(diff(tan(x),x)*cheb1-diff(tan(x)));
 norms(24) = norm(diff(tanh(x),x)*cheb1-diff(tanh(x)));
 
 
-pass = all(norms < 1e-12);
+pass = all(norms < chebfunpref('eps')*1e4);

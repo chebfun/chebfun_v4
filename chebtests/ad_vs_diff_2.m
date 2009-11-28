@@ -40,4 +40,4 @@ norms(17) = norm(diff(2.^x,x)*cheb1-diff(2.^x));
 % sqrt
 norms(18) = norm(diff(sqrt(x),x)*cheb1-diff(sqrt(x)));
 
-pass = all(norms < 1e-13);
+pass = all(norms < chebfunpref('eps')*1e3);

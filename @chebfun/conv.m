@@ -65,7 +65,7 @@ a = f.ends(1); b = f.ends(end); c = g.ends(1); d = g.ends(end);
 funs = [];
 
 scl.h = max(hscale(f),hscale(g));
-scl.v = 100*max(g.scl,f.scl);
+scl.v = 2*max(g.scl,f.scl);
 
 % Avoid resampling for speed up!
 %res = chebfunpref('resampling');
@@ -73,7 +73,8 @@ pref = chebfunpref;
 pref.sampletest = false;
 pref.resampling = false;
 pref.splitting = false;
-pref.exps = num2cell(0*ends);  % avoid checking for blowup exponents.
+prof.blowup = false;
+
 % Construct funs
 for k =1:length(ends)-1  
     newfun = fun(@(x) integral(x,a,b,c,d,f,g,pref,scl), ends(k:k+1), pref, scl);
@@ -90,9 +91,9 @@ h.nfuns = length(ends)-1;
 % function values in imps 
 imps = 0*h.ends;
 for k = 1:h.nfuns
-    imps(k) = funs(k).vals(1);
+    imps(k) = get(funs(k),'lval');
 end
-imps(k+1) =  funs(k).vals(end);
+imps(k+1) =  get(funs(k),'rval');
 h.imps = imps; 
 h = update_vscl(h);
 h.trans = f.trans;
@@ -102,7 +103,7 @@ end   % conv()
 
 function out = integral(x,a,b,c,d,f,g, pref,scl)
 
-pref.exps ={0,0}; % avoid checking for blowup exponents.
+pref.blowup = false; % avoid checking for blowup exponents.
 out = 0.*x;
 for k = 1:length(x)
     A = max(a,x(k)-d); B = min(b,x(k)-c);

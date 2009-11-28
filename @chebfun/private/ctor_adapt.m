@@ -27,6 +27,7 @@ if isinf(hs)
 end
 scl.v=0; scl.h= hs;
 newends = ends(1);
+newops = {};
 
 if isa(ops,'chebfun')
     if numel(ops) > 1
@@ -61,15 +62,16 @@ end
 
 for i = 1:length(ops)
     op = ops{i};
+    if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
     switch class(op)
         case 'double'
             if ~isfield(pref,'map')
-                funs = [funs fun(op,ends(i:i+1))];
+                fs = fun(op,ends(i:i+1));
             else
-                funs = [funs fun(op,maps(pref.map,ends(i:i+1)))];
+                fs = fun(op,maps(pref.map,ends(i:i+1)));
             end
-            newends = [newends ends(i+1)];
-            scl.v = max(scl.v, funs(end).scl.v);
+            es = ends(i:i+1);
+            scl.v = max(scl.v, fs.scl.v);
         case 'fun'
             if numel(op) > 1
             error(['A vector of funs cannot be used to construct '...
@@ -78,9 +80,9 @@ for i = 1:length(ops)
             if norm(op.map.par(1:2)-ends(i:i+1)) > scl.h*1e-15
                 error('chebfun:ctor_1:domain','Incosistent domains')
             else
-                funs = [funs op];
-                newends = [newends ends(i+1)];
-                scl.v = max(scl.v, funs(end).scl.v);
+                fs = op;
+                es = ends(i:i+1);
+                scl.v = max(scl.v, fs.scl.v);
             end
         case 'char'
             if ~isempty(str2num(op))
@@ -93,39 +95,32 @@ for i = 1:length(ops)
                 error('Incorrect number of dependent variables in string input'); 
             end
             op = eval(['@(' depvar{:} ')' op]);
-            op = vectorcheck(op,ends(i:i+1),pref.vecwarn);
-            if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
+            op = vectorcheck(op,ends(i:i+1),pref.vecwarn);         
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
-            funs = [funs fs];
-            newends = [newends es(2:end)];
         case 'function_handle'
-            op = vectorcheck(op,ends(i:i+1),pref.vecwarn);
-            if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
+            op = vectorcheck(op,ends(i:i+1),pref.vecwarn);        
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
-            funs = [funs fs];
-            newends = [newends es(2:end)];
         case 'chebfun'
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)
                  warning('chebfun:c_tor2:domain','chebfun is not defined in the domain')
             end
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(@(x) feval(op,x),ends(i:i+1),scl,pref);
-            funs = [funs fs];
-            newends = [newends es(2:end)];
         case 'cell'
             error(['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])
-        case 'chebfun'
-            error(['Unrecognized input sequence: Attempted to construct '...
-                'a chebfun from another in an inappropriate way.'])
         otherwise
             error(['The input argument of class ' class(op) ...
                 'cannot be used to construct a chebfun object.'])
     end
+    % Concatenate funs, ends and handles (or ops)   
+    funs = [funs fs];
+    newends = [newends es(2:end)];
+    for k = 1:numel(fs), newops{end+1} = op; end;
 end
 
 
-imps = jumpvals(funs,newends,op,pref,scl.v); % Update values at jumps, first row of imps.
+imps = jumpvals(funs,newends,newops,pref,scl.v); % Update values at jumps, first row of imps.
 scl.v = max(scl.v,norm(imps(~isinf(imps)),inf));
 f.nfuns = length(newends)-1; 
 % update scale and check if simplification is needed.

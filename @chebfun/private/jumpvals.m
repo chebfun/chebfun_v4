@@ -1,4 +1,4 @@
-function vals = jumpvals(funs,ends,op,pref,scl)
+function vals = jumpvals(funs,ends,ops,pref,scl)
 % Updates the values at breakpoints, i.e., the first row of imps.
 % If there is a singular point, op is evaluated in order to obtain a 
 % value at the breakpoint.
@@ -11,29 +11,36 @@ vals = 0*ends;
 vals(1) = get(funs(1),'lval');
 vals(nfuns+1) = get(funs(nfuns),'rval');
 
-if nargin >2 && ~isa(op,'double') % Function handle is provided
-    
-    if isa(op,'chebfun') || isa(op,'fun')
-        op = @(x) feval(op,x);
-    end
-    
+if nargin >2 
+        
     if pref.chebkind == 2       
         for k = 2:nfuns
-            if funs(k).exps(1) < 0
+            if funs(k).exps(1) < 0 || isa(ops{k},'double')
                 vals(k) = get(funs(k),'lval');
             else
-                vals(k) = op(ends(k));
+                vals(k) = feval(ops{k},ends(k));
             end
         end
         
     else
         
         % If first kind points were used in construction, make sure
-        % representation is continuous.
-        
+        % representation is continuous.        
         tol = max(10*pref.eps,3e-12)*scl;
         dbz_state = warning('off','MATLAB:divideByZero');   % turn off warning because of removable sings
-        vals = op(ends);          
+        for k = 1:nfuns
+            if isa(ops{k},'double')
+                vals(k) = get(funs(k),'lval');
+            else
+                vals(k) = feval(ops{k},ends(k));
+            end
+        end
+        if isa(ops{k},'double')
+             vals(k+1) = get(funs(k),'rval');
+        else
+            vals(k+1) = feval(ops{k},ends(k+1));
+        end        
+        
         warning(dbz_state);
         
         lval = get(funs(1),'lval'); % Check left endpoint of the domain
