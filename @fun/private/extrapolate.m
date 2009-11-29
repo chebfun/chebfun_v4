@@ -2,7 +2,7 @@ function g = extrapolate(g,pref,x)
 % Extrapolate at endpoints if needed using "Fejer's 2nd rule" type of
 % barycentric formula. Also updates the vertical scale of g.
 
-if pref.avoidnans || any(g.exps) || any(isinf(g.map.par([1 2])))
+if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(g.vals)) 
     
     if pref.chebkind == 2
         
@@ -93,10 +93,8 @@ if pref.avoidnans || any(g.exps) || any(isinf(g.map.par([1 2])))
     
 else
 
-    if any(isnan(g.vals))
-        error('chebfun:nans','Function returned NaN when when evaluated')
-    elseif any(isinf(g.vals))
-        error('chebfun:inf','Function returned INF when evaluated')
+    if any(isinf(g.vals))
+        error('chebfun:inf','Function returned INF when evaluated. You may try using the BLOWUP flag in this case')
     end
     
     g.scl.v = max(g.scl.v,norm(g.vals,inf));

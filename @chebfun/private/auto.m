@@ -44,7 +44,7 @@ end
 
 % ----------------------------SPLITTING ON--------------------------------
 
-pref.avoidnans = true;
+pref.extrapolate = true;
 
 if isfield(pref,'exps'), exps = {pref.exps{:}}; end
 
