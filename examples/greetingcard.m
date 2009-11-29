@@ -4,7 +4,7 @@
 % Nick Trefethen, Oxford University, November 2009
 
 function greetingcard(dt0)
-if nargin==0, dt0 = 4; end;       % pause between statements
+if nargin==0, dt0 = 3; end;       % pause between statements
 
 w('We''re going to make a 10-digit greeting card.',.5)
 
@@ -37,7 +37,7 @@ border0 = [seg-.4i*ht;1+ht*1i+1.4*ht*semi;2.4*ht*1i-seg;-1+ht*1i-1.4*ht*semi];
 border = chebfun;
 border{-1,1} = border0;
 
-ps(fs)
+ps(fs,0)
 
 prompt = 'Type <Enter> to see the result of f(s) = ';
 
@@ -49,11 +49,11 @@ fs = 'exp(2.5i*s)';                    disp(' '), w([prompt fs],0); ps(fs,99)
 fs = 'exp(-1.4i)*exp((3.5i+.6)*s)/1i'; disp(' '), w([prompt fs],0); ps(fs,99)
 fs = 'real(s) + exp((1+1i)*(s-.5))';   disp(' '), w([prompt fs],0); ps(fs,99)
 
-w('Well now you''ve got the hang of it.')
+w('Well now you''ve got the hang of it.',0)
+disp(' ')
 w('It''s time to pick your own function f,',0)
 w('which you should input as a string in quotes.',0)
-
-w('You can keep trying things till you''re satisfied.')
+w('You can keep trying things till you''re satisfied.',0)
 w('Then type in the string ''done''.',0)
 
 while ~strcmp(fs,'done')
@@ -61,15 +61,15 @@ while ~strcmp(fs,'done')
   if ~strcmp(fs,'done'), disp(' '), ps(fs,0), end
 end
 
-w('We''ll now turn off the axes and the title.')
-axis off, title(' ')
-
-w('Use Matlab'' control buttons to change the color,')
-w('and when you''re happy, print your greeting card.',0)
-
-w('Incidentally, you can run this program more quickly')
+disp(' ')
+w('Use Matlab'' control buttons to change the color if you,',0)
+w('wish, and when you''re happy, print your greeting card.',0)
+disp(' ')
+w('To get rid of the axes, type axis off.',0)
+w('To get rid of the title, type title '' ''.',0)
+disp(' ')
+w('Incidentally, you can run this program more quickly',0)
 w('by typing, say, greetingcard(1) or greetingcard(0).',0)
-
 
 function w(str,dt)  % writes string s on the screen after delay dt,
                     % which defaults to dt0 seconds.
