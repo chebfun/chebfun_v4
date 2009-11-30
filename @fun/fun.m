@@ -109,7 +109,6 @@ switch class(op)
         end
         return
     case 'char'
-%         op = inline(op);
         depvar = symvar(op); 
         if numel(depvar) ~= 1, 
             error('Incorrect number of dependent variables in string input'); 
@@ -123,7 +122,6 @@ end
 % (Note that for blowup exponents are now negative!)
 if isfield(pref,'exps') && ~isempty([pref.exps{:}])
     if ~isempty(pref.exps{1}) && ~isempty(pref.exps{2})
-        pref.exps
         exps(1) = pref.exps{1};
         exps(2) = pref.exps{2};
     elseif ~isempty(pref.exps{1})
