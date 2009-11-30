@@ -23,7 +23,7 @@ function [g c] = diff(g,k,c)
 %
 % [F C] = DIFF(G,K) returns also the coefficients C of the K-th derivative.
 %
-% See "Chebyshev Polynomials" by Mason ad Handscomb, CRC 2002, pg 34.
+% See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 34.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -55,6 +55,11 @@ if strcmp(g.map.name,'linear')
             n = n-1;
         end
         g = fun(chebpolyval(c)/g.map.der(1).^k, g.map.par(1:2));
+        
+        if nargout > 1, 
+            c = c/g.map.der(1).^k;
+        end
+        
         
     else % function which blows up, need product rule
 
@@ -89,18 +94,20 @@ if strcmp(g.map.name,'linear')
             
             g.exps = exps;
             
-            if i~=k, 
+            if i~=k || nargout > 1
                 c = chebpoly(g);
                 n = length(c);
             end
             
         end
+        
+        c = [];
 
     end
     % Unbounded map
 elseif norm(g.map.par(1:2),inf) == inf
     
-    if any(g.exps) error('chebfun:fun:diff','Cannot diff inf interval funs with exps yet'); end
+    if any(g.exps), error('chebfun:fun:diff','Cannot diff inf interval funs with exps yet'); end
     
     nz = 2; % number of zeros needed to augment coefficients due chain rule
     infboth = false;
@@ -119,7 +126,7 @@ elseif norm(g.map.par(1:2),inf) == inf
         vals = chebpolyval(cout)./g.map.der(chebpts(n+nz-1));
         g.vals = vals;
         g.n = length(vals);
-        if i ~= k
+        if i ~= k 
             c = chebpoly(g);
             n = g.n;
         end
@@ -128,6 +135,11 @@ elseif norm(g.map.par(1:2),inf) == inf
     if infboth
         g = simplify(g);
     end
+    if nargout > 1
+        c = chebpoly(g);
+    end
+    
+    c = [];
     
     % General (MAP) case: (slow !!!)
 else
@@ -147,11 +159,13 @@ else
             g.map = linear([-1,1]);
             g = fun(@(x) feval(g,x)./map.der(x),[-1 1]); % construct fun from {c_r}
             g.map = map;
-            if i ~= k
+            if i ~= k || nargout > 1
                 c = chebpoly(g);
                 n = length(c);
             end
         end
+        
+        c = [];
         
     else
         
@@ -193,11 +207,13 @@ else
             
             g.exps = exps;
             
-            if i ~= k
+            if i ~= k || nargout > 1
                 c = chebpoly(g);
                 n = length(c);
             end
         end
+        
+        c = [];
         
     end
 

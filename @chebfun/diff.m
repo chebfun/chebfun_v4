@@ -40,8 +40,7 @@ for j = 1:n % loop n times for nth derivative
     
     % differentiate every piece and rescale
     for i = 1:f.nfuns
-%         funs(i) = diff(funs(i));
-        [funs(i) c] = diff(funs(i),1,c);
+        [funs(i) c] = diff(funs(i),1,[]);
         F.scl = max(F.scl, funs(i).scl.v);
     end
     F.funs = funs;
