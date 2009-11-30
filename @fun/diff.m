@@ -1,4 +1,4 @@
-function g = diff(g,k)
+function [g c] = diff(g,k,c)
 % DIFF	Differentiation
 % DIFF(G) is the derivative of the fun G.
 %
@@ -21,6 +21,8 @@ function g = diff(g,k)
 %
 % with c_{n} = c_{n+1} = 0.
 %
+% [F C] = DIFF(G,K) returns also the coefficients C of the K-th derivative.
+%
 % See "Chebyshev Polynomials" by Mason ad Handscomb, CRC 2002, pg 34.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
@@ -31,8 +33,12 @@ function g = diff(g,k)
 
 if isempty(g), return, end
 if (nargin==1), k=1; end
-c = chebpoly(g);                        % obtain Cheb coeffs {C_r}
-n = g.n;
+if nargin < 3 || (nargin==3 && isempty(c))
+    c = chebpoly(g);  % obtain Cheb coeffs {C_r}
+    n = g.n;
+else
+    n = length(c);
+end
 ends = g.map.par(1:2);
 
 % Separate in 3 cases:

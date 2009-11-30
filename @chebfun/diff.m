@@ -35,11 +35,13 @@ exps = get(f,'exps');
 ends = get(f,'ends');
 F.jacobian = anon(' @(u) diff(domain(f))^n * jacobian(f,u)',{'f' 'n'},{f n});
 F.ID = newIDnum;
+c = [];
 for j = 1:n % loop n times for nth derivative
     
     % differentiate every piece and rescale
     for i = 1:f.nfuns
-        funs(i) = diff(funs(i));
+%         funs(i) = diff(funs(i));
+        [funs(i) c] = diff(funs(i),1,c);
         F.scl = max(F.scl, funs(i).scl.v);
     end
     F.funs = funs;
