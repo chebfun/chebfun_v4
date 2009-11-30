@@ -369,7 +369,7 @@ domain(f)
 % Though its applications are unlikely to be mathematical,
 % f is a precisely defined mathematical object just like any other
 % chebfun.  If we wish, we can compute with it:
-f(10), norm(f)
+f(0), norm(f)
 
 %%
 % Perhaps more interesting is that we can apply functions to it
@@ -383,8 +383,9 @@ plot(exp(3i*f),'m',LW,lw), axis equal
 % quasimatrix -- see Chapter 6.)
  
 L = f.ends(end);
-s = chebfun(@(x) 4*x/L,[0 L/4]);
-box = [-1.1-.05i+2.2*s;1.1-.05i+.22i*s;1.1+.17i-2.2*s;-1.1+.17i-.22i*s];
+s = chebfun(@(x) x,[0 1]);
+box0 = [-1.1-.05i+2.2*s;1.1-.05i+.22i*s;1.1+.17i-2.2*s;-1.1+.17i-.22i*s];
+box{-1,1} = box0;
 f = [f box];
 plot(f,LW,lw), axis equal
 
@@ -404,6 +405,10 @@ clf, plot(g(f),'r',LW,lw), axis equal, axis off
 circle = 1.12*chebfun(@(x) exp(2i*pi*x/L),[0 L]);
 ellipse = 1.2*(circle + 1./circle)/2 + 1i*mean(imag(f));
 hold on, plot(g(ellipse),'b',LW,lw)
+
+%%
+% You can find a code GREETINGCARD for producing
+% images like this in the chebfun Examples collection.
 
 %% 5.6  References
 %
