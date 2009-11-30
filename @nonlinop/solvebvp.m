@@ -22,8 +22,8 @@ end
 
 % If RHS of the \ is 0, keep the original DE. If not, update it. Also check
 % whether we have a chebop, if so, perform subtraction otherwise.
-if opType == 2  % Operator is a chebop
-    problemFun = BVP.op - rhs;
+if opType == 2  % Operator is a chebop. RHS is treated later
+    problemFun = BVP.op;
 elseif isnumeric(rhs) && all(rhs == 0)
     problemFun = BVP.op;
 else
@@ -91,14 +91,17 @@ while nrmdu > tol && normr > tol
         end
     end
     % If the operator is a chebop, we don't need to linearize. Else, do the
-    % linearization using diff
+    % linearization using diff. Note that if the operator is a chebop, we
+    % handle the rhs differently.
     if opType == 1
         A = diff(r,u) & bc;
+        A.scale = sqrt(sum( sum(u.^2,1)));
+        delta = -(A\r);
     else
         A = problemFun & bc; % problemFun is a chebop
+        A.scale = sqrt(sum( sum(u.^2,1)));
+        delta = -(A\(r-rhs));
     end
-    A.scale = sqrt(sum( sum(u.^2,1)));
-    delta = -(A\r);
     
     
     
@@ -155,7 +158,14 @@ end
                 sn = sn + v(b)^2;
             end
         end
-        sn = sn + norm(r,'fro').^2;
+        
+        if opType == 1
+            sn = sn + norm(r,'fro').^2;
+        else
+            sn = sn + norm(r-rhs,'fro').^2;
+        end
+        
+
         sn = sqrt(sn);
     end
 

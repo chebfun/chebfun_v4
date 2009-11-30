@@ -50,10 +50,10 @@ else
     
     if ~isempty(A.rbc)
         if isa(A.rbc,'function_handle')
-            s = char(s, ' ', '   left boundary condition:',...
+            s = char(s, ' ', '   right boundary condition:',...
                 ['     ' char(A.rbc) ' = 0']);
         else
-                s = char(s, '   left boundary conditions:');
+                s = char(s, '   right boundary conditions:');
                 for funCounter =1:length(A.rbc)
                     s = char(s, ...
                         ['     ' char(A.rbc{funCounter}) ' = 0']);
