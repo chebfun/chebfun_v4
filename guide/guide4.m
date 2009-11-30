@@ -465,6 +465,17 @@ plot(f-pinterp,'b')
 % Notice that although the best approximation has a smaller
 % maximum error, it is a worse approximation for almost all x.
 
+%%
+% The chebfun code REMEZ does not (yet) compute rational approximants.
+% If your function is smooth, however, you can compute them by Caratheodory-Fejer
+% approximation using the code CF due to Joris Van Deun.  For example:
+f = chebfun('exp(x)');
+[p,q] = cf(f,5,5);
+r = p./q;
+err = norm(f-r,inf);
+clf, plot(f-r,'c'), hold on
+plot([-1 1],err*[1 1],'--k'), plot([-1 1],-err*[1 1],'--k')
+
 %% 4.7  The Runge phenomenon
 % The chebfun system is based on polynomial interpolants in Chebyshev
 % points, not equispaced points.   It has been known for over a century
@@ -490,22 +501,102 @@ p = interp1(s,f); hold off
 plot(f), hold on, plot(p,'r'), grid on, plot(s,p(s),'.r')
 
 %%
-% As the degree increases, the interpolant diverges exponentially.
+% Approximation experts will know that one of the tools used
+% in analyzing effects like this is known as the Lebesgue
+% function associated with a given set of interpolation points.
+% Chebfun has a command LEBESGUE for computing these functions.
+% The problem with interpolation in 20 equispaced points is reflected
+% in a Lebesgue function of size 10^4 -- note the semilog scale:
+clf, semilogy(lebesgue(s))
 
-%% 4.8  Splines, CF approximants, rational approximants
-% The chebfun system contains a number of approximation facilities
-% besides those mentioned here, and more are being developed.
-% For example there are codes for least-squares fitting, CF approximation,
-% Chebyshev-Pade approximation, and rational interpolation.
-% Approximation codes to be aware of at the time of this
-% writing include
-%
-% CF, CHEBPADE, INTERP1, POLYFIT, REMEZ.
-%
-% More are being added.
+%%
+% For 40 points it is much worse:
+semilogy(lebesgue(linspace(-1,1,40)))
+
+%%
+% As the degree increases, polynomial interpolants in equispaced
+% points diverge exponentially [Platte, Trefethen and Kuijlaars 2009].
+
+%% 4.8  Rational approximations
+% The chebfun system contains three different programs, at present, for
+% computing rational approximants to a function f.  We say that
+% a rational function is of type (m,n) if it can be written as
+% a quotient of one polynomial of degree at most m and another of degree
+% at most n.
+
+%%
+% To illustrate the possibilities, consider the function
+f = chebfun('tanh(pi*x/2) + x/20',[-10,10]);
+length(f)
+plot(f)
+
+%%
+% We can use the command CHEBPADE, developed by Ricardo Pachon,
+% to compute a Chebyshev-Pade approximant, defined by the
+% condition that the Chebyshev series of p/q should match that of f as
+% far as possible [Baker and Graves-Morris 1996].  (This is the so-called "Clenshaw-Lord" Chebyshev-Pade
+% approximation; if the flag 'maehly' is specified the code alternatively
+% computes the linearized variation known as the "Maehly" approximation.)
+% Chebyshev-Pade approximation is the analogue for functions defined on an interval
+% of Pade approximation for functions defined in a neighborhood of a point.
+[p,q] = chebpade(f,40,4);
+r = p./q;
+
+%%
+% The functions f and r match to about 8 digits:
+norm(f-r)
+plot(f-r,'r')
+
+%%
+% Mathematically, f has poles in the
+% complex plane at +-i, +-3i, +5i, and so on.
+% We can obtain approximations to these by looking at the roots of q:
+roots(q,'complex')
+
+%%
+% A similar but perhaps faster and more robust approach to rational interpolation
+% is encoded in the command RATINTERP, which computes a type (m,n) interpolant
+% through m+n+1 Chebyshev points (or, optionally, a different set of points).
+% This capability was developed by Ricardo Pachon and Pedro Gonnet [Pachon
+% & Gonnet 2010].  The results are similar:
+[p,q] = ratinterp(f,40,4);
+r = p./q;
+norm(f-r)
+plot(f-r,'m')
+
+%%
+% Again the poles are not bad:
+roots(q,'complex')
+
+%%
+% The third option for rational approximation is Caratheodory-Fejer approximation,
+% realized in the code CF by Joris Van Deun [Trefethen & Gutknecht 1983].
+% As mentioned in the last section,
+% CF approximants often agree
+% with best approximations to machine precision if f is smooth.
+% We explore the same function yet again, and this time obtain
+% an equioscillating error curve:
+[p,q] = cf(f,40,4);
+r = p./q;
+norm(f-r)
+plot(f-r,'c')
+
+%%
+% And the poles:
+roots(q,'complex')
+
+%%
+% It is tempting to vary parameters and functions to explore more poles
+% and what accuracy can be obtained for them.  But rational approximation
+% and analytic continuation are
+% very big subjects and we shall resist the temptation.
 
 %% 4.9  References
 % 
+%
+% [Baker and Graves-Morris 1996] G. A. Baker, Jr. and P. Graves-Morris,
+% Pade Approximants, 2nd ed., Cambridge U. Press, 1996.
+%
 % [Battles & Trefethen 2004] Z. Battles and L. N. Trefethen,
 % "An extension of Matlab to continuous functions and
 % operators", SIAM Journal on Scientific Computing 25 (2004),
@@ -533,7 +624,8 @@ plot(f), hold on, plot(p,'r'), grid on, plot(s,p(s),'.r')
 % [Fox & Parker 1966] L. Fox and I. B. Parker,
 % Chebyshev Polynomials in Numerical Analysis, Oxford U. Press, 1968.
 %
-% [G. Helmberg & P. Wagner 1997] "Manipulating Gibbs' phenomenon for
+% [Helmberg & Wagner 1997] G. Helmberg & P. Wagner,
+% "Manipulating Gibbs' phenomenon for
 % Fourier interpolation," Journal of Approximation Theory 89
 % (1997), 308-320.
 %
@@ -557,9 +649,16 @@ plot(f), hold on, plot(p,'r'), grid on, plot(s,p(s),'.r')
 % [Meinardus 1967] G. Meinardus, Approximation of Functions:
 % Theory and Numerical Methods, Springer, 1967.
 %
+% [Pachon & Gonnet 2010] R. Pachon and P. Gonnet, manuscript
+% in preparation.
+%
 % [Pachon & Trefethen 2009] R. Pachon and L. N. Trefethen,
 % "Barycentric-Remez algorithms for best polynomial approximation in the
 % chebfun system", BIT Numerical Mathematics 49 (2009), ?-?.
+%
+% [Platte, Trefethen & Kuijlaars 2009] R. P. Platte, L. N. Trefethen
+% and A. B. J. Kuijlaars, Impossibility of approximating analytic
+% functions from equispaced samples, manuscript, 2009.
 %
 % [Powell 1981] M. J. D. Powell, Approximation Theory and Methods,
 % Cambridge University Press, 1981.
@@ -578,4 +677,8 @@ plot(f), hold on, plot(p,'r'), grid on, plot(s,p(s),'.r')
 %
 % [Trefethen 2010] L. N. Trefethen, Approximation Theory and Approximation
 % Practice, book in preparation.
+%
+% [Trefethen & Gutknecht 1983] L. N. Trefethen and M. H. Gutknecht, The
+% Caratheodory-Fejer method for real rational approximation,
+% SIAM Journal of on Numerical Analysis 20 (1983), 420-436.
 

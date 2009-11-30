@@ -1,14 +1,14 @@
-function [p,q,r] = ratinterp(f,m,varargin)
+function [p,q,r_handle] = ratinterp(f,m,varargin)
 % RATIONAL INTERPOLATION
-% [P,Q,R] = RATINTERP(F,M,N) constructs the [M/N]-rational interpolant 
+% [P,Q,R_HANDLE] = RATINTERP(F,M,N) constructs the [M/N]-rational interpolant 
 % R = P/Q on M+N+1 Chebyshev points. P is a chebfun of length M+1 and Q is 
-% a chebfun of length N+1. R is a function handle that evaluates the
+% a chebfun of length N+1. R_HANDLE is a function handle that evaluates the
 % rational function using the barycentric formula.
 %
-% [P,Q,R] = RATINTERP(F,M,N,XGRID) constructs the [M/N]-rational
-% interpolant R = P/Q on a grid XGRID of length M+N+1. P, Q and R are function
-% handles that evaluates the numerator, denominator, and rational function
-% using the barycentric formula.
+% [P,Q,R_HANDLE] = RATINTERP(F,M,N,XGRID) constructs the [M/N]-rational
+% interpolant R_HANDLE = P/Q on a grid XGRID of length M+N+1. P, Q and R_HANDLE
+% are function handles that evaluates the numerator, denominator, and rational
+% function using the barycentric formula.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

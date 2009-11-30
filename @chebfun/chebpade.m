@@ -1,17 +1,17 @@
-function [p, q, r] = chebpade(F,m,n,type) 
+function [p, q, r_handle] = chebpade(F,m,n,type) 
 % CHEBYSHEV-PADE APPROXIMATION
-% [P Q R] = CHEBPADE(F,M,N) constructs R = P/Q, where P and Q are
-%   chebfuns corresponding to the [M/N] Chebyshev-Pade approximation of
-%   type Clenshaw-Lord, i.e., the rational function has maximum contact
-%   with the Chebyshev series of the chebfun F. R is a function handle for
-%   the rational function.
-% [P Q R] = CHEBPADE(F,M,N,'maehly') constructs R = P/Q, where P and Q are
-%   chebfuns corresponding to the [M/N] Chebyshev-Pade approximation of
-%   type Maehly, which satisfies the linear Pade condition. R is a function
-%   handle for the rational function
+% [P,Q,R_HANDLE] = CHEBPADE(F,M,N) constructs R_HANDLE = P/Q, where P and
+%   Q are chebfuns corresponding to the [M/N] Chebyshev-Pade approximation 
+%   of type Clenshaw-Lord, i.e., the rational function has maximum contact
+%   with the Chebyshev series of the chebfun F. R_HANDLE is a function handle
+%   for the rational function.
+% [P,Q,R_HANDLE] = CHEBPADE(F,M,N,'maehly') constructs R_HANDLE = P/Q, where
+%   P and Q are chebfuns corresponding to the [M/N] Chebyshev-Pade approximation
+%   of type Maehly, which satisfies the linear Pade condition. R_HANDLE is a
+%   function handle for the rational function
 %
 % If F is a quasimatrix then so are the outputs P & Q, 
-% and R is a cell array of function handles.
+% and R_HANDLE is a cell array of function handles.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -37,13 +37,13 @@ if numel(F) > 1, % Deal with quasimatrices
         F = F.';        trans = true;
     end
 
-    r = cell(1,numel(F)); p = chebfun; q = chebfun;
+    r_handle = cell(1,numel(F)); p = chebfun; q = chebfun;
     % loop over chebfuns
     for k = 1:numel(F)
-        [p(:,k) q(:,k) r{k}] = chebpade(F(:,k),m,n,type);
+        [p(:,k) q(:,k) r_handle{k}] = chebpade(F(:,k),m,n,type);
     end
     if trans
-        r = r.'; p = p.'; q = q.';
+        r_handle = r_handle.'; p = p.'; q = q.';
     end
     return
 end
@@ -78,7 +78,7 @@ if  strcmp(type,'clenshawlord')
     pk = pk/qk(1); qk = 2*qk/qk(1); qk(1) = 1;
     p = chebfun(chebpolyval(fliplr(pk)), d );            % chebfun of numerator
     q = chebfun(chebpolyval(fliplr(qk)), d );            % chebfun of denominator
-    r = @(x) feval(p,x)./feval(q,x);   
+    r_handle = @(x) feval(p,x)./feval(q,x);   
 elseif strcmp(type,'maehly')
     tol = 1e-10; % tolerance for testing singular matrices
     if numel(F) > 1, % Deal with quasimatrices    
@@ -87,14 +87,14 @@ elseif strcmp(type,'maehly')
             F = F.';        trans = true;
         end
 
-        r = cell(1,numel(F)); p = chebfun; q = chebfun;
+        r_handle = cell(1,numel(F)); p = chebfun; q = chebfun;
         % loop over chebfuns
         for k = 1:numel(F)
-            [r{k} p(:,k) q(:,k)] = chebpade(F(:,k),m,n);
+            [r_handle{k} p(:,k) q(:,k)] = chebpade(F(:,k),m,n);
         end
 
         if trans
-            r = r.'; p = p.'; q = q.';
+            r_handle = r_handle.'; p = p.'; q = q.';
         end
 
         return
@@ -115,11 +115,11 @@ elseif strcmp(type,'maehly')
     if n > m,  D = D + a(1)*diag(ones(n-m,1),m); end
     if rank(D,tol) < min(size(D)) % test for singularity of matrix
         if m > 1
-            [p q r] = chebpade(F,m-1,n,'maehly');
+            [p q r_handle] = chebpade(F,m-1,n,'maehly');
             warning('chebfun:chebpade:singular_goingleft', ...
                 ['Singular matrix encountered. Computing [',int2str(m-1),',',int2str(n),'] approximant.'])
         elseif n > 1
-            [p q r] = chebpade(F,m,n-1,'maehly');
+            [p q r_handle] = chebpade(F,m,n-1,'maehly');
             warning('chebfun:chebpade:singlar_goingup', ...
                 ['Singular matrix encountered. Computing [',int2str(m),',',int2str(n-1),'] approximant.'])
         else
@@ -142,10 +142,10 @@ elseif strcmp(type,'maehly')
     else
         pk = .5*B*qk(2:n+1)+qk(1)*a(1:m+1);
     end
-    % p, q and r
+    % p, q and r_handle
     p = chebfun(chebpolyval(flipud(pk)),d);
     q = chebfun(chebpolyval(flipud(qk)),d);
-    r = @(x) feval(p,x)./feval(q,x);
+    r_handle = @(x) feval(p,x)./feval(q,x);
 else 
     error('CHEBFUN:chebpade:type','Unrecognized ChebPade type.');
 end
