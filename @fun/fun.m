@@ -122,8 +122,10 @@ end
 %  op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
 % (Note that for blowup exponents are now negative!)
 if isfield(pref,'exps') && ~isempty([pref.exps{:}])
-    if numel([pref.exps{:}]) == 2
-        exps = [pref.exps{:}];
+    if ~isempty(pref.exps{1}) && ~isempty(pref.exps{2})
+        pref.exps
+        exps(1) = pref.exps{1};
+        exps(2) = pref.exps{2};
     elseif ~isempty(pref.exps{1})
         exps(1) = pref.exps{1};
         exps(2) = findexps(op,ends,1);
@@ -142,7 +144,6 @@ if any(exps)
     op = @(x) rescl*op(x)./((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)); % new op
 end
 g.exps = exps;
-
     
 %% Call constructor depending on narg
 if pref.n
