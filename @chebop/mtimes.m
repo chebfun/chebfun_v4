@@ -14,6 +14,9 @@ function C = mtimes(A,B)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
+%  Last commit: $Author: platte $: $Rev: 840 $:
+%  $Date: 2009-11-27 18:01:24 -0500 (Fri, 27 Nov 2009) $:
+
 persistent storage
 if isempty(storage), storage = struct([]); end
 use_store = cheboppref('storage');
@@ -38,8 +41,9 @@ switch(class(B))
     if isempty(B), C = []; return, end  % chebop*[] = []
     [m n] = size(B);
     if max(m,n) == 1
-      C = chebop(B*A.varmat, B*A.oparray, A.fundomain, A.difforder );
-      C.blocksize = A.blocksize;
+      C = A;
+      C.varmat = B*C.varmat;
+      C.oparray = B*C.oparray;
     elseif n == 1
       error('chebop:mtimes:numericvector','Chebop-vector multiplication is not well defined.')
     else

@@ -7,6 +7,10 @@ function C = plus(A,B)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
+%  Last commit: $Author: platte $: $Rev: 840 $:
+%  $Date: 2009-11-27 18:01:24 -0500 (Fri, 27 Nov 2009) $:
+
+
 if isa(A,'double')
     C=A; A=B; B=C;    % swap to make A a chebop
 end
@@ -14,7 +18,7 @@ end
 % Scalar expansion using identity.
 if isnumeric(B)
     if numel(B) == 0  % chebob + [] = chebop
-        C = A; return
+        C = A; 
     elseif numel(B)==1
         if B==0, C=A; return
         elseif diff(A.blocksize)~=0
@@ -23,14 +27,16 @@ if isnumeric(B)
         end
         m = A.blocksize(1);
         B = B*blockeye(domain(A),m);
+        C = A+B;
+        C = setbc(C,getbc(A));
     elseif size(B,1) == size(B,2)
         if A.numbc > 0
             A = feval(A,size(B,1),'bc');
         else
             A = feval(A,size(B,1));
         end
+        C = A+B;
     end
-    C = A + B;
     return
 end
 

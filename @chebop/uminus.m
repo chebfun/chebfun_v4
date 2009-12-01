@@ -3,8 +3,12 @@ function C = uminus(A)
 
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
- 
-C = chebop( -A.varmat, -A.oparray, A.fundomain, A.difforder );
-C.blocksize = A.blocksize;
+
+%  Last commit: $Author: platte $: $Rev: 840 $:
+%  $Date: 2009-11-27 18:01:24 -0500 (Fri, 27 Nov 2009) $:
+
+C = A;
+C.varmat = -C.varmat;
+C.oparray = -C.oparray;
 
 end
