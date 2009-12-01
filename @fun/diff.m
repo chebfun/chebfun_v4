@@ -33,12 +33,12 @@ function [g c] = diff(g,k,c)
 
 if isempty(g), return, end
 if (nargin==1), k=1; end
-if nargin < 3 || (nargin==3 && isempty(c))
+% if nargin < 3 || (nargin==3 && isempty(c))
     c = chebpoly(g);  % obtain Cheb coeffs {C_r}
     n = g.n;
-else
-    n = length(c);
-end
+% else
+%     n = length(c);
+% end
 ends = g.map.par(1:2);
 
 % Separate in 3 cases:
