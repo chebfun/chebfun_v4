@@ -42,7 +42,7 @@
 % the fastest:
   tic, erf(1), toc
 %%
-% Using Matlab's standard various quadrature commands
+% Using Matlab's various quadrature commands
 % is understandably slower:
   tol = 3e-14;
   tic, I = quad(F,0,1,tol); t = toc;
@@ -93,7 +93,6 @@
 % given as example F21F in [Kahaner 1971].  We treat it first in
 % the default mode of splitting off:
 
-  splitting off
   x = chebfun('x',[0 1]);
   f = sech(10*(x-0.2)).^2 + sech(100*(x-0.4)).^4 + sech(1000*(x-0.6)).^6;
 
@@ -120,11 +119,12 @@
 
 %%
 % Incidentally, if you are dealing with functions with narrow
-% spikes like this, it is safer to increase the value of
+% spikes like this, it is a good idea to increase the value of
 % "minsamples" as described in Section 8.6.
 
 %%
-% As mentioned in Chapter 1, the chebfun system has a (somewhat limited)
+% As mentioned in Chapter 1 and described in more detail in
+% Chapter 9, the chebfun system has some
 % capability of dealing with functions that blow up to infinity.  Here
 % for example is a familiar integral:
 
@@ -154,7 +154,7 @@
 
 %% 2.2 norm, mean, std, var
 % A special case of an integral is the "norm" command,
-% which for a chebfun by default returns the 2-norm, i.e., the square root
+% which for a chebfun returns by default the 2-norm, i.e., the square root
 % of the integral of the square of the absolute value over the
 % region of definition.  Here is a well-known example:
   norm(chebfun('sin(pi*theta)'))
@@ -287,14 +287,15 @@
 %%
 % Here is the derivative:
   fprime = diff(f);
-  plot(fprime,'r')
+  plot(fprime,'r'), ylim([-2,3])
 
 %%
 % The first segment of f' is linear, since f is quadratic here.
 % Then comes a segment with f' = 0, since f is constant.
 % And the end of this second segment appears
 % a delta function of amplitude 1, corresponding to
-% the jump of f by 1.  The third segment has constant
+% the jump of f by 1.  (Currently delta functions are not shown
+% on chebfun plots.)  The third segment has constant
 % value f' = -1. Finally another delta function, this time with
 % amplitude 1/3, takes us to the final segment.
 
@@ -375,7 +376,9 @@ clf, contour(x,y,f(xx,yy),-1:.2:1),
 axis([-2 2 0.5 2.5]), colorbar, grid on
 
 %%
-% We can compute the integral over the box like this:
+% We can compute the integral over the box like this.  Notice the use of
+% the flag 'vectorize' to construct a chebfun from a function
+% only defined for scalar arguments.
 Iy = @(y) sum(chebfun(@(x) f(x,y),[-2 2]));
 tic; I = sum(chebfun(@(y) Iy(y),[0.5 2.5],'vectorize')); t = toc;
 fprintf('CHEBFUN:  I = %16.14f  time = %5.3f secs\n',I,t)
@@ -392,7 +395,7 @@ fprintf('DBLQUAD/QUADL:  I = %16.14f  time = %5.3f secs\n',I,t)
 % different for less smooth integrands, and typically one will need to
 % lower the tolerance.   In the chebfun system, this can be done
 % by the chebfunpref command, as described in Chapter 8.  For this
-% example, however, there is no speedup:
+% example, however, there is not much speedup:
 
 tic; I = sum(chebfun(@(y) Iy(y),[0.5 2.5],'vectorize','eps',1e-6)); t = toc;
 fprintf('CHEBFUN:  I = %16.14f  time = %5.3f secs\n',I,t)
@@ -450,6 +453,10 @@ toc
 % one or both endpoints, and are used internally in the chebfun system
 % for integration of chebfuns with singularities (Chapter 9).
 
+%%
+% As explained in the help texts, all of these operators
+% work on general intervals [a,b], not just on [-1,1].
+
 %% 2.7 References
 %
 % [Assheton 2008] P. Assheton, Comparing Chebfun to Adaptive
@@ -464,12 +471,12 @@ toc
 % the ACM 15 (1972), 337-346 and 353.
 %
 % [Glaser, Liu & Rokhlin 2007]
-% A. Glaser, X. Liu and V. Rokhlin, A fast algorithm for the
-% calculation fo the roots of special functions, SIAM Journal of
+% A. Glaser, X. Liu and V. Rokhlin, "A fast algorithm for the
+% calculation fo the roots of special functions", SIAM Journal on
 % Scientific Computing 29 (2007), 1420-1438.
 %
 % [Golub & Welsch 1969]
-% G. H. Golub and J. H. Welsch, Calculation of Gauss quadrature rules,
+% G. H. Golub and J. H. Welsch, "Calculation of Gauss quadrature rules,"
 % Mathematics of Computation 23 (1969), 221-230.
 %
 % [Gonnet 2009] P. Gonnet, Adaptive Quadrature Re-Revisited,

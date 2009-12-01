@@ -22,7 +22,7 @@
 
 %%
 % A more substantial example of rootfinding involving a Bessel function
-% was shown in Section 1.  Here is a similar calculation for
+% was considered in Sections 1.2 and 2.4.  Here is a similar calculation for
 % the Airy functions Ai and Bi, modeled after the page on "Airy functions"
 % at WolframMathWorld.  (The reason for the "real" command is a
 % bug in Matlab: Matlab's "airy" command gives spurious nonzero imaginary
@@ -118,7 +118,7 @@
 % at points where f-g is zero:
 
   f = min(x,-x/2), subplot(1,2,1), plot(f,'.-')
-  g = max(.6,1-x.^2), subplot(1,2,2), plot(g,'.-')
+  g = max(.6,1-x.^2), subplot(1,2,2), plot(g,'.-'), ylim([.5,1])
 
 %%
 % The function "sign" also introduces breaks, as illustrated
@@ -216,7 +216,9 @@
 % In standard Matlab one can also compute 1-, infinity-, and Frobenius norms
 % with norm(f,1), norm(f,inf), and norm(f,'fro').  These
 % have been overloaded in the chebfun system, and in the first two cases, rootfinding
-% is part of the implementation.  The 1-norm norm(f,1) is the integral of 
+% is part of the implementation.  (The 2- and Frobenius norms are
+% equal for a single chebfun but differ for quasimatrices; see Chapter 6.)
+% The 1-norm norm(f,1) is the integral of 
 % the absolute value, and the system computes this by adding up segments
 % between zeros, at which abs(f) will typically have a discontinuous slope.
 % The infinity-norm is computed from the formula
@@ -246,7 +248,7 @@ f = 1+16*x.^2;
 roots(f)
 
 %%
-% But we can extract its complex roots with the command
+% We can extract its complex roots with the command
 roots(f,'all')
 
 %%
@@ -273,7 +275,7 @@ roots(g,'all')
 % One cannot expect the chebfun system to solve this problem perfectly -- after all,
 % it is working on a real interval, not in the complex plane, and analytic continuation 
 % from the one to the other is
-% well known to be an ill-posed problem.  Nevertheless, chebfun may do do a pretty good job of
+% well known to be an ill-posed problem.  Nevertheless, chebfun may do a pretty good job of
 % selecting genuine complex (and real)
 % roots near the interval of definition if you use the 'complex' flag:
 roots(g,'complex')
@@ -327,6 +329,9 @@ hold on, plot(r,'om','markersize',8)
 norm(F(r))
 norm(F(r2))
 
+%%
+% To find poles in the complex plane as opposed to zeros, see Section 4.8.
+
 %% 3.7 References
 %
 % [Battles 2006] Z. Battles, Numerical Linear Algebra for
@@ -341,5 +346,5 @@ norm(F(r2))
 % analogue of the companion matrix", Quarterly Journal of 
 % Mathematics 12 (1961), 61-68.
 %
-% [Specht 1960] W. Specht, Die Lage der Nullstellen eines Polynoms.
-% IV, Math. Nachr. 21 (1960), 201-222.
+% [Specht 1960] W. Specht, "Die Lage der Nullstellen eines Polynoms.
+% IV", Mathematische Nachrichten 21 (1960), 201-222.
