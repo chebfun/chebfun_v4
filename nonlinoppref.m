@@ -1,17 +1,14 @@
 function varargout = nonlinoppref(varargin)
-% CHEBOPPREF Settings for chebops.
+% NONLINOPPREF settings for nonlinear backslash
 %
-% By itself, CHEBOPPREF returns a structure with current preferences as
-% fields/values. Use it to find out what preferences are available.
+% More details and more options to follow.
 %
-% CHEBOPPREF(PREFNAME) returns the value corresponding to the preference
-% named in the string PREFNAME.
+% Options to be added include: Update tolerance, Residual tolerance,
+% (absolute or relative tolerance). Fixed stepsize. Automatic finding of
+% stepsize. Different search direction. Simplified Newton (i.e. same
+% Jacobian used for many iterations).
 %
-% CHEBOPPREF(PREFNAME,PREFVAL) sets the preference PREFNAME to the value
-% PREFVAL.
-
-
-% Toby Driscoll, 31 March 2008.
+% Asgeir Birkisson, 2009
 
 persistent prefs
 

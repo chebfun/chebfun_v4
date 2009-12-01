@@ -34,9 +34,20 @@ if isnumeric(B)
     return
 end
 
-if isa(B,'chebop')
+if isa(B,'chebop') % Chebop + chebop
     dom = domaincheck(A,B);
-    if A.blocksize~=B.blocksize
+
+    % If one chebop happens to be the zero chebop, we return the other one 
+    if iszero(A)
+        C = B;
+        return
+    elseif iszero(B)
+        C = A;
+        return
+    end
+
+    
+    if ~all(A.blocksize==B.blocksize)
         error('chebop:plus:sizes','Chebops must have identical sizes.')
     end
     

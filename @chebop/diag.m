@@ -1,10 +1,19 @@
-function fout = diag(opin)
-% Take the diagonal of a chebop. This is useful when the
-% operator is diagonal, but needs more thought for cases
-% when it is not.
+function fout = diag(L)
+% DIAG The diagonal of chebops
+%
+% F = DIAG(L) returns the chebfun that lies on the diagonal line of the
+% linear operator L. Note that this is not well defined if L is not a
+% diagonal operator, in that case, diag(L) issues a warning.
 
-d = domain(opin);
+d = domain(L);
 cheb1 = chebfun(1,d);
-fout = opin*cheb1;
 
+% Check whether L is truly a diagonal chebop.
+if norm(full(feval(L,10))-diag(diag(feval(L,10)))) == 0
+    fout = L*cheb1;
+else
+    fout = L*cheb1;
+    warning('chebop:diag',['Taking the diagonal of a nondiagonal ' ...
+    'chebop is not well defined.']);
+end
 end
