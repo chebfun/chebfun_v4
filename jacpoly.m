@@ -10,7 +10,7 @@ function P = jacpoly(N,a,b,d,flag)
 %   JACPOLY(N,ALPHA,BETA,D,'norm') or JACPOLY(N,ALPHA,BETA,'norm') will 
 %   normalise so that P(D(2)) or P(1) = 1;
 %
-% See also chebfun/legpoly and chebpoly.
+% See also legpoly and chebpoly.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

@@ -27,7 +27,7 @@ end
 
 if strcmp(map.name,'linear')
 % Linear case is nice
-    c = chebpoly(f); % The chebyshev coefficients of f
+    c = chebpoly(f); % The Chebyshev coefficients of f
     while any(f0 < tol) && f.n >1
         c = flipud(c);
         if f0(1) < tol

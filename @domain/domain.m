@@ -9,6 +9,9 @@ function [d,x,N] = domain(varargin)
 % [D,X] = DOMAIN(...) also returns the 'identity chebfun', the
 % result of CHEBFUN('x',D).
 %
+% [D,X,N] = DOMAIN(...) also returns a nonlinop N on D, whose
+% fields can then be filled by N.op = ..., N.lbc = ..., etc.
+%
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
@@ -34,7 +37,6 @@ d = class(d,'domain');
 if nargout == 2
   x = chebfun(@(x) x,d);
 end
-
 
 if nargout == 3
   x = chebfun(@(x) x,d);

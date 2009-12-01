@@ -47,7 +47,7 @@ N = m+n;
 fx = feval(f,xi);
 %fx = f(xi);
 if strcmp(type,'chebyshev')
-    % get the chebyshev coefficients of fx (not f!)
+    % get the Chebyshev coefficients of fx (not f!)
     gama = flipud( chebpoly( chebfun ( fx ) )' );
     gama(1) = gama(1) / 2;
     % assemble the matrix Z

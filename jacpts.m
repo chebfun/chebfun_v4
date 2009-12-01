@@ -16,6 +16,8 @@ function [x,w] = jacpts(n,alpha,beta,varargin)
 %  [X,W] = JACPTS(N,ALPHA,BETA,[A,B]) scales the nodes and weights for the 
 %       finite interval [A,B].
 %
+%  See also legpts and chebpts.
+%
 %  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 %  'FAST' by Nick Hale, April 2009 - algorithm adapted from [1].

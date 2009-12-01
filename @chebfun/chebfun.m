@@ -16,7 +16,7 @@ function f = chebfun(varargin)
 % CHEBFUN(F,[A B],NP) specifies the interval of definition and the
 % number np of Chebyshev points.
 %
-% CHEBFUN(F,'map',{MAPNAME,MAPPARS}) allows the use of mapped chebyshev
+% CHEBFUN(F,'map',{MAPNAME,MAPPARS}) allows the use of mapped Chebyshev
 % expansions. See help chebfun/maps for more information.
 %
 % CHEBFUN(F,'exps',{EXP1 EXP2}) allows the definition of singularities

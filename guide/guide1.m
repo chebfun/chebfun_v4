@@ -56,10 +56,10 @@
 % Joris Van Deun.
 
 %%
-% This Guide is based on Chebfun Version 3, to be released
-% in December 2009.  The chebfun website is
-% http://www.maths.ox.ac.uk/chebfun/.
-% Chebfun is also available from the MathWorks File Exchange.
+% This Guide is based on Chebfun Version 3, released
+% in December 2009.  Chebfun is available from the website 
+% http://www.maths.ox.ac.uk/chebfun/ and also
+% from the MathWorks File Exchange. 
 
 %% 1.2  Constructing simple chebfuns
 % The "chebfun" command constructs a chebfun from a specification
@@ -162,13 +162,12 @@
 
 %% 1.3  Operations on chebfuns
 % There are about 150 commands that can be applied to
-% a chebfun.  For a complete list you can type
-% "methods":
+% a chebfun.  For a list of most of them you can type "methods":
   methods chebfun
 %%
 % To find out what a command does, you can use "help".
 
-  help chebfun/domain
+  help chebfun/chebpoly
 
 %%
 % Most of the commands in the list exist in ordinary Matlab;
@@ -206,7 +205,7 @@
 % was developed initially by Ricardo Pachon during 2006-2007, then
 % also by Rodrigo Platte starting in 2007 [Pachon, Platte and
 % Trefethen 2009].
-% Essentially funs consist of the "classic chebfuns" for smooth
+% Essentially funs are the "classic chebfuns" for smooth
 % functions on [-1,1] originally implemented by Zachary Battles.
 
 %%
@@ -219,28 +218,30 @@
   f = chebfun('abs(x-.3)');
 
 %%
-% but the same function can be successfully captured with splitting on:
+% The same function can be successfully captured with splitting on:
   f = chebfun('abs(x-.3)','splitting','on');
 %%
 % The "length" command reveals that f is defined by four data points,
 % namely two for each linear interval:
   length(f)
 %%
-% We can see the definition of f in more detail by typing
+% We can see the structure of f in more detail by typing
 % f without a semicolon:
   f
 %%
 % This output confirms that f consists of two funs, each defined
 % by two points and two corresponding function values.  We can see
-% its structure from another angle with "struct", Matlab's command
-% for seeing the various fields within an object:
+% the structure from another angle with "struct", Matlab's command
+% for seeing the various fields within an object: 
   struct(f)
 %%
 % This output again shows that f consists of two funs
 % with breakpoints at -1, 1, and a number very close to 0.3.  The
 % "imps" field refers to "impulses", which relate to values at
 % breakpoints, including possible information related to delta functions,
-% discussed in Section 2.4.
+% discussed in Section 2.4.  The "trans" field is 0 for a column chebfun
+% and 1 for a row chebfun (Section 1.6 and Chapter 6).  The "jacobian" and "ID" fields
+% are used for Automatic Differentiation (Chapter 10).
 
 %%
 % Another way to make a piecewise smooth chebfun is to construct
@@ -355,7 +356,7 @@ plot(h)
 sum(h)
 
 %%
-% For more on infinities in the chebfun system, see Chapter 9.
+% For more on the treatment of infinities in the chebfun system, see Chapter 9.
 
 %% 1.6  Rows, columns, and quasimatrices
 % Matlab doesn't only deal with column vectors: there are
@@ -399,7 +400,7 @@ sum(h)
 %
 % [Pachon, Platte & Trefethen 2009] R. Pachon, R. B. Platte
 % and L. N. Trefethen, "Piecewise smooth chebfuns",
-% IMA J. Numer. Anal., to appear.
+% IMA J. Numer. Anal., 2009.
 %
 % [Salzer 1972] H. E. Salzer, "Lagrangian interpolation at the 
 % Chebyshev points cos(nu pi/n), nu = 0(1)n; some unnoted

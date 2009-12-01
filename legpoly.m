@@ -10,7 +10,7 @@ function p = legpoly(n,d,normalize)
 %   of three possible normalizations, where normalize is 'unnorm',
 %   'sch' or 'norm'.
 %
-% See also chebfun/legpoly and chebpoly.
+% See also legpoly and chebpoly.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

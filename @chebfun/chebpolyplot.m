@@ -1,7 +1,7 @@
 function varargout = chebpolyplot(u,varargin)
-% CHEBPOLYPLOT    Display chebyshev coefficients graphically.
-%   CHEBPOLYPLOT(U) plots the chebyshev coefficients of a chebfun U 
-%   on a semilogy scale. If U is arow (or column) quasimatrix, only the 
+% CHEBPOLYPLOT    Display Chebyshev coefficients graphically.
+%   CHEBPOLYPLOT(U) plots the Chebyshev coefficients of a chebfun U 
+%   on a semilogy scale. If U is a row (or column) quasimatrix, only the 
 %   fist row (column) will be used.
 %
 %   CHEBPOLYPLOT(U,K) plots the coefficients of the funs indexed by the vector K.

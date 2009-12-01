@@ -12,6 +12,8 @@ function [x w] = chebpts(n,d,kind)
 %
 %   CHEBPTS(N,KIND) or CHEBPTS(N,D,KIND) returns Chebysehv points of the
 %   first kind if KIND = 1 and second kind if KIND = 2 (default). 
+%
+%   See also legpts and jacpts.
 %   
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

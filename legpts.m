@@ -2,15 +2,17 @@ function [x,w] = legpts(n,varargin)
 %LEGPTS  Legendre points and Gauss Quadrature Weights.
 %  X = LEGPTS(N) returns N Legendre points X in (-1,1).
 %
-%  [X,W] = LEGPTS(N) also returns a vector of weights for Gauss quadrature.
+%  [X,W] = LEGPTS(N) also returns a row vector of weights for Gauss quadrature.
 %
 %  [X,W] = LEGPTS(N,METHOD) allows the user to select which method to use.
 %       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
-%       which is best suited for when N is small. METHOD = 'FAST' will use 
-%       the Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
-%       By default LEGPTS will use 'GW' when N < 128.
+%       which is best for when N is small. METHOD = 'FAST' will use the
+%       Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
+%       By default LEGPTS uses 'GW' when N < 128.
 %
 %  [X,W] = LEGPTS(N,[A,B]) scales the nodes and weights for the finite interval [A,B].
+%
+%  See also chebpts and jacpts.
 %
 %  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

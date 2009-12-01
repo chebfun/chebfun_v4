@@ -1,7 +1,7 @@
 %% CHEBFUN GUIDE: INDEX
 
 %%
-% Chebfun commands and computer programs are give in capital
+% Chebfun commands and computer programs are given in capital
 % letters.  Entries are listed by section number.
 
 %%
