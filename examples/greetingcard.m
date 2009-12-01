@@ -58,7 +58,13 @@ w('Then type in the string ''done''.',0)
 
 while ~strcmp(fs,'done')
   fs = input('function = ');
-  if ~strcmp(fs,'done'), disp(' '), ps(fs,0), end
+  if strcmp(fs,'done'), 
+      break,
+  elseif isempty(fs)
+      disp(' ')
+  else
+      disp(' '), ps(fs,0)
+  end
 end
 
 disp(' ')
@@ -91,14 +97,19 @@ if dt>0
   if dt==99, pause, else pause(dt), end
 end
 c = cc(randi(size(cc,1)),:);
-ffs = eval(fs);
+depvar = symvar(fs); 
+if numel(depvar) ~= 1, 
+    error('Incorrect number of dependent variables in string input'); 
+end
+op = eval(['@(' depvar{:} ')' fs]);
+ffs = op(s);
 hold off
 plot(ffs,'linewidth',2,'color',c), axis equal, grid on
 c = cc(randi(size(cc,1)),:);
 ssave = s;
 s = border;
 hold on
-plot(eval(fs),'linewidth',2,'color',c)
+plot(op(s),'linewidth',2,'color',c)
 s = ssave;
 a = axis;
 xm = mean(a(1:2)); xd = a(1:2)-xm;

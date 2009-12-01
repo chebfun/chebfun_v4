@@ -1,16 +1,20 @@
-function f = vandermonde( n , fin )
+function f = vandermonde( xi , fx )
 
-% Input:  number of random nodes over which to interpolate and an optional
-%         function to interpolate. If no function is input, sin(exp(2*xi))
-%         is used by default.
+%  Input: a set of nodes xi in [-1,1] and function values fx,
 % Output: the chebfun created by interpolating fin at n random nodes on
 %         [-1,1].
 
-%% create a set of random nodes and function values
-if nargin == 0, n = 32; end
-xi = 2*rand(n,1) - 1;
-if nargin < 2, fx = sin(exp(2*xi));
-else fx = fin(xi); end;
+
+%% create a set of random nodes and function values (if not supplied)
+if nargin < 1
+    n = 20;
+    xi = 2*rand(n,1) - 1;
+else
+    n = length(xi);
+end;
+if nargin < 2
+    fx = sin(exp(2*xi));
+end;
 
 %% create the basis of Chebyshev polynomials
 T = chebpoly(0:n-1);
@@ -22,9 +26,12 @@ c = T(xi,:) \ fx;
 f = chebfun( chebpolyval( flipud(c) ) );
 
 %% plot the result
-if nargin < 2, plot(f);
-else plot([f,fin]); end;
-hold on; plot(xi,fx,'or'); hold off;
+if nargin < 2
+    subplot(2,1,1); plot([f,chebfun(@(x)sin(exp(2*x)))]); hold on; plot(xi,fx,'or'); hold off; title('interpolation of sin(exp(x))');
+    subplot(2,1,2); plot(f-chebfun(@(x)sin(exp(2*x)))); hold on; plot(xi,0,'or'); hold off; title('interpolation error');
+else
+    plot(f); hold on; plot(xi,fx,'or'); hold off;
+end;
 
 %% how far off are we at the nodes?
 disp(sprintf('inf-norm of interpolation error at the nodes is %e.',norm(f(xi)-fx,inf)));
