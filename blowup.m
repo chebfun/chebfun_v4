@@ -17,14 +17,18 @@ if nargin==0
             disp('BLOWUP is currently ON')
         case 0
             disp('BLOWUP is currently OFF')
+        case 2 
+            disp('BLOWUP is currently ON (and allowing noninteger powers)')
     end
 else
-    if strcmpi(on_off, 'on')
-        chebfunpref('blowup',true)
+    if strcmpi(on_off, 'on') || strcmpi(on_off, '1')
+        chebfunpref('blowup',1)
     elseif strcmpi(on_off, 'off') 
-        chebfunpref('blowup',false)
+        chebfunpref('blowup',0)
+    elseif strcmpi(on_off, '2')
+        chebfunpref('blowup',2)      
     else
         error('CHEBFUN:split:UnknownOption',...
-          'Unknown blowup option: only ON and OFF are valid options.')
+          'Unknown blowup option: only ON, OFF, 1, & 2 are valid options.')
     end
 end

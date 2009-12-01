@@ -33,7 +33,8 @@ funs = [];
 
 if isfield(pref,'exps') 
     exps = pref.exps;
-    pref.blowup = true;
+    if ~iscell(exps), exps = num2cell(exps); end
+    if ~pref.blowup, pref.blowup = 1; end
     if numel(exps) == 1, 
         exps = {exps{ones(1,2*numel(ends)-2)}};
     elseif numel(exps) == 2, 

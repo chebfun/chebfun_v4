@@ -126,13 +126,13 @@ if isfield(pref,'exps') && ~isempty([pref.exps{:}])
         exps(2) = pref.exps{2};
     elseif ~isempty(pref.exps{1})
         exps(1) = pref.exps{1};
-        exps(2) = findexps(op,ends,1);
+        exps(2) = findexps(op,ends,1,pref.blowup);
     else
-        exps(1) = findexps(op,ends,-1);
+        exps(1) = findexps(op,ends,-1,pref.blowup);
         exps(2) = pref.exps{2};
     end
 elseif pref.blowup
-    exps = findexps(op,ends);  % Compute exponents
+    exps = findexps(op,ends,0,pref.blowup);  % Compute exponents
 else
     exps = [0 0]; % Standard representation - no blowup
 end
