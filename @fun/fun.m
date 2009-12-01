@@ -149,12 +149,9 @@ if pref.n
     % map might still be adapted for that number of points
     x = chebpts(n,pref.chebkind);
     xvals = g.map.for(x);
-    if pref.chebkind == 2
-        xvals = adjustends(xvals,g.map.par(1),g.map.par(2));
-    end
     vals = op(xvals);
     g.vals = vals; g.n = n; 
-    if any(g.exps) || any(isnan(g.vals)) % Extrapolate only in special cases
+    if any(g.exps) || any(isnan(g.vals)) || any(isinf(g.map.par([1 2]))) % Extrapolate only in special cases
         g = extrapolate(g,pref,x);
     else
         g.scl.v = max(g.scl.v,norm(vals,inf));
