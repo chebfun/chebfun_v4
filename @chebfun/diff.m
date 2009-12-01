@@ -6,6 +6,9 @@ function Fout = diff(F,n)
 %
 % DIFF(F,N) is the Nth derivative of F.
 %
+% DIFF(F,u) where u is a chebfun returns the Jacobian of the chebfun F 
+% with respect to the chebfun u. Either F or u or both can be a quasimatrix.
+%
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
@@ -33,7 +36,7 @@ F = f;
 funs = f.funs;
 exps = get(f,'exps');
 ends = get(f,'ends');
-F.jacobian = anon(' @(u) diff(domain(f))^n * jacobian(f,u)',{'f' 'n'},{f n});
+F.jacobian = anon(' @(u) diff(domain(f),n) * jacobian(f,u)',{'f' 'n'},{f n});
 F.ID = newIDnum;
 % c = cell(f.nfuns,1);
 for j = 1:n % loop n times for nth derivative
