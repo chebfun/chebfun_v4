@@ -50,30 +50,31 @@ for j = 1:n % loop n times for nth derivative
     F.funs = funs;
     
     % update function values in the first row of imps:
-    if ~isinf(F.imps(1,1))
-        if exps(1,1) < 0
-            F.imps(1,1) = inf;
-        else
-            F.imps(1,1) = feval(F.funs(1),ends(1));      
-        end
-    end
-    for i=2:F.nfuns
-        if ~isinf(F.imps(1,i))
-            if (exps(i-1,2)<0 || exps(i,1)<0)       
-                F.imps(1,i) = inf;
-            else
-                F.imps(1,i) = .5*(feval(F.funs(i-1),ends(i))+feval(F.funs(i),ends(i)));
-            end
-        end
-    end
-    if ~isinf(F.imps(1,end))
-        if exps(end,2) < 0
-            F.imps(1,end) = inf;
-        else
-            F.imps(1,end) = feval(F.funs(F.nfuns),ends(end));      
-        end
-    end   
+    %if ~isinf(F.imps(1,1))
+    %    if exps(1,1) < 0
+    %        F.imps(1,1) = inf;
+    %    else
+    %        F.imps(1,1) = feval(F.funs(1),ends(1));      
+    %    end
+    %%end
+    %%for i=2:F.nfuns
+    %    if ~isinf(F.imps(1,i))
+    %        if (exps(i-1,2)<0 || exps(i,1)<0)       
+    %            F.imps(1,i) = inf;
+    %        else
+    %            F.imps(1,i) = .5*(feval(F.funs(i-1),ends(i))+feval(F.funs(i),ends(i)));
+    %        end
+    %    end
+    %end
+    %if ~isinf(F.imps(1,end))
+    %    if exps(end,2) < 0
+    %        F.imps(1,end) = inf;
+    %    else
+    %        F.imps(1,end) = feval(F.funs(F.nfuns),ends(end));      
+    %    end
+    %end   
 
+    F.imps(1,:) = jumpvals(F.funs,ends);
     
     % Detect jumps in the function
     fright = f.funs(1);

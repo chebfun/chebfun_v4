@@ -14,8 +14,16 @@ function out = feval(g,x)
 exps = g.exps;
 ends = g.map.par(1:2);
 
-if isfield(g.map,'inv')
-    out = bary(g.map.inv(x),g.vals);
+if isfield(g.map,'inv')    
+    z = g.map.inv(x);
+    
+    % Make sure +inf and -inf get mapped to +1 or -1 to avoid NaNs in
+    % inverse map
+    if any(isinf(g.map.par([1 2])))
+        mask = isinf(x); z(mask) = sign(x(mask));
+    end
+    
+    out = bary(z,g.vals);    
 else
     n = g.n;
     xk = chebpts(n); 

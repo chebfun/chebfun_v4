@@ -1,4 +1,4 @@
-function x = bary(x,gvals,xk,ek)  
+function fx = bary(x,gvals,xk,ek)  
 % BARY  Barycentric interpolation with arbitrary weights/nodes.
 %  P = BARY(X,GVALS,XK,EK) interpolates the values PK at nodes 
 %  XK in the point X using the barycentric weights EK. 
@@ -16,9 +16,12 @@ function x = bary(x,gvals,xk,ek)
 n = length(gvals);
 
 if n == 1               % The function is a constant
-    x = gvals*ones(size(x));
+    fx = gvals*ones(size(x));
     return;
 end
+
+% init return value
+fx = zeros(size(x));
 
 if nargin < 4           % Default to Chebyshev weights
     ek = [.5 ; ones(n-1,1)]; 
@@ -32,27 +35,25 @@ end
 if nargin < 3           % Default to Chebyshev nodes
     xk = chebpts(n);
 end
-
-[mem,loc] = ismember(x,xk);
     
 if length(x) < length(xk)
     for i = 1:numel(x)
-        if ~mem(i)
-            xx = ek./(x(i)-xk);
-            x(i) = (xx.'*gvals)/sum(xx);
-        end
+        xx = ek./(x(i)-xk);
+        fx(i) = (xx.'*gvals)/sum(xx);
     end      
 else
-     xnew = x(~mem);
-     num = zeros(size(xnew)); denom = num;
-     for i = 1:numel(xk)
-          y = ek(i)./(xnew-xk(i));
-          num = num+(gvals(i)*y);
-          denom = denom+y;
-     end
-     x(~mem) = num./denom;
+    num = zeros(size(x)); denom = num;
+    for i = 1:numel(xk)
+        y = ek(i)./(x-xk(i));
+        num = num+(gvals(i)*y);
+        denom = denom+y;
+    end
+    fx = num./denom;
 end
 
-x(mem) = gvals(loc(mem));
+% clean-up nans
+for i=find(isnan(fx(:)))'
+    fx(i) = gvals(x(i)==xk);
+end;
 
 
