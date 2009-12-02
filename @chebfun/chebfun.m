@@ -66,7 +66,7 @@ f = default_f;
 % No arguments -> return empty chebfun
 if nargin == 0; return, end
 
-sings = [0 1 1]; % Default
+sings = []; % Default
 
 % Chebfun preferences:
 if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')
@@ -113,14 +113,9 @@ else
             elseif strcmpi('degree',varargin{k})
                 pref.n = varargin{k+1};
                 k = k+2;
-            elseif strcmpi('leftsing',varargin{k}) || strcmpi('lsing',varargin{k}) 
-                sings(1) = sings(1)-1;
-                sings(2) = varargin{k+1};
-                k = k+2;  
-            elseif strcmpi('rightsing',varargin{k}) || strcmpi('rsing',varargin{k})
-                sings(1) = sings(1) + 1;
-                sings(3) = varargin{k+1};                
-                k = k+2;                
+            elseif strcmpi('singmap',varargin{k})
+                sings = varargin{k+1};
+                k = k+2;               
             else
                 argin{j} = varargin{k};
                 j = j+1; k = k+1;
@@ -132,14 +127,9 @@ else
     end
 end
 
-if sings(1) || any(sings(2:3)~=1)
+if ~isempty(sings)
     if isfield(pref,'map'),
         warning('CHEBFUN:chebfun:singmap','Map is being overridden by singmap');
-    end
-    if sings(1)
-        s = sings(2:3);
-        s(s==1) = [];
-        sings = [sings(1) s];
     end
     pref.map = {'sing',sings};
 end

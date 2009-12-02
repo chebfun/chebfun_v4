@@ -121,6 +121,9 @@ end
 %  op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
 % (Note that for blowup exponents are now negative!)
 if isfield(pref,'exps') && ~isempty([pref.exps{:}])
+    for k = 1:numel(pref.exps)
+        if isnan(pref.exps{k}), pref.exps{k} = []; end
+    end
     if ~isempty(pref.exps{1}) && ~isempty(pref.exps{2})
         exps(1) = pref.exps{1};
         exps(2) = pref.exps{2};

@@ -1,4 +1,4 @@
-function g1 = minus(g1,g2)
+function [g1 ish] = minus(g1,g2)
 % -	Minus
 % G1 - G2 subtracts fun G1 from G2 or a scalar from a fun if either
 % G1 or G2 is a scalar.
@@ -13,6 +13,8 @@ function g1 = minus(g1,g2)
 
 % The exponents of g1 and g2 are automatically summed. Perhaps
 % some checking should be done for cancellation??
+
+ish = true; % We're usually happy!
 
 % Scalar case:
 if isa(g1,'double') 
@@ -145,7 +147,7 @@ scl.v = max(g1.scl.v,g2.scl.v);
 % Choose the correct singmap
 dexps = exps1 - exps2;
 newexps = [0 0];
-pows = [];          % will be the powers in the sing map
+pows = [0 0 ];       % will be the powers in the sing map
 lr = 0;
 % left
 if round(dexps(1)) ~= dexps(1) % then trouble at the left
@@ -155,8 +157,11 @@ if round(dexps(1)) ~= dexps(1) % then trouble at the left
         newexps(1) = expsl(1);
         pows(1) = expsl(2)-expsl(1);
     else            % ==> no blow up, so use largest power
-        pows = expsl(2);
+        pows(1) = expsl(2);
     end
+else
+%     error('can''t do this yet');
+%     [expsl idx] = sort([exps1(1) exps2(1)]);
 end
 % right (as above)
 if round(dexps(2)) ~= dexps(2)
@@ -164,16 +169,22 @@ if round(dexps(2)) ~= dexps(2)
     expsr = sort([exps1(2) exps2(2)]);
     if expsr(1) < 0
         newexps(2) = expsr(1);
-        pows = [pows expsr(2)-expsr(1)];
+        pows(2) = expsr(2)-expsr(1);
     else
-        pows = [pows expsr(2)];
+        pows(2) = expsr(2);
     end
+else
+%     error('can''t do this yet');
+%     [expsr idx] = sort([exps1(2) exps2(2)])
+%     newexps(2) = expsr(1);
+%     multl
 end
 
 % The new map
-map = maps({'sing',[lr pows]},ends);
+map = maps({'sing',pows},ends);
 % The new exponents
 pref.exps = {newexps(1) newexps(2)};
+pref.sampletest = 0;
 
 % Call the fun constructor
 [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),map,pref,scl);
