@@ -25,6 +25,10 @@ function A = subsref(A,s)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+
+
 valid = false;
 switch s(1).type
   case '{}'                              
@@ -52,19 +56,30 @@ switch s(1).type
       valid = true;
    end
   case '.'
+    valid = true;
     switch(s(1).subs)
       case 'bc'
         A = getbc(A);
-        valid = true;
+      case 'lbc'
+        A = getbc(A);
+        A = A.left;
+        if length(s)>1
+          A = subsref(A,s(2:end));  % respect deeper indexing
+        end
+      case 'rbc'
+        A = getbc(A);
+        A = A.right;
+        if length(s)>1
+          A = subsref(A,s(2:end));  % respect deeper indexing
+        end
       case 'scale'
         A = A.scale;
-        valid = true;
       case 'numbc'
         A = A.numbc;
-        valid = true; 
       case 'ID'
         A = A.ID;
-        valid = true;         
+      otherwise 
+        valid = false;
     end
  end
 
