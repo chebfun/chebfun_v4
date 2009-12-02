@@ -19,17 +19,42 @@ switch nargin
     case 3
         Nop.dom = varargin{1};
         Nop.op = varargin{2};
-        Nop.lbc = varargin{3};
+        if isnumeric(varargin{3}) && ~isempty(varargin{3})
+            val = varargin{3};
+            Nop.lbc = @(u) u - val;
+        else
+            Nop.lbc = varargin{3};
+        end
     case 4        
         Nop.dom = varargin{1};
         Nop.op = varargin{2};
-        Nop.lbc = varargin{3};
-        Nop.rbc = varargin{4};
+        if isnumeric(varargin{3}) && ~isempty(varargin{3})
+            val = varargin{3};
+            Nop.lbc = @(u) u - val;
+        else
+            Nop.lbc = varargin{3};
+        end
+        if isnumeric(varargin{4}) && ~isempty(varargin{4})
+            val = varargin{4};
+            Nop.rbc = @(u) u - val;
+        else
+            Nop.rbc = varargin{4};
+        end
     case 5       
         Nop.dom = varargin{1};
         Nop.op = varargin{2};
-        Nop.lbc = varargin{3};
-        Nop.rbc = varargin{4};
+        if isnumeric(varargin{3}) && ~isempty(varargin{3})
+            val = varargin{3};
+            Nop.lbc = @(u) u - val;
+        else
+            Nop.lbc = varargin{3};
+        end
+        if isnumeric(varargin{4}) && ~isempty(varargin{4})
+            val = varargin{4};
+            Nop.rbc = @(u) u - val;
+        else
+            Nop.rbc = varargin{4};
+        end
         Nop.guess = varargin{5};
 end
 
@@ -38,7 +63,9 @@ if nargin > 1
     if isa(varargin{2},'function_handle')
         Nop.optype = 'anon_fun';
     elseif isa(varargin{2},'chebop')
-        Nop.optype = 'chebop';        
+        Nop.optype = 'chebop';
+    elseif isempty(varargin{2})
+        % Do nothing
     else
         error(['nonlinop:nonlinop: Illegal type of operator. Allowed types are ' ...
             'anonymous functions and chebops.']);

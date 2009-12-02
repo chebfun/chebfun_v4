@@ -1,20 +1,20 @@
-function [u nrmduvec] = solvebvp(BVP,rhs)
+function [u nrmduvec] = solvebvp(N,rhs)
 % Begin by obtaining the nonlinop preferences
 pref = nonlinoppref;
 tol = pref.tolerance;
 
 % Check whether the operator is empty, or whether both BC are empty
-if isempty(BVP.op)
+if isempty(N.op)
     error('Operator empty');
 end
 
-if isempty(BVP.lbc) && isempty(BVP.rbc)
+if isempty(N.lbc) && isempty(N.rbc)
     error('Both BC empty');
 end
 
 % Check which type the operator is (anonymous function or a chebop).
 % If it's an anonymous function, opType = 1. Else, opType = 2.
-if strcmp(BVP.optype,'anon_fun')
+if strcmp(N.optype,'anon_fun')
     opType = 1;
 else
     opType = 2;
@@ -23,16 +23,16 @@ end
 % If RHS of the \ is 0, keep the original DE. If not, update it. Also check
 % whether we have a chebop, if so, perform subtraction otherwise.
 if opType == 2  % Operator is a chebop. RHS is treated later
-    problemFun = BVP.op;
+    problemFun = N.op;
 elseif isnumeric(rhs) && all(rhs == 0)
-    problemFun = BVP.op;
+    problemFun = N.op;
 else
-    problemFun = @(u) BVP.op(u)-rhs;
+    problemFun = @(u) N.op(u)-rhs;
 end
 
 % Extract BC functions
-bcFunLeft = BVP.lbc;
-bcFunRight = BVP.rbc;
+bcFunLeft = N.lbc;
+bcFunRight = N.rbc;
 
 % Check whether either boundary has no BC attached, used later in the
 % iteration.
@@ -40,15 +40,15 @@ leftEmpty = isempty(bcFunLeft);
 rightEmpty = isempty(bcFunRight);
 
 % Construct initial guess if missing
-if isempty(BVP.guess) % No initial guess given
-    if isempty(BVP.dom)
+if isempty(N.guess) % No initial guess given
+    if isempty(N.dom)
         error('Error in nonlinear backslash. Neither domain nor initial guess is given')
     else
-        dom = BVP.dom;
-        u = chebfun(0,dom);
+        dom = N.dom;
+        u = findguess(N);% Initial quasimatrix guess of 0 functions chebfun(0,dom);
     end
 else
-    u = BVP.guess;
+    u = N.guess;
     dom = domain(u);
 end
 

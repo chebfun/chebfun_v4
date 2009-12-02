@@ -20,16 +20,23 @@ else
             % Need to treat the cell case differently from the an. fun. case
             if isa(A.op,'function_handle')
                 opchar = char(A.op);
-                firstRPar = min(strfind(opchar,')'));
                 s = char(s, '   representing the operator:',...
-                    ['     ' opchar(3:firstRPar-1) ' |-> ' opchar(firstRPar+1:end), ' ']);
+                    ['     ' opchar ' = 0 ']);
+%                 Arrows in print
+%                 firstRPar = min(strfind(opchar,')'));
+%                 s = char(s, '   representing the operator:',...
+%                     ['     ' opchar(3:firstRPar-1) ' |-> ' opchar(firstRPar+1:end), ' ']);
             else
                 s = char(s, '   representing the operator:');
                 for funCounter =1:length(A.op)
                     opchar = char(A.op{funCounter});
-                    firstRPar = min(strfind(opchar,')'));
                     s = char(s, ...
-                        ['     ' opchar(3:firstRPar-1) ' |-> ' opchar(firstRPar+1:end), ' ']);
+                        ['     ' opchar ' = 0']);
+
+%                     Arrows in print
+%                     firstRPar = min(strfind(opchar,')'));
+%                     s = char(s, ...
+%                         ['     ' opchar(3:firstRPar-1) ' |-> ' opchar(firstRPar+1:end), ' ']);
                 end
             end
         end

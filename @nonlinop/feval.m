@@ -1,5 +1,8 @@
 function Narg = feval(Nin,argument,varargin)
-% Evaluate the anonymous function in Nin.op with the argument passed.
+% FEVAL Evaluate the operator of the nonlinop.
+%
+% Evaluate the anonymous function (or chebop) in Nin.op with the 
+% argument passed.
 
 % Check whether the operator is a chebop
 if strcmp(Nin.optype,'chebop')
