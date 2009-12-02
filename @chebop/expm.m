@@ -24,6 +24,10 @@ function E = expm(A)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+
+
 maxdegree = cheboppref('maxdegree');
 
 % Check for warnings/errors.
@@ -43,10 +47,18 @@ if m~=A.blocksize(1)
   error('chebop:expm:square','Operator must be block-square.')
 end
 
-E = chebop( @evalexp, [], domain(A), 0);
-E.blocksize = [m m];
+% We need two versions of the chebop. The returned version inspects the
+% initial data using the operator form. The internal version does not have
+% an operator form, so that mtimes will iteratively apply the matrix until
+% chebfun happiness.
 
-  function E = evalexp(n)
+E = chebop( @expm_mat, @expm_op, domain(A), 0);
+E.blocksize = [m m];
+F = chebop( @expm_mat, [], domain(A), 0);
+F.blocksize = [m m];
+
+
+  function E = expm_mat(n)
     % Function may be called with n=2. Punt.
     if A.numbc >= n
       E = eye(n*m);
@@ -71,4 +83,24 @@ E.blocksize = [m m];
     E(elim,~elim) = R*E1;
   end
 
+  function v = expm_op(u)
+    ms = chebfunpref('minsamples');   % save for later
+    if isinf(size(u,2)), u = u.'; end
+
+    % Determine min sampling size based on initial data.
+    n = ms;
+    for j = 1:size(u,2)
+      if length(u(:,j).ends) > 2
+        warning('chebop:expm:Nonsmooth',...
+          'Nonsmooth initial data may degrade accuracy in the result.')
+      else
+        n = max(n,length(u(:,j)));
+      end
+    end
+    
+    % Use mtimes on the matrix definition.
+    chebfunpref('minsamples',n)
+    v = F*u;
+    chebfunpref('minsamples',ms)
+  end
 end
