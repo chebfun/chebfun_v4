@@ -5,9 +5,8 @@ function g = extrapolate(g,pref,x)
 if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(g.vals)) 
     
     if pref.chebkind == 2
-        
-        % Update scale - first part
-        g.scl.v = max(g.scl.v,norm(g.vals(2:end-1),inf));
+           
+        v = g.vals(2:end-1);
         
         %if pref.sampletest || pref.splitting || any(g.exps) || any(isnan(g.vals)) || any(isinf(g.vals))
         % Always extrapolate! But put endpoint values back in if they seem
@@ -21,7 +20,8 @@ if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(
         vends = g.vals([1 end]);
         
         % Look for nans in the interior
-        mask = isnan(g.vals(2:end-1));
+        mask = isnan(v) | isinf(v);
+        g.scl.v = max(g.scl.v,norm(v(~mask),inf));
         if any(mask)
             % Force extrapolation at end points
             mask = [true;mask;true];
@@ -58,7 +58,7 @@ if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(
             g.vals(end) = vends(end);
         end
         
-        g.scl.v = max(g.scl.v,norm(g.vals([1 end]),inf));
+        g.scl.v = max(g.scl.v,norm(g.vals(mask),inf));
         
         
     else % For first kind points, no need to check endpoints
@@ -67,7 +67,7 @@ if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(
             if nargin < 3
                 x = chebpts(g.n,pref.chebkind);
             end
-            mask = isnan(g.vals);
+            mask = isnan(g.vals) | isinf(g.vals);
             xgood = x(~mask);
             if isempty(xgood)
                 error('CHEBFUN:extrapolate:nans','Too many nans to handle. Increasing minsamples may help')

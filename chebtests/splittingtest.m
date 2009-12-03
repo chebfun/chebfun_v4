@@ -6,22 +6,21 @@ tol = chebfunpref('eps');
 
 splitting on
 debug = false;
-Ntests = 3;
+
 
 pass = true;
 try
-    for j = 1:Ntests
+    %for j = 1:Ntests
 
         % test jumps
-        x0 = rand;
+        x0 = 0.91;
         f= chebfun(@(x) exp(x) +cos(7*x) + sign(x-x0));
         pass = pass && f.ends(2) == x0 && (length(f.ends) < 4);
         if ~pass
             error('jump1')
         end
 
-        x0 = rand;
-        x0 = sign(x0-.5)*x0/100; % change sign and closer to origin
+        x0 = -0.112;
         f= chebfun(@(x) exp(x) +cos(7*x) + sign(x-x0));
         pass = pass && f.ends(2) == x0 && (length(f.ends) < 4);
         if ~pass
@@ -29,9 +28,7 @@ try
         end
 
         if chebfunpref('eps') > 1/1000
-            x0 = rand;
-            x0 = sign(x0-.5)*x0/1000; % change sign and even closer to origin
-            f= chebfun(@(x) exp(x) +cos(7*x) + 0.1*sign(x-x0))+1;
+            f = chebfun(@(x) exp(x) +cos(7*x) + 0.1*sign(x-x0))+1;
             pass = pass && f.ends(2) == x0 && (length(f.ends) < 4);
             if ~pass
                 error('jump3')
@@ -39,8 +36,6 @@ try
         end
 
         % test C0 functions
-        x0 = rand;
-        x0 = sign(x0-.5)*x0; % change sign and closer to origin
         f= chebfun(@(x) exp(x) +cos(7*x) + abs(x-x0));
         pass = pass && (length(f.ends)<3) || (abs(f.ends(2) - x0)< 1e-12*(tol/eps) && (length(f.ends) < 4));
         if ~pass
@@ -49,8 +44,6 @@ try
         end
 
         % test C1 functions
-        x0 = rand;
-        x0 = sign(x0-.5)*x0;
         f= chebfun(@(x) (x-x0).^2.*double(x>x0));
         pass = pass && abs(f.ends(2) - x0)< 1e-8*(tol/eps) && (length(f.ends) < 4);
         if ~pass
@@ -58,8 +51,6 @@ try
         end
 
         % test C2 functions
-        x0 = rand;
-        x0 = sign(x0-.5)*x0/100; % change sign and closer to origin
         f= chebfun(@(x) exp(x) + abs(x-x0).^3+1);
         pass = pass && abs(f.ends(2) - x0)< 1e-4*(tol/eps) && (length(f.ends) < 4);
         if ~pass
@@ -67,15 +58,13 @@ try
         end
 
         % test C3 functions
-        x0 = rand;
-        x0 = sign(x0-.5)*x0/100;
         f= chebfun(@(x) (x-x0).^4.*double(x>x0));
         pass = pass && (length(f.ends) < 5);
         if ~pass
             error('C3')
         end
 
-    end
+    %end
     
     % test sqrt
     ff = @(x) sqrt(x-2)+10;
