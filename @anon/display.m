@@ -11,10 +11,14 @@ disp([inputname(1) ' = anon']);
 if loose, disp(' '), end
 s = [];
 s = char(s,['Function = ' A.function],' ');
-s = char(s,['Variables name = ' char(A.variablesName)],' ');
-s = char(s,'Workspace = ');
+if length(A.variablesName)==1
+  s = char(s,['Variable name = ' A.variablesName{1}],' ');
+else
+  s = char(s,'Variable names = ',' ',char(A.variablesName),' ');
+end
+s = char(s,'Workspace = ',' ');
 disp(s);
-disp(A.workspace{:});
+display(A.workspace)
 
 end
 

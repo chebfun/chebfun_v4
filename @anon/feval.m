@@ -8,7 +8,7 @@ loadVariables(Fvar,Fwork)
 
 % Create a normal anonymous function handle that we can then evaluate
 Ffun = eval(Fin.function);
-Fx = Ffun(anonArgument);
+Fx = feval(Ffun,anonArgument);
 end
 
 function loadVariables(Fvar,Fwork)
