@@ -1,14 +1,19 @@
 function C = uminus(A)
 % -   Negate oparray.
 
-% Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2008-2009 by Toby Driscoll. 
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 if isempty(A) 
   C = oparray({});
   return
 end
 
-op = cellfun( @(a) @(u) -feval(a,u), A.op, 'uniform',false );
+fun = @(a) anon('@(u) -feval(a,u)',{'a'},{a});
+op = cellfun( fun, A.op, 'uniform',false );
 C = oparray(op);
 
 end

@@ -4,7 +4,12 @@ function C = mtimes(A,B)
 % c*A or A*c multiplies the oparray A by scalar c.
 % A*B is the oparray that represents the composition of A and B.
 
-% Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2008-2009 by Toby Driscoll. 
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+
 
 if isempty(A) || isempty(B)
   C = oparray({});
@@ -16,7 +21,9 @@ if isnumeric(A)
 end
 
 if isnumeric(B)   % scalar multiply
-  op = cellfun( @(op) @(u) B*op(u), A.op, 'uniform',false );
+%  op = cellfun( @(op) @(u) B*op(u), A.op, 'uniform',false );
+  fun = @(op) anon('@(u) B*feval(op,u)',{'B','op'},{B,op});
+  op = cellfun( fun, A.op, 'uniform',false );
   C = oparray(op);
 
 else              % compose
@@ -30,7 +37,7 @@ else              % compose
   for i = 1:m
     for j = 1:n
       % Tricky: For nested function, must lock in values of i,j.
-      op{i,j} = @(u) innersum(u,i,j);
+      op{i,j} = anon('@(u) innersum(u,i,j)',{'innersum','i','j'},{@innersum,i,j});
     end
   end
   C = oparray(op);
@@ -39,7 +46,7 @@ end
   function v = innersum(u,i,j)
     v = 0;
     for k = 1:q
-      v = v + A.op{i,k}( B.op{k,j}(u) );
+      v = v + feval(A.op{i,k}, feval(B.op{k,j},u) );
     end
   end
 
