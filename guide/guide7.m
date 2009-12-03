@@ -91,9 +91,8 @@ norm( F*g - f.*g )
 %%
 % Chebops respond to arithmetic operations much as matrices do. Both the
 % underlying matrices and functional representations are kept up to date.
-A = D^2 + I;
 J = 4 + Q*F;
-norm( J*g - (4*g - cumsum(f.*g)) )
+norm( J*g - (4*g + cumsum(f.*g)) )
 
 %% 7.4 Solving linear equations
 % The backslash operator works on chebops much as it does on matrices, to
