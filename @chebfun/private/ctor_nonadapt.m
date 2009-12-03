@@ -34,21 +34,22 @@ funs = [];
 if isfield(pref,'exps') 
     exps = pref.exps;
     if ~iscell(exps), exps = num2cell(exps); end
-    if ~pref.blowup, pref.blowup = 1; end
     if numel(exps) == 1, 
         exps = {exps{ones(1,2*numel(ends)-2)}};
     elseif numel(exps) == 2, 
-        tmp = repmat({[]},1,2*numel(ends)-4);
-        exps = {exps{1} tmp{:} exps{2}};
+        if pref.blowup, ee = []; else ee = 0; end
+        tmp = repmat({ee},1,2*numel(ends)-4);
+        exps = [exps{1} tmp exps{2}];
     elseif numel(exps) == numel(ends)
         if numel(ends)~=2
-            warning('chebfun:ctor_adapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
-            'Assuming exps are the same on either side of break.']);
+%             warning('chebfun:ctor_nonadapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
+%             'Assuming exps are the same on either side of break.']);
             exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
         end
     elseif numel(exps) ~= 2*numel(ends)-2
-        error('chebfun:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
+        error('chebfun:ctor_nonadapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
+    if ~pref.blowup, pref.blowup = 1; end
 end
 
 % Initial horizontal scale.

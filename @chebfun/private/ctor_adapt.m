@@ -9,11 +9,11 @@ function f = ctor_adapt(f,ops,ends,pref)
 % $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
 
 if length(ends) ~= length(ops)+1
-    error(['Unrecognized input sequence: Number of intervals '...
+    error('CHEBFUN:ctor_adapt:numints',['Unrecognized input sequence: Number of intervals '...
         'do not agree with number of funs'])
 end
 if any(diff(ends)<0), 
-    error(['Vector of endpoints should have increasing values'])
+    error('CHEBFUN:ctor_adapt:vecends','Vector of endpoints should have increasing values')
 end
 funs = [];
 hs = norm(ends([1,end]),inf);
@@ -31,12 +31,12 @@ newops = {};
 
 if isa(ops,'chebfun')
     if numel(ops) > 1
-        error('chebfun:ctor_adapt','Only one chebfun is allowed for this call');
+        error('CHEBFUN:ctor_adapt:onechebfun','Only one chebfun is allowed for this call');
     end
     if ops.ends(1) <= ends(1) && ops.ends(end) >= ends(end)
         f = restrict(f,[ends(1) ends(end)]);
     else
-        error('chebfun:ctor_adapt:domain','chebfun is not defined in the domain')
+        error('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain')
     end
     return
 end
@@ -44,21 +44,22 @@ end
 if isfield(pref,'exps') 
     exps = pref.exps;
     if ~iscell(exps), exps = num2cell(exps); end
-    if ~pref.blowup, pref.blowup = 1; end
     if numel(exps) == 1, 
         exps = {exps{ones(1,2*numel(ends)-2)}};
     elseif numel(exps) == 2, 
-        tmp = repmat({[]},1,2*numel(ends)-4);
-        exps = {exps{1} tmp{:} exps{2}};
+        if pref.blowup, ee = []; else ee = 0; end
+        tmp = repmat({ee},1,2*numel(ends)-4);
+        exps = [exps{1} tmp exps{2}];
     elseif numel(exps) == numel(ends)
         if numel(ends)~=2
-            warning('chebfun:ctor_adapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
-            'Assuming exps are the same on either side of break.']);
+%             warning('chebfun:ctor_adapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
+%             'Assuming exps are the same on either side of break.']);
             exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
         end
     elseif numel(exps) ~= 2*numel(ends)-2
-        error('chebfun:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
+        error('CHEBFUN:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
+    if ~pref.blowup, pref.blowup = 1; end
 end
 
 for i = 1:length(ops)
@@ -75,7 +76,7 @@ for i = 1:length(ops)
             scl.v = max(scl.v, fs.scl.v);
         case 'fun'
             if numel(op) > 1
-            error(['A vector of funs cannot be used to construct '...
+            error('CHEBFUN:ctor_adapt:vecin',['A vector of funs cannot be used to construct '...
                 ' a chebfun.'])
             end
             if norm(op.map.par(1:2)-ends(i:i+1)) > scl.h*1e-15
