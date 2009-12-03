@@ -42,17 +42,31 @@ end
     
 r = roots(f2);    
 if isa(f1,'double')
-    [ends(1) ends(2)] = domain(f2);
+    ends = get(f2,'ends');
 else
     ends = get(f1,'ends');
 end
+
+% Remove poles that are close to existing breakpoints
+% (slow and hacky!)
+tol = 100*chebfunpref('eps');
+j = 1;
+while j <= length(r)
+    if any(abs(r(j)-ends)<tol)
+        r(j) = [];
+    else
+        j = j+1;
+    end
+end
+    
+% The new breakpoints
 newbkpts = setdiff(r,ends);
 
 if ~isempty(newbkpts)
     d = union(ends,newbkpts);
     d = union(d,get(f2,'ends'));
-    if isa(f1,'chebfun'), f1 = restrict(f1,d); end
-    f2 = restrict(f2,d);
+    if isa(f1,'chebfun'), f1 = overlap(f1,d); end
+    f2 = overlap(f2,d);
     fout = rdividecol(f1,f2);
 %        error('CHEBFUN:rdivide:DivisionByZero','Division by zero')
 elseif isa(f1,'double')    
@@ -62,12 +76,19 @@ elseif isa(f1,'double')
       	fout.ID = newIDnum();
     else   
         exps = get(f2,'exps');
-        if ~any(exps) % No exps. Old school case
+        poles = false;
+        for k = 1:f2.nfuns
+            if abs(get(f2.funs(k),'lval'))<tol || abs(get(f2.funs(k),'rval'))<tol
+                poles = true; break
+            end
+        end
+        if ~poles && ~any(any(exps))% No exps. Old school case
             fout = comp(f2,@(x) rdivide(f1,x));
         else % compute without exps (not surrently working)
             fout = chebfun;
             for k = 1:f2.nfuns
                 f2k = f2.funs(k);
+                f2k = extract_roots(f2k);
                 expsk = f2k.exps;
                 f2k.exps = [0 0];
                 tmp = comp(chebfun(f2k,ends(k:k+1)),@(x) rdivide(f1,x));
@@ -75,7 +96,7 @@ elseif isa(f1,'double')
                 tmp.funs(end).exps(2) = -expsk(2);
                 tmp.funs(1) = replace_roots(tmp.funs(1));
                 tmp.funs(end) = replace_roots(tmp.funs(end));
-                fout = [fout tmp];
+                fout = [fout ; tmp];
             end
         end
         if fout.nfuns == f2.nfuns
@@ -90,12 +111,19 @@ else
     end
 
     exps1 = get(f1,'exps'); exps2 = get(f2,'exps');
-    if (~any(exps1) & ~any(exps2)) % No exps. Old school case
+    poles = false;
+    for k = 1:f2.nfuns
+        if abs(get(f2.funs(k),'lval'))<tol || abs(get(f2.funs(k),'rval'))<tol
+            poles = true; break
+        end
+    end
+    if ~poles && (~any(any(exps1)) && ~any(any(exps2))) % No exps. Old school case
         fout = comp(f1, @rdivide, f2);
     else % compute without exps (not surrently working)
         fout = chebfun;
         for k = 1:f2.nfuns
             f1k = f1.funs(k);   f2k = f2.funs(k);
+            f2k = extract_roots(f2k);
             exps1k = f1k.exps;  exps2k = f2k.exps;
             f1k.exps = [0 0];   f2k.exps = [0 0];
             tmp = comp(chebfun(f1k,ends(k:k+1)), @rdivide, chebfun(f2k,ends(k:k+1)));
@@ -103,7 +131,7 @@ else
             tmp.funs(end).exps(2) = exps1k(2)-exps2k(2);
             tmp.funs(1) = replace_roots(tmp.funs(1));
             tmp.funs(end) = replace_roots(tmp.funs(end));
-            fout = [fout tmp];
+            fout = [fout ; tmp];
         end
     end
     if fout.nfuns == f2.nfuns

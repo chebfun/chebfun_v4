@@ -12,7 +12,6 @@ d = f.map.par(1:2);
 % Get the map
 map = f.map;
 
-
 f.exps = [0 0];
 mask = exps >= 1;
 newexps = exps;
