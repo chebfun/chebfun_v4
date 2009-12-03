@@ -20,10 +20,10 @@ function [p, q, r_handle] = chebpade(F,m,n,type)
 %  $Date$:
 
 
-if any(get(F,'exps')), error('CHEBFUN:chebpade:inf',...
-        'ChebPade does not currently support functions with nonzero exponents'); end
-if nargin == 2, n = 0; type = 'clenshawlord'; end
-
+if nargin == 2, 
+    n = 0; 
+    type = 'clenshawlord'; 
+end
 if nargin == 3, 
     type = 'clenshawlord';
     if ~isnumeric(n)
@@ -47,6 +47,9 @@ if numel(F) > 1, % Deal with quasimatrices
     end
     return
 end
+
+if any(get(F,'exps')), error('CHEBFUN:chebpade:inf',...
+        'ChebPade does not currently support functions with nonzero exponents'); end
 
 if  strcmp(type,'clenshawlord')
     d = domain( F );
