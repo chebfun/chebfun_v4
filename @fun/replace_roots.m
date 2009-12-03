@@ -23,7 +23,7 @@ if strcmp(map.name,'linear')
     x = get(f,'points');
     mult = (x-d(1)).^pow(1).*(d(2)-x).^pow(2);
     f.vals = mult.*f.vals;
-    f.scl = norm(f.vals,inf);
+    f.scl.v = norm(f.vals,inf);
 else
     mult = fun(@(x) (x-d(1)).^pow(1).*(d(2)-x).^pow(2),map);
     f = f.*mult;
