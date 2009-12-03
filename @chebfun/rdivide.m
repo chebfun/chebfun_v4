@@ -73,8 +73,13 @@ elseif isa(f1,'double')
                 tmp = comp(chebfun(f2k,ends(k:k+1)),@(x) rdivide(f1,x));
                 tmp.funs(1).exps(1) = -expsk(1);
                 tmp.funs(end).exps(2) = -expsk(2);
+                tmp.funs(1) = replace_roots(tmp.funs(1));
+                tmp.funs(end) = replace_roots(tmp.funs(end));
                 fout = [fout tmp];
             end
+        end
+        if fout.nfuns == f2.nfuns
+            fout.imps = 1./f2.imps;
         end
         fout.jacobian = anon('@(u) diag(-f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});
         fout.ID = newIDnum();
@@ -96,8 +101,13 @@ else
             tmp = comp(chebfun(f1k,ends(k:k+1)), @rdivide, chebfun(f2k,ends(k:k+1)));
             tmp.funs(1).exps(1) = exps1k(1)-exps2k(1);
             tmp.funs(end).exps(2) = exps1k(2)-exps2k(2);
+            tmp.funs(1) = replace_roots(tmp.funs(1));
+            tmp.funs(end) = replace_roots(tmp.funs(end));
             fout = [fout tmp];
         end
+    end
+    if fout.nfuns == f2.nfuns
+        fout.imps = f1.imps./f2.imps;
     end
     
     fout.jacobian = anon('@(u) diag(1./f2)*jacobian(f1,u) - diag(f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});

@@ -41,6 +41,9 @@ elseif nargin == 3
         d = d.ends;   
     end
 end
+
+if      strcmpi(kind,'1st'), kind = 1;
+elseif  strcmpi(kind,'2nd'), kind = 2; end
         
 w = 2;
 if n <= 0, 
