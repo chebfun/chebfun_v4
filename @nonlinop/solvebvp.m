@@ -98,7 +98,6 @@ while nrmdu > restol && normr > deltol && counter < maxIter
     if opType == 1
         A = diff(r,u) & bc;
         A.scale = solNorm;
-        A.scale
         delta = -(A\r);
     else
         A = problemFun & bc; % problemFun is a chebop
@@ -106,11 +105,7 @@ while nrmdu > restol && normr > deltol && counter < maxIter
         delta = -(A\(r-rhs));
     end
     
-%     delta = simplify(delta,1e-10);
-    
-    
-    disp(['lu  = ' num2str(length(u)) '.ld = ' num2str(length(delta))]);   
-    disp(['lus  = ' num2str(length(simplify(u,1e-8))) '.lds = ' num2str(length(simplify(delta,1e-8)))]);
+
     u = u + alpha*delta;
     u = jacvar(u);      % Reset the Jacobian of the function
     
@@ -120,8 +115,8 @@ while nrmdu > restol && normr > deltol && counter < maxIter
         r = problemFun*u;
     end
     
-    nrmdu = norm(delta,'fro')
-    normr = solNorm
+    nrmdu = norm(delta,'fro');
+    normr = solNorm;
     %     nrmdu = sqrt(sum( sum(delta.^2,1)));
     %     normr = sqrt(sum( sum(r.^2,1)));
     % In case of a quasimatrix, the norm calculations are taking the
