@@ -14,19 +14,23 @@ function u = simplify(u,k,tol)
 %   Last commit: $Author$: $Rev$:
 %   $Date$:
 
-if nargin == 1, 
-    k = 1:u.nfuns;
-end
-
-if nargin < 3, 
+if nargin < 3,
     tol = chebfunpref('eps');
 end
 
-if any(k < 1)
-    tol = k;
-    k = 1:u.nfuns;
-end
-
-for kk = k
-    u.funs(kk) = simplify(u.funs(kk),tol);
+for j = 1:numel(u)
+    
+    if nargin == 1,
+        k = 1:u(j).nfuns;
+    end
+    
+    if any(k < 1)
+        tol = k;
+        k = 1:u(j).nfuns;
+    end
+    
+    for kk = k
+        u(j).funs(kk) = simplify(u(j).funs(kk),tol);
+    end
+    
 end
