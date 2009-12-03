@@ -243,9 +243,10 @@ if ish && pref.sampletest
     x = chebpts(g.n); % points of second kind (as simplify returns second kind "point values")
     [mx indx] = max(abs(diff(g.vals))./diff(x));
     xeval = (x(indx+1)+1.41*x(indx))/(2.41);
-    xvals = [-1+1e-4;xeval;1-1e-4];
-    v = op(g.map.for(xvals));    
-    if norm(v-bary(xvals,g.vals,x),inf) > max(pref.eps,1e3*eps)*g.n*g.scl.v
+    %xvals = xeval;
+    %xvals = [-1+1e-4;xeval;1-1e-4];
+    v = op(g.map.for(xeval));    
+    if norm(v-bary(xeval,g.vals,x),inf) > max(pref.eps,1e3*eps)*g.n*g.scl.v
         ish =  false;
     end
 end
