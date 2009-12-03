@@ -18,15 +18,15 @@
 % For nonlinear two-point boundary-value problems, chebop offers
 % two main approaches.  One is to use the chebfun overloaded commands
 % bvp4c/bvp5c, which solve the problem using Matlab's standard
-% bvp4c/bvp5c commands and then convert the result to a chebfun.  The other
-% approach, truer to the chebfun spirit and in many cases remarkably
+% bvp4c/bvp5c commands and then convert the result to a chebfun (Section 10.2).
+% The other approach, truer to the chebfun spirit and in many cases remarkably
 % fast, accurate and convenient, is to use the chebfun "nonlinear backslash"
-% or solvebvp commands described in Chapter 10, which are built on
+% or solvebvp commands described (Section 10.4), which are built on
 % chebfun Automatic Differentiation (AD) and Newton iteration.  These tools
 % are due to Toby Driscoll and Asgeir Birkisson.
 
 %%
-% For nonlinear problems posed on an interval that also havea time variable, again
+% For nonlinear problems posed on an interval that also have a time variable, again
 % several approaches have been investigated.  One of these is implemented in the
 % chebfun code pde15s.
 
@@ -236,8 +236,10 @@ end
 
 %%
 % Here is a more fanciful analogous computation
-% with a complex initial function obtained from the scribble command introduced
-% in Chapter 5:
+% with a complex initial function obtained from the "scribble"
+% command introduced in Chapter 5.  (As it happens "expm" does
+% not map non-smooth data with the usual chebfun accuracy, so
+% warning messages are generated.)
 
 f = scribble('BLUR');
 d = domain(-1,1); D = diff(d,2); clf
@@ -262,7 +264,7 @@ end
 % similar. The chebfun construction of the solution requests function
 % values at finite numbers of points n = 9, 17, 33,... until the desired
 % function or eigenfunctions are deemed to have been fully resolved after
-% inspection of their Chebyshev polynomial coefficients.
+% inspection of their Chebyshev coefficients.
 
 %%
 % For each n, the spectral collocation matrix corresponding to the operator
@@ -307,9 +309,10 @@ clf, plot(u)
 % Note the beautifully fast convergence, as one expects with Newton's method.
 % The chebop J is a Jacobian (=Frechet derivative) operator, which we have
 % constructed explicitly by differentiating the nonlinear operator defining the
-% ODE.  In Chapter 10 we shall see that this process can be automated by use
+% ODE.  In Section 10.4 we shall see that this process can be automated by use
 % of chebfun's "nonlinear backslash" capability, which in turn utilizes a
-% built-in chebfun Automatic Differentiation (AD) feature.  We shall see that
+% built-in chebfun Automatic Differentiation (AD) feature.  In Section 10.2
+% we shall see that
 % it is also possible to solve such problems with the chebfun overloads of
 % the Matlab boundary-value problem solvers bvp4c and bvp5c.
 
@@ -346,8 +349,9 @@ subplot(1,3,3), plot( expm(1.8*A & A.bc)*f )
 
 %% 7.10 References
 %
-% [Driscoll, Bornemann & Trefethen 2008] T. A. Driscoll, F. Bornemann, and L. N. Trefethen, The chebop system
-% for automatic solution of differential equations, BIT Numerical Mathematics 46 (2008),701-723.
+% [Driscoll, Bornemann & Trefethen 2008] T. A. Driscoll, F. Bornemann, and L. N. Trefethen,
+% "The chebop system
+% for automatic solution of differential equations", BIT Numerical Mathematics 46 (2008),701-723.
 %
 % [Fornberg 1996] B. Fornberg, A Practical Guide to Pseudospectral Methods,
 % Cambridge University Press, 1996.

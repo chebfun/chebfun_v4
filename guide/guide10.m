@@ -275,12 +275,13 @@ u = L\0; plot(u,'m',LW,lw)
 % diff and diag and eye we specify the problem by anonymous functions:
 [d,x,N] = domain(-1,1);
 N.op = @(u) 0.0001*diff(u,2) + x.*u;
-N.lbc = @(u) u;
-N.rbc = @(u) u-1;
+N.lbc = 0;
+N.rbc = 1;
 u = N\0; plot(u,'m',LW,lw)
 
 %%
-% (More simply we could also have written N.lbc=0 and N.rbc=1.)
+% (More generall we could also have written N.lbc = @(u)u 0 and
+% N.rbc=@(u)u-1.)
 % The object N we have created is called a nonlinop.
 % Here are its pieces (subject to change as the code is further
 % developed in the future):
@@ -307,7 +308,7 @@ struct(N)
 % be solved in nonlinop formulation like this:
 [d,x,N] = domain(0,1);
 N.op = @(u) diff(u)-u.^2;  
-N.lbc = @(u) u-0.9;
+N.lbc = 0.9;
 u = N\0;                 
 plot(u,'m',LW,lw)
 

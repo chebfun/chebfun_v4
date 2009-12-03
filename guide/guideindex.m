@@ -4,10 +4,7 @@
 % Chebfun commands and computer programs are given in capital
 % letters.  Entries are listed by section number.
 
-%%
-% [Only a beginning so far.]
-
-%% AAA
+%% A
 %  ABS, 1.4, 2.1, 3.2, 9.2
 %  accuracy, 1.1, 2.4, 4.2, 7.7, 8.8
 %  Airy function, 3.1
@@ -17,7 +14,7 @@
 %  approximation theory, chap. 4
 %  Assheton, Phil, 1.1, 2.1
 %  Automatic Differentiation, 7.1, 10.1, 10.3, 10.4
-%% BBB
+%% B
 %  backslash, 6.2, chap. 7, 9.1, 10.4; see also nonlinear backslash
 %  barycentric interpolation, 1.2, 4.5
 %  Battles, Zachary, 1.1, 3.1
@@ -34,7 +31,7 @@
 %  breakpoints, 1.4, 3.2
 %  BVP4C/BVP/5C, 7.1, chap. 10
 %  BVPINIT, 10.2
-%% CCC
+%% C
 %  Carrier equation, 10.4
 %  Cauchy integral, see contour integral
 %  CEIL, 3.2
@@ -60,7 +57,7 @@
 %  contour integral, 5.3, 5.4
 %  COTEDA, 2.1
 %  CUMSUM, 2.3, 2.4, 7.3, 9.1
-%% DDD
+%% D
 %  DBLQUAD, 205
 %  delta functions, 2.4
 %  DIAG, 7.3
@@ -71,7 +68,7 @@
 %  DIFF, 2.4, 3.3
 %  DOMAIN, 1.3, 7.4, 8.1, 8.2
 %  Driscoll, Toby, 1.1, chap. 7, 10.2, 10.3
-%% EEE
+%% E
 %  edge detection, 1.4
 %  eigenvalues problems, 7.5
 %  EIGS, 7.5
@@ -82,7 +79,7 @@
 %  exponential of an operator, 7.6
 %  EXTRPOLATE, 8.1
 %  extrema, 3.3
-%% FFF
+%% F
 %  factory values, 1.4
 %  FFT, 1.1
 %  File Exchange, 1.1
@@ -90,17 +87,17 @@
 %  FLOOR, 3.2
 %  Frechet derivative, see Jacobian
 %  funs, 1.4
-%% GGG
+%% G
 %  Gauss quadrature, 2.6
 %  Gauss-Jacobi quadrature, 2.6, 9.2
 %  Gibbs phenomenon
 %  Glaser-Liu-Rokhlin algorithm, 206
 %  Golub-Welsch algorithm, 206
 %  Gonnet, Pedro, 1.1
-%% HHH
+%% H
 %  Hale, Nick, 1.1, 1.5, 2.6, 9.2
 %  Higham, Nick, 1.2, 4.5
-%% III
+%% I
 %  infinite function values, 1.5, 2.1, 9.2
 %  infinite intervals, 1.5, 2.1, 9.1
 %  inner product, 1.6
@@ -108,12 +105,12 @@
 %  integrals in 2D, 2.5
 %  interpolation, 1.2
 %  INTERP1, 4.7, 4.8
-%% JJJ
+%% J
 %  JACPOLY, 2.6
 %  JACPTS, 2.6, 9.2
 %  Jacobian, 7.8, 10.3, 10.4
-%% KKK
-%% LLL
+%% K
+%% L
 %  least-squares, 6.2
 %  Legendre polynomials, 2.6, 6.3, 6.4
 %  LEGPOLY, 2.6, 6.3
@@ -121,7 +118,7 @@
 %  LENGTH, 1.2, 1.4
 %  LINSOLVE, 10.4
 %  Lorenz equations, 10.1
-%% MMM
+%% M
 %  MAP, 9.3
 %  mappings, 9.1, 9.3
 %  Mathematica, 2.1
@@ -133,16 +130,17 @@
 %  MIN, 3.2, 3.4
 %  MINANDMAX, 3.4, 10.1
 %  MINSAMPLES, 8.1, 8.6
+%  MLDIVIDE, 6.2, 10.3
 %  Moebius transformation, 5.2
 %  monomial basis, 4.2
-%% NNN
+%% N
 %  Newton iteration, 7.1, 7.8, 9.4, chap. 10
 %  nonlinear backslash, 7.1, 10.1, 10.4
 %  NONLINOPPREF, 10.4
 %  nonlinops, chap. 10
 %  NORM, 2.2, 6.4, 6.5
 %  NULL, 6.6
-%% OOO
+%% O
 %  ODE45/ODE15S/ODE113, 10.1, 10.2
 %  ODEs, chap. 7, chap. 10
 %  ODESET, 10.1
@@ -151,7 +149,7 @@
 %  ORTH, 6.6
 %  orthogonal polynomials, 6.3
 %  overloading, 1.1
-%% PPP
+%% P
 %  Pachon, Ricardo, 1.1, 1.4, 4.6
 %  PDE15S, 7.1, 10.1
 %  PDEs, 7.1
@@ -164,13 +162,13 @@
 %  POLY, 4.2
 %  POLYFIT, 4.8
 %  POWER, 1.3
-%% QQQ
+%% Q
 %  QR, 6.3
 %  QR factorization, 6.3
 %  QUAD, QUADL, QUADGK, 2.1
 %  quadrature, see integration
 %  quasimatrices, 1.6, 5.1, chap. 6
-%% RRR
+%% R
 %  RATINTERP,
 %  RDIVIDE, 1.3
 %  REMEZ, 4.8
@@ -183,7 +181,7 @@
 %  row vs. column chebfuns, 1.6, 6.1
 %  Runge functions, 1.2
 %  Runge phenomenon, 4.7
-%% SSS
+%% S
 %  Salzer, Herbert, 1.2
 %  SCRIBBLE, 5.5, 7.6
 %  SIGN, 3.2
@@ -205,12 +203,12 @@
 %  SUM, 1.2, 2.1
 %  SVD, 6.4
 %  systems of equations, 7.9
-%% TTT
+%% T
 %  Taylor coefficients, 4.2, 5.3, 5.4
 %  transpose, 1.6
-%% UUU
+%% U
 %  UNWRAP, 5.4
-%% VVV
+%% V
 %  van der Pol equation, 10.1, 10.4
 %  Van Deun, Joris, 1.1
 %  VAR, 2.2

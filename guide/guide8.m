@@ -94,7 +94,7 @@ splitting off
 % at non-singular points when
 % convergence is not taking place fast enough.  For example, with splitting off
 % we cannot successfully construct a chebfun for the square root function on [0,1]
-% (unless we use mappings as described in Chapter 9):
+% (unless we use exponentials or mappings as described in the next chapter):
 
   f = chebfun(@(x) sqrt(x),[0 1]);
 

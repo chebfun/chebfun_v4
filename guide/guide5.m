@@ -99,7 +99,7 @@ subplot(1,2,2), plot(z.^2), axis equal, grid on
 
 %%
 % For example, suppose we define R to be
-% a chebfun corresponding to the four sides of a rectangle, and
+% a chebfun corresponding to the four sides of a rectangle and
 % we define X to be another chebfun corresponding to a cross inside R. 
 
 s = chebfun('s',[0 1]);
@@ -154,8 +154,7 @@ hold on, plot(exp(X),'r',LW,lw2)
 % for constants a,b,c,d.  For example, here is a square and its
 % image under the map w = 1/(1+z), and the image of the image under the
 % same map, and the image of the image of the image.  We also plot
-% the limiting point given by the equation z = 1/(1+z), i.e., 
-% z = (sqrt(5)-1)/2.
+% the limit point given by the equation z = 1/(1+z), i.e., z = (sqrt(5)-1)/2.
 
 moebius = @(z) 1./(1+z);
 s = chebfun(@(s) s,[0 1]);
@@ -219,7 +218,7 @@ axis off
 % A *meromorphic function* is a function that is analytic in a region of interest
 % in the complex plane apart from possible poles.
 % According to the *Cauchy integral formula*, (1/2i*pi) times the integral of
-% a function f around a closed contour is equal to the sum of the residues
+% a meromorphic function f around a closed contour is equal to the sum of the residues
 % of f associated with any poles it may have in the enclosed region.   The
 % *residue* of f at a point z0 is the coefficient of the degree -1 term in
 % its Laurent expansion at z0.  For example, the function exp(z)/z^3
@@ -236,7 +235,7 @@ I = sum(f.*diff(z))/(2i*pi)
 
 %%
 % When the chebfun system integrates around a circular contour
-% like this, it does not use the fact that the integrand is
+% like this, it does not take advtange of the fact that the integrand is
 % periodic.  That would be Fourier analysis as opposed to Chebyshev
 % analysis, and a "fourfun" system would be more efficient for such
 % problems [Davis 1959].  Chebyshev analysis is more flexible, however, since it does
@@ -304,7 +303,8 @@ B10 = factorial(k)*sum((f./z.^(k+1)).*diff(z))/(2i*pi)
 %%
 % This problem of numerical instability would arise no matter
 % how one calculated the integral over the unit circle; it is not
-% the fault of the chebfun system.
+% the fault of the chebfun system.  For a study of how to pick
+% the optimal radius, see [Bornemann 2009].
 
 %%
 % Another use of Cauchy integrals is to count zeros or
@@ -359,7 +359,7 @@ r = roots(f)
 % corresponding to a word spelled out in capital letters.  For example:
 f = scribble('Oxford University');
 LW = 'linewidth'; lw = 2;
-plot(f,LW,lw), axis equal
+plot(f,LW,lw), xlim(1.1*[-1 1]), axis equal
 
 %%
 % This chebfun happens to have 67 pieces:
@@ -375,7 +375,7 @@ f(0), norm(f)
 % Perhaps more interesting is that we can apply functions to it
 % and learn something in the process:
 
-plot(exp(3i*f),'m',LW,lw), axis equal
+plot(exp(3i*f),'m',LW,lw), ylim(1.1*[-1 1]), axis equal
 
 %%
 % Does putting a box around enhance the image?
@@ -385,32 +385,37 @@ plot(exp(3i*f),'m',LW,lw), axis equal
 L = f.ends(end);
 s = chebfun(@(x) x,[0 1]);
 box0 = [-1.1-.05i+2.2*s;1.1-.05i+.22i*s;1.1+.17i-2.2*s;-1.1+.17i-.22i*s];
+box = chebfun;
 box{-1,1} = box0;
 f = [f box];
-plot(f,LW,lw), axis equal
+plot(f,LW,lw), xlim(1.2*[-1 1]), axis equal
 
 %%
 clf, plot(exp((1+.2i)*f),LW,lw), axis equal, axis off
 
 %%
-plot(sin(2*f),LW,lw), axis equal, axis off
+plot(tan(f),LW,lw), axis equal, axis off
 
 %%
 % Next May 16, you might wish to write a greeting card for
 % Pafnuty Lvovich Chebyshev, accurate as always to 15 digits:
 f = scribble('Happy Birthday Pafnuty!');
 L = f.ends(end);
-g = @(z) exp((2.5i+.4)*z)/1i;
+g = @(z) exp(-2.1i+(2.5i+.4)*z);
 clf, plot(g(f),'r',LW,lw), axis equal, axis off
 circle = 1.12*chebfun(@(x) exp(2i*pi*x/L),[0 L]);
 ellipse = 1.2*(circle + 1./circle)/2 + 1i*mean(imag(f));
 hold on, plot(g(ellipse),'b',LW,lw)
 
 %%
-% You can find a code GREETINGCARD for producing
+% You can find a code "greetingcard" for producing
 % images like this in the chebfun Examples collection.
 
 %% 5.6  References
+%
+% [Bornemann 2009] F. Bornemann, "Accuracy and stability of computing
+% high-order derivatives of analytic functions by Cauchy integrals",
+% manuscript, 2009.
 %
 % [Davis 1959] P. J. Davis, "On the numerical integration of periodic analytic
 % functions", in R. E. Langer, ed., On Numerical Integration,
@@ -418,7 +423,7 @@ hold on, plot(g(ellipse),'b',LW,lw)
 %
 % [Delves & Lyness 1967] L. M. Delves and J. N. Lyness, "A numerical
 % method for locating the zeros of an analytic function", Mathematics
-% of Computation 21 (1967), 543--560.
+% of Computation 21 (1967), 543-560.
 %
 % [Hale & Trefethen 2008] N. Hale and L. N. Trefethen,
 % "New quadrature formulas from conformal maps", SIAM Journal

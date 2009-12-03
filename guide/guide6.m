@@ -157,7 +157,8 @@
 % The spy command confirms the shape of these various matrices.
 % One sees fewer dots in the spy plot than one may expect at first,
 % the reason being that half its entries in the upper-triangle should
-% be zero because of the columns of A alternate even and odd functions.
+% be zero because of the fact that
+% the columns of A alternate even and odd functions.
 % In fact, because of rounding or truncation errors, not all those mathematical
 % zeros are zero on the computer, so the upper half of
 % spy (R) appears as an imperfect checkerboard.

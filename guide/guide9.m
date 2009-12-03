@@ -3,7 +3,7 @@
 
 %%
 % This chapter presents some new features of
-% the chebfun system that are far less robust than what is
+% the chebfun system that are a good deal less robust than what is
 % described in the first eight chapters.  With classic bounded
 % chebfuns on a bounded interval [a,b], you can do amazingly
 % complicated things often without encountering any difficulties.
@@ -11,8 +11,7 @@
 % diverge to infinity -- but please
 % lower your expectations!  Partly because the software is new
 % and experimental, and partly for good mathematical reasons,
-% one cannot expect anywhere
-% near the same reliability with these new features.
+% one cannot expect the same reliability with these new features.
 
 %% 9.1 Infinite intervals
 % If a function converges reasonably rapidly to a constant at infinity,
@@ -79,11 +78,6 @@ sinc = chebfun('sin(pi*x)./(pi*x)',[-inf inf]);
 plot(sinc,'m','interval',[-10 10])
 
 %%
-% The exact 2-norm is 1:
-norm(sinc)
-
-
-%%
 % Chebfun's capability of handling infinite intervals was introduced by
 % Rodrigo Platte in 2008-09.  The basis of these computations is a change
 % of variables, or mapping, which reduces the infinite interval to
@@ -110,7 +104,7 @@ m = f.map
 
 %%
 % What's going on here is the use of a rational mapping from the
-% y variable in [-1,1] to the x variable in the infinite domain.
+% y variable in [-1,1] to the x variable in [0,inf].
 % The forward map is a Matlab anonymous function,
 m.for
 
@@ -135,25 +129,77 @@ m.par
 % over the years.  One of the references we have benefitted especially from, which
 % also contains pointers to other works in this area, is the book [Boyd 2001].
 
-%% 9.2 Infinite function values and singularities
-% Chebfun can handle certain "vertical" infinities as well as
-% "horizontal" ones -- that is, functions that blow up according
-% to an algebraic power.  If you know the nature of the blowup,
+%% 9.2 Poles
+% Chebfun can handle certain "vertical" as well as
+% "horizontal" infinities -- especially, functions that blow up according
+% to an integer power, i.e., with a pole.  If you know the nature of the blowup,
 % it is a good idea to specify it using the 'exps' flag.
 % For example, here's a function with a pole at 0.  We can use
 % 'exps' to tell the constructor that the function looks like x^(-1)
 % at the left endpoint and x^0 (i.e., smooth) at the right
 % endpoint.
-f = chebfun('sin(50*x) + 1./x',[0 4],'exps',{-1,0});
+f = chebfun('sin(50*x) + 1./x',[0 4],'exps',[-1,0]);
 plot(f), ylim([-5 30])
 
 %%
+% Here's the same function but over a domain that contains the
+% singularity in the middle.  We tell the constructor where the
+% pole is and what the singularity is like:
+f = chebfun('sin(50*x) + 1./x',[-2 0 4],'exps',[0,-1,0]);
+plot(f), ylim([-30 30])
+
+%%
+% Here's the tangent function:
+f = chebfun('tan(x)', pi*((-5/2):(5/2)), 'exps', -ones(1,6));
+plot(f), ylim([-5 5])
+
+%%
+% Rootfinding works as expected:
+x2 = chebfun('x/2',pi*(5/2)*[-1 1]);
+hold on, plot(x2,'k')
+r = roots(f-x2); plot(r,f(r),'or','markersize',8)
+
+%%
+% And we can manipulate the function in various other familiar ways:
+g = sin(2*x2)+min(abs(f+2),6);
+hold off, plot(g)
+
+%%
+% If you don't know what singularities your function may
+% have, chebfun has some ability to find them if the flags
+% "blowup" and "splitting" are on:
+gam = chebfun('gamma(x)',[-4 4],'splitting','on','blowup','on');
+plot(gam), ylim([-10 10])
+
+%%
+% But it's always better to specify the breakpoints and powers if you know them:
+gam = chebfun('gamma(x)',[-4:0 4],'exps',[-1 -1 -1 -1 -1 0]);
+
+%%
+% If you know the breakpoints but not the strengths of the poles, you
+% can specify NaN at locations of unknown strength:
+%
+% [commented out since this doesn't currently work]
+%
+% f = chebfun(@(t) exp(t)./(exp(t)-1-t),[0 1],'exps',[NaN 0])
+
+%%
+% It's also possible to have poles of different strengths
+% on two sides of a singularity.  In this case, you specify two
+% exponents at each internal breakpoint rather than one:
+f = chebfun(@(x) cos(100*x)+sin(x).^(-2+sign(x)),[-1 0 1],'exps',[0 -3 -1 0]);
+plot(f), ylim([-30 30])
+
+
+%% 9.3  Singularities other than poles
+% Less reliable but also sometimes useful is the possibility of working
+% with functions with algebraic singularities that are not poles.
 % Here's a function with inverse square root singularities at each end:
 w = chebfun('(2/pi)./(sqrt(1-x.^2))','exps',{-.5 -.5});
 plot(w,'m'), ylim([0 10])
 
 %%
-% The integral of this function is 2:
+% The integral is 2:
 sum(w)
 
 %%
@@ -183,21 +229,21 @@ chebcoeffs2 = flipud(chebpoly(f)')
 
 %% 
 % You can specify singularities for functions that don't blow up, too.
-% For example, suppose we want to work with sqrt(x) on the interval
+% For example, suppose we want to work with sqrt(x*exp(x)) on the interval
 % [0,2].  A first try fails completely:
 ff = @(x) sqrt(x.*exp(x));
 d = domain(0,2);
 f = chebfun(ff,d)
 
 %%
-% We could use splitting on and resolve the function by many
-% pieces, as illustrated in Section ?.?:
+% We could turn splitting on and resolve the function by many
+% pieces, as illustrated in Section 8.3:
 f = chebfun(ff,d,'splitting','on')
 
 %%
 % A much better representation, however, is constructed if we
 % tell the system about the singularity at x=0:
-f = chebfun(ff,d,'exps',{.5 0})
+f = chebfun(ff,d,'exps',[.5 0])
 plot(f)
 
 %%
@@ -206,7 +252,7 @@ plot(f)
 % breakpoints at roots of f, sqrt(abs(f)) introduces breakpoints and
 % also singularities at such roots:
 theta = chebfun('t',[0,4*pi]);
-f = sqrt(abs(sin(theta)));
+f = sqrt(abs(sin(theta)))
 plot(f)
 sumf = sum(f)
 
@@ -233,48 +279,33 @@ f.funs.exps
 % progress and we hope to make it more reliable in future
 % releases.
 
-%% 9.3 Another approach to singularities
+%% 9.4 Another approach to singularities
 % We have just seen how certain algebraic singularities can be
 % captured in chebfun via the 'exps' flag, which represents the
 % function in question by a polynomial times certain algebraic terms.
 % One example looked like this:
 ff = @(x) sqrt(x.*exp(x));
 d = domain(0,2);
-f = chebfun(ff,d,'exps',{.5 0})
+f = chebfun(ff,d,'exps',[.5 0])
 
 %%
-% It is easy to undo such calculations, however:
+% It is easy to run into trouble with such calculations, however:
 gg = @(x) 1+sqrt(x.*exp(x));
-g = chebfun(gg,d,'exps',{.5 0})
+g = chebfun(gg,d,'exps',[.5 0])
 
 %%
-% Better results may sometimes be achieved by using a different
+% Better results may sometimes be achieved -- for bounded functions
+% only -- by using a different
 % experimental chebfun facility based on the same kind of changes of
 % variable that make infinite intervals possible as described in
 % Section 9.1.  For example, we may write
-g = chebfun(gg,d,'map',{'sing',[-1 .5]})
+g = chebfun(gg,d,'singmap',[.5 0])
 
 %%
-% The -1 indicates that the singularity is at the left endpoint
-% (use 1 for the right endpoint, 0 for both endpoints) and the .5
-% indicates that is of type x^.5.
-
-%%
-% If exponents are not specified, they default to 0.25, a value
-% that does a pretty good job of resolving quite a few singularities.
-% For example, suppose we define
-ff = @(x) cos(22*x)./(1+x.^2)  + gamma(1.2+x).*real(airy(10*x)).*(1-x).^.77.*(1+x).^1.33;
-%%
-% Here is a result with exponents fully specified:
-f1 = chebfun(ff,'map',{'sing',[0 .77 1.33]})
-sum(f1)
-
-%%
-% If we don't specify the exponents, we get much the same result:
-f2 = chebfun(ff,'map',{'sing',0})
-sum(f2)
-norm(f1-f2)
-
+% Here's another example:
+ff = @(x) cos(22*x)./(1+x.^2)  + gamma(1.2+x).*real(airy(10*x)).*(1-x).^.3;
+f1 = chebfun(ff,'singmap',[0 .3])
+plot(min(f1,1))
 
 %% 9.4 References
 %

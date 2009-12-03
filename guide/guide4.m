@@ -120,8 +120,7 @@
 
 %% 4.2 chebpoly and poly
 %
-% Throughout this section of the Chebfun Guide, we must be sure
-% to use the "factory" setting
+% Throughout this section, we must be sure to use the "factory" setting
 
 splitting off
 %%
@@ -214,7 +213,8 @@ subplot(1,2,2), plot(f,'.-'), grid on, axis([0 .004 .5 1.5])
 % The second plot is jagged, not because there is anything wrong with
 % the underlying chebfun but because we have zoomed in very closely on the result
 % of a "plot" command.  One way to get it right is by using chebfun's { } feature,
-% which enables one to construct a chebfun corresponding to a subinterval:
+% which enables one to construct a chebfun corresponding to a subinterval.
+% (Another way would be to use the 'interval' flag in the "plot" command.)
 
 clf
 subplot(1,2,2), plot(f,'.'), grid on, axis([0 .004 .5 1.5])
@@ -283,8 +283,8 @@ err1000 = norm(f1000-fexact,inf)
 % Notice the clean linear decrease of the error as N increases.
 
 %%
-% If f is a bit smoother, polynomial approximations to machine precision
-% become practical:
+% If f is a bit smoother, polynomial approximation to machine precision
+% becomes practical:
 
   length(chebfun('abs(x).*x'))
   length(chebfun('abs(x).*x.^2'))
@@ -327,7 +327,7 @@ hold  on, semilogy(NN.^(-5),'--r'), grid on
 % f is analytic, its Chebyshev interpolants converge geometrically.
 % In this example we take f to be the Runge function, for which
 % interpolants in equally spaced points would not converge at all
-% (in fact they would diverge exponentially -- see Section 4.7).
+% (in fact they diverge exponentially -- see Section 4.7).
 
 %%
 s = '1./(1+25*x.^2)';
@@ -434,8 +434,7 @@ text(45,1e-3,'C^{-N}','color','r','fontsize',16)
 % a beautiful and well-established idea, and it is certainly interesting
 % to be able to compute them.  The chebfun system makes this 
 % possible with the command "remez", named after Evgeny Remez,
-% who devised the basic algorithm for computing these approximations
-% in 1934.
+% who devised the standard algorithm for computing these approximations in 1934.
 % This capability is due to Ricardo Pachon;
 % see [Pachon & Trefethen 2009].
 
@@ -466,27 +465,28 @@ plot(f-pinterp,'b')
 % maximum error, it is a worse approximation for almost all x.
 
 %%
-% The chebfun code REMEZ does not (yet) compute rational approximants.
+% The chebfun code "remez" does not (yet) compute rational approximants.
 % If your function is smooth, however, you can compute them by Caratheodory-Fejer
-% approximation using the code CF due to Joris Van Deun.  For example:
+% approximation using the code "cf" due to Joris Van Deun.  For example:
 f = chebfun('exp(x)');
 [p,q] = cf(f,5,5);
 r = p./q;
 err = norm(f-r,inf);
 clf, plot(f-r,'c'), hold on
 plot([-1 1],err*[1 1],'--k'), plot([-1 1],-err*[1 1],'--k')
+ylim(2e-13*[-1 1])
 
 %% 4.7  The Runge phenomenon
 % The chebfun system is based on polynomial interpolants in Chebyshev
 % points, not equispaced points.   It has been known for over a century
 % that the latter choice is disastrous, even for interpolation of
-% smooth functions.  One should never use equispaced polynomial interpolants
+% smooth functions [Runge 1901].  One should never use equispaced polynomial interpolants
 % for practical work, but like best
 % approximations, they are certainly interesting.
 
 %%
 % In the chebfun system, we can compute them with the overloaded
-% INTERP1 command.  For example, here is an analytic function and
+% "interp1" command.  For example, here is an analytic function and
 % its equispaced interpolant of degree 9:
 f = tanh(10*x);
 s = linspace(-1,1,10);
@@ -504,7 +504,7 @@ plot(f), hold on, plot(p,'r'), grid on, plot(s,p(s),'.r')
 % Approximation experts will know that one of the tools used
 % in analyzing effects like this is known as the Lebesgue
 % function associated with a given set of interpolation points.
-% Chebfun has a command LEBESGUE for computing these functions.
+% Chebfun has a command "lebesgue" for computing these functions.
 % The problem with interpolation in 20 equispaced points is reflected
 % in a Lebesgue function of size 10^4 -- note the semilog scale:
 clf, semilogy(lebesgue(s))
@@ -531,7 +531,7 @@ length(f)
 plot(f)
 
 %%
-% We can use the command CHEBPADE, developed by Ricardo Pachon,
+% We can use the command "chebpade", developed by Ricardo Pachon,
 % to compute a Chebyshev-Pade approximant, defined by the
 % condition that the Chebyshev series of p/q should match that of f as
 % far as possible [Baker and Graves-Morris 1996].  (This is the so-called "Clenshaw-Lord" Chebyshev-Pade
@@ -550,12 +550,12 @@ plot(f-r,'r')
 %%
 % Mathematically, f has poles in the
 % complex plane at +-i, +-3i, +5i, and so on.
-% We can obtain approximations to these by looking at the roots of q:
+% We can obtain approximations to these values by looking at the roots of q:
 roots(q,'complex')
 
 %%
 % A similar but perhaps faster and more robust approach to rational interpolation
-% is encoded in the command RATINTERP, which computes a type (m,n) interpolant
+% is encoded in the command "ratinterp", which computes a type (m,n) interpolant
 % through m+n+1 Chebyshev points (or, optionally, a different set of points).
 % This capability was developed by Ricardo Pachon and Pedro Gonnet [Pachon
 % & Gonnet 2010].  The results are similar:
@@ -570,9 +570,8 @@ roots(q,'complex')
 
 %%
 % The third option for rational approximation is Caratheodory-Fejer approximation,
-% realized in the code CF by Joris Van Deun [Trefethen & Gutknecht 1983].
-% As mentioned in the last section,
-% CF approximants often agree
+% realized in the code "cf" by Joris Van Deun [Trefethen & Gutknecht 1983].
+% As mentioned in the last section, CF approximants often agree
 % with best approximations to machine precision if f is smooth.
 % We explore the same function yet again, and this time obtain
 % an equioscillating error curve:
@@ -657,17 +656,21 @@ roots(q,'complex')
 % chebfun system", BIT Numerical Mathematics 49 (2009), ?-?.
 %
 % [Platte, Trefethen & Kuijlaars 2009] R. P. Platte, L. N. Trefethen
-% and A. B. J. Kuijlaars, Impossibility of approximating analytic
-% functions from equispaced samples, manuscript, 2009.
+% and A. B. J. Kuijlaars, "Impossibility of approximating analytic
+% functions from equispaced samples", manuscript, 2009.
 %
 % [Powell 1981] M. J. D. Powell, Approximation Theory and Methods,
 % Cambridge University Press, 1981.
 %
 % [Rack & Reimer 1982] H.-J. Rack and M. Reimer, "The numerical stability 
 % of evaluation schemes for polynomials based on the Lagrange
-% interpolation form", BIT 22 (1982), 101-107.
+% interpolation form", BIT Numerical Mathematics 22 (1982), 101-107.
 %
 % [Rivlin 1974] T. J. Rivlin, The Chebyshev Polynomials, Wiley, 1974 and 1990.
+%
+% [Runge 1901] C. Runge, "Ueber empirische Funktionen und die Interpolation
+% zwischen aequidistanten Ordinaten", Zeitschrift fuer Mathematik
+% und Physik 46 (1901), 224-243.
 %
 % [Salzer 1972] H. E. Salzer, "Lagrangian interpolation at the 
 % Chebyshev points cos(nu pi/n), nu = 0(1)n; some unnoted
@@ -678,7 +681,7 @@ roots(q,'complex')
 % [Trefethen 2010] L. N. Trefethen, Approximation Theory and Approximation
 % Practice, book in preparation.
 %
-% [Trefethen & Gutknecht 1983] L. N. Trefethen and M. H. Gutknecht, The
-% Caratheodory-Fejer method for real rational approximation,
-% SIAM Journal of on Numerical Analysis 20 (1983), 420-436.
+% [Trefethen & Gutknecht 1983] L. N. Trefethen and M. H. Gutknecht, "The
+% Caratheodory-Fejer method for real rational approximation",
+% SIAM Journal on Numerical Analysis 20 (1983), 420-436.
 
