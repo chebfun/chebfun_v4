@@ -85,7 +85,7 @@ else
     end
 
     exps1 = get(f1,'exps'); exps2 = get(f2,'exps');
-    if (~any(exps1) && ~any(exps2)) % No exps. Old school case
+    if (~any(exps1) & ~any(exps2)) % No exps. Old school case
         fout = comp(f1, @rdivide, f2);
     else % compute without exps (not surrently working)
         fout = chebfun;
