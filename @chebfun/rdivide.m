@@ -51,8 +51,8 @@ newbkpts = setdiff(r,ends);
 if ~isempty(newbkpts)
     d = union(ends,newbkpts);
     d = union(d,get(f2,'ends'));
-    f1 = chebfun(f1,d);
-    f2 = chebfun(f2,d);
+    if isa(f1,'chebfun'), f1 = restrict(f1,d); end
+    f2 = restrict(f2,d);
     fout = rdividecol(f1,f2);
 %        error('CHEBFUN:rdivide:DivisionByZero','Division by zero')
 elseif isa(f1,'double')    
@@ -60,21 +60,46 @@ elseif isa(f1,'double')
 		fout = chebfun(0, f2.ends([1,end])); 
       	fout.jacobian = anon('@(u) 0*jacobian(f2,u)',{'f2'},{f2});
       	fout.ID = newIDnum();
-    else        
-        fout = comp(f2,@(x) rdivide(f1,x));
-        %fout = chebfun(@(x) f1./feval(f2,x), f2.ends);
-        %fout.trans = f2.trans;
-
+    else   
+        exps = get(f2,'exps');
+        if ~any(exps) % No exps. Old school case
+            fout = comp(f2,@(x) rdivide(f1,x));
+        else % compute without exps (not surrently working)
+            fout = chebfun;
+            for k = 1:f2.nfuns
+                f2k = f2.funs(k);
+                expsk = f2k.exps;
+                f2k.exps = [0 0];
+                tmp = comp(chebfun(f2k,ends(k:k+1)),@(x) rdivide(f1,x));
+                tmp.funs(1).exps(1) = -expsk(1);
+                tmp.funs(end).exps(2) = -expsk(2);
+                fout = [fout tmp];
+            end
+        end
         fout.jacobian = anon('@(u) diag(-f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});
-		fout.ID = newIDnum();
+        fout.ID = newIDnum();
     end
 else
     if f1.trans~=f2.trans
         error('CHEBFUN:rdivide:trans','The .trans field of the two functions must agree')
     end
-    fout = comp(f1, @rdivide, f2);
-    %chebfun(@(x) feval(f1,x)./feval(f2,x), union(f1.ends,f2.ends));
-    %fout.trans = f1.trans;
+
+    exps1 = get(f1,'exps'); exps2 = get(f2,'exps');
+    if (~any(exps1) && ~any(exps2)) % No exps. Old school case
+        fout = comp(f1, @rdivide, f2);
+    else % compute without exps (not surrently working)
+        fout = chebfun;
+        for k = 1:f2.nfuns
+            f1k = f1.funs(k);   f2k = f2.funs(k);
+            exps1k = f1k.exps;  exps2k = f2k.exps;
+            f1k.exps = [0 0];   f2k.exps = [0 0];
+            tmp = comp(chebfun(f1k,ends(k:k+1)), @rdivide, chebfun(f2k,ends(k:k+1)));
+            tmp.funs(1).exps(1) = exps1k(1)-exps2k(1);
+            tmp.funs(end).exps(2) = exps1k(2)-exps2k(2);
+            fout = [fout tmp];
+        end
+    end
+    
     fout.jacobian = anon('@(u) diag(1./f2)*jacobian(f1,u) - diag(f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});
     fout.ID = newIDnum();
 end
