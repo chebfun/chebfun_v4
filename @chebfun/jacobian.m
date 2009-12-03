@@ -3,7 +3,7 @@ function J = jacobian(F,u)
 %
 % J = jacobian(F,u) returns the Jacobian of the chebfun F with respect to
 % the chebfun u. Both F and u can be a quasimatrix.
-%
+
 % The Chebfun Team, 2009
 
 % Obtain a list of all ID-s of the chebfun u (concat. the list if u is a
