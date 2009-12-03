@@ -7,7 +7,7 @@ function C = uminus(A)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-C = A;
+C = copy(A);
 C.varmat = -C.varmat;
 C.oparray = -C.oparray;
 

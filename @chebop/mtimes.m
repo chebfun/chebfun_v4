@@ -41,7 +41,7 @@ switch(class(B))
     if isempty(B), C = []; return, end  % chebop*[] = []
     [m n] = size(B);
     if max(m,n) == 1
-      C = A;
+      C = copy(A);
       C.varmat = B*C.varmat;
       C.oparray = B*C.oparray;
     elseif n == 1
