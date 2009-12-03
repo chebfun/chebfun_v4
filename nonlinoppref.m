@@ -5,23 +5,46 @@ function varargout = nonlinoppref(varargin)
 %
 % Options to be added include: Update tolerance, Residual tolerance,
 % (absolute or relative tolerance). Fixed stepsize. Automatic finding of
-% stepsize. Different search direction. Simplified Newton (i.e. same
-% Jacobian used for many iterations).
+% stepsize. Different search direction.
 %
 % Asgeir Birkisson, 2009
 
 persistent prefs
 
+% Initialize
 if isempty(prefs)  % first call, default values
-  prefs.plotting = 0;
-  prefs.tolerance = 1e-10;
+    prefs.plotting = 'off';
+    prefs.restol= 1e-10;
+    prefs.deltol = 1e-10;
+    prefs.damped = 'off';
+    prefs.maxiter = Inf;
 end
 
-% Probably should use some nicer error catching...
+% Return nonlinoppref or assign values 
 if nargin==0
-  varargout = { prefs };
+    varargout = { prefs };
 elseif nargin==1
-  varargout = { prefs.(varargin{1}) };
+    varargout = { prefs.(varargin{1}) };
 else
-  prefs.(varargin{1}) = varargin{2};
+    prop = lower(varargin{1});
+    newVal = varargin{2};
+    switch prop
+        case 'restol'
+            prefs.(prop) = newVal;
+        case 'deltol'
+            prefs.(prop) = newVal;
+        case 'tol'
+            prefs.restol = newVal;
+            prefs.deltol = newVal;
+        case 'plotting'
+            % Need to improve plotting options
+            prefs.(prop) = newVal;
+        case 'damped'
+            prefs.(prop) = newVal;
+        case 'maxiter'
+            prefs.(prop) = newVal;     
+        otherwise
+            error(['Nonlinoppref: Unknown property ' prop '.']);
+    end
+    
 end

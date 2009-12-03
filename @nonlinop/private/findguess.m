@@ -11,10 +11,22 @@ cheb0 = chebfun(0,dom);
 guess = cheb0;
 success = 0;
 counter = 0;
+
+if strcmp(N.optype,'anon_fun')
+    opType = 1;
+else
+    opType = 2;
+end
+
 while ~success && counter < 10
     try
-        feval(N.op,guess);
-        success = 1;
+        if opType == 1
+            feval(N.op,guess);
+            success = 1;
+        else
+            N.op*guess;
+            success = 1;
+        end
     catch
         guess = [guess cheb0];
         counter = counter+1;

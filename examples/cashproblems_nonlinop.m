@@ -2,18 +2,19 @@
 % The Jeff Cash problems solved with nonlinops.
 % See http://www2.imperial.ac.uk/~jcash/
 
-% Set up for plotting 
+% Set up for plotting. Throughout this script, the variable probCounter is
+% used to set up subplots etc.
 time = zeros(35,1);
 iter = zeros(35,1);
 figure;
-plotOn = 1;
+plotOn = 0;
 titleOn  = 0;
 %% Problem #01
 eps = 0.1;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) - u;
-N.lbc = @(u) u - 1;
-N.rbc = @(u) u ;
+N.lbc = -1;
+N.rbc = 0;
 tic
 [u nrmduvec] = N\0;
 probCounter = 1;
@@ -23,30 +24,28 @@ if plotOn,
     subplot(7,5,probCounter),plot(u),
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
-% figure;plot(u)
 
 %% Problem #02
 eps = 1;
 [d,x,N] = domain(-1,1);
-N.op = @(u) eps*diff(u,2) + (2+diag(cos(pi*x)))*diff(u,1) - u + (1+eps+pi^2)*cos(pi*x)+pi*(2+diag(cos(pi*x)))*sin(pi*x);
-N.lbc = @(u) u + 1;
-N.rbc = @(u) u + 1;
+N.op = @(u) eps*diff(u,2) + (2+cos(pi*x)).*diff(u,1) - u;
+N.lbc = 1;
+N.rbc = 1;
 probCounter = 2;
 tic
-[u nrmduvec] = N\0;
+[u nrmduvec] = N\(-(1+eps+pi^2)*cos(pi*x)-pi*(2+cos(pi*x)).*sin(pi*x));
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
     subplot(7,5,probCounter),plot(u),
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
-
 %% Problem #03
 eps = 0.1;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) - diff(u,1);
-N.lbc = @(u) u - 1;
-N.rbc = @(u) u ;
+N.lbc = 1;
+N.rbc = 0;
 tic
 [u nrmduvec] = N\0;
 probCounter = 3;
@@ -60,8 +59,8 @@ end
 [d,x,N] = domain(-1,1);
 eps = 0.5;
 N.op = @(u) eps*diff(u,2) + diff(u,1) - (1+eps)*u;
-N.lbc = @(u) u - 1+exp(-2);
-N.rbc = @(u) u - 1 + exp(-2*(1+eps)/eps);
+N.lbc = 1-exp(-2);
+N.rbc = 1- exp(-2*(1+eps)/eps);
 tic
 [u nrmduvec] = N\0;
 probCounter = 4;
@@ -71,21 +70,23 @@ if plotOn,
     subplot(7,5,probCounter),plot(u),
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
+
 %% Problem #05
 eps = 1;
 [d,x,N] = domain(-1,1);
-N.op = @(u) eps*diff(u,2) + diag(x)*diff(u,1) - u + (1+eps+pi^2)*cos(pi*x)+pi*diag(x)*sin(pi*x);
-N.lbc = @(u) u + 1;
-N.rbc = @(u) u + 1 ;
+N.op = @(u) eps*diff(u,2) + x.*diff(u,1) - u;
+N.lbc = 1;
+N.rbc = 1;
 probCounter = 5;
 tic
-[u nrmduvec] = N\0;
+[u nrmduvec] = N\(-(1+eps+pi^2)*cos(pi*x)-pi*x.*sin(pi*x));
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
     subplot(7,5,probCounter),plot(u),
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
+
 figure(gcf)
 %% Problem #06
 eps = 0.005;
@@ -106,9 +107,9 @@ end
 %% Problem #07
 eps = 0.21;
 [d,x,N] = domain(-1,1);
-N.op = @(u) eps*diff(u,2) + diag(x)*diff(u,1) - u + (1+eps*pi^2)*cos(pi*x)+pi*diag(x)*sin(pi*x);
-N.lbc = @(u) u + 1;
-N.rbc = @(u) u - 1 ;
+N.op = @(u) eps*diff(u,2) + x.*diff(u,1) - u + (1+eps*pi^2)*cos(pi*x)+pi*x.*sin(pi*x);
+N.lbc = -1;
+N.rbc = 1;
 probCounter = 7;
 tic
 [u nrmduvec] = N\0;
@@ -118,6 +119,7 @@ if plotOn,
     subplot(7,5,probCounter),plot(u),
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
+figure;plot(u)
 %% Problem #08
 eps = 0.046;
 [d,x,N] = domain(0,1);

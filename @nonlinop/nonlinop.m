@@ -19,43 +19,24 @@ switch nargin
     case 3
         Nop.dom = varargin{1};
         Nop.op = varargin{2};
-        if isnumeric(varargin{3}) && ~isempty(varargin{3})
-            val = varargin{3};
-            Nop.lbc = @(u) u - val;
-        else
-            Nop.lbc = varargin{3};
-        end
+        Nop.lbc = createbc(varargin{3});
     case 4        
         Nop.dom = varargin{1};
         Nop.op = varargin{2};
-        if isnumeric(varargin{3}) && ~isempty(varargin{3})
-            val = varargin{3};
-            Nop.lbc = @(u) u - val;
-        else
-            Nop.lbc = varargin{3};
-        end
-        if isnumeric(varargin{4}) && ~isempty(varargin{4})
-            val = varargin{4};
-            Nop.rbc = @(u) u - val;
-        else
-            Nop.rbc = varargin{4};
-        end
+        Nop.lbc = createbc(varargin{3});
+        Nop.rbc = createbc(varargin{4});
     case 5       
         Nop.dom = varargin{1};
         Nop.op = varargin{2};
-        if isnumeric(varargin{3}) && ~isempty(varargin{3})
-            val = varargin{3};
-            Nop.lbc = @(u) u - val;
+        Nop.lbc = createbc(varargin{3});
+        Nop.rbc = createbc(varargin{4});
+        
+        % Convert constant initial guesses to chebfuns
+        if isnumeric(varargin{5})
+            Nop.guess = chebfun(varargin{5},dom);
         else
-            Nop.lbc = varargin{3};
+            Nop.guess = varargin{5};
         end
-        if isnumeric(varargin{4}) && ~isempty(varargin{4})
-            val = varargin{4};
-            Nop.rbc = @(u) u - val;
-        else
-            Nop.rbc = varargin{4};
-        end
-        Nop.guess = varargin{5};
 end
 
 % Determine the type of the operator

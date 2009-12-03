@@ -22,6 +22,7 @@ function varargout = mldivide(BVP,b)
 % Copyright 2002-2009 by The Chebfun Team. 
 
 % This function calls solvebvp for the BVP and the RHS of \.
-[varargout{1} varargout{2}] = solvebvp(BVP,b);
 
+% [varargout{1} varargout{2}] = solvebvp_newton_damped(BVP,b);
+[varargout{1} varargout{2}] = solvebvp(BVP,b);
 end

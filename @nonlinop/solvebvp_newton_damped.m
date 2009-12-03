@@ -3,7 +3,9 @@ function [u nrmduvec] = solvebvp_newton_damped(N,rhs)
 
 % Begin by obtaining the nonlinop preferences
 pref = nonlinoppref;
-tol = pref.tolerance;
+restol = pref.restol;
+deltol = pref.deltol;
+maxIter = pref.maxiter;
 sigma = 0.01; lambda_min = 0.1; tau = 0.1;
 
 % Check whether the operator is empty, or whether both BC are empty
@@ -73,7 +75,7 @@ nrmdu = Inf;
 normr = Inf;
 nrmduvec = zeros(10,1);
 alpha = 1;      % Stepsize in Newton iteration
-while nrmdu > tol && normr > tol
+while nrmdu > restol && normr > deltol && counter < maxIter
     %     u = jacvar(u);
     % Check whether a boundary happens to have no BC attached
     if leftEmpty
@@ -185,9 +187,9 @@ end
             glam = g(lam);
             if glam <= (1-2*lam*sigma)
                 accept = 1;
-                lam;
+                lam
             else
-                lam = max(tau*lam,(lam^2*g0)/((2*lam-1)*g0+glam));
+                lam = max(tau*lam,(lam^2*g0)/((2*lam-1)*g0+glam))
             end
         end
     end

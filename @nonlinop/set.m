@@ -14,39 +14,12 @@ while length(propertyArgIn) >= 2,
         case 'dom'
             F.dom = val;
         case 'bc'
-            if strcmp(val,'neumann')
-                F.lbc = @(u) diff(u);
-                F.rbc = @(u) diff(u);
-            elseif strcmp(val,'dirichlet')
-                F.lbc = @(u) u;
-                F.rbc = @(u) u;
-            elseif isnumeric(val)
-                F.lbc = @(u) u-val;
-                F.rbc = @(u) u-val;
-            else
-                F.lbc = val;
-                F.rbc = val;
-            end
+            F.lbc = createbc(val);
+            F.rbc = F.lbc;
         case 'lbc'
-            if strcmp(val,'neumann')
-                F.lbc = @(u) diff(u);
-            elseif strcmp(val,'dirichlet')
-                F.lbc = @(u) u;
-            elseif isnumeric(val)
-                F.lbc = @(u) u-val;
-            else
-                F.lbc = val;
-            end
+            F.lbc = createbc(val);
         case 'rbc'
-            if strcmp(val,'neumann')
-                F.rbc = @(u) diff(u);
-            elseif strcmp(val,'dirichlet')
-                F.rbc = @(u) u;
-            elseif isnumeric(val)
-                F.rbc = @(u) u-val;
-            else
-                F.rbc = val;
-            end
+            F.rbc = createbc(val);
         case 'op'
             if isa(val,'function_handle') || (isa(val,'cell') && isa(val{1},'function_handle'))
                 F.optype = 'anon_fun';
@@ -58,8 +31,14 @@ while length(propertyArgIn) >= 2,
             end
             F.op = val;
         case 'guess'
-            F.guess = val;
+            % Convert constant initial guesses to chebfuns
+            if isnumeric(val)
+                F.guess = chebfun(val,F.dom);
+            else
+                F.guess = val;
+            end
         otherwise
             error('Unknown nonlinop property')
     end
+end
 end

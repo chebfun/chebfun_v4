@@ -1,7 +1,9 @@
 function [u nrmduvec] = solvebvp(N,rhs)
 % Begin by obtaining the nonlinop preferences
 pref = nonlinoppref;
-tol = pref.tolerance;
+restol = pref.restol;
+deltol = pref.deltol;
+maxIter = pref.maxiter;
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(N.op)
@@ -70,7 +72,7 @@ nrmdu = Inf;
 normr = Inf;
 nrmduvec = zeros(10,1);
 alpha = 1;      % Stepsize in Newton iteration
-while nrmdu > tol && normr > tol
+while nrmdu > restol && normr > deltol && counter < maxIter
     %     u = jacvar(u);
     % Check whether a boundary happens to have no BC attached
     if leftEmpty
@@ -95,7 +97,8 @@ while nrmdu > tol && normr > tol
     % handle the rhs differently.
     if opType == 1
         A = diff(r,u) & bc;
-        A.scale = sqrt(sum( sum(u.^2,1)));
+        A.scale = solNorm;
+        A.scale
         delta = -(A\r);
     else
         A = problemFun & bc; % problemFun is a chebop
@@ -103,8 +106,11 @@ while nrmdu > tol && normr > tol
         delta = -(A\(r-rhs));
     end
     
+%     delta = simplify(delta,1e-10);
     
     
+    disp(['lu  = ' num2str(length(u)) '.ld = ' num2str(length(delta))]);   
+    disp(['lus  = ' num2str(length(simplify(u,1e-8))) '.lds = ' num2str(length(simplify(delta,1e-8)))]);
     u = u + alpha*delta;
     u = jacvar(u);      % Reset the Jacobian of the function
     
@@ -114,9 +120,8 @@ while nrmdu > tol && normr > tol
         r = problemFun*u;
     end
     
-    
-    nrmdu = norm(delta,'fro');
-    normr = solNorm;
+    nrmdu = norm(delta,'fro')
+    normr = solNorm
     %     nrmdu = sqrt(sum( sum(delta.^2,1)));
     %     normr = sqrt(sum( sum(r.^2,1)));
     % In case of a quasimatrix, the norm calculations are taking the
@@ -127,14 +132,11 @@ while nrmdu > tol && normr > tol
     % the residuals (this is certainly correct if the preferred norm would
     % be the Frobenius norm).
     if strcmp(pref.plotting,'on')
-        subplot(2,1,1),plot(u);title('Current solution');
-        subplot(2,1,2),plot(delta,'r'),title('Latest update');
+        subplot(2,1,1),plot(u,'.-');title('Current solution');
+        subplot(2,1,2),plot(delta,'.-r'),title('Latest update');
         drawnow,pause
     end
     counter = counter +1;
-    %     if nrmdu < 1e-1
-    %         alpha  = 1
-    %     end
     nrmduvec(counter) = nrmdu;
 end
 
@@ -163,8 +165,7 @@ end
             sn = sn + norm(r,'fro').^2;
         else
             sn = sn + norm(r-rhs,'fro').^2;
-        end
-        
+        end      
 
         sn = sqrt(sn);
     end
