@@ -12,3 +12,6 @@ pass(2) = (sum(f2)==inf);
 
 f3 = chebfun('-tan(x).^4',[a c d b],'exps',[0 -4 -4 0]);
 pass(3) = (sum(f3)==-inf);
+
+f4 = chebfun('1+1./x.^2',[1 inf]);
+pass(4) = (sum(f4)==inf);
