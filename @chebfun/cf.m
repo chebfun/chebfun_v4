@@ -1,12 +1,12 @@
 function [p,q,r,s] = cf(f,m,n,M)
 % Caratheodory-Fejer approximation
 %
-% [P,Q,R] = CF(F,M,N): degree (M/N) rational CF approximant to chebfun F
+% [P,Q,R_HANDLE] = CF(F,M,N): type (M,N) rational CF approximant to chebfun F
 %         defined in [a b] (which must consist of just a single fun);
 %         P and Q are chebfuns representing the numerator and denominator
-%         polynomials, R is an anonymous function that evaluates P/Q
+%         polynomials, R_HANDLE is an anonymous function that evaluates P/Q.
 %
-% [P,Q,R,S] = CF(F,M,N): same plus S, the associated CF
+% [P,Q,R_HANDLE,S] = CF(F,M,N): same plus S, the associated CF
 %         singular value, an approximation to the minimax error
 %
 % ... = CF(F,M,N,K): use only K-th partial sum in Chebyshev expansion of F
@@ -15,8 +15,8 @@ function [p,q,r,s] = cf(f,m,n,M)
 % input arguments. If P and S are required, four output arguments must be
 % specified.
 %
-% If F is a quasimatrix then so are the outputs P & Q, R is a cell array of
-% function handles and s is a vector.
+% If F is a quasimatrix then so are the outputs P and Q, R_HANDLE is a cell
+% array of function handles and s is a vector.
 %
 % Rational CF approximation can be very ill-conditioned for non-smooth
 % functions. If the program detects this, a warning message is given and
@@ -61,8 +61,11 @@ if numel(f) > 1, % Deal with quasimatrices
     return
 end
 
-if f.nfuns > 1, error('CHEBFUN:cf:multiple_funs',...
-  'CF does not support chebfuns consisting of multiple funs.'); end
+if (f.nfuns > 1) & (nargin<4), error('CHEBFUN:cf:multiple_funs',...
+  'For a function with multiple funs, CF must be called with 4 arguments.'); end
+
+%if (f.nfuns > 1), f = chebfun(@(x) feval(f,x),f.ends([1 end]),M+1); end
+if (f.nfuns > 1), [aa,bb] = domain(f); f = chebfun(@(x) feval(f,x),[aa bb],M+1); end
 
 if any(get(f,'exps')), error('CHEBFUN:cf:inf',...
   'CF does not support functions with nonzero exponents.'); end
