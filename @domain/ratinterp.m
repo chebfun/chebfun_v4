@@ -21,7 +21,7 @@ function [p,q,r_handle] = ratinterp(f,d,m,varargin)
 %  This version of RATINTERP lives in @domain.
 %  There is a companion code in @chebfun.
 
-a = d.ends(1); b = d.ends(2);
+a = d.ends(1); b = d.ends(end);
 if nargin == 3,
     n = 0; xi = chebpts(m+1,[a,b]); % polynomial interpolation in Chebyshev points
     type = 'chebyshev';
