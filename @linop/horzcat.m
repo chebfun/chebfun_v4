@@ -8,7 +8,7 @@ function A = horzcat(varargin)
 %  $Date$:
 
 % Take out empties.
-empty = cellfun( @(A) isempty(A), varargin );
+empty = cellfun( @isempty, varargin );
 varargin(empty) = [];
 
 % Is it now trivial?
