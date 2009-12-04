@@ -61,11 +61,10 @@ if numel(f) > 1, % Deal with quasimatrices
     return
 end
 
-if (f.nfuns > 1) & (nargin<4), error('CHEBFUN:cf:multiple_funs',...
+if (f.nfuns > 1) && (nargin<4), error('CHEBFUN:cf:multiple_funs',...
   'For a function with multiple funs, CF must be called with 4 arguments.'); end
 
-%if (f.nfuns > 1), f = chebfun(@(x) feval(f,x),f.ends([1 end]),M+1); end
-if (f.nfuns > 1), [aa,bb] = domain(f); f = chebfun(@(x) feval(f,x),[aa bb],M+1); end
+if (f.nfuns > 1), f = chebfun(@(x) feval(f,x),f.ends([1 end]),M+1); end
 
 if any(get(f,'exps')), error('CHEBFUN:cf:inf',...
   'CF does not support functions with nonzero exponents.'); end
@@ -123,12 +122,14 @@ else                              % rational case
       m = m + 1;
     elseif mod(m,2) && mod(n,2),
       n = n - 1;
+      if (n == 0), [p,q,r,s] = cf(f,m,n,M); return; end
     end
   elseif max(abs(a(end:-2:1)))/f.scl < eps, % f is an odd function
     if mod(m,2) && ~mod(n,2),
       m = m + 1;
     elseif ~mod(m,2) && mod(n,2),
       n = n - 1;
+      if (n == 0), [p,q,r,s] = cf(f,m,n,M); return; end
     end
   end
   
