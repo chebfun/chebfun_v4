@@ -34,7 +34,10 @@ switch s(1).type
   case '{}'                              
   case '()'                          
     t = s(1).subs;
-    if length(t)==2
+    if isa(t{1},'chebfun')
+      A = mtimes(A,t{1});
+      valid = true;
+    elseif length(t)==2
       % Will return first row, last row, or both only.
       firstrow = t{1}==1;
       lastrow = isinf(t{1}) & real(t{1})==0;
