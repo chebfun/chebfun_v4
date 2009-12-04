@@ -65,7 +65,7 @@ if any(any(exps<=-1)),
    % get the sign at these blowups
    expsl = find(exps(:,1)<=-1);
    expsr = find(exps(:,2)<=-1);
-   sgn = zeros(length(expsl)+length(expsr));
+   sgn = zeros(length(expsl)+length(expsr),1);
    for k = 1:length(expsl), sgn(k) = sign(f.funs(expsl(k)).vals(1)); end
    for k = 1:length(expsr), sgn(length(expsl)+k) = sign(f.funs(expsr(k)).vals(end)); end
    
