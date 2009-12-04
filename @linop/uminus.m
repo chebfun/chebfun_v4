@@ -1,8 +1,8 @@
 function C = uminus(A)
-% -  Negate a chebop.
+% -  Negate a linop.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 %  Last commit: $Author$: $Rev$:
 %  $Date$:

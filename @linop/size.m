@@ -1,11 +1,14 @@
 function varargout = size(A,dim)
-% SIZE   Return the block size of a chebop.
+% SIZE   Return the block size of a linop.
 % The usual syntax of SIZE applies.
 %
-% See also size.
+% See also size, linop/blkdiag.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 bs = A.blocksize;
 if nargin > 1

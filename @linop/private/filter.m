@@ -9,7 +9,10 @@ function v = filter(v,thresh)
 % with zero in order to nudge the constructor to stop.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 n = length(v);
 if n < 64, return, end

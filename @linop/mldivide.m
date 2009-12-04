@@ -1,5 +1,5 @@
 function C = mldivide(A,B)
-% \  Solve a chebop equation.
+% \  Solve a linear operator equation.
 % U = A\F solves the linear system A*U=F, where U and F are chebfuns and A
 % is a chebop. If A is a differential operator of order M, a warning will
 % be issued if A does not have M boundary conditions. In general the
@@ -24,10 +24,12 @@ function C = mldivide(A,B)
 %     u = u+du;
 %   end
 %
-% See also chebop/and, chebop/mtimes.
+% See also linop/and, linop/mtimes.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 % For future performance, store LU factors of realized matrices.
 persistent storage
@@ -36,23 +38,23 @@ use_store = cheboppref('storage');
 maxdegree = cheboppref('maxdegree');
 
 switch(class(B))
-  case 'chebop'
+  case 'linop'
     %TODO: Experimental, undocumented.
     dom = domaincheck(A,B);
-    C = chebop( A.varmat\B.varmat, [], dom, B.difforder-A.difforder );  
+    C = linop( A.varmat\B.varmat, [], dom, B.difforder-A.difforder );  
 
   case 'double'
     if length(B)==1  % scalar expansion
       C = mldivide(A,chebfun(B,domain(A),chebopdefaults));
     else
-      error('chebop:mldivide:operand','Use scalar or chebfun with backslash.')
+      error('linop:mldivide:operand','Use scalar or chebfun with backslash.')
     end
 
   case 'chebfun'
     dom = domaincheck(A,B(:,1));
     m = A.blocksize(2);
     if (m==1) && (A.numbc~=A.difforder)
-      warning('chebop:mldivide:bcnum',...
+      warning('linop:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
     
@@ -72,17 +74,17 @@ switch(class(B))
     end
     
   otherwise
-    error('chebop:mtimes:operand','Unrecognized operand.')
+    error('linop:mtimes:operand','Unrecognized operand.')
 end
 
   function v = value(x)
     N = length(x);
     if N > maxdegree+1
       msg = sprintf('Failed to converge with %i points.',maxdegree+1);
-      error('chebop:mldivide:NoConverge',msg)
+      error('linop:mldivide:NoConverge',msg)
     elseif N==1
-      error('chebop:mldivide:OnePoint',...
-        'Solution requested at a lone point. Check for a bug in the chebop definition.')
+      error('linop:mldivide:OnePoint',...
+        'Solution requested at a lone point. Check for a bug in the linop definition.')
     elseif N <= A.numbc+1
       % Too few points: force refinement
       v = ones(N,1); 

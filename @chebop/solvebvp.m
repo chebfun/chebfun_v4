@@ -1,6 +1,6 @@
 function [u nrmduvec] = solvebvp(N,rhs)
 % Begin by obtaining the nonlinop preferences
-pref = nonlinoppref;
+pref = cheboppref;
 restol = pref.restol;
 deltol = pref.deltol;
 maxIter = pref.maxiter;
@@ -44,7 +44,7 @@ rightEmpty = isempty(bcFunRight);
 % Construct initial guess if missing
 if isempty(N.guess) % No initial guess given
     if isempty(N.dom)
-        error('Error in nonlinear backslash. Neither domain nor initial guess is given')
+        error('chebop:solvebvp:noGuess','Neither domain nor initial guess is given.')
     else
         dom = N.dom;
         u = findguess(N);% Initial quasimatrix guess of 0 functions chebfun(0,dom);
@@ -97,11 +97,13 @@ while nrmdu > restol && normr > deltol && counter < maxIter
     % handle the rhs differently.
     if opType == 1
         A = diff(r,u) & bc;
-        A.scale = solNorm;
+        subsasgn(A,struct('type','.','subs','scale'),solNorm);
+        %A.scale = solNorm;
         delta = -(A\r);
     else
         A = problemFun & bc; % problemFun is a chebop
-        A.scale = sqrt(sum( sum(u.^2,1)));
+        subsasgn(A,struct('type','.','subs','scale'),solNorm);
+        %A.scale = sqrt(sum( sum(u.^2,1)));
         delta = -(A\(r-rhs));
     end
     

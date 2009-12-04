@@ -1,5 +1,5 @@
 function varargout = subsasgn(f,index,varargin)
-% SUBSASGN   Modify a nonlinop
+% SUBSASGN   Modify a chebop.
 %
 %     See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -11,5 +11,5 @@ switch index(1).type
     case '.'
         varargout = {set(f,idx,vin)};
     otherwise
-        error(['??? Unexpected index.type of ' index(1).type]);
+        error('chebop:subsasgn:indexType',['Unexpected index.type of ' index(1).type]);
 end

@@ -6,12 +6,16 @@ function Fout = mtimes(F1,F2)
 % returns the m-by-n matrix of pairwise inner products. F and G must have
 % the same domain.
 %
-% A=F*G, if F is Inf-by-m and G is m-by-Inf, results in a rank-m chebop A
+% A=F*G, if F is Inf-by-m and G is m-by-Inf, results in a rank-m linop A
 % such that A*U=F*(G*U) for any chebfun U. 
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+
 
 % Quasi-matrices product
 if (isa(F1,'chebfun') && isa(F2,'chebfun'))
@@ -42,7 +46,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         else
           mat = [];
         end
-        Fout = Fout + chebop(mat,op,d);
+        Fout = Fout + linop(mat,op,d);
       end
       chebfunpref('splitting',splitstate)
       chebfunpref('resampling',sampstate)

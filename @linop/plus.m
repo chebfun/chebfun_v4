@@ -1,29 +1,29 @@
 function C = plus(A,B)
-% +  Sum of chebops.
-% If A and B are chebops, A+B returns the chebop that represents their
+% +  Sum of linops.
+% If A and B are linops, A+B returns the linop that represents their
 % sum. If one is a scalar, it is interpreted as the scalar times the
 % identity operator.
 
-% Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
 
+% Copyright 2008 by Toby Driscoll.
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
 
 if isa(A,'double')
-    C=A; A=B; B=C;    % swap to make A a chebop
+    C=A; A=B; B=C;    % swap to make A a linop
 end
 
 % Scalar expansion using identity.
 if isnumeric(B)
-    if numel(B) == 0  % chebob + [] = chebop
+    if numel(B) == 0  % linop + [] = linop
         C = A; 
     elseif numel(B)==1
         if B==0, C=A; return
         elseif diff(A.blocksize)~=0
-            error('chebop:plus:expandsquare',...
-                'Scalars can be added only to square chebops.')
+            error('linop:plus:expandsquare',...
+                'Scalars can be added only to square linops.')
         end
         m = A.blocksize(1);
         B = B*blockeye(domain(A),m);
@@ -40,10 +40,10 @@ if isnumeric(B)
     return
 end
 
-if isa(B,'chebop') % Chebop + chebop
+if isa(B,'linop') % linop + linop
     dom = domaincheck(A,B);
 
-    % If one chebop happens to be the zero chebop, we return the other one 
+    % If one linop happens to be the zero linop, we return the other one 
     if iszero(A)
         C = B;
         return
@@ -54,16 +54,16 @@ if isa(B,'chebop') % Chebop + chebop
 
     
     if ~all(A.blocksize==B.blocksize)
-        error('chebop:plus:sizes','Chebops must have identical sizes.')
+        error('linop:plus:sizes','Chebops must have identical sizes.')
     end
     
     op = A.oparray + B.oparray;
     order = max( A.difforder, B.difforder );
-    C = chebop( A.varmat+B.varmat, op, dom, order );
+    C = linop( A.varmat+B.varmat, op, dom, order );
     C.blocksize = A.blocksize;
     
 else
-    error('chebop:plus:badoperand','Unrecognized operand.')
+    error('linop:plus:badoperand','Unrecognized operand.')
     
 end
 

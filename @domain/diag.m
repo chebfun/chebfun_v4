@@ -5,13 +5,14 @@ function A = diag(f,d)
 %
 % See also chebop, chebop/mtimes.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2008 by Toby Driscoll. 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 mat = @(n) spdiags( feval( @(x)f(trim(x)), chebpts(n,d) ) ,0,n,n);
 oper = @(u) chebfun(@(x) feval(f,x).*feval(u,x),d);
-A = chebop( mat, oper, d  );
+A = linop( mat, oper, d  );
 
 end
 

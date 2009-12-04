@@ -1,7 +1,7 @@
 function A = subsasgn(A,s,B)
-% SUBSASGN  Change boundary conditions or other properties of a chebop.
+% SUBSASGN  Change boundary conditions or other properties of a linop.
 % A.bc = BC assigns boundary conditions at both ends of the function domain
-% as described by a mnemonic or chebop. See CHEBOP/AND for the syntax.
+% as described by a mnemonic or linop. See linop/and for the syntax.
 %
 % A.lbc = BC or A.rbc = BC assigns a single boundary condition only at one 
 % end of the domain, using the same syntax to describe the condition. To
@@ -13,10 +13,13 @@ function A = subsasgn(A,s,B)
 % example in Newton's method where corrections are small compared to the
 % global solution.
 %
-% See also CHEBOP/AND, CHEBOP/MLDIVIDE.
+% See also linop.and, linop.mldivide.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 valid = false;
 switch s(1).type
@@ -51,11 +54,11 @@ switch s(1).type
             % Dirichlet case
             bc.(side)(idx).op = 'dirichlet';
             bc.(side)(idx).val = B;
-          elseif ischar(B) || isa(B,'chebop') || isa(B,'varmat')
+          elseif ischar(B) || isa(B,'linop') || isa(B,'varmat')
             bc.(side)(idx).op = B;
             bc.(side)(idx).val = 0;           
           elseif iscell(B) && isnumeric(B{2}) && ...
-              (isa(B{1},'chebop') || isa(B{1},'varmat') || ischar(B{1}) )  
+              (isa(B{1},'linop') || isa(B{1},'varmat') || ischar(B{1}) )  
             % General operator
             bc.(side)(idx).op = B{1};
             bc.(side)(idx).val = B{2};
@@ -73,7 +76,7 @@ switch s(1).type
 end
 
 if ~valid
-  error('chebop:subsasgn:invalid','Invalid assignment syntax.')
+  error('linop:subsasgn:invalid','Invalid assignment syntax.')
 elseif ~isequal(s(1).subs,'scale')
   A.ID = newIDnum();   % stored matrices have become invalid
 end

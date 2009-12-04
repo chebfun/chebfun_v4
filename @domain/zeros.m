@@ -11,15 +11,18 @@ function Z = zeros(d,m)
 %
 % See also DOMAIN/ONES, DOMAIN/EYE, CHEBOP.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2008 by The Chebfun Team.
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
-if nargin==1    % return chebop
+
+if nargin==1    % return linop
   if isempty(d)
-    Z = chebop;
+    Z = linop;
   else
-    Z = chebop( @(n) sparse(n,n), @(u) 0*u, d );
+    Z = linop( @(n) sparse(n,n), @(u) 0*u, d );
   end
 else            % return chebfun
   if isnumeric(d) % number given first

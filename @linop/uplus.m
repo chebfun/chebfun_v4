@@ -1,8 +1,8 @@
 function A = uplus(A)
-% +  Same chebop.
+% +  Same linop.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 %  Last commit: $Author$: $Rev$:
 %  $Date$:

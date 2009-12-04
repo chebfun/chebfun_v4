@@ -1,17 +1,17 @@
-function A = chebop(varargin)
-% CHEBOP  Chebop operator object constructor.
-% CHEBOP(F), where F is a function of one argument N that returns an NxN
-% matrix, returns a chebop object whose NxN finite realization is defined
+function A = linop(varargin)
+% LINOP  Linear chebop operator constructor.
+% LINOP(F), where F is a function of one argument N that returns an NxN
+% matrix, returns a linop object whose NxN finite realization is defined
 % by F.
 %
-% CHEBOP(F,L), where L is a function that can be applied to a chebfun,
-% defines an infinite-dimensional representation of the chebop as well. L
+% LINOP(F,L), where L is a function that can be applied to a chebfun,
+% defines an infinite-dimensional representation of the linop as well. L
 % may be empty.
 %
-% CHEBOP(F,L,D) specifies the domain D on which chebfuns are to be defined
+% LINOP(F,L,D) specifies the domain D on which chebfuns are to be defined
 % for this operator. If omitted, it defaults to [-1,1].
 %
-% CHEBOP(F,L,D,M) also defines a nonzero differential order for the
+% LINOP(F,L,D,M) also defines a nonzero differential order for the
 % operator.
 %
 % Normally one does not call CHEBOP directly. Instead, use one of the
@@ -32,11 +32,11 @@ A.lbc = struct([]);
 A.rbc = struct([]);
 A.numbc = 0;
 A.scale = 0;
-A.blocksize = [0 0];  % for block chebops
+A.blocksize = [0 0];  % for block linops
 A.ID = newIDnum();    % for storage of realizations/factorizations
 
 if nargin==0
-elseif nargin==1 && isa(varargin{1},'chebop')
+elseif nargin==1 && isa(varargin{1},'linop')
   A = varargin{1};
 else
   % First argument defines the matrix part.
@@ -62,5 +62,6 @@ else
 end
   
 superiorto('double');
-A = class(A,'chebop');
+nonlin = chebop(A.fundomain);
+A = class(A,'linop',nonlin);
 end

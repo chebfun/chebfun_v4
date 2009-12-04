@@ -8,11 +8,14 @@ function D = diff(d,varargin)
 % D = DIFF(R,G) or DIFF(R,M,G) is the mapped differentiation matrix with 
 % the map G.FOR from the map structure G.
 %
-% See also CHEBOP, CHEBFUN/DIFF.
+% See also chebop, linop, chebfun/diff.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 % defaults
 m = 1;
@@ -35,21 +38,21 @@ if nargin > 1
 end
 
 if isempty(d)
-    D = chebop;
+    D = linop;
     return
     
 elseif all(isfinite(d.ends))
     if strcmp(map.name,'linear')
-        D = chebop( @(n) diffmat(n)*2/length(d), @(u) diff(u), d, 1 );
+        D = linop( @(n) diffmat(n)*2/length(d), @(u) diff(u), d, 1 );
     else
-%         D = chebop( @(n) diag(1./map.der(chebpts(n)))*diffmat(n), @(u) diff(u), d, 1 );
-        D = chebop( @(n) barymat(map.for(chebpts(n))), @(u) diff(u), d, 1 );
+%         D = linop( @(n) diag(1./map.der(chebpts(n)))*diffmat(n), @(u) diff(u), d, 1 );
+        D = linop( @(n) barymat(map.for(chebpts(n))), @(u) diff(u), d, 1 );
     end
 else
     if isempty(map)
         map = maps({'unbounded'},d.ends); % use default unbounded map
     end
-    D = chebop( @(n) diag(1./map.der(chebpts(n)))*diffmat(n), @(u) diff(u), d, 1 );
+    D = linop( @(n) diag(1./map.der(chebpts(n)))*diffmat(n), @(u) diff(u), d, 1 );
 end
 
 if m > 1
@@ -74,8 +77,8 @@ function [D1 D2 D3 D4] = barymat(x,w)
 %  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author: nich $: $Rev: 509 $:
-%  $Date: 2009-06-23 19:22:15 +0100 (Tue, 23 Jun 2009) $:
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 N = length(x)-1;
 if N == 0

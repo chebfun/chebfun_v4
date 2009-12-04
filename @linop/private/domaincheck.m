@@ -1,7 +1,10 @@
 function dom = domaincheck(varargin)
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 % Are the intervals defined by the domains of the arguments the "same"?
 
@@ -13,7 +16,7 @@ end
 dom = domain(varargin{1});
 for k = 2:nargin
   if ~eq(domain(varargin{k}),dom)
-    error('chebop:domaincheck:nomatch','Function domains do not match.')
+    error('linop:domaincheck:nomatch','Function domains do not match.')
   end
 end
 

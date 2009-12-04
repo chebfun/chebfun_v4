@@ -1,6 +1,6 @@
 function J = diff(N,u)
 %DIFF    Jacobian (Frechet derivative) of nonlinear operator.
-% J = DIFF(N,U) for a nonlinop N and chebfun U, returns a chebop
+% J = DIFF(N,U) for a chebop N and chebfun U, returns a chebop
 % represening the Jacobian (i.e., the Frechet derivative) of N evaluated at
 % U. More specifically, J is the operator such that 
 %

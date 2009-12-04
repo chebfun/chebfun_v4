@@ -1,8 +1,11 @@
 function A = horzcat(varargin)
-% HORZCAT   Horizontally concatenate chebops.
+% HORZCAT   Horizontally concatenate linops.
 
+% See http://www.maths.ox.ac.uk/chebfun.
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 % Take out empties.
 empty = cellfun( @(A) isempty(A), varargin );
@@ -17,7 +20,7 @@ end
 % Size compatability.
 bs1 = cellfun( @(A) A.blocksize(1), varargin );
 if any(bs1~=bs1(1))
-  error('chebop:horzcat:badsize','Each block must have the same number of rows.')
+  error('linop:horzcat:badsize','Each block must have the same number of rows.')
 end
 
 % Domain compatability.
@@ -34,7 +37,7 @@ op = horzcat( op{:} );
 % We disable differential order.
 difford = 0;
 
-A = chebop( V, op, dom, difford );
+A = linop( V, op, dom, difford );
 
 % Update the block size.
 bs2 = cellfun( @(A) A.blocksize(2), varargin );

@@ -1,6 +1,6 @@
 function varargout = eigs(A,varargin)
-% EIGS  Find selected eigenvalues and eigenfunctions of a chebop.
-% D = EIGS(A) returns a vector of 6 eigenvalues of the chebop A. EIGS will
+% EIGS  Find selected eigenvalues and eigenfunctions of a linop.
+% D = EIGS(A) returns a vector of 6 eigenvalues of the linop A. EIGS will
 % attempt to return the eigenvalues corresponding to the least oscillatory
 % eigenfunctions. (This is unlike the built-in EIGS, which returns the 
 % largest eigenvalues by default.)
@@ -9,7 +9,7 @@ function varargout = eigs(A,varargin)
 % eigenvalues, and a quasimatrix V of the corresponding eigenfunctions.
 %
 % EIGS(A,B) solves the generalized eigenproblem A*V = B*V*D, where B
-% is another chebop. 
+% is another linop. 
 %
 % EIGS(A,K) and EIGS(A,B,K) find the K smoothest eigenvalues. 
 %
@@ -34,16 +34,19 @@ function varargout = eigs(A,varargin)
 %   format long, sqrt(-diag(D))  % integers, to 14 digits
 %
 % See also EIGS, EIG.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 % Parsing.
 B = [];  k = 6;  sigma = [];
 gotk = false;
 j = 1;
 while (nargin > j)
-  if isa(varargin{j},'chebop')
+  if isa(varargin{j},'linop')
     B = varargin{j};
   else
     % k must be given before sigma.
@@ -60,7 +63,7 @@ end
 maxdegree = cheboppref('maxdegree');
 m = A.blocksize(2);
 if m~=A.blocksize(1)
-  error('chebop:eigs:notsquare','Block size must be square.')
+  error('linop:eigs:notsquare','Block size must be square.')
 end
 
 if isempty(sigma)
@@ -130,7 +133,7 @@ end
       msg = sprintf(...
         'No convergence with %i points. Check sigma, or ask for fewer modes.',...
         maxdegree+1);
-      error('chebop:eigs:NoConverge',msg)
+      error('linop:eigs:NoConverge',msg)
     end
     if N-A.numbc < k
       % Not enough eigenvalues. Return a sawtooth to ensure refinement.

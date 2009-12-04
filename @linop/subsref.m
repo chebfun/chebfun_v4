@@ -1,11 +1,11 @@
 function A = subsref(A,s)
-%SUBSREF  Extract information from a chebop.
-% A{N} returns a realization of the chebop A at dimension N. If N is
+%SUBSREF  Extract information from a linop.
+% A{N} returns a realization of the linop A at dimension N. If N is
 % infinite, the functional form of the operator is returned as a function
 % handle. If N is finite, any boundary conditions on A will be applied to
 % some rows of A. (This is equivalent to the output of FEVAL(A,N,'bc').)
 %
-% A(I,J) returns a chebop that selects certain rows or columns from the
+% A(I,J) returns a linop that selects certain rows or columns from the
 % finite-dimensional realizations of A. A(1,:) and A(end,:) are examples of
 % valid syntax. Normally this syntax is not needed at the user level, but 
 % it may be useful for expressing nonseparated boundary conditions, for
@@ -20,10 +20,10 @@ function A = subsref(A,s)
 % A.scale returns the global scale set for linear system solution, as
 % described in the documentation for mldivide.
 %
-% See also chebop/subsasgn, chebop/feval, chebop/and.
+% See also linop/subsasgn, linop/feval, linop/and.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
 
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
@@ -47,7 +47,7 @@ switch s(1).type
       if isequal(t{2},':') && ~isempty(pts)
         mat = subsref(A.varmat,s);
         op = @(u) feval(A*u,pts);
-        A = chebop(mat,op,A.fundomain );
+        A = linop(mat,op,A.fundomain );
         valid = true;
       end
     elseif length(t)==1 && isnumeric(t{1})  % return a realization (feval)
@@ -87,5 +87,5 @@ switch s(1).type
  end
 
 if ~valid
-  error('chebop:subsref:invalid','Invalid reference syntax.')
+  error('linop:subsref:invalid','Invalid reference syntax.')
 end

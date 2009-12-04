@@ -16,7 +16,10 @@ function A = setbc(A,bc)
 % difforder=m. 
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 I = eye(A.fundomain);
 D = diff(A.fundomain);
@@ -31,7 +34,7 @@ if ~isstruct(bc)
   elseif iscell(bc) && length(bc)==2
     type = bc{1};  val = bc{2};
   else
-    error('chebop:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
+    error('linop:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
   end
   bc = struct('left',struct([]),'right',struct([]));
   switch(lower(type))
@@ -41,7 +44,7 @@ if ~isstruct(bc)
         if A.difforder > 1
           bc.right = struct('op',I,'val',val);
           if A.difforder > 2
-            warning('chebop:setbc:order',...
+            warning('linop:setbc:order',...
               'Dirichlet may not be appropriate for differential order greater than 2.')
           end
         end
@@ -52,7 +55,7 @@ if ~isstruct(bc)
         if A.difforder > 1
           bc.right = struct('op',D,'val',val);
           if A.difforder > 2
-            warning('chebop:setbc:order',...
+            warning('linop:setbc:order',...
               'Neumann may not be appropriate for differential order greater than 2.')
           end
         end
@@ -70,7 +73,7 @@ if ~isstruct(bc)
         B = D.varmat*B;
       end
     otherwise
-      error('chebop:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
+      error('linop:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
   end
 end
 

@@ -4,7 +4,10 @@ function [B,c,rowidx] = bdyreplace(A,n)
 % rows of A*u=f that should be replaced by them.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 m = size(A,2);
 B = zeros(A.numbc,n*m);
@@ -17,7 +20,7 @@ q = 1;
 for k = 1:length(A.lbc)
   op = A.lbc(k).op;
   if size(op,2)~=m
-    error('chebop:bdyreplace:systemsize',...
+    error('linop:bdyreplace:systemsize',...
       'Boundary conditions not consistent with system size.')
   end
   T = feval(op,n);
@@ -35,7 +38,7 @@ elimnext = n:n:n*m;  % in each variable, next row to eliminate
 for k = 1:length(A.rbc)
   op = A.rbc(k).op;
   if size(op,2)~=m
-    error('chebop:bdyreplace:systemsize',...
+    error('linop:bdyreplace:systemsize',...
       'Boundary conditions not consistent with system size.')
   end
   T = feval(op,n);

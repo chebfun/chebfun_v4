@@ -40,7 +40,7 @@ end
 
 if nargout == 3
   x = chebfun(@(x) x,d);
-  N = nonlinop(d);
+  N = chebop(d);
 end
 
 end

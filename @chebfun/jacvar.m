@@ -16,6 +16,12 @@ function varargout = jacvar(varargin)
 %
 % See also JACOBIAN
 
+% Copyright 2008 by Asgeir Birkisson. 
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+
 % SKIP?
 % Begin by making sure all chebfuns passed in are column vectors. If not we
 % transpose them in order to ensure we will only work with column vectors.
@@ -82,7 +88,7 @@ if isnumeric(jac)  % scalars given to represent Jacobians
         end
         F(i).jacobian = anon('@(u) J',{'J'},{J});
     end
-else   % chebops given for the Jacobians
+else   % linops given for the Jacobians
     % Make copies if necessary (and wrap in cell to do it).
     if ~iscell(jac)
         jac = repmat({jac},[numel(F),1]);

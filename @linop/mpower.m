@@ -1,10 +1,13 @@
 function C = mpower(A,m)
-% ^   Repeated application of a chebop.
-% For chebop A and nonnegative integer M, A^M returns the chebop
+% ^   Repeated application of a linop.
+% For linop A and nonnegative integer M, A^M returns the linop
 % representing M-fold application of A.
 
+% See http://www.maths.ox.ac.uk/chebfun.
+
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 if ~((numel(m)==1)&&(m==round(m))&&(m>=0))
   error('oparray:mpower:argument','Exponent must be a nonnegative integer.')
@@ -16,7 +19,7 @@ if s(1)~=s(2)
 end
 
 if (m > 0) 
-  C = chebop(A.varmat^m, A.oparray^m, A.fundomain );
+  C = linop(A.varmat^m, A.oparray^m, A.fundomain );
   C.difforder = m*A.difforder;
   C.blocksize = s;
 else

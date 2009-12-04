@@ -1,19 +1,18 @@
 function C = mtimes(A,B)
 % *  Chebop multiplication or operator application.
-% If A and B are chebops, or if one is scalar and the other is a chebop,
-% then A*B is a chebop that represents their composition/product.
+% If A and B are linops, or if one is scalar and the other is a linop,
+% then A*B is a linop that represents their composition/product.
 %
-% If A is a chebop and U is a chebfun, then A*U applies the operator A to
+% If A is a linop and U is a chebfun, then A*U applies the operator A to
 % the function U. If the infinite-dimensional form of A is known, it is
 % used. Otherwise, the application is done through finite matrix-vector
 % multiplications until the chebfun constructor is satisfied with
 % convergence. In all cases, boundary conditions on A are ignored.
 %
-% See also chebop/mldivide.
+% See also linop/mldivide.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
-
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
@@ -22,52 +21,52 @@ if isempty(storage), storage = struct([]); end
 use_store = cheboppref('storage');
 
 if isa(A,'double')
-   % We allow double*chebop if the inner dimensions match--i.e., the chebop
+   % We allow double*linop if the inner dimensions match--i.e., the linop
    % is really a functional. Or (below) if A is scalar.
   [m,n] = size(A);
   if max(m,n)>1 && n==size( feval(B,11), 1 )
     mat = A*B.varmat;
     op = A*B.oparray;
     order = B.difforder;
-    C = chebop(mat,op,domain(B),order);
+    C = linop(mat,op,domain(B),order);
     return
   else
-    C=A; A=B; B=C;    % swap to make sure A is a chebop
+    C=A; A=B; B=C;    % swap to make sure A is a linop
   end
 end
 
 switch(class(B))
-  case 'double'     % chebop * scalar
-    if isempty(B), C = []; return, end  % chebop*[] = []
+  case 'double'     % linop * scalar
+    if isempty(B), C = []; return, end  % linop*[] = []
     [m n] = size(B);
     if max(m,n) == 1
       C = copy(A);
       C.varmat = B*C.varmat;
       C.oparray = B*C.oparray;
     elseif n == 1
-      error('chebop:mtimes:numericvector','Chebop-vector multiplication is not well defined.')
+      error('linop:mtimes:numericvector','Chebop-vector multiplication is not well defined.')
     else
-      error('chebop:mtimes:numericmatrix','Chebop-matrix multiplication is not well defined.')
+      error('linop:mtimes:numericmatrix','Chebop-matrix multiplication is not well defined.')
     end
-  case 'chebop'     % chebop * chebop
+  case 'linop'     % linop * linop
     dom = domaincheck(A,B);
     if size(A,2) ~= size(B,1)
-      error('chebop:mtimes:size','Inner block dimensions must agree.')
+      error('linop:mtimes:size','Inner block dimensions must agree.')
     end
     mat = A.varmat * B.varmat;
     op =  A.oparray * B.oparray;
     order = A.difforder + B.difforder;
-    C = chebop(mat,op,dom,order);
+    C = linop(mat,op,dom,order);
     C.blocksize = [size(A,1) size(B,2)];
 
-  case 'chebfun'    % chebop * chebfun
+  case 'chebfun'    % linop * chebfun
     dom = domaincheck(A,B);
     if isinf(size(B,2))
-      error('chebop:mtimes:dimension','Inner dimensions do not agree.')
+      error('linop:mtimes:dimension','Inner dimensions do not agree.')
     end
    
     if (A.blocksize(2) > 1) && (A.blocksize(2)~=size(B,2))
-      error('chebop:mtimes:blockdimension',...
+      error('linop:mtimes:blockdimension',...
         'Number of column blocks must equal number of quasimatrix columns.')
     end
     
@@ -102,7 +101,7 @@ switch(class(B))
     end
            
   otherwise
-    error('chebop:mtimes:badoperand','Unrecognized operand.')
+    error('linop:mtimes:badoperand','Unrecognized operand.')
 end
 
   function v = value(x,f)

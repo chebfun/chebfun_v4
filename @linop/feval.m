@@ -1,5 +1,7 @@
 function [M,B,c,rowreplace] = feval(A,n,usebc)
-% FEVAL  Realization of a chebop at fixed size.
+% FEVAL  Apply or realize a linop.
+% FEVAL(A,U) for chebfun U applies A to U; i.e., it returns A*U.
+%
 % M = FEVAL(A,N) for integer N returns the matrix associated with A at 
 % size N.
 %
@@ -9,10 +11,13 @@ function [M,B,c,rowreplace] = feval(A,n,usebc)
 %
 % FEVAL(A,Inf) returns the functional form of A if it is available.
 %
-% See also chebop/subsref.
+% See also linop/subsref.
+% See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 % For future performance, store realizations.
 persistent storage
@@ -21,15 +26,20 @@ use_store = true; %cheboppref('storage');
 
 usebc = (nargin > 2) && strcmpi(usebc,'bc');
 
+if isa(n,'chebfun')  % apply to chebfun
+  M = A*n;
+  return
+end
+
 if isinf(n)   % function
   if ~isempty(A.oparray)
     M = A.oparray;
     if A.numbc && usebc > 0
-      warning('chebop:feval:funbc',...
+      warning('linop:feval:funbc',...
         'Boundary conditions are not imposed in the functional form.')
     end
   else
-    error('chebop:feval:nofun',...
+    error('linop:feval:nofun',...
       'This operator does not have a functional form defined.')
   end
 

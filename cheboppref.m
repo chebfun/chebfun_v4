@@ -9,9 +9,14 @@ function varargout = cheboppref(varargin)
 %
 % CHEBOPPREF(PREFNAME,PREFVAL) sets the preference PREFNAME to the value
 % PREFVAL.
+%
+% See also chebfunpref.
 
+% Copyright 2008-2009 by Toby Driscoll and Asgeir Birkisson.
+% See http://www.maths.ox.ac.uk/chebfun.
 
-% Toby Driscoll, 31 March 2008.
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 persistent prefs
 
@@ -19,13 +24,27 @@ if isempty(prefs)  % first call, default values
   prefs.maxdegree = 1024;
   prefs.storage = true;
   prefs.maxstorage = 50e6;
+  prefs.plotting = 'off';
+  prefs.restol= 1e-10;
+  prefs.deltol = 1e-10;
+  prefs.damped = 'off';
+  prefs.maxiter = Inf;
 end
 
 % Probably should use some nicer error catching...
-if nargin==0
-  varargout = { prefs };
-elseif nargin==1
-  varargout = { prefs.(varargin{1}) };
-else
-  prefs.(varargin{1}) = varargin{2};
+if nargin==0  % return structure
+    varargout = { prefs };
+elseif nargin==1  % return value  
+    varargout = { prefs.(varargin{1}) };
+else  % set value
+    prop = lower(varargin{1});
+    newVal = varargin{2};
+    switch prop
+        case 'tol'
+            prefs.restol = newVal;
+            prefs.deltol = newVal;
+        otherwise
+            prefs.(prop) = newVal;
+
+    end
 end

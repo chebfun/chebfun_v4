@@ -2,7 +2,7 @@ function [u nrmduvec] = solvebvp_newton_damped(N,rhs)
 % Damped Newton iteration. More details will follow very soon.
 
 % Begin by obtaining the nonlinop preferences
-pref = nonlinoppref;
+pref = cheboppref;
 restol = pref.restol;
 deltol = pref.deltol;
 maxIter = pref.maxiter;

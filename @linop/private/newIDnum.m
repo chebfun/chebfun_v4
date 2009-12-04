@@ -6,7 +6,10 @@ function newID = newIDnum()
 % are left uncleared, but this possibility seems remote.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 persistent ID
 if isempty(ID), ID = 0; end

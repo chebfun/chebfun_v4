@@ -40,12 +40,14 @@ function F = fred(k,d,onevar)
 %   %(Elapsed time is 0.205714 seconds.)
 %
 %  See also volt, chebop.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by Toby Driscoll and Folkmar Bornemann.
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
-% $Id$
 
-F = chebop(@matrix,@op,d);
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+
+F = linop(@matrix,@op,d);
 
 % Functional form. At each x, do an adaptive quadrature.
   function v = op(u)

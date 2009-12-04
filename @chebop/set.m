@@ -1,5 +1,5 @@
 function F = set(F,varargin)
-% SET Set nonlinop properties.
+% SET Set chebop properties.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -26,8 +26,7 @@ while length(propertyArgIn) >= 2,
             elseif isa(val,'chebop') || (isa(val,'cell') && isa(val{1},'chebop'))
                 F.optype = 'chebop';
             else
-                error(['nonlinop:set: Illegal type of operator. Allowed types are ' ...
-                    'anonymous functions and chebops.']);
+                error('chebop:set:opType','Operator must by a function handle or linop.')
             end
             F.op = val;
         case 'guess'
@@ -38,7 +37,7 @@ while length(propertyArgIn) >= 2,
                 F.guess = val;
             end
         otherwise
-            error('Unknown nonlinop property')
+            error('Unknown chebop property')
     end
 end
 end

@@ -1,11 +1,14 @@
 function s = char(A)
-% CHAR  Convert chebop to pretty-printed string.
+% CHAR  Convert linop to pretty-printed string.
 
 % Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun.
+
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 if isempty(A)
-  s = '   (empty chebop)';
+  s = '   (empty linop)';
 else
   s = '   operating on chebfuns defined on:';
   s = char(s,' ');

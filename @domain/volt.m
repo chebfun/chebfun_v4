@@ -25,13 +25,14 @@ function V = volt(k,d,onevar)
 % u = (1+diag(x)*V) \ sin(exp(3*x)); 
 %
 %  See also fred, chebop.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by Toby Driscoll.
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
-% $Id$
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
 
 C = cumsum(d);
-V = chebop(@matrix,@op,d,-1);
+V = linop(@matrix,@op,d,-1);
 
 % Functional form. At each x, do an adaptive quadrature.
   function v = op(u)

@@ -1,5 +1,5 @@
 function val = get(N, propName)
-% GET   Get nonlinop properties.
+% GET   Get chebop properties.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 

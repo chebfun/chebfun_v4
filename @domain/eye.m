@@ -3,16 +3,19 @@ function I = eye(d)
 % EYE(D) returns a chebop representing the identity for functions defined 
 % on the domain D.
 %
-% See also CHEBOP.
+% See also chebop, linop.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
 
+%  Last commit: $Author$: $Rev$:
+%  $Date$:
+
 if isempty(d)
-  I = chebop;
+  I = linop;
 else
-  I = chebop( @speye, @(u) u, d );
+  I = linop( @speye, @(u) u, d );
 end
 
 end
