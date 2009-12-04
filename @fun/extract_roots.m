@@ -7,12 +7,6 @@ exps = get(f,'exps');
 % Get the map
 map = f.map;
 
-% if ~strcmp(map.name,'linear')
-%     warning('CHEBFUN:extract_roots:linear', ...
-%         'Extract roots currently only works for a linear map!'); 
-%     f = f; 
-%     return
-% end
 
 % Tolerance for a root
 tol = 1000*chebfunpref('eps')*f.scl.v;
@@ -23,7 +17,6 @@ if all(f0 > tol),
     f.exps = exps;
     return
 end
-
 
 if strcmp(map.name,'linear')
 % Linear case is nice
@@ -70,7 +63,7 @@ elseif ~all(isinf(d))
         else
             break
         end
-        % Not sure why we need to scale.
+        % Not sure why we need to scale here and not above.
         % The 1.5*f.n is hand-wavy.
         pref = chebfunpref; pref.blowup = 0; pref.n = f.n;
         f = fun(@(x) newfun(x,f,d,sgn)*diff(d)/2,map,pref);

@@ -18,6 +18,9 @@ newexps = exps;
 newexps(mask) = exps(mask) - floor(exps(mask));
 pow = exps-newexps;
 
+ends = map.par(1:2);
+C = (2/diff(ends)).^sum(exps-newexps);
+
 if strcmp(map.name,'linear')
     f = prolong(f,f.n+sum(pow));
     x = get(f,'points');
@@ -28,4 +31,5 @@ else
     mult = fun(@(x) (x-d(1)).^pow(1).*(d(2)-x).^pow(2),map);
     f = f.*mult;
 end
+f = C*f;    
 f.exps = newexps;

@@ -25,8 +25,10 @@ if length(g2.vals) == 1 && ~any(g2.exps)
     g1 = mtimes(g1,g2.vals); return
 end
 
-% Deal with exps (just have to add!)
-exps = sum([g1.exps ; g2.exps]);
+% Deal with exps 
+if any(g2.exps<0), g1 = extract_roots(g1); end
+if any(g1.exps<0), g2 = extract_roots(g2); end
+exps = sum([g1.exps ; g2.exps]); % (just have to add!)
  
 % Deal with maps
 % If two maps are different, call constructor.
