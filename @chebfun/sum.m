@@ -61,26 +61,20 @@ if isempty(f), out = 0; return, end
 % Things can go wrong with blowups.
 exps = get(f,'exps');
 if any(any(exps<=-1)),
-   % The answer is infinite, and the sign is determined by the direction
-   % of the blowup at the strongest poles
-    
-   % find these poles
-   minexp = min(min(exps));
-   % find all occurances
-   minl = find(exps(:,1)==minexp);
-   minr = find(exps(:,2)==minexp);
-   
+
    % get the sign at these blowups
-   sgn = zeros(length(minl)+length(minr));
-   for k = 1:length(minl), sgn(k) = sign(f.funs(minl(k)).vals(1)); end
-   for k = 1:length(minr), sgn(k) = sign(f.funs(minr(k)).vals(end)); end
+   expsl = find(exps(:,1)<=-1);
+   expsr = find(exps(:,2)<=-1);
+   sgn = zeros(length(expsl)+length(expsr));
+   for k = 1:length(expsl), sgn(k) = sign(f.funs(expsl(k)).vals(1)); end
+   for k = 1:length(expsr), sgn(length(expsl)+k) = sign(f.funs(expsr(k)).vals(end)); end
    
    % If these aren't all the same, then we can't compute
    if length(unique(sgn)) > 1 || any(isinf(get(f,'ends')))
        out = NaN;
-        warning('CHEBFUN:sum:NaN',['Integrand diverges to infinity on domain ', ...
-        'and chebfun cannot compute its sum.']);
-       return
+%         warning('CHEBFUN:sum:NaN',['Integrand diverges to infinity on domain ', ...
+%         'and chebfun cannot compute its sum. (Principal value integrals are not ', ...
+%         'currently supported).']);
    else
        % Here we can determine the sign of the blowup
        out = sgn(1).*inf;
