@@ -21,21 +21,18 @@ function varargout = cheboppref(varargin)
 persistent prefs
 
 if isempty(prefs)  % first call, default values
-  prefs.maxdegree = 1024;
-  prefs.storage = true;
-  prefs.maxstorage = 50e6;
-  prefs.plotting = 'off';
-  prefs.restol= 1e-10;
-  prefs.deltol = 1e-10;
-  prefs.damped = 'off';
-  prefs.maxiter = Inf;
+    prefs = initPrefs();
 end
 
 % Probably should use some nicer error catching...
 if nargin==0  % return structure
     varargout = { prefs };
-elseif nargin==1  % return value  
-    varargout = { prefs.(varargin{1}) };
+elseif nargin==1  % return value
+    if strcmp(varargin{1},'factory')
+        prefs = initPrefs;
+    else
+        varargout = { prefs.(varargin{1}) };
+    end
 else  % set value
     prop = lower(varargin{1});
     newVal = varargin{2};
@@ -45,6 +42,18 @@ else  % set value
             prefs.deltol = newVal;
         otherwise
             prefs.(prop) = newVal;
-
+            
     end
+end
+end
+function prefs = initPrefs()
+    prefs.maxdegree = 1024;
+    prefs.storage = true;
+    prefs.maxstorage = 50e6;
+    prefs.plotting = 'off';
+    prefs.restol= 1e-10;
+    prefs.deltol = 1e-10;
+    prefs.damped = 'off';
+    prefs.maxiter = Inf;
+    prefs.maxstag = 3;
 end

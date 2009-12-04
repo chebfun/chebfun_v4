@@ -4,6 +4,8 @@ pref = cheboppref;
 restol = pref.restol;
 deltol = pref.deltol;
 maxIter = pref.maxiter;
+maxStag = pref.maxstag;
+% currEps = chebfunpref('eps');
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(N.op)
@@ -71,8 +73,11 @@ end
 nrmdu = Inf;
 normr = Inf;
 nrmduvec = zeros(10,1);
+normrvec = zeros(10,1);
+
 alpha = 1;      % Stepsize in Newton iteration
-while nrmdu > restol && normr > deltol && counter < maxIter
+stagCounter = 0; % Counter that checks whether we are stagnating
+while nrmdu > restol && normr > deltol && counter < maxIter && stagCounter < maxStag
     %     u = jacvar(u);
     % Check whether a boundary happens to have no BC attached
     if leftEmpty
@@ -97,12 +102,12 @@ while nrmdu > restol && normr > deltol && counter < maxIter
     % handle the rhs differently.
     if opType == 1
         A = diff(r,u) & bc;
-        subsasgn(A,struct('type','.','subs','scale'),solNorm);
+        subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
         %A.scale = solNorm;
         delta = -(A\r);
     else
         A = problemFun & bc; % problemFun is a chebop
-        subsasgn(A,struct('type','.','subs','scale'),solNorm);
+        subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
         %A.scale = sqrt(sum( sum(u.^2,1)));
         delta = -(A\(r-rhs));
     end
@@ -135,6 +140,14 @@ while nrmdu > restol && normr > deltol && counter < maxIter
     end
     counter = counter +1;
     nrmduvec(counter) = nrmdu;
+    normrvec(counter) = normr;
+    
+    % Avoid stagnation.
+    if nrmdu > min(nrmduvec(1:counter)) && normr > min(normrvec(1:counter))
+        stagCounter = stagCounter+1;
+    else
+        stagCounter = max(0,stagCounter-1);
+    end
 end
 
 % Function that measures how far away we are from the solving the BVP.
@@ -169,4 +182,10 @@ end
 
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
+
+% Issue a warning message if stagnated. Should this in output argument
+% (i.e. flag)?
+if stagCounter == maxStag
+    warning('Nonlinop:Solvebvp: Function exited with stagnation flag.')
+end
 end
