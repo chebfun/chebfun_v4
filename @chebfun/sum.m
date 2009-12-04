@@ -58,18 +58,29 @@ function out = sumcol(f)
 
 if isempty(f), out = 0; return, end
 
-exps = get(f,'exps');
-if any(exps(:)<=-1),
-    out = inf; % We could probably figure out the sign though?
+% Things can go wrong with blowups.
+if any(any(get(f,'exps'))<=-1),
     warning('CHEBFUN:sum:inf',['Integrand diverges to infinity on domain. ', ...
-        'Assuming integral is infinite.']);
-    return
+        'Result may be incorrect']);
 end
 
-out = 0;
+out = 0; sgninf = 0;
 for i = 1:f.nfuns
+    % Sum on each fun
     out = out + sum(f.funs(i));
+    
+    % Deal with blowups
+    if isinf(out)
+        if sgninf == 0, 
+            sgninf = sign(out);
+        elseif sign(out) ~= sgninf
+            out = NaN;
+        end
+    end
+    if isnan(out), return, end
 end
+
+% Deal with impulses
 if not(isempty(f.imps(2:end,:)))
     out = out + sum(f.imps(end,:));
 end

@@ -8,18 +8,32 @@ function out = sum(g)
 % Last commit: $Author: rodp $: $Rev: 537 $:
 % $Date: 2009-07-17 16:15:29 +0100 (Fri, 17 Jul 2009) $:
 
+% Deal with divergent integrands
+exps = g.exps;
+if any(exps<=-1)
+    sl = sign(g.vals(1));    sr = sign(g.vals(end));
+    if all(exps <= -1)
+        if  sl == sr
+            out = sl.*inf;
+        else
+            out = NaN;
+            return
+        end
+    elseif (exps(1) <= -1 && sl == -1) || (exps(2) <= -1 && sr == -1)
+        out = -inf;
+    else
+        out = inf;
+    end
+%      warning('CHEBFUN:sum:inf',['Integrand diverges to infinity on domain. ', ...
+%     'Assuming integral is infinite.']);
+    return
+end
+
 % Linear map (simple variable substitution)
 if strcmp(g.map.name,'linear')
     if ~any(g.exps)
         out = sum_unit_interval(g)*g.map.der(1);
     else
-        exps = g.exps;
-        if any(exps<=-1)
-             warning('CHEBFUN:sum:inf',['Integrand diverges to infinity on domain. ', ...
-            'Assuming integral is infinite.']);
-            out = inf;
-            return
-        end
         [x w] = jacpts(ceil(g.n/2)+1,exps(2),exps(1));
         % (Our exps are the reverse of Jacobi polynomials,
         %   i.e. exps(1) = beta, exps(2) = alpha.)
