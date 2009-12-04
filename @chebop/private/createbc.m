@@ -10,7 +10,7 @@ elseif isnumeric(bcArg)
     bcOut = @(u) u-val;
 elseif iscell(bcArg) % BC-s of the form {1, @(u)diff(u)};
     % Need to convert the doubles to anonymous functions.
-    bcOut = cell2anon_fun(bcArg);
+    bcOut = cellfun(@createbc,bcArg,'uniform',false);
 else
     bcOut = bcArg;
 end

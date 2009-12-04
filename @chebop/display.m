@@ -13,6 +13,7 @@ if ~loose
   s( all(isspace(s),2), : ) = [];  % remove blank lines
 end
 disp(s)
+if loose, disp(' '), end
 
 end
 

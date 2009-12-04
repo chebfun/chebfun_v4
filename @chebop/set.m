@@ -14,12 +14,23 @@ while length(propertyArgIn) >= 2,
         case 'dom'
             F.dom = val;
         case 'bc'
-            F.lbc = createbc(val);
-            F.rbc = F.lbc;
+          if isa(val,'struct')  % given .left and .right
+            if isfield(val,'left')
+              F = set(F,'lbc',val.left);
+             end
+            if isfield(val,'right')
+              F = set(F,'rbc',val.right);
+            end
+          else  % given same for both sides
+            F = set(F,'lbc',val);
+            F = set(F,'rbc',val);
+          end
         case 'lbc'
             F.lbc = createbc(val);
+            F.lbcshow = val;
         case 'rbc'
             F.rbc = createbc(val);
+            F.rbcshow = val;
         case 'op'
             if isa(val,'function_handle') || (isa(val,'cell') && isa(val{1},'function_handle'))
                 F.optype = 'anon_fun';

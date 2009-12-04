@@ -8,35 +8,27 @@ if isnumeric(default_N)
 end
 N = default_N;
 
-switch nargin
-    case 0
-        % Empty constructor
-    case 1
-        N.dom = varargin{1};
-    case 2
-        N.dom = varargin{1};
-        N.op = varargin{2};
-    case 3
-        N.dom = varargin{1};
-        N.op = varargin{2};
-        N.lbc = createbc(varargin{3});
-    case 4        
-        N.dom = varargin{1};
-        N.op = varargin{2};
-        N.lbc = createbc(varargin{3});
+if nargin > 0
+  N.dom = varargin{1};
+  if nargin > 1
+    N.op = varargin{2};
+    if nargin > 2
+      N.lbc = createbc(varargin{3});
+      N.lbcshow = varargin{3};
+      if nargin > 3
         N.rbc = createbc(varargin{4});
-    case 5       
-        N.dom = varargin{1};
-        N.op = varargin{2};
-        N.lbc = createbc(varargin{3});
-        N.rbc = createbc(varargin{4});
-        
-        % Convert constant initial guesses to chebfuns
-        if isnumeric(varargin{5})
+        N.rbcshow = varargin{4};
+        if nargin > 4
+          % Convert numerical initial guesses to chebfuns
+          if isnumeric(varargin{5})
             N.guess = chebfun(varargin{5},dom);
-        else
+          else
             N.guess = varargin{5};
+          end
         end
+      end
+    end
+  end
 end
 
 % Determine the type of the operator
@@ -59,7 +51,9 @@ N = struct([]);
 N(1).dom =[];
 N(1).op = [];
 N(1).lbc = [];
+N(1).lbcshow = [];
 N(1).rbc = [];
+N(1).rbcshow = [];
 N(1).guess = [];
 N(1).optype = [];
 end

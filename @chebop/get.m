@@ -11,7 +11,7 @@ switch propName
     case 'op'
         val = N.op;
     case 'bc'
-        val = struct('left',N.lbc,'right',N.rbc);
+        val = struct('left',{N.lbcshow},'right',{N.rbcshow});
     case 'lbc'
         val = N.lbc;
     case 'rbc'
