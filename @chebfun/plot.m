@@ -170,6 +170,15 @@ if isempty(jvaldata), jvaldata = {[]}; end
 
 h = ishold;
 
+% getting current axes
+if all(~isinf([bot top])) && infy
+    try
+        yl = get(gca,'ylim');
+        bot = min(yl(1),bot);
+        top = max(yl(2),top);
+    end
+end
+
 % dummy plot for legends
 hdummy = plot(dummydata{:}); hold on
 
@@ -211,9 +220,6 @@ end
 if all(~isinf([bot top])) && infy
     try
         xl = get(gca,'xlim');
-        yl = get(gca,'ylim');
-        bot = min(yl(1),bot);
-        top = max(yl(2),top);
         axis([xl(1) xl(2) bot top]);
     end
 end
