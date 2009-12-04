@@ -59,12 +59,17 @@ while any(sad)
     % If a fun is sad in a subinterval, split this subinterval.
     i = find(sad,1,'first');
     a = ends(i); b = ends(i+1);
-    
     oldfunlength = funs(i).n;
     
     % Look for an edge between [a,b].
     if ~isinf(norm([a,b],inf))
-        edge = detectedge(op,a,b,scl.h,scl.v);
+        ex = funs(i).exps;
+        if any(ex)            
+            edge = detectedge(@(x) op(x)./(x-a).^ex(1)./(b-x).^ex(2),a,b,scl.h,scl.v, @(x) 0.*x+1,pref.blowup);        
+        else
+            edge = detectedge(op,a,b,scl.h,scl.v, @(x) 0.*x+1,pref.blowup);
+        end
+ 
         if isempty(edge)        % No edge found, split interval at the middle point
             edge = (b+a)/2;
         elseif (edge-a) <= htol % Edge is close to the left boundary, assume it is at x=a
@@ -73,10 +78,11 @@ while any(sad)
             edge = b-(b-a)/100; % Split interval closer to the right boundary
         end
 
-    else 
+    else
+        
         % Unbounded case: must use map!
          mapfor = funs(i).map.for; mapder = funs(i).map.der;
-         edge = detectedge(@(x) op(mapfor(x)),-1+scl.h*eps,1-scl.h*eps,scl.h,scl.v,mapder);
+         edge = detectedge(@(x) op(mapfor(x)),-1+scl.h*eps,1-scl.h*eps,scl.h,scl.v,mapder,pref.blowup);
          if isempty(edge)
              edge = mapfor(0);      % No edge found, split interval at the middle point
          elseif (edge+1) <= htol    % Edge is close to the left boundary, assume it is at x=a

@@ -239,10 +239,10 @@ g = simplify(g,pref.eps,pref.chebkind);
 ish = g.n < n;
 
 % Antialiasing procedure
-if ish && pref.sampletest
+if ish && pref.sampletest 
     x = chebpts(g.n); % points of second kind (as simplify returns second kind "point values")
     if g.n == 1
-        xeval = x;
+        xeval = 0.61;
     else
         [mx indx] = max(abs(diff(g.vals))./diff(x));
         xeval = (x(indx+1)+1.41*x(indx))/(2.41);

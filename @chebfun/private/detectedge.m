@@ -1,4 +1,4 @@
-function edge = detectedge(f,a,b,hs,vs,der)
+function [edge,vs] = detectedge(f,a,b,hs,vs,der,checkblowup)
 % EDGE = DETECTEDGE(F,A,B,HS,VS,DER)
 % Edge detection code used in auto.m 
 %
@@ -46,17 +46,29 @@ maxd1 = maxd;
 ends = [na(nder) nb(nder)]; 
 
 % Main loop
-while maxd(nder) ~= inf && ~isnan(maxd(nder)) &&  diff(ends) > eps*hs 
+while maxd(nder) ~= inf && ~isnan(maxd(nder)) &&  diff(ends) > eps*hs
     maxd1 = maxd(1:nder);                                  % Keep track of max derivatives
     [na,nb,maxd] = maxder(f, ends(1), ends(2), nder, N, der);   % compute maximum derivatives and interval
-        nder = find( (maxd > (5.5-(1:nder)').*maxd1) & (maxd > 10*vs./hs.^(1:nder)') , 1, 'first' );      % find proper nder
-        if isempty(nder)  
-            return                                          % derivatives are not gowing, return edge =[]
-        elseif nder == 1 && diff(ends) < 1e-3*hs
-            edge = findjump(f, ends(1) ,ends(2), hs, vs, der);  % blow up in first derivative, use findjump
+    nder = find( (maxd > (5.5-(1:nder)').*maxd1) & (maxd > 10*vs./hs.^(1:nder)') , 1, 'first' );      % find proper nder
+    if isempty(nder)
+        return                                          % derivatives are not gowing, return edge =[]
+    elseif nder == 1 && diff(ends) < 1e-3*hs
+        edge = findjump(f, ends(1) ,ends(2), hs, vs, der);  % blow up in first derivative, use findjump
+        return
+    end
+    ends = [na(nder) nb(nder)];
+    
+    % Blowup mode?
+    if checkblowup && f((ends(1)+ends(2))/2) > 100*vs
+        nedge = findblowup(f, ends(1), ends(2) , vs, hs);
+        if isempty(nedge)
+            checkblowup = false;
+        else
+            edge = nedge;
             return
         end
-    ends = [na(nder) nb(nder)];
+    end    
+    
 end
 
 edge = mean(ends);
@@ -129,4 +141,54 @@ for j = 1:nder
 end
 if dx^nder <= eps(0), maxd= inf+maxd; % Avoid divisions by zero!
 else maxd = maxd./dx.^(1:nder)';      % get norm_inf of derivatives.
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function edge = findblowup(f, a, b , vs, hs)
+% Detects blowup location in function values
+                                  
+ya = abs(f(a)); yb = abs(f(b)); 
+y = [ya; yb];
+x = [a;b];
+
+while b-a > 1e7*hs
+    x = linspace(a,b,50).';
+    yy = abs(f(x(2:end-1)));
+    y = [ya; yy(:); yb];
+    [maxy, ind] = max(abs(y));
+    if ind == 1, b = x(3); yb = y(3);
+    elseif ind == 50, a = x(48); ya = y(48);
+    else
+        a = x(ind-1); yb = y(ind-1);
+        b = x(ind+1); ya = y(ind+1);
+    end
+end
+while b-a > 50*eps(a) 
+    x = linspace(a,b,10).';
+    yy = abs(f(x(2:end-1)));
+    y = [ya; yy(:); yb];
+    [maxy, ind] = max(abs(y));
+    if ind == 1, b = x(3); yb = y(3);
+    elseif ind == 10, a = x(8); ya = y(8);
+    else
+        a = x(ind-1); yb = y(ind-1);
+        b = x(ind+1); ya = y(ind+1);
+    end
+end
+while b-a >= 4*eps(a)
+    x = linspace(a,b,4).';
+    yy = abs(f(x(2:end-1)));
+    y = [ya; yy(:); yb];
+    if y(2) > y(3)
+        b = x(3); yb = y(3);
+    else
+        a = x(2); ya = y(2);
+    end    
+end
+
+[ymax,ind] = max(y);
+edge = x(ind);
+
+if ymax < 1e5*vs
+    edge = [];
 end
