@@ -5,15 +5,18 @@ function pass = bvpsimplifytest
 % a solution which is a parabola to a chebfun with
 % length 3.   Nick T. & Asgeir B., 4 December 2009.
 
+%%
 [d,x,N] = domain(-1,1);
 N.bc = 1;
 N.op = @(u) diff(u,2);
-u = N\2;                    % this should be a parabola
-pass(1) = (length(u)==3);
+u1 = N\2;                    % this should be a parabola
+pass(1) = (length(u1)==3);
 
 N.op = @(u) diff(u,2) + sin(u-x.^2);
-u = N\2;                    % this should be a parabola too!
-pass(2) = (length(u)==3);
+u2 = N\2;                    % this should be a parabola too!
+pass(2) = (length(u2)==3)
 
+subplot(1,2,1),plot(u1,'.-')
+subplot(1,2,2),plot(u2,'r.-')
 
 

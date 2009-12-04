@@ -5,7 +5,7 @@ restol = pref.restol;
 deltol = pref.deltol;
 maxIter = pref.maxiter;
 maxStag = pref.maxstag;
-% currEps = chebfunpref('eps');
+currEps = chebfunpref('eps');
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(N.op)
@@ -77,8 +77,10 @@ normrvec = zeros(10,1);
 
 alpha = 1;      % Stepsize in Newton iteration
 stagCounter = 0; % Counter that checks whether we are stagnating
-while nrmdu > restol && normr > deltol && counter < maxIter && stagCounter < maxStag
-    %     u = jacvar(u);
+normu = norm(u,'fro'); % Initial value for normu (used for accuracy settings)
+while nrmdu > deltol && normr > restol && counter < maxIter && stagCounter < maxStag
+    counter = counter +1;
+    
     % Check whether a boundary happens to have no BC attached
     if leftEmpty
         bc.left = [];
@@ -102,9 +104,20 @@ while nrmdu > restol && normr > deltol && counter < maxIter && stagCounter < max
     % handle the rhs differently.
     if opType == 1
         A = diff(r,u) & bc;
-        subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
-        %A.scale = solNorm;
+        
+        % Using A.scale
+%         subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
+%         delta = -(A\r);     
+%        
+        % Lowering tolerance of chebfun constructor (so not to use the
+        % default tolerance of chebfuns but rather a size related to the
+        % norm of u and the tolerance requested).
+        newEps = normu*deltol
+        chebfunpref('eps',newEps);
+        
         delta = -(A\r);
+        chebfunpref('eps',currEps);
+        
     else
         A = problemFun & bc; % problemFun is a chebop
         subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
@@ -112,8 +125,9 @@ while nrmdu > restol && normr > deltol && counter < maxIter && stagCounter < max
         delta = -(A\(r-rhs));
     end
     
-
+%     delta = simplify(delta,deltol);
     u = u + alpha*delta;
+    
     u = jacvar(u);      % Reset the Jacobian of the function
     
     if opType == 1
@@ -122,8 +136,9 @@ while nrmdu > restol && normr > deltol && counter < maxIter && stagCounter < max
         r = problemFun*u;
     end
     
-    nrmdu = norm(delta,'fro');
-    normr = solNorm;
+    normu = norm(u,'fro')
+    nrmdu = norm(delta,'fro')/normu
+    normr = solNorm/normu
     %     nrmdu = sqrt(sum( sum(delta.^2,1)));
     %     normr = sqrt(sum( sum(r.^2,1)));
     % In case of a quasimatrix, the norm calculations are taking the
@@ -133,14 +148,19 @@ while nrmdu > restol && normr > deltol && counter < maxIter && stagCounter < max
     % columnwise and use the sum of those inner products as an estimate for
     % the residuals (this is certainly correct if the preferred norm would
     % be the Frobenius norm).
+    
+    
+    u = simplify(u,deltol*norm(u,'fro'));
+    
     if strcmp(pref.plotting,'on')
         subplot(2,1,1),plot(u,'.-');title('Current solution');
         subplot(2,1,2),plot(delta,'.-r'),title('Latest update');
         drawnow,pause
     end
-    counter = counter +1;
+
     nrmduvec(counter) = nrmdu;
     normrvec(counter) = normr;
+    
     
     % Avoid stagnation.
     if nrmdu > min(nrmduvec(1:counter)) && normr > min(normrvec(1:counter))
@@ -149,7 +169,14 @@ while nrmdu > restol && normr > deltol && counter < maxIter && stagCounter < max
         stagCounter = max(0,stagCounter-1);
     end
 end
+% Clear up norm vector
+nrmduvec(counter+1:end) = [];
 
+% Issue a warning message if stagnated. Should this in output argument
+% (i.e. flag)?
+if stagCounter == maxStag
+    warning('Nonlinop:Solvebvp: Function exited with stagnation flag.')
+end
 % Function that measures how far away we are from the solving the BVP.
 % This function takes into account the differential equation and the
 % boundary values.
@@ -180,12 +207,5 @@ end
         sn = sqrt(sn);
     end
 
-% Clear up norm vector
-nrmduvec(counter+1:end) = [];
 
-% Issue a warning message if stagnated. Should this in output argument
-% (i.e. flag)?
-if stagCounter == maxStag
-    warning('Nonlinop:Solvebvp: Function exited with stagnation flag.')
-end
 end
