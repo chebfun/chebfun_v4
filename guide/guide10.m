@@ -280,8 +280,12 @@ N.rbc = 1;
 u = N\0; plot(u,'m',LW,lw)
 
 %%
-% (More generall we could also have written N.lbc = @(u)u 0 and
-% N.rbc=@(u)u-1.)
+% Alternatively we could specify the boundary conditions too by anonymous
+% functions to be set to zero, i.e., N.lbc = @(u)u and
+% N.rbc=@(u)u-1.  The construction can also be done in a single line:
+N = nonlinop(d,@(u)0.0001*diff(u,2)+x.*u,@(u)u,@(u)u-1);
+
+%%
 % The object N we have created is called a nonlinop.
 % Here are its pieces (subject to change as the code is further
 % developed in the future):

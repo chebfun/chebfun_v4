@@ -5,10 +5,10 @@
 % Like any software system, the chebfun system is based on certain
 % design decisions.  Some of these are fixed, like the principle
 % of representing functions by Chebyshev expansions.  Others are adjustable,
-% like the maximum number of times a function will be sampled before the
-% system gives up trying to resolve it to machine precision.  A starting point in
+% like the maximum number of points at which a function will be sampled before the
+% system gives up trying to resolve it.  A starting point in
 % exploring these matters is to type the command help chebfunpref.
-% (For chebops, there is help cheboppref.)
+% (For chebops and nonlinops, there are help cheboppref and help nonlinoppref.)
 % Or just to see the list of preferences, you can simply execute chebfunpref.
 % Here we execute it with the argument 'factory' to ensure that all preferences are set to their
 % factory values:
@@ -27,14 +27,14 @@
 % chebfun directly from the constructor and creating one by operating on
 % previous chebfuns.  In the former case we can include preferences directly
 % in the constructor command, and we recommend this as good practice:
-f = chebfun('abs(x)','splitting','on');
+f = chebfun('x.^x',[0,1],'splitting','on');
 
 %%
 % In the latter case, however, one must (say) turn the preference 
 % on and off again.
-x = chebfun('x');
+x = chebfun('x',[0,1]);
 splitting on
-f = abs(x);
+f = x.^x;
 splitting off
 
 %% 8.2  domain: the default domain
@@ -242,7 +242,7 @@ splitting off
 
 %%
 % More generally a function is sampled at 9, 17, 33,... points until a set of
-% Chebyshev expansion coefficients are obtained with a tail judged to be
+% Chebyshev coefficients are obtained with a tail judged to be
 % negligible.
 
 %% 
