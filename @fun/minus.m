@@ -160,8 +160,9 @@ if round(dexps(1)) ~= dexps(1) % then trouble at the left
         pows(1) = expsl(2);
     end
 else
-%     error('can''t do this yet');
-%     [expsl idx] = sort([exps1(1) exps2(1)]);
+    newexps(1) = min(exps1(1),exps2(1));
+    % We could probably do something cleverer like extracting out the blowup
+    % by hand, but for now we just let the constructor do it.
 end
 % right (as above)
 if round(dexps(2)) ~= dexps(2)
@@ -174,10 +175,7 @@ if round(dexps(2)) ~= dexps(2)
         pows(2) = expsr(2);
     end
 else
-%     error('can''t do this yet');
-%     [expsr idx] = sort([exps1(2) exps2(2)])
-%     newexps(2) = expsr(1);
-%     multl
+    newexps(2) = min(exps1(2),exps2(2));
 end
 
 % The new map
