@@ -1,9 +1,8 @@
 function blowup(on_off)
 %BLOWUP     CHEBFUN blowup option
-%   BLOWUP ON allows chebfun to attampt to deal with functions which
-%   diverge to infinity on the domain.
-%
-%   MORE HERE 
+%   BLOWUP=0: bounded functions only
+%   BLOWUP=1: poles are permitted (integer order)
+%   BLOWUP=2: blowup of integer or non-integer orders permitted (experimental)
 %
 %   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -13,12 +12,12 @@ function blowup(on_off)
 
 if nargin==0 
     switch chebfunpref('blowup')
-        case 1 
-            disp('BLOWUP is currently ON')
         case 0
-            disp('BLOWUP is currently OFF')
+            disp('BLOWUP=0: bounded functions only')
+        case 1 
+            disp('BLOWUP=1: poles are permitted (integer order)')
         case 2 
-            disp('BLOWUP is currently ON (and allowing noninteger powers)')
+            disp('BLOWUP=2: blowup of integer or non-integer orders permitted (experimental)')
     end
 else
     if strcmpi(on_off, 'on') || strcmpi(on_off, '1')

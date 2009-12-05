@@ -161,7 +161,7 @@
   clf, plot(f)
 
 %% 1.3  Operations on chebfuns
-% There are about 150 commands that can be applied to
+% There are more than 150 commands that can be applied to
 % a chebfun.  For a list of most of them you can type "methods":
   methods chebfun
 %%
@@ -347,8 +347,9 @@ sum(chebfun('1./x.^4',[1 inf]))
 
 %%
 % Here is an example of a function that diverges to infinity,
-% which we can capture by including the flag 'blowup on':
-h = chebfun('(1/pi)./sqrt(1-x.^2)','blowup','on');
+% which we can capture by including the flag 'blowup 2' (try help blowup
+% for details):
+h = chebfun('(1/pi)./sqrt(1-x.^2)','blowup',2);
 plot(h)
 
 %%
@@ -384,7 +385,15 @@ sum(h)
 % These are called "quasimatrices", and they are discussed in
 % Chapter 6.
 
-%% 1.7  References
+%% 1.7  How this Guide is produced
+% This guide is produced in Matlab using the "publish" command.
+% The formatting is rather simple, not relying on TeX features or
+% other fine points of typesetting.  To publish a chapter for
+% yourself, make sure the chebfun guide directory
+% is in your path and then type, for example, "open(publish(guide1))".
+% Before publishing, we recommend executing "guidedefaults".
+
+%% 1.8  References
 % [Battles & Trefethen 2004] Z. Battles and L. N. Trefethen,
 % "An extension of Matlab to continuous functions and
 % operators", SIAM Journal on Scientific Computing 25 (2004),

@@ -112,7 +112,7 @@ while nrmdu > deltol && normr > restol && counter < maxIter && stagCounter < max
         % Lowering tolerance of chebfun constructor (so not to use the
         % default tolerance of chebfuns but rather a size related to the
         % norm of u and the tolerance requested).
-        newEps = normu*deltol
+        newEps = normu*deltol;
         chebfunpref('eps',newEps);
         
         delta = -(A\r);
@@ -136,9 +136,9 @@ while nrmdu > deltol && normr > restol && counter < maxIter && stagCounter < max
         r = problemFun*u;
     end
     
-    normu = norm(u,'fro')
-    nrmdu = norm(delta,'fro')/normu
-    normr = solNorm/normu
+    normu = norm(u,'fro');
+    nrmdu = norm(delta,'fro')/normu;
+    normr = solNorm/normu;
     %     nrmdu = sqrt(sum( sum(delta.^2,1)));
     %     normr = sqrt(sum( sum(r.^2,1)));
     % In case of a quasimatrix, the norm calculations are taking the

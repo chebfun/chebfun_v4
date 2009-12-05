@@ -67,10 +67,11 @@ function varargout = chebfunpref(varargin)
 %        point to minimize the risk of missing signals between gridpoints.
 %        Factory value is true.
 %
-% blowup - Blowup option, true (1) or false (0).  If true, the constructor
-%        checks for possible blowups to infinity and attempts to act accordingly
-%        by introducing algebraic factors.  If false, only a pure polynomial
-%        representation is attempted.  Factor value is true.
+% blowup - Blowup option:
+%        BLOWUP=0: bounded functions only
+%        BLOWUP=1: poles are permitted (integer order)
+%        BLOWUP=2: blowup of integer or non-integer orders permitted (experimental)
+%        Factory value 0.
 %
 % Examples
 %       chebfunpref
