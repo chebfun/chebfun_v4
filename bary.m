@@ -15,6 +15,11 @@ function fx = bary(x,gvals,xk,ek)
 
 n = length(gvals);
 
+if any(isnan(gvals))
+    fx = NaN(size(x));
+    return
+end
+
 if n == 1               % The function is a constant
     fx = gvals*ones(size(x));
     return;

@@ -40,11 +40,7 @@ switch propName
         val = g.exps;
     case 'lval'  % value at left endpoint
         if g.exps(1) < 0  % inf case, need to check sign
-            if g.n > 1
-                val = inf*sign(g.vals(2));
-            else
-                val = inf*sign(g.vals(1));
-            end
+            val = inf*sign(g.vals(1));
         elseif g.exps(1) > 0, val = 0;
         else
             %rescl = (2/diff(g.map.par(1:2)))^-g.exps(2); % scale (see feval)
@@ -53,11 +49,7 @@ switch propName
         end
     case 'rval' % value at right endpoint 
         if g.exps(2) < 0  % inf case, need to check sign
-            if g.n > 1
-                val = inf*sign(g.vals(end-1));
-            else
-                val = inf*sign(g.vals(1));
-            end
+            val = inf*sign(g.vals(end));
         elseif g.exps(2) > 0, val = 0;
         else          
            % rescl = (2/diff(g.map.par(1:2)))^-g.exps(1); % scale (see feval) 

@@ -33,6 +33,7 @@ if nargin ==1 && strcmpi(dirname,'restore')
     rmpath(userpref.dirname)
     path(path,userpref.path)
     chebfunpref(userpref.pref);
+    cheboppref(userpref.oppref);
     disp('Restored values of warning, path, and chebfunpref')
     return
 end
@@ -73,6 +74,7 @@ warning off
 userpref.warnstate = warnstate;
 userpref.path = path;
 userpref.pref = pref;
+userpref.oppref = cheboppref;
 userpref.dirname = dirname;
 addpath(dirname)
 
@@ -87,6 +89,7 @@ for j = 1:length(mfile)
   try
     close all
     chebfunpref('factory');
+    cheboppref('factory');
     chebfunpref('eps',tol);
     tic
     failed(j) = ~ all(feval( fun ));
@@ -113,6 +116,7 @@ path(path,userpref.path); % If dirname was already in path, put it back.
 warning(warnstate)
 chebfunpref('factory');
 chebfunpref(pref);
+cheboppref(oppref);
 
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')
