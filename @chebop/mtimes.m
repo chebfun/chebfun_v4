@@ -1,25 +1,24 @@
 function C = mtimes(A,B)
-% MTIMES * nonlinop multiplication
+%* Chebop composition, multiplication, or application.
 %
-% If A and B are nonlinops, then C = A*B is a nonlinop where the operator
-% of C is the composition of the operators of A and B. This operations does
-% not preserve information about boundary conditions.
+% If A and B are chebops, then C = A*B is a chebop where the operator
+% of C is the composition of the operators of A and B. No boundary
+% conditions are applied to C.
 %
-% If either A or B are scalar, then C = A*B is a nonlinop where the
-% operator of C is the multiple of the operator of A or B with the scalar.
+% If either A or B are scalar, then C = A*B is a chebop representing scalar
+% multiplication of the original operator. In this case, boundary conditions
+% are copied into the new operator. 
 %
-% If N is a nonlinop and U a chebfun, use N(u) to apply the operator N to
-% U. N*U is also a permitted syntax.
+% If N is a chebop and U a chebfun, then N*U applies N to U. 
 %
-% See also nonlinop/mldivide.
-
+% See also chebop/mldivide.
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team.
 
+
 if isa(A,'chebfun')
-    error('Nonlinop:mtimes:invalid',['Left multiplication of a chebfun to '...
-        ' a nonlinop is not defined.']);
+    error('chebop:mtimes:invalid','Operation is undefined.');
 elseif isa(B,'chebfun')
     C = feval(A.op,B);
 elseif isnumeric(A) || isnumeric(B)
@@ -28,27 +27,30 @@ elseif isnumeric(A) || isnumeric(B)
         temp = A; A = B; B = temp;
     end
     
-    C = B;
+    C = B;  % change this if ID's are put in chebops!
     C.op = @(u) A*C.op(u);
-elseif isa(A,'nonlinop') && isa(B,'nonlinop')
+    C.opshow = [num2str(A),' * ',B.opshow];
+elseif isa(A,'chebop') && isa(B,'chebop')
     if ~(A.dom == B.dom)
-        error('Nonlinop:mtimes:domaincheck: Domains of operators do not match');
+        error('chebop:mtimes:domain','Domains of operators do not match');
     end
     
     % When L*u is allowed, these checks will not be necessary anymore
     if strcmp(A.optype,'anon_fun')
         if strcmp(B.optype,'anon_fun')
-            C = nonlinop(A.dom, @(u) A.op(B.op(u)));
+            C = chebop(A.dom, @(u) A.op(B.op(u)));
         else
-            C = nonlinop(A.dom, @(u) A.op(B.op*u));
+            C = chebop(A.dom, @(u) A.op(B.op*u));
         end
     else
         if strcmp(B.optype,'anon_fun')
-            C = nonlinop(A.dom, @(u) A.op*(B.op(u)));
+            C = chebop(A.dom, @(u) A.op*(B.op(u)));
         else
-            C = nonlinop(A.dom, A.op*B.op);
+            C = chebop(A.dom, A.op*B.op);
         end        
     end
+    
+    C.opshow = [A.opshow, ' composed with ',B.opshow];
 else
     
 end
