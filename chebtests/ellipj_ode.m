@@ -1,6 +1,6 @@
 function pass = ellipj_ode
 
-tol = 50*chebfunpref('eps');
+tol = cheboppref('restol');
 
 % Elliptic parameter
 m = .1;
