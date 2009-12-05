@@ -50,6 +50,7 @@ function prefs = initPrefs()
     prefs.maxdegree = 1024;
     prefs.storage = true;
     prefs.maxstorage = 50e6;
+    prefs.display = 'none';
     prefs.plotting = 'off';
     prefs.restol= 1e-10;
     prefs.deltol = 1e-10;

@@ -78,7 +78,10 @@ normrvec = zeros(10,1);
 alpha = 1;      % Stepsize in Newton iteration
 stagCounter = 0; % Counter that checks whether we are stagnating
 normu = norm(u,'fro'); % Initial value for normu (used for accuracy settings)
-while nrmdu > deltol && normr > restol && counter < maxIter && stagCounter < maxStag
+
+solve_display('init',u);
+
+while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter < maxStag
     counter = counter +1;
     
     % Check whether a boundary happens to have no BC attached
@@ -152,18 +155,20 @@ while nrmdu > deltol && normr > restol && counter < maxIter && stagCounter < max
     
     u = simplify(u,deltol*norm(u,'fro'));
     
-    if strcmp(pref.plotting,'on')
-        subplot(2,1,1),plot(u,'.-');title('Current solution');
-        subplot(2,1,2),plot(delta,'.-r'),title('Latest update');
-        drawnow,pause
-    end
+    solve_display('iter',u,alpha*delta,nrmdu,normr)
+    
+%     if strcmp(pref.plotting,'on')
+%         subplot(2,1,1),plot(u,'.-');title('Current solution');
+%         subplot(2,1,2),plot(delta,'.-r'),title('Latest update');
+%         drawnow,pause
+%     end
 
     nrmduvec(counter) = nrmdu;
-    normrvec(counter) = normr;
+    normrvec(counter) = norm(normr);
     
     
     % Avoid stagnation.
-    if nrmdu > min(nrmduvec(1:counter)) && normr > min(normrvec(1:counter))
+    if nrmdu > min(nrmduvec(1:counter)) && norm(normr) > min(normrvec(1:counter))
         stagCounter = stagCounter+1;
     else
         stagCounter = max(0,stagCounter-1);
@@ -171,6 +176,9 @@ while nrmdu > deltol && normr > restol && counter < maxIter && stagCounter < max
 end
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
+
+solve_display('final',u,[],nrmdu,normr)
+
 
 % Issue a warning message if stagnated. Should this in output argument
 % (i.e. flag)?
@@ -181,27 +189,29 @@ end
 % This function takes into account the differential equation and the
 % boundary values.
     function sn = solNorm()
-        sn = 0;
+        sn = [0 0];
         if ~leftEmpty
             for bcCount = 1:length(bcFunLeft)
                 v = bcFunLeft{bcCount}(u);
-                sn = sn + v(a)^2;
+                sn(2) = sn(2) + v(a)^2;
             end
         end
+        
         % Check whether a boundary happens to have no BC attached
         if rightEmpty
             bc.right = [];
         else
             for bcCount = 1:length(bcFunRight)
                 v = bcFunRight{bcCount}(u);
-                sn = sn + v(b)^2;
+                sn(2) = sn(2) + v(b)^2;
             end
         end
         
+        
         if opType == 1
-            sn = sn + norm(r,'fro').^2;
+            sn(1) = sn(1) + norm(r,'fro').^2;
         else
-            sn = sn + norm(r-rhs,'fro').^2;
+            sn(1) = sn(1) + norm(r-rhs,'fro').^2;
         end      
 
         sn = sqrt(sn);
