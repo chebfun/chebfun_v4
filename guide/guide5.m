@@ -235,7 +235,7 @@ I = sum(f.*diff(z))/(2i*pi)
 
 %%
 % When the chebfun system integrates around a circular contour
-% like this, it does not take advtange of the fact that the integrand is
+% like this, it does not take advantange of the fact that the integrand is
 % periodic.  That would be Fourier analysis as opposed to Chebyshev
 % analysis, and a "fourfun" system would be more efficient for such
 % problems [Davis 1959].  Chebyshev analysis is more flexible, however, since it does
@@ -375,7 +375,7 @@ f(0), norm(f)
 % Perhaps more interesting is that we can apply functions to it
 % and learn something in the process:
 
-plot(exp(3i*f),'m',LW,lw), ylim(1.1*[-1 1]), axis equal
+plot(exp(3i*f),'m',LW,lw), ylim(1.2*[-1 1]), axis equal
 
 %%
 % Does putting a box around enhance the image?
@@ -401,7 +401,7 @@ plot(tan(f),LW,lw), axis equal, axis off
 % Pafnuty Lvovich Chebyshev, accurate as always to 15 digits:
 f = scribble('Happy Birthday Pafnuty!');
 L = f.ends(end);
-g = @(z) exp(-2.1i+(2.5i+.4)*z);
+g = @(z) exp(-2.2i+(2.5i+.4)*z);
 clf, plot(g(f),'r',LW,lw), axis equal, axis off
 circle = 1.12*chebfun(@(x) exp(2i*pi*x/L),[0 L]);
 ellipse = 1.2*(circle + 1./circle)/2 + 1i*mean(imag(f));

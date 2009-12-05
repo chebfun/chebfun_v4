@@ -2,20 +2,21 @@
 % Lloyd N. Trefethen, November 2009
 
 %%
-% Chapter 7 described the "chebop" capability for solving
+% Chapter 7 described the chebop capability for solving
 % linear ODEs (ordinary differential equations) by a backslash command.
-% The chebfun system also offers several options for nonlinear ODEs:
+% We will now describe extensions of chebops to the nonlinear case, as
+% well as other methods for nonlinear ODEs:
 %
 %   Initial-value problems:  ODE45, ODE113, ODE15S
 %
 %   Boundary-value problems: BVP4C, BVP5C
 %
-%   Both kinds of problems:  nonlinear backslash ( = SOLVEBVP)
+%   Both kinds of problems via chebops:  nonlinear backslash ( = SOLVEBVP)
 %
 % In this chapter we outline the use of
 % these methods; for fuller details, see the "help"
-% documentation.  The last of the methods listed, nonlinear backslash
-% and SOLVEBVP, is an experimental "pure chebfun" approach in which Newton's method
+% documentation.  The last of the methods listed, the chebop approach of nonlinear backslash
+% and SOLVEBVP, is a new and experimental "pure chebfun" approach in which Newton's method
 % is applied on chebfuns, with the necessary derivative operators calculated
 % by chebfun's built-in capabilities of Automatic Differentiation (AD).
 
@@ -206,7 +207,7 @@ w = u + diff(v);
 dvdu = diff(v,u)
 
 %%
-% The result dvdu is a chebop, just as described in Chapter 7.
+% The result dvdu is a linear chebop, just as described in Chapter 7.
 
 %%
 % For example, dvdu*x is 3x^4 times x, or 3x^5:
@@ -270,7 +271,7 @@ u = L\0; plot(u,'m',LW,lw)
 % convergence is achieved.
 
 %%
-% Chebfun can also solve problems specified by nonlinear operators, which
+% Chebops can also be used for nonlinear operators, which
 % may also have nonlinear boundary conditions.  Now instead of using
 % diff and diag and eye we specify the problem by anonymous functions:
 [d,x,N] = domain(-1,1);
@@ -283,10 +284,11 @@ u = N\0; plot(u,'m',LW,lw)
 % Alternatively we could specify the boundary conditions too by anonymous
 % functions to be set to zero, i.e., N.lbc = @(u)u and
 % N.rbc=@(u)u-1.  The construction can also be done in a single line:
-N = nonlinop(d,@(u)0.0001*diff(u,2)+x.*u,@(u)u,@(u)u-1);
+N = chebop(d,@(u)0.0001*diff(u,2)+x.*u,@(u)u,@(u)u-1);
 
 %%
-% The object N we have created is called a nonlinop.
+% The object N we have created is a nonlinear chebop (though in this
+% example the operator still happens to be linear).
 % Here are its pieces (subject to change as the code is further
 % developed in the future):
 struct(N)
@@ -300,7 +302,7 @@ struct(N)
 %%
 % The example just given is linear, but the point is that we can
 % also handle nonlinear problems.  To do this, the chebfun system uses
-% a Newton iteration starting at the given initial guess.  Each step of
+% a Newton or damped Newton iteration starting at the given initial guess.  Each step of
 % the iteration requires the solution of a linear problem specified by a
 % Jacobian operator (Frechet derivative) evaluated at the current estimated
 % solution.  This is provided by the AD facility, and the linear problem
@@ -309,7 +311,7 @@ struct(N)
 %%
 % Let us reconsider some of the examples of the last two sections.  First in
 % Section 10.1 we had the nonlinear IVP u' = u^2, u(0)=0.9.  This can
-% be solved in nonlinop formulation like this:
+% be solved in chebop formulation like this:
 [d,x,N] = domain(0,1);
 N.op = @(u) diff(u)-u.^2;  
 N.lbc = 0.9;
@@ -317,7 +319,7 @@ u = N\0;
 plot(u,'m',LW,lw)
 
 %%
-% Next came the linear equation u"=-u.  With nonlinops, there is
+% Next came the linear equation u"=-u.  With chebops, there is
 % no need to reformulate the problem as a first-order system.  There
 % are two boundary conditions at the left, which can be imposed
 % by making N.lbc a cell array.
@@ -329,27 +331,10 @@ plot(u,'m',diff(u),'c',LW,lw)
 
 %%
 % The van der Pol problem of Section 10.1 cannot be solved by
-% nonlinops; the stiffness quickly causes failure of the Newton
-% iteration.
+% chebops; the stiffness quickly causes failure of the Newton iteration.
 
 %%
-% Now we come to the BVPs of Section 10.2.
-% First came the "twoode" problem u"+abs(u)=0, u(0)=0, u(4)=-2.  
-% If we start from the initial guess u=1 as before, there is
-% no convergence; nonlinop currently uses a pure Newton iteration,
-% which is more fragile than the methods of BVP4C/BVP5C.
-% On the other hand we converge to a solution if we start
-% from the guess u(x)=-x/2:
-[d,x,N] = domain(0,4);
-N.op = @(u) diff(u,2)+abs(u);
-N.lbc = @(u) u;
-N.rbc = @(u) u+2;
-N.guess = -x/2;
-u = N\0;
-plot(u,'m',LW,lw)
-
-%%
-% Finally here again is the Carrier problem of section 10.2:
+% Here is the Carrier problem of section 10.2:
 ep = 0.01;
 [d,x,N] = domain(-1,1);
 N.op = @(u) ep*diff(u,2) + 2*(1-x.^2).*u + u.^2;
@@ -385,25 +370,17 @@ semilogy(nrmdu,'.-k',LW,lw), ylim([1e-14,1e2])
 
 %%
 % Another way to get information about the Newton iteration with
-% nonlinop backlash is by setting
-nonlinoppref('plotting',1)
+% nonlinear backlash is by setting
+cheboppref('plotting',1)
 
 %%
-% Type help nonlinoppref for details.  Here we shall not pursue this
+% Type help cheboppref for details.  Here we shall not pursue this
 % option and thus return the system to its factory state:
-nonlinoppref('plotting',0)
-
-%%
-% Notice that if N is a nonlinop and u is a chebfun on the same domain,
-% we can write N(u) to get the chebfun corresponding to N's action on u.
-% In developing the nonlinop class we
-% could have overloaded N*u also, giving it the same meaning as
-% N(u), but it seemed wiser to keep with the familiar usage of L*u
-% for a linear operator and N(u) for a nonlinear one.  
+cheboppref('plotting',0)
 
 %%
 % The heading of this section refers to the command SOLVEBVP.
-% When you apply backslash to a nonlinop, it invokes the overloaded
+% When you apply backslash to a nonlinear chebop, it invokes the overloaded
 % Matlab command mldivide; this in turn calls a command
 % SOLVEBVP to do the actual work.
 % By calling SOLVEBVP directly, you can control the

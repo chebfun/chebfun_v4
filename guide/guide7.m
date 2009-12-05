@@ -10,31 +10,24 @@
 
 %%
 % The present chapter is devoted to chebops, the fundamental chebfun tools
-% for solving linear differential equations.  We shall
+% for solving differential equations.  In particular we focus here on the
+% linear case.  We shall
 % see that one can solve a linear two-point boundary value problem to high
-% accuracy by a single backslash command.
+% accuracy by a single backslash command.  Nonlinear extensions are
+% described in Chapter 10.
 
 %%
-% For nonlinear two-point boundary-value problems, chebop offers
-% two main approaches.  One is to use the chebfun overloaded commands
-% bvp4c/bvp5c, which solve the problem using Matlab's standard
-% bvp4c/bvp5c commands and then convert the result to a chebfun (Section 10.2).
-% The other approach, truer to the chebfun spirit and in many cases remarkably
-% fast, accurate and convenient, is to use the chebfun "nonlinear backslash"
-% or solvebvp commands described (Section 10.4), which are built on
-% chebfun Automatic Differentiation (AD) and Newton iteration.  These tools
-% are due to Toby Driscoll and Asgeir Birkisson.
-
-%%
-% For nonlinear problems posed on an interval that also have a time variable, again
+% For linear or nonlinear problems posed on an interval that also have a time variable,
 % several approaches have been investigated.  One of these is implemented in the
 % chebfun code pde15s.
 
-%% 7.2  About chebops
-% A chebop represents a linear differential or integral operator that acts
-% on chebfuns. Chebops are designed to understand and obey many appropriate
-% commands defined by Matlab for matrices, notably including commands for
-% solving linear systems and eigenvalue problems.
+%% 7.2  About linear chebops
+% A chebop represents a differential or integral operator that acts
+% on chebfuns. This chapter is devoted to the linear case, and we shall mention
+% the qualifier "linear" sometimes but not always.
+% Chebops are designed to understand and obey many appropriate
+% commands defined by Matlab for matrices, including solving system of equations,
+% and in the linear case also including eigenvalue problems.
 
 %%
 % Like chebfuns, chebops are built on the premise of appoximation by
@@ -46,12 +39,14 @@
 % double precision arithmetic. 
 
 %%
-% The chebop package was first conceived at Oxford University by Folkmar
+% The linear part of the chebop package was first conceived at Oxford University by Folkmar
 % Bornemann, Toby Driscoll, and Nick Trefethen [Driscoll, Bornemann & Trefethen
-% 2008].  The implementation has been by Toby Driscoll.
+% 2008].  The implementation has been by Toby Driscoll.  At the time of this
+% writing, a good deal of the functionality of linear chebops is actually implemented
+% in a class called linops.
 
 %% 7.3 chebop syntax
-% Many chebops are created out of three basic building blocks, eye, diff,
+% Many linear chebops are created out of three basic building blocks, eye, diff,
 % and cumsum, which represent the identity, differentiation, and indefinite
 % integration operators on a specified domain.
 [d,x] = domain(0,1);  
@@ -95,7 +90,7 @@ J = 4 + Q*F;
 norm( J*g - (4*g + cumsum(f.*g)) )
 
 %% 7.4 Solving linear equations
-% The backslash operator works on chebops much as it does on matrices, to
+% The backslash operator works on linear chebops much as it does on matrices, to
 % solve a linear system. In this case, the system may be an integral or
 % differential one. For instance, we can transform the differential
 % equation
@@ -173,7 +168,7 @@ u = ( A & 'periodic') \ f;  plot(u-0.1,'m.-')
 
 %%
 % For all the details on how to assign boundary conditions, see the help 
-% for chebop/and.
+% for linop/and.
 
 %% 7.5 Eigenvalue problems
 % The eigs command is overloaded to find some of the eigenvalues and
@@ -252,7 +247,7 @@ k = k+1; subplot(2,2,k)
 end
 
 %%
-% Unlike all the chebops created previously in this chapter, the operator
+% Unlike the chebops created previously in this chapter, the operator
 % exponential does not have an infinite-dimensional representation. 
 
 %% 7.7 Algorithms and accuracy

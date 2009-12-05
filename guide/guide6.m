@@ -236,11 +236,14 @@
 
 %%
 % The largest singular value is equal to the norm of the quasimatrix, which
-% is defined by  norm(A) = max_x norm(A*x)/norm(x).
+% is defined by  norm(A,2) = max_x norm(A*x)/norm(x).
 
-  norm(A)
+  norm(A,2)
 
 %%
+% (Note that we must include the argument "2" here: for reasons of speed,
+% the default for quasimatrices, unlike the usual Matlab matrices, is
+% the Frobenius norm rather than the 2-norm.)
 % The SVD enables us to identify exactly what vectors are involved in achieving
 % this maximum ratio.  The optimal vector x is v1, the first right singular vector of A,
 
@@ -324,7 +327,7 @@ cond(chebpoly(0:10))
 
 %%
 % The definition  norm(A) = max_x norm(A*x)/norm(x)
-% makes sense in other norms besides the default 2-norm, and the particularly 
+% makes sense in other norms besides the 2-norm, and the particularly 
 % important alternatives are the 1-norm and the inf-norm.  The 1-norm of
 % a column quasimatrix is the "maximum column sum", i.e., the maximum of
 % the 1-norms of its columns.   In the case of our quasimatrix A,
