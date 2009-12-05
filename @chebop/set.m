@@ -32,7 +32,7 @@ while length(propertyArgIn) >= 2,
             F.rbc = createbc(val);
             F.rbcshow = val;
         case 'op'
-            if isa(val,'function_handle') || (isa(val,'cell') && isa(val{1},'function_handle'))
+            if isa(val,'function_handle') || (iscell(val) && isa(val{1},'function_handle'))
                 F.optype = 'anon_fun';
             elseif isa(val,'chebop') || (isa(val,'cell') && isa(val{1},'chebop'))
                 F.optype = 'chebop';
@@ -40,6 +40,11 @@ while length(propertyArgIn) >= 2,
                 error('chebop:set:opType','Operator must by a function handle or linop.')
             end
             F.op = val;
+            if ~iscell(val)
+              F.opshow = {char(val)}; 
+            else
+              F.opshow = cellfun(@char,val,'uniform',false);
+            end
         case 'guess'
             % Convert constant initial guesses to chebfuns
             if isnumeric(val)
