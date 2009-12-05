@@ -168,7 +168,7 @@ hold off, plot(g)
 % If you don't know what singularities your function may
 % have, chebfun has some ability to find them if the flags
 % "blowup" and "splitting" are on:
-gam = chebfun('gamma(x)',[-4 4],'splitting','on','blowup','on');
+gam = chebfun('gamma(x)',[-4 4],'splitting','on','blowup',1);
 plot(gam), ylim([-10 10])
 
 %%
@@ -258,11 +258,12 @@ sumf = sum(f)
 
 %%
 % If you have a function that blows up but you don't know the
-% nature of the singularities, chebfun will try to figure them
-% out automatically if you run in 'blowup on' mode.  Here's an example
+% nature of the singularities, even whether they are poles or
+% not, chebfun will try to figure them
+% out automatically if you run in 'blowup 2' mode.  Here's an example
 
 %%
-f = chebfun('x.*(1+x).^(-exp(1)).*(1-x).^(-pi)','blowup','on')
+f = chebfun('x.*(1+x).^(-exp(1)).*(1-x).^(-pi)','blowup',2)
 
 %%
 % Notice that the 'exps' field shows values close

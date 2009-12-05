@@ -466,7 +466,8 @@ plot(f-pinterp,'b')
 
 %%
 % The chebfun code "remez" does not (yet) compute rational approximants.
-% If your function is smooth, however, you can compute them by Caratheodory-Fejer
+% If your function is smooth, however, you can compute best
+% approximants by Caratheodory-Fejer
 % approximation using the code "cf" due to Joris Van Deun.  For example:
 f = chebfun('exp(x)');
 [p,q] = cf(f,5,5);
@@ -475,6 +476,15 @@ err = norm(f-r,inf);
 clf, plot(f-r,'c'), hold on
 plot([-1 1],err*[1 1],'--k'), plot([-1 1],-err*[1 1],'--k')
 ylim(2e-13*[-1 1])
+
+%%
+% CF approximation often comes close to optimal for non-smooth
+% functions too, provided you specify a fourth argument to tell the
+% system on how fine a Chebfyshev grid to sample:
+f = abs(x-.3);
+[p,q,r_handle,lam] = cf(f,5,5,300);
+clf, plot(f-p./q,'c'), hold on
+plot([-1 1],lam*[1 1],'--k'), plot([-1 1],-lam*[1 1],'--k')
 
 %% 4.7  The Runge phenomenon
 % The chebfun system is based on polynomial interpolants in Chebyshev
@@ -515,7 +525,9 @@ semilogy(lebesgue(linspace(-1,1,40)))
 
 %%
 % As the degree increases, polynomial interpolants in equispaced
-% points diverge exponentially [Platte, Trefethen and Kuijlaars 2009].
+% points diverge exponentially, and no other method of approximation based
+% on equispaced data can
+% completely get around this problem [Platte, Trefethen and Kuijlaars 2009].
 
 %% 4.8  Rational approximations
 % The chebfun system contains three different programs, at present, for
@@ -571,7 +583,7 @@ roots(q,'complex')
 %%
 % The third option for rational approximation is Caratheodory-Fejer approximation,
 % realized in the code "cf" by Joris Van Deun [Trefethen & Gutknecht 1983].
-% As mentioned in the last section, CF approximants often agree
+% As mentioned in Section 4.6, CF approximants often agree
 % with best approximations to machine precision if f is smooth.
 % We explore the same function yet again, and this time obtain
 % an equioscillating error curve:

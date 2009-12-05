@@ -20,7 +20,8 @@ function normA = norm(A,n)
 %   Last commit: $Author: nich $: $Rev: 489 $:
 %   $Date: 2009-06-04 22:25:42 +0100 (Thu, 04 Jun 2009) $:
 
-if nargin==1, n=2; end                  % 2-norm is the default
+if nargin==1, n='fro'; end              % Frobenius norm is the default
+                                        % (2 norm would be much slower)
 
 if isempty(A), normA = 0;               % empty chebfun has norm 0
 

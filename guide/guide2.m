@@ -128,7 +128,7 @@
 % capability of dealing with functions that blow up to infinity.  Here
 % for example is a familiar integral:
 
-  f = chebfun(@(x) 1./sqrt(x),[0 1],'blowup','on');
+  f = chebfun(@(x) 1./sqrt(x),[0 1],'blowup',2);
   sum(f)
 
 %%
