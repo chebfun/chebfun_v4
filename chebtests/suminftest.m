@@ -15,3 +15,21 @@ pass(3) = (sum(f3)==-inf);
 
 f4 = chebfun('1+1./x.^2',[1 inf]);
 pass(4) = (sum(f4)==inf);
+
+f5 = chebfun('1./x',[1 inf]);
+pass(5) = (sum(f5)==inf);
+
+f6 = chebfun('1./x',[-inf -1]);
+pass(6) = (sum(f6)==-inf);
+
+f7 = chebfun('1./x.^0.9',[1 inf]);
+pass(7) = (sum(f7)==inf);
+
+f8 = chebfun('1./x.^1.1',[1 inf]);
+pass(8) = ~isinf(sum(f8));
+
+f9 = chebfun('-1+1./x.^2',[1 inf]);
+pass(9) = (sum(f9)==-inf);
+
+f10 = chebfun('x./(1+x.^2)',[-inf inf]);
+pass(10) = isnan(sum(f10));
