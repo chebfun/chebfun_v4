@@ -24,7 +24,7 @@ else
     n = pref.maxdegree + 1;
 end
 
-% If maxdegree is ot a power of 2, we over sample and then trim
+% If maxdegree is not a power of 2, we oversample and then trim
 % back to maxdegree
 l2n = log2(n-1);
 maxdegflag = 0;

@@ -179,9 +179,7 @@ gam = chebfun('gamma(x)',[-4:0 4],'exps',[-1 -1 -1 -1 -1 0]);
 % If you know the breakpoints but not the strengths of the poles, you
 % can specify NaN at locations of unknown strength:
 %
-% [commented out since this doesn't currently work]
-%
-% f = chebfun(@(t) exp(t)./(exp(t)-1-t),[0 1],'exps',[NaN 0])
+f = chebfun(@(t) exp(t)./(exp(t)-1),[0 1],'exps',[NaN 0])
 
 %%
 % It's also possible to have poles of different strengths

@@ -289,20 +289,20 @@ splitting off
 % The default minsamples=9 was chosen as a good compromise between efficiency
 % and reliability.  In practice it rarely seems to fail, but perhaps
 % it is most vulnerable when applied in splitting on mode
-% to functions with discontinuities.  For example, the following
-% chebfun is missing some pieces near the right boundary:
+% to functions with narrow spikes.  For example, the following
+% chebfun is missing most of the spikes that should be there:
 
   chebfunpref('factory')
-  splitting on
-  f = chebfun('round(.55*sin(x+x.^2))',[0 10]);
-  plot(f), axis off
+  ff = @(x) max(.8,sin(x+x.^2)) - x/20;
+  f = chebfun(ff,[0,10],'splitting','on');
+  plot(f)
 
 %%
-% Increasing minsamples fills in the missing pieces:
+% Increasing minsamples fills them in:
 
   chebfunpref('minsamples',17)
-  f = chebfun('round(.55*sin(x+x.^2))',[0 10]);
-  plot(f), axis off
+  f = chebfun(ff,[0,10],'splitting','on');
+  plot(f)
     
 %% 8.7  resampling: resampling on/off
 % We now turn to a particularly interesting preference for chebfun geeks, relating
@@ -366,11 +366,9 @@ splitting off
   h = chebfun(hh,'sampletest',0,'resampling','on');
 
 %%
-% Here is an in-between case where convergence is achieved on the grid of length 65:
-
+% Here is an in-between case where convergence is achieved on the grid of length 65,
+% and the resulting chebfun then trimmed to length 44.
   kk = @(x) sin(length(x).^(2/3)*x);
-  k = chebfun(kk);
-  length(k)      
   k = chebfun(kk,'sampletest',0,'resampling','on');
   length(k)
   plot(k,'.-')
