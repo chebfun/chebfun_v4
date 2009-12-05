@@ -9,28 +9,23 @@ else
     s = char(s,['  ' char(A.dom)],' ');
     
     if ~isempty(A.op)
-      % Need to treat the cell case differently from the an. fun. case
-      if isa(A.op,'function_handle')
-        opchar = char(A.op);
-        s = char(s, '   representing the operator:',...
-          ['     ' opchar ' = 0 ']);
-        %                 Arrows in print
-        %                 firstRPar = min(strfind(opchar,')'));
-        %                 s = char(s, '   representing the operator:',...
-        %                     ['     ' opchar(3:firstRPar-1) ' |-> ' opchar(firstRPar+1:end), ' ']);
-      else
-        s = char(s, '   representing the operator:');
-        for funCounter =1:length(A.op)
-          opchar = char(A.op{funCounter});
-          s = char(s, ...
-            ['     ' opchar ' = 0']);
-          
-          %                     Arrows in print
-          %                     firstRPar = min(strfind(opchar,')'));
-          %                     s = char(s, ...
-          %                         ['     ' opchar(3:firstRPar-1) ' |-> ' opchar(firstRPar+1:end), ' ']);
-        end
+      s = char(s, '   representing the operator:');
+      for j = 1:length(A.opshow)
+          s = char(s,['     ',A.opshow{j}]);
       end
+%       % Need to treat the cell case differently from the an. fun. case
+%       if isa(A.op,'function_handle')
+%         opchar = char(A.op);
+%         ,...
+%           ['     ' opchar ' = 0 ']);
+%       else
+%         s = char(s, '   representing the operator:');
+%         for funCounter =1:length(A.op)
+%           opchar = char(A.op{funCounter});
+%           s = char(s, ...
+%             ['     ' opchar ' = 0']);
+%         end
+%       end
     end
     s = char(s,' ');
     

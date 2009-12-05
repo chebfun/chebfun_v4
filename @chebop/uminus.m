@@ -1,6 +1,8 @@
 function Nout = uminus(N)
 % -  Negate a chebop.
  
-Nout = chebop(N.dom, @(u) -N.op(u));
+Nout = N;  %change if ID's are added!
+Nout.op = @(u) -N.op(u);
+Nout.opshow = cellfun(@(s) ['- (',s,')'],N.opshow,'uniform',false);
 
 end

@@ -29,7 +29,7 @@ elseif isnumeric(A) || isnumeric(B)
     
     C = B;  % change this if ID's are put in chebops!
     C.op = @(u) A*C.op(u);
-    C.opshow = [num2str(A),' * ',B.opshow];
+    C.opshow = cellfun(@(s) [num2str(A),' * (',s,')'],B.opshow,'uniform',false);
 elseif isa(A,'chebop') && isa(B,'chebop')
     if ~(A.dom == B.dom)
         error('chebop:mtimes:domain','Domains of operators do not match');
@@ -50,7 +50,8 @@ elseif isa(A,'chebop') && isa(B,'chebop')
         end        
     end
     
-    C.opshow = [A.opshow, ' composed with ',B.opshow];
+    C.opshow = cellfun(@(s,t) [s, ' composed with ',t],A.opshow,B.opshow,...
+      'uniform',false);
 else
     
 end

@@ -12,6 +12,12 @@ if nargin > 0
   N.dom = varargin{1};
   if nargin > 1
     N.op = varargin{2};
+    % Make opshow field always be a cell, even in singleton case.
+    if ~iscell(N.op)
+      N.opshow = {char(varargin{2})};
+    else
+      N.opshow = cellfun(@char,N.op,'uniform',false);
+    end
     if nargin > 2
       N.lbc = createbc(varargin{3});
       N.lbcshow = varargin{3};
@@ -50,6 +56,7 @@ function N = Nop_ini()
 N = struct([]);
 N(1).dom =[];
 N(1).op = [];
+N(1).opshow = [];
 N(1).lbc = [];
 N(1).lbcshow = [];
 N(1).rbc = [];
