@@ -153,7 +153,13 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     u = simplify(u,deltol/10);
     
     solve_display('iter',u,lambda*delta,nrmdu,normr)
-    solve_display('plot',u,lambda*delta,nrmdu,normr)
+
+        
+    if strcmp(pref.plotting,'on')
+        subplot(2,1,1),plot(u,'.-');title('Current solution');
+        subplot(2,1,2),plot(delta,'.-r'),title('Latest update');
+        drawnow,pause
+    end
     
     nrmduvec(counter) = nrmdu;
     normrvec(counter) = norm(normr);
