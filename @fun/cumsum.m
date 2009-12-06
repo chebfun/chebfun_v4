@@ -335,21 +335,31 @@ end
 function f = sheehan(f)
 
 if ~strcmpi(f.map.name,'linear')
-    error('chebfun:fun:cumsum:exps','cumsum does not yet support exponents <= 1 with arbitrary maps');
+    error('chebfun:fun:cumsum:exps','cumsum does not yet support exponents <= 1 with arbitrary maps.');
 end
+
+flip = false;
 
 exps = f.exps;
 oldends = f.map.par(1:2);
+
+if exps(2)~=0
+    if ~exps(1)
+        f.vals = f.vals(end:-1:1);
+        exps = exps([2 1]);
+        f.exps = exps;
+        flip = true;
+    else
+        error('chebfun:fun:cumsum:both','cumsum does not yet support exponents <= 1 at both boundaries.');
+    end
+end
 
 % Shift domain to origin
 f = newdomain(f,oldends-oldends(1));
 ends = f.map.par(1:2);
 
-if exps(2)~=0
-    error('chebfun:fun:cumsum:exps2','cumsum does not yet support exponents <= 1 at right boundary');
-end
 if exps(1)==-1
-    error('chebfun:fun:cumsum:exps1m1','cumsum does not yet support simple poles at left boundary');
+    error('chebfun:fun:cumsum:exps1m1','cumsum does not yet support simple poles at left boundary.');
 end
 if round(exps(1))~=exps(1)
     error('chebfun:fun:cumsum:nonint','cumsum does not yet support noninteger blows up of this type.');
@@ -391,13 +401,20 @@ f = extract_roots(f,1,[1 0]);
 % Shft back to old domain
 f = newdomain(f,oldends);
 
-map = maps({'sing',[.25 1]},oldends);
-pref = chebfunpref; pref.extrapolate = 1;
-g = fun(@(x) ck*(x-oldends(1)).^(a-1).*log(x-oldends(1)),map,pref,f.scl);
-g = setexps(g,[1-a 0]);
-
-if abs(ck) > 1e-13 % some ind of scale needed here
+% Adding in the log term
+if abs(ck) > 1e-13 % some kind of scale needed here
+    map = maps({'sing',[.25 1]},oldends);
+    pref = chebfunpref; pref.extrapolate = 1;
+    g = fun(@(x) ck*(x-oldends(1)).^(a-1).*log(x-oldends(1)),map,pref,f.scl);
+    g = setexps(g,[1-a 0]);
     f = f+g.*(2./diff(ends)).^exps(1);
+end
+
+if flip
+    f.vals = -f.vals(end:-1:1);
+    f.exps = f.exps([2 1]);
+    f = f - get(f,'lval');
+    f = replace_roots(f);
 end
 
 end
