@@ -1,4 +1,4 @@
-function [u nrmduvec] = solvebvp_newton_damped(N,rhs)
+function [u nrmduvec] = solve_newton_damped(N,rhs)
 % Damped Newton iteration. More details will follow very soon.
 
 % Begin by obtaining the nonlinop preferences
@@ -6,7 +6,11 @@ pref = cheboppref;
 restol = pref.restol;
 deltol = pref.deltol;
 maxIter = pref.maxiter;
-sigma = 0.01; lambda_min = 0.1; tau = 0.1;
+maxStag = pref.maxstag;
+currEps = chebfunpref('eps');
+% Parameters for damping. Eventually, they will be available for the user
+% to set in options.
+sigma = 0.01; lambda_min = 0.1; tau = 0.1;  
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(N.op)
@@ -47,10 +51,10 @@ rightEmpty = isempty(bcFunRight);
 % Construct initial guess if missing
 if isempty(N.guess) % No initial guess given
     if isempty(N.dom)
-        error('Error in nonlinear backslash. Neither domain nor initial guess is given')
+        error('chebop:solve_newton_damped:noGuess','Neither domain nor initial guess is given.')
     else
         dom = N.dom;
-        u = findguess(N);% Initial quasimatrix guess of 0 functions chebfun(0,dom);
+        u = findguess(N); % Initial quasimatrix guess of linear chebfuns
     end
 else
     u = N.guess;
@@ -65,18 +69,23 @@ if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
 
 counter = 0;
 
-% Anon. fun. and chebops differ whether we use N(u) or L*u
-if opType == 1
-    r = problemFun(u);
-else
-    r = problemFun*u;
-end
+% Anon. fun. and linops now both work with N(u)
+r = problemFun(u);
+
 nrmdu = Inf;
 normr = Inf;
 nrmduvec = zeros(10,1);
-alpha = 1;      % Stepsize in Newton iteration
+normrvec = zeros(10,1);
+
+lambdas = zeros(10,1);
+stagCounter = 0; % Counter that checks whether we are stagnating
+normu = norm(u,'fro'); % Initial value for normu (used for accuracy settings)
+
+solve_display('init',u);
+
 while nrmdu > restol && normr > deltol && counter < maxIter
-    %     u = jacvar(u);
+    counter = counter +1;
+
     % Check whether a boundary happens to have no BC attached
     if leftEmpty
         bc.left = [];
@@ -97,54 +106,72 @@ while nrmdu > restol && normr > deltol && counter < maxIter
     end
     % If the operator is a chebop, we don't need to linearize. Else, do the
     % linearization using diff. Note that if the operator is a chebop, we
-    % handle the rhs differently.
+    % need to handle the rhs differently.
     if opType == 1
         A = diff(r,u) & bc;
-        A.scale = sqrt(sum( sum(u.^2,1)));
+        
+        % Using A.scale
+%         subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
+%         delta = -(A\r);     
+%        
+        % Lowering tolerance of chebfun constructor (so not to use the
+        % default tolerance of chebfuns but rather a size related to the
+        % norm of u and the tolerance requested).
+        newEps = deltol;
+        chebfunpref('eps',newEps);      
         delta = -(A\r);
+        chebfunpref('eps',currEps);
+        
     else
         A = problemFun & bc; % problemFun is a chebop
-        A.scale = sqrt(sum( sum(u.^2,1)));
+        subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
+        %A.scale = sqrt(sum( sum(u.^2,1)));
         delta = -(A\(r-rhs));
     end
     
-
-    
-%     alpha = fminbnd(g,0.1,1)
-    lambda = optStep
+    % Find the optimal stepsize of the dampe Newton iteration
+    lambda = optStep(); 
     
     u = u + lambda*delta;
     u = jacvar(u);      % Reset the Jacobian of the function
     
-    if opType == 1
-        r = problemFun(u);
-    else
-        r = problemFun*u;
-    end
-    
-    
+    r = problemFun(u);
+        
     nrmdu = norm(delta,'fro');
     normr = solNorm;
-    %     nrmdu = sqrt(sum( sum(delta.^2,1)));
-    %     normr = sqrt(sum( sum(r.^2,1)));
-    % In case of a quasimatrix, the norm calculations are taking the
-    % longest time in each iterations. This is caused by the fact that we
-    % are performing svd in the norm calculations in case of quasimatrices.
+
+    % In case of a quasimatrix, the norm calculations were taking the
+    % longest time in each iterations when we used the two norm. 
+    % This was caused by the fact that we performed 
+    % svd in the norm calculations in case of quasimatrices.
     % A possible remedy would be to the simply take the inner product
     % columnwise and use the sum of those inner products as an estimate for
     % the residuals (this is certainly correct if the preferred norm would
     % be the Frobenius norm).
-    if strcmp(pref.plotting,'on')
-        subplot(2,1,1),plot(u);title('Current solution');
-        subplot(2,1,2),plot(delta,'r'),title('Latest update');
-        drawnow,pause
-    end
-    counter = counter +1;
-    %     if nrmdu < 1e-1
-    %         alpha  = 1
-    %     end
+
+    solve_display('iter',u,lambda*delta,nrmdu,normr)
+
     nrmduvec(counter) = nrmdu;
+    normrvec(counter) = norm(normr);
+    lambdas(counter) = lambda;
+    
+    % Avoid stagnation.
+    if nrmdu > min(nrmduvec(1:counter)) && norm(normr) > min(normrvec(1:counter))
+        stagCounter = stagCounter+1;
+    else
+        stagCounter = max(0,stagCounter-1);
+    end
 end
+% Clear up norm vector
+nrmduvec(counter+1:end) = [];
+solve_display('final',u,[],nrmdu,normr)
+
+% Issue a warning message if stagnated. Should this in output argument
+% (i.e. flag)?
+if stagCounter == maxStag
+    warning('Nonlinop:Solvebvp: Function exited with stagnation flag.')
+end
+
 
 % Function that measures how far away we are from the solving the BVP.
 % This function takes into account the differential equation and the
@@ -175,26 +202,39 @@ end
         
 
         sn = sqrt(sn);
+
     end
 
-    function lam = optStep()
+    function lam = optStep()        
         g = @(a) 0.5*norm(A\problemFun(u+a*delta)).^2;
-        g0 = g(0); % Norm of the update
+        g0 = g(0);
+%         
+        % Check whether the full Newton step is acceptable. If not, we
+        % search for a mininum using fminbnd.
+%         g1 = g(1);
+%         if g1 < (1-2*sigma)*g0
+%             lam = 1;
+%         else          
+%             amin = fminbnd(g,0.1,1);
+%             lam = amin;
+%         end
+%  
+        % Explicit calculations, see Ascher, Mattheij, Russell [1995]
+           
         lam = 1;
         accept = 0;
-        while ~accept
-            uhat = u + lam*delta;
+        while ~accept && lam > lambda_min
             glam = g(lam);
-            if glam <= (1-2*lam*sigma)
+            if glam <= (1-2*lam*sigma)*g0
                 accept = 1;
-                lam
             else
-                lam = max(tau*lam,(lam^2*g0)/((2*lam-1)*g0+glam))
+                lam = max(tau*lam,(lam^2*g0)/((2*lam-1)*g0+glam));
             end
         end
-    end
-            
+        if lam < lambda_min
+            disp('Use min lambda')
+            lam = lambda_min;
+        end
 
-% Clear up norm vector
-nrmduvec(counter+1:end) = [];
+    end          
 end

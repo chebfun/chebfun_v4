@@ -1,7 +1,6 @@
 function [u nrmduvec] = solve(N,rhs)
 % SOLVE. Version at 16:46, 5/12/2009
 
-
 % Begin by obtaining the nonlinop preferences
 pref = cheboppref;
 restol = pref.restol;
@@ -9,6 +8,7 @@ deltol = pref.deltol;
 maxIter = pref.maxiter;
 maxStag = pref.maxstag;
 currEps = chebfunpref('eps');
+
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(N.op)
@@ -49,10 +49,10 @@ rightEmpty = isempty(bcFunRight);
 % Construct initial guess if missing
 if isempty(N.guess) % No initial guess given
     if isempty(N.dom)
-        error('chebop:solvebvp:noGuess','Neither domain nor initial guess is given.')
+        error('chebop:solve:noGuess','Neither domain nor initial guess is given.')
     else
         dom = N.dom;
-        u = findguess(N);% Initial quasimatrix guess of 0 functions chebfun(0,dom);
+        u = findguess(N); % Initial quasimatrix guess of linear chebfuns
     end
 else
     u = N.guess;
@@ -67,22 +67,21 @@ if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
 
 counter = 0;
 
-% Anon. fun. and chebops differ whether we use N(u) or L*u
-if opType == 1
-    r = problemFun(u);
-else
-    r = problemFun*u;
-end
+% Anon. fun. and linops now both work with N(u)
+r = problemFun(u);
+
 nrmdu = Inf;
 normr = Inf;
 nrmduvec = zeros(10,1);
 normrvec = zeros(10,1);
 
-alpha = 1;      % Stepsize in Newton iteration
+lambda = 1;      % Stepsize in Newton iteration - Pure Newton so stepsize is 1
 stagCounter = 0; % Counter that checks whether we are stagnating
 normu = norm(u,'fro'); % Initial value for normu (used for accuracy settings)
 
 solve_display('init',u);
+
+
 
 while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter < maxStag
     counter = counter +1;
@@ -107,7 +106,7 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     end
     % If the operator is a chebop, we don't need to linearize. Else, do the
     % linearization using diff. Note that if the operator is a chebop, we
-    % handle the rhs differently.
+    % need to handle the rhs differently.
     if opType == 1
         A = diff(r,u) & bc;
         
@@ -119,8 +118,7 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
         % default tolerance of chebfuns but rather a size related to the
         % norm of u and the tolerance requested).
         newEps = deltol;
-        chebfunpref('eps',newEps);
-        
+        chebfunpref('eps',newEps);      
         delta = -(A\r);
         chebfunpref('eps',currEps);
         
@@ -132,43 +130,31 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     end
     
 %     delta = simplify(delta,deltol);
-    u = u + alpha*delta;
+    u = u + lambda*delta;
     
     u = jacvar(u);      % Reset the Jacobian of the function
     
-    if opType == 1
-        r = problemFun(u);
-    else
-        r = problemFun*u;
-    end
-    
+    r = problemFun(u);
+        
     normu = norm(u,'fro');
     nrmdu = norm(delta,'fro')/normu;
     normr = solNorm/normu;
-    %     nrmdu = sqrt(sum( sum(delta.^2,1)));
-    %     normr = sqrt(sum( sum(r.^2,1)));
-    % In case of a quasimatrix, the norm calculations are taking the
-    % longest time in each iterations. This is caused by the fact that we
-    % are performing svd in the norm calculations in case of quasimatrices.
+    
+    % In case of a quasimatrix, the norm calculations were taking the
+    % longest time in each iterations when we used the two norm. 
+    % This was caused by the fact that we performed 
+    % svd in the norm calculations in case of quasimatrices.
     % A possible remedy would be to the simply take the inner product
     % columnwise and use the sum of those inner products as an estimate for
     % the residuals (this is certainly correct if the preferred norm would
     % be the Frobenius norm).
     
-    
 %     u = simplify(u,deltol/100000);
     
-    solve_display('iter',u,alpha*delta,nrmdu,normr)
+    solve_display('iter',u,lambda*delta,nrmdu,normr)
     
-%     if strcmp(pref.plotting,'on')
-%         subplot(2,1,1),plot(u,'.-');title('Current solution');
-%         subplot(2,1,2),plot(delta,'.-r'),title('Latest update');
-%         drawnow,pause
-%     end
-
     nrmduvec(counter) = nrmdu;
     normrvec(counter) = norm(normr);
-    
     
     % Avoid stagnation.
     if nrmdu > min(nrmduvec(1:counter)) && norm(normr) > min(normrvec(1:counter))
@@ -179,7 +165,6 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
 end
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
-
 solve_display('final',u,[],nrmdu,normr)
 
 
@@ -219,6 +204,5 @@ end
 
         sn = sqrt(sn);
     end
-
 
 end
