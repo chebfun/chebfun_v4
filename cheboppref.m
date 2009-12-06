@@ -24,9 +24,17 @@ function varargout = cheboppref(varargin)
 %
 % display - controls information displayed during nonlinear solution
 %    'none' (default)
-%    'init' - plot initial guess before iterating
 %    'iter' - plot iterates and updates during solution process
 %    'final' - plot solution at end
+%
+% plotting - controls whether the most current solution and update of the
+%     iteratation are plotted
+%     'off' - no plotting (default)
+%     'on'  - plots and pauses for the default time (0.5 s)
+%     time  - current iteration and update are plotted for a value of time,
+%           i.e. cheboppref('plotting',1) shows the plots for 1 s.
+%     'pause' - pauses the run of the program after plots are shown to wait
+%               for user action.
 %
 % restol - tolerance of norm of residual relative to norm of solution
 %
@@ -78,6 +86,12 @@ else  % set value
         case 'tol'
             prefs.restol = newVal;
             prefs.deltol = newVal;
+        case 'plotting'
+            if strcmp(newVal,'on')
+                prefs.plotting = 0.5;
+            else
+                prefs.plotting = newVal;
+            end
         otherwise
             prefs.(prop) = newVal;
             

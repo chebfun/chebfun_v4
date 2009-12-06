@@ -119,7 +119,7 @@ if plotOn,
     subplot(7,5,probCounter),plot(u),
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
-figure;plot(u)
+
 %% Problem #08
 eps = 0.046;
 [d,x,N] = domain(0,1);
@@ -318,6 +318,7 @@ if plotOn,
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 figure(gcf)
+
 %% Problem #21
 eps = 0.0008;
 [d,x,N] = domain(0,1);
@@ -385,7 +386,7 @@ A = @(x) 1 + x.^2; Ap = @(x) 2*x; gamma = 1.4;
 N.op = @(u) eps*diag(1+x.^2)*(diff(u,2).*u) - ((1+gamma)/2-eps*diag(Ap(x)))*(u.*diff(u,1)) + diff(u,1)./u + diag(Ap(x)./A(x))*(1-(gamma-1)/2*u.^2);
 N.lbc = @(u) u - 0.9129;
 N.rbc = @(u) u - 0.375;
-N.guess = 0*x+1;
+N.guess = chebfun([0.9129 0.375],d);
 tic
 [u nrmduvec] = N\0;
 probCounter = 24;
@@ -522,6 +523,7 @@ if plotOn,
 end
 
 %% Problem #33
+chebfunpref('tol',1e-8)
 eps = 0.01;
 [d,x,N] = domain(0,1);
 N.op = @(u) [eps*diff(u(:,2),4) + u(:,2).*diff(u(:,2),3)+u(:,1).*diff(u(:,1)), ...
@@ -538,6 +540,7 @@ if plotOn,
     subplot(7,5,probCounter),plot(u(:,2)),
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
+chebfunpref('tol',1e-10)
 %% Problem #34
 eps = 3.5;
 [d,x,N] = domain(0,1);

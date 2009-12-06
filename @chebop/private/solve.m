@@ -150,7 +150,7 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     % be the Frobenius norm).
     
 %     u = simplify(u,deltol/100000);
-    u = simplify(u,deltol/10);
+%     u = simplify(u,deltol/10);
     
     solve_display('iter',u,lambda*delta,nrmdu,normr)
 
@@ -164,23 +164,12 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     nrmduvec(counter) = nrmdu;
     normrvec(counter) = norm(normr);
     
-    % Avoid stagnation.
-    if nrmdu > min(nrmduvec(1:counter)) && norm(normr) > min(normrvec(1:counter))
-        stagCounter = stagCounter+1;
-    else
-        stagCounter = max(0,stagCounter-1);
-    end
 end
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
 solve_display('final',u,[],nrmdu,normr)
 
 
-% Issue a warning message if stagnated. Should this in output argument
-% (i.e. flag)?
-if stagCounter == maxStag
-    warning('Nonlinop:Solvebvp: Function exited with stagnation flag.')
-end
 % Function that measures how far away we are from the solving the BVP.
 % This function takes into account the differential equation and the
 % boundary values.

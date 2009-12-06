@@ -1,7 +1,7 @@
-%% Solving the ODE with the new method
+%% Solving BVPs with Newton iteration
 % Below is shown how we can solve the BVP eps*u'' + u'+sin(u) = 0,
-% u(0) = 0, u(1) = 1/2 using Newton iteration and the Jacobian
-% calculations now available.
+% u(0) = 0, u(1) = 1/2 using Newton iteration directly, creating the
+% Jacobian explicitly.
 
 [d,x] = domain(0,1);
 D = diff(d,1); D2 = diff(d,2);
@@ -40,31 +40,33 @@ box on, grid on, xlabel('Iteration no.'), ylabel('Norm of update');
 set(gca,'XTick',[1:4])
 
 %% Fourth order problem
-f = @(u) 0.01*diff(u,4) + 10.*diff(u,2) + 100*sin(u);
-g.left = @(u) u-1;
-g.right = { @(u) u, @(u) diff(u), @(u) diff(u,2) };
-[u nrmduvec] = solvebvp(f,g,domain(0,1));
+[d,x,N] = domain(0,1);
+N.op = @(u) 0.01*diff(u,4) + 10.*diff(u,2) + 100*sin(u);
+N.lbc = 1;
+N.rbc = { @(u) u, @(u) diff(u), @(u) diff(u,2) };
+[u nrmduvec] = N\0;
 figure;subplot(1,2,1),plot(u),title('u(x) vs. x');
 box on, grid on, xlabel('x'), ylabel('u(x)'), %set(gca,'Ytick',[0:0.2:1.2])
 subplot(1,2,2),semilogy(nrmduvec,'-*');title('Norm of update vs. iteration no.');
 box on, grid on, xlabel('Iteration no.'), ylabel('Norm of update');
 xlim([0 20]),set(gca,'XTick',[0:4:20])
 
-%% System
-f = @(u) [ diff(u(:,1)) - sin(u(:,2)), diff(u(:,2)) + cos(u(:,1)) ];
-g.left = @(u) u(:,1)-1;
-g.right = @(u) u(:,2);
-
-[d,x] = domain(-1,1);
-[u nrmduvec] = solvebvp(f,g,[0*x,0*x],1e-6 );
+%% Systems of equations
+[d,x,N] = domain(-1,1);
+N.op = @(u) [ diff(u(:,1)) - sin(u(:,2)), diff(u(:,2)) + cos(u(:,1)) ];
+N.lbc = @(u) u(:,1)-1;
+N.rbc = @(u) u(:,2);
+u = N\0;
 figure;plot(u)
 
-%% 
-f = @(u) [ diff(u(:,1),2) - sin(u(:,2)), diff(u(:,2),2) + cos(u(:,1)) ];
-g.left = {@(u) u(:,1)-1, @(u) diff(u(:,2))};
-g.right = {@(u) u(:,2), @(u) diff(u(:,1))};
-[d,x] = domain(-1,1);
-[u nrmduvec] = solvebvp(f,g,[0*x,0*x]);
+%%
+cheboppref('tol',5e-9);
+[d,x,N] = domain(-1,1);
+N.op = @(u) [ diff(u(:,1),2) - sin(u(:,2)), diff(u(:,2),2) + cos(u(:,1)) ];
+N.lbc = {@(u) u(:,1)-1, @(u) diff(u(:,2))};
+N.rbc = {@(u) u(:,2), @(u) diff(u(:,1))};
+
+[u nrmduvec] = N\0;
 figure;subplot(1,2,1),plot(u(:,1)),hold on, plot(u(:,2),'-.r'),hold off
 title('u_1(x) and u_2(x) vs. x'); legend('u_1','u_2')
 box on, grid on, xlabel('x'), ylabel('u_1(x) and u_2(x)')

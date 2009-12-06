@@ -8,9 +8,10 @@ deltol = pref.deltol;
 maxIter = pref.maxiter;
 maxStag = pref.maxstagnation;
 currEps = chebfunpref('eps');
+lambda_minCounter = 0;
 % Parameters for damping. Eventually, they will be available for the user
 % to set in options.
-sigma = 0.01; lambda_min = 0.1; tau = 0.1;  
+sigma = 0.01; lambda_min = 0.1; tau = 0.1;
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(N.op)
@@ -81,11 +82,11 @@ lambdas = zeros(10,1);
 stagCounter = 0; % Counter that checks whether we are stagnating
 normu = norm(u,'fro'); % Initial value for normu (used for accuracy settings)
 
-solve_display('init',u);
+solve_display('initNewton',u);
 
-while nrmdu > restol && normr > deltol && counter < maxIter
+while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter < maxStag
     counter = counter +1;
-
+    
     % Check whether a boundary happens to have no BC attached
     if leftEmpty
         bc.left = [];
@@ -110,18 +111,24 @@ while nrmdu > restol && normr > deltol && counter < maxIter
     if opType == 1
         A = diff(r,u) & bc;
         
-        % Using A.scale
-%         subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
-%         delta = -(A\r);     
-%        
-        % Lowering tolerance of chebfun constructor (so not to use the
-        % default tolerance of chebfuns but rather a size related to the
-        % norm of u and the tolerance requested).
-        newEps = deltol;
-        chebfunpref('eps',newEps);      
-        delta = -(A\r);
-        chebfunpref('eps',currEps);
-        
+        % Using A.scale if we are in the first iteration - Handles linear
+        % problems better
+        if counter == 1
+            subsasgn(A,struct('type','.','subs','scale'), norm(u,'fro'));
+            delta = -(A\r);
+        else
+            try
+                % Lowering tolerance of chebfun constructor (so not to use the
+                % default tolerance of chebfuns but rather a size related to the
+                % norm of u and the tolerance requested).
+                newEps = deltol;
+                chebfunpref('eps',newEps);
+                delta = -(A\r);
+                chebfunpref('eps',currEps);
+            catch
+                chebfunpref('eps',currEps);
+            end
+        end
     else
         A = problemFun & bc; % problemFun is a chebop
         subsasgn(A,struct('type','.','subs','scale'), sqrt(sum( sum(u.^2,1))));
@@ -130,28 +137,29 @@ while nrmdu > restol && normr > deltol && counter < maxIter
     end
     
     % Find the optimal stepsize of the dampe Newton iteration
-    lambda = optStep(); 
+    lambda = optStep();
+    
     
     u = u + lambda*delta;
     u = jacvar(u);      % Reset the Jacobian of the function
     
     r = problemFun(u);
-        
+    
     nrmdu = norm(delta,'fro');
-    normr = solNorm;
-
+    normr = solNorm(u);
+    
     % In case of a quasimatrix, the norm calculations were taking the
-    % longest time in each iterations when we used the two norm. 
-    % This was caused by the fact that we performed 
+    % longest time in each iterations when we used the two norm.
+    % This was caused by the fact that we performed
     % svd in the norm calculations in case of quasimatrices.
-    % A possible remedy would be to the simply take the inner product
+    % A possible remedy was be to the simply take the inner product
     % columnwise and use the sum of those inner products as an estimate for
-    % the residuals (this is certainly correct if the preferred norm would
+    % the residuals (this is certainly correct if the preferred norm is
     % be the Frobenius norm).
-
-    u = simplify(u,deltol/10);
-    solve_display('iter',u,lambda*delta,nrmdu,normr)
-
+    
+    %     u = simplify(u,deltol/10);
+    solve_display('iterNewton',u,lambda*delta,nrmdu,normr,lambda)
+    
     nrmduvec(counter) = nrmdu;
     normrvec(counter) = norm(normr);
     lambdas(counter) = lambda;
@@ -165,6 +173,7 @@ while nrmdu > restol && normr > deltol && counter < maxIter
 end
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
+normrvec;
 solve_display('final',u,[],nrmdu,normr)
 
 % Issue a warning message if stagnated. Should this in output argument
@@ -177,51 +186,62 @@ end
 % Function that measures how far away we are from the solving the BVP.
 % This function takes into account the differential equation and the
 % boundary values.
-    function sn = solNorm()
-        sn = 0;
+    function sn = solNorm(u)
+        sn = [0 0];
         if ~leftEmpty
             for bcCount = 1:length(bcFunLeft)
                 v = bcFunLeft{bcCount}(u);
-                sn = sn + v(a)^2;
+                sn(2) = sn(2) + v(a)^2;
             end
         end
+        
         % Check whether a boundary happens to have no BC attached
         if rightEmpty
             bc.right = [];
         else
             for bcCount = 1:length(bcFunRight)
                 v = bcFunRight{bcCount}(u);
-                sn = sn + v(b)^2;
+                sn(2) = sn(2) + v(b)^2;
             end
         end
         
+        
         if opType == 1
-            sn = sn + norm(r,'fro').^2;
+            sn(1) = sn(1) + norm(r,'fro').^2;
         else
-            sn = sn + norm(r-rhs,'fro').^2;
+            sn(1) = sn(1) + norm(r-rhs,'fro').^2;
         end
         
-
         sn = sqrt(sn);
-
     end
 
-    function lam = optStep()        
+    function lam = optStep()
         g = @(a) 0.5*norm(A\problemFun(u+a*delta)).^2;
         g0 = g(0);
-%         
+        
         % Check whether the full Newton step is acceptable. If not, we
         % search for a mininum using fminbnd.
-%         g1 = g(1);
-%         if g1 < (1-2*sigma)*g0
-%             lam = 1;
-%         else          
-%             amin = fminbnd(g,0.1,1);
-%             lam = amin;
-%         end
-%  
+        %         g1 = g(1);
+        %         if g1 < (1-2*sigma)*g0
+        %             lam = 1;
+        %         else
+        %             amin = fminbnd(g,0.095,1);
+        %             lam = amin;
+        %         end
+        %         if lam < lambda_min
+        %             if lambda_minCounter < 3
+        %                 lambda_minCounter = lambda_minCounter + 1;
+        %                 lam = lambda_min;
+        %             else
+        %                 %If we take three smallest step in a row, give the
+        %                 %solution process a "kick".
+        %                 lam = .6;
+        %                 lambda_minCounter = lambda_minCounter - 1;
+        %             end
+        %         end
+        %
         % Explicit calculations, see Ascher, Mattheij, Russell [1995]
-           
+        
         lam = 1;
         accept = 0;
         while ~accept && lam > lambda_min
@@ -233,9 +253,16 @@ end
             end
         end
         if lam < lambda_min
-           % disp('Using min lambda')
-            lam = lambda_min;
+            if lambda_minCounter < 3
+                lambda_minCounter = lambda_minCounter + 1;
+                lam = lambda_min;
+            else
+                % If we take three smallest step in a row, give the
+                % solution process a "kick".
+                lam = 1;
+                lambda_minCounter = lambda_minCounter - 1;
+            end
         end
-
-    end          
+        
+    end
 end
