@@ -22,9 +22,9 @@ function varargout = chebfunpref(varargin)
 % without restoring them. V = CHEBFUNPREF(PREFNAME,'factory') returns the 
 % factory value V for preference PREFNAME without changing it. 
 %
-% CHEBFUNPREF creates a persistent variable that stores the these preferences.
-% CLEAR ALL will not clear preferences, but MUNLOCK CHEBFUNPREF will (as will
-% quitting Matlab).
+% CHEBFUNPREF creates a persistent variable that stores these preferences.
+% CLEAR ALL will not clear preferences, but MUNLOCK CHEBFUNPREF followed by
+% CLEAR CHEBFUNPREF will (quitting Matlab also clears this variable).
 %
 % CHEBFUN PREFERENCES (case sensitive)
 %
@@ -37,7 +37,7 @@ function varargout = chebfunpref(varargin)
 %        a chebfun F passes through zero.  Factory value is false.
 %
 % minsamples - Minimum number of points used by the constructor. The 
-%        contructed fun or chebfun might be shorter as a result of the 
+%        constructed fun or chebfun might be shorter as a result of the 
 %        simplify command. Must be of the form 2^n+1.  Factory value is 9.
 %
 % maxdegree - Maximum degree used by the constructor in SPLITTING OFF mode.
@@ -64,7 +64,7 @@ function varargout = chebfunpref(varargin)
 %
 % sampletest - Safety test option, true (1) or false (0).
 %        If true, the constructor tests the function at one more arbitrary
-%        point to minimize the risk of missing signals between gridpoints.
+%        point to minimize the risk of missing signals between grid points.
 %        Factory value is true.
 %
 % blowup - Blowup option:
@@ -72,6 +72,22 @@ function varargout = chebfunpref(varargin)
 %        BLOWUP=1: poles are permitted (integer order)
 %        BLOWUP=2: blowup of integer or non-integer orders permitted (experimental)
 %        Factory value 0.
+%
+% chebkind - Interpolation points for the construction of chebfuns:
+%        CHEBKIND = 1: Chebyshev points of the first kind (experimental)
+%        CHEBKIND = 2: Chebyshev points of the secnod kind (recommended)
+%        Factory value is 2. 
+%
+% extrapolate - Extrapolation at endpoints, true (1) or false (0). 
+%        If true, function values at endpoints maybe extrapolated from
+%        interior values rather than sampled. Extrapolation is used
+%        independently of this option if a function evaluation returns NaN.
+%        In some cases, however, functions values at end points maybe
+%        inaccurate and enabling extrapolation maybe helpful.
+%        Factory value is 0.
+%
+% plot_numpts - Number of points used to plot a chebfun. Factory value is
+%        2001.
 %
 % Examples
 %       chebfunpref
@@ -84,6 +100,7 @@ function varargout = chebfunpref(varargin)
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2008 by The Chebfun Team. 
+
 
 % persistent variables are known only to the function in which they are
 % declared.
@@ -110,7 +127,7 @@ end
 
 % These are the options
 options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest', 'blowup', 'chebkind', 'extrapolate','plot_numpts'};
-factoryvals = {false,       9,            2^16,         6000,        128,           false,         [-1 1],   2^-52,     true,  false,  2, false, 2001};
+factoryvals = {false,       9,            2^16,         6000,        128,           false,        [-1 1],  2^-52,    true,     false,     2,          false,         2001};
 % Note: The proper number of points for Chebyshev points of the first kind
 % is 2^k (not 2^k+1 as for the second kind).
 
