@@ -116,7 +116,7 @@ path(path,userpref.path); % If dirname was already in path, put it back.
 warning(warnstate)
 chebfunpref('factory');
 chebfunpref(pref);
-cheboppref(oppref);
+cheboppref(userpref.oppref);
 
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')

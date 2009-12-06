@@ -28,6 +28,11 @@ end
 if nargin==0  % return structure
     varargout = { prefs };
 elseif nargin==1  % return value
+    if isstruct(varargin{1})
+        % Assign prefs from structure input
+        prefs = varargin{1};
+        return
+    end
     if strcmp(varargin{1},'factory')
         prefs = initPrefs;
     else
