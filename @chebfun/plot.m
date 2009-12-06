@@ -64,7 +64,7 @@ function varargout = plot(varargin)
 %  Last commit: $Author: nich $: $Rev: 458 $:
 %  $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
 
-numpts = 2001;
+numpts = chebfunpref('plot_numpts');
 
 % get jumpline style and jumpval markers
 jlinestyle = ':'; jmarker = 'x'; forcejmarks = false; 
