@@ -40,7 +40,7 @@ if strcmp(g.map.name,'linear')
         g.vals = g.vals*g.map.der(0); % From change of variables to [-1,1]
         g = cumsum_unit_interval(g);
     elseif any(g.exps<=-1)
-        error('chebfun:fun:cumsum','cumsum does not yet support exponents <= 1');
+        g = sheehan(g);
     else
         g = jacsum(g);
     end
@@ -253,3 +253,77 @@ f.vals = P*flipud(jac(:)); f.n = length(f.vals);
 cheb = chebpoly(f);
 
 end
+
+
+
+function f = sheehan(f)
+
+if ~strcmpi(f.map.name,'linear')
+    error('chebfun:fun:cumsum:exps','cumsum does not yet support exponents <= 1 with arbitrary maps');
+end
+
+exps = f.exps;
+oldends = f.map.par(1:2);
+
+% Shift domain to origin
+f = newdomain(f,oldends-oldends(1));
+ends = f.map.par(1:2)
+
+if exps(2)~=0
+    error('chebfun:fun:cumsum:exps2','cumsum does not yet support exponents <= 1 at right boundary');
+end
+if exps(1)==-1
+    error('chebfun:fun:cumsum:exps1m1','cumsum does not yet support simple poles at left boundary');
+end
+if round(exps(1))~=exps(1)
+    error('chebfun:fun:cumsum:nonint','cumsum does not yet support noninteger blows up of this type.');
+end
+
+f.exps = [0 0];
+
+d = domain(ends);
+x = fun('x',ends);
+
+a = -exps(1);                             % The order of the pole
+xa1 = x; xa1.vals = chebpts(a,d).^(a-1);  % x^(a-1)
+
+ck = feval(diff(f,a-1),0)/factorial(a-1); % Coefficient of x^(a-1) in Taylor 
+                                          % series about x = 0 (leads to log)                                      % log)
+p = f - ck*xa1;                           % Remove log contribution
+% feval(diff(p,a-1),0)/factorial(a-1)       % This should be zero now?
+
+xp = x.*p;                      
+N = length(xp);
+
+% Backslash
+% D = diff(d); D = D(N); L = diag(get(xp,'points'))*D-diag(a*ones(N,1));
+% % D = diff(d); L = diag(chebfun(x,ends))*D-a*eye(domain(ends)); L = L(N);
+% L(1,:) = []; L(:,1) = [];
+% f = fun([0 ; L \ xp.vals(2:end)], ends);
+% f.exps = [-a 0];
+
+% GMRES
+% D = diff(d); D = D(N); L = diag(get(xp,'points'))*D-diag(a*ones(N,1));
+D = diff(d); I = eye(d); L = diag(chebfun(x,ends))*D-a*eye(d); L = L(N);
+[vals flag] = gmres(L,xp.vals,N,1e-15);
+f = fun(vals,ends);
+f.exps = exps;
+
+% Bump the exponent by one
+f = extract_roots(f,1,[1 0]);
+
+% Shft back to old domain
+f = newdomain(f,oldends);
+
+map = maps({'sing',[.25 1]},oldends);
+pref = chebfunpref; pref.extrapolate = 1;
+g = fun(@(x) ck*(x-oldends(1)).^(a-1).*log(x-oldends(1)),map,pref,f.scl);
+g = setexps(g,[1-a 0]);
+
+if abs(ck) > 1e-13 % some ind of scale needed here
+    f = f+g.*(2./diff(ends)).^exps(1);
+end
+
+end
+
+
