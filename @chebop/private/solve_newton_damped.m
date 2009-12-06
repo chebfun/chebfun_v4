@@ -6,7 +6,7 @@ pref = cheboppref;
 restol = pref.restol;
 deltol = pref.deltol;
 maxIter = pref.maxiter;
-maxStag = pref.maxstag;
+maxStag = pref.maxstagnation;
 currEps = chebfunpref('eps');
 % Parameters for damping. Eventually, they will be available for the user
 % to set in options.
@@ -149,6 +149,7 @@ while nrmdu > restol && normr > deltol && counter < maxIter
     % the residuals (this is certainly correct if the preferred norm would
     % be the Frobenius norm).
 
+    u = simplify(u,deltol/10);
     solve_display('iter',u,lambda*delta,nrmdu,normr)
 
     nrmduvec(counter) = nrmdu;

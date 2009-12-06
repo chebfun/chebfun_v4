@@ -41,7 +41,8 @@ switch(phase)
       case {'iter','final'}
         fprintf('\n')
         fprintf('%i iterations\n',itercount)
-        fprintf('Final residual norm: %.2e (interior) and %.2e (boundary)\n\n',nrmres)
+%       fprintf('Final residual norm: %.2e (interior) and %.2e (boundary)\n\n',nrmres(1),nrmres(2))
+        fprintf('Final residual norm: %.2e (interior)\n\n',nrmres)
       case 'plot'
         figure(fig), clf
         plot(u), title('Final solution')

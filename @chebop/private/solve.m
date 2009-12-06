@@ -6,7 +6,7 @@ pref = cheboppref;
 restol = pref.restol;
 deltol = pref.deltol;
 maxIter = pref.maxiter;
-maxStag = pref.maxstag;
+maxStag = pref.maxstagnation;
 currEps = chebfunpref('eps');
 
 
@@ -150,8 +150,10 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     % be the Frobenius norm).
     
 %     u = simplify(u,deltol/100000);
+    u = simplify(u,deltol/10);
     
     solve_display('iter',u,lambda*delta,nrmdu,normr)
+    solve_display('plot',u,lambda*delta,nrmdu,normr)
     
     nrmduvec(counter) = nrmdu;
     normrvec(counter) = norm(normr);
