@@ -233,7 +233,7 @@ end
             end
         end
         if lam < lambda_min
-            disp('Use min lambda')
+           % disp('Using min lambda')
             lam = lambda_min;
         end
 

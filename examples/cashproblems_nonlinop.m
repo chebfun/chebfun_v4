@@ -7,7 +7,7 @@
 time = zeros(35,1);
 iter = zeros(35,1);
 figure;
-plotOn = 0;
+plotOn = 1;
 titleOn  = 0;
 %% Problem #01
 eps = 0.1;
