@@ -77,6 +77,18 @@ if ~samemap(g1,g2) && ~any([exps1 exps2])
         pref.splitdegree = 8*pref.splitdegree;
     end
     pref.resampling = false;
+    
+    % Sing maps are inherited during plus.
+    if strcmp(g1.map.name,'sing') && strcmp(g2.map.name,'sing')
+        par4 = min(g1.map.par(3),g2.map.par(3));
+        par4 = min(g1.map.par(4),g2.map.par(4));
+        ends = map({'sing',[par3 par4]},ends);
+    elseif strcmp(g1.map.name,'sing')
+        ends = g1.map;
+    elseif strcmp(g2.map.name,'sing')
+        ends = g2.map;
+    end
+    
     [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),ends,pref,scl);
     if ~ish
         warning('fun:minus:failtoconverge','Operation may have failed to converge');
