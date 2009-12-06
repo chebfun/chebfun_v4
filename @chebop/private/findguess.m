@@ -42,6 +42,9 @@ end
 bcFunLeft = N.lbc;
 bcFunRight = N.rbc;
 
+leftEmpty = isempty(bcFunLeft);
+rightEmpty = isempty(bcFunRight);
+
 if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
 if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
 
@@ -53,16 +56,23 @@ a = ab(1);  b = ab(end);
 % Get values of BCs at the endpoints
 leftVals = zeros(length(bcFunLeft),1);
 rightVals = zeros(length(bcFunRight),1);
-for j = 1:length(bcFunLeft)
-    v = feval(bcFunLeft{j},guess);
-    leftVals(j) = v(a);
+if leftEmpty
+    leftVals = 0;
+else
+    for j = 1:length(bcFunLeft)
+        v = feval(bcFunLeft{j},guess);
+        leftVals(j) = v(a);
+    end
 end
 
-for j = 1:length(bcFunRight)
-    v = feval(bcFunRight{j},(guess));
-    rightVals(j) = v(b);
+if rightEmpty
+    rightVals = 0;
+else
+    for j = 1:length(bcFunRight)
+        v = feval(bcFunRight{j},(guess));
+        rightVals(j) = v(b);
+    end
 end
-
 % If we just have one column in our guess, perform a linear interpolation
 if counter == 1
     leftY = leftVals(min(find(leftVals ~= 0)));

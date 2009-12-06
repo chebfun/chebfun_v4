@@ -171,7 +171,7 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     
     
     % Avoid stagnation.
-    if nrmdu > min(nrmduvec(1:counter)) && normr > min(normrvec(1:counter))
+    if nrmdu > min(nrmduvec(1:counter)) && norm(normr) > min(normrvec(1:counter))
         stagCounter = stagCounter+1;
     else
         stagCounter = max(0,stagCounter-1);

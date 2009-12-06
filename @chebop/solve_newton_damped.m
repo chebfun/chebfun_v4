@@ -179,7 +179,7 @@ end
 
     function lam = optStep()        
         g = @(a) 0.5*norm(A\problemFun(u+a*delta)).^2;
-        g0 = g(0)
+        g0 = g(0);
 %         
         % Check whether the full Newton step is acceptable. If not, we
         % search for a mininum using fminbnd.
@@ -213,5 +213,5 @@ end
 
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
-lambdas
+lambdas;
 end
