@@ -92,7 +92,7 @@ elseif any(isinf(ends))
         end
     end
     if isinf(ends(2))
-        % integral is nan if endpoint value isn't zero
+        % integral is +- inf endpoint value isn't zero
         if abs(g.vals(end)) > tol
             unbounded(2) = sign(vends(2))*inf;
         end
@@ -111,23 +111,30 @@ elseif any(isinf(ends))
     pref.extrapolate = true;
     pref.eps = pref.eps*10;
     
-    if isinf(ends(2))   
+    if isinf(ends(2))
         gtmp = g; gtmp.vals = gtmp.vals./(1-y);
-        gtmp = extrapolate(gtmp,pref,y);        
-        if abs(gtmp.vals(end)) > tol && diff(gtmp.vals((end-1:end))./diff(y(end-1:end))) > -g.scl.v/g.scl.h
+        gtmp = extrapolate(gtmp,pref,y);
+        if abs(gtmp.vals(end)) > 1e3*tol && diff(gtmp.vals((end-1:end))./diff(y(end-1:end))) > -g.scl.v/g.scl.h
             unbounded(1) = inf*sign(g.vals(end-1));
         else
             g.vals(end) = 0;
+            if abs(gtmp.vals(end)) > tol
+                warning('chebfun:sum:slowdecay','Result is likely inaccurate')
+            end
         end
-    end        
+    end
     if isinf(ends(1))
         gtmp = g; gtmp.vals = gtmp.vals./(1+y);
-        gtmp = extrapolate(gtmp,pref,y);         
-        if abs(gtmp.vals(1)) > tol && diff(gtmp.vals(1:2)./diff(y(1:2))) < g.scl.v/g.scl.h
-           unbounded(2) = inf*sign(g.vals(2));
+        gtmp = extrapolate(gtmp,pref,y);
+        if abs(gtmp.vals(1)) > 1e3*tol && diff(gtmp.vals(1:2)./diff(y(1:2))) < g.scl.v/g.scl.h
+            unbounded(2) = inf*sign(g.vals(2));
         else
             g.vals(1) = 0;
+            if abs(gtmp.vals(1)) > tol
+                warning('chebfun:sum:slowdecay','Result is likely inaccurate')
+            end
         end
+
     end
     if ~isempty(unbounded)
         out = sum(unbounded);

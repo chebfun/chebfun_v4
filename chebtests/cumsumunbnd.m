@@ -18,7 +18,7 @@ try
 %     plot(u,'b',h,'--g')
     
     err = h - restrict(u,[a f.ends(2)]);
-    nerr = norm(err,inf)
+    nerr = norm(err,inf);
     
 %     pass(1) = nerr < tol;
 

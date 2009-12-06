@@ -44,26 +44,102 @@ if strcmp(g.map.name,'linear')
     else
         g = jacsum(g);
     end
-        
     
-% Infinite intervals    
-elseif norm(g.map.par(1:2),inf) == inf
+% Infinite intervals
+elseif any(isinf(g.map.par(1:2)))
+    ends = g.map.par(1:2);
     
+    % non-constant case    
     % constant case
     if g.n == 1
         if abs(g.vals) <= chebfunpref('eps')*10*g.scl.v
-            g.vals = 0; g.n = 1; g.scl.v = 0;
+            g.vals = 0; g.scl.v = 0;
         else
-            warning('fun:cumsum','Integral seems to diverge')
-            g.vals = nan; g.n = 1; g.scl.v = inf;
+            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+            %g.vals = inf*sign(g.vals); g.scl.v = inf;
         end
         return
     end
-
-    % non-constant case
-    g = cumsum_unit_interval(changevar(g));
     
-% General map case    
+    vends = g.vals([1,end]);
+    tol = max(10*chebfunpref('eps'),1e-8)*g.scl.v; % Loose tolerance
+    
+    % Linear case (must be like f=c*(1/x) and integral diverges)
+    if g.n == 2
+        if all(abs(g.vals) <= chebfunpref('eps')*10*g.scl.v)
+            g.vals = 0; g.scl.v = 0;
+        else
+            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+        end
+        return
+    end
+           
+    % Check if not zero at infinity (unbounded integral, simple case)
+    if isinf(ends(1))
+        % integral is +-inf if endpoint value isn't zero
+        if abs(g.vals(1)) > tol
+            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+        end
+    end
+    if isinf(ends(2))
+        % integral is +- inf endpoint value isn't zero
+        if abs(g.vals(end)) > tol
+            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+        end
+    end
+    
+    % Extract roots (type of trick)
+    % Besides having a zero at (+- 1), the fun should decrease towards the
+    % endpoint. Decaying faster than 1/x^2 results in a double root.
+    % ---------------------------------------------------------------------
+    y = chebpts(g.n, 2);
+    pref = chebfunpref;
+    pref.extrapolate = true;
+    pref.eps = pref.eps*10;
+    
+    if isinf(ends(2))
+        gtmp = g; gtmp.vals = gtmp.vals./(1-y);
+        gtmp = extrapolate(gtmp,pref,y);
+        if abs(gtmp.vals(end)) > 1e3*tol &&  diff(gtmp.vals((end-1:end))./diff(y(end-1:end))) > -g.scl.v/g.scl.h
+            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+        else
+            g.vals(end) = 0;
+            if abs(gtmp.vals(end)) > tol
+                warning('chebfun:cumsum:slowdecay','Representation is likely inaccurate')
+            end
+        end
+        
+    end
+    if isinf(ends(1))
+        gtmp = g; gtmp.vals = gtmp.vals./(1+y);
+        gtmp = extrapolate(gtmp,pref,y);
+        if abs(gtmp.vals(1)) > 1e3*tol && diff(gtmp.vals(1:2)./diff(y(1:2))) < g.scl.v/g.scl.h
+            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+        else
+            g.vals(1) = 0;
+            if abs(gtmp.vals(1)) > tol
+                warning('chebfun:cumsum:slowdecay','Representation is likely inaccurate')
+            end
+        end
+        
+    end
+    
+    % ---------------------------------------------------------------------
+    
+    % clean up rounding errors in exponential decay
+    if isinf(ends(1)) && norm(g.vals(1:3),inf) < tol
+        g.vals(abs(g.vals) < max(10*abs(vends(1)),10*eps*g.scl.v)) = 0;
+    end
+    if isinf(ends(2)) && norm(g.vals(end-2:end),inf) < tol
+        g.vals(abs(g.vals) < max(10*abs(vends(2)),10*eps*g.scl.v)) = 0;
+    end
+    
+    % Chain rule and extrapolate
+    g.vals = g.vals.*g.map.der(y);
+    g = extrapolate(g,pref,y);
+    g = cumsum_unit_interval(g);    
+
+% General map case
 else
     
     map = g.map;
@@ -84,7 +160,7 @@ else
         exps = g.exps; g.exps = [0 0];
         g = fun(@(x) feval(g,x),map,pref);
         g.exps = exps;
-    else      
+    else
         g.map = linear([-1 1]);
         g = cumsum_unit_interval(g.*fun(map.der,g.map));
         g.map = map;
@@ -267,7 +343,7 @@ oldends = f.map.par(1:2);
 
 % Shift domain to origin
 f = newdomain(f,oldends-oldends(1));
-ends = f.map.par(1:2)
+ends = f.map.par(1:2);
 
 if exps(2)~=0
     error('chebfun:fun:cumsum:exps2','cumsum does not yet support exponents <= 1 at right boundary');
