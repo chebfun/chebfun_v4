@@ -208,7 +208,7 @@
 %%
 % An m x n matrix A defines a map from R^n to R^m, and in particular, A maps the unit ball in
 % R^n to a hyperellipsoid of dimension <=n in R^m.  The (reduced, skinny, condensed,...)
-% *SVD* or *Singular Value Decomposition* exhibits this
+% *SVD* or *singular value decomposition* exhibits this
 % map by providing a factorization  AV = US or equivalently
 % A = USV', where U is m x n with orthonormal columns, S is diagonal with
 % nonincreasing nonnegative diagonal entries known as the *singular values*,

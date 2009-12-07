@@ -136,7 +136,7 @@ clf, plot(u)
 % as a Dirichlet condition on the solution; if an operator is given, it is
 % applied homogeneously to the solution; and if {operator,number} are given
 % in a cell array, the operator applied to the solution equals that number
-% at the boundary. One can alternatively use the string 'dirichlet' or
+% at the boundary. One can alternatively use the strings 'dirichlet' or
 % 'neumann' anywhere an operator would be accepted. 
 A.rbc = 'neumann';   % same as previous example
 A.rbc = {D-4*I, 5};  % so that u'(1)-4u(1)=5

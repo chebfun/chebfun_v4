@@ -371,12 +371,16 @@ semilogy(nrmdu,'.-k',LW,lw), ylim([1e-14,1e2])
 %%
 % Another way to get information about the Newton iteration with
 % nonlinear backlash is by setting
-cheboppref('plotting',1)
+cheboppref('plotting','on')
+%%
+% or
+cheboppref('display','iter')
 
 %%
 % Type help cheboppref for details.  Here we shall not pursue this
 % option and thus return the system to its factory state:
-cheboppref('plotting',0)
+cheboppref('plotting','off')
+cheboppref('display','none')
 
 %%
 % The heading of this section refers to the command SOLVEBVP.

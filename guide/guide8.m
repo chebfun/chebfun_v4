@@ -8,7 +8,7 @@
 % like the maximum number of points at which a function will be sampled before the
 % system gives up trying to resolve it.  A starting point in
 % exploring these matters is to type the command help chebfunpref.
-% (For chebops and nonlinops, there are help cheboppref and help nonlinoppref.)
+% (For chebops, there is help cheboppref.)
 % Or just to see the list of preferences, you can simply execute chebfunpref.
 % Here we execute it with the argument 'factory' to ensure that all preferences are set to their
 % factory values:

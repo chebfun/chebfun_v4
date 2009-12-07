@@ -480,7 +480,7 @@ ylim(2e-13*[-1 1])
 %%
 % CF approximation often comes close to optimal for non-smooth
 % functions too, provided you specify a fourth argument to tell the
-% system on how fine a Chebfyshev grid to sample:
+% system on how fine a Chebyshev grid to sample:
 f = abs(x-.3);
 [p,q,r_handle,lam] = cf(f,5,5,300);
 clf, plot(f-p./q,'c'), hold on
