@@ -42,7 +42,7 @@ switch r
         % Afrikaans:
         % Andre Weideman
         
-    case 6,         s = 'Mdat Nick Trefethen het zegt!';
+    case 6,         s = 'Omdat Nick Trefethen het zegt!';
         % Dutch:
         % Joris Van Deun
         

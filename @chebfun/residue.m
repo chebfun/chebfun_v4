@@ -1,17 +1,17 @@
-function [r,p,k] = residue(b,a)
+function [coeffs,poles,k] = residue(u,v,k)
 %  RESIDUE Partial-fraction expansion (residues).
 %     [R,P,K] = RESIDUE(B,A) finds the residues, poles and direct term of
-%     a partial fraction expansion of the ratio of two polynomials B(s)/A(s).
+%     a partial fraction expansion of the ratio of two chebfuns B(s)/A(s).
 %     If there are no multiple roots,
 %        B(s)       R(1)       R(2)             R(n)
 %        ----  =  -------- + -------- + ... + -------- + K(s)
 %        A(s)     s - P(1)   s - P(2)         s - P(n)
-%     Vectors B and A are chebfuns representing the numerator and
-%     denominator polynomials.  The residues are returned in the column
-%     vector R, the pole locations in column vector P, and the direct terms
-%     in chebfun K.  The number of poles is n = length(A)-1 = length(R) =
-%     length(P). The direct term chebfun is empty if length(B) < length(A),
-%     otherwise length(K) = length(B)-length(A)+1.
+%     B and A are chebfuns consisting of a single fun.  The residues are
+%     returned in the column vector R, the pole locations in column vector
+%     P, and the direct terms in chebfun K.  The number of poles is n =
+%     length(A)-1 = length(R) = length(P). The direct term chebfun is zero
+%     if length(B) < length(A), otherwise length(K) =
+%     length(B)-length(A)+1.
 %  
 %     If P(j) = ... = P(j+m-1) is a pole of multplicity m, then the
 %     expansion includes terms of the form
@@ -32,14 +32,22 @@ function [r,p,k] = residue(b,a)
 %     representations are preferable.
 
 if (nargin == 2),
-  b = poly(b); a = poly(a);
-  [r,p,k] = residue(b,a);
+  if (u.nfuns > 1) || (v.nfuns > 1), error('CHEBFUN:residue:multiple_funs',...
+      'Residue does not support chebfuns consisting of multiple funs.'); end
+  if any(get(u,'exps')) || any(get(v,'exps')), error('CHEBFUN:residue:inf',...
+      'Residue does not support functions with nonzero exponents.'); end
+  b = poly(u); a = poly(v);
+  [coeffs,poles,k] = residue(b,a);
   k = chebfun(@(x) polyval(k,x),length(k),'vectorize');
 elseif (nargin == 3),
+  if (k.nfuns > 1), error('CHEBFUN:residue:multiple_funs',...
+      'Residue does not support chebfuns consisting of multiple funs.'); end
+  if any(get(k,'exps')), error('CHEBFUN:residue:inf',...
+      'Residue does not support functions with nonzero exponents.'); end
   k = poly(k);
-  [b,a] = residue(r,p,k);
-  b = chebfun(@(x) polyval(b,x),length(b),'vectorize');
-  a = chebfun(@(x) polyval(a,x),length(a),'vectorize');
+  [b,a] = residue(u,v,k);
+  coeffs = chebfun(@(x) polyval(b,x),length(b),'vectorize');
+  poles = chebfun(@(x) polyval(a,x),length(a),'vectorize');
 else
-  error('CHEBFUN:residue:arguments','RTFM!');
+  error('CHEBFUN:residue:arguments','Residue requires either 2 or 3 arguments.');
 end
