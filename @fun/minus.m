@@ -138,7 +138,7 @@ if round(exps1-exps2) == exps1-exps2
     
     if any(g1.exps < 0) || any(isinf(ends))
         g1 = checkzero(g1);
-        g1 = extract_roots(g1);
+%         g1 = extract_roots(g1);
     end
     return
 end
@@ -189,6 +189,7 @@ if round(dexps(2)) ~= dexps(2)
 else
     newexps(2) = min(exps1(2),exps2(2));
 end
+pows = pows-floor(pows); % Should be < 1;
 
 % The new map
 map = maps({'sing',pows},ends);
@@ -216,6 +217,5 @@ if all(abs(g1.vals) < 10*g1.scl.v*chebfunpref('eps'))
     g1.exps = [0 0];
     g1.scl.v = 0;
 end
-
 
 

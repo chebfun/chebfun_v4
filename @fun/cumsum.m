@@ -1,4 +1,4 @@
-function g = cumsum(g)
+function [g gsing] = cumsum(g)
 % CUMSUM	Indefinite integral
 % CUMSUM(G) is the indefinite integral of the fun G.
 % If the fun G of length n is represented as
@@ -40,7 +40,11 @@ if strcmp(g.map.name,'linear')
         g.vals = g.vals*g.map.der(0); % From change of variables to [-1,1]
         g = cumsum_unit_interval(g);
     elseif any(g.exps<=-1)
-        g = sheehan(g);
+        if nargout > 1 
+            [g gsing] = unbdnd(g);
+        else
+            g = unbdnd(g);
+        end
     else
         g = jacsum(g);
     end
@@ -199,10 +203,6 @@ a = exps(2); b = exps(1);
 j = jacpoly(f,a,b).';
 
 if abs(j(end)) < chebfunpref('eps'), j(end) = 0; end
-if exps(2) && j(end) ~= 0
-    error('CHEBFUN:fun:cumsum',['Cumsum does not yet support functions with ', ...
-        'singularities at the righthand endpoint.']);
-end
 
 % Integrate the nonconstant terms exactly to get new coefficients
 k = (length(j)-1:-1:1).';
@@ -221,82 +221,22 @@ f.scl.v = max(f.scl.v, norm(f.vals,inf));
 if j(end) == 0
     G = 0;
 elseif exps(2)
-    G = j(end)*2^(a+b+1)*beta(b+1,a+1)*chebfun(@(x) betainc(.5*(x+1),b+1,a+1),'map',{'sing',0},'exps',{exps(1) exps(2)},'splitting','off');
+    const = j(end)*2^(a+b+1)*beta(b+1,a+1)*(diff(ends)/2);
+    mappar = [b a];
+    mappar(mappar<0) = mappar(mappar<0)+1; 
+    mappar(mappar>1) = mappar(mappar>1)-floor(mappar(mappar>1)) ;
+    map = maps({'sing',mappar},ends);
+    pref = chebfunpref;
+    G = fun(@(x) const*betainc(.5*(x+1),b+1,a+1),map,pref,f.scl);
 else
     G = fun(j(end)/(1+exps(1)),f.map.par(1:2));
-    G.exps = [exps(1)+1 0];
+    G = (diff(ends)/2)*setexps(G,[exps(1)+1 0]);
 end
 
-% For testing when the righthand exponent is nonzero
-if exps(2) && j(end) ~=0
-    figure
-    F = chebfun(f);
-    plot(F,'-b'); hold on
-    xx = linspace(-1,1,1000);
-    plot(G,'--b')
-    plot(xx,F(xx)+feval(G,xx),'k','linewidth',2)
-
-    % testing within interval
-    h = @(x) feval(h,x);
-    ff = chebfun(@(x) h(x).*((1-x).^a.*(x+1).^b),[-.9,.9]);
-    gg = cumsum(ff)+feval(F,ff.ends(1))+feval(G,ff.ends(1));
-    xx = linspace(ff.ends(1),ff.ends(2),1000);
-    plot(xx,gg(xx),'--r')
-
-    xx = linspace(-ff.ends(1),ff.ends(2),1000);
-    norm(F(xx)+feval(G,xx)-gg(xx),inf)
-    legend('F','G','F+G','''true''')
-
-    figure
-    subplot(2,1,1)
-    plot(G)
-    legend('G')
-    subplot(2,1,2)
-    chebpolyplot(chebfun(G))
-    legend('chebpolyploy(G)')
-    A = get(gcf,'position'); 
-    A(1) = A(1)+.6*A(3); 
-    set(gcf,'position',A)
-    A(1) = A(1)-1.2*A(3);
-    set(1,'position',A)
-
-else
-    
-    % We can do this situation! 
-    fexps = f.exps; 
-    f.exps = [0 0];
-    pref = chebfunpref;
-    pref.exps = {0 0}; pref.n = 2;
-    f = f.*fun(@(x) ends(2)-x,ends,pref);
-    f.exps(1) = fexps(1);
-    
-    % Changed this to make it scale invariant (Rodrigo Nov 09)
-%    f = 2/diff(ends)*f + G;
-    f = f + (diff(ends)/2)*G;
-    
-%     % testing within interval
-%     xx = linspace(ends(1),ends(2),1000);
-%     plot(xx,feval(f,xx),'k','linewidth',2); 
-%     hold on
-% 
-%     h = @(x) feval(h,x);
-%     ff = chebfun(@(x) h(x).*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)),.9*ends);
-%     gg = cumsum(ff)+feval(f,ff.ends(1));
-%     xx = linspace(ff.ends(1),ff.ends(2),1000);
-%     plot(xx,gg(xx),'.r')
-%     legend('f','true')
-%     
-%     xx = linspace(ff.ends(1),ff.ends(2),1000);
-%     norm(feval(f,xx)-gg(xx),inf)
-%     
-%     figure
-%     subplot(2,1,1)
-%     semilogy(xx,abs(feval(f,xx)-gg(xx)))
-%     subplot(2,1,2)
-%     plot(xx,abs(feval(f,xx)-gg(xx)))
-
+% Add together smooth and singular terms
+if nargout == 1 || ~exps(2)
+    f = f + G;
 end
-
 
 end
 
@@ -332,7 +272,9 @@ end
 
 
 
-function f = sheehan(f)
+function [f g] = unbdnd(f)
+% If only one output is asked for, f is the whole function
+% For two outputs, f is the smooth part, and g contains the log singularity
 
 if ~strcmpi(f.map.name,'linear')
     error('chebfun:fun:cumsum:exps','cumsum does not yet support exponents <= 1 with arbitrary maps.');
@@ -406,8 +348,12 @@ if abs(ck) > 1e-13 % some kind of scale needed here
     map = maps({'sing',[.25 1]},oldends);
     pref = chebfunpref; pref.extrapolate = 1;
     g = fun(@(x) ck*(x-oldends(1)).^(a-1).*log(x-oldends(1)),map,pref,f.scl);
-    g = setexps(g,[1-a 0]);
-    f = f+g.*(2./diff(ends)).^exps(1);
+    g = (2./diff(ends)).^exps(1)*setexps(g,[1-a 0]);
+    if nargout == 1
+        f = f+g;
+    end 
+else
+    g = fun(0,oldends);
 end
 
 if flip
@@ -416,6 +362,16 @@ if flip
     f = f - get(f,'lval');
     f = replace_roots(f);
 end
+
+if flip
+    f.vals = -f.vals(end:-1:1);
+    f.exps = f.exps([2 1]);
+    f = f - fun(get(f,'lval'),f.map);
+else
+    f = f - fun(get(f,'rval'),f.map);
+end
+
+f = replace_roots(f);
 
 end
 
