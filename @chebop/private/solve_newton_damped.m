@@ -145,8 +145,9 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     
     r = problemFun(u);
     
-    nrmdu = norm(delta,'fro');
-    normr = solNorm(u);
+    normu = norm(u,'fro');
+    nrmdu = norm(delta,'fro')/normu;
+    normr = solNorm/normu;
     
     % In case of a quasimatrix, the norm calculations were taking the
     % longest time in each iterations when we used the two norm.
@@ -161,11 +162,11 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     solve_display('iterNewton',u,lambda*delta,nrmdu,normr,lambda)
     
     nrmduvec(counter) = nrmdu;
-    normrvec(counter) = norm(normr);
+    normrvec(counter) = norm(normr)/normu;
     lambdas(counter) = lambda;
     
     % Avoid stagnation.
-    if nrmdu > min(nrmduvec(1:counter)) && norm(normr) > min(normrvec(1:counter))
+    if nrmdu > min(nrmduvec(1:counter)) && norm(normr)/normu > min(normrvec(1:counter))
         stagCounter = stagCounter+1;
     else
         stagCounter = max(0,stagCounter-1);
@@ -186,7 +187,7 @@ end
 % Function that measures how far away we are from the solving the BVP.
 % This function takes into account the differential equation and the
 % boundary values.
-    function sn = solNorm(u)
+    function sn = solNorm()
         sn = [0 0];
         if ~leftEmpty
             for bcCount = 1:length(bcFunLeft)
@@ -252,7 +253,7 @@ end
                 lam = max(tau*lam,(lam^2*g0)/((2*lam-1)*g0+glam));
             end
         end
-        if lam < lambda_min
+        if lam <= lambda_min           
             if lambda_minCounter < 3
                 lambda_minCounter = lambda_minCounter + 1;
                 lam = lambda_min;
@@ -263,6 +264,5 @@ end
                 lambda_minCounter = lambda_minCounter - 1;
             end
         end
-        
     end
 end
