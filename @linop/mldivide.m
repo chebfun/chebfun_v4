@@ -105,42 +105,6 @@ end
       Amat(rowidx,:) = Bmat;
       d = A.fundomain;
       ab = d.ends;
-
-      if 0 && any(isinf(ab)) % if the domain is infinite then apply Neumann conditions. 
-          Dtmp = feval(diff(domain([-1,1])),N);
-          Dtmp = Dtmp([1 end],:);
-          numlbc = numel(A.lbc);    numrbc = numel(A.rbc);
-          
-          if isinf(ab(1))
-              j = 1;
-              if numlbc > 0
-                  j = rowidx(numel(A.lbc))+1;
-              end
-              Amat(j,:) = Dtmp(1,:);
-              rowidx = [rowidx(1:numlbc) j rowidx(numlbc+1:end)];
-              if numlbc > 0
-                  c = [c(1:numlbc) ; 0 ; c(numlbc+1:end)];
-              else
-                  c = [0 ; c];
-              end
-              numlbc = numlbc +1;
-          end
-          if isinf(ab(2))
-              j = N;
-              if numrbc > 0
-                  j = rowidx(numlbc+1)-1;
-              end
-              Amat(j,:) = Dtmp(2,:);
-              if numrbc > 0
-                  rowidx = [rowidx(1:numlbc) j rowidx(numlbc+1:end)];
-                  c = [c(1:numlbc);  0 ; c(numlbc+1:end)];
-              else
-                  rowidx = [rowidx(1:numlbc) j];
-                  c = [c ; 0];
-              end
-              
-          end
-      end
       
       [L,U] = lu(Amat);
       if use_store && N>5   % store L and U
