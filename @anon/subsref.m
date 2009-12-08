@@ -1,4 +1,6 @@
 function varargout = subsref(f,index)
+% SUBSREF for the anon class. At the moment, the only allowed subsref type
+% is ().
 
 idx = index(1).subs;
 switch index(1).type
