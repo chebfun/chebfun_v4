@@ -4,8 +4,8 @@ function pass = cumsumunbnd
 %
 % Nick Hale, Dec 2009
 
-tol = 1e-6;
 chebfunpref('factory');
+tol = 1e-10;
 
 f = chebfun('(sin(1-x)-(1-x))./(1-x).^2',[1 3],'exps',[-2 0]);
 u = cumsum(f);
@@ -25,4 +25,3 @@ h = cumsum(f{f.ends(1), b});
 err = h - restrict(u,[f.ends(1) b]);
 nerr = norm(err,inf);
 pass(2) = nerr < tol;
-
