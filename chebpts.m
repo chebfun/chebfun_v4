@@ -71,7 +71,7 @@ if scale
     
     if ~any(isinf(d))
         % finite interval
-        x = (x+1)/2*dab + d(1);
+        x = x/2*dab + (d(1) + dab/2);
         w = dab*w/2;
     else
         % infinite interval
