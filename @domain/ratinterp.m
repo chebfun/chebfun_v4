@@ -54,7 +54,6 @@ fx = f(xi);
 if strcmp(type,'chebyshev')
     % get the Chebyshev coefficients of fx (not f!)
     gama = flipud( chebpoly( chebfun ( fx ) )' );
-    gama(1) = gama(1) / 2;
     % assemble the matrix Z
     Z = zeros(n,n+1);
     for i=m+1:N, for j=0:n
@@ -85,7 +84,7 @@ if strcmp(type,'chebyshev')
     % construct p
     p = chebfun( qi.* fx , [a,b] );
     c = chebpoly(p);
-    p = chebfun( chebpolyval( c( m+1:end ) ) , [a,b] );
+    p = chebfun( chebpolyval( c( n+1:end ) ) , [a,b] );
     % construct r
     w = [.5 ; ones(N,1)]; 
     w(2:2:end) = -1;
