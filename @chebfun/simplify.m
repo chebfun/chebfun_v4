@@ -14,22 +14,32 @@ function u = simplify(u,k,tol)
 %   Last commit: $Author$: $Rev$:
 %   $Date$:
 
-if nargin < 3,
+% deal with input arguments
+if nargin ==1
     tol = chebfunpref('eps');
+    k = [];
+elseif nargin == 2
+    if min(k) < 1
+        tol = max(min(k),eps);
+        k = [];
+    else
+        tol = chebfunpref('eps');
+    end
 end
+if ~isempty(k) && numel(u)>1 && numel(u)~=length(k)
+    error('chebfun:simplify:quasimatrices',['For quasimatrices, '...
+        'second imput must be a vector with length matching the '...
+        'number of columns or rows in the quasimatrix'])
+end
+kfun = k(:)';
 
 for j = 1:numel(u)
     
-    if nargin == 1,
-        k = 1:u(j).nfuns;
+    if isempty(k)
+        kfun = 1:u(j).nfuns;
     end
     
-    if any(k < 1)
-        tol = k;
-        k = 1:u(j).nfuns;
-    end
-    
-    for kk = k
+    for kk = kfun
         u(j).funs(kk) = simplify(u(j).funs(kk),tol);
     end
     
