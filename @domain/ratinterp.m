@@ -85,7 +85,7 @@ if strcmp(type,'chebyshev')
     % construct p
     p = chebfun( qi.* fx , [a,b] );
     c = chebpoly(p);
-    p = chebfun( chebpolyval( c( n+1:end ) ) , [a,b] );
+    p = chebfun( chebpolyval( c( m+1:end ) ) , [a,b] );
     % construct r
     w = [.5 ; ones(N,1)]; 
     w(2:2:end) = -1;
