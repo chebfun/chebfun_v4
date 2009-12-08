@@ -4,6 +4,7 @@
 
 % Set up for plotting. Throughout this script, the variable probCounter is
 % used to set up subplots etc.
+cheboppref('factory')
 time = zeros(35,1);
 iter = zeros(35,1);
 figure;
@@ -13,7 +14,7 @@ titleOn  = 0;
 eps = 0.1;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) - u;
-N.lbc = -1;
+N.lbc = 1;
 N.rbc = 0;
 tic
 [u nrmduvec] = N\0;
@@ -29,8 +30,8 @@ end
 eps = 1;
 [d,x,N] = domain(-1,1);
 N.op = @(u) eps*diff(u,2) + (2+cos(pi*x)).*diff(u,1) - u;
-N.lbc = 1;
-N.rbc = 1;
+N.lbc = -1;
+N.rbc = -1;
 probCounter = 2;
 tic
 [u nrmduvec] = N\(-(1+eps+pi^2)*cos(pi*x)-pi*(2+cos(pi*x)).*sin(pi*x));
@@ -75,8 +76,8 @@ end
 eps = 1;
 [d,x,N] = domain(-1,1);
 N.op = @(u) eps*diff(u,2) + x.*diff(u,1) - u;
-N.lbc = 1;
-N.rbc = 1;
+N.lbc = -1;
+N.rbc = -1;
 probCounter = 5;
 tic
 [u nrmduvec] = N\(-(1+eps+pi^2)*cos(pi*x)-pi*x.*sin(pi*x));
@@ -92,8 +93,8 @@ figure(gcf)
 eps = 0.005;
 [d,x,N] = domain(-1,1);
 N.op = @(u) eps*diff(u,2) + diag(x)*diff(u,1) + eps*pi*pi*cos(pi*x) + pi*diag(x)*sin(pi*x);
-N.lbc = @(u) u + 2;
-N.rbc = @(u) u;
+N.lbc = -2;
+N.rbc = 0;
 tic
 [u nrmduvec] = N\0;
 probCounter = 6;
@@ -107,12 +108,12 @@ end
 %% Problem #07
 eps = 0.21;
 [d,x,N] = domain(-1,1);
-N.op = @(u) eps*diff(u,2) + x.*diff(u,1) - u + (1+eps*pi^2)*cos(pi*x)+pi*x.*sin(pi*x);
+N.op = @(u) eps*diff(u,2) + x.*diff(u,1) - u;
 N.lbc = -1;
 N.rbc = 1;
 probCounter = 7;
 tic
-[u nrmduvec] = N\0;
+[u nrmduvec] = N\-((1+eps*pi^2)*cos(pi*x)+pi*x.*sin(pi*x));
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
@@ -124,8 +125,8 @@ end
 eps = 0.046;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + diff(u,1);
-N.lbc = @(u) u - 1;
-N.rbc = @(u) u - 2;
+N.lbc = 1;
+N.rbc = 2;
 probCounter = 8;
 tic
 [u nrmduvec] = N\0;
@@ -139,8 +140,8 @@ end
 eps = 0.4;
 [d,x,N] = domain(-1,1);
 N.op = @(u) (eps+diag(x.^2))*diff(u,2) + 4*diag(x)*diff(u,1) + 2*u;
-N.lbc = @(u) u - 1/(1+eps);
-N.rbc = @(u) u - 1/(1+eps);
+N.lbc = 1/(1+eps);
+N.rbc = 1/(1+eps);
 probCounter = 9;
 tic
 [u nrmduvec] = N\0;
@@ -154,8 +155,8 @@ end
 eps = 0.03;
 [d,x,N] = domain(-1,1);
 N.op = @(u) eps*diff(u,2) +diag(x)*diff(u,1);
-N.lbc = @(u) u ;
-N.rbc = @(u) u - 2;
+N.lbc = 0;
+N.rbc = 2;
 probCounter = 10;
 tic
 [u nrmduvec] = N\0;
@@ -170,8 +171,8 @@ figure(gcf)
 eps = 1;
 [d,x,N] = domain(-1,1);
 N.op = @(u) eps*diff(u,2)  - u + (1+eps+pi^2)*cos(pi*x);
-N.lbc = @(u) u + 1;
-N.rbc = @(u) u + 1 ;
+N.lbc = -1;
+N.rbc = -1 ;
 probCounter = 11;
 tic
 [u nrmduvec] = N\0;
@@ -184,12 +185,12 @@ end
 %% Problem #12
 eps = 0.5;
 [d,x,N] = domain(-1,1);
-N.op = @(u) eps*diff(u,2)  - u + (1+eps+pi^2)*cos(pi*x);
-N.lbc = @(u) u + 1;
-N.rbc = @(u) u  ;
+N.op = @(u) eps*diff(u,2)  - u;
+N.lbc = -1;
+N.rbc = 0;
 probCounter = 12;
 tic
-[u nrmduvec] = N\0;
+[u nrmduvec] = N\(-(1+eps+pi^2)*cos(pi*x));
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
@@ -199,12 +200,12 @@ end
 %% Problem #13
 eps = 0.5;
 [d,x,N] = domain(-1,1);
-N.op = @(u) eps*diff(u,2)  - u + (1+eps+pi^2)*cos(pi*x);
-N.lbc = @(u) u;
-N.rbc = @(u) u +1  ;
+N.op = @(u) eps*diff(u,2)  - u;
+N.lbc = 0;
+N.rbc = -1;
 probCounter = 13;
 tic
-[u nrmduvec] = N\0;
+[u nrmduvec] = N\(-(1+eps+pi^2)*cos(pi*x));
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
@@ -214,12 +215,12 @@ end
 %% Problem #14
 eps = 1;
 [d,x,N] = domain(-1,1);
-N.op = @(u) eps*diff(u,2)  - u + (1+eps+pi^2)*cos(pi*x);
+N.op = @(u) eps*diff(u,2)  - u;
 N.lbc = @(u) u ;
 N.rbc = @(u) u  ;
 probCounter = 14;
 tic
-[u nrmduvec] = N\0;
+[u nrmduvec] = N\(-(1+eps+pi^2)*cos(pi*x));
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
@@ -230,8 +231,8 @@ end
 eps = 0.005;
 [d,x,N] = domain(-1,1);
 N.op = @(u) eps*diff(u,2)  - diag(x)*u;
-N.lbc = @(u) u -1;
-N.rbc = @(u) u -1;
+N.lbc = 1;
+N.rbc = 1;
 probCounter = 15;
 tic
 [u nrmduvec] = N\0;
@@ -246,8 +247,8 @@ figure(gcf)
 eps = 0.15;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps^2*diff(u,2) + pi^2/4*u;
-N.lbc = @(u) u;
-N.rbc = @(u) u - sin(pi/(2*eps));
+N.lbc = 0;
+N.rbc = sin(pi/(2*eps));
 probCounter = 16;
 tic
 [u nrmduvec] = N\0;
@@ -261,8 +262,8 @@ end
 eps = 0.05;
 [d,x,N] = domain(-0.1,0.1);
 N.op = @(u) diff(u,2) + 3*eps*u./((eps+x.^2).^2);
-N.lbc = @(u) u + 0.1/sqrt(eps+0.01);
-N.rbc = @(u) u - 0.1/sqrt(eps+0.01);
+N.lbc = - 0.1/sqrt(eps+0.01);
+N.rbc = 0.1/sqrt(eps+0.01);
 probCounter = 17;
 tic
 [u nrmduvec] = N\0;
@@ -276,8 +277,8 @@ end
 eps = 0.05;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + diff(u,1);
-N.lbc = @(u) u -1;
-N.rbc = @(u) u - exp(-1/eps);
+N.lbc = 1;
+N.rbc = exp(-1/eps);
 probCounter = 18;
 tic
 [u nrmduvec] = N\0;
@@ -291,8 +292,8 @@ end
 eps = 0.05;
 [d,x,N] = domain(0,1);
 N.op = @(u)eps*diff(u,2) + exp(u).*diff(u,1) - pi/2*diag(sin(pi*x/2))*exp(2*u);
-N.lbc = @(u) u ;
-N.rbc = @(u) u ;
+N.lbc = 0;
+N.rbc = 0;
 probCounter = 19;
 tic
 [u nrmduvec] = N\0;
@@ -306,10 +307,10 @@ end
 eps = 0.05;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + diff(u,1).*diff(u,1) - 1;
-N.lbc = @(u) u - 1 - eps*log(cosh(-0.745/eps));
-N.rbc = @(u) u - 1 - eps*log(cosh(-0.255/eps));
+N.lbc = 1 + eps*log(cosh(-0.745/eps));
+N.rbc = 1 + eps*log(cosh(-0.255/eps));
 tic
-[u nrmduvec] = N\0;
+[u nrmduvec] = N\1;
 probCounter = 20;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
@@ -322,11 +323,11 @@ figure(gcf)
 %% Problem #21
 eps = 0.0008;
 [d,x,N] = domain(0,1);
-N.op = @(u) eps*diff(u,2) - u - u.^2 + exp(-2*x/sqrt(eps));
-N.lbc = @(u) u - 1;
-N.rbc = @(u) u - exp(-1/sqrt(eps));
+N.op = @(u) eps*diff(u,2) - u - u.^2;
+N.lbc = 1;
+N.rbc = exp(-1/sqrt(eps));
 tic
-[u nrmduvec] = N\0;
+[u nrmduvec] = N\-exp(-2*x/sqrt(eps));
 probCounter = 21;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
@@ -338,8 +339,8 @@ end
 eps = 0.025;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + diff(u) + u.^2;
-N.lbc = @(u) u;
-N.rbc = @(u) u - 1/2;
+N.lbc = 0;
+N.rbc = 1/2;
 tic
 [u nrmduvec] = N\0;
 probCounter = 22;
@@ -353,8 +354,8 @@ end
 eps = 0.025;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + diff(u) + u.^2;
-N.lbc = @(u) u;
-N.rbc = @(u) u - 1/2;
+N.lbc = 0;
+N.rbc = 1/2;
 tic
 [u nrmduvec] = N\0;
 probCounter = 22;
@@ -368,8 +369,8 @@ end
 eps = 8;
 [d,x,N] = domain(0,1);
 N.op = @(u) diff(u,2) - eps*sinh(eps*u);
-N.lbc = @(u) u;
-N.rbc = @(u) u - 1;
+N.lbc = 0;
+N.rbc = 1;
 tic
 [u nrmduvec] = N\0;
 probCounter = 23;
@@ -384,8 +385,8 @@ eps = 0.21;
 A = @(x) 1 + x.^2; Ap = @(x) 2*x; gamma = 1.4;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diag(1+x.^2)*(diff(u,2).*u) - ((1+gamma)/2-eps*diag(Ap(x)))*(u.*diff(u,1)) + diff(u,1)./u + diag(Ap(x)./A(x))*(1-(gamma-1)/2*u.^2);
-N.lbc = @(u) u - 0.9129;
-N.rbc = @(u) u - 0.375;
+N.lbc = 0.9129;
+N.rbc = 0.375;
 N.guess = chebfun([0.9129 0.375],d);
 tic
 [u nrmduvec] = N\0;
@@ -400,8 +401,8 @@ end
 eps = 0.01;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + u.*diff(u,1) - u;
-N.lbc = @(u) u + 1/3 ;
-N.rbc = @(u) u - 1/3;
+N.lbc = -1/3 ;
+N.rbc = 1/3;
 tic
 [u nrmduvec] = N\0;
 probCounter = 25;
@@ -416,8 +417,8 @@ figure(gcf)
 eps = 0.03;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + u.*diff(u,1) - u;
-N.lbc = @(u) u - 1;
-N.rbc = @(u) u + 1/3;
+N.lbc = 1;
+N.rbc = -1/3;
 tic
 [u nrmduvec] = N\0;
 probCounter = 26;
@@ -431,8 +432,8 @@ end
 eps = 0.03;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + u.*diff(u,1) - u;
-N.lbc = @(u) u - 1;
-N.rbc = @(u) u - 1/3;
+N.lbc = 1;
+N.rbc = 1/3;
 tic
 [u nrmduvec] = N\0;
 probCounter = 27;
@@ -446,8 +447,8 @@ end
 eps = 0.01;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + u.*diff(u,1) - u;
-N.lbc = @(u) u -1 ;
-N.rbc = @(u) u - 3/2;
+N.lbc = 1 ;
+N.rbc = 3/2;
 tic
 [u nrmduvec] = N\0;
 probCounter = 28;
@@ -461,8 +462,8 @@ end
 eps = 0.01;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + u.*diff(u,1) - u;
-N.lbc = @(u) u;
-N.rbc = @(u) u - 3/2;
+N.lbc = 0;
+N.rbc = 3/2;
 tic
 [u nrmduvec] = N\0;
 probCounter = 29;
@@ -476,8 +477,8 @@ end
 eps = 0.01;
 [d,x,N] = domain(0,1);
 N.op = @(u) eps*diff(u,2) + u.*diff(u,1) - u;
-N.lbc = @(u) u + 7/6;
-N.rbc = @(u) u - 3/2;
+N.lbc = -7/6;
+N.rbc = 3/2;
 tic
 [u nrmduvec] = N\0;
 probCounter = 30;
@@ -523,7 +524,8 @@ if plotOn,
 end
 
 %% Problem #33
-chebfunpref('tol',1e-8)
+% Pure Newton iteration has been found to work better for this problem
+cheboppref('damped','off')
 eps = 0.01;
 [d,x,N] = domain(0,1);
 N.op = @(u) [eps*diff(u(:,2),4) + u(:,2).*diff(u(:,2),3)+u(:,1).*diff(u(:,1)), ...
@@ -540,13 +542,13 @@ if plotOn,
     subplot(7,5,probCounter),plot(u(:,2)),
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
-chebfunpref('tol',1e-10)
+cheboppref('damped','on')
 %% Problem #34
 eps = 3.5;
 [d,x,N] = domain(0,1);
 N.op = @(u) diff(u,2) + eps*exp(u);
-N.lbc = @(u) u;
-N.rbc = @(u) u;
+N.lbc = 0;
+N.rbc = 0;
 tic
 [u nrmduvec] = N\0;
 probCounter = 34;
@@ -561,8 +563,8 @@ end
 eps = 0.03;
 [d,x,N] = domain(-1,1);
 N.op = @(u) eps*diff(u,2) - diag(x)*diff(u,1) + u;
-N.lbc = @(u) u -1 ;
-N.rbc = @(u) u - 2;
+N.lbc = 1 ;
+N.rbc = 2;
 tic
 [u nrmduvec] = N\0;
 probCounter = 35;

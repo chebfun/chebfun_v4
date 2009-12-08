@@ -20,8 +20,8 @@
 
 % Assign the properties of the operator
 N.op =  @(u) 0.03*diff(u,2) + diff(u,1) + sin(u);
-N.lbc = @(u) u;
-N.rbc = @(u) u-1/2;
+N.lbc = 0;
+N.rbc = 1/2;
 
 % Solve the problem
 u1 = N\0;
