@@ -15,7 +15,20 @@ if nargin == 1
     else
         Fout = zeros(1,size(F1,2));
         for k = 1:size(F1,2)
-            Fout(k) = sum(F1(:,k))/length(domain(F1(:,k)));
+            infends = isinf(F1(:,k).ends([1 end]));
+            if infends == [1 0]
+                Fout(k) = F1(:,k).imps(1);
+            elseif infends == [0 1]
+                Fout(k) = F1(:,k).imps(end);
+            elseif infends == [1 1]
+                if abs(F1(:,k).imps(1) - F1(:,k).imps(end)) < F1(:,k).scl
+                    Fout(k) = F1(:,k).imps(1);
+                else
+                    Fout(k) = NaN;
+                end
+            else
+                Fout(k) = sum(F1(:,k))/length(domain(F1(:,k)));
+            end
         end
     end
         

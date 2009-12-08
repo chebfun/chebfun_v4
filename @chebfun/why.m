@@ -20,7 +20,7 @@ switch r
         % Spanish:
         % Ricardo Pachon
         
-    case 3,         s = 'Porque o Nick Trefthen disse!';
+    case 3,         s = 'Porque o Nick Trefethen disse!';
         % Portuguese:
         % Rodrigo Platte
                 
