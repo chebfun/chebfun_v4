@@ -36,10 +36,10 @@ if ~pos && all(pow == 1)
 end
 
 % Can only do .25 powers at boths ends (or maybe .5?)
-if ~pos && ~all(pow==.25)
+if ~pos && (~all(pow==.25) && ~all(pow==.5))
     pow = [.25 .25];
-    warning('CHEBFUN:sing:bothends',['Singmaps at boths ends may only have ', ...
-    'parameters 0.25']);
+%     warning('CHEBFUN:sing:bothends',['Singmaps at boths ends may only have ', ...
+%     'parameters 0.25']);
 end
     
 powi = 1./pow;
@@ -57,10 +57,15 @@ switch pos
         m.der = @(y) L.der(1) * powi * ( (1-y)/2 ).^(powi-1);
         m.inv = @(x) 1 - 2*( (1-L.inv(x))/2 ).^pow(2);
     case 0 % Both points sigularities
-        m.for = @(y) L.for(sin(pi/2*sin(pi/2*y)));
-        m.inv = @(x) 2/pi*asin(2/pi*asin(L.inv(x)));
-%         m.inv = @(x) -2i/pi*log(1i*x+(1-x).^powi(1).*(1+x).^powi(2));
-        m.der = @(y) L.der(1)*(1/4)*cos((1/2)*pi*sin((1/2)*pi*y)).*pi^2.*cos((1/2)*pi*y);
+        if all(pow(1)) == .5
+            m.for = @(y) L.for(sin(pi/2*y));
+            m.inv = @(x) 2/pi*asin(L.inv(x));
+            m.der = @(y) L.der(1)*(pi/2)*cos(pi/2*y);
+        else
+            m.for = @(y) L.for(sin(pi/2*sin(pi/2*y)));
+            m.inv = @(x) 2/pi*asin(2/pi*asin(L.inv(x)));
+            m.der = @(y) L.der(1)*(1/4)*cos((1/2)*pi*sin((1/2)*pi*y)).*pi^2.*cos((1/2)*pi*y);
+        end
 end
 
 m.name = 'sing';

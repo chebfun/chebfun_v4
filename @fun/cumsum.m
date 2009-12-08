@@ -39,6 +39,7 @@ if strcmp(g.map.name,'linear')
     if ~any(g.exps)  
         g.vals = g.vals*g.map.der(0); % From change of variables to [-1,1]
         g = cumsum_unit_interval(g);
+%         gsing = fun(0,g.map.par(1:2));
     elseif any(g.exps<=-1)
         if nargout > 1 
             [g gsing] = unbdnd(g);
@@ -46,7 +47,11 @@ if strcmp(g.map.name,'linear')
             g = unbdnd(g);
         end
     else
-        g = jacsum(g);
+        if nargout > 1 
+            [g gsing] = jacsum(g);
+        else
+            g = jacsum(g);
+        end
     end
     
 % Infinite intervals
@@ -190,7 +195,7 @@ n = g.n;
     
 end
 
-function f = jacsum(f)
+function [f G] = jacsum(f)
 % for testing - delete this eventually
 h = f; h.exps = [0 0];
 
@@ -215,6 +220,7 @@ c = jac2cheb2(a+1,b+1,jhat);
 f.vals = chebpolyval(c);
 f.n = length(f.vals);
 f.exps = f.exps + 1;
+f = f*diff(ends)/2;
 f.scl.v = max(f.scl.v, norm(f.vals,inf));
 
 % Deal with the constant part
@@ -222,21 +228,29 @@ if j(end) == 0
     G = 0;
 elseif exps(2)
     const = j(end)*2^(a+b+1)*beta(b+1,a+1)*(diff(ends)/2);
+    
+    % Choose the right sing map
     mappar = [b a];
-    mappar(mappar<0) = mappar(mappar<0)+1; 
+    mappar(mappar<=0) = mappar(mappar<=0)+1; 
     mappar(mappar>1) = mappar(mappar>1)-floor(mappar(mappar>1)) ;
     map = maps({'sing',mappar},ends);
+
     pref = chebfunpref;
-    G = fun(@(x) const*betainc(.5*(x+1),b+1,a+1),map,pref,f.scl);
+    if all(mappar), pref.exps = {mappar(1) 0}; mappar(1) = 1; end
+    G = fun(@(x) const*betainc((x-ends(1))/diff(ends),b+1,a+1),map,pref,f.scl);
 else
     G = fun(j(end)/(1+exps(1)),f.map.par(1:2));
-    G = (diff(ends)/2)*setexps(G,[exps(1)+1 0]);
+    const = (2/diff(ends)).^exps(1);
+    G = const*setexps(G,[exps(1)+1 0]);
+    
 end
 
 % Add together smooth and singular terms
 if nargout == 1 || ~exps(2)
     f = f + G;
 end
+
+f = replace_roots(f);
 
 end
 
@@ -345,7 +359,8 @@ f = newdomain(f,oldends);
 
 % Adding in the log term
 if abs(ck) > 1e-13 % some kind of scale needed here
-    map = maps({'sing',[.25 1]},oldends);
+    if a == 2, map = maps({'sing',[.125 1]},oldends);
+    else       map = maps({'sing',[.25 1]},oldends); end
     pref = chebfunpref; pref.extrapolate = 1;
     g = fun(@(x) ck*(x-oldends(1)).^(a-1).*log(x-oldends(1)),map,pref,f.scl);
     g = (2./diff(ends)).^exps(1)*setexps(g,[1-a 0]);
@@ -354,13 +369,6 @@ if abs(ck) > 1e-13 % some kind of scale needed here
     end 
 else
     g = fun(0,oldends);
-end
-
-if flip
-    f.vals = -f.vals(end:-1:1);
-    f.exps = f.exps([2 1]);
-    f = f - get(f,'lval');
-    f = replace_roots(f);
 end
 
 if flip

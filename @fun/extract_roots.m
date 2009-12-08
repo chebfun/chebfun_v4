@@ -77,7 +77,8 @@ elseif ~all(isinf(d))
         end
         % Not sure why we need to scale here and not above.
         % The 1.5*f.n is hand-wavy.
-        pref = chebfunpref; pref.blowup = 0; pref.n = f.n; pref.extrapolate = 1;
+        pref = chebfunpref; pref.blowup = 0; %pref.n = f.n; 
+        pref.extrapolate = true;
         f = fun(@(x) newfun(x,f,d,sgn)*diff(d)/2,map,pref);
         f0 = abs(f.vals([1 end]));
         f0(~sides) = inf;
@@ -96,6 +97,31 @@ end
 function y = newfun(x,f,d,sgn)
     if sgn > 0
         y = feval(f,x)./(x-d(1));
+%         y = global_extrapolate(y,sgn);
     else
         y = feval(f,x)./(d(2)-x);
+%         y = global_extrapolate(y,sgn);
     end
+    
+function y = global_extrapolate(fx,sgn)
+    n = length(fx);
+    if n <= 2, y = fx; return, end
+    e = .5*ones(n,1);
+    D = spdiags([e sgn*2*e e], 0:2, n, n); 
+    D(1,1) = 1;
+    b = D\[zeros(n-3,1) ; -.5 ; 0 ; .5 ];
+    
+    if sgn > 0
+        fx(1) = 0.0;           % step one
+    else
+        fx(end) = 0.0;           % step one
+    end
+    c = chebpoly(chebfun(fx));           % step two
+    alpha = c(1) / b(1);                 % step four
+
+    c_nm1 = c(2:end).' - alpha*b(2:end); % step five
+    y = chebpolyval([0 ; c_nm1]);
+
+    
+
+
