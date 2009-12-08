@@ -575,9 +575,9 @@ if plotOn,
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %%
-figure;plot(time,':*'),%ylim([0 6])
+figure;plot(time,':*')
 title('Solution time for BVPs'); xlabel('Problem number'), ylabel('Solution time [sec]')
 box on, grid on
-figure;plot(iter,':*'), ylim([0 12])
+figure;plot(iter,':*')
 title('Number of iterations for needed for solving BVPs'); xlabel('Problem number'), ylabel('Number of iterations needed for convergence')
 box on, grid on
