@@ -154,7 +154,7 @@ if pref.n
     xvals = g.map.for(x);
     vals = op(xvals);
     g.vals = vals; g.n = n; 
-    if any(g.exps) || any(isnan(g.vals)) || any(isinf(g.map.par([1 2]))) % Extrapolate only in special cases
+    if g.n>2 && (any(g.exps) || any(isnan(g.vals)) || any(isinf(g.map.par([1 2])))) % Extrapolate only in special cases
         g = extrapolate(g,pref,x);
     else
         g.scl.v = max(g.scl.v,norm(vals,inf));

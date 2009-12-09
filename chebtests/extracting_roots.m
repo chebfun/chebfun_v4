@@ -1,7 +1,7 @@
 function pass = extracting_roots
 % Test extracting roots with and without maps
 
-tol = 100*chebfunpref('eps');
+tol = 400*chebfunpref('eps');
 
 F = @(x) cos(x);
 var = {};

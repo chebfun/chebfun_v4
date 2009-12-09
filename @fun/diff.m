@@ -141,6 +141,66 @@ elseif norm(g.map.par(1:2),inf) == inf
     
     c = [];
     
+elseif strcmp(g.map.name,'sing') 
+    
+    % Only one derivative here for now! (must loop later)
+    
+    exps = g.exps;
+    
+    if ~any(exps) % old case with no exponents
+        
+        if n == 1,
+            g = fun(0,g.map.par(1:2));
+            return
+        end                                 % derivative of constant is zero
+        
+        % Compute derivative of g with respect to Cheby variable
+        cout = newcoeffs_der(c);
+        vals = chebpolyval(cout);
+        
+        map = g.map;
+        par = g.map.par(3:4);
+        newexps = par-1;
+        ends = g.map.par(1:2);
+        
+        if all(newexps)
+            % Singmap at both ends
+            pref = chebfunpref;
+            pref.extrapolate = true;
+            pref.exps  = num2cell(newexps);
+            if par(1) == .25
+                pref.n = length(vals)+23;
+                g = fun(@(x) bary(map.inv(x),vals)./map.der(map.inv(x)),map,pref);
+                g = simplify(g);
+            else
+                pref.n = length(vals);
+                g = fun(@(x) bary(map.inv(x),vals)./map.der(map.inv(x)),map,pref);
+                
+                % this should also work, but one needs to find the constant
+                % ...
+                %             a = sum(par);
+                %             c = 4*a/diff(ends)^(a)/pi;
+                %             g = fun(vals*c, [-1 1]);
+                %             g.map = map;
+                %             g = setexps(g,newexps);
+            end
+        else
+            % Voodoo ...
+            par(par==1) = 0;
+            a = sum(par);
+            c = 2*a/diff(ends)^(a);
+            
+            g = fun(vals*c, [-1 1]);
+            g.map = map;
+            g = setexps(g,newexps);         
+        end
+        
+    elseif exps(1) && ~exps(2)
+       % Compute derivative of g with respect to Cheby variable
+       error('Not implemented yet') 
+        
+    end
+    
     % General (MAP) case: (slow !!!)
 else
     
@@ -177,7 +237,7 @@ else
             end                        
             vals = chebpolyval(c);
             
-            exps = g.exps;
+            oldexps = exps;
             g.exps = [0 0];
             map = g.map;
             
@@ -205,7 +265,8 @@ else
                 exps = exps + 1;
             end
             
-            g.exps = exps;
+            g.exps = oldexps;
+            g = setexps(g,exps);
             
             if i ~= k || nargout > 1
                 c = chebpoly(g);
