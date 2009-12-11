@@ -23,8 +23,12 @@ for k = 1:length(A.lbc)
     error('linop:bdyreplace:systemsize',...
       'Boundary conditions not consistent with system size.')
   end
-  T = feval(op,n);
-  if size(T,1)>1, T = T(1,:); end   % at left end only
+  if isa(op,'function_handle')
+      T = NaN(1,n*m);
+  else
+      T = feval(op,n);
+      if size(T,1)>1, T = T(1,:); end   % at left end only
+  end
   B(q,:) = T;
   c(q) = A.lbc(k).val;
   nz = any( reshape(T,n,m)~=0 );    % nontrivial variables
@@ -41,8 +45,12 @@ for k = 1:length(A.rbc)
     error('linop:bdyreplace:systemsize',...
       'Boundary conditions not consistent with system size.')
   end
-  T = feval(op,n);
-  if size(T,1)>1, T = T(n,:); end   % at right end only
+  if isa(op,'function_handle')
+      T = NaN(1,n*m);
+  else
+      T = feval(op,n);
+      if size(T,1)>1, T = T(n,:); end   % at right end only
+  end
   B(q,:) = T;
   c(q) = A.rbc(k).val;
   nz = any( reshape(T,n,m)~=0 );    % nontrivial variables 

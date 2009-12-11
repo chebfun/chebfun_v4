@@ -5,7 +5,7 @@ global order tol
 order = 0; % Initialise to zero
 
 % Default options
-tol = 1e-5;             % 'eps' in chebfun terminology
+tol = 1e-6;             % 'eps' in chebfun terminology
 doplot = 1;             % plot after every time chunk?
 dohold = 0;             % plot after every time chunk?
 
@@ -51,17 +51,47 @@ end
 % Set bcs to zeros (these are supplied by rhs variable in odefun)
 rhs = {};
 if isfield(bc,'left')
+    if isa(bc.left,'function_handle')
+        bc.left = struct( 'op', bc.left, 'val', 0);
+    end
+    lop = {bc.left.op};
+    % Remove nonlinear conditions
+    nllbc = []; nllbcfuns = {};
+    for k = 1:numel(lop)
+        if isa(lop{k},'function_handle')
+            lopk = lop{k};
+            if nargin(lopk) == 2,      lopk = @(u,t,x) lopk(u,@Diff);
+            elseif nargin(lopk) == 4,  lopk = @(u,t,x) lopk(u,t,x,@Diff); end
+            nllbcfuns = [nllbcfuns {lopk}]; nllbc = [nllbc k]; % Store
+        end
+    end     
+    % Store RHS of bcs and set to homogenious
     if isfield(bc.left,'val')
         rhs = [rhs {bc.left.val}];  
-        bc.left = struct( 'op', {bc.left.op}, 'val', {0});
+        bc.left = struct( 'op', lop, 'val', {0});
     end
 end
 if isfield(bc,'right')
+    if isa(bc.right,'function_handle')
+        bc.right = struct( 'op', bc.right, 'val', 0);
+    end
+    rop = {bc.right.op};
+    % Remove nonlinear conditions
+    nlrbc = []; nlrbcfuns = {};
+    for k = 1:numel(rop)
+        if isa(rop{k},'function_handle')
+            ropk = rop{k};
+            if nargin(ropk) == 2,      ropk = @(u,t,x) ropk(u,@Diff);
+            elseif nargin(ropk) == 4,  ropk = @(u,t,x) ropk(u,t,x,@Diff); end
+            nlrbcfuns = [nlrbcfuns {ropk}]; nlrbc = [nlrbc k]; % Store
+        end
+    end          
+    % Store RHS of bcs and set to homogenious
     if isfield(bc.right,'val')
         rhs = [rhs {bc.right.val}];
-        bc.right = struct( 'op', {bc.right.op}, 'val', {0});
+        bc.right = struct( 'op', rop, 'val', {0});
     end
-end     
+end    
 
 % Get the domain
 d = domain(u0);
@@ -119,14 +149,31 @@ if dohold && ~ish, hold off, end
         % This is what ode15s calls.
         function F = odefun(t,U)
             F = pdefun(U,t,x);
-            for k = 1:numel(rhs)
+            for l = 1:numel(rhs)
                 if isa(rhs{k},'function_handle')
-                    q(k,1) = feval(rhs{k},t);
+                    q(k,1) = feval(rhs{l},t);
                 else
-                    q(k,1) = rhs{k};
+                    q(k,1) = rhs{l};
                 end
             end
-            F(rows) = B*U-q;  % replacements for the BC algebraic conditions
+            
+            % replacements for the BC algebraic conditions
+            F(rows) = B*U-q;  
+            
+            % replacements for the nonlinear BC conditions
+            j = 0;
+            for kk = 1:length(nllbc)
+                j = j + 1;
+                tmp = feval(nllbcfuns{j},U,t,x);
+                F(rows(kk)) = tmp(1)-q(kk);
+            end
+            j = 0;
+            for kk = numel(rhs)+1-nlrbc
+                j = j + 1;
+                tmp = feval(nlrbcfuns{j},U,t,x);
+                F(rows(kk)) = tmp(end)-q(kk);
+            end
+           
         end
     end
 end
@@ -210,7 +257,7 @@ Dx = repmat(x ,1,N+1) - repmat(x',N+1,1) + eye(N+1);
 
 D1 = Dw ./ Dx;
 D1(ii) = 0; D1(ii) = - sum(D1,2);
-if (nargout == 1), return; end
+if (nargout == 1), varargout = {D1}; return; end
 D2 = 2*D1 .* (repmat(D1(ii),1,N+1) - 1./Dx);
 D2(ii) = 0; D2(ii) = - sum(D2,2);
 if (nargout == 2), return; end
@@ -220,6 +267,7 @@ if (nargout == 3), return; end
 D4 = 4./Dx .* (Dw.*repmat(D3(ii),1,N+1) - D3);
 D4(ii) = 0; D4(ii) = - sum(D4,2);
 end
+
 
 
 
