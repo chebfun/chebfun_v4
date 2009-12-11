@@ -74,7 +74,7 @@ if strcmp(type,'chebyshev')
     alfa = null( Z );
     % did we get only one solution? try to restrict alfa if we did...
     if size(alfa,2) > 1
-        warning('CHEBFUN:RATINTERP','Ill-posed interpolation nodes! reducing ''n'' from %i to %i.',n,n-size(alfa,2)+1);
+        warning('CHEBFUN:RATINTERP','Denominator computed to be of degree %i.',n-size(alfa,2)+1);
         R = qr( flipud( alfa )' );
     	alfa = flipud( R(end,size(alfa,2):end)' );
     end;
@@ -92,7 +92,7 @@ if strcmp(type,'chebyshev')
     w = w.* qi;
     r_handle = @(x) bary(x,fx,xi,w);
 elseif strcmp(type,'arbitrary')
-    xk = (2*xi-a-b)/(b-a);                      % map [a,b] to [-1,1]
+    xk = (2*xi-a-b)/(b-a);                       % map [a,b] to [-1,1]
     zk = xk(2:end-1) + sqrt(xk(2:end-1).^2-1);   
     zk = [xk(1); zk; conj(zk); xk(end)];         % map [-1,1] to unit circle
     wk = bary_weights(zk);
@@ -105,8 +105,7 @@ elseif strcmp(type,'arbitrary')
        temp = real(wk.*zk.^(k-1)).';
        B = [B; [fx(1)*temp(1) 2*fx(2:end-1).'.*temp(2:N) fx(end)*temp(end)]];
     end
-    cB = cond(B(:,2:end));
-    qk = real([1;B(:,2:end)\(-B(:,1))]) ;        % denominator values at nodes
+    qk = [1;B(:,2:end)\(-B(:,1))] ;              % denominator values at nodes
     wxk = bary_weights(xk);
     p = chebfun(@(x) bary(x,qk.*fx,xi,wxk),[a,b],m+1);
     q = chebfun(@(x) bary(x,qk,xi,wxk),[a,b],n+1);
