@@ -23,7 +23,7 @@ while ~success && counter < 10
         feval(N.op,guess);
         success = 1;
         counter = counter+1;
-    catch
+    catch % Should do some more accurate error catching
         counter = counter+1;
     end
 end
@@ -42,48 +42,63 @@ end
 bcFunLeft = N.lbc;
 bcFunRight = N.rbc;
 
-leftEmpty = isempty(bcFunLeft);
-rightEmpty = isempty(bcFunRight);
-
-if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
-if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
-
-
-% Store information about the endpoints of the domain
-ab = dom.ends;
-a = ab(1);  b = ab(end);
-
-% Get values of BCs at the endpoints
-leftVals = zeros(length(bcFunLeft),1);
-rightVals = zeros(length(bcFunRight),1);
-if leftEmpty
-    leftVals = 0;
-else
-    for j = 1:length(bcFunLeft)
-        v = feval(bcFunLeft{j},guess);
-        leftVals(j) = v(a);
-    end
+if counter == 1 && ~any(strcmpi(bcFunLeft,'periodic')) && ~any(strcmpi(bcFunRight,'periodic'))
+    guess = tryInterpGuess();
+elseif xor(strcmpi(bcFunLeft,'periodic'),strcmpi(bcFunRight,'periodic'))
+    error('Nonlinop:mldivide:findguess: BC is periodic at one end but not at the other.');
 end
 
-if rightEmpty
-    rightVals = 0;
-else
-    for j = 1:length(bcFunRight)
-        v = feval(bcFunRight{j},(guess));
-        rightVals(j) = v(b);
+    function intGuess = tryInterpGuess()
+        % For some type of problems (nonperiodic problems where the
+        % solution is a single chebfun rather then quasimatrix) we can try
+        % to construct an initial guess such that it fullfills
+        % (potentially) non-homogenous Dirichlet BCs.
+
+        leftEmpty = isempty(bcFunLeft);
+        rightEmpty = isempty(bcFunRight);
+        
+        if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
+        if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
+        
+        
+        
+        % Store information about the endpoints of the domain
+        ab = dom.ends;
+        a = ab(1);  b = ab(end);
+        
+        
+        % Get values of BCs at the endpoints
+        leftVals = zeros(length(bcFunLeft),1);
+        rightVals = zeros(length(bcFunRight),1);
+        if leftEmpty
+            leftVals = 0;
+        else
+            for j = 1:length(bcFunLeft)
+                v = feval(bcFunLeft{j},guess);
+                leftVals(j) = v(a);
+            end
+        end
+        
+        if rightEmpty
+            rightVals = 0;
+        else
+            for j = 1:length(bcFunRight)
+                v = feval(bcFunRight{j},(guess));
+                rightVals(j) = v(b);
+            end
+        end
+        % If we just have one column in our guess, perform a linear interpolation
+        leftY = leftVals(min(find(leftVals ~= 0)));
+        rightY = rightVals(min(find(rightVals ~= 0)));
+        
+        if isempty(leftY)
+            leftY = 0;
+        end
+        if isempty(rightY)
+            rightY = 0;
+        end
+        
+        intGuess = chebfun(-[leftY rightY],dom);
     end
-end
-% If we just have one column in our guess, perform a linear interpolation
-if counter == 1
-    leftY = leftVals(min(find(leftVals ~= 0)));
-    rightY = rightVals(min(find(rightVals ~= 0)));
-    
-    if isempty(leftY)
-        leftY = 0;
-    end
-    if isempty(rightY)
-        rightY = 0;
-    end
-    
-    guess = chebfun(-[leftY rightY],dom);
+
 end

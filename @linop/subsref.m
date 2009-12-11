@@ -79,6 +79,8 @@ switch s(1).type
         A = A.scale;
       case 'numbc'
         A = A.numbc;
+      case 'difforder'
+        A = A.difforder;
       case 'ID'
         A = A.ID;
       otherwise 

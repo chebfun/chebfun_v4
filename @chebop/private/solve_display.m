@@ -21,10 +21,7 @@ switch(phase)
         
         if ~strcmp(plotMode,'off')
             fig = figure('name','BVP solver convergence');
-            subplot(2,1,1)
-            plot(u,'.-'), title('Current solution')
-            subplot(2,1,2)
-            title('Current correction step')
+            plot(u,'.-'), title('Initial guess of solution')
             if strcmp(plotMode,'pause') 
                 pause
             else
@@ -41,10 +38,7 @@ switch(phase)
         
         if ~strcmp(plotMode,'off')
             fig = figure('name','BVP solver convergence');
-            subplot(2,1,1)
-            plot(u,'.-'), title('Current solution')
-            subplot(2,1,2)
-            title('Current correction step')
+            plot(u,'.-'), title('Initial guess of solution')
             if strcmp(plotMode,'pause') 
                 pause
             else
@@ -63,7 +57,11 @@ switch(phase)
             plot(u,'.-'), title('Current solution')
             subplot(2,1,2)
             plot(du,'.-'), title('Current correction step')
-            pause(0.5)
+            if strcmp(plotMode,'pause') 
+                pause
+            else
+                pause(plotMode)
+            end
         end
         
     case 'iterNewton'
