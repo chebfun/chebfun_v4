@@ -23,13 +23,20 @@ while ~success && counter < 10
         feval(N.op,guess);
         success = 1;
         counter = counter+1;
-    catch % Should do some more accurate error catching
-        counter = counter+1;
+    catch exception % Should do some more accurate error catching
+        if strcmp(exception.identifier,'MATLAB:badsubscript')
+            counter = counter + 1;
+        else
+            fprintf(['Error in constructing initial guess. \nCould it be that ' ...
+                'the zero function \non the domain is not a permittet ' ...
+                'initial\nguess (e.g. causes division by zero)?\n']);
+            rethrow(exception);
+        end
     end
 end
 
 if counter == 10
-    error(['Chebop:solve:findguess: Initial guess seems to have 10 or more ' ...
+    error('Chebop:solve:findguess', ['Initial guess seems to have 10 or more ' ...
         'columns in the quasimatrix. If this is really the case, set the ' ...
         'initial guess using N.guess.']);
 end

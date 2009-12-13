@@ -1,4 +1,4 @@
-function C = mldivide(A,B)
+function C = mldivide(A,B,tolerance)
 % \  Solve a linear operator equation.
 % U = A\F solves the linear system A*U=F, where U and F are chebfuns and A
 % is a chebop. If A is a differential operator of order M, a warning will
@@ -57,19 +57,22 @@ switch(class(B))
       warning('linop:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
-    
+    settings = chebopdefaults;
+    if nargin == 3
+        settings.eps = tolerance;
+    end
     V = [];  % so that the nested function overwrites it
     if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
-      C = chebfun( @(x) A.scale(x)+value(x), dom, chebopdefaults) - A.scale;
+      C = chebfun( @(x) A.scale(x)+value(x), dom, settings) - A.scale;
     else
-      C = chebfun( @(x) A.scale+value(x), dom, chebopdefaults) - A.scale;
+      C = chebfun( @(x) A.scale+value(x), dom, settings) - A.scale;
     end
     
     % V has been overwritten by the nested value function.
     if m > 1
       for j = 1:m
-        c = chebfun( V(:,j), dom, chebopdefaults);
-        C(:,j) = chebfun( @(x) c(x), dom, chebopdefaults);
+        c = chebfun( V(:,j), dom, settings);
+        C(:,j) = chebfun( @(x) c(x), dom, settings);
       end
     end
     
