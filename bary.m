@@ -41,6 +41,7 @@ if nargin < 3           % Default to Chebyshev nodes
     xk = chebpts(n);
 end
     
+warnstate = warning('off','MATLAB:divideByZero');
 if length(x) < length(xk)
     for i = 1:numel(x)
         xx = ek./(x(i)-xk);
@@ -55,6 +56,7 @@ else
     end
     fx = num./denom;
 end
+warning(warnstate);
 
 % clean-up nans
 for i=find(isnan(fx(:)))'
