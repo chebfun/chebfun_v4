@@ -20,7 +20,7 @@ function Fout = mtimes(F1,F2)
 % Quasi-matrices product
 if (isa(F1,'chebfun') && isa(F2,'chebfun'))
     if size(F1,2) ~= size(F2,1)
-        error('Quasimatrix dimensions must agree.')
+        error('CHEBFUN:chebfun:mtimes:quasi','Quasimatrix dimensions must agree.')
     end
     if isinf(size(F1,1))     % outer product
       splitstate = chebfunpref('splitting');
@@ -30,7 +30,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
       Fout = 0;
       d = domain(F1);
       if ~(d==domain(F2))
-        error('chebfun:mtimes:outerdomain',...
+        error('CHEBFUN:chebfun:mtimes:outerdomain',...
           'Domains must be identical for outer products.')
       end
       for i = 1:size(F1,2)
@@ -57,7 +57,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
           if F1(k).trans && ~F2(j).trans
             Fout(k,j) = sum((F1(k).').*F2(j));
           else
-            error('Chebfun dimensions must agree.')
+	    error('CHEBFUN:chebfun:mtimes:dim','Chebfun dimensions must agree.')
           end
         end
       end
@@ -73,7 +73,7 @@ elseif isa(F1,'chebfun')
         end
      % quasimatrix times matrix of doubles
     else
-        if size(F1,2)~=size(F2,1), error('Dimensions must agree'), end
+        if size(F1,2)~=size(F2,1), error('CHEBFUN:chebfun:mtimes:dim','Dimensions must agree'), end
         for j = 1:size(F2,2)
             Fout(j) =  mtimescol(F2(1,j),F1(1));
             for i = 2:size(F2,1)
