@@ -22,8 +22,20 @@ function [g gsing] = cumsum(g)
 % See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 32-33.
 %
 % For functions with exponents, things are more complicated. We switch to 
-% a Jacobi polynomial representation with the correct weights. W can then
-% integrate all the terms for r > 0 exactly,
+% a Jacobi polynomial representation with the correct weights. We can then
+% integrate all the terms for r > 0 exactly.
+%
+% In these cases [F1 F2] = cumsum(G) will return two funs, the first F1 will
+% be the a smooth part (or a smooth part with exponents), whilst the 2nd F2
+% will contain the terms which are harder to represent (using a sing-type
+% map). (This is very experimental!)
+%
+% There is limited support for functions whose indefinite integral is also 
+% unbounded (i.e. G.exps <=1). In particular, the form of the blow up must
+% be an integer, and G may only have exponents at one end of it's interval.
+%
+% Functions with both exponents and nonlinear maps can only be dealt with 
+% by switching to and from a linear map, and are therefore often very slow.
 %
 % See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
 
@@ -39,7 +51,7 @@ if strcmp(g.map.name,'linear')
     if ~any(g.exps)  
         g.vals = g.vals*g.map.der(0); % From change of variables to [-1,1]
         g = cumsum_unit_interval(g);
-%         gsing = fun(0,g.map.par(1:2));
+        gsing = fun(0,g.map.par(1:2));
     elseif any(g.exps<=-1)
         if nargout > 1 
             [g gsing] = unbdnd(g);
@@ -306,7 +318,8 @@ if exps(2)~=0
         f.exps = exps;
         flip = true;
     else
-        error('chebfun:fun:cumsum:both','cumsum does not yet support exponents <= 1 at both boundaries.');
+        error('chebfun:fun:cumsum:both',['cumsum does not yet support functions whose ', ...
+            'definite integral diverges and has exponents at both boundaries.']);
     end
 end
 
@@ -314,9 +327,9 @@ end
 f = newdomain(f,oldends-oldends(1));
 ends = f.map.par(1:2);
 
-if exps(1)==-1
-    error('chebfun:fun:cumsum:exps1m1','cumsum does not yet support simple poles at left boundary.');
-end
+% if exps(1)==-1
+%     error('chebfun:fun:cumsum:exps1m1','cumsum does not yet support simple poles at left boundary.');
+% end
 if round(exps(1))~=exps(1)
     error('chebfun:fun:cumsum:nonint','cumsum does not yet support noninteger blows up of this type.');
 end
@@ -327,10 +340,9 @@ d = domain(ends);
 x = fun('x',ends);
 
 a = -exps(1);                             % The order of the pole
-xa1 = x; xa1.vals = chebpts(a,d).^(a-1);  % x^(a-1)
-
+xa1 = x; xa1.vals = chebpts(a,d).^(a-1); xa1.n = a; % =  % x^(a-1)
 ck = feval(diff(f,a-1),0)/factorial(a-1); % Coefficient of x^(a-1) in Taylor 
-                                          % series about x = 0 (leads to log)                                      % log)
+                                          % series about x = 0 (leads to log)   
 p = f - ck*xa1;                           % Remove log contribution
 % feval(diff(p,a-1),0)/factorial(a-1)       % This should be zero now?
 
@@ -352,13 +364,14 @@ f = fun(vals,ends);
 f.exps = exps;
 
 % Bump the exponent by one
-f = extract_roots(f,1,[1 0]);
+% f = extract_roots(f,1,[1 0]);
 
 % Shft back to old domain
 f = newdomain(f,oldends);
 
 % Adding in the log term
 if abs(ck) > 1e-13 % some kind of scale needed here
+    if a == 1, a =2; end
     if a == 2, map = maps({'sing',[.125 1]},oldends);
     else       map = maps({'sing',[.25 1]},oldends); end
     pref = chebfunpref; pref.extrapolate = 1;
@@ -371,15 +384,18 @@ else
     g = fun(0,oldends);
 end
 
+f = f - fun(get(f,'rval'),f.map);
+f = replace_roots(f);
+
 if flip
     f.vals = -f.vals(end:-1:1);
     f.exps = f.exps([2 1]);
-    f = f - fun(get(f,'lval'),f.map);
-else
-    f = f - fun(get(f,'rval'),f.map);
-end
 
-f = replace_roots(f);
+    if strcmp(f.map.name,'sing')
+        pars = f.map.par;
+        f.map = maps({'sing',pars([4 3])},pars(1:2));
+    end
+end
 
 end
 
