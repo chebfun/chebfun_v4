@@ -12,7 +12,8 @@ function varargout = chebfunpref(varargin)
 %
 % CHEBFUNPREF(PREFNAME,PREFVAL) sets the preference PREFNAME to the value
 % PREFVAL. If PREFVAL is 'factory', PREFNAME is set to its factory defined
-% value.
+% value. S = CHEBFUNPREF(PREFNAME,PREFVAL) will store the current state of
+% chebfunpref to S before changing PREFNAME.
 %
 % S = CHEBFUNPREF will return the current preferences in a structure, which 
 % may then be used in the form CHEBFUNPREF(P) to reload them or be passed 
@@ -167,8 +168,14 @@ if isempty(prefs)
         prefs.(options{k}) = factoryvals{k};
     end
     
+    if nargout == 1
+        varargout = {prefs};
+    end
+    
     mlock %locks the currently running M-file so that clear functions do not remove it.
           % Use munlock and clear chebfunpref if you edit this file.
+elseif nargout == 1
+    varargout = {prefs};
 end
 
 % Assign output values
@@ -217,12 +224,12 @@ elseif nargin==2
     prefs.(varargin{1}) = varargin{2};
     
     % To avoid error messages
-    if nargout > 0
-        varargout = {};
-    end
+%     if nargout > 0
+%         varargout = {};
+%     end
     
     if ~prefs.resampling && prefs.chebkind == 1
-        warning('chebfun:resampling_kind','RESAMPLING has been turned ON. Chebyshev points of 1st kind are being used')
+        warning('CHEBFUN:resampling_kind','RESAMPLING has been turned ON. Chebyshev points of 1st kind are being used')
         prefs.resampling = true;
     end
     
@@ -230,4 +237,3 @@ elseif nargin==2
 else
     error('CHEBFUN:chebfunpref:argin','Check number of input arguments.')
 end
-

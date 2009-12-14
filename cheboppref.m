@@ -11,7 +11,8 @@ function varargout = cheboppref(varargin)
 % values.
 %
 % CHEBOPPREF(PREFNAME,PREFVAL) sets the preference PREFNAME to the value
-% PREFVAL. 
+% PREFVAL. S = CHEBOPPREF(PREFNAME,PREFVAL) stores the current state of
+% cheboppref in the structure S before PREFNAME is changed.
 %
 % CHEBOP PREFERENCES (case sensitive)
 %
@@ -41,7 +42,7 @@ function varargout = cheboppref(varargin)
 % deltol - tolerance of norm of update relative to norm of solution
 %
 %          (Convergence occurs if either of the above two norms are below tolerance)
-%           
+%
 % damped - controls method of nonlinear solution
 %     'off'  - pure Newton iteration (perhaps less robust, more interesting!)
 %     'on'   - damped Newton iteration (perhaps more robust; default)
@@ -63,6 +64,10 @@ persistent prefs
 
 if isempty(prefs)  % first call, default values
     prefs = initPrefs();
+end
+
+if nargout == 1
+    varargout = {prefs};
 end
 
 % Probably should use some nicer error catching...
@@ -97,16 +102,17 @@ else  % set value
             
     end
 end
-end
+
+
 function prefs = initPrefs()
-    prefs.maxdegree = 1024;
-    prefs.storage = true;
-    prefs.maxstorage = 50e6;
-    prefs.display = 'none';
-    prefs.plotting = 'off';
-    prefs.restol= 1e-10;
-    prefs.deltol = 1e-10;
-    prefs.damped = 'on';
-    prefs.maxiter = 25;
-    prefs.maxstagnation = 5;
-end
+prefs.maxdegree = 1024;
+prefs.storage = true;
+prefs.maxstorage = 50e6;
+prefs.display = 'none';
+prefs.plotting = 'off';
+prefs.restol= 1e-10;
+prefs.deltol = 1e-10;
+prefs.damped = 'on';
+prefs.maxiter = 25;
+prefs.maxstagnation = 5;
+
