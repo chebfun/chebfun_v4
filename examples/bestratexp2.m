@@ -30,11 +30,13 @@ if mod(N,2), error('CHEBFUN:bestratexp2:N_odd','N must be even.'); end
 f = chebfun('exp(9*(t-1)./(t+1))');
 [p,q,r,s] = cf(f,N/2,N/2);
 
-if nargin == 2
+if nargin == 2 || nargin == 0
     x = linspace(-20,20,10000);
     plot(x,exp(-x.^2)-p((9-x.^2)./(9+x.^2))./q((9-x.^2)./(9+x.^2))); hold on; 
     plot([-20,20],[s,s],'k',[-20,20],[-s,-s],'k'); hold off
 end
 
-p = chebfun(@(x) (9+x.^2).^(N/2).*p((9-x.^2)./(9+x.^2)),N+1);
-q = chebfun(@(x) (9+x.^2).^(N/2).*q((9-x.^2)./(9+x.^2)),N+1);
+if nargout > 0
+    p = chebfun(@(x) (9+x.^2).^(N/2).*p((9-x.^2)./(9+x.^2)),N+1);
+    q = chebfun(@(x) (9+x.^2).^(N/2).*q((9-x.^2)./(9+x.^2)),N+1);
+end

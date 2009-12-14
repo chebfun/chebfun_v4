@@ -8,13 +8,15 @@ function f = vandermonde( xi , fx )
 %% create a set of random nodes and function values (if not supplied)
 if nargin < 1
     n = 20;
-    xi = 2*rand(n,1) - 1;
+    xi = 2*rand(n,1) - 1
 else
     n = length(xi);
 end;
 if nargin < 2
     fx = sin(exp(2*xi));
 end;
+
+h = interp1(xi,fx,domain(-1,1))
 
 %% create the basis of Chebyshev polynomials
 T = chebpoly(0:n-1);
@@ -35,3 +37,6 @@ end;
 
 %% how far off are we at the nodes?
 disp(sprintf('inf-norm of interpolation error at the nodes is %e.',norm(f(xi)-fx,inf)));
+
+norm(h(xi)-fx)
+[flipud(c) chebpoly(h).']

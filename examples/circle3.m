@@ -22,8 +22,5 @@ while true
     ti = ti - h
     if abs(h) < 1e-5, break; end;
     plot([zc,ze]); hold on; plot([zc(real(ti)),ze(imag(ti))],'or'); hold off;
-    pause
+    pause(.1)
 end;
-
-%% plot the roots
-plot([zc,ze]); hold on; plot(zi,'or'); hold off;

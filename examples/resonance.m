@@ -1,7 +1,7 @@
 % resonance.m - response of ODE BVP for various parameters a
 %               Lu = u'' + ua, Dirichlet BCs on [0,pi]
 
-splitting off, [d,x] = domain([0,pi]);
+[d,x] = domain([0,pi]);
 L = @(a) diff(d,2) + a & 'dirichlet';
 f = exp(x);
 for a = 10.1:.2:63.9

@@ -31,7 +31,7 @@ E = 1e-1;
 u = sin(2*x);
 f = @(u,t,x,D) E*D(u,2)+D(u);
 lbc = struct( 'op', 'neumann', 'val', 0);
-rbc = struct( 'op', 'dirichlet', 'val', 1);
+rbc = struct( 'op', 'dirichlet', 'val', 0);
 bc = struct( 'left', lbc, 'right', rbc);
 opts = pdeset('HoldPlot','on');
 tt = linspace(0,5,21);
@@ -50,6 +50,19 @@ bc = struct( 'left', lbc, 'right', rbc);
 opts = pdeset('holdPlot','on');
 tt = linspace(0,3,101);
 uu = pde15s(f,tt,u,bc,opts);
+figure, surf(uu,tt)
+
+%% Advection-diffusion4 (nonlinear bcs)
+close all, 
+E = 1e-1;
+[d x] = domain(-3*pi/4,pi);
+u = sin(2*x);
+f = @(u,t,x,D) E*D(u,2)+D(u);
+lbc = @(u,t,x,D) D(u) + u - (1+2*sin(10*t));
+rbc = @(u,t,x,D) (1+u.^2).*sin(pi*u)-(1-exp(-t)).*cos(10*t);
+bc = struct( 'left', lbc, 'right', rbc);
+tt = linspace(0,3,101);
+uu = pde15s(f,tt,u,bc);
 figure, surf(uu,tt)
 
 %% Allen-Cahn
@@ -85,17 +98,17 @@ bc.right = struct('op',{I,D},'val',{1,2});
 f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
 u = pde15s(f,0:.01:.5,u,bc);
 
-%% Cahn-Hilliard - not working!
-close all
-E = 1e-1;
-[d,x] = domain(-1,1); 
-u = cos(pi*x)-exp(-6*pi*x.^2);
-plot(u)
-opts = pdeset('eps',1e-6,'abstol',1e-10,'reltol',1e-10,'plot',1);
-lbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
-rbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
-f = @(t,x,u,D) -D(u,4) + D(u.^3,2)-D(u,2);
-tt = linspace(0,.0005,101);
-uu = pde15s(f,tt,u,{lbc rbc},opts);
-surf(uu,tt)
+% %% Cahn-Hilliard - not working!
+% close all
+% E = 1e-1;
+% [d,x] = domain(-1,1); 
+% u = cos(pi*x)-exp(-6*pi*x.^2);
+% plot(u)
+% opts = pdeset('eps',1e-6,'abstol',1e-10,'reltol',1e-10,'plot',1);
+% lbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
+% rbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
+% f = @(t,x,u,D) -D(u,4) + D(u.^3,2)-D(u,2);
+% tt = linspace(0,.0005,101);
+% uu = pde15s(f,tt,u,{lbc rbc},opts);
+% surf(uu,tt)
 

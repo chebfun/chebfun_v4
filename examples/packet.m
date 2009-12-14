@@ -1,7 +1,7 @@
 % packet.m  A resonance problem with a variable coefficient
 %           Lu = h^2 u" + hu' + 3xu -iau, Dirichlet BCs on [0,pi]
 
-splitting off, [d,x] = domain([0,pi]);
+[d,x] = domain([0,pi]);
 X = diag(x); D = diff(d); D2 = diff(d,2);
 h = .08; L = @(a) h^2*D2 + h*D + 3*X - 1i*a & 'dirichlet';
 f = exp(x);
