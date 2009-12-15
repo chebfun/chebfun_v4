@@ -13,17 +13,21 @@ switch n
     case 1
         for d = -1:.2:1, S = [S d+1i*x 1i*d+x]; end
     case 2
-        for d = 0.1:.1:1,  S = [S d*exp(pi*1i*x) .5*(x+1)*exp(pi*1i*d)]; end
+        for d = 0.1:.1:1,  S = [S d*exp(pi*1i*x) .5*(x+1)*exp(2*pi*1i*d)]; end
     case 3
         c = exp(1*pi*1i*x); x2 = .5*(rho-1)*(x+1)+1;
-        for d = 0.1:.1:1,  S = [S exp(d*log(rho))*c x2*exp(1i*pi*d) x2*exp(-1i*pi*d)]; end
+        for d = 0:.1:1,  S = [S exp(d*log(rho))*c x2*exp(1i*pi*d) x2*exp(-1i*pi*d)]; end
         S = .5*(S+1./S);
 end
 
 
 while true
-    s = input('function of z to plot? (in quotes).\n');
+    s = input('function of z to plot? (in quotes or anonymous function).\n');
     if isempty(s), return, end
-    f = inline(s);
+    if ischar(s), 
+        f = inline(s);
+    elseif isa(s,'function_handle'), 
+        f = s; 
+    end
     plot(f(S),'b'), shg, axis equal
 end

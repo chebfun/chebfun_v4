@@ -22,7 +22,7 @@ probCounter = 1;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 
@@ -38,7 +38,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #03
@@ -53,7 +53,7 @@ probCounter = 3;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #04
@@ -68,7 +68,7 @@ probCounter = 4;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 
@@ -84,7 +84,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 
@@ -101,7 +101,7 @@ probCounter = 6;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 
@@ -117,7 +117,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 
@@ -133,7 +133,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #09
@@ -148,7 +148,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #10
@@ -163,7 +163,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 figure(gcf)
@@ -179,7 +179,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #12
@@ -194,7 +194,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #13
@@ -209,7 +209,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #14
@@ -224,7 +224,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #15
@@ -239,7 +239,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 figure(gcf)
@@ -255,7 +255,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #17
@@ -270,7 +270,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #18
@@ -285,7 +285,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #19
@@ -300,7 +300,7 @@ tic
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #20
@@ -315,7 +315,7 @@ probCounter = 20;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 figure(gcf)
@@ -332,7 +332,7 @@ probCounter = 21;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #22
@@ -347,7 +347,7 @@ probCounter = 22;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #22
@@ -362,7 +362,7 @@ probCounter = 22;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #23
@@ -377,7 +377,7 @@ probCounter = 23;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #24
@@ -394,7 +394,7 @@ probCounter = 24;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #25
@@ -409,7 +409,7 @@ probCounter = 25;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 figure(gcf)
@@ -425,7 +425,7 @@ probCounter = 26;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #27
@@ -440,7 +440,7 @@ probCounter = 27;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #28
@@ -455,7 +455,7 @@ probCounter = 28;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #29
@@ -470,7 +470,7 @@ probCounter = 29;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %% Problem #30
@@ -485,7 +485,7 @@ probCounter = 30;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 figure(gcf)
@@ -503,7 +503,7 @@ probCounter = 31;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u(:,3)),
+    subplot(7,5,probCounter),plot(u(:,3)),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 
@@ -519,7 +519,7 @@ probCounter = 32;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(diff(u)),
+    subplot(7,5,probCounter),plot(diff(u)),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 
@@ -539,7 +539,7 @@ probCounter = 33;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u(:,2)),
+    subplot(7,5,probCounter),plot(u(:,2)),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 cheboppref('damped','on')
@@ -555,7 +555,7 @@ probCounter = 34;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 
@@ -571,7 +571,7 @@ probCounter = 35;
 time(probCounter) = toc;
 iter(probCounter) = length(nrmduvec);
 if plotOn, 
-    subplot(7,5,probCounter),plot(u),
+    subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
 %%
