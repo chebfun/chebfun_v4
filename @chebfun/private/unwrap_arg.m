@@ -1,6 +1,6 @@
 function NewInputArg = unwrap_arg(varargin)
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 if length(varargin) == 2
     temp = varargin{2};
@@ -9,7 +9,7 @@ if length(varargin) == 2
          if isa(temp,'domain'), 
              temp=double(temp);             
          else
-            error(['Unrecognized input sequence: Last input arguement'...
+            error('CHEBFUN:unwraparg:inseq',['Unrecognized input sequence: Last input arguement'...
                 ' was recognized neither as the vector of endpoints nor '...
                 ' as the vector of Chebyshev points.'])
          end
@@ -26,7 +26,7 @@ if length(varargin) == 2
     end
     %% -------------------------------------------------------------
 %     else
-%         error(['Unrecognized input sequence: Intervals should '...
+%         error('CHEBFUN:unwraparg:inseq2',['Unrecognized input sequence: Intervals should '...
 %             'be specified when defining the chebfun with two or'...
 %             ' more funs.'])
 %    end
@@ -37,7 +37,7 @@ else
          if isa(temp,'domain'), 
              temp=double(temp);
          else
-            error(['Unrecognized input sequence: Last input arguement'...
+            error('CHEBFUN:unwraparg:inseq3',['Unrecognized input sequence: Last input arguement'...
                 ' was recognized neither as the vector of endpoints nor '...
                 ' as the vector of Chebyshev points.'])
          end
@@ -48,7 +48,7 @@ else
         temp2 = varargin{end-1};
         if length(temp2) ~= length(varargin)-1
             if length(temp)~=1, 
-                error(['Unrecognized input sequence: Intervals should '...
+                error('CHEBFUN:unwraparg:inseq4',['Unrecognized input sequence: Intervals should '...
                 'be specified when defining the chebfun with two or'...
                 ' more funs.'])
             elseif length(varargin(1:end-2))==1
@@ -59,7 +59,7 @@ else
         end
         NewInputArg = {varargin(1:end-2), temp2, temp};
     else
-        error(['Unrecognized input sequence: Intervals should '...
+        error('CHEBFUN:unwraparg:inseq5',['Unrecognized input sequence: Intervals should '...
             'be specified when defining the chebfun with two or'...
             ' more funs.'])
     end

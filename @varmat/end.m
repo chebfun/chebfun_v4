@@ -12,5 +12,5 @@ function e = end(A,k,m)
 if m==2
   e = complex(0,Inf);
 else
-  error('varmat:end:bad','Bad indexing use of end.')
+  error('VARMAT:end:bad','Bad indexing use of end.')
 end

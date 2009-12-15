@@ -3,12 +3,12 @@ function A = vander(f,n)
 %   A = VANDER(f,n) returns the Vandermonde quasimatrix whose n columns are 
 %   powers of the chebfun f, that is A(:,j) = f.^(n-j), j=0...n-1.
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if f(1).trans || min(size(f))>1
-    error('input must be a column chebfun')
+    error('CHEBFUN:vander:row','input must be a column chebfun')
 end
 
 A = ones(domain(f),n);

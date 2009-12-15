@@ -67,7 +67,7 @@ elseif nargout == nargin
         varargout{i} = jacReset(varargin{i},jacVector);
     end
 else
-    error('Number of outputs does not match number of inputs');
+    error('CHEBFUN:jacvar:numout','Number of outputs does not match number of inputs');
 end
 
 end

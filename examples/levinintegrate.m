@@ -48,7 +48,7 @@ L = D + 1i*w*diag(diff(g));
 %   so we turn off the warning.
 
 
-s = warning('off','chebop:mldivide:bcnum');
+s = warning('off','LINOP:mldivide:bcnum');
 
 u = L \ f;
 

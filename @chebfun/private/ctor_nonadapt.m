@@ -2,7 +2,7 @@ function f = ctor_nonadapt(f,ops,ends,n,pref)
 %CTOR_NONADAPT  non-adaptive chebfun constructor
 % CTOR_NONADAPT handles non-adaptive construction of chebfuns.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 
 % Last commit: $Author: nich $: $Rev: 458 $:
@@ -42,12 +42,12 @@ if isfield(pref,'exps')
         exps = [exps{1} tmp exps{2}];
     elseif numel(exps) == numel(ends)
         if numel(ends)~=2
-%             warning('chebfun:ctor_nonadapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
+%             warning('CHEBFUN:ctor_nonadapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
 %             'Assuming exps are the same on either side of break.']);
             exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
         end
     elseif numel(exps) ~= 2*numel(ends)-2
-        error('chebfun:ctor_nonadapt:exps_input2','Length of vector exps must correspond to breakpoints');
+        error('CHEBFUN:ctor_nonadapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
     if ~pref.blowup, pref.blowup = 1; end
 end
@@ -86,7 +86,7 @@ for i = 1:length(ops)
             a = ends(i); b = ends(i+1);
             depvar = symvar(op); 
             if numel(depvar) ~= 1, 
-                error('CHEBFUN:ctor_nonadapt','Incorrect number of dependent variables in string input'); 
+                error('CHEBFUN:ctor_nonadapt:depvar','Incorrect number of dependent variables in string input'); 
             end
             op = eval(['@(' depvar{:} ')' op]);
             op = vectorcheck(op,[a b],pref.vecwarn);
@@ -102,7 +102,7 @@ for i = 1:length(ops)
         case 'chebfun'
             a = ends(i); b = ends(i+1);
             if op.ends(1) > a || op.ends(end) < b
-                error('chebfun:ctor_nonadapt:domain','chebfun is not defined in the domain')
+                error('CHEBFUN:ctor_nonadapt:domain','chebfun is not defined in the domain')
             end
             pref.n = n(i);
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
@@ -113,20 +113,20 @@ for i = 1:length(ops)
             end
             funs = [funs g];
         case 'double'
-            error(['Generating fun from a numerical vector. '...
+            error('CHEBFUN:ctor_nonadapt:vecpts',['Generating fun from a numerical vector. '...
                 'Associated number of Chebyshev points is not used.']);
         case 'fun'
             if numel(op) > 1
-                error(['A vector of funs cannot be used to construct '...
+                error('CHEBFUN:ctor_nonadapt:vecfuns',['A vector of funs cannot be used to construct '...
                     ' a chebfun.'])
             end
-            error(['Generating fun from another. '...
+            error('CHEBFUN:ctor_nonadapt:funpts',['Generating fun from another. '...
                 'Associated number of Chebyshev points is not used.']);
         case 'cell'
-            error(['Unrecognized input sequence: Attempted to use '...
+            error('CHEBFUN:ctor_nonadapt:incell',['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])
         otherwise
-            error(['The input argument of class ' class(op) ...
+            error('CHEBFUN:ctor_nonadapt:inop',['The input argument of class ' class(op) ...
                 'cannot be used to construct a chebfun object.'])
     end
     scl.v = max(scl.v, g.scl.v);

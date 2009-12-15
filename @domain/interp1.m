@@ -23,7 +23,7 @@ function p = interp1(xk,yk,d)
 %  hold on, plot(p,'r')
 %  grid on, plot(x,p(x),'.r')
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2009 by The Chebfun Team. 
 %

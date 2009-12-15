@@ -18,7 +18,7 @@ function C = mtimes(A,B)
 
 
 if isa(A,'chebfun')
-    error('chebop:mtimes:invalid','Operation is undefined.');
+    error('CHEBOP:mtimes:invalid','Operation is undefined.');
 elseif isa(B,'chebfun')
     C = feval(A.op,B);
 elseif isnumeric(A) || isnumeric(B)
@@ -32,7 +32,7 @@ elseif isnumeric(A) || isnumeric(B)
     C.opshow = cellfun(@(s) [num2str(A),' * (',s,')'],B.opshow,'uniform',false);
 elseif isa(A,'chebop') && isa(B,'chebop')
     if ~(A.dom == B.dom)
-        error('chebop:mtimes:domain','Domains of operators do not match');
+        error('CHEBOP:mtimes:domain','Domains of operators do not match');
     end
     
     % When L*u is allowed, these checks will not be necessary anymore

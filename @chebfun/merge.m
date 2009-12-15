@@ -31,7 +31,7 @@ function [fout,mpts] = merge(f, varargin)
 %
 %   See also SPLITTING, CHEBFUNPREF, SIMPLIFY.
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team. 
 %   Last commit: $Author$: $Rev$:
@@ -39,7 +39,7 @@ function [fout,mpts] = merge(f, varargin)
 
 
 if numel(f) > 1
-    error('chebfun:merge:quasimatrix','MERGE does not handle chebfun quasimatrices')
+    error('CHEBFUN:merge:quasimatrix','MERGE does not handle chebfun quasimatrices')
 end
 
 fout = f;
@@ -65,7 +65,7 @@ else % Index of endpoints was provided
     else
         bkpts = unique(bkpts);
         if  bkpts(1) < 1 || bkpts(end) > f.nfuns+1 || any(round(bkpts)~=bkpts)
-            error('chebfun:merge:bkpts','Break points must be integers between 2 and length(ends)-1')
+            error('CHEBFUN:merge:bkpts','Break points must be integers between 2 and length(ends)-1')
         end
         if bkpts(1)==1, bkpts = bkpts(2:end); end
         if ~isempty(bkpts) && bkpts(end)==length(f.ends), bkpts = bkpts(1:end-1); end

@@ -3,9 +3,9 @@ function Fout = times(F1,F2)
 % F.*G multiplies chebfuns F and G or a chebfun by a scalar if either F or G is
 % a scalar.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
         
 if (isempty(F1) || isempty(F2)), Fout = chebfun; return; end
 
@@ -16,7 +16,7 @@ else
 % product of two chebfuns
 
     if any(size(F1)~=size(F2))
-        error('Quasimatrix dimensions must agree')
+        error('CHEBFUN:times:quasi','Quasimatrix dimensions must agree')
     end
       
     Fout = F1;
@@ -71,10 +71,20 @@ end
 
 % Update first row of h.imps (function values)
 % this seems to be slow:
-%imps(1,:) = feval(f,f.ends).*feval(g,g.ends);
+% imps(1,:) = feval(f,f.ends).*feval(g,g.ends);
 % replaced with
-imps(1,:) = f.imps(1,:).*g.imps(1,:);
+tmp = f.imps(1,:).*g.imps(1,:);
 
+tol = 10*f.scl.*chebfunpref('eps');
+if any(isinf(tmp))
+    for k = 1:length(tmp)
+        if isinf(tmp(k)) && (f.imps(1,k)<tol || g.imps(1,k)<tol)
+            tmp(k) = NaN;
+        end
+    end   
+end
+imps(1,:) = tmp;
+    
 % % If there are deltas, then function value is + or - inf. (or should it
 % be nan in some cases?)
 % if size(imps,1)>1

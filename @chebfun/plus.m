@@ -3,9 +3,9 @@ function H = plus(F1,F2)
 % F + G adds chebfuns F and G, or a scalar to a chebfun if either F or G is 
 % a scalar.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if (isempty(F1) || isempty(F2)), H=chebfun; return; end
 
@@ -18,7 +18,7 @@ elseif isa(F2,'double')
     H = F2 + F1;
 else
     if any(size(F1)~=size(F2))
-        error('chebfun:plus:size','Quasimatrix dimensions must agree.')
+        error('CHEBFUN:plus:size','Quasimatrix dimensions must agree.')
     end
     H = F2;
     for k = 1:numel(F2)

@@ -91,7 +91,7 @@ g = extrapolate(g,pref,y);
 %
 % % c must be a root of g. Here we check if c is in [-1,1].
 % if abs(c)>1+1e-14*g.scl.h
-%     error('fun:factorfun:input','abs(c)>1')
+%     error('FUN:factorfun:input','abs(c)>1')
 % end
 % isroot = true;
 % if abs(feval(g,c)) > 1e+8*chebfunpref('eps')*g.scl.v
@@ -118,7 +118,7 @@ g = extrapolate(g,pref,y);
 % 
 % % Need at least on linear factor
 % if n<2
-%     error('fun:factorfun:input','degree must be larger than 0')
+%     error('FUN:factorfun:input','degree must be larger than 0')
 % end
 % 
 % % New coefficients:
@@ -137,6 +137,6 @@ g = extrapolate(g,pref,y);
 % % Check accuracy and if c is really a zero of the original g:
 % res = abs(a(1)-b(2)/2+c*b(1));
 % if res > 1e4*chebfunpref('eps')*g.scl.h;
-%     warning('fun:factorfun:accuracy',['Results seem inacurrate -- res = ' ...
+%     warning('FUN:factorfun:accuracy',['Results seem inacurrate -- res = ' ...
 %         num2str(res)])
 % end

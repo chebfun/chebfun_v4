@@ -88,7 +88,7 @@ elseif ~all(isinf(d))
         
 else
     
-    warning('CHEBFUN:extract_roots:inf', ...
+    warning('FUN:extract_roots:inf', ...
         'Extract roots currently only works for finite domains!'); 
     f.exps = exps; 
     return

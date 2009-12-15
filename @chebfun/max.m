@@ -21,13 +21,13 @@ function [y,x] = max(f,g,dim)
 %
 % See also chebfun/min. 
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if nargin==2
   if nargout > 1
-    error('chebfun:max:twoout',...
+    error('CHEBFUN:max:twoout',...
       'Max with two inputs and two outputs is not supported.')
   end
   y = maxfun(f,g);

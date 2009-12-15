@@ -3,12 +3,12 @@ function Z = null(A)
 % NULL(A) returns an orthonormal basis for the null space of 
 % the column quasimatrix A.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if A(1).trans
-   error('NULL only defined for column quasimatrices')
+   error('CHEBFUN:null:row','NULL only defined for column quasimatrices')
 end
 
 [U,S,V] = svd(A,0);

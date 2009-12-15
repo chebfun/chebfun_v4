@@ -34,7 +34,7 @@ if ~isstruct(bc)
   elseif iscell(bc) && length(bc)==2
     type = bc{1};  val = bc{2};
   else
-    error('linop:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
+    error('LINOP:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
   end
   bc = struct('left',struct([]),'right',struct([]));
   switch(lower(type))
@@ -44,7 +44,7 @@ if ~isstruct(bc)
         if A.difforder > 1
           bc.right = struct('op',I,'val',val);
           if A.difforder > 2
-            warning('linop:setbc:order',...
+            warning('LINOP:setbc:order',...
               'Dirichlet may not be appropriate for differential order greater than 2.')
           end
         end
@@ -55,7 +55,7 @@ if ~isstruct(bc)
         if A.difforder > 1
           bc.right = struct('op',D,'val',val);
           if A.difforder > 2
-            warning('linop:setbc:order',...
+            warning('LINOP:setbc:order',...
               'Neumann may not be appropriate for differential order greater than 2.')
           end
         end
@@ -73,7 +73,7 @@ if ~isstruct(bc)
         B = D.varmat*B;
       end
     otherwise
-      error('linop:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
+      error('LINOP:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
   end
 end
 

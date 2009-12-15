@@ -10,7 +10,7 @@ elseif length(pars) > 2
 end
 
 if length(pow)==1, 
-    error('CHEBFUN:SING:numin','Singmap requires two-vector of singularities')
+    error('FUN:SING:numin','Singmap requires two-vector of singularities')
 end
 
 pow(~pow) = 1;
@@ -38,7 +38,7 @@ end
 % Can only do .25 powers at boths ends (or maybe .5?)
 if ~pos && (~all(pow==.25) && ~all(pow==.5))
     pow = [.25 .25];
-%     warning('CHEBFUN:sing:bothends',['Singmaps at boths ends may only have ', ...
+%     warning('FUN:sing:bothends',['Singmaps at boths ends may only have ', ...
 %     'parameters 0.25']);
 end
     

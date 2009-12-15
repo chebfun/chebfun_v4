@@ -2,7 +2,7 @@ function f = ctor_adapt(f,ops,ends,pref)
 %CTOR_ADAPT  Adaptive chebfun constructor
 % CTOR_ADAPT handles adaptive construction of chebfuns.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 
 % Last commit: $Author: nich $: $Rev: 458 $:
@@ -52,7 +52,7 @@ if isfield(pref,'exps')
         exps = [exps{1} tmp exps{2}];
     elseif numel(exps) == numel(ends)
         if numel(ends)~=2
-%             warning('chebfun:ctor_adapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
+%             warning('CHEBFUN:ctor_adapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
 %             'Assuming exps are the same on either side of break.']);
             exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
         end
@@ -80,7 +80,7 @@ for i = 1:length(ops)
                 ' a chebfun.'])
             end
             if norm(op.map.par(1:2)-ends(i:i+1)) > scl.h*1e-15
-                error('chebfun:ctor_1:domain','Incosistent domains')
+                error('CHEBFUN:ctor_adapt:domain','Incosistent domains')
             else
                 fs = op;
                 es = ends(i:i+1);
@@ -88,13 +88,13 @@ for i = 1:length(ops)
             end
         case 'char'
             if ~isempty(str2num(op))
-                error(['A chebfun cannot be constructed from a string with '...
+                error('CHEBFUN:ctor_adapt:stringvals',['A chebfun cannot be constructed from a string with '...
                     ' numerical values.'])
             end
 %             op = inline(op);
             depvar = symvar(op); 
             if numel(depvar) ~= 1, 
-                error('Incorrect number of dependent variables in string input'); 
+                error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input'); 
             end
             op = eval(['@(' depvar{:} ')' op]);
             op = vectorcheck(op,ends(i:i+1),pref.vecwarn);         
@@ -104,15 +104,15 @@ for i = 1:length(ops)
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
         case 'chebfun'
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)
-                 warning('chebfun:c_tor2:domain','chebfun is not defined in the domain')
+                 warning('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain')
             end
             if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
             [fs,es,scl] = auto(@(x) feval(op,x),ends(i:i+1),scl,pref);
         case 'cell'
-            error(['Unrecognized input sequence: Attempted to use '...
+            error('CHEBFUN:ctor_adapt:inputcell',['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])
         otherwise
-            error(['The input argument of class ' class(op) ...
+            error('CHEBFUN:ctor_adapt:inputclass',['The input argument of class ' class(op) ...
                 'cannot be used to construct a chebfun object.'])
     end
     % Concatenate funs, ends and handles (or ops)   

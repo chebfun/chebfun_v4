@@ -25,9 +25,9 @@ function [g c] = diff(g,k,c)
 %
 % See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 34.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team.
+% Copyright 2002-2009 by The Chebfun Team.
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
@@ -107,7 +107,7 @@ if strcmp(g.map.name,'linear')
     % Unbounded map
 elseif norm(g.map.par(1:2),inf) == inf
     
-    if any(g.exps), error('chebfun:fun:diff','Cannot diff inf interval funs with exps yet'); end
+    if any(g.exps), error('FUN:diff:infexps','Cannot diff inf interval funs with exps yet'); end
     
     nz = 2; % number of zeros needed to augment coefficients due chain rule
     infboth = false;
@@ -195,9 +195,10 @@ elseif strcmp(g.map.name,'sing')
             g = setexps(g,newexps);         
         end
         
-    elseif exps(1) && ~exps(2)
-       % Compute derivative of g with respect to Cheby variable
-       error('Not implemented yet') 
+    else
+ 	% This is tricky! (Or is it just the chan rule?)
+       error('FUN:diff:singmapandexps',['Differentiating singmaps with exponents is ', ...
+		'not implemented yet']) 
         
     end
     

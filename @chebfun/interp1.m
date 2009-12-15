@@ -22,9 +22,9 @@ function p = interp1(xk,f)
 %  hold on, plot(p,'r')
 %  grid on, plot(x,f(x),'.r')
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 %  This version of INTERP1 lives in @chebfun.
 %  We call @domain/interp1 to do the work:

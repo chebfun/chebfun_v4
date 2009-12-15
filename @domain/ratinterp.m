@@ -12,7 +12,7 @@ function [p,q,r_handle] = ratinterp(f,d,m,varargin)
 % [P,Q,R_HANDLE] = RATINTERP(F_HANDLE,D,M,N,XGRID) uses a function handle
 % F_HANDLE on a domain F to construct the rational interpolant.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author: pachon $: $Rev: 768 $:
@@ -36,7 +36,7 @@ if nargin == 4
         xi = varargin{1};
         type = 'arbitrary';
     else
-        error('CHEBFUN:ratinterp:input','Unrecognized input sequence.'); 
+        error('DOMAIN:ratinterp:input','Unrecognized input sequence.'); 
     end
 end
 if nargin == 5
@@ -44,7 +44,7 @@ if nargin == 5
     xi = varargin{2};
     type = 'arbitrary';
     if length(xi) ~= m+n+1
-        error('CHEBFUN:ratinterp:input',['The vector of nodes must be of length M+N+1 = ',num2str(N+1),'.']);
+        error('DOMAIN:ratinterp:input',['The vector of nodes must be of length M+N+1 = ',num2str(N+1),'.']);
     end
 end
 % init some constants
@@ -74,7 +74,7 @@ if strcmp(type,'chebyshev')
     alfa = null( Z );
     % did we get only one solution? try to restrict alfa if we did...
     if size(alfa,2) > 1
-        warning('CHEBFUN:RATINTERP','Denominator computed to be of degree %i.',n-size(alfa,2)+1);
+        warning('DOMAIN:ratinterp','Denominator computed to be of degree %i.',n-size(alfa,2)+1);
         R = qr( flipud( alfa )' );
     	alfa = flipud( R(end,size(alfa,2):end)' );
     end;

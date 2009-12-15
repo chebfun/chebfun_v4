@@ -4,9 +4,9 @@ function varargout = subsref(f,index)
 % function at the right of a breakpoint x is used for the evaluation of F
 % on x.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 idx = index(1).subs;
 switch index(1).type
@@ -27,7 +27,7 @@ switch index(1).type
             % f(s), where s can be vector, domain or ':'
             % syntaxis not allowed when f is a quasimatrix
             if n ~= 1 && isnumeric(s)
-               error('chebfun:subsasgn:dimensions',...
+               error('CHEBFUN:subsasgn:dimensions',...
                    'Index missing for quasi-matrix assignment.')
             end
         elseif length(idx) == 2
@@ -37,7 +37,7 @@ switch index(1).type
                 f = f(:,cat(2,idx{2}));
             end
         else
-            error('chebfun:subsref:dimensions',...
+            error('CHEBFUN:subsref:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
         % ---- assign values/chebfuns at given points/domains ---        
@@ -53,7 +53,7 @@ switch index(1).type
         elseif isequal(s,':')
             varargout = { f }; 
         else
-            error('chebfun:subsref:nonnumeric',...
+            error('CHEBFUN:subsref:nonnumeric',...
               'Cannot evaluate chebfun for non-numeric type.')
         end       
     case '{}'
@@ -61,18 +61,18 @@ switch index(1).type
             if isequal(idx{1},':')
                 s = domain(f); 
             else
-                error('chebfun:subsref:baddomain',...
+                error('CHEBFUN:subsref:baddomain',...
                     'Invalid domain syntax.')
             end
         elseif length(idx) == 2
             s = domain(cat(2,idx{:}));
         else
-            error('chebfun:subsasgn:dimensions',...
+            error('CHEBFUN:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
         varargout = { restrict(f,s) };        
     otherwise
-        error(['??? Unexpected index.type of ' index(1).type]);
+        error('CHEBFUN:UnexpectedType',['??? Unexpected index.type of ' index(1).type]);
 end
 
 

@@ -3,15 +3,15 @@ function Fout = rdivide(F1,F2)
 % F./G returns a chebfun that represents the function F(x)/G(x). This may
 % fail to converge if G is ever close to zero.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if (isempty(F1) || isempty(F2)), Fout = chebfun; return; end
 
 if isa(F1,'chebfun')&&isa(F2,'chebfun')
     if size(F1)~=size(F2)
-        error('Quasi-matrix dimensions must agree')
+        error('CHEBFUN:rdivide:quasi','Quasi-matrix dimensions must agree')
     end
     Fout = F1;
     for k = 1:numel(F1)
@@ -82,9 +82,9 @@ elseif isa(f1,'double')
                 poles = true; break
             end
         end
-        if ~poles && ~any(any(exps))% No exps. Old school case
+        if ~poles && ~any(any(exps)) % No exps. Old school case
             fout = comp(f2,@(x) rdivide(f1,x));
-        else % compute without exps (not surrently working)
+        else % remove exps, compute without, and add back
             fout = chebfun;
             for k = 1:f2.nfuns
                 f2k = f2.funs(k);

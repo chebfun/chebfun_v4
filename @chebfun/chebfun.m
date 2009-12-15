@@ -53,8 +53,8 @@ function f = chebfun(varargin)
 % CHEBFUN(F,'vectorize') prevents the warning message from being displayed
 % when F does not appear to be a vectorized input.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
-% Copyright 2002-2008 by The Chebfun Team.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% Copyright 2002-2009 by The Chebfun Team.
 
 persistent default_f
 if isnumeric(default_f)
@@ -95,7 +95,7 @@ else
                     elseif strcmpi(value,'factory')
                         value = chebfunpref(varargin{k},'factory');
                     else
-                        error('chebfun:chebfun:prefval', ...
+                        error('CHEBFUN:chebfun:prefval', ...
                             'Invalid chebfun preference value')
                     end
                 end

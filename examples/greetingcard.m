@@ -99,7 +99,7 @@ end
 c = cc(randi(size(cc,1)),:);
 depvar = symvar(fs); 
 if numel(depvar) ~= 1, 
-    error('Incorrect number of dependent variables in string input'); 
+    error('CHEBFUN:examples:greetingcard','Incorrect number of dependent variables in string input'); 
 end
 op = eval(['@(' depvar{:} ')' fs]);
 ffs = op(s);

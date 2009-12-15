@@ -8,9 +8,9 @@ function varargout = domain(f)
 %
 % See also domain/domain.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if numel(f) == 1
     if nargout < 2 || numel(f.ends)==0

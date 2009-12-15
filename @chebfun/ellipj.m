@@ -13,7 +13,7 @@ function [sn,cn,dn] = ellipj(u,m,tol)
 %   Some definitions of the Jacobi elliptic functions use the modulus
 %   k instead of the parameter M.  They are related by M = k^2.
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 %
 %   See also ELLIPKE
 

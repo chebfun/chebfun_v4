@@ -3,7 +3,7 @@ function vals = jumpvals(funs,ends,ops,pref,scl)
 % If there is a singular point, op is evaluated in order to obtain a 
 % value at the breakpoint.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 nfuns = numel(funs);
 vals = 0*ends;

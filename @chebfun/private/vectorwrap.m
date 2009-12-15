@@ -1,7 +1,7 @@
 function g = vectorwrap(f,x)
 % Try to determine whether f is vectorized. If not, wrap it in a loop.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 if isa(f,'chebfun') || isa(f,'fun')
     g = f;
@@ -10,12 +10,12 @@ else
     try
         v=f(x(:));
         if any(size(v) ~= size(x(:)))
-          warning('chebfun:vectorwrap:shape',...
+          warning('CHEBFUN:vectorwrap:shape',...
         'Supplied function gives an unexpected shape for vector input.')
             g = @loopwrapper;
         end
     catch
-      warning('chebfun:vectorwrap:error',...
+      warning('CHEBFUN:vectorwrap:vecerror',...
         'Supplied function gives an error for vector input.')
         g = @loopwrapper;
     end

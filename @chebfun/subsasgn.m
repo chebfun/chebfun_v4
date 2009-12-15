@@ -17,9 +17,9 @@ function varargout = subsasgn(f,index,varargin)
 %     F.FIELD = B is a wrapper for the command SET(F,FIELD,B), where FIELD
 %     is any of the chebfun fields.
 %
-%     See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%     See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 idx = index(1).subs;
 vin = varargin{:};
@@ -41,7 +41,7 @@ switch index(1).type
             % f(s), where s can be vector, domain or ':'
             % syntaxis not allowed when f is a quasimatrix
             if n ~= 1
-                error('chebfun:subsasgn:dimensions',...
+                error('CHEBFUN:subsasgn:dimensions',...
                     'Index missing for quasi-matrix assignment.')
             end
             col = 1;          
@@ -56,20 +56,20 @@ switch index(1).type
                 if isempty(f(:,1)) || all(f(:,1).ends([1,end]) == vin(:,1).ends([1,end]))
                     f(:,n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);     
                 else
-                    error('chebfun:subsasgn:domain','Inconsistent domains')
+                    error('CHEBFUN:subsasgn:domain','Inconsistent domains')
                 end
                 
             end
             
         else
-            error('chebfun:subsasgn:dimensions',...
+            error('CHEBFUN:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
         fcol = f(:,col);        
         % ---- assign values/chebfuns at given points/domains ---        
         if isnumeric(s)
             if ~isa(vin,'numeric')
-                error('chebfun:subsasgn:conversion',...
+                error('CHEBFUN:subsasgn:conversion',...
                         ['Conversion to numeric from ',class(vin),...
                         'is not possible.'])
             end
@@ -79,12 +79,12 @@ switch index(1).type
                     length(vin)==length(s)
                 vin = vin(:);
             elseif length(s)~=size(vin,1) || length(col)~=size(vin,2)
-                error('chebfun:subsasgn:dimensions',...
+                error('CHEBFUN:subsasgn:dimensions',...
                         'Subscripted assignment dimension mismatch.')
             end
             [a,b] = domain(fcol);
             if min(s) < a || max(s) > b
-                error('chebfun:subsasgn:outbounds',...
+                error('CHEBFUN:subsasgn:outbounds',...
                     'Cannot introduce endpoints outside domain.')
             end
             stemp = s;
@@ -108,13 +108,13 @@ switch index(1).type
                 fcol = restrict(vin,domain(fcol));
             end
         else
-            error('chebfun:subsasgn:nonnumeric',...
+            error('CHEBFUN:subsasgn:nonnumeric',...
               'Cannot evaluate chebfun for non-numeric type.')
         end
         % --- assign modified column to original chebfun/quasimatrix --
         % Check orientation
         if fcol(1).trans ~= trans
-            error('chebfun:subsasgn:trans','Inconsistent chebfun transpose fields')
+            error('CHEBFUN:subsasgn:trans','Inconsistent chebfun transpose fields')
         end
         f(:,col) = fcol;
         if trans, f = f.'; end
@@ -126,16 +126,16 @@ switch index(1).type
             elseif isa(idx{1},'domain')
                 s = idx{1};                 
             else
-                error('chebfun:subsasgn:baddomain',...
+                error('CHEBFUN:subsasgn:baddomain',...
                     'Invalid domain syntax.')
             end
         elseif length(idx) == 2
             s = domain(cat(2,idx{:}));
         else
-            error('chebfun:subsasgn:dimensions',...
+            error('CHEBFUN:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
         varargout = { define(f,s,vin) };
     otherwise
-        error('chebfun:subsasgn:indextype',['??? Unexpected index.type of ' index(1).type]);
+        error('CHEBFUN:subsasgn:indextype',['??? Unexpected index.type of ' index(1).type]);
 end

@@ -4,7 +4,7 @@ function f = polyfit(y,n)
 %   polynomial of degree N that fits the chebfun Y in
 %   the least-squares sense.
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by The Chebfun Team. 
 % Nick Hale & Rodrigo Platte,  21/01/2009

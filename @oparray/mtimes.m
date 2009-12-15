@@ -28,7 +28,7 @@ if isnumeric(B)   % scalar multiply
 
 else              % compose
   if size(A.op,2)~=size(B.op,1)
-    error('oparray:mtimes:size','Inner dimensions do not agree.')
+    error('OPARRAY:mtimes:size','Inner dimensions do not agree.')
   end
 
   % Emulate matrix * matrix.

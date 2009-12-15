@@ -12,7 +12,7 @@ function [edge,vs] = detectedge(f,a,b,hs,vs,der,checkblowup)
 % identity map is assumed.
 %
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 % Assume no edge is found
 edge = [];

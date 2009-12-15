@@ -16,7 +16,7 @@ end
 dom = domain(varargin{1});
 for k = 2:nargin
   if ~eq(domain(varargin{k}),dom)
-    error('linop:domaincheck:nomatch','Function domains do not match.')
+    error('LINOP:domaincheck:nomatch','Function domains do not match.')
   end
 end
 
@@ -36,7 +36,7 @@ end
 % if all( hscl*[maxleft-minleft maxright-minright] < 10*eps )
 %   dom = domain( [minleft, maxright] );
 % else
-%   error('chebop:domaincheck:nomatch','Function domains do not match.')
+%   error('LINOP:domaincheck:nomatch','Function domains do not match.')
 % end
 
 end

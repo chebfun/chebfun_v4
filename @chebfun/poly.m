@@ -5,21 +5,21 @@ function out = poly(f,n)
 % For numerical work, the Chebyshev polynomial coefficients returned
 % by CHEBPOLY are more useful.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 nfuns = f.nfuns;
 if nargin == 1
     if nfuns>1
-        warning('chebfun:poly', ...
+        warning('CHEBFUN:poly', ...
             'Chebfun has more than one fun. Only the polynomial coefficients of the first one are returned');
     end
     n = 1;
 end
 
 if n>nfuns
-    error(['Chebfun only has ',num2str(nfuns),' funs'])
+    error('CHEBFUN:poly:nfuns',['Chebfun only has ',num2str(nfuns),' funs'])
 else
 
     a = f.ends(n); b = f.ends(n+1);

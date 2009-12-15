@@ -2,7 +2,7 @@ function g = simplify(g,tol,kind)
 % This function removes leading Chebyshev coefficients that are below 
 % epsilon, relative to the verical scale stored in g.scl.v
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team. 
 %   Last commit: $Author$: $Rev$:
@@ -25,12 +25,12 @@ epstol = 2^-52;
 if g.scl.v == 0, 
     % Check for NaN's or Inf's
     if any(isnan(g.vals)) || isinf(g.scl.v)
-        error('CHEBFUN:growfun:naneval','Function returned NaN or Inf when evaluated.')
+        error('FUN:simplify:naneval','Function returned NaN or Inf when evaluated.')
     end
     g = set(g,'vals',0);               % is g the zero function?
     return;
     elseif isinf(g.scl.v)
-%         error('CHEBFUN:simplify:InfEval', ...
+%         error('FUN:simplify:InfEval', ...
 %                 'Function returned Inf when evaluated.')
 
 %     inf located, try markfun!
@@ -57,7 +57,7 @@ if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
     Tend = find(ac>=Tmax,1,'first');  % pos of last entry below Tmax
     if isempty(Tend)                  % is g the zero function?  
         if any(isnan(ac))
-            error('CHEBFUN:simplify:NaNEval', ...
+            error('FUN:simplify:NaNEval', ...
                 'Function returned NaN when evaluated.')
         else
             g = set(g,'vals',0);

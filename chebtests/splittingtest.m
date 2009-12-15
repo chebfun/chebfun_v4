@@ -17,21 +17,21 @@ try
         f= chebfun(@(x) exp(x) +cos(7*x) + sign(x-x0));
         pass = pass && f.ends(2) == x0 && (length(f.ends) < 4);
         if ~pass
-            error('jump1')
+            error('CHEBTESTS:splittingtest:j1','jump1')
         end
 
         x0 = -0.112;
         f= chebfun(@(x) exp(x) +cos(7*x) + sign(x-x0));
         pass = pass && f.ends(2) == x0 && (length(f.ends) < 4);
         if ~pass
-            error('jump2')
+            error('CHEBTESTS:splittingtest:j2','jump2')
         end
 
         if chebfunpref('eps') > 1/1000
             f = chebfun(@(x) exp(x) +cos(7*x) + 0.1*sign(x-x0))+1;
             pass = pass && f.ends(2) == x0 && (length(f.ends) < 4);
             if ~pass
-                error('jump3')
+                error('CHEBTESTS:splittingtest:j3','jump3')
             end
         end
 
@@ -40,28 +40,28 @@ try
         pass = pass && (length(f.ends)<3) || (abs(f.ends(2) - x0)< 1e-12*(tol/eps) && (length(f.ends) < 4));
         if ~pass
             abs(f.ends(2) - x0)
-            error('C0')
+            error('CHEBTESTS:splittingtest:C0','C0')
         end
 
         % test C1 functions
         f= chebfun(@(x) (x-x0).^2.*double(x>x0));
         pass = pass && abs(f.ends(2) - x0)< 1e-8*(tol/eps) && (length(f.ends) < 4);
         if ~pass
-            error('C1')
+            error('CHEBTESTS:splittingtest:C1','C1')
         end
 
         % test C2 functions
         f= chebfun(@(x) exp(x) + abs(x-x0).^3+1);
         pass = pass && abs(f.ends(2) - x0)< 1e-4*(tol/eps) && (length(f.ends) < 4);
         if ~pass
-            error('C2')
+            error('CHEBTESTS:splittingtest:C2','C2')
         end
 
         % test C3 functions
         f= chebfun(@(x) (x-x0).^4.*double(x>x0));
         pass = pass && (length(f.ends) < 5);
         if ~pass
-            error('C3')
+            error('CHEBTESTS:splittingtest:C3','C3')
         end
 
     %end
@@ -72,7 +72,7 @@ try
     xx = linspace(2,10);
     pass = pass && length(f) <600 && norm(f(xx) - ff(xx),inf)<5e-7*(tol/eps);
     if ~pass
-        error('SQRT')
+        error('CHEBTESTS:splittingtest:sqrt','SQRT')
     end
 
 

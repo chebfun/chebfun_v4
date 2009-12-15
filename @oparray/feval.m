@@ -7,14 +7,14 @@ function g = feval(A,f)
 % quasimatrix whose columns are different variables.
 
 if ~isa(f,'chebfun')
-  error('oparray:feval:type','Oparrays can evaluate only on chebfuns.')
+  error('OPARRAY:feval:type','Oparrays can evaluate only on chebfuns.')
 end
 
 if numel(A.op)==1
   g = A.op{1}(f);
 else
   if size(A,2)~=size(f,2)
-    error('oparray:feval:size',...
+    error('OPARRAY:feval:size',...
       'Number of op columns must equal number of chebfun columns.')
   end
   % Emulate matrix * vector.

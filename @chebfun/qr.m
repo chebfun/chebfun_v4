@@ -4,19 +4,19 @@ function [Q,R] = qr(A,econ)
 % columns, produces a column quasimatrix Q with n orthonormal columns
 % and an n x n upper triangular matrix R such that A = Q*R.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 %
 % This algorithm was developed by Nick Trefethen, June 2008: see
 % Trefethen, "Householder triangularization of a quasimatrix", to appear.
 
 if (nargin>2) || ((nargin==2) && (econ~=0))
-    error('chebfun:qr:twoargs',...
+    error('CHEBFUN:qr:twoargs',...
           'Use qr(A) or qr(A,0) for QR decomposition of quasimatrix.');
 end
 if A(1).trans
-    error('chebfun:qr:transpose',...
+    error('CHEBFUN:qr:transpose',...
           'QR works only for column quasimatrices.')
 end
 

@@ -1,4 +1,3 @@
-
 function pass = ratinterptest
 
 % Check a few basics with ratinterp

@@ -13,7 +13,7 @@ function g = inv(f,varargin)
 %   f = sign(x) + x;
 %   g = inv(f,'splitting',true);
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author$: $Rev$:
@@ -21,7 +21,7 @@ function g = inv(f,varargin)
 
 % no quasimatrix support
 if numel(f) > 1
-    error('chebfun:inv:noquasi','no support for quasimatrices');
+    error('CHEBFUN:inv:noquasi','no support for quasimatrices');
 end
 
 split_yn = [];
@@ -57,9 +57,9 @@ if ~isempty(tpoints)
         endtest(k) = min(abs(tpoints(k)-domainf.ends));
     end
     if any(endtest > 100*abs(feval(f,tpoints))*tol)
-        error('chebfun:inv:notmonotonic','chebfun F must be monotonic its domain.');
+        error('CHEBFUN:inv:notmonotonic','chebfun F must be monotonic its domain.');
     elseif ~(chebfunpref('splitting') || split_yn)
-         warning('chebfun:inv:singularendpoints', ['F is monotonic, but ', ...
+         warning('CHEBFUN:inv:singularendpoints', ['F is monotonic, but ', ...
          'INV(F) has singular endpoints. Suggest you try ''splitting on''.']);
     end
 end
@@ -84,7 +84,7 @@ for j = 1:length(x)
         err = abs(fvals-x(j));
         [temp k] = min(err);
         if err(k) > 100*tol*abs(fvals(k));
-            error('chebfun:inv:notmonotonic2','chebfun must be monotonic');
+            error('CHEBFUN:inv:notmonotonic2','chebfun must be monotonic');
         end
     end
     r(j,1) = temp;

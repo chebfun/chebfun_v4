@@ -22,7 +22,7 @@ if isnumeric(B)
     elseif numel(B)==1
         if B==0, C=A; return
         elseif diff(A.blocksize)~=0
-            error('linop:plus:expandsquare',...
+            error('LINOP:plus:expandsquare',...
                 'Scalars can be added only to square linops.')
         end
         m = A.blocksize(1);
@@ -54,7 +54,7 @@ if isa(B,'linop') % linop + linop
 
     
     if ~all(A.blocksize==B.blocksize)
-        error('linop:plus:sizes','Chebops must have identical sizes.')
+        error('LINOP:plus:sizes','Chebops must have identical sizes.')
     end
     
     op = A.oparray + B.oparray;
@@ -63,7 +63,7 @@ if isa(B,'linop') % linop + linop
     C.blocksize = A.blocksize;
     
 else
-    error('linop:plus:badoperand','Unrecognized operand.')
+    error('LINOP:plus:badoperand','Unrecognized operand.')
     
 end
 

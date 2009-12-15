@@ -35,7 +35,7 @@ if a == -inf && b == inf
             c = (x1+x2)/2;
         end
         if abs(c) == inf
-            error('somthing is wrong')
+            error('FUN:unbounded:oops','Somthing is wrong')
         end
     end
 
@@ -86,7 +86,7 @@ elseif b == inf
      scl = max(abs(a),abs(a+s));
 
 else
-    error('check input')
+    error('FUN:unbounded:input','Error: Check input')
 end
 
 if nargout > 1

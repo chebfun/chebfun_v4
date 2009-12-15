@@ -24,7 +24,7 @@ elseif isa(defn,'varmat')
 elseif isa(defn,'function_handle')
   A.defn = defn;
 else
-  error('failed')
+  error('VARMAT:varmat:fail','Varmat failed')
 end
  
 A = class(A,'varmat');

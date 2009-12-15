@@ -27,7 +27,7 @@ if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(
             mask = [true;mask;true];
             xgood = x(~mask);
             if isempty(xgood)
-                error('CHEBFUN:extrapolate:nans','Too many nans to handle. Increasing minsamples may help')
+                error('FUN:extrapolate:nans','Too many nans to handle. Increasing minsamples may help')
             end
             xnan = x(mask);
             w = 0*xgood+1;
@@ -70,7 +70,7 @@ if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(
             mask = isnan(g.vals) | isinf(g.vals);
             xgood = x(~mask);
             if isempty(xgood)
-                error('CHEBFUN:extrapolate:nans','Too many nans to handle. Increasing minsamples may help')
+                error('FUN:extrapolate:nans','Too many nans to handle. Increasing minsamples may help')
             end
             xnan = x(mask);
             
@@ -94,7 +94,7 @@ if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(
 else
 
     if any(isinf(g.vals))
-        error('chebfun:inf','Function returned INF when evaluated. You may try using the BLOWUP flag in this case')
+        error('FUN:extrapolate:inf','Function returned INF when evaluated. You may try using the BLOWUP flag in this case')
     end
     
     g.scl.v = max(g.scl.v,norm(g.vals,inf));

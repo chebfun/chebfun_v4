@@ -36,7 +36,7 @@ function [p,q,r,s] = cf(f,m,n,M)
 % Caratheodory-Fejer method for real rational approximation", SIAM J.
 % Numer. Anal. 20 (1983), 420-436.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by The Chebfun Team. 
 
@@ -85,7 +85,7 @@ end
 
 a = chebpoly(f); a = a(end-M:end);
 if any(imag(a) ~= 0),
-  warning('chebfun:cf:complex', ...
+  warning('CHEBFUN:cf:complex', ...
     ['CF does not work for complex valued functions. Taking real part.']);
   a = real(a);
 end
@@ -166,7 +166,7 @@ else                              % rational case
     b(j+1) = -(b(1:j)*ac(end-j:end-1))/j;
   end
   z = roots(b);
-  if any(abs(z)>1), warning('chebfun:cf:ill_conditioned', ...
+  if any(abs(z)>1), warning('CHEBFUN:cf:ill_conditioned', ...
       ['Ill-conditioning detected. Results may be inaccurate.']);
   end
   z = z(abs(z)<1); rho = 1/max(abs(z)); z = .5*(z+1./z);
@@ -201,7 +201,7 @@ else                              % rational case
   A = gam(1:m,1:m); B = gam(1:m,m+1);
   C = gam(1:m,end:-1:m+2); G = A+C-2*B*B'/gam(1,1);
   if (cond(G)/s > tolcond) && (cond(G) > tolcondG),
-    warning('chebfun:cf:ill_conditioned', ...
+    warning('CHEBFUN:cf:ill_conditioned', ...
       ['Ill-conditioning detected. Results may be inaccurate.']);
   end
   bc = G\(-2*(B*ct(1)/gam(1,1)-ct(m+1:-1:2)'));

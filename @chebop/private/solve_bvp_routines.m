@@ -12,11 +12,11 @@ lambda_minCounter = 0;
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(N.op)
-    error('Operator empty');
+    error('CHEBOP:solve_bvp_routines:OpEmpty','Operator empty');
 end
 
 if isempty(N.lbc) && isempty(N.rbc)
-    error('Both BC empty');
+    error('CHEBOP:solve_bvp_routines:BCEmpty''Both BC empty');
 end
 
 % Check which type the operator is (anonymous function or a chebop).
@@ -42,7 +42,7 @@ bcFunLeft = N.lbc;
 bcFunRight = N.rbc;
 
 if xor(strcmpi(bcFunLeft,'periodic'),strcmpi(bcFunRight,'periodic'))
-    error('Nonlinop:mldivide:findguess', 'BC is periodic at one end but not at the other.');
+    error('CHEBOP:solve_bvp_routines:findguess', 'BC is periodic at one end but not at the other.');
 end
 
 % Check whether either boundary has no BC attached, used later in the
@@ -53,7 +53,7 @@ rightEmpty = isempty(bcFunRight);
 % Construct initial guess if missing
 if isempty(N.guess) % No initial guess given
     if isempty(N.dom)
-        error('chebop:solve_newton_damped:noGuess','Neither domain nor initial guess is given.')
+        error('CHEBOP:solve_bvp_routines:noGuess','Neither domain nor initial guess is given.')
     else
         dom = N.dom;
         u = findguess(N); % Initial quasimatrix guess of linear chebfuns

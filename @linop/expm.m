@@ -33,18 +33,18 @@ maxdegree = cheboppref('maxdegree');
 % Check for warnings/errors.
 [L,B,c,rowrep] = feval(A,10,'bc');
 if any(c~=0)
-  warning('linop:expm:boundarydata',...
+  warning('LINOP:expm:boundarydata',...
     'Ignoring nonzero boundary data--setting to zero.')
 end
 
 if (A.numbc~=A.difforder) && all(A.blocksize==[1 1])
-  warning('linop:expm:bc',...
+  warning('LINOP:expm:bc',...
     'Operator may not have the right number of boundary conditions.')
 end
 
 m = A.blocksize(2);
 if m~=A.blocksize(1)
-  error('linop:expm:square','Operator must be block-square.')
+  error('LINOP:expm:square','Operator must be block-square.')
 end
 
 % We need two versions of the linop. The returned version inspects the
@@ -66,7 +66,7 @@ F.blocksize = [m m];
     end
     if n > maxdegree+1
       msg = sprintf('Failed to converge with %i points.',maxdegree+1);
-      error('linop:expm:NoConverge',msg)
+      error('LINOP:expm:NoConverge',msg)
     end
 
     [L,B,c,rowrep] = feval(A,n,'bc');
@@ -91,7 +91,7 @@ F.blocksize = [m m];
     n = ms;
     for j = 1:size(u,2)
       if length(u(:,j).ends) > 2
-        warning('linop:expm:Nonsmooth',...
+        warning('LINOP:expm:Nonsmooth',...
           'Nonsmooth initial data may degrade accuracy in the result.')
       else
         n = max(n,length(u(:,j)));

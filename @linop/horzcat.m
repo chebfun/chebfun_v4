@@ -20,7 +20,7 @@ end
 % Size compatability.
 bs1 = cellfun( @(A) A.blocksize(1), varargin );
 if any(bs1~=bs1(1))
-  error('linop:horzcat:badsize','Each block must have the same number of rows.')
+  error('LINOP:horzcat:badsize','Each block must have the same number of rows.')
 end
 
 % Domain compatability.

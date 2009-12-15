@@ -37,9 +37,9 @@ function [u,flag,normres,Q] = gmres(varargin)
 %   A = @(u) cumsum(u) + 20*u;
 %   u = gmres(A,f,Inf,1e-14);
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 % Parse inputs and supply defaults.
 defaults = {[],[],Inf,1e-10,36,[],[]};
@@ -98,7 +98,7 @@ while (normres(j) > tol) && (j<maxiter)          % outer iterations
     
     % Give up?
     if j==maxiter+1
-      warning('chebfun:gmres:maxiter',...
+      warning('CHEBFUN:gmres:maxiter',...
         'Maximum number of iterations reached.')
       showtrace = false;
       break

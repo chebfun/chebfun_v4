@@ -20,8 +20,8 @@ end
 % for n = 10:10:100
 %     f = chebfun(op,n);
 %     fzz = f(zz);
-%     error = log(abs(op(zz)-fzz));
-%     contourf(xx,yy,error,log(10.^[-17:-1]),'linewidth',2);
+%     err = log(abs(op(zz)-fzz));
+%     contourf(xx,yy,err,log(10.^[-17:-1]),'linewidth',2);
 %     caxis([log(1e-16) log(1e-1)]),
 %     colormap(hot), colorbar
 %     title(['n = ', num2str(n)],'fontsize',18,'fontweight','bold')

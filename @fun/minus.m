@@ -3,9 +3,9 @@ function [g1 ish] = minus(g1,g2)
 % G1 - G2 subtracts fun G1 from G2 or a scalar from a fun if either
 % G1 or G2 is a scalar.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team.
+% Copyright 2002-2009 by The Chebfun Team.
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
@@ -91,7 +91,7 @@ if ~samemap(g1,g2) && ~any([exps1 exps2])
     
     [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),ends,pref,scl);
     if ~ish
-        warning('fun:minus:failtoconverge','Operation may have failed to converge');
+        warning('FUN:minus:failtoconverge','Operation may have failed to converge');
     end
     return
 end
@@ -201,7 +201,7 @@ pref.sampletest = 0;
 [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),map,pref,scl);
 
 if ~ish
-    warning('fun:minus:failtoconverge','Operation may have failed to converge');
+    warning('FUN:minus:failtoconverge','Operation may have failed to converge');
 end
     
 if any(g1.exps < 0)

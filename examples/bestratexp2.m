@@ -25,7 +25,7 @@ if nargin == 0
     N = 12;
 end
 
-if mod(N,2), error('CHEBFUN:bestratexp2:N_odd','N must be even.'); end
+if mod(N,2), error('CHEBFUN:examples:bestratexp2:N_odd','N must be even.'); end
 
 f = chebfun('exp(9*(t-1)./(t+1))');
 [p,q,r,s] = cf(f,N/2,N/2);

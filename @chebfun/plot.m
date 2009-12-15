@@ -58,7 +58,7 @@ function varargout = plot(varargin)
 % points), H(:,3) for the jump lines, H(:,4) for the jump vals, and H(:,5) 
 % contains the handle for a dummy plot used to supply correct legends.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team.
 %  Last commit: $Author: nich $: $Rev: 458 $:
@@ -98,7 +98,7 @@ while ~isempty(varargin)
         g = varargin{2};
         varargin(1:2) = [];
         if ~isreal(f) || ~isreal(g)
-            warning('chebfun:plot:doubleimag',...
+            warning('CHEBFUN:plot:doubleimag',...
                 'Imaginary parts of complex X and/or Y arguments ignored.');
             f = real(f); g = real(g);
         end

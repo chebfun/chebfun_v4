@@ -16,7 +16,7 @@ function [funs,ends,scl] = auto(op,ends,scl,pref)
 %
 % Note: this function is used in ctor_2.m
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 
 % Last commit: $Author: nich $: $Rev: 458 $:

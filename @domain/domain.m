@@ -12,9 +12,9 @@ function [d,x,N] = domain(varargin)
 % [D,X,N] = DOMAIN(...) also returns a nonlinop N on D, whose
 % fields can then be filled by N.op = ..., N.lbc = ..., etc.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if nargin==0
   v = [];

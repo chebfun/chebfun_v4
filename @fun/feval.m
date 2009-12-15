@@ -5,9 +5,9 @@ function out = feval(g,x)
 % nodes of length 2^n+1 then the evaluation could be done using FFTs through
 % prolong.m (faster).
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 % Last commit: $Author$: $Rev$:
 % $Date$:
 

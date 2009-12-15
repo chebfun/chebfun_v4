@@ -7,15 +7,15 @@ function t = subsref(d,s)
 % D.break returns the breakpoints (excluding endpoints). You can access a
 % single breakpoint via D.break(I).
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 valid = false;
 switch(s(1).type)
   case '()'
     if isempty(d)
-      error('domain:subsref:empty',...
+      error('DOMAIN:subsref:empty',...
         'Cannot reference an endpoint of an empty domain.')
     end
     k = s(1).subs{1};
@@ -48,7 +48,7 @@ switch(s(1).type)
 end
         
 if ~valid
-  error('domain:subsref:invalid','Invalid reference.')
+  error('DOMAIN:subsref:invalid','Invalid reference.')
 end
         
 end

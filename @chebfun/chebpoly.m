@@ -9,22 +9,22 @@ function out = chebpoly(f,n)
 % There is also a CHEBPOLY command in the chebfun trunk directory, which
 % computes the chebfun corresponding to the Chebyshev polynomial T_n.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
  
-if numel(f)>1, error('CHEBPOLY does not handle chebfun quasi-matrices'), end
+if numel(f)>1, error('CHEBFUN:chebpoly:quasi','CHEBPOLY does not handle chebfun quasi-matrices'), end
 
 if nargin == 1
     if f.nfuns>1
-        warning(['Chebfun has more than one fun. Only the Chebyshev' ...
+        warning('CHEBFUN:chebpoly',['Chebfun has more than one fun. Only the Chebyshev' ...
                  ' coefficients of the first one are returned.' ...
                  ' Use CHEBPOLY(F,1) to suppress this warning.'])
     end
     out = chebpoly(f.funs(1)).';
 else
     if n>f.nfuns
-        error(['Chebfun only has ',num2str(f.nfuns),' funs'])
+        error('CHEBFUN:chebpoly:nfuns',['Chebfun only has ',num2str(f.nfuns),' funs'])
     else
         out = chebpoly(f.funs(n)).';
     end

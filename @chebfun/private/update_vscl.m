@@ -3,7 +3,7 @@ function f = update_vscl(f)
 % Goes through funs to find the largest vertical scale and updates the 
 % global scale accordingly.
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 vscl = 0;
 for k = 1:f.nfuns

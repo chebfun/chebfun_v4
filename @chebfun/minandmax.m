@@ -16,7 +16,7 @@ function [y,x] = minandmax(f,dim)
 %
 %  See also chebfun/max chebfun/min. 
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author$: $Rev$:
@@ -69,7 +69,7 @@ end
 if dim == 2
     % Return the composite max function.
     if nargout > 1
-        error('chebfun:minandmax:dim2outs',['Only single output if ', ...
+        error('CHEBFUN:minandmax:dim2outs',['Only single output if ', ...
         'taking min/max in the discrete dimension']);
     end
     if ftrans

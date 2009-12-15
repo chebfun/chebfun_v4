@@ -9,9 +9,9 @@ function fout = ne(F1,F2)
 %
 %  See also chebfun/find, chebfun/eq, chebfun/not.
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 % Make sure F1 is a chebfun
 if ~isa(F1,'chebfun')

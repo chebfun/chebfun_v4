@@ -5,9 +5,9 @@ function g = set(g,varargin)
 %
 % G = SET(G,PROP_1,VAL_1,...,PROP_n,VAL_n) modifies more than one property.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 % Last commit: $Author: rodp $: $Rev: 537 $:
 % $Date: 2009-07-17 16:15:29 +0100 (Fri, 17 Jul 2009) $:
 
@@ -36,6 +36,6 @@ while length(propertyArgIn) >= 2,
         case 'exps'
             g.exps = val;
         otherwise
-            error('fun properties: val, n, map, exps, or scl')
+            error('FUN:set:badprop','fun properties: val, n, map, exps, or scl')
     end
 end

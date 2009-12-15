@@ -18,9 +18,9 @@ function [failfun t] = chebtest(dirname)
 % execution. If a CHEBTEST execution is interrupted, the RESTORE option can
 % be used to reset these values. 
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 persistent userpref
 
@@ -44,7 +44,7 @@ tol = pref.eps;
 matlabver = ver('matlab');
 if str2double(matlabver.Version) < 7.39
     disp(['Matlab version: ',matlabver.Version])
-    error('chebfun:chebtest:version',['Chebfun is compatible' ...
+    error('CHEBFUN:chebtest:version',['Chebfun is compatible' ...
         ' with MATLAB 7.4 or a more recent version.'])
 end
 
@@ -57,7 +57,7 @@ end
   
 if exist(dirname)~=7
   msg = ['The name "' dirname '" does not appear to be a directory on the path.'];
-  error('chebfun:probe:nodir',msg)
+  error('CHEBFUN:probe:nodir',msg)
 end
 
 dirlist = dir( fullfile(dirname,'*.m') );

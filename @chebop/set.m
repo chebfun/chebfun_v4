@@ -1,7 +1,7 @@
 function F = set(F,varargin)
 % SET Set chebop properties.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team.
 
@@ -37,7 +37,7 @@ while length(propertyArgIn) >= 2,
             elseif isa(val,'chebop') || (isa(val,'cell') && isa(val{1},'chebop'))
                 F.optype = 'chebop';
             else
-                error('chebop:set:opType','Operator must by a function handle or linop.')
+                error('CHEBOP:set:opType','Operator must by a function handle or linop.')
             end
             F.op = val;
             if ~iscell(val)
@@ -53,7 +53,7 @@ while length(propertyArgIn) >= 2,
                 F.guess = val;
             end
         otherwise
-            error('Unknown chebop property')
+            error('CHEBOP:set:unknownprop','Unknown chebop property')
     end
 end
 end

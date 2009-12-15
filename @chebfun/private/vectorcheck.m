@@ -1,7 +1,7 @@
 function f = vectorcheck(f,x,warn)
 % Try to determine whether f is vectorized. 
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 try
     dbz_state = warning('off','MATLAB:divideByZero');   % turn off warning because of removable sings
     v = f(x(:));
@@ -9,7 +9,7 @@ try
     if any(size(v) ~= size(x(:)))
         if nargout == 1
             if warn
-                warning('chebfun:vectorwrap:shape',...
+                warning('CHEBFUN:vectorwrap:shape',...
                     ['Warning: Function failed to evaluate on array inputs; ',...
                     'vectorizing the function may speed up its evaluation and avoid ',...
                     'the need to loop over array elements.'])
@@ -17,14 +17,14 @@ try
             f = vec(f);
             vectorcheck(f,x);
         elseif warn
-            warning('chebfun:vectorwrap:shapeauto',...
+            warning('CHEBFUN:vectorwrap:shapeauto',...
                 'Automatic vectorization may not have been successful.')
         end
     end
 catch %ME
     if nargout == 1
         if warn
-            warning('chebfun:vectorwrap:vecfail',...
+            warning('CHEBFUN:vectorwrap:vecfail',...
                 ['Warning: Function failed to evaluate on array inputs; ',...
                 'vectorizing the function may speed up its evaluation and avoid ',...
                 'the need to loop over array elements.'])

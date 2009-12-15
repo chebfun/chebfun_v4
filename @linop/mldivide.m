@@ -47,14 +47,14 @@ switch(class(B))
     if length(B)==1  % scalar expansion
       C = mldivide(A,chebfun(B,domain(A),chebopdefaults));
     else
-      error('linop:mldivide:operand','Use scalar or chebfun with backslash.')
+      error('LINOP:mldivide:operand','Use scalar or chebfun with backslash.')
     end
 
   case 'chebfun'
     dom = domaincheck(A,B(:,1));
     m = A.blocksize(2);
     if (m==1) && (A.numbc~=A.difforder)
-      warning('linop:mldivide:bcnum',...
+      warning('LINOP:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
     settings = chebopdefaults;
@@ -77,16 +77,16 @@ switch(class(B))
     end
     
   otherwise
-    error('linop:mtimes:operand','Unrecognized operand.')
+    error('LINOP:mldivide:operand','Unrecognized operand.')
 end
 
   function v = value(x)
     N = length(x);
     if N > maxdegree+1
       msg = sprintf('Failed to converge with %i points.',maxdegree+1);
-      error('linop:mldivide:NoConverge',msg)
+      error('LINOP:mldivide:NoConverge',msg)
     elseif N==1
-      error('linop:mldivide:OnePoint',...
+      error('LINOP:mldivide:OnePoint',...
         'Solution requested at a lone point. Check for a bug in the linop definition.')
     elseif N <= A.numbc+1
       % Too few points: force refinement

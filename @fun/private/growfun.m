@@ -11,7 +11,7 @@ function [g,ish] = growfun(op,g,pref,g1,g2)
 %   OP(G1,G2), where G1 and G2 are funs.
 %
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
@@ -59,7 +59,7 @@ if resample
 else
     if pref.chebkind == 1        
         pref.chebkind = 2;
-        warning('chebfun:resampling_kind','In RESAMPLING OFF mode, Chebyshev points of 2nd kind are used')        
+        warning('FUN:growfun:resampling_kind','In RESAMPLING OFF mode, Chebyshev points of 2nd kind are used')        
     end
     kk = 2.^(minpower:npower) + 1;
 end
@@ -178,10 +178,10 @@ end
 % Check for Inf's
 if isinf(g.scl.v)
     if ~pref.blowup
-        error('CHEBFUN:growfun:inf_blowup',['Function returned Inf when evaluated. ', ...
+        error('FUN:growfun:inf_blowup',['Function returned Inf when evaluated. ', ...
             'Have you tried ''blowup on''?'])
     elseif ~split
-        error('CHEBFUN:growfun:inf_split',['Function returned Inf when evaluated. ', ...
+        error('FUN:growfun:inf_split',['Function returned Inf when evaluated. ', ...
             'Have you tried ''splitting on''?'])
     else
         ish = false;
@@ -193,7 +193,7 @@ end
 
 % Check for NaN's or Inf's
 if any(isnan(g.vals))
-    error('CHEBFUN:growfun:naneval','Function returned NaN when evaluated.')
+    error('FUN:growfun:naneval','Function returned NaN when evaluated.')
 end
 
 % if unhappy, change map and try again

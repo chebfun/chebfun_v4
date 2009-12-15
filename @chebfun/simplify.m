@@ -8,7 +8,7 @@ function u = simplify(u,k,tol)
 %   U = SIMPLIFY(U,K,TOL) simplifies only the funs of U given by the 
 %   entries of the integer vector K.
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team. 
 %   Last commit: $Author$: $Rev$:
@@ -27,7 +27,7 @@ elseif nargin == 2
     end
 end
 if ~isempty(k) && numel(u)>1 && numel(u)~=length(k)
-    error('chebfun:simplify:quasimatrices',['For quasimatrices, '...
+    error('CHEBFUN:simplify:quasimatrices',['For quasimatrices, '...
         'second imput must be a vector with length matching the '...
         'number of columns or rows in the quasimatrix'])
 end

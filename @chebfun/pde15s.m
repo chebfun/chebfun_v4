@@ -41,7 +41,7 @@ end
 
 % some error checking on the bcs
 if order > 2 && ischar(bc) && (strcmpi(bc,'neumann') || strcmpi(bc,'dirichlet'))
-    error('CHEBFUN:pde45',['Cannot assign "', bc, '" boundary conditions to a ', ...
+    error('CHEBFUN:pde15s:bcs',['Cannot assign "', bc, '" boundary conditions to a ', ...
         'RHS with differential order ', int2str(order),'.']);
 end
 if iscell(bc) && numel(bc) == 2
@@ -49,20 +49,19 @@ if iscell(bc) && numel(bc) == 2
 end
 
 % Set bcs to zeros (these are supplied by rhs variable in odefun)
-rhs = {};
+rhs = {}; nllbc = []; nlbcfuns = {}; nlrbc = [];
 if isfield(bc,'left')
     if isa(bc.left,'function_handle')
         bc.left = struct( 'op', bc.left, 'val', 0);
     end
     lop = {bc.left.op};
     % Remove nonlinear conditions
-    nllbc = []; nllbcfuns = {};
     for k = 1:numel(lop)
         if isa(lop{k},'function_handle')
             lopk = lop{k};
             if nargin(lopk) == 2,      lopk = @(u,t,x) lopk(u,@Diff);
             elseif nargin(lopk) == 4,  lopk = @(u,t,x) lopk(u,t,x,@Diff); end
-            nllbcfuns = [nllbcfuns {lopk}]; nllbc = [nllbc k]; % Store
+            nlbcfuns = [nlbcfuns {lopk}]; nllbc = [nllbc k]; % Store
         end
     end     
     % Store RHS of bcs and set to homogenious
@@ -77,13 +76,12 @@ if isfield(bc,'right')
     end
     rop = {bc.right.op};
     % Remove nonlinear conditions
-    nlrbc = []; nlrbcfuns = {};
     for k = 1:numel(rop)
         if isa(rop{k},'function_handle')
             ropk = rop{k};
             if nargin(ropk) == 2,      ropk = @(u,t,x) ropk(u,@Diff);
             elseif nargin(ropk) == 4,  ropk = @(u,t,x) ropk(u,t,x,@Diff); end
-            nlrbcfuns = [nlrbcfuns {ropk}]; nlrbc = [nlrbc k]; % Store
+            nlbcfuns = [nlbcfuns {ropk}]; nlrbc = [nlrbc k]; % Store
         end
     end          
     % Store RHS of bcs and set to homogenious
@@ -150,10 +148,10 @@ if dohold && ~ish, hold off, end
         function F = odefun(t,U)
             F = pdefun(U,t,x);
             for l = 1:numel(rhs)
-                if isa(rhs{k},'function_handle')
-                    q(k,1) = feval(rhs{l},t);
+                if isa(rhs{l},'function_handle')
+                    q(l,1) = feval(rhs{l},t);
                 else
-                    q(k,1) = rhs{l};
+                    q(l,1) = rhs{l};
                 end
             end
             
@@ -164,13 +162,12 @@ if dohold && ~ish, hold off, end
             j = 0;
             for kk = 1:length(nllbc)
                 j = j + 1;
-                tmp = feval(nllbcfuns{j},U,t,x);
+                tmp = feval(nlbcfuns{j},U,t,x);
                 F(rows(kk)) = tmp(1)-q(kk);
             end
-            j = 0;
             for kk = numel(rhs)+1-nlrbc
                 j = j + 1;
-                tmp = feval(nlrbcfuns{j},U,t,x);
+                tmp = feval(nlbcfuns{j},U,t,x);
                 F(rows(kk)) = tmp(end)-q(kk);
             end
            
@@ -235,7 +232,7 @@ function [D1 D2 D3 D4] = barymat(x,w)
 %  [D1 D2 D3 D4] = BARYMAT(X,W) returns differentiation matrices of upto
 %  order 4.
 %  All inputs should be column vectors.
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 %
 %  Taken from T. W. Tee's Thesis.
 

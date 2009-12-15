@@ -37,9 +37,9 @@ function [g gsing] = cumsum(g)
 % Functions with both exponents and nonlinear maps can only be dealt with 
 % by switching to and from a linear map, and are therefore often very slow.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
@@ -76,7 +76,7 @@ elseif any(isinf(g.map.par(1:2)))
         if abs(g.vals) <= chebfunpref('eps')*10*g.scl.v
             g.vals = 0; g.scl.v = 0;
         else
-            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+            error('FUN:cumsum:unbdblow','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
             %g.vals = inf*sign(g.vals); g.scl.v = inf;
         end
         return
@@ -90,7 +90,7 @@ elseif any(isinf(g.map.par(1:2)))
         if all(abs(g.vals) <= chebfunpref('eps')*10*g.scl.v)
             g.vals = 0; g.scl.v = 0;
         else
-            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+            error('FUN:cumsum':unbdblow,'Representation of functions that blowup on unbounded intervals has not been implemented in this version')
         end
         return
     end
@@ -99,13 +99,13 @@ elseif any(isinf(g.map.par(1:2)))
     if isinf(ends(1))
         % integral is +-inf if endpoint value isn't zero
         if abs(g.vals(1)) > tol
-            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+            error('FUN:cumsum:unbdblow','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
         end
     end
     if isinf(ends(2))
         % integral is +- inf endpoint value isn't zero
         if abs(g.vals(end)) > tol
-            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+            error('FUN:cumsum:unbdblow','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
         end
     end
     
@@ -122,11 +122,11 @@ elseif any(isinf(g.map.par(1:2)))
         gtmp = g; gtmp.vals = gtmp.vals./(1-y);
         gtmp = extrapolate(gtmp,pref,y);
         if abs(gtmp.vals(end)) > 1e3*tol &&  diff(gtmp.vals((end-1:end))./diff(y(end-1:end))) > -g.scl.v/g.scl.h
-            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+            error('FUN:cumsum:unbdblow','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
         else
             g.vals(end) = 0;
             if abs(gtmp.vals(end)) > tol
-                warning('chebfun:cumsum:slowdecay','Representation is likely inaccurate')
+                warning('FUN:cumsum:slowdecay','Representation is likely inaccurate')
             end
         end
         
@@ -135,11 +135,11 @@ elseif any(isinf(g.map.par(1:2)))
         gtmp = g; gtmp.vals = gtmp.vals./(1+y);
         gtmp = extrapolate(gtmp,pref,y);
         if abs(gtmp.vals(1)) > 1e3*tol && diff(gtmp.vals(1:2)./diff(y(1:2))) < g.scl.v/g.scl.h
-            error('chebfun:cumsum','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+            error('chebfun:cumsum:unbdblow','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
         else
             g.vals(1) = 0;
             if abs(gtmp.vals(1)) > tol
-                warning('chebfun:cumsum:slowdecay','Representation is likely inaccurate')
+                warning('FUN:cumsum:slowdecay','Representation is likely inaccurate')
             end
         end
         
@@ -165,7 +165,7 @@ else
     
     map = g.map;
     if any(g.exps)
-        warning('chebfun:fun:cumsum',['Cumsum does not fully support functions ', ...
+        warning('FUN:cumsum:dblexp',['Cumsum does not fully support functions ', ...
             'with both maps an exponents. Switching to a linear map (which may be slow!)']);
         pref = chebfunpref;
         pref.splitting = false;
@@ -303,7 +303,7 @@ function [f g] = unbdnd(f)
 % For two outputs, f is the smooth part, and g contains the log singularity
 
 if ~strcmpi(f.map.name,'linear')
-    error('chebfun:fun:cumsum:exps','cumsum does not yet support exponents <= 1 with arbitrary maps.');
+    error('FUN:cumsum:exps','cumsum does not yet support exponents <= 1 with arbitrary maps.');
 end
 
 flip = false;
@@ -318,7 +318,7 @@ if exps(2)~=0
         f.exps = exps;
         flip = true;
     else
-        error('chebfun:fun:cumsum:both',['cumsum does not yet support functions whose ', ...
+        error('FUN:cumsum:both',['cumsum does not yet support functions whose ', ...
             'definite integral diverges and has exponents at both boundaries.']);
     end
 end
@@ -328,10 +328,10 @@ f = newdomain(f,oldends-oldends(1));
 ends = f.map.par(1:2);
 
 % if exps(1)==-1
-%     error('chebfun:fun:cumsum:exps1m1','cumsum does not yet support simple poles at left boundary.');
+%     error('FUN:cumsum:exps1m1','cumsum does not yet support simple poles at left boundary.');
 % end
 if round(exps(1))~=exps(1)
-    error('chebfun:fun:cumsum:nonint','cumsum does not yet support noninteger blows up of this type.');
+    error('FUN:cumsum:nonint','cumsum does not yet support noninteger blows up of this type.');
 end
 
 f.exps = [0 0];

@@ -25,7 +25,7 @@ function varargout = chebellipseplot(u,varargin)
 %     u = chebfun({@sin @cos @tan @cot},[-2,-1,0,1,2]);
 %     chebellipseplot(u,sqrt(eps),'--');
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team. 
 %   Last commit: $Author: rodp $: $Rev: 663 $:
@@ -77,7 +77,7 @@ if numel(u) > 1
     end
 end
 if any(k > u.nfuns)
-    error('chebfun:chebellipseplot:outofbounds', 'input chebfun has only %d pieces', u.nfuns);
+    error('CHEBFUN:chebellipseplot:outofbounds', 'Input chebfun has only %d pieces', u.nfuns);
 end
 
 c = exp(2*pi*1i*linspace(0,1,numpts));

@@ -1,9 +1,9 @@
 function g = restrict(g,subint)
 % RESTRICT Restrict a fun to a subinterval.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 % Last commit: $Author: rodp $: $Rev: 537 $:
 % $Date: 2009-07-17 16:15:29 +0100 (Fri, 17 Jul 2009) $:
 
@@ -11,13 +11,13 @@ ends = g.map.par(1:2);
 
 % Check if subinterval is in the domain of g!
 if (subint(1)<ends(1)) || (subint(2)>ends(2)) || (subint(1)>subint(2))
-  error('fun:restrict:badinterval','Not given a valid interval.')
+  error('FUN:restrict:badinterval','Not given a valid interval.')
 end
 
 % unbounded case
 if norm(g.map.par(1:2),inf) == inf %&& mappref('adaptinf')
     % adaptive
-    if any(g.exps), error('chebfun:fun:restruct:infmark1','Markfuns not supported on infinite intervals'); end
+    if any(g.exps), error('FUN:restruct:infmark1','Markfuns not supported on infinite intervals'); end
     pref = chebfunpref;
     pref.minsamples = g.n;
     g = fun(@(x) feval(g,x), subint, pref, g.scl);
@@ -70,7 +70,7 @@ end
 % % 2) unbounded
 % elseif norm(g.map.par(1:2),inf) == inf %&& mappref('adaptinf')
 %     % adaptive
-%     if any(g.exps), error('chebfun:fun:restruct:infmark1','Markfuns not supported on infinite intervals'); end
+%     if any(g.exps), error('FUN:restruct:infmark1','Markfuns not supported on infinite intervals'); end
 %     pref = chebfunpref;
 %     pref.minsamples = g.n;
 %     g = fun(@(x) feval(g,x), subint, pref, g.scl);

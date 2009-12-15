@@ -13,7 +13,7 @@ function [p, q, r_handle] = chebpade(F,m,n,type)
 % If F is a quasimatrix then so are the outputs P & Q, 
 % and R_HANDLE is a cell array of function handles.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author$: $Rev$:
@@ -106,7 +106,7 @@ elseif strcmp(type,'maehly')
     a = chebpoly(F,1).';
     a = a(end:-1:1);
     if length(F) < m+2*n+1, 
-        warning('chebfun:chebpade:coeffs', ...
+        warning('CHEBFUN:chebpade:coeffs', ...
             ['Not enough coefficients given for [',int2str(m),'/',int2str(n),'] approx.', ...])
             ' Assumming remainder are noise.']); 
         a = [a ; eps*randn(m + 2*n+1 - length(F),1)]; % this is more stable than zeros?
@@ -119,14 +119,14 @@ elseif strcmp(type,'maehly')
     if rank(D,tol) < min(size(D)) % test for singularity of matrix
         if m > 1
             [p q r_handle] = chebpade(F,m-1,n,'maehly');
-            warning('chebfun:chebpade:singular_goingleft', ...
+            warning('CHEBFUN:chebpade:singular_goingleft', ...
                 ['Singular matrix encountered. Computing [',int2str(m-1),',',int2str(n),'] approximant.'])
         elseif n > 1
             [p q r_handle] = chebpade(F,m,n-1,'maehly');
-            warning('chebfun:chebpade:singlar_goingup', ...
+            warning('CHEBFUN:chebpade:singlar_goingup', ...
                 ['Singular matrix encountered. Computing [',int2str(m),',',int2str(n-1),'] approximant.'])
         else
-            error('chebfun:chebpade:singlar_fail', ...
+            error('CHEBFUN:chebpade:singlar_fail', ...
                 'Singular matrix encountered. [1/1] approximation is not computable.');
         end
         return

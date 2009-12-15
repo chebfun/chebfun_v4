@@ -8,7 +8,7 @@ function  m = slit(par,plotflag)
 %
 %  See also mpinch, slitp
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team.
 %  Last commit: $Author$: $Rev$:
@@ -19,7 +19,7 @@ function  m = slit(par,plotflag)
     w = par(3:end);
 
     if ~isnumeric(w) || isempty(w),
-        error('chebfun:slit:arg1',...
+        error('FUN:slit:arg1',...
             'First argument must be slit positions');
     end
 

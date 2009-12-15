@@ -20,7 +20,7 @@ function varargout = chebpolyplot(u,varargin)
 %
 %   See also chebfun/chebpoly, plot
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team. 
 %   Last commit: $Author$: $Rev$:
@@ -52,7 +52,7 @@ if numel(u) > 1
     end
 end
 if any(k > u.nfuns)
-    error('chebfun:chebpolyplot:outofbounds', 'input chebfun has only %d pieces', u.nfuns);
+    error('CHEBFUN:chebpolyplot:outofbounds', 'input chebfun has only %d pieces', u.nfuns);
 end
 
 UK = {};

@@ -19,7 +19,7 @@
 %
 % See also ode15s, odeset, domain/ode113, domain/ode45
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by The Chebfun Team. 
 

@@ -15,5 +15,5 @@ function e = end(A,k,m)
 if m==2
   e = complex(0,Inf);
 else
-  error('linop:end:bad','Bad indexing use of end.')
+  error('LINOP:end:bad','Bad indexing use of end.')
 end

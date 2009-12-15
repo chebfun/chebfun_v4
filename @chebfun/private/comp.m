@@ -10,16 +10,16 @@ function Fout = comp(F1, op, F2)
 %        Fout = comp(x,@sin)
 %        Fout = comp(x+1,@power,x+5)
 %
-%    See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%    See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 % Note: this function does not deal with deltas! It will delete them!
 % Only the first row of imps is updated. 
 
 %-------------------------------------------------------
 % Deal with quasimatrices.
-Fout=F1;
+Fout = F1;
 
 % One chebfun
 if nargin < 3

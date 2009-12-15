@@ -11,9 +11,9 @@ function Fout = restrict(F,subdom)
 %
 % See also CHEBFUN/SUBSREF, CHEBFUN/DEFINE.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 % Deal with quasi-matrices
 Fout = F;
@@ -39,7 +39,7 @@ end
 g = f;
 dom = domain(f);
 if (subint(1)<dom(1)) || (subint(2)>dom(2))
-  error('chebfun:restrict:badinterval','Given interval is not in the domain.')
+  error('CHEBFUN:restrict:badinterval','Given interval is not in the domain.')
 end
 
 if subint(2)==subint(1)

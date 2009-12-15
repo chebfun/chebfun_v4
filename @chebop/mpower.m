@@ -10,7 +10,7 @@ function C = mpower(A,m)
 %  $Date$:
 
 if ~((numel(m)==1)&&(m==round(m))&&(m>=0))
-  error('chebop:mpower:argument','Exponent must be a nonnegative integer.')
+  error('CHEBOP:mpower:argument','Exponent must be a nonnegative integer.')
 end
 
 if (m > 0) 

@@ -4,7 +4,7 @@ function out = legpoly(f,n)
 % F = a_N P_N(x)+...+a_1 P_1(x)+a_0 P_0(x) where P_N(x) denotes the N-th
 % normalized Legendre polynomial.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by The Chebfun Team. 
 

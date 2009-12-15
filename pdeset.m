@@ -85,7 +85,7 @@ for k = 1:2:length(pdeopts)
             break
         end
         if j ==m 
-            error(['Unknown input sequence: ',pdeopts{k},'.'])
+            error('CHEBFUN:pdeset:UnknownOption',['Unknown input sequence: ',pdeopts{k},'.'])
         end
     end
 end

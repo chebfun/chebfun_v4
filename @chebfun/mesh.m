@@ -3,7 +3,7 @@ function varargout = mesh(u,varargin)
 %
 %  MESH(U) or MESH(U,T) where LENGTH(T) = MIN(SIZE(U))
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author$: $Rev$:
@@ -24,12 +24,12 @@ if nargin > 1 && isnumeric(varargin{1}) && length(varargin{1}) == size(u,2)
 end
 
 if length(t)~=n
-    error('chebfun:mesh:szet', ...
+    error('CHEBFUN:mesh:szet', ...
         'Length of T should equal the number of quasimatrices in U');
 end
 
 if ~isreal(u) || ~all(isreal(t))
-    warning('chebfun:mesh:imaginary',...
+    warning('CHEBFUN:mesh:imaginary',...
         'Imaginary parts of complex T and/or U arguments ignored');
     u = real(u); t = real(t);
 end

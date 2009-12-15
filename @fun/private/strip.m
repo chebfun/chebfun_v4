@@ -11,7 +11,7 @@ function map = strip(pars,plotflag)
 %
 %  See also smap, kte
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 a = pars(1); b = pars(2); rho = pars(3);
 

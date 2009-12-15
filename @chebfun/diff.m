@@ -9,9 +9,9 @@ function Fout = diff(F,n)
 % DIFF(F,u) where u is a chebfun returns the Jacobian of the chebfun F 
 % with respect to the chebfun u. Either F or u or both can be a quasimatrix.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if nargin==1, n=1; end
 

@@ -9,9 +9,9 @@ function Fout = repmat(F,M,N)
 %
 %    REPMAT(F,[M,N]) is the same as REPMAT(F,M,N).
 %
-%    See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%    See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if nargin==2
   if length(M)~=2
@@ -24,14 +24,14 @@ end
 Fout = chebfun;
 if F(1).trans 
     if N~=1
-        error('chebfun:repmat:row',...
+        error('CHEBFUNchebfun:repmat:row',...
           'Use REPMAT(F,M,1) to replicate and tile row chebfuns.')
     else
         for j = 1:M, Fout = [ Fout; F ];  end
     end
 else 
     if M~=1
-        error('chebfun:repmat:col',...
+        error('CHEBFUNchebfun:repmat:col',...
           'Use REPMAT(F,1,N) to replicate and tile column chebfuns.')
     else
         for j = 1:N, Fout = [Fout F];  end 

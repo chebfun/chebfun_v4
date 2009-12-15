@@ -8,7 +8,7 @@ function f = scribble(s)
 %   f = scribble('The quick brown fox jumped over the lazy dog. 123456789');
 %   plot(f), axis equal
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author$: $Rev$:

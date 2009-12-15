@@ -20,7 +20,7 @@ end
 % Size compatability.
 bs2 = cellfun( @(A) A.blocksize(2), varargin );
 if any(bs2~=bs2(1))
-  error('linop:vertcat:badsize','Each block must have the same number of columns.')
+  error('LINOP:vertcat:badsize','Each block must have the same number of columns.')
 end
 
 % Domain compatability.

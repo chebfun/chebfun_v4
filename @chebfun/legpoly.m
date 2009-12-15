@@ -9,23 +9,23 @@ function out = legpoly(f,n)
 % There is also a LEGPOLY command in the chebfun trunk directory, which
 % computes the chebfun corresponding to the Legendre polynomial P_n.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by The Chebfun Team. 
  
-if numel(f)>1, error('LEGPOLY does not handle chebfun quasi-matrices'), end
+if numel(f)>1, error('CHEBFUN:legpoly:quasi','LEGPOLY does not handle chebfun quasi-matrices'), end
  
 % Select fun!
 if nargin == 1
     if f.nfuns>1
-        warning(['Chebfun has more than one fun. Only the Chebyshev' ...
+        warning('CHEBFUN:legpoly:onefun',['Chebfun has more than one fun. Only the Legendre' ...
                  ' coefficients of the first one are returned.' ...
                  ' Use LEGPOLY(F,1) to suppress this warning.'])
     end
     out = legpoly(f.funs(1));
 else
     if n>f.nfuns
-        error(['Chebfun only has ',num2str(f.nfuns),' funs'])
+        error('CHEBFUN:legpoly:nfuns',['Chebfun only has ',num2str(f.nfuns),' funs'])
     else
         out = legpoly(f.funs(n));
     end

@@ -37,13 +37,13 @@ function Fout = define(F,subdom,G)
 %   Deletion:
 %     f = chebfun('abs(x)'); f{-1/2,1/2} = [];
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 % Deal with quasi-matrices.
 if numel(F)~=numel(G), 
-    error('Chebfun quasi-matrix dimensions must agree')
+    error('CHEBFUN:cumsum:quasidim','Chebfun quasi-matrix dimensions must agree')
 end 
 
 Fout = F;
@@ -79,7 +79,7 @@ if isnumeric(g)
   elseif numel(g)==0
     g = chebfun;
   else
-    error('chebfun:define:badassign',...
+    error('CHEBFUN:define:badassign',...
       'Must assign to a chebfun, scalar, or empty matrix.')
   end
 end
@@ -132,7 +132,7 @@ if ~isempty(g)                                 % INSERTION/OVERWRITING
   end
 else                                             % DELETION
   if subint(2) < domf(1) || subint(1) > domf(2)
-    error('chebfun:define:badremoveinterval',...
+    error('CHEBFUN:define:badremoveinterval',...
       'Interval to be removed is outside the domain.')
   else
     fleft = restrict(f,[domf(1) subint(1)]);

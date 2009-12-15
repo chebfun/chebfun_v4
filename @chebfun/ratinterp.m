@@ -12,7 +12,7 @@ function [p,q,r_handle] = ratinterp(f,m,varargin)
 % [P,Q,R_HANDLE] = RATINTERP(F_HANDLE,D,M,N,XGRID) uses a function handle
 % F_HANDLE on a domain F to construct the rational interpolant.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author: pachon $: $Rev: 768 $:

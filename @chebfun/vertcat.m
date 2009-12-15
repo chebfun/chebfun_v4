@@ -11,9 +11,9 @@ function Fout = vertcat(varargin)
 %
 %   See also CHEBFUN/HORZCAT, CHEBFUN/SUBSASGN.
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 thereisdouble = false;
 for i = 1:nargin
@@ -39,9 +39,9 @@ if Fout(1).trans
                 varargin{k} = f;
             elseif isa(v,'chebfun')
                 if ~v(1).trans
-                    error('CAT arguments dimensions are not consistent.')
+                    error('CHEBFUN:vertcat:dims','CAT arguments dimensions are not consistent.')
                 elseif  ~(domain(v(1))==d)
-                    error('Domains are not consistent');
+                    error('CHEBFUN:vertcat:doms','Domains are not consistent');
                 end
             end
         end
@@ -53,7 +53,7 @@ if Fout(1).trans
 else      
         
     if thereisdouble
-         error('Incorrect input arguments')  % Cannot Tobycat doubles with chebfuns
+         error('CHEBFUN:vertcat:inargs','Incorrect input arguments')  % Cannot Tobycat doubles with chebfuns
     end
     
     % TOBYCAT!
@@ -62,14 +62,14 @@ else
         f2 = varargin{k};
         if isa(f2,'chebfun')
             if size(Fout,2) ~= size(f2,2)
-                error('CAT arguments dimensions are not consistent or number of rows>1. Try horzcat?')
+                error('CHEBFUN:vertcat:argsorrows','CAT arguments dimensions are not consistent or number of rows>1. Try horzcat?')
             else
                 for j = 1:numel(f2)
                     Fout(j) = vertcatcol(Fout(j),f2(j));
                 end
             end
         else
-            error('Incorrect input arguments')  % Cannot Tobycat doubles with chebfuns
+            error('CHEBFUN:vertcat:numinargs','Incorrect input arguments')  % Cannot Tobycat doubles with chebfuns
         end
     end
     

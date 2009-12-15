@@ -9,12 +9,12 @@ pass(1) = f(1e-200) == sin(1e-200) &&  f(1-eps/2) == sin(1-eps/2);
 return
 
 % This call should return an error message - NOT ANYMORE!
-try
-    chebfun(@(x) sin(x)./x, [0, pi]);
-    pass(2) = false;
-catch
-    pass(2) = true;
-end
+%try
+%    chebfun(@(x) sin(x)./x, [0, pi]);
+%    pass(2) = false;
+%catch
+%    pass(2) = true;
+%end
 
 % % This call should return an error message
 % try

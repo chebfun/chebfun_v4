@@ -1,11 +1,11 @@
 function Nout = plus(N1,N2)
 
 if ~(N1.dom == N2.dom)
-    error('chebop:plus:domain','Domains of operators do not match');
+    error('CHEBOP:plus:domain','Domains of operators do not match');
 end
 
 if ~strcmp(N1.optype,N2.optype)
-    error('chebop:plus:opType','Operators must be of same type (handle or linop)');
+    error('CHEBOP:plus:opType','Operators must be of same type (handle or linop)');
 end
 
 if strcmp(N1.optype,'anon_fun')

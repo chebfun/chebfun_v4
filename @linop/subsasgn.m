@@ -76,7 +76,7 @@ switch s(1).type
 end
 
 if ~valid
-  error('linop:subsasgn:invalid','Invalid assignment syntax.')
+  error('LINOP:subsasgn:invalid','Invalid assignment syntax.')
 elseif ~isequal(s(1).subs,'scale')
   A.ID = newIDnum();   % stored matrices have become invalid
 end

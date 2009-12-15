@@ -22,7 +22,7 @@ function [g,ish] = fun(op,ends,varargin)
 %
 % FUN creates an empty fun.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team.
 %   Last commit: $Author$: $Rev$:
@@ -44,7 +44,7 @@ if nargin == 0, return; end  % Return empty fun
 %% Look for domain in the second argument.
 if nargin == 1
     if isa(op,'fun'), g = op; return, end      % returns the same fun
-    error('fun:constructor:ends','Either endpoints or a map must be provided')
+    error('FUN:constructor:ends','Either endpoints or a map must be provided')
 end
 
 if nargin == 2
@@ -93,25 +93,25 @@ switch class(op)
     case 'fun'      % returns the same fun
         g = op;
         if nargin > 2
-            warning('fun:constructor:input',['Generating fun from fun on the first' ...
+            warning('FUN:constructor:input',['Generating fun from fun on the first' ...
                 ' input argument. Other arguments are not used.'])
         end
         return
     case 'double'   % assigns value to the Chebyshev points
         if min(size(op)) > 1
-            error('fun:constructor:double','Only vector inputs are allowed')
+            error('FUN:constructor:double','Only vector inputs are allowed')
         end
         g.vals = op(:); g.n = length(op); g.scl.v = max(g.scl.v, norm(op,inf)); 
         g.exps = [0 0]; % Can't deal with blow up for numeric input
         if nargin > 2
-            warning('fun:constructor:input',['Generating fun from double object on the first' ...
+            warning('FUN:constructor:input',['Generating fun from double object on the first' ...
                 ' input argument. Other arguments are not used.'])
         end
         return
     case 'char'
         depvar = symvar(op); 
         if numel(depvar) ~= 1, 
-            error('Incorrect number of dependent variables in string input'); 
+            error('FUN:constructor:depvar','Incorrect number of dependent variables in string input'); 
         end
         op = eval(['@(' depvar{:} ')' op]);
 end

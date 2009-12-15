@@ -31,7 +31,7 @@ switch s(1).type
 end
 
 if ~valid
-  error('varmat:subsref:invalid','Invalid reference syntax.')
+  error('VARMAT:subsref:invalid','Invalid reference syntax.')
 end
 
 end
@@ -45,7 +45,7 @@ elseif isnumeric(idx)
 elseif isa(idx,'function_handle')
   sel = idx;
 else
-  error('varmat:subsref:badindex',...
+  error('VARMAT:subsref:badindex',...
     'Index must be a :, value, or function handle.')
 end
 

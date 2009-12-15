@@ -7,7 +7,7 @@ function map = linear(ends)
 %   MAP.DER is the derivative of the map defined in MAP.FOR
 %   MAP.ID is a string that identifies the map.
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2009 by The Chebfun Team.
 %   First author: Rodrigo Platte, May 2009.

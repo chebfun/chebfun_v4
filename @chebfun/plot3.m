@@ -6,7 +6,7 @@ function varargout = plot3(varargin)
 %   PLOT3(X,Y,Z), where X, Y and Z are three chebfun quasimatrices, plots
 %   several curves obtained from the columns (or rows) of X, Y, and Z. 
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team. 
 %   Last commit: $Author$: $Rev$:
@@ -41,12 +41,12 @@ while ~isempty(varargin)
         h = varargin{3};
         varargin(1:3) = [];
         if ~isreal(f) || ~isreal(g) || ~isreal(h)
-            warning('chebfun:plot:doubleimag',...
+            warning('CHEBFUN:plot:doubleimag',...
                 'Imaginary parts of complex X and/or Y arguments ignored.');
             f = real(f); g = real(g); h = real(h);
         end
     else                                                % one chebfun
-         error('chebfun:plot3:argin','First three arguments must be chebfuns')
+         error('CHEBFUN:plot3:argin','First three arguments must be chebfuns')
     end
     
     % other data

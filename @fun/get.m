@@ -2,9 +2,9 @@ function val = get(g, propName, kind)
 % GET Get asset properties from the specified object
 % and return the value
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team.
+% Copyright 2002-2009 by The Chebfun Team.
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
@@ -57,5 +57,5 @@ switch propName
             val = g.vals(end)*2^g.exps(1);
         end
     otherwise
-        error([propName,' Is not a valid fun property'])
+        error('FUN:get:propname',[propName,' Is not a valid fun property'])
 end

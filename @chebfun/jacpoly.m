@@ -7,25 +7,25 @@ function out = jacpoly(f,a,b,n)
 %
 % A = JACPOLY(F,ALPHA,BETA,I) returns the coefficients for the I-th fun.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by The Chebfun Team. 
  
-if numel(f) > 1, error('JACPOLY does not handle chebfun quasi-matrices'), end
+if numel(f) > 1, error('CHEBFUN:jacpoly:quasi','JACPOLY does not handle chebfun quasi-matrices'), end
 
-if nargin < 3, error('JACPOLY requires 3 inputs: F, ALPHA, and BETA.'), end
+if nargin < 3, error('CHEBFUN:jacpoly:numin','JACPOLY requires 3 inputs: F, ALPHA, and BETA.'), end
  
 % Select fun!
 if nargin == 3
     if f.nfuns>1
-        warning(['Chebfun has more than one fun. Only the Chebyshev' ...
+        warning('CHEBFUN:jacpoly:nfuns',['Chebfun has more than one fun. Only the Chebyshev' ...
                  ' coefficients of the first one are returned.' ...
                  ' Use JACPOLY(F,1) to suppress this warning.'])
     end
     out = jacpoly(f.funs(1),a,b);
 else
     if n>f.nfuns
-        error(['Chebfun only has ',num2str(f.nfuns),' funs'])
+        error('CHEBFUN:jacpoly:nfuns',['Chebfun only has ',num2str(f.nfuns),' funs'])
     else
         out = jacpoly(f.funs(n),a,b);
     end

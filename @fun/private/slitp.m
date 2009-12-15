@@ -8,7 +8,7 @@ function m = slitp(par,plotflag)
 %
 %  See also slit, mpinch
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team.
 %  Last commit: $Author$: $Rev$:
@@ -24,7 +24,7 @@ function m = slitp(par,plotflag)
     if nargin == 2, plotflag = true; else plotflag = false; end
     
     if ~isnumeric(w) || isempty(w),
-        error('chebfun:slit:arg1',...
+        error('FUN:slitp:arg1',...
             'First argument must be slit positions');
     end
 
@@ -103,7 +103,7 @@ end
 if paramflag
     fdat = {wk(1:ns),ns,tol,cmax};                  % package data
     [y ignored ierr]= nsold(y,@(x)pfun(x,fdat),[1e-2*tol,tol]); % nonlinear system solver
-%     if ierr, warning('Nonlinear equation solver did not terminate normally'); end
+%     if ierr, warning('FUN:slitp','Nonlinear equation solver did not terminate normally'); end
 end
 
 % recover unconstrained data
@@ -183,7 +183,7 @@ while ((count <= cmax) && (normfp>tol))
     normfp = norm(fp,inf);                      % error
 end
 
-if count > cmax, warning('Newton Iteration Failed. Residual = %e',normfp); end
+if count > cmax, warning('FUN:slitp','Newton Iteration Failed. Residual = %e',normfp); end
    
 % evaluate f at the preimages zk
 z = pi*(zk+(1-eps)*1i*Kp)/K;

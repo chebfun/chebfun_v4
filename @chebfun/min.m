@@ -21,13 +21,13 @@ function [y,x] = min(f,g,dim)
 %
 % See also chebfun/max. 
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if nargin==2
   if nargout > 1
-    error('chebfun:min:twoout',...
+    error('CHEBFUN:min:twoout',...
       'Min with two inputs and two outputs is not supported.')
   end
   y = minfun(f,g);

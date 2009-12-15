@@ -20,11 +20,11 @@ if nargin < 5, interval = []; end
 % Check domains: f,g,h must have the same domain
 if ~isempty(f)
     if any(f(1).ends([1,end]) ~= g(1).ends([1,end]))
-        error('chebfun:plot:domain','Inconsistent domains');
+        error('CHEBFUN:plot:domain','Inconsistent domains');
     end
     if ~isempty(h)
         if any(f(1).ends([1,end]) ~= h(1).ends([1,end]))
-            error('chebfun:plot:domain','Inconsistent domains');
+            error('CHEBFUN:plot:domain2','Inconsistent domains');
         end
     end
 end
@@ -229,12 +229,12 @@ elseif isempty(h) % Two quasimatrices case
     
     % Check size
     if  nf~=ng && nf~=1 && ng~=1
-        error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
+        error('CHEBFUN:plot:quasisize','Inconsistent quasimatrix sizes');
     end
     
     % Deal with row quasimatrices
     if f(1).trans ~= g(1).trans
-        error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
+        error('CHEBFUN:plot:quasisize2','Inconsistent quasimatrix sizes');
     end
     if f(1).trans
         f = f.'; g = g.';
@@ -301,12 +301,12 @@ else % Case of 3 quasimatrices (used in plot3)
     
     nf = numel(f); ng = numel(g); nh = numel(h);
     if  nf~=ng && nf~=1 && ng~=1 && nh~=1
-        error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
+        error('CHEBFUN:plot:quasisize3','Inconsistent quasimatrix sizes');
     end
         
     % Deal with row quasimatrices
     if  f(1).trans ~= g(1).trans || f(1).trans ~= h(1).trans
-        error('chebfun:plot:quasisize','Inconsistent quasimatrix sizes');
+        error('CHEBFUN:plot:quasisize4','Inconsistent quasimatrix sizes');
     end
     if f(1).trans
         f = f.'; g = g.'; h = h.';

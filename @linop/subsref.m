@@ -89,5 +89,5 @@ switch s(1).type
  end
 
 if ~valid
-  error('linop:subsref:invalid','Invalid reference syntax.')
+  error('LINOP:subsref:invalid','Invalid reference syntax.')
 end

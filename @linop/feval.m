@@ -35,11 +35,11 @@ if isinf(n)   % function
   if ~isempty(A.oparray)
     M = A.oparray;
     if A.numbc && usebc > 0
-      warning('linop:feval:funbc',...
+      warning('LINOP:feval:funbc',...
         'Boundary conditions are not imposed in the functional form.')
     end
   else
-    error('linop:feval:nofun',...
+    error('LINOP:feval:nofun',...
       'This operator does not have a functional form defined.')
   end
 

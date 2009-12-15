@@ -4,9 +4,9 @@ function s = singmap(on_off)
 %   deal with singularities at endpoints.
 %   SINGMAP OFF disables this kind of mappings.
 %   SINGMAP, by itself, displays the current splitting state.
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2008 by The Chebfun Team. 
+%  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 

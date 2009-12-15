@@ -19,7 +19,7 @@ if norm(full(feval(L,10))-diag(diag(feval(L,10)))) == 0
     fout = L*cheb1;
 else
     fout = L*cheb1;
-    warning('linop:diag',['Taking the diagonal of a nondiagonal ' ...
+    warning('LINOP:diag',['Taking the diagonal of a nondiagonal ' ...
     'linop is not well defined.']);
 end
 end

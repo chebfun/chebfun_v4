@@ -5,9 +5,9 @@ function gout = compfun(g1,op,g2)
 % This function is called at the chebfun level (CHEBFUN/PRIVATE/COMP.M)
 % See also FUN/PRIVATE/GROWFUN.M
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 %   Last commit: $Author$: $Rev$:
 %   $Date$:
 
@@ -17,7 +17,7 @@ if nargin == 3
     if ~samemap(g1,g2)
         ends = g1.map.par(1:2);
         if norm(ends-g2.map.par(1:2),inf) > 1e-15*max(g1.scl.h,g2.scl.h)
-            error('fun:minus:domain','Domains dont match')
+            error('FUN:minus:domain','Domains dont match')
         else
             scl.h = max(g1.scl.h,g2.scl.h);
             scl.v = max(g1.scl.v,g2.scl.v);

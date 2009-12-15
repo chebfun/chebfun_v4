@@ -44,14 +44,14 @@ switch(class(B))
       C.varmat = B*C.varmat;
       C.oparray = B*C.oparray;
     elseif n == 1
-      error('linop:mtimes:numericvector','Chebop-vector multiplication is not well defined.')
+      error('LINOP:mtimes:numericvector','Chebop-vector multiplication is not well defined.')
     else
-      error('linop:mtimes:numericmatrix','Chebop-matrix multiplication is not well defined.')
+      error('LINOP:mtimes:numericmatrix','Chebop-matrix multiplication is not well defined.')
     end
   case 'linop'     % linop * linop
     dom = domaincheck(A,B);
     if size(A,2) ~= size(B,1)
-      error('linop:mtimes:size','Inner block dimensions must agree.')
+      error('LINOP:mtimes:size','Inner block dimensions must agree.')
     end
     mat = A.varmat * B.varmat;
     op =  A.oparray * B.oparray;
@@ -62,11 +62,11 @@ switch(class(B))
   case 'chebfun'    % linop * chebfun
     dom = domaincheck(A,B);
     if isinf(size(B,2))
-      error('linop:mtimes:dimension','Inner dimensions do not agree.')
+      error('LINOP:mtimes:dimension','Inner dimensions do not agree.')
     end
    
     if (A.blocksize(2) > 1) && (A.blocksize(2)~=size(B,2))
-      error('linop:mtimes:blockdimension',...
+      error('LINOP:mtimes:blockdimension',...
         'Number of column blocks must equal number of quasimatrix columns.')
     end
     
@@ -101,7 +101,7 @@ switch(class(B))
     end
            
   otherwise
-    error('linop:mtimes:badoperand','Unrecognized operand.')
+    error('LINOP:mtimes:badoperand','Unrecognized operand.')
 end
 
   function v = value(x,f)

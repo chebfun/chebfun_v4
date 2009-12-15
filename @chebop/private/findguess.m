@@ -36,7 +36,7 @@ while ~success && counter < 10
 end
 
 if counter == 10
-    error('Chebop:solve:findguess', ['Initial guess seems to have 10 or more ' ...
+    error('CHEBOP:solve:findguess', ['Initial guess seems to have 10 or more ' ...
         'columns in the quasimatrix. If this is really the case, set the ' ...
         'initial guess using N.guess.']);
 end
@@ -52,7 +52,7 @@ bcFunRight = N.rbc;
 if counter == 1 && ~any(strcmpi(bcFunLeft,'periodic')) && ~any(strcmpi(bcFunRight,'periodic'))
     guess = tryInterpGuess();
 elseif xor(strcmpi(bcFunLeft,'periodic'),strcmpi(bcFunRight,'periodic'))
-    error('Nonlinop:mldivide:findguess: BC is periodic at one end but not at the other.');
+    error('CHEBOP:mldivide:findguess: BC is periodic at one end but not at the other.');
 end
 
     function intGuess = tryInterpGuess()

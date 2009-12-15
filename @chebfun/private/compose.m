@@ -8,14 +8,14 @@ function h = compose(f,g)
 %           g = chebfun(@(x) asin(.99*x)/asin(.99));
 %           h = compose(f,g);
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team.
 %   Last commit: $Author$: $Rev$:
 %   $Date$:
 
 if isa(g,'chebfun') && f(1).trans ~= g(1).trans
-    error('chebfun:compose:dim','Inconsistent quasimatrix dimensions');
+    error('CHEBFUN:compose:QMdim','Inconsistent quasimatrix dimensions');
 end
 
 if numel(g) == 1
@@ -38,7 +38,7 @@ elseif size(f) == size(g)
         h(k).ID = newIDnum;
     end
 else
-    error('chebfun:compose:dim','Inconsistent quasimatrix dimensions')
+    error('CHEBFUN:compose:QMdim','Inconsistent quasimatrix dimensions')
 end
 
 
@@ -58,13 +58,13 @@ trans = f.trans; f.trans = false; g.trans = false;
 
 % Delta functions ?
 if size(f.imps,1) > 1 || size(g.imps,1) >1
-    warning('chebfun:compose:imps', 'Compoistion does not handle delta functions')
+    warning('CHEBFUN:compose:imps', 'Composition does not handle delta functions')
 end
 
 % g must be a real-valued function
 if ~isreal(g)
-    %     error('chebfun:compose:complex', 'G must be real valued to construct F(G).')
-    %     warning('chebfun:compose:complex', 'G SHOULD be real valued to construct F(G).');
+    %     error('CHEBFUN:compose:complex', 'G must be real valued to construct F(G).')
+    %     warning('CHEBFUN:compose:complex', 'G SHOULD be real valued to construct F(G).');
     % Experimental feature allows composition when G has a complex range.
     %   This is only really of any use when F is constructed from a
     %   polynomial otherwise approximation off the real line is awful.
@@ -75,7 +75,7 @@ tol = 100*chebfunpref('eps');
 % Range of g must be in the domain of f.
 r = minandmax(g);
 if f.ends(1) > r(1) + tol || f.ends(end) < r(2) - tol && isreal(g)
-    error('chebfun:compose:domain','F(G): range of G, [%g, %g], must be in the domain of F, [%g, %g].', r(1), r(2), f.ends(1), f.ends(2))
+    error('CHEBFUN:compose:domain','F(G): range of G, [%g, %g], must be in the domain of F, [%g, %g].', r(1), r(2), f.ends(1), f.ends(2))
 end
 
 % If f has breakpoints, find the corresponding x-points in the domain of g.

@@ -13,9 +13,9 @@ function rts = roots(f,varargin)
 % deactivates the recursion procedure to compute the roots as explained in
 % the 'all' and 'complex' modes.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 % Last commit: $Author$: $Rev$:
 % $Date$:
  
@@ -23,7 +23,7 @@ function rts = roots(f,varargin)
 tol = 1e-14;
 
 if numel(f)>1
-    error('roots does not work with chebfun quasi-matrices')
+    error('CHEBFUN:roots:quasi','roots does not work with chebfun quasi-matrices')
 end
 all = 0; recurse = 1; prune = 0;
 for k = 1:nargin-1
@@ -39,7 +39,7 @@ for k = 1:nargin-1
         prune = 1;
         all = 1;
     else
-        error('Unknown option.')
+        error('CHEBFUN:roots:UnknownOption','Unknown option.')
     end
 end
 

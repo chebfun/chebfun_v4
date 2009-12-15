@@ -47,7 +47,7 @@ elseif min(size(A))==1                  % A is a chebfun
       case {-inf,'-inf'}
          normA = min(abs(A));
       otherwise
-         error('Unknown norm');
+         error('CHEBFUN:norm:unknown','Unknown norm');
    end
 
 elseif min(size(A))>1                  % A is a quasimatrix
@@ -64,7 +64,7 @@ elseif min(size(A))>1                  % A is a quasimatrix
       case {'inf',inf}
          normA = max(sum(abs(A),2));
       otherwise
-         error('Unknown norm')
+         error('CHEBFUN:norm:unknown2','Unknown norm')
    end
 end
 normA = real(normA);       % discard possible imaginary rounding errors

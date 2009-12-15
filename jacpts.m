@@ -18,7 +18,7 @@ function [x,w] = jacpts(n,alpha,beta,varargin)
 %
 %  See also legpts and chebpts.
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  'FAST' by Nick Hale, April 2009 - algorithm adapted from [1].
 %

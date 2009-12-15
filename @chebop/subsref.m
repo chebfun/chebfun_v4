@@ -1,9 +1,9 @@
 function varargout = subsref(f,index)
 % SUBSREF   Evaluate a chebop
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 idx = index(1).subs;
 switch index(1).type
@@ -16,5 +16,5 @@ switch index(1).type
     case '()'
         varargout = {feval(f,idx{1})};
     otherwise
-        error('chebop:subsref:indexType',['Unexpected index.type of ' index(1).type]);
+        error('CHEBOP:subsref:indexType',['Unexpected index.type of ' index(1).type]);
 end

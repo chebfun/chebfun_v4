@@ -15,7 +15,7 @@ function w = clencurt(a,b,m)
 %       w*sin(x)
 
 % Copyright 2009 by Folkmar Bornemann. 
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 % $Id$
 
 persistent table    % cache the weights for the interval [-1,1]
@@ -25,7 +25,7 @@ if ~isa(table,'struct')
 end
 
 if m<2
-    error('Use at least two quadrature points.');
+    error('DOMAIN:clencurt','Use at least two quadrature points.');
 end
 if m==2
     w = (b-a)*[1/2 1/2];

@@ -3,9 +3,9 @@ function v = chebpolyval(c,kind)
 %   CHEBPOLYVAL(C) returns the values of the polynomial 
 %   P(x) = C(1)T_{N-1}(x)+C(2)T_{N-2}(x)+...+C(N) at Chebyshev nodes.
 %               
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 c = c(:);       % input should be a column vector
 lc = length(c);

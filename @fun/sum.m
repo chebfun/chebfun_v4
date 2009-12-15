@@ -2,9 +2,9 @@ function out = sum(g)
 % SUM	Definite integral from -1 to 1
 % SUM(G) is the integral from -1 to 1 of F.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team.
+% Copyright 2002-2009 by The Chebfun Team.
 % Last commit: $Author: rodp $: $Rev: 537 $:
 % $Date: 2009-07-17 16:15:29 +0100 (Fri, 17 Jul 2009) $:
 
@@ -25,7 +25,7 @@ if any(exps<=-1)
     else
         out = inf;
     end
-    %      warning('CHEBFUN:sum:inf',['Integrand diverges to infinity on domain. ', ...
+    %      warning('FUN:sum:inf',['Integrand diverges to infinity on domain. ', ...
     %     'Assuming integral is infinite.']);
     return
 end
@@ -119,7 +119,7 @@ elseif any(isinf(ends))
         else
             g.vals(end) = 0;
             if abs(gtmp.vals(end)) > tol
-                warning('chebfun:sum:slowdecay','Result is likely inaccurate')
+                warning('FUN:sum:slowdecay','Result is likely inaccurate')
             end
         end
     end
@@ -131,7 +131,7 @@ elseif any(isinf(ends))
         else
             g.vals(1) = 0;
             if abs(gtmp.vals(1)) > tol
-                warning('chebfun:sum:slowdecay','Result is likely inaccurate')
+                warning('FUN:sum:slowdecay','Result is likely inaccurate')
             end
         end
 
@@ -165,7 +165,7 @@ else
         disp('Warning sum is not properly for implemented for funs')
         disp('which have both nontrivial maps and exponents.')
         disp('It may be very slow!');
-        %         warning('CHEBFUN:fun:sum:nonlinmap&exps',...
+        %         warning('FUN:sum:nonlinmap&exps',...
         %             ['Warning sum for funs with nontirivial maps and exponents is not properly ', ...
         %             'implemented and may be slow!']);
         pref = chebfunpref;

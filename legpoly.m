@@ -12,9 +12,9 @@ function p = legpoly(n,d,normalize)
 %
 % See also legpoly and chebpoly.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if nargin < 3, normalize = 'unnorm'; end
 if nargin < 2, d = [-1,1]; end

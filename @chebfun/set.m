@@ -7,12 +7,12 @@ function F = set(F,varargin)
 %
 % F = SET(F,PROP_1,VAL_1,...,PROP_n,VAL_n) modifies more than one property.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if numel(F)>1
-    error('set currently does not work with quasi-matrices')
+    error('CHEBFUN:set:quasi','set currently does not work with quasi-matrices')
 end
 
 propertyArgIn = varargin;
@@ -42,10 +42,10 @@ while length(propertyArgIn) >= 2,
     case 'trans'
         F.trans = val;     
     otherwise
-        error('chebfun properties: funs, ends and imps')
+        error('CHEBFUN:set:UnknwonProperty','chebfun properties: funs, ends and imps')
     end
 end
 
 if length(F.ends)~=F.nfuns+1 || size(F.imps,2) ~= length(F.ends)
-    error('inconsistent chebfun') 
+    error('CHEBFUN:set:Inconsistent','inconsistent chebfun') 
 end

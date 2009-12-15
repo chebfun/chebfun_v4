@@ -7,12 +7,12 @@ function Q = orth(A)
 %   the columns of A, and the number of columns of Q is the 
 %   rank of A.
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if A(1).trans
-   error('ORTH only defined for column quasimatrices')
+   error('CHEBFUN:orth:row','ORTH only defined for column quasimatrices')
 end
 
 [U,S,V] = svd(A,0);

@@ -6,14 +6,14 @@ function [f,g] = overlap(f,g)
 % 
 % This function replaces support/overlap.m
 
-% Copyright 2002-2008 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 
 if isa(g,'domain') || isnumeric(g)
     g = chebfun(1,g);
 end
 
 if f.trans ~= g.trans
-    error('The .trans field of the two chebfuns must agree')
+    error('CHEBFUN:overlap:trans','The .trans field of the two chebfuns must agree')
 end
 
 fends=f.ends; gends=g.ends;
@@ -29,7 +29,7 @@ else
     
     hs = hscale(f);
     if norm([fends(1)-gends(1), fends(end)-gends(end)],inf) > 1e-15*hs
-       error('domain(f) ~= domain(g)')
+       error('CHEBFUN:overlap:domains','Inconsitent domains, domain(f) ~= domain(g)')
     end
     ends=union(fends,gends);
     

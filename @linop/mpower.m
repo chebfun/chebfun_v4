@@ -10,12 +10,12 @@ function C = mpower(A,m)
 %  $Date$:
 
 if ~((numel(m)==1)&&(m==round(m))&&(m>=0))
-  error('oparray:mpower:argument','Exponent must be a nonnegative integer.')
+  error('LINOP:mpower:argument','Exponent must be a nonnegative integer.')
 end
 
 s = A.blocksize;
 if s(1)~=s(2) 
-  error('oparray:mpower:square','Oparray must be square')
+  error('LINOP:mpower:square','Oparray must be square')
 end
 
 if (m > 0) 

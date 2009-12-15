@@ -6,9 +6,9 @@ function val = get(f, propName)
 % with Dirac impulses respectively. Or 'nfuns', 'points', 'scl', 'vals',
 % 'exps', or 'trans'.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 val = [];
 
@@ -44,5 +44,5 @@ switch propName
     case 'trans'
         val = f(1).trans;
     otherwise
-        error([propName,' is not a valid chebfun property'])
+        error('CHEBFUN:get:propnam',[propName,' is not a valid chebfun property'])
 end

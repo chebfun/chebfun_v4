@@ -7,6 +7,6 @@ switch index(1).type
     case '()'
         varargout = {feval(f,idx{1})};
     otherwise
-        error(['??? Unexpected index.type of ' index(1).type]);
+        error('CHEBFUN:anon:subsref',['??? Unexpected index.type of ' index(1).type]);
 end
 end

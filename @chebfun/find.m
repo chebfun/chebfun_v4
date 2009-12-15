@@ -15,12 +15,12 @@ function varargout = find(f)
 %    
 %  See also chebfun/roots, chebfun/eq, find.
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 if numel(f) > 1 && nargout<2
-  error('chebfun:find','Use two output arguments for quasimatrices.')
+  error('CHEBFUN:find:quasiout','Use two output arguments for quasimatrices.')
 end
 
 x = [];  idx = [];
@@ -29,7 +29,7 @@ for n = 1:numel(f)
   for k = 1:f(n).nfuns
     if any(f(n).funs(k).vals)
       % Continuous part is not identically zero!
-      error('chebfun:find','Nonzero locations are not a finite set.')
+      error('CHEBFUN:find:infset','Nonzero locations are not a finite set.')
     end
   end
 

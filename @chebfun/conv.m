@@ -22,13 +22,13 @@ function Fout = conv(F1,F2)
 %   for j=2:4, g=conv(f,g); subplot(2,2,j), plot(g), end
 %   figure, for j=1:4, subplot(2,2,j), plot(g), g=diff(g); end
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 % Deal with quasi-matrices
 if size(F1) ~= size(F2)
-    error('Quasi-matrix dimensions must agree')
+    error('CHEBFUN:conv:quasi','Quasi-matrix dimensions must agree')
 end
 Fout = F1;
 for k = 1:numel(F1)
@@ -48,7 +48,7 @@ if isempty(f) || isempty(g), h=chebfun; return, end
 fimps = f.imps(2:end,:);
 gimps = g.imps(2:end,:);
 if any(fimps(:)~=0) || any(gimps(:)~=0)
-  error('chebfun:conv:nodeltas','Impulses not implemented for convolution.')
+  error('CHEBFUN:conv:nodeltas','Impulses not implemented for convolution.')
 end
 
 h = chebfun;

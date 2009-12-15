@@ -2,10 +2,14 @@
 % However this is quite experimental. 
 % Below are some examples.
 
+
+
 %%
 
 % u' + 2x = 0,
 % u(0) = 1, u(inf) = 0
+
+warnstate = warning('off','LINOP:mldivide:bcnum');
 
 d = domain([0 inf]);
 A = diff(d) + diag(@(x) 2*x,d) ;
@@ -17,6 +21,9 @@ f = chebfun('exp(-x.^2)',d);                    % true soln
 plot(u,'b',f,'--r');
 legend('computed','true')
 norm(u-f,inf)
+
+
+warning(warnstate);
 
 %%
 
@@ -30,7 +37,7 @@ bc.right = struct('op','dirichlet','val',0);
 A.bc = bc;
 
 u = A\0;                                        % computed soln
-f = chebfun(@(x) exp(-x/2)*x,d);                % tru soln
+f = chebfun(@(x) exp(-x/2).*x,d);                % tru soln
 
 plot(u,'b',f,'--r')
 legend('computed','true')
@@ -41,6 +48,8 @@ norm(u-f,inf)
 
 % u'' + xu' + ((n pi)^2 + 2(1+2x^2))u  = 0,
 % u(0) = 1, u'(0) = 0, u(inf) = 0
+
+warnstate = warning('off','LINOP:mldivide:bcnum');
 
 d = domain(0,inf);
 n = 4;
@@ -57,6 +66,8 @@ plot(u,'b',f,'--r')
 legend('computed','true')
 axis([0 5 -1,1])
 norm(u-f,inf)
+
+warning(warnstate);
 
 
 %%

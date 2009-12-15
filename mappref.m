@@ -11,7 +11,7 @@ function varargout = mappref(varargin)
 %       mappref
 %       mappref('adaptinf', true)
 %
-%   See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by The Chebfun Team. 
 % Rodrigo Platte, May 09.
@@ -66,7 +66,7 @@ if nargin > 1
         switch lower(prop)
             case 'name'
                 if ~isa(val,'char')
-                    error('chebfun:mappref:input','Map name must be a string');
+                    error('CHEBFUN:mappref:input','Map name must be a string');
                 end
                 prefmap.name = val;
             case 'adapt'
@@ -78,7 +78,7 @@ if nargin > 1
             case 'parinf'
                 prefmap.parinf = val;
             otherwise
-                error('chebfun:mappref:input','Invalid option');
+                error('CHEBFUN:mappref:input','Invalid option');
         end
     end
 end

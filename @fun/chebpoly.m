@@ -4,9 +4,9 @@ function out = chebpoly(g,kind)
 % G = A(1) T_N(x) + ... + A(N) T_1(x) + A(N+1) T_0(x) where T_N(x) denotes 
 % the N-th Chebyshev polynomial.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 %   Last commit: $Author$: $Rev$:
 %   $Date$:
 

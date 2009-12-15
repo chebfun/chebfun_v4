@@ -12,13 +12,13 @@ function P = jacpoly(N,a,b,d,flag)
 %
 % See also legpoly and chebpoly.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 x = chebpts(N+1);
 
-if nargin < 3, error('jacpoly requires at least 3 inputs'); end
+if nargin < 3, error('CHEBFUN:jacpoly:inputs','jacpoly requires at least 3 inputs'); end
 if nargin < 4, d = [-1,1]; end
 if nargin < 5, flag = 0; end
 if isa(d,'char'), flag = d; d = [-1,1]; end

@@ -63,7 +63,7 @@ end
 maxdegree = cheboppref('maxdegree');
 m = A.blocksize(2);
 if m~=A.blocksize(1)
-  error('linop:eigs:notsquare','Block size must be square.')
+  error('LINOP:eigs:notsquare','Block size must be square.')
 end
 
 if isempty(sigma)
@@ -133,7 +133,7 @@ end
       msg = sprintf(...
         'No convergence with %i points. Check sigma, or ask for fewer modes.',...
         maxdegree+1);
-      error('linop:eigs:NoConverge',msg)
+      error('LINOP:eigs:NoConverge',msg)
     end
     if N-A.numbc < k
       % Not enough eigenvalues. Return a sawtooth to ensure refinement.

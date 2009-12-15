@@ -26,7 +26,7 @@ function [L,Lconst] = lebesgue(x,varargin)
 %  subplot(1,3,3), plot(L), title(['Equispaced: ' num2str(c)])
 %  grid on, axis([-1 1 0 8])
 
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2009 by The Chebfun Team. 
 %
@@ -42,7 +42,7 @@ elseif nargin==2
 elseif nargin==3
   d = domain(varargin{1},varargin{2}); 
 else
-  error('wrong number of arguments in lebesgue');
+  error('CHEBFUN:lebesgue:inputs','Wrong number of arguments in lebesgue');
 end
 
 % barycentric weights
@@ -50,10 +50,10 @@ w = bary_weights(x);
 % set preferences
 pref = chebfunpref; pref.sampletest = false; pref.maxdegree = length(x)-1;
 % ill-conditioned computations may prevent convergence to high accuracy.
-warning('off','CHEBFUN:auto')
+warnstate = warning('off','CHEBFUN:auto');
 % Lebesgue function (breakpoints at interpolation nodes)
 L = chebfun(@(t) lebfun(t,x(:),w), unique([x(:);d.ends.']), pref);
-warning('on','CHEBFUN:auto')
+warning(warnstate)
 
 % Lebesgue constant
 if nargout==2, Lconst = norm(L,inf); end

@@ -3,7 +3,7 @@ function w = bary_weights(xk)
 % Compute the barycentric weights W for the points XK, scaled such that
 % norm(W,inf) == 1.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author: nich $: $Rev: 458 $:

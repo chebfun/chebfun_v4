@@ -10,9 +10,9 @@ function C = mrdivide(A,B)
 %  $Date$:
 
 if ~isnumeric(B)
-  error('linop:mrdivide:noright','Right inverses not implemented.')
+  error('LINOP:mrdivide:noright','Right inverses not implemented.')
 elseif numel(B)~=1
-  error('linop:mrdivide:scalaronly','May divide by scalars only.')
+  error('LINOP:mrdivide:scalaronly','May divide by scalars only.')
 end
 
 C = mtimes(1/B,A);

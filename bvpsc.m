@@ -52,7 +52,7 @@ I = eye(d);  D = diff(d);
 m = size(y,2);
 bigD = blkdiag(D,m);
 
-state = warning('off','chebfun:vectorwrap:shape');
+state = warning('off','CHEBFUN:vectorwrap:shape');
 for newt = 1:8
   r = D*y - odefun(x',y.').';
   J = jacobian(y);  % jacobian of the RHS odefun
@@ -64,7 +64,7 @@ for newt = 1:8
   if ndy(newt) < 1e-12
     break
   elseif (newt > 3 && ndy(newt) > 0.1*ndy(newt-3))
-    warning('chebfun:bvpsc','Newton iteration stagnated.')
+    warning('CHEBFUN:bvpsc','Newton iteration stagnated.')
     break
   end
 end
@@ -123,7 +123,7 @@ varargout{1} = y;
       atleft = any(Ka(k,:));
       atright = any(Kb(k,:));
       if ~xor(atleft,atright)
-        error('chebfun:bvpsc:badBC',...
+        error('CHEBFUN:bvpsc:badBC',...
           'Boundary conditions must be of separated type.')
       end
       bc=chebop;

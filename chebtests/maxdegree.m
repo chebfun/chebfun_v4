@@ -3,7 +3,7 @@ function pass = maxdegree
 
 pref = chebfunpref; %pref.resmapling = true; 
 pref.maxdegree = 100;
-warning('off','CHEBFUN:auto')
+warnstate = warning('off','CHEBFUN:auto');
 
 f = chebfun(@(x) sin(200*x),pref);
 pass(1) = length(f) == 101;
@@ -12,7 +12,7 @@ pref.resampling = false;
 f = chebfun(@(x) sin(200*x),pref);
 pass(2) = length(f) == 101;
 
-warning('on','CHEBFUN:auto')
+warning(warnstate)
 
 
 

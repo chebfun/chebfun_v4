@@ -11,15 +11,15 @@ function varargout = svd(A,econ)
 %
 % S = SVD(A) returns a vector containing the singular values.
 %
-% See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2008 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team. 
 
 % The computation is carried out by orthogonalization operations
 % following Battles' 2006 thesis.
 
 if (nargin>2) | ((nargin==2) & (econ~=0))
-    error('chebfun:svd:twoargs',...
+    error('CHEBFUN:svd:twoargs',...
           'Use svd(A) or svd(A,0) for QR decomposition of quasimatrix.');
 end
 

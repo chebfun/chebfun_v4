@@ -14,7 +14,7 @@ function [x,w] = legpts(n,varargin)
 %
 %  See also chebpts and jacpts.
 %
-%  See http://www.comlab.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
 %  'FAST' by Nick Hale, April 2009 - algorithm adapted from [2].
