@@ -60,7 +60,8 @@ warning(warnstate);
 
 % clean-up nans
 for i=find(isnan(fx(:)))'
-    fx(i) = gvals(x(i)==xk);
+    indx = find(x(i)==xk,1);
+    fx(i) = gvals(indx);
 end;
 
 
