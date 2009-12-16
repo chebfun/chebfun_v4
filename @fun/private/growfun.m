@@ -155,7 +155,6 @@ else % double sampling
     for k = kk
   
         if adapt % adaptive infinite intervals
-            pref.kind = 1; % Foce 1st kind for now.
             [map,v,hscl] = unbounded(g.map.par, op, k);
             g.vals = v; g.map = map; g.n = k;
             g = extrapolate(g,pref);

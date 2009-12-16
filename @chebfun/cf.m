@@ -137,8 +137,10 @@ else                              % rational case
   [s,u,k,l,rflag] = getblock(a,m,n,M);
   if (k>0) | (l>0),
     if rflag, % f is rational function (at least up to machine precision)
-      [p,q] = chebpade(f,m-k,n-k);
+      [p,q,r] = chebpade(f,m-k,n-k);
       s = eps;
+      warning('chebfun:cf:chebpade', ...
+        'Functions looks close to rational, switching to CHEBPADE');
       return;
     end
     nnew = n - k;

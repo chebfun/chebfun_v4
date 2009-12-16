@@ -121,10 +121,32 @@ for i = 1:length(ops)
     for k = 1:numel(fs), newops{end+1} = op; end;
 end
 
+nfuns  = length(newends)-1; 
+
+% If splitting is not done accurately, scales may be incorrectly large. To
+% fix this, a second call to the constructor is needed. 
+% Check for exponents and try a second time. Add a new
+% field to pref to break the recursion on second call.
+if ~isfield(pref,'secondcall') && pref.splitting && pref.blowup
+    pref.secondcall = true;
+    userends = ismember(newends,ends)';  % ends defined by user must be kept
+    % Check if there are blowups at either endpoints
+    exps = zeros(nfuns,2);
+    for k = 1:nfuns
+       exps(k,:) = funs(k).exps;    
+    end
+    eak = [1 ; exps(1:nfuns-1,2) | exps(2:nfuns,1); 1];
+    mask = ~userends & ~eak;
+    newends(mask) = [];
+    newops(mask) = [];
+    pref.exps = [exps(~mask(1:end-1),1) exps(~mask(2:end),2)].';
+    f = ctor_adapt(f,newops,newends,pref);
+    return
+end
 
 imps = jumpvals(funs,newends,newops,pref,scl.v); % Update values at jumps, first row of imps.
 scl.v = max(scl.v,norm(imps(~isinf(imps)),inf));
-f.nfuns = length(newends)-1; 
+f.nfuns = nfuns;
 % update scale and check if simplification is needed.
 for k = 1:f.nfuns
     funscl = funs(k).scl.v;
@@ -133,9 +155,10 @@ for k = 1:f.nfuns
         funs(k) = simplify(funs(k),pref.eps);
     end
 end
+
 % Assign fields to chebfuns.
 f.funs = funs; f.ends = newends; f.imps = imps; f.trans = false; f.scl = scl.v;
 f.ID = newIDnum();
- if length(f.ends)>2 
+ if length(f.ends)>2         
      f = merge(f,find(~ismember(newends,ends)),pref); % Avoid merging at specified breakpoints
  end

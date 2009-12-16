@@ -9,7 +9,7 @@ mappref('adaptinf',1,'parinf',[1 0])
 % Exponential decay
 
 f = chebfun(@(x) exp(-x), [0 inf]);
-pass(1) = abs(sum(f)-1)<tol*10;
+pass(1) = abs(sum(f)-1)<tol*100;
 
 f = chebfun(@(x) exp(-0.001*x), [0 inf]);
 pass(2) = abs(sum(f)-1000)<tol*5e4;
@@ -21,10 +21,10 @@ f = chebfun(@(x) exp(-x.^2),[-inf inf]);
 pass(4) = abs(sum(f)-sqrt(pi))<tol*10;
 
 f = chebfun(@(x) exp(-(100*x).^2),[-inf inf]);
-pass(5) = abs(sum(f)-sqrt(pi)/100)<tol*.1;
+pass(5) = abs(sum(f)-sqrt(pi)/100)<tol;
 
 f = chebfun(@(x) sin(10*x).*exp(-x), [0 inf]);
-pass(6) = abs(sum(f) - 990/9999)<tol*50;
+pass(6) = abs(sum(f) - 990/9999)<tol*500;
 
 % Algebraic decay
 

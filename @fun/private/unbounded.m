@@ -90,7 +90,7 @@ else
 end
 
 if nargout > 1
-    xvals = m.for(chebpts(n,1));
+    xvals = m.for(chebpts(n));
     v = fh(xvals);
     
     % Experimental feature for avoiding NaNs.

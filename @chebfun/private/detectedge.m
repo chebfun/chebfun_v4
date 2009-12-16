@@ -59,7 +59,7 @@ while maxd(nder) ~= inf && ~isnan(maxd(nder)) &&  diff(ends) > eps*hs
     ends = [na(nder) nb(nder)];
     
     % Blowup mode?
-    if checkblowup && f((ends(1)+ends(2))/2) > 100*vs
+    if checkblowup && abs(f((ends(1)+ends(2))/2)) > 100*vs
         nedge = findblowup(f, ends(1), ends(2) , vs, hs);
         if isempty(nedge)
             checkblowup = false;
