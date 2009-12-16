@@ -102,7 +102,7 @@ while any(sad)
 
     % Construct child funs
     blank = 0;
-    if pref.blowup, blank = []; end              % Only looks for exps if blowup is on
+    if pref.blowup, blank = NaN; end             % Only looks for exps if blowup is on
     %  left
     if isfield(pref,'exps')                      % exps were passed to the constructor 
         if i == 1, pref.exps = {exps{1}, blank}; % We should keep these at the ends.

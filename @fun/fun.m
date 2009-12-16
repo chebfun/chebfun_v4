@@ -120,19 +120,19 @@ end
 % If op has blow up, we represent it by 
 %  op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
 % (Note that for blowup exponents are now negative!)
-if isfield(pref,'exps') && ~isempty([pref.exps{:}])
-    for k = 1:numel(pref.exps)
-        if isnan(pref.exps{k}), pref.exps{k} = []; end
-    end
-    if ~isempty(pref.exps{1}) && ~isempty(pref.exps{2})
+if isfield(pref,'exps') && ~all(isnan([pref.exps{:}]))
+    if ~pref.blowup, pref.blowup = 1; end   % blowup = 1 is the default option
+    if ~any(isnan([pref.exps{:}]))                  % both exps given
         exps(1) = pref.exps{1};
         exps(2) = pref.exps{2};
-    elseif ~isempty(pref.exps{1})
-        exps(1) = pref.exps{1};
+    elseif ~isnan(pref.exps{1})                     % left exp given
+        exps(1) = pref.exps{1};     
         exps(2) = findexps(op,ends,1,pref.blowup);
-    else
+    elseif ~isnan(pref.exps{2})                     % right exp given 
         exps(1) = findexps(op,ends,-1,pref.blowup);
         exps(2) = pref.exps{2};
+    else
+        exps = findexps(op,ends,0,pref.blowup);     % no exps given
     end
 elseif pref.blowup
     exps = findexps(op,ends,0,pref.blowup);  % Compute exponents
