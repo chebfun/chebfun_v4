@@ -92,22 +92,17 @@ if strcmp(type,'chebyshev')
     w = w.* qi;
     r_handle = @(x) bary(x,fx,xi,w);
 elseif strcmp(type,'arbitrary')
+    % construct the complex nodes and weights
     xk = (2*xi-a-b)/(b-a);                       % map [a,b] to [-1,1]
-    zk = xk(2:end-1) + sqrt(xk(2:end-1).^2-1);   
-    zk = [xk(1); zk; conj(zk); xk(end)];         % map [-1,1] to unit circle
-    wk = bary_weights(zk);
-    B = [];
-    for k = n+1:N
-       temp = real(wk.*zk.^(k-1)).';             % assemble NxN system
-       B = [B; [temp(1) 2*(temp(2:N)) temp(end)]];
-    end
-    for k = m+1:N
-       temp = real(wk.*zk.^(k-1)).';
-       B = [B; [fx(1)*temp(1) 2*fx(2:end-1).'.*temp(2:N) fx(end)*temp(end)]];
-    end
-    qk = [1;B(:,2:end)\(-B(:,1))] ;              % denominator values at nodes
+    % construct the vandermonde-linke matrix Z
+    Z = chebpoly(0:n); Z = Z(xk,:);
+    % get the null-space of L*Z and make qk out of it
     wxk = bary_weights(xk);
-    p = chebfun(@(x) bary(x,qk.*fx,xi,wxk),[a,b],m+1);
-    q = chebfun(@(x) bary(x,qk,xi,wxk),[a,b],n+1);
+    M = Z(:,1:n).' * diag(fx.*wxk) * Z;
+    [u,s,v] = svd(M);
+    qk = Z * v(:,end);
+    % construct the interpolants
+    p = chebfun(@(x) bary(x,qk.*fx,xi,wxk),d.ends([1,end]),m+1);
+    q = chebfun(@(x) bary(x,qk,xi,wxk),d.ends([1,end]),n+1);
     r_handle = @(x) bary(x,fx,xi,qk.*wxk);
 end
