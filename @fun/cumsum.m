@@ -166,7 +166,7 @@ else
     map = g.map;
     if any(g.exps)
         warning('FUN:cumsum:dblexp',['Cumsum does not fully support functions ', ...
-            'with both maps an exponents. Switching to a linear map (which may be slow!)']);
+            'with both maps and exponents. Switching to a linear map (which may be VERY slow!)']);
         pref = chebfunpref;
         pref.splitting = false;
         pref.resampling = false;

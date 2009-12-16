@@ -3,7 +3,7 @@ function f = chebpoly(n,d)
 % F = CHEBPOLY(N) returns the chebfun corresponding to the Chebyshev
 % polynomials T_N(x) on [-1,1], where N may be a vector of positive integers.
 %
-% F = CHEBPOLY(N,d), where d is an interval or a domain, gives the same 
+% F = CHEBPOLY(N,D), where D is an interval or a domain, gives the same 
 % result scaled accordingly.
 %
 % See also chebpoly and legpoly.

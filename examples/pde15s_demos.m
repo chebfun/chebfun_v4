@@ -1,5 +1,5 @@
 %% pde15s_demos
-% Some demos of pde15s (and pdesolve)
+% Some demos of pde15s
 
 %% Advection
 close all

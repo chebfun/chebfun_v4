@@ -21,9 +21,9 @@ map.der = @(s) polyval(cp,s);
 %     map.inv = @(x) sausagemap(x);
 % else
 %     ginv = chebfun(map.inv);
-%     sausagemap = chebfun(vec(@(x) roots(ginv-x)));
+%     sausagemap = chebfun(@(x) roots(ginv-x));
 %     map.inv = @(x) sausagemap(x);
-    %end
+%end
 
 a = pars(1); b = pars(2);
 scale = @(y) ((b-a)*y+b+a)/2;

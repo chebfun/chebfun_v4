@@ -238,7 +238,9 @@ else
             end                        
             vals = chebpolyval(c);
             
+            exps = g.exps
             oldexps = exps;
+            
             g.exps = [0 0];
             map = g.map;
             

@@ -54,7 +54,7 @@ F = linop(@matrix,@op,d);
     % Result can be resolved relative to norm(u).
     scale = norm(u);
     int = @(x) sum(u.*chebfun(@(y) k(x,y),d,'resampling',false,'splitting',true,'exps',{0 0}));
-    v = chebfun( vec(@(x) scale+int(x)), d,'sampletest',false,'resampling',false,'exps',{0 0});
+    v = chebfun( @(x) scale+int(x), d,'sampletest',false,'resampling',false,'exps',{0 0},'vectorize');
     v = v-scale;
   end
 
@@ -62,8 +62,7 @@ F = linop(@matrix,@op,d);
 % weights, then apply kernel as inner products. 
 if nargin==2, onevar=false; end
   function A = matrix(n)
-    x = chebpts(n,d);
-    s = clencurt(d.ends(1),d.ends(2),n);
+    [x s] = chebpts(n,d);
     if onevar  % experimental
       A = k(x)*spdiags(s',0,n,n);
     else

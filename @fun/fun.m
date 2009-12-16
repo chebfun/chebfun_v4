@@ -66,6 +66,7 @@ else
         pref.n = 0;
     end
 end
+if isnan(pref.n), pref.n = 0; end
 
 %% Deal with endpoints and maps
 if ~isnumeric(ends)     % A map may optionally be passed in the second arg.

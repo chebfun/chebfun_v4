@@ -10,6 +10,8 @@ function resampling(on_off)
 %   the number of nodes is doubled. This option is recommended when the
 %   evaluations are time consuming.
 %
+%   RESAMPLING is ON by default.
+%
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 

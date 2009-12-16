@@ -3,6 +3,10 @@ function Fout = cumsum(F)
 % CUMSUM(F) is the indefinite integral of the chebfun F. Dirac deltas 
 % already existing in F will decrease their degree.
 %
+% CUMSUM does not currently support chebfuns whose indefinite integral diverges
+% (i.e. has exponents <-1) when using nontrivial maps. Even for chebfuns
+% with a bounded definite integral, nontrivial maps will be slow.
+%
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 
@@ -17,8 +21,16 @@ function fout = cumsumcol(f)
 
 if isempty(f), fout = chebfun; return, end
 
-% if any(get(f,'exps')<=-1), error('CHEBFUN:cumsum:inf',...
-%         'Cumsum does not currently support functions which diverge to infinity'); end
+exps = get(f,'exps');
+ends = f.ends;
+
+for k = 1:size(exps,1)
+    if all(exps(k,:)) && any(exps(k,:)<=-1)
+        midpt = mean(ends(k:k+1));
+        index = struct('type','()','subs',{{midpt}});
+        f = subsasgn(f,index,feval(f,midpt));
+    end
+end
 
 ends = f.ends;
 

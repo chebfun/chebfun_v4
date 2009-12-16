@@ -60,7 +60,7 @@ function varargout = chebfunpref(varargin)
 %
 % domain - Default interval of definition of a chebfun. Factory definition is [-1 1].
 %
-% eps - Relative tolerance. Factory value is 2^-52 (Matlab's factory value
+% eps -  Relative tolerance. Factory value is 2^-52 (Matlab's factory value
 %        of machine epsilon).
 %
 % sampletest - Safety test option, true (1) or false (0).
@@ -91,12 +91,12 @@ function varargout = chebfunpref(varargin)
 %        2001.
 %
 % Examples
-%       chebfunpref
-%       chebfunpref('minn', 17)
-%       chebfunpref('minn','factory')
-%       chebfunpref('factory')
+%        chebfunpref
+%        chebfunpref('minsamples', 17)
+%        chebfunpref('minsamples','factory')
+%        chebfunpref('factory')
 %
-% See also SPLITTING, RESAMPLING
+% See also SPLITTING, RESAMPLING, BLOWUP
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 

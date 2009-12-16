@@ -196,32 +196,6 @@ if any(isnan(g.vals))
     error('FUN:growfun:naneval','Function returned NaN when evaluated.')
 end
 
-% if unhappy, change map and try again
-if ~ish && strcmp(g.map.name,'linear') && singmap
-    % Check singular ends and pick a map ---------------
-    %     if g.scl.v == 0
-    %         g.scl.v = norm(op(linspace(a,b,10).'),inf);
-    %     end
-    isl = issing(op,a+eps(a),a+0.001*g.scl.h,g.scl.v);
-    isr = issing(op,b-0.001*g.scl.h,b-eps(b),g.scl.v);
-    if ~(isl || isr)
-        return;
-    elseif isl && isr
-        g.map = sing([a,b,0]);
-    elseif isl
-        g.map = sing([a,b,-1]);
-    elseif isr
-        g.map = sing([a,b,1]);
-    end
-    if isl || isr
-        pref.sampletest = false;
-    end
-    [gnew,ish] = growfun(@(x) op(max(a,min(x,b))),g,pref);
-    if ish
-        g = gnew;
-    end
-end
-
 if ~ish && pref.blowup % If not happy, then we revert the scale (as the respresentation my change by using markfins
     g.scl = old_scl;
 end

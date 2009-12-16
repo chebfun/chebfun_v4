@@ -1,5 +1,5 @@
 function [failfun t] = chebtest(dirname)
-% CHEBTEST Probe chebfun system against standard test files.
+%CHEBTEST Probe chebfun system against standard test files.
 % CHEBTEST DIRNAME runs each M-file in the directory DIRNAME. Each M-file
 % should be a function that takes no inputs and returns a logical scalar 
 % value. If this value is true, the function is deemed to have 'passed'. 

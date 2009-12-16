@@ -8,7 +8,7 @@ function P = jacpoly(N,a,b,d,flag)
 %   but on the interval given by the domain D, which must be bounded.
 %
 %   JACPOLY(N,ALPHA,BETA,D,'norm') or JACPOLY(N,ALPHA,BETA,'norm') will 
-%   normalise so that P(D(2)) or P(1) = 1;
+%   normalise so that P(1) or P(D(2)) = 1 ;
 %
 % See also legpoly and chebpoly.
 %

@@ -62,6 +62,6 @@ warning(warnstate);
 for i=find(isnan(fx(:)))'
     indx = find(x(i)==xk,1);
     fx(i) = gvals(indx);
-end;
+end
 
 

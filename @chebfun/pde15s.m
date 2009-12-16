@@ -1,6 +1,43 @@
 function u = pde15s( pdefun, t, u0, bc, opt)
-% Solve pdes of the form u_t = pdefun(u,t,x) using chebfun.
+%PDE15S  Solve PDEs using the chebfun system
+% UU = PDE15s(PDEFUN, T, U0, BC) where PDEFUN is a handle to a function with 
+% arguments u, t, x, and D, T is a vector, U0 is a chebfun, and BC is a 
+% chebop boundary condition structure will solve the PDE dUdt = PDEFUN(U,t,x)
+% with the initial condition U0 and boundary conditions BC over the time
+% interval T. D in PDEFUN represents the differential operator of U, and
+% D(u,K) will represent the Kth derivative of u.
+%
+% Example 1: Nonlinear Advection
+%   [d,x] = domain(-1,1);
+%   u = exp(3*sin(pi*x));
+%   f = @(u,t,x,D) -(1+0.6*sin(pi*x)).*D(u);
+%   pde15s(f,0:.05:3,u,'periodic');
+%   surf(u,0:.05:3)
+%
+% Example 2: Kuramoto-Sivashinsky
+%   [d,x] = domain(-1,1);
+%   I = eye(d); D = diff(d);
+%   u = 1 + 0.5*exp(-40*x.^2);
+%   bc.left = struct('op',{I,D},'val',{1,2});
+%   bc.right = struct('op',{I,D},'val',{1,2});
+%   f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
+%   u = pde15s(f,0:.01:.5,u,bc);
+%   surf(u,0:.01:.5)
+%
+% UU = PDE15s(PDEFUN, T, U0, BC, OPTS) will use nondefault options as
+% defined by the structure returned from OPTS = PDESET.
+%
+% There is some support for nonlinear boundary conditions, such as
+%    BC.LEFT = @(u,t,x,D) D(u) + u - (1+2*sin(10*t));
+%    BC.RIGHT = struct( 'op', 'dirichlet', 'val', @(t) .1*sin(t));
+%
+% See also chebfun/examples/pde15s_demos, pdeset, ode15s
+%
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+
+% Copyright 2002-2009 by The Chebfun Team. 
 % Toby Driscoll & Nick Hale, 2009
+
 global order tol
 order = 0; % Initialise to zero
 

@@ -38,3 +38,26 @@ catch %ME
 end
 
 end
+
+function g = vec(f)
+%VEC  Vectorize a function or string expression.
+%   VEC(F), if F is a function handle or anonymous function, returns a 
+%   function that returns vector outputs for vector inputs by wrapping F
+%   inside a loop.
+%
+%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+
+%   Copyright 2002-2009 by The Chebfun Team. 
+
+g = @loopwrapper;
+
+% ----------------------------
+    function v = loopwrapper(x)
+        v = zeros(size(x));
+        for j = 1:numel(v)
+            v(j) = f(x(j));
+        end
+    end
+% ----------------------------
+
+end
