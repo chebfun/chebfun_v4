@@ -49,7 +49,7 @@ if isfield(pref,'exps')
     elseif numel(exps) ~= 2*numel(ends)-2
         error('CHEBFUN:ctor_nonadapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
-    if ~pref.blowup, pref.blowup = 1; end
+%     if ~pref.blowup, pref.blowup = 1; end
 end
 
 % Initial horizontal scale.

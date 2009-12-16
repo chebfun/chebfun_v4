@@ -59,7 +59,7 @@ if isfield(pref,'exps')
     elseif numel(exps) ~= 2*numel(ends)-2
         error('CHEBFUN:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
-    if ~pref.blowup, pref.blowup = 1; end
+%     if ~pref.blowup, pref.blowup = 1; end
 end
 
 for i = 1:length(ops)

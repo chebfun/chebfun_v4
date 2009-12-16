@@ -101,18 +101,19 @@ while any(sad)
     % ------------------------------------
 
     % Construct child funs
+    blank = 0;
+    if pref.blowup, blank = []; end              % Only looks for exps if blowup is on
     %  left
-    if isfield(pref,'exps')                   % exps were passed to the constructor 
-        if i == 1, pref.exps = {exps{1}, []}; % We should keep these at the ends.
-        else pref.exps = {[] []}; end         % But not if an interior split.
+    if isfield(pref,'exps')                      % exps were passed to the constructor 
+        if i == 1, pref.exps = {exps{1}, blank}; % We should keep these at the ends.
+        else pref.exps = {blank blank}; end      % But not if an interior split.
     end
     [child1, hpy1, scl] = getfun(op, [a, edge], pref, scl);
     %  right
-    if isfield(pref,'exps')                   % As above
-        if i+1 == length(ends), pref.exps = {[], exps{2}};
-        else pref.exps = {[] []}; end  
+    if isfield(pref,'exps')                      % As above
+        if i+1 == length(ends), pref.exps = {blank, exps{2}};
+        else pref.exps = {blank blank}; end  
     end
-      
     [child2, hpy2, scl] = getfun(op, [edge, b], pref, scl);
     
     % Insert to existing funs
@@ -127,7 +128,6 @@ while any(sad)
     if ~lenf
         for i = 1:numel(funs), lenf = lenf+funs(i).n; end
     end
-    %     lenf = 0; for i = 1:numel(funs), lenf = lenf+funs(i).n; end
         
     if lenf > pref.maxlength+1;
         warning('CHEBFUN:auto',['Chebfun representation may not be accurate:' ...
