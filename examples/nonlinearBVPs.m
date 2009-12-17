@@ -57,5 +57,9 @@ N.lbc = {@(u) u(:,1)-1, @(u) diff(u(:,2))};
 N.rbc =  {@(u) u(:,2), @(u) diff(u(:,1))};
 N.guess = [0*x,0*x];
 [u nrmduvec] = N\0;
-figure;plot(u), title('The solution of the BVP (3)')
-legend('u_1','u_2')
+
+figure;subplot(1,2,1),plot(u(:,1)),hold on, plot(u(:,2),'-.r'),hold off
+title('u_1(x) and u_2(x) vs. x'); legend('u_1','u_2')
+box on, grid on, xlabel('x'), ylabel('u_1(x) and u_2(x)')
+subplot(1,2,2),semilogy(nrmduvec,'-*');title('Norm of update vs. iteration no.');
+box on, grid on, xlabel('Iteration no.'), ylabel('Norm of update');
