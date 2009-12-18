@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1' ?>
 <!-- $Revision: 1.1.6.1.40.1 $ $Date: 2007/08/02 17:20:57 $ -->
 
-<toc version="2.0395">
+<toc version="3.1000">
 
 <tocitem target="index.html">Chebfun
 
@@ -11,9 +11,11 @@
 <tocitem target="guide4.html">Chebfuns and approximation theory</tocitem>
 <tocitem target="guide5.html">Complex chebfuns</tocitem>
 <tocitem target="guide6.html">Quasimatrices and least squares</tocitem>
-<tocitem target="guide7.html">Linear differential equations with chebops</tocitem>
+<tocitem target="guide7.html">Solving linear differential equations with chebops</tocitem>
 <tocitem target="guide8.html">Chebfun preferences</tocitem>
-
+<tocitem target="guide9.html">Infinite intervals, infinite function values, and singularities</tocitem>
+<tocitem target="guide10.html">Nonlinear boundary value problems and Automatic Differentiation</tocitem>
+<tocitem target="guideindex.html">Index</tocitem>
 
 </tocitem>
 </toc>

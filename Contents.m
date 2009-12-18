@@ -1,5 +1,5 @@
 % Chebfun
-% Version 3.0(alpha) 19-Jan-2009
+% Version 3.1000 18-Dec-2009
 %
 % The chebfun system extends familiar powerful methods of numerical
 % computation involving numbers to continuous or piecewise-continuous
