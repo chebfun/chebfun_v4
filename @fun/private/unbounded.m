@@ -39,7 +39,7 @@ if a == -inf && b == inf
         end
     end
 
-    m.inv = @(x) mfor_inf_inf(x,s,c);
+    m.inv = @(x) 2*x./(5*s+sqrt((5*s)^2+4*x.^2));
     m.for = @(y) (5*s)*y./(1-min(y.^2,1))+c;
     m.der = @(y) (5*s)*(1+y.^2)./(1-y.^2).^2;
     m.par = [par(1:2) s c];
@@ -108,16 +108,16 @@ end
 m.name = 'unbounded';
 
 
-function y = mfor_inf_inf(x,s,c)
-% This function maps [-inf,inf] to [-1,1]
-x = x-c;
-a = 5*s;
-mask = abs(x)>1;
-y = x;
-x1 = x(mask);                                     % Large x
-x2 = x(~mask);                                    % Small x
-y(mask) = 1/2*(sign(x1).*sqrt(a^2./x1.^2+4)-a./x1); % good for large x
-y(~mask) = 2*x2./(a+sqrt(a^2+4*x2.^2));             % good for small x
+% function y = mfor_inf_inf(x,s,c)
+% % This function maps [-inf,inf] to [-1,1]
+% x = x-c;
+% a = 5*s;
+% mask = abs(x)>1;
+% y = x;
+% x1 = x(mask);                                     % Large x
+% x2 = x(~mask);                                    % Small x
+% y(mask) = 1/2*(sign(x1).*sqrt(a^2./x1.^2+4)-a./x1); % good for large x
+% y(~mask) = 2*x2./(a+sqrt(a^2+4*x2.^2));             % good for small x
 
 %function y = trim(x)
 % This function forces x to be in [-10^16,10^16]

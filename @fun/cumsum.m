@@ -90,7 +90,25 @@ elseif any(isinf(g.map.par(1:2)))
         if all(abs(g.vals) <= chebfunpref('eps')*10*g.scl.v)
             g.vals = 0; g.scl.v = 0;
         else
-            error('FUN:cumsum':unbdblow,'Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+            error('FUN:cumsum:unbdblow','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
+        end
+        return
+    end
+    
+    y = chebpts(g.n, 2);
+    pref = chebfunpref;
+    pref.extrapolate = true;
+    pref.eps = pref.eps*10;
+
+    % Quadratic case (must be like f = c*(1/x^2) +b) -- semi-bounded case
+    if g.n == 3 && sum(isinf(ends)) == 1
+        vals = g.vals;
+        g.vals = vals.*g.map.der(y);
+        g = extrapolate(g,pref,y);
+        g = cumsum_unit_interval(g);   
+        if (isinf(ends(1)) && abs(vals(1))/norm(vals,inf) > 10*eps) || ...
+                (isinf(ends(2)) && abs(vals(3))/norm(vals,inf) > 10*eps)
+            error('FUN:cumsum:unbdblow','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
         end
         return
     end
@@ -113,10 +131,6 @@ elseif any(isinf(g.map.par(1:2)))
     % Besides having a zero at (+- 1), the fun should decrease towards the
     % endpoint. Decaying faster than 1/x^2 results in a double root.
     % ---------------------------------------------------------------------
-    y = chebpts(g.n, 2);
-    pref = chebfunpref;
-    pref.extrapolate = true;
-    pref.eps = pref.eps*10;
     
     if isinf(ends(2))
         gtmp = g; gtmp.vals = gtmp.vals./(1-y);

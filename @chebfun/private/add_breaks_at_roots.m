@@ -18,5 +18,10 @@ end
 r(isnan(r)) = [];
 
 % A new chebfun with the right breaks
-ends = union(ends,r);
-F = chebfun(F,ends);
+newends = union(ends,r);
+
+if length(newends)~= length(ends)
+%     F = chebfun(F,newends);
+      index = struct('type','()','subs',{{newends}});
+      F = subsasgn(F,index,feval(F,newends));
+end

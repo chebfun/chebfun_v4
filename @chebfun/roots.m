@@ -63,7 +63,9 @@ for i = 1:f.nfuns
     if isreal(f) && i<f.nfuns && (isempty(rts) || abs(rts(end)-b)>tol*hs )
         rfun = f.funs(i+1);
         if lfun.vals(end)*rfun.vals(1) <= 0, 
-            rts = [rts; b];
+%             if ~(lfun.exps(2) < 0) && ~(rfun.exps(1) < 0)
+                rts = [rts; b];
+%             end
         end
 %   if i < f.nfuns && ( isempty(rts) || abs(rts(end)-b) > 1e-14*hs )
 %       rfun = f.funs(i+1);
