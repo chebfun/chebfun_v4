@@ -1,4 +1,4 @@
-function [g c] = diff(g,k,c)
+function g = diff(g,k,c)
 % DIFF	Differentiation
 % DIFF(G) is the derivative of the fun G.
 %
@@ -21,7 +21,6 @@ function [g c] = diff(g,k,c)
 %
 % with c_{n} = c_{n+1} = 0.
 %
-% [F C] = DIFF(G,K) returns also the coefficients C of the K-th derivative.
 %
 % See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 34.
 %
@@ -33,15 +32,12 @@ function [g c] = diff(g,k,c)
 
 if isempty(g), return, end
 if (nargin==1), k=1; end
-% if nargin < 3 || (nargin==3 && isempty(c))
-    c = chebpoly(g);  % obtain Cheb coeffs {C_r}
-    n = g.n;
-% else
-%     n = length(c);
-% end
+c = chebpoly(g);  % obtain Cheb coeffs {C_r}
+n = g.n;
 ends = g.map.par(1:2);
 
-% Separate in 3 cases:
+% Separate in cases:
+
 % 1 Linear map!
 if strcmp(g.map.name,'linear')
     
@@ -55,56 +51,17 @@ if strcmp(g.map.name,'linear')
             n = n-1;
         end
         g = fun(chebpolyval(c)/g.map.der(1).^k, g.map.par(1:2));
-        
-        if nargout > 1, 
-            c = c/g.map.der(1).^k;
-        end
-        
-        
+                
     else % function which blows up, need product rule
-
+        
         for i = 1:k % loop for higher derivatives
-            % Perhaps treat 2nd derivatives as a special case?
-            if n == 1,
-                c = 0;
-            else
-                c = newcoeffs_der(c);
-            end
-            
-            exps = g.exps;
-            g.exps = [0 0];
-             
-             k = 2/diff(ends); % rescale vertical scale because of exps
-            if exps(1) && ~exps(2)               
-                g = fun([0 diff(ends)],ends).*fun(k*chebpolyval(c)/g.map.der(1), ends) + (k*exps(1)).*g;                
-                exps(1) = exps(1) - 1;
-            end
-            
-            if ~exps(1) && exps(2)
-                g = fun([diff(ends) 0],ends).*fun(k*chebpolyval(c)/g.map.der(1), ends) - (k*exps(2)).*g;
-                exps(2) = exps(2) - 1;
-            end
-            
-            if all(exps)      
-                k = k^2;
-                g = fun([0 -prod(ends) 0],ends).*fun(k*chebpolyval(c)/g.map.der(1), ends) - ...
-                    ((k*exps(2))*fun([0 diff(ends)],ends) - (k*exps(1))*fun([diff(ends) 0],ends)).*g;
-                exps = exps - 1;
-            end
-            
-            g.exps = exps;
-            
-            if i~=k || nargout > 1
-                c = chebpoly(g);
-                n = length(c);
-            end
+
+            g = productrule(g);
             
         end
-        
-        c = [];
-
     end
-    % Unbounded map
+    
+% Unbounded map
 elseif norm(g.map.par(1:2),inf) == inf
     
     if any(g.exps), error('FUN:diff:infexps','Cannot diff inf interval funs with exps yet'); end
@@ -126,7 +83,7 @@ elseif norm(g.map.par(1:2),inf) == inf
         vals = chebpolyval(cout)./g.map.der(chebpts(n+nz-1));
         g.vals = vals;
         g.n = length(vals);
-        if i ~= k 
+        if i ~= k
             c = chebpoly(g);
             n = g.n;
         end
@@ -135,78 +92,76 @@ elseif norm(g.map.par(1:2),inf) == inf
     if infboth
         g = simplify(g);
     end
-    if nargout > 1
-        c = chebpoly(g);
-    end
+
+% sing maps 
+% A special case (as the map introduces exponents)    
+elseif strcmp(g.map.name,'sing')
     
-    c = [];
-    
-elseif strcmp(g.map.name,'sing') 
-    
-    % Only one derivative here for now! (must loop later)
-    
-    exps = g.exps;
-    
-    if ~any(exps) % old case with no exponents
-        
-        if n == 1,
-            g = fun(0,g.map.par(1:2));
-            return
-        end                                 % derivative of constant is zero
-        
-        % Compute derivative of g with respect to Cheby variable
-        cout = newcoeffs_der(c);
-        vals = chebpolyval(cout);
-        
-        map = g.map;
-        par = g.map.par(3:4);
-        newexps = par-1;
-        ends = g.map.par(1:2);
-        
-        if all(newexps)
-            % Singmap at both ends
-            pref = chebfunpref;
-            pref.extrapolate = true;
-            pref.exps  = num2cell(newexps);
-            if par(1) == .25
-                pref.n = length(vals)+23;
-                g = fun(@(x) bary(map.inv(x),vals)./map.der(map.inv(x)),map,pref);
-                g = simplify(g);
-            else
-                pref.n = length(vals);
-                g = fun(@(x) bary(map.inv(x),vals)./map.der(map.inv(x)),map,pref);
-                
-                % this should also work, but one needs to find the constant
-                % ...
-                %             a = sum(par);
-                %             c = 4*a/diff(ends)^(a)/pi;
-                %             g = fun(vals*c, [-1 1]);
-                %             g.map = map;
-                %             g = setexps(g,newexps);
-            end
-        else
-            % Voodoo ...
-            par(par==1) = 0;
-            a = sum(par);
-            c = 2*a/diff(ends)^(a);
+    for i = 1:k % loop for higher derivatives (note exps may be introduced by
+                % differentiating here, so 'if' is inside 'for')
+        if ~any(g.exps) % old case with no exponents
             
-            g = fun(vals*c, [-1 1]);
-            g.map = map;
-            g = setexps(g,newexps);         
+            if n == 1,
+                g = fun(0,g.map.par(1:2));
+                return
+            end                                 % derivative of constant is zero
+            
+            % Compute derivative of g with respect to Cheby variable
+            cout = newcoeffs_der(c);
+            vals = chebpolyval(cout);
+            
+            map = g.map;
+            par = g.map.par(3:4);
+            newexps = par-1;
+
+            if all(newexps)
+                % Singmap at both ends (SLOW?)
+                pref = chebfunpref;
+                pref.extrapolate = true;
+                pref.exps  = num2cell(newexps);
+                if par(1) == .25
+                    pref.n = length(vals)+23;
+                    g = fun(@(x) bary(map.inv(x),vals)./map.der(map.inv(x)),map,pref);
+                    g = simplify(g);
+                else
+                    pref.n = length(vals);
+                    g = fun(@(x) bary(map.inv(x),vals)./map.der(map.inv(x)),map,pref);
+                    
+                    % this should also work, but one needs to find the constant
+                    % ...
+                    %             a = sum(par);
+                    %             c = 4*a/diff(ends)^(a)/pi;
+                    %             g = fun(vals*c, [-1 1]);
+                    %             g.map = map;
+                    %             g = setexps(g,newexps);
+                end
+            else
+                % Voodoo ...
+                par(par==1) = 0;
+                a = sum(par);
+                scl = 2*a/diff(ends)^(a);
+                
+                g = fun(vals*scl, [-1 1]);
+                g.map = map;
+                g = setexps(g,newexps);
+            end
+            
+        else
+            % This is the case of singmaps and exponents.
+            % We use the product rule, and it turns out the tricky bit reduces to
+            % the case where there aren't exponents which is dealt with above.
+            
+            g = productrule(g);   
+            
         end
         
-    else
- 	% This is tricky! (Or is it just the chan rule?)
-       error('FUN:diff:singmapandexps',['Differentiating singmaps with exponents is ', ...
-		'not implemented yet']) 
-        
     end
     
-    % General (MAP) case: (slow !!!)
+% General (MAP) case: (slow !!!)
 else
     
     if ~any(g.exps) % old case with no exponents
-    
+        
         for i = 1:k                             % loop for higher derivatives
             if n == 1,
                 g = set(g,'vals',0); g.scl.v = 0;
@@ -226,59 +181,12 @@ else
             end
         end
         
-        c = [];
-        
-    else
-        
-        for i = 1:k                  % loop for higher derivatives
-            if n == 1,
-                c = 0;               % derivative of constant is zero
-            else
-                c = newcoeffs_der(c);
-            end                        
-            vals = chebpolyval(c);
-            
-            exps = g.exps
-            oldexps = exps;
-            
-            g.exps = [0 0];
-            map = g.map;
-            
-            if exps(1) && ~exps(2)
-                gp = @(x) (map.for(x)-ends(1)).*bary(x,vals)./map.der(x);
-                gp = fun(gp,[-1 1]);
-                gp.map = map;
-                g = gp + exps(1).*g;
-                exps(1) = exps(1) - 1;
-            end
-            
-            if ~exps(1) && exps(2)
-                gp = @(x) (ends(2)-map.for(x)).*bary(x,vals)./map.der(x);
-                gp = fun(gp,[-1 1]);
-                gp.map = map;
-                g = gp - exps(2).*g;
-                exps(2) = exps(2) - 1;
-            end
+    else % apply product rule!
 
-            if all(exps)      
-                gp = @(x) (map.for(x)-ends(1)).*(ends(2)-map.for(x)).*bary(x,vals)./map.der(x);
-                gp = fun(gp,[-1 1]);
-                gp.map = map;
-                g = gp - (exps(2)*fun(@(x) x-ends(1),map) - exps(1)*fun(@(x) ends(2)-x,map)).*g;
-                exps = exps + 1;
-            end
-            
-            g.exps = oldexps;
-            g = setexps(g,exps);
-            
-            if i ~= k || nargout > 1
-                c = chebpoly(g);
-                n = length(c);
-            end
+        for i = 1:k
+            g = productrule(g);
         end
-        
-        c = [];
-        
+
     end
 
 end
@@ -295,3 +203,23 @@ cout(1:2:end) = cumsum(v(1:2:end)); % compute c_{n-2}, c_{n-4},...
 cout(2:2:end) = cumsum(v(2:2:end)); % compute c_{n-3}, c_{n-5},...
 cout(end) = .5*cout(end);           % rectify the value for c_0
 cout = cout(3:end);
+
+function g = productrule(g)
+% Apply the product rule to differentiate functions with exponents
+exps = g.exps;
+g = setexps(g,[0 0]);
+gp = diff(g);
+
+if exps(1) && ~exps(2)                  % left exponent
+    gp = setexps(gp, gp.exps+[1 0]);
+    g = exps(1)*g+gp;
+    g = setexps(g,g.exps+exps-[1 0]);
+elseif ~exps(1) && exps(2)              % right exponent
+    gp = setexps(gp, gp.exps+[0 1]);
+    g = -exps(2)*g+gp;
+    g = setexps(g,g.exps+exps-[0 1]);
+else                                    % double exponent
+    gp = setexps(gp, gp.exps+[1 1]);
+    g = (exps(1)*setexps(g,[0 1])-exps(2)*setexps(g,[1 0]))+gp;
+    g = setexps(g,g.exps+exps-[1 1]);
+end

@@ -38,12 +38,10 @@ exps = get(f,'exps');
 ends = get(f,'ends');
 F.jacobian = anon(' @(u) diff(domain(f),n) * jacobian(f,u)',{'f' 'n'},{f n});
 F.ID = newIDnum;
-% c = cell(f.nfuns,1);
 for j = 1:n % loop n times for nth derivative
     
     % differentiate every piece and rescale
     for i = 1:f.nfuns
-%         [funs(i) c{i}] = diff(funs(i),1,c{i});
         funs(i) = diff(funs(i));
         F.scl = max(F.scl, funs(i).scl.v);
     end

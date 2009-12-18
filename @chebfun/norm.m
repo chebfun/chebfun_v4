@@ -33,9 +33,9 @@ elseif min(size(A))==1                  % A is a chebfun
          normA = sum(absA);
       case {2,'fro'}
          if A.trans 
-            normA = sqrt(A*A');
+            normA = sqrt(abs(A*A'));
          else
-            normA = sqrt(A'*A);
+            normA = sqrt(abs(A'*A));
          end
       case {inf,'inf'}
          if isreal(A)

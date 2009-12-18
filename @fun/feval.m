@@ -29,5 +29,8 @@ else
     xk = chebpts(n); 
     out = bary(x,g.vals,g.map.for(xk));
 end
-rescl = (2/diff(ends))^-sum(exps); 
-out = out.*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2))/rescl;
+
+if any(g.exps)
+    rescl = (2/diff(ends))^-sum(exps); 
+    out = out.*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2))/rescl;
+end

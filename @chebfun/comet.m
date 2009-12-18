@@ -19,19 +19,29 @@ if norm(f.ends([1,end]),inf) == inf
     error('CHEBFUN:comet:restrict','comet requires a bounded interval, please use restrict')
 end
 
-if nargin==1
+p = 0;
+for k = 1:numel(varargin)
+    if isnumeric(varargin{k}), p = varargin{k}; break, end
+end
+
+if nargin==1 && isreal(f)
     [x0,x1] = domain(f);
     x = linspace(x0,x1,300); x(end) = [];
     ydata = feval(f,x);
     hh = plot(x(1),ydata(1),'.r','markersize',25);
     for j = 2:length(x)
          set(hh,'xdata',x(j),'ydata',ydata(j));
-         drawnow, %pause(.005)
+         drawnow, pause(p)
     end
 end
 
-if nargin==2
-    g = varargin{1};
+if nargin==2 || ~isreal(f)
+    if isreal(f)
+        g = varargin{1};
+    else
+        g = imag(f);
+        f = real(f);
+    end
     [x0,x1] = domain(f); [y0,y1] = domain(g);
     hs = max(hscale(f),hscale(g));
     if (abs(x0-y0)>1e-12*hs) || (abs(x1-y1)>1e-12*hs)
@@ -44,7 +54,7 @@ if nargin==2
     hh = plot(xdata(1),ydata(1),'.r','markersize',25);
     for j = 2:length(x)
         set(hh,'xdata',xdata(j),'ydata',ydata(j));
-        drawnow, %pause(.005)
+        drawnow, pause(p)
     end
 end
 
