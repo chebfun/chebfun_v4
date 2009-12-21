@@ -42,7 +42,8 @@ pref = chebfunpref;
 tol = pref.eps;
 
 matlabver = ver('matlab');
-if str2double(matlabver.Version) < 7.39
+if str2double(matlabver.Version(1)) < 7 || ...
+    (str2double(matlabver.Version(3)) < 4 && length(matlabver.Version) < 4)
     disp(['Matlab version: ',matlabver.Version])
     error('CHEBFUN:chebtest:version',['Chebfun is compatible' ...
         ' with MATLAB 7.4 or a more recent version.'])
