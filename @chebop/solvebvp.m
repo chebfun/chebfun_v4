@@ -25,10 +25,6 @@ function varargout = solvebvp(N,rhs)
 
 % Developed by Toby Driscoll and Asgeir Birkisson, 2009.
 
-if strcmp(cheboppref('damped'),'off')
-    [varargout{1} varargout{2}] = solve(N,rhs);
-else
-    [varargout{1} varargout{2}] = solve_newton_damped(N,rhs);
-end
+[varargout{1} varargout{2}] = solve_bvp_routines(BVP,b);
 
 end

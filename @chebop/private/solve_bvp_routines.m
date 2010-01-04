@@ -1,5 +1,12 @@
 function [u nrmduvec] = solve_bvp_routines(N,rhs)
-% Damped Newton iteration. More details will follow very soon.
+% SOLVE_BVP_ROUTINES Private function of the chebop class.
+%
+% This function gets called by nonlinear backslash and solvebvp. It both
+% treates the cases where the user requests damped Newton iteration and
+% pure Newton iteration.
+
+
+% Damped Newton iteration. More details will follow.
 
 % Begin by obtaining the nonlinop preferences
 pref = cheboppref;
