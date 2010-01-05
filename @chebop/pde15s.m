@@ -28,9 +28,6 @@ function u = pde15s(N, t, opt)
 pdefun = N.op;
 u0 = N.guess;
 
-N.lbc
-N.lbcshow
-
 if strcmpi(N.lbc,'periodic') || strcmpi(N.rbc,'periodic'), 
     bc = 'periodic';
 else
@@ -43,9 +40,6 @@ else
     end
     bc.right = N.rbc;
 end
-
-bc
-        
 
 if nargin < 3, opt = []; end
 

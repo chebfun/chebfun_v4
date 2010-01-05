@@ -1,4 +1,4 @@
-function u = pde15s( pdefun, t, u0, bc, opt)
+function uu = pde15s( pdefun, t, u0, bc, opt)
 %PDE15S  Solve PDEs using the chebfun system
 % UU = PDE15s(PDEFUN, T, U0, BC) where PDEFUN is a handle to a function with 
 % arguments u, t, x, and D, T is a vector, U0 is a chebfun, and BC is a 
@@ -23,6 +23,15 @@ function u = pde15s( pdefun, t, u0, bc, opt)
 %   f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
 %   u = pde15s(f,0:.01:.5,u,bc);
 %   surf(u,0:.01:.5)
+% 
+% Example 3: Chemical reaction (system)
+%    [d,x] = domain(-1,1);  
+%    u = [ 1-erf(10*(x+0.7)) , 1 + erf(10*(x-0.7)) , chebfun(0,d) ];
+%    f = @(u,t,x,D)  [ 0.1*D(u(:,1),2) - 100*u(:,1).*u(:,2) , ...
+%                      0.2*D(u(:,2),2) - 100*u(:,1).*u(:,2) , ...
+%                     .001*D(u(:,3),2) + 2*100*u(:,1).*u(:,2) ];
+%    bc = 'neumann';     
+%    uu = pde15s(f,0:.1:3,u,bc);
 %
 % UU = PDE15s(PDEFUN, T, U0, BC, OPTS) will use nondefault options as
 % defined by the structure returned from OPTS = PDESET.
@@ -35,14 +44,11 @@ function u = pde15s( pdefun, t, u0, bc, opt)
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-% Toby Driscoll & Nick Hale, 2009
-
-global order tol
+global order
 order = 0; % Initialise to zero
 
 % Default options
-tol = 1e-6;             % 'eps' in chebfun terminology
+tol = 1e-5;             % 'eps' in chebfun terminology
 doplot = 1;             % plot after every time chunk?
 dohold = 0;             % plot after every time chunk?
 
@@ -56,121 +62,186 @@ if ~isempty(opt.HoldPlot), dohold = strcmpi(opt.HoldPlot,'on'); end
 
 % ODE tolerances
 atol = odeget(opt,'AbsTol',1e-6);
-rtol = odeget(opt,'RelTol',1e-3);
-tolflag = 0;
-if tol < atol, opt = odeset(opt,'AbsTol',tol); tolflag = 1; end
-if tol < rtol, opt = odeset(opt,'RelTol',tol); tolflag = 1; end
-% if tolflag, 
-%     warning('CHEBFUN:pde15s',['AbsTol and RelTol must be <= Tol.', ...
-%         ' Adjusting accordingly.']);
-% end
+rtol = odeget(opt,'RelTol',1e-5);
+
+% AbsTol and RelTol must be <= Tol
+if tol < atol, opt = tol/10; end
+if tol < rtol, opt = tol/10; end
+
+% Get the domain
+d = domain(u0);
+
+% Determine the size of the system
+syssize = min(size(u0));
 
 % If the differential operator is passed, redefine the anonymous function
-% This should be the default behaviour?
 if nargin(pdefun) == 2
     pdefun = @(u,t,x) pdefun(u,@Diff);
-    % get the order (stored as global variable) by evaluating RHS with NaN 
-    pdefun(NaN); % (See Diff below for more details)
+    % get the order (a global variable) by evaluating the RHS with NaNs
+    tmp = repmat(NaN,1,syssize);
+    pdefun(tmp);
 elseif nargin(pdefun) == 4
     pdefun = @(u,t,x) pdefun(u,t,x,@Diff);
-    pdefun(NaN,NaN,NaN); % (as above)
+    tmp = repmat(NaN,1,syssize);
+    pdefun(tmp,NaN,NaN); % (as above)
 end
 
 % some error checking on the bcs
-if order > 2 && ischar(bc) && (strcmpi(bc,'neumann') || strcmpi(bc,'dirichlet'))
-    error('CHEBFUN:pde15s:bcs',['Cannot assign "', bc, '" boundary conditions to a ', ...
+if ischar(bc) && (strcmpi(bc,'neumann') || strcmpi(bc,'dirichlet'))
+    if order > 2
+        error('CHEBFUN:pde15s:bcs',['Cannot assign "', bc, '" boundary conditions to a ', ...
         'RHS with differential order ', int2str(order),'.']);
+    end
+    bc = struct( 'left', bc, 'right', bc);
 end
 if iscell(bc) && numel(bc) == 2
     bc = struct( 'left', bc{1}, 'right', bc{2});
 end
 
-% Set bcs to zeros (these are supplied by rhs variable in odefun)
-rhs = {}; nllbc = []; nlbcfuns = {}; nlrbc = [];
-if isfield(bc,'left') && numel(bc.left) > 0
-    if isa(bc.left,'linop')
-        bc.left = struct( 'op', bc.left.varmat, 'val', 0);
+% Shorthand bcs
+if isfield(bc,'left') && ischar(bc.left)
+    if strcmpi(bc.left,'dirichlet'),    A = eye(d);
+    elseif strcmpi(bc.left,'neumann'),  A = diff(d);
     end
-    if isa(bc.left,'function_handle')
-        bc.left = struct( 'op', bc.left, 'val', 0);
+    Z = zeros(d);        op = cell(1,syssize);
+    for k = 1:syssize,   op{k} = [repmat(Z,1,k-1) A repmat(Z,1,syssize-k)];  end
+    bc.left = struct('op',op,'val',repmat({0},1,syssize));
+end
+if isfield(bc,'right') && ischar(bc.right)
+    if strcmpi(bc.right,'dirichlet'),    A = eye(d);
+    elseif strcmpi(bc.right,'neumann'),  A = diff(d);
     end
-    lop = {bc.left.op};
-    % Remove nonlinear conditions
-    for k = 1:numel(lop)
-        if isa(lop{k},'function_handle')
-            lopk = lop{k};
-            if nargin(lopk) == 2,      lopk = @(u,t,x) lopk(u,@Diff);
-            elseif nargin(lopk) == 4,  lopk = @(u,t,x) lopk(u,t,x,@Diff); end
-            nlbcfuns = [nlbcfuns {lopk}]; nllbc = [nllbc k]; % Store
-        end
-    end     
-    % Store RHS of bcs and set to homogenious
-    if isfield(bc.left,'val')
-        rhs = [rhs {bc.left.val}];  
-        bc.left = struct( 'op', lop, 'val', {0});
-    end
-% else
-%     bc.left = [];
+    Z = zeros(d);        op = cell(1,syssize);
+    for k = 1:syssize,   op{k} = [repmat(Z,1,k-1) A repmat(Z,1,syssize-k)];  end
+    bc.right = struct('op',op,'val',repmat({0},1,syssize));
 end
 
-if isfield(bc,'right') && numel(bc.right) > 0
-    if isa(bc.right,'linop')
-        bc.right = struct( 'op', bc.right.varmat, 'val', 0);
+% Sort out boundary conditions (Left)
+nllbc = []; nlbcs = {}; nlrbc = []; rhs = {};
+if isfield(bc,'left') && numel(bc.left) > 0
+    if isa(bc.left,'function_handle')
+        bc.left = struct( 'op', bc.left, 'val', 0);
+    elseif isa(bc.left,'linop')
+        bc.left = struct( 'op', bc.left, 'val', 0);
+    elseif iscell(bc.left)
+        bc.left = struct( 'op', bc.left);
     end
+    % Extract nonlinear conditions
+    for k = 1:numel(bc.left)
+        opk = bc.left(k).op;
+        if isnumeric(opk) && syssize == 1
+            bc.left(k).op = repmat(eye(d),1,syssize);
+            bc.left(k).val = opk;
+        end
+        if isa(opk,'function_handle')
+            nllbc = [nllbc k];             % Store positions
+            if     nargin(opk) == 2,  nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
+            elseif nargin(opk) == 4,  nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)} ]; 
+            end
+            bc.left(k).op = repmat(eye(d),1,syssize);
+        end
+        if isfield(bc.left(k),'val') && ~isempty(bc.left(k).val)
+                rhs{k} = bc.left(k).val;
+        else    rhs{k} = 0; end
+        bc.left(k).val = 0;  % set to homogenious (to remove function handles
+    end     
+elseif isfield(bc,'right') 
+    bc.left = [];
+end
+% (Right)
+numlbc = numel(rhs);
+if isfield(bc,'right') && numel(bc.right) > 0% && syssize == 1 % as above for rhs
     if isa(bc.right,'function_handle')
         bc.right = struct( 'op', bc.right, 'val', 0);
+    elseif isa(bc.right,'linop')
+        bc.right = struct( 'op', bc.right, 'val', 0);
+    elseif iscell(bc.right)
+        bc.right = struct( 'op', bc.right);
     end
-    rop = {bc.right.op};
-    % Remove nonlinear conditions
-    for k = 1:numel(rop)
-        if isa(rop{k},'function_handle')
-            ropk = rop{k};
-            if nargin(ropk) == 2,      ropk = @(u,t,x) ropk(u,@Diff);
-            elseif nargin(ropk) == 4,  ropk = @(u,t,x) ropk(u,t,x,@Diff); end
-            nlbcfuns = [nlbcfuns {ropk}]; nlrbc = [nlrbc k]; % Store
+    for k = 1:numel(bc.right)
+        opk = bc.right(k).op;
+        if isnumeric(opk) && syssize == 1
+            bc.right(k).op = eye(d);
+            bc.right(k).val = opk;
         end
+        if isa(opk,'function_handle')
+            nlrbc = [nlrbc k];
+            if     nargin(opk) == 2,  nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
+            elseif nargin(opk) == 4,  nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)} ]; 
+            end
+            bc.right(k).op = repmat(eye(d),1,syssize);
+        end
+        if isfield(bc.right(k),'val') && ~isempty(bc.right(k).val)
+                rhs{numlbc+k} = bc.right(k).val;
+        else    rhs{numlbc+k} = 0; end
+        bc.right(k).val = 0;
     end          
-    % Store RHS of bcs and set to homogenious
-    if isfield(bc.right,'val')
-        rhs = [rhs {bc.right.val}];
-        bc.right = struct( 'op', rop, 'val', {0});
-    end
-% else 
-%     bc.right = [];
+elseif isfield(bc,'left') 
+    bc.right = [];
 end
 
 % Support for user-defined mass matrices - experimental!
 if ~isempty(opt.Mass) && isnumeric(opt.Mass)
     usermass = true;
     userM = opt.Mass;
-else usermass = false; end
-
-% Get the domain
-d = domain(u0);
+else
+    usermass = false; 
+end
 
 % This is needed inside the nested function onestep()
 diffop = diff(d,order);
-    
-% initial condition
-u = simplify(u0,tol);
+if syssize > 1
+    diffop = repmat(diffop,syssize,syssize);
+end
+
+% simplify initial condition  to tolerance
+u0 = simplify(u0,tol);
 
 % The vertical scale of the intial condition
-vscl = u.scl;
+vscl = u0.scl;
 
 % Plotting setup
 if doplot
     cla, shg, set(gcf,'doublebuf','on')
-    plot(u,'.-'), drawnow,
+    plot(u0,'.-'), drawnow,
     if dohold, ish = ishold; hold on, end
 end
 
+% initial condition
+ucur = u0;
+if syssize == 1
+    uu = repmat(chebfun(0,d),1,length(t));
+    uu(:,1) = ucur;
+else
+    uu = cell(length(t),1);
+    uu{1} = ucur;
+end
+
+% initialise variables for onestep()
+B = []; q = []; rows = []; M = []; n = [];
+
 % Begin time chunks
 for nt = 1:length(t)-1
-    curlen = length(u(:,nt));
-    u(:,nt+1) = chebfun( @(x) vscl+onestep(x), d, 'eps', tol, 'minsamples',curlen, ...
-        'resampling','on','splitting','off','sampletest','off','blowup','off')-vscl;  % solve one chunk
+    
+    % size of current length
+    curlen = 0;
+    for k = 1:syssize, curlen = max(curlen,length(ucur(:,k))); end
+    
+    % solve one chunk
+    chebfun( @(x) vscl+onestep(x), d, 'eps', tol, 'minsamples',curlen, ...
+        'resampling','on','splitting','off','sampletest','off','blowup','off') - vscl;  
+
+    % get chebfun of solution from this time chunk
+    for k = 1:syssize, ucur(:,k) = chebfun(unew(:,k),d); end
+    
+    % store in uu
+    if syssize == 1,  uu(:,nt) = ucur;
+    else              uu{nt+1} = ucur;
+    end
+    
+    % plotting
     if doplot
-        cla, plot(u(:,nt+1),'.-')
+        cla, plot(ucur,'.-')
         title(sprintf('t = %.3f,  len = %i',t(nt+1),curlen)), drawnow
     end
 end
@@ -181,30 +252,53 @@ if dohold && ~ish, hold off, end
 % Constructs the result of one time chunk at fixed discretization
     function U = onestep(y)
         global x
-        x = y;
-        n = length(x);
-        if n == 2, U = [0;0]; return, end
-        U0 = feval(u(:,nt),x);
-        % See what the boundary replacement actions will be.
-        [ignored,B,q,rows] = feval( diffop & bc, n, 'bc' );
-        % Mass matrix is I except for algebraic rows for the BCs.
-        M = speye(n);  M(rows,:) = 0;
 
-        if usermass
-            M = userM*M;
+        if length(y) == 2, U = [0;0]; return, end
+        
+        % set the global variable x
+        x = y;
+        
+        % Evaluate the chebfun at discrete points
+        U0 = feval(ucur,y);
+
+        % This depends only on the size of n. If this is the same, reuse
+        if isempty(n) || n ~= length(y)
+            n = length(y);
+            % See what the boundary replacement actions will be.
+            [ignored,B,q,rows] = feval( diffop & bc, n, 'bc' );
+            % Mass matrix is I except for algebraic rows for the BCs.
+            M = speye(syssize*n);    M(rows,:) = 0;
+        
+            % Multiply by user-defined mass matrix
+            if usermass, M = userM*M; end
+            
         end
         
-        % Magic line: Convert the string spec into a working callable function
-        % at the proper discretization size.
+        % ODE options (mass matrix)
         opt = odeset(opt,'mass',M,'masssing','yes','initialslope',odefun(t(nt),U0));
-        
+
+        % Solve ODE over time chunk with ode15s
         [ignored,U] = ode15s(@odefun,t(nt:nt+1),U0,opt);
-        U = U(end,:).';
         
+        % Reshape solution
+        U = reshape(U(end,:).',n,syssize);
+        
+        % The solution we'll take out and store
+        unew = U;
+        
+        % Collapse systems to single chebfun for constructor (is addition right?)
+        U = sum(U,2);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    ODEFUN   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % This is what ode15s calls.
         function F = odefun(t,U)
+            % Reshape to n by syssize
+            U = reshape(U,n,syssize);
+            
+            % Evaluate the PDEFUN
             F = pdefun(U,t,x);
+            
+            % Get the algebraic righthandsides (may be time-dependent)
             for l = 1:numel(rhs)
                 if isa(rhs{l},'function_handle')
                     q(l,1) = feval(rhs{l},t);
@@ -212,23 +306,26 @@ if dohold && ~ish, hold off, end
                     q(l,1) = rhs{l};
                 end
             end
-            
-            % replacements for the BC algebraic conditions
-            F(rows) = B*U-q;  
+
+            % replacements for the BC algebraic conditions           
+            F(rows) = B*U(:)-q; 
             
             % replacements for the nonlinear BC conditions
             j = 0;
             for kk = 1:length(nllbc)
                 j = j + 1;
-                tmp = feval(nlbcfuns{j},U,t,x);
+                tmp = feval(nlbcs{j},U,t,x);
                 F(rows(kk)) = tmp(1)-q(kk);
             end
             for kk = numel(rhs)+1-nlrbc
                 j = j + 1;
-                tmp = feval(nlbcfuns{j},U,t,x);
+                tmp = feval(nlbcs{j},U,t,x);
                 F(rows(kk)) = tmp(end)-q(kk);
             end
-           
+            
+            % Reshape to single column
+            F = F(:);
+
         end
     end
 end
@@ -245,9 +342,9 @@ function up = Diff(u,k)
 
     % Assume first-order derivative
     if nargin == 1, k = 1; end
-
+    
     % For finding the order of the RHS
-    if isnan(u), 
+    if any(isnan(u)) 
         if isempty(order), order = k;
         else order = max(order,k); end
         up = [];
@@ -255,9 +352,9 @@ function up = Diff(u,k)
     end
     
     N = length(u);
+    
     % Retrieve or compute matrix.
-    if N > 5 && length(storage) >= N && numel(storage(N).D)>=k ...
-            && ~isempty(storage(N).D{k})
+    if N > 5 && length(storage) >= N && numel(storage(N).D) >= k && ~isempty(storage(N).D{k})
         % Matrix is already in storage
     else
         % Which differentiation matrices do we need?
@@ -275,7 +372,7 @@ function up = Diff(u,k)
         end
 
     end
-    
+
     % Find the derivative by muliplying by the kth-order differentiation matrix
     up = storage(N).D{k}*u;
 end       
@@ -305,6 +402,11 @@ if nargin < 2           % Default to Chebyshev weights
     w(end) = .5*w(end);
 end
 
+if nargout > 4
+    error('chebfun:barymat:nargout',['barymat only supports differentiation ', ...
+        'matrices upto and including order 4']);
+end
+
 ii = (1:N+2:(N+1)^2)';
 Dw = repmat(w',N+1,1) ./ repmat(w,1,N+1) - eye(N+1);
 Dx = repmat(x ,1,N+1) - repmat(x',N+1,1) + eye(N+1);
@@ -321,26 +423,4 @@ if (nargout == 3), return; end
 D4 = 4./Dx .* (Dw.*repmat(D3(ii),1,N+1) - D3);
 D4(ii) = 0; D4(ii) = - sum(D4,2);
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

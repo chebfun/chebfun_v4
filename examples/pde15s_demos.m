@@ -2,18 +2,18 @@
 % Some demos of pde15s
 
 %% Advection
-close all
+clc,close all
 [d,x] = domain(-1,1);
 opts = pdeset('eps',1e-10,'abstol',1e-10,'reltol',1e-10,'plot',1);
 u = exp(3*sin(pi*x));
 plot(u); hold on
 f = @(u,D) -D(u);
-pde15s(f,0:.05:3,u,'periodic',opts);
+pde15s(f,0:.05:2,u,'periodic',opts);
 
 %% Nonuniform Advection
 clc, close all
 [d,x] = domain(-1,1);
-u = exp(3*sin(pi*x));
+u = exp(sqrt(5)*sin(pi*x))
 f = @(u,t,x,D) -(1+0.6*sin(pi*x)).*D(u);
 pde15s(f,0:.05:3,u,'periodic');
 
@@ -39,7 +39,7 @@ uu = pde15s(f,tt,u,bc,opts);
 figure, surf(uu,tt)
 
 %% Advection-diffusion3 (Time depended rhs bc)
-close all
+clc, close all
 E = 1e-1;
 [d x] = domain(-3*pi/4,pi);
 u = sin(2*x);
@@ -48,7 +48,7 @@ lbc = struct( 'op', 'neumann', 'val',0);
 rbc = struct( 'op', 'dirichlet', 'val', @(t) .1*sin(t));
 bc = struct( 'left', lbc, 'right', rbc);
 opts = pdeset('holdPlot','on');
-tt = linspace(0,3,101);
+tt = linspace(0,3,51);
 uu = pde15s(f,tt,u,bc,opts);
 figure, surf(uu,tt)
 
@@ -86,17 +86,17 @@ close all
 [d,x] = domain(-1,1);
 u = (1-x.^2).*exp(-30*(x+.5).^2);
 f = @(u,D) -D(u.^2)+.01*D(u,2);
-pde15s(f,0:.05:6,u,'dirichlet');
+pde15s(f,0:.1:4,u,'dirichlet');
 
 %% KS
-close all
+clc, close all
 [d,x] = domain(-1,1);
 I = eye(d); D = diff(d);
 u = 1 + 0.5*exp(-40*x.^2);
 bc.left = struct('op',{I,D},'val',{1,2});
 bc.right = struct('op',{I,D},'val',{1,2});
 f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
-u = pde15s(f,0:.01:.5,u,bc);
+u = pde15s(f,0:.01:2,u,bc);
 
 % %% Cahn-Hilliard - not working!
 % close all
