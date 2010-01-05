@@ -79,14 +79,19 @@ if isempty(f)
 
     % evaluation points
     fl = [a ; reshape(repmat(ends,3,1),3*length(ends),1) ; b ; setdiff(fl,[a ; ends.' ; b])];
+    if greal
+        % remove values outside interval
+        mask = (fl < interval(1)) | (fl > interval(2));
+        fl(mask) = [];
+    end
+    % sort
     [fl indx] = sort(fl);    [ignored indx2] = sort(indx);
     
-
     % where the breaks occur. Needed for yscaling in markfun plots
     breaks = [0 ; indx2(3:3:3*length(ends))  ; length(fl)]; 
     db = diff(breaks);
     top = -inf; bot = inf;
-    
+
     % line values of g
     gl = feval(g,fl);
        
@@ -193,6 +198,13 @@ if isempty(f)
                 jmpvls = gjk2(3*(j-2)+[1:3]);
                 gl(indx2(3*(loc-1)+[1 3 2]+1),k) = jmpvls;
              end
+        end
+        
+        
+        if greal
+            % remove values outside interval
+            mask = (fjk < interval(1)) | (fjk > interval(2));
+            fjk(mask) = []; gjk(mask) = [];
         end
         
         % store jumps and marks
