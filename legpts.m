@@ -65,6 +65,15 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
    [V,D] = eig(T);                       % eigenvalue decomposition
    x = diag(D); [x,i] = sort(x);         % Legendre points
    w = 2*V(1,i).^2;                      % weights
+   
+   % enforce symmetry
+   ii = 1:floor(n/2);  x = x(ii);  w = w(ii);
+   if mod(n,2)
+        x = [x ; 0 ; -flipud(x)];  w = [w  2-sum(2*w) fliplr(w)];
+   else
+       n
+        x = [x ; -flipud(x)];      w = [w fliplr(w)];
+   end
 else                                                            % Fast, see [2]
    [x ders] = alg0_Leg(n);               % nodes and P_n'(x)
    w = 2./((1-x.^2).*ders.^2)';          % weights
