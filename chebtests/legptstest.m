@@ -8,16 +8,9 @@ N = 32;
 [x2 w2] = legpts(N,'fast');
 pass(1) = norm(x1-x2,inf) + norm(w1-w2,inf) < 100*tol;
 
-
-clc
 N = 129;
 [x1 w1] = legpts(N,'GW');
 [x2 w2] = legpts(N,'fast');
-
-norm(x1-x2,inf)
-norm(w1-w2,inf)
-
-
 pass(2) = norm(x1-x2,inf) + norm(w1-w2,inf) < 100*tol;
 
 % integrate first 30 (even) powers of x correctly?

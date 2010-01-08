@@ -45,7 +45,8 @@ switch propName
         else
             %rescl = (2/diff(g.map.par(1:2)))^-g.exps(2); % scale (see feval)
             %val = g.vals(1).*diff(g.map.par(1:2)).^g.exps(2)/rescl;
-            val = g.vals(1)*2^g.exps(2);
+            if isempty(g.vals), val = NaN;
+            else val = g.vals(1)*2^g.exps(2); end
         end
     case 'rval' % value at right endpoint 
         if g.exps(2) < 0  % inf case, need to check sign
@@ -54,7 +55,8 @@ switch propName
         else          
            % rescl = (2/diff(g.map.par(1:2)))^-g.exps(1); % scale (see feval) 
            % val = g.vals(end)*diff(g.map.par(1:2)).^g.exps(1)/rescl;
-            val = g.vals(end)*2^g.exps(1);
+            if isempty(g.vals), val = NaN;
+            else val = g.vals(end)*2^g.exps(1); end
         end
     otherwise
         error('FUN:get:propname',[propName,' Is not a valid fun property'])

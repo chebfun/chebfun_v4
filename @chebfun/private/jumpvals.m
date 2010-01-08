@@ -7,6 +7,7 @@ function vals = jumpvals(funs,ends,ops,pref,scl)
 
 nfuns = numel(funs);
 vals = 0*ends;
+if nfuns == 1 && isempty(funs), vals = []; return, end
 % Endpoint values
 vals(1) = get(funs(1),'lval');
 vals(nfuns+1) = get(funs(nfuns),'rval');

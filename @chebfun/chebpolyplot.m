@@ -1,10 +1,13 @@
 function varargout = chebpolyplot(u,varargin)
 % CHEBPOLYPLOT    Display Chebyshev coefficients graphically.
 %   CHEBPOLYPLOT(U) plots the Chebyshev coefficients of a chebfun U 
-%   on a semilogy scale. If U is a row (or column) quasimatrix, only the 
-%   fist row (column) will be used.
+%   on a semilogy scale. 
 %
-%   CHEBPOLYPLOT(U,K) plots the coefficients of the funs indexed by the vector K.
+%   If U is a quasimatrix, the coefficients of the first fun in each row 
+%   (or column) are plotted. CHEBPOLYPLOT(U,K) plots only the coefficients 
+%   of the row indexed by the vector K. If U is a single chebfun but is 
+%   composed of more than one fun, then CHEBPOLYPLOT(U,K) plots only the 
+%   coefficients of the funs indexed by  K.
 %
 %   H = CHEBPOLYPLOT(U) returns a handle H to the figure.
 %
@@ -44,20 +47,30 @@ if nargin > 1
     end
 end
 
-if k == 0, k = 1:u.nfuns(1); end
+quasi = false;
+if numel(u) > 1, quasi = true; end
 
-if numel(u) > 1
-    if u(1).trans, u = u(1,:);
-    else           u = u(:,1);
+if u(1).trans, u = u.'; end
+
+if quasi
+    if k == 0, k = 1:numel(u); end
+    if any(k > numel(u))
+        error('CHEBFUN:chebpolyplot:quasi_oob', 'input chebfun has only %d rows', numel(u));
     end
-end
-if any(k > u.nfuns)
-    error('CHEBFUN:chebpolyplot:outofbounds', 'input chebfun has only %d pieces', u.nfuns);
+else
+    if k == 0, k = 1:u.nfuns(1); end
+    if any(k > u.nfuns)
+        error('CHEBFUN:chebpolyplot:funs_oob', 'input chebfun has only %d pieces', u.nfuns);
+    end
 end
 
 UK = {};
 for j = k
-    uk = chebpoly(u,j);             % coefficients of kth fun
+    if quasi,
+        uk = chebpoly(u(:,j),1);      % coefficients of kth row
+    else
+        uk = chebpoly(u,j);         % coefficients of kth fun
+    end
     uk = abs(uk(end:-1:1));         % flip
     uk(~uk) = eps*max(uk);          % remove zeros for LNT
 %     UK = [UK, {0:length(uk)-1, uk}]; % store

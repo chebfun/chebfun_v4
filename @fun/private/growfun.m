@@ -201,7 +201,7 @@ end
 
 %-------------------------------------------------------------------------
 function  [ish,g] = ishappy(op,g,pref)
-% ISHAPPY happyness test for funs
+% ISHAPPY happiness test for funs
 %   [ISH,G2] = ISHAPPY(OP,G,X,PREF) tests if the fun G is a good approximation to
 %   the function handle OP. X is the vector of Chebyshev nodes use to
 %   generate the values in G. ISH is either true or false. If ISH is true,
