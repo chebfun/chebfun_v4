@@ -71,7 +71,6 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
    if mod(n,2)
         x = [x ; 0 ; -flipud(x)];  w = [w  2-sum(2*w) fliplr(w)];
    else
-       n
         x = [x ; -flipud(x)];      w = [w fliplr(w)];
    end
 else                                                            % Fast, see [2]

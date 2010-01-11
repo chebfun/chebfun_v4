@@ -19,7 +19,7 @@ n = min(size(u,2));
 t = 1:n;
 
 if nargin > 1 && isnumeric(varargin{1}) && length(varargin{1}) == size(u,2)
-    t = varargin{1}; t = t(:);
+    t = varargin{1}; t = t(:).';
     varargin = {varargin{2:end}};
 end
 
@@ -48,7 +48,7 @@ uu(mm) = .5*(uu(mm+1)+uu(mm-1));
 if ~trans
     h = mesh(xx.',tt.',uu.',varargin{:});
 else
-    h = mesh(xx,tt,uu,varargin{:});
+    h = mesh(xx.',tt.',uu,varargin{:});
 end
 
 if nargout > 0

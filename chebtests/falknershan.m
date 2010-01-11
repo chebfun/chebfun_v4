@@ -1,5 +1,4 @@
 function pass = falknershan
-
 tol = chebfunpref('eps');
 dom = domain(0,6);
 beta = 0.5;
@@ -18,17 +17,17 @@ bcright = struct('op',D,'val',0);
 bc = struct('left',bcleft,'right',bcright);
 
 % Newton iteration
-du = Inf;  niter = 0;
-while norm(du)>1e-10*(tol/eps) && niter < 11
-  r = f(u);  
+normdu = Inf;  niter = 0;
+while normdu>1e-10*(tol/eps) && niter < 11 
+  r = f(u);
   J = dfdu(u);
   J.bc = bc;
   J.scale = norm(u);
   du = -(J\r);
   u = (u+du);
   niter = niter+1;
+  normdu = norm(du);
 end
-
 
 pass = abs( feval(diff(u,2),0) - 0.927680043004878) < 1e8*tol;
 

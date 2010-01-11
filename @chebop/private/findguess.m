@@ -23,7 +23,8 @@ while ~success && counter < 10
         feval(N.op,guess);
         success = 1;
         counter = counter+1;
-    catch exception % Should do some more accurate error catching
+    catch % Should do some more accurate error catching
+        exception = lasterror;
         if strcmp(exception.identifier,'MATLAB:badsubscript')
             counter = counter + 1;
         else

@@ -83,7 +83,7 @@ counter = 0;
 r = problemFun(u);
 
 nrmdu = Inf;
-normr = Inf;
+nnormr = Inf;
 nrmduvec = zeros(10,1);
 normrvec = zeros(10,1);
 
@@ -97,8 +97,8 @@ else
     solve_display('init',u);
 end
 
-while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter < maxStag
-    counter = counter +1;
+while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
+    counter = counter + 1;
     
     bc = setupBC();
     % If the operator is a chebop, we don't need to linearize. Else, do the
@@ -147,6 +147,7 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     normu = norm(u,'fro');
     nrmdu = norm(delta,'fro')/normu;
     normr = solNorm/normu;
+    nnormr = norm(normr);
     
     % In case of a quasimatrix, the norm calculations were taking the
     % longest time in each iterations when we used the two norm.
@@ -157,7 +158,7 @@ while nrmdu > deltol && norm(normr) > restol && counter < maxIter && stagCounter
     % the residuals (this is certainly correct if the preferred norm is
     % be the Frobenius norm).
     nrmduvec(counter) = nrmdu;
-    normrvec(counter) = norm(normr)/normu;
+    normrvec(counter) = nnormr/normu;
     lambdas(counter) = lambda;
     
     % We want a slightly different output when we do a damped Newton
@@ -211,14 +212,14 @@ end
 % Function that measures how far away we are from the solving the BVP.
 % This function takes into account the differential equation and the
 % boundary values.
-    function sn = solNorm()
+    function sn = solNorm
         sn = [0 0];
         
         % Need to check whether we satisfy BCs in a different way if we
         % have periodic BCs (i.e. we check for example whether u(0) = u(1),
         % u'(0) = u'(1) etc.).
         if strcmpi(bcFunLeft,'periodic')
-            diffOrderA = struct(A).difforder;
+%             diffOrderA = struct(A).difforder;
             for orderCounter = 0:diffOrderA - 1
                 sn(2) = sn(2) + norm(feval(diff(u,orderCounter),b)-feval(diff(u,orderCounter),a))^2;
             end
