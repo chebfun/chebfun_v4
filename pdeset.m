@@ -6,6 +6,7 @@ function varargout = pdeset(varargin)
 % does!)
 
 Names = ['Eps     ' 
+         'N       '
          'Plot    '
          'HoldPlot'];
 m = size(Names,1);
@@ -18,6 +19,7 @@ if nargin == 0,
     if nargout == 0
         odeset;
         fprintf('             Eps: [ positive scalar {1e-6} ]\n')
+        fprintf('               N: [ {[]} | positive integer  ]\n')        
         fprintf('            Plot: [ {on} | off ]\n')
         fprintf('        HoldPlot: [ on | {off} ]\n')
     else
@@ -39,14 +41,12 @@ if isstruct(varargin{1})
     varargin(1) = [];
 end
 
-if isfield(opts,'Eps')
-    ee = opts.('Eps');
-end
-if isfield(opts,'Plot')
-    doplot = opts.('Plot');
-end
-if isfield(opts,'Plot')
-    dohold = opts.('HoldPlot');
+% Remember the old values
+for k = 1:m
+    namek = strtrim(Names(k,:));
+    if isfield(opts,namek)
+        pdeopts = [ pdeopts {namek, opts.(namek)}];
+    end
 end
 
 % Parse the remaining input
@@ -76,7 +76,7 @@ opts = odeset(varargin{:});
 for j = 1:m
     opts.(strtrim(Names(j,:))) = [];
 end
-    
+
 % Attach the pde opts
 for k = 1:2:length(pdeopts)
     for j = 1:m
@@ -88,6 +88,10 @@ for k = 1:2:length(pdeopts)
             error('CHEBFUN:pdeset:UnknownOption',['Unknown input sequence: ',pdeopts{k},'.'])
         end
     end
+end
+
+if isfield(opts,'Mass') && ~isempty(opts.Mass) && ~isa(opts.Mass,'chebop') 
+    error('CHEBFUN:pdeset:Mass','Mass matrix must be a chebop');
 end
 
 varargout{1} = opts;

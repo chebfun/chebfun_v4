@@ -1,4 +1,4 @@
-function pass = falknershan
+function pass = falknerskan
 tol = chebfunpref('eps');
 dom = domain(0,6);
 beta = 0.5;
