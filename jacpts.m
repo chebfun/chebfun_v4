@@ -99,7 +99,7 @@ if ~all(interval == [-1 1])
         w = dab*w/2;
     else
         % infinite interval
-        m = maps({'unbounded'},interval); % use default map
+        m = maps(fun,{'unbounded'},interval); % use default map
         if nargout > 1
             w = w.*m.der(x.');
         end

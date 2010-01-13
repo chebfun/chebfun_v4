@@ -20,9 +20,9 @@ function D = diff(d,varargin)
 % defaults
 m = 1;
 if all(isfinite(d.ends))
-    map = maps({'linear'},d.ends);    % standard linear map
+    map = maps(fun,{'linear'},d.ends);    % standard linear map
 else
-    map = maps({'unbounded'},d.ends); % default unbounded map
+    map = maps(fun,{'unbounded'},d.ends); % default unbounded map
 end
 
 % parse inputs

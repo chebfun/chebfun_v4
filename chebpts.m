@@ -75,7 +75,7 @@ if scale
         w = dab*w/2;
     else
         % infinite interval
-        m = maps({'unbounded'},d); % use default map
+        m = maps(fun,{'unbounded'},d); % use default map
         if nargout > 1
             w = w.*m.der(x.');
         end
