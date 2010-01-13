@@ -259,7 +259,7 @@ elseif exps(2)
     mappar = [b a];
     mappar(mappar<=0) = mappar(mappar<=0)+1; 
     mappar(mappar>1) = mappar(mappar>1)-floor(mappar(mappar>1)) ;
-    map = maps({'sing',mappar},ends);
+    map = maps(fun,{'sing',mappar},ends);
 
     pref = chebfunpref;
     if all(mappar), pref.exps = {mappar(1) 0}; mappar(1) = 1; end
@@ -386,8 +386,8 @@ f = newdomain(f,oldends);
 % Adding in the log term
 if abs(ck) > 1e-13 % some kind of scale needed here
     if a == 1, a =2; end
-    if a == 2, map = maps({'sing',[.125 1]},oldends);
-    else       map = maps({'sing',[.25 1]},oldends); end
+    if a == 2, map = maps(fun,{'sing',[.125 1]},oldends);
+    else       map = maps(fun,{'sing',[.25 1]},oldends); end
     pref = chebfunpref; pref.extrapolate = 1;
     g = fun(@(x) ck*(x-oldends(1)).^(a-1).*log(x-oldends(1)),map,pref,f.scl);
     g = (2./diff(ends)).^exps(1)*setexps(g,[1-a 0]);
@@ -407,7 +407,7 @@ if flip
 
     if strcmp(f.map.name,'sing')
         pars = f.map.par;
-        f.map = maps({'sing',pars([4 3])},pars(1:2));
+        f.map = maps(fun,{'sing',pars([4 3])},pars(1:2));
     end
 end
 

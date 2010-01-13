@@ -192,7 +192,7 @@ end
 pows = pows-floor(pows); % Should be < 1;
 
 % The new map
-map = maps({'sing',pows},ends);
+map = maps(fun,{'sing',pows},ends);
 % The new exponents
 pref.exps = {newexps(1) newexps(2)};
 pref.sampletest = 0;

@@ -51,7 +51,7 @@ b = f.ends(2) - .05;
 h = cumsum(f{f.ends(1), b});
 subplot(4,2,6), plot(u,'b',h,'--g')  
 err = h - restrict(u,[f.ends(1) b]);
-;nerr(5) = norm(err,inf);
+nerr(5) = norm(err,inf);
 pass(5) = nerr(5) < tol;
 
 f = chebfun({'exp(2*x)+pi','1./(1-x).^2'},[-1 0 1],'exps',[0 0 -2]);

@@ -29,6 +29,7 @@ elseif (subint(1) > ends(1) && g.exps(1)) || (subint(2) < ends(2) && g.exps(2)) 
     if isfield(g.map,'inherited') && g.map.inherited
         pars = g.map.par; pars(1:2) = [];
         map = maps(fun,{g.map.name,pars},subint);
+%         map = maps({g.map.name,pars},subint);
     else
         map = linear(subint);
     end
