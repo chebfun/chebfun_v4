@@ -137,7 +137,7 @@ if isempty(f)
             if ~isempty(mask)
                 mask([1 end]) = [];
             end
-            masked = gl(mask);
+            masked = gl(mask,k);
             sd = std(masked);
             bot = min(bot,min(masked)-sd);
             top = max(top,max(masked)+sd);
