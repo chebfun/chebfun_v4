@@ -45,8 +45,8 @@ title('The solution of the BVP (2)')
 %
 % (u_1)'' - sin(u_2) = 0
 % (u_2)'' + cos(u_1) = 0                BVP(3)
-% u_1(-1) = 1,      (u_2)''(-1) = 0
-% (u_1)''(1) = 0,   u_2(1) = 0
+% u_1(-1) = 1,      (u_2)'(-1) = 0
+% (u_1)'(1) = 0,   u_2(1) = 0
 
 % By using cells of anonymous functions, we can solve the problem as shown
 % in the following lines:
