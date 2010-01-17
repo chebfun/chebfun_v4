@@ -3,7 +3,11 @@ function [y,x] = minandmax(f,dim)
 %  Y = MINANDMAX(F) returns the range of the chebfun F such that Y(1) = min(F)
 %  and Y(2) = max(F). 
 %
-%  [Y X] = MINANDMAX(F) returns also points X such that F(X(j)) = Y(j), j = 1,2.
+%  [Y X] = MINANDMAX(F) returns also points X such that F(X(j)) = Y(j), j =
+%  1,2.
+%
+%  [Y X] = MINANDMAX(F,'local') returns not just the global minimum and 
+%  maximum values, but all of the local extrema (i.e. local min and max).
 %
 %  Y = MINANDMAX(F,DIM) operates along the dimension DIM of the quasimatrix
 %  F. If DIM represents the continuous variable, then Y is a vector.
@@ -34,6 +38,15 @@ if nargin==1
     else
       dim = 1;
     end
+end
+
+if strcmpi(dim,'local') 
+  if numel(f) == 1
+      [y x] = localminandmax(f);
+      return
+  else
+      error('CHEBFUN:minadmax:localminandmax','''local'' minandmax is not defined for quasimatrices');
+  end
 end
 
 % Translate everthing to column quasimatrix. 
@@ -186,3 +199,21 @@ end
 h = ((1-Fs)/2).*f + ((1+Fs)/2).*g ;
 end
 
+function [y x] = localminandmax(f)
+    % Compute the turning points
+    df = diff(f);
+    x = roots(df);
+    
+    % Deal with the end-points
+    d = domain(f);
+    xends = d.ends([1 end]);
+    dfends = feval(df,xends);
+    if dfends(1)~=0
+        x = [xends(1) ; x];
+    end
+    if dfends(2)~=0
+            x = [x ; xends(2)];
+    end
+    
+    y = feval(f,x);
+end

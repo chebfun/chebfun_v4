@@ -82,17 +82,18 @@ switch index(1).type
                 error('CHEBFUN:subsasgn:dimensions',...
                         'Subscripted assignment dimension mismatch.')
             end
-            [a,b] = domain(fcol);
+            ends = get(fcol,'ends'); a = ends(1); b = ends(end);
             if min(s) < a || max(s) > b
                 error('CHEBFUN:subsasgn:outbounds',...
                     'Cannot introduce endpoints outside domain.')
             end
-            stemp = s;
-           % s(find(s==b)) = [];
-            s(s==a) = []; s(s==b) = [];             
+            stemp = s;    
+            s = setdiff(s,ends);
+            impsends = f.imps(1,[1 end]);
             for i = 1:length(s)
                 fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
             end 
+            fcol.imps([1 end]) = impsends;
             for i = 1:length(col)   
                 [mem,loc] = ismember(stemp,fcol(i).ends);
                % fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 

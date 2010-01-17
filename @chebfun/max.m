@@ -4,6 +4,9 @@ function [y,x] = max(f,g,dim)
 %
 % [Y,X] = MAX(F) also returns the argument (location) where the maximum 
 % value is achieved. Multiple locations are not found reliably. 
+%
+% [Y,X] = MAX(F,'local') returns not just the global maximum and 
+% its position, but all of the local maxima.
 % 
 % H = MAX(F,G), where F and G are chebfuns defined on the same domain,
 % returns a chebfun H such that H(x) = max(F(x),G(x)) for all x in the
@@ -26,6 +29,14 @@ function [y,x] = max(f,g,dim)
 % Copyright 2002-2009 by The Chebfun Team. 
 
 if nargin==2
+  if strcmpi(g,'local') 
+      if numel(f) == 1
+          [y x] = localmax(f);
+          return
+      else
+          error('CHEBFUN:min:localmax','''local'' max is not defined for quasimatrices');
+      end
+  end
   if nargout > 1
     error('CHEBFUN:max:twoout',...
       'Max with two inputs and two outputs is not supported.')
@@ -152,3 +163,25 @@ end
 
 end
 
+
+function [y x] = localmax(f)
+    % Compute the turning points
+    df = diff(f);
+    x = roots(df);
+    % Detect the maxima
+    idx = feval(diff(df),x) < 0;
+    x = x(idx);
+    
+    % Deal with the end-points
+    d = domain(f);
+    xends = d.ends([1 end]);
+    dfends = feval(df,xends);
+    if dfends(1)<0  && ((~isempty(x) && xends(1) ~= x(1)) || isempty(x))
+        x = [xends(1) ; x];
+    end
+    if dfends(2)>0 && ((~isempty(x) && xends(2) ~= x(end)) || isempty(x))
+            x = [x ; xends(2)];
+    end
+    
+    y = feval(f,x);
+end
