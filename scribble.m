@@ -15,7 +15,8 @@ function f = scribble(s)
 %  $Date$:
 
 L = length(s);
-f0 = chebfun;
+f0 = [];
+ends = [0 1];
 for j = 1:L
    switch upper(s(j))
       case {'A'}, t = c([0 .4+1i .8 .6+.5i .2+.5i]);
@@ -64,18 +65,29 @@ for j = 1:L
       case {' '}, t = [];
       otherwise, 
    end
+   
    if ~isempty(t)
-       f0 = [f0; t+(j-1)];
+       f0 = [f0 t];
    end
+   
 end
-f0 = 2*f0/L-1;     % rescale real part of range to [-1,1]
-f = chebfun;
-f{-1,1} = f0;      % rescale domain to [-1,1]
+
+% rescale to [-1 1]
+ends = 2*[0:ends(1)]/ends(1)-1;
+% adjust the maps accordingly
+for k = 1:numel(f0);
+    m = maps(fun,{'linear',ends(k:k+1)});
+    f0(k).map = m;
+end
+
+f = chebfun(0,ends);
+f.funs = f0;
 
 function cf = c(v)
-    cf = chebfun;
+    cf = [];
     for k = 2:length(v)
-       cf = [cf; chebfun(v([k-1 k]),[0 1])];
+       cf = [cf (fun(v([k-1 k]),ends)+(j-1))*2/L-1];
+       ends = ends+1;
     end
 end
 
