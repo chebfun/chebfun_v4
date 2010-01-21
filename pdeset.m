@@ -1,14 +1,37 @@
 function varargout = pdeset(varargin)
-% Set options for pde15s
+%PDESET Set options for pde15s
+% PDESET('NAME1',VALUE1,'NAME2',VALUE2,...) creates options for the
+% chebfun pde15s routine. It acts as a gateway to odeset for the usual
+% ode options for use in advancing through time, in addition to some new
+% options.
 %
-% (At the moment it wont retain inputs as
-%   opts = odeset(opts, ...);
-% does!)
+% OPTIONS = ODESET(OLDOPTS,'NAME1',VALUE1,...) alters an existing options
+% structure OLDOPTS.
+%
+% PDESET PROPERTIES (In addition to ODESET properties)
+%
+% Eps - Tolerance to use in solving the PDE [ positive scalar {1e-6} ].
+%
+% N - Turn off spacial adaptivity. [{NaN} | positive integer  ]
+%   Use a fixed spacial grid of size N. If N is NaN, then the automatic 
+%   procedure is used.  
+%
+% Plot - Plot the solution at the end of every time chunk. [ {on} | off ]
+%   Turning this off can improve speed considerably.
+%
+% HoldPlot - Hold the plots after each chunk. [ on | {off} ]
+%
+% YLim - Fix the limits of the Y axis if plotting. [ 2x1 vector | {NaN} ]
+%   If Ylim is NaN then the imits are determined automatically.
+%
+% PlotOpts - Change the plotting options. [ string | ''-''].
 
-Names = ['Eps     ' 
-         'N       '
-         'Plot    '
-         'HoldPlot'];
+Names = ['Eps      ' 
+         'N        '
+         'Plot     '
+         'HoldPlot '
+         'YLim     '
+         'PlotStyle']; 
 m = size(Names,1);
 
 % initialise
@@ -19,9 +42,11 @@ if nargin == 0,
     if nargout == 0
         odeset;
         fprintf('             Eps: [ positive scalar {1e-6} ]\n')
-        fprintf('               N: [ {[]} | positive integer  ]\n')        
+        fprintf('               N: [ {NaN} | positive integer  ]\n')        
         fprintf('            Plot: [ {on} | off ]\n')
         fprintf('        HoldPlot: [ on | {off} ]\n')
+        fprintf('            YLim: [ 2x1 vector | {NaN} ]\n')
+        fprintf('       PlotStyle: [ string | ''-'']\n')
     else
         % Get the ode opts
         opts = odeset;

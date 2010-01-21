@@ -4,9 +4,8 @@
 %% Advection
 clc,close all
 [d,x] = domain(-1,1);
-opts = pdeset('eps',1e-10,'abstol',1e-10,'reltol',1e-10,'plot',1);
+opts = pdeset('eps',1e-10,'abstol',1e-10,'reltol',1e-10,'plot',1,'HoldPlot',1,'PlotStyle','.-b');
 u = exp(3*sin(pi*x));
-plot(u); hold on
 f = @(u,D) -D(u);
 pde15s(f,0:.05:2,u,'periodic',opts);
 
@@ -96,7 +95,8 @@ u = 1 + 0.5*exp(-40*x.^2);
 bc.left = struct('op',{I,D},'val',{1,2});
 bc.right = struct('op',{I,D},'val',{1,2});
 f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
-u = pde15s(f,0:.01:2,u,bc);
+opts = pdeset('Ylim',[-30 30])
+u = pde15s(f,0:.01:2,u,bc,opts);
 
 % %% Cahn-Hilliard - not working!
 % close all
@@ -108,7 +108,7 @@ u = pde15s(f,0:.01:2,u,bc);
 % lbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
 % rbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
 % f = @(t,x,u,D) -D(u,4) + D(u.^3,2)-D(u,2);
-% tt = linspace(0,.0005,101);
+% tt = linspace(0,.05,101);
 % uu = pde15s(f,tt,u,{lbc rbc},opts);
 % surf(uu,tt)
 

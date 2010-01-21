@@ -11,7 +11,7 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 % is the solution at TT(k). For systems, the solution is returned as a
 % cell array of quasimatrices.
 %
-% Example 1: Nonlinear Advection
+% Example 1: Nonuniform advection
 %   [d,x] = domain(-1,1);
 %   u = exp(3*sin(pi*x));
 %   f = @(u,t,x,D) -(1+0.6*sin(pi*x)).*D(u);
@@ -65,13 +65,14 @@ end
 tol = 1e-6;             % 'eps' in chebfun terminology
 doplot = 1;             % plot after every time chunk?
 dohold = 0;             % hold plot?
+plotopts = '-';         % Plot Style
 
 % Parse the inputs
 if numel(varargin) == 2
     opt = varargin{1};     opt.N = varargin{2};
 elseif numel(varargin) == 1
     if isstruct(varargin{1})
-        opt = varargin{1}; nonadaptN = opt.N;
+        opt = varargin{1};
     else
         opt = pdeset;      opt.N = varargin{1};
     end
@@ -79,19 +80,22 @@ else
     opt = pdeset;
 end
 optN = opt.N;
+if isempty(optN), optN = NaN; end
     
 % PDE solver options
 if ~isempty(opt.Eps), tol = opt.Eps; end
 if ~isempty(opt.Plot), doplot = strcmpi(opt.Plot,'on'); end
 if ~isempty(opt.HoldPlot), dohold = strcmpi(opt.HoldPlot,'on'); end
+if ~isempty(opt.PlotStyle), plotopts = opt.PlotStyle; end
+YLim = opt.YLim;
 
 % ODE tolerances
 atol = odeget(opt,'AbsTol',1e-7);
 rtol = odeget(opt,'RelTol',1e-7);
 % AbsTol and RelTol must be <= Tol/10
-if isempty(optN)
+if isnan(optN)
     atol = min(atol, tol/10);
-    rtol = min(atol, tol/10);
+    rtol = min(rtol, tol/10);
 end
 
 % Get the domain
@@ -167,7 +171,7 @@ if isfield(bc,'left') && numel(bc.left) > 0
         if isfield(bc.left(k),'val') && ~isempty(bc.left(k).val)
                 rhs{k} = bc.left(k).val;
         else    rhs{k} = 0; end
-        bc.left(k).val = 0;  % set to homogenious (to remove function handles
+        bc.left(k).val = 0;  % set to homogeneous (to remove function handles
     end     
 elseif isfield(bc,'right') 
     bc.left = [];
@@ -221,7 +225,7 @@ if syssize > 1
 end
 
 % simplify initial condition  to tolerance or fixed size in optN
-if isempty(optN)
+if isnan(optN)
     u0 = simplify(u0,tol);
 end
 
@@ -231,23 +235,25 @@ vscl = u0.scl;
 % Plotting setup
 if doplot
     cla, shg, set(gcf,'doublebuf','on')
-    plot(u0,'.-'), drawnow,
+    plot(u0,plotopts)
     if dohold, ish = ishold; hold on, end
+    if ~isempty(YLim), ylim(YLim);    end
+    drawnow
 end
 
 % initial condition
 ucur = u0;
 % storage
 if syssize == 1
-    uu = repmat(chebfun(0,d),1,length(tt));
-    uu(:,1) = ucur;
+%     uu = repmat(chebfun(0,d),1,length(tt));
+%     uu(:,1) = ucur;
 else
     % for systems, each functions is stored as a quasimatrix in a cell array
     uu = cell(1,syssize);
     for k = 1:syssize
-        tmp = repmat(chebfun(0,d),1,length(tt));
-        tmp(:,1) = ucur(:,k);
-        uu{k} = tmp;
+%         tmp = repmat(chebfun(0,d),1,length(tt));
+%         tmp(:,1) = ucur(:,k);
+%         uu{k} = tmp;
     end
 end
 
@@ -262,7 +268,7 @@ for nt = 1:length(tt)-1
     for k = 1:syssize, curlen = max(curlen,length(ucur(:,k))); end
     
     % solve one chunk
-    if isempty(optN)
+    if isnan(optN)
         chebfun( @(x) vscl+onestep(x), d, 'eps', tol, 'minsamples',curlen, ...
             'resampling','on','splitting','off','sampletest','off','blowup','off');
     else
@@ -273,7 +279,7 @@ for nt = 1:length(tt)-1
     % get chebfun of solution from this time chunk
     for k = 1:syssize, ucur(:,k) = chebfun(unew(:,k),d); end
     
-    if isempty(optN) 
+    if isnan(optN) 
         ucur = simplify(ucur,tol);
     end
 
@@ -290,7 +296,8 @@ for nt = 1:length(tt)-1
     
     % plotting
     if doplot
-        cla, plot(ucur,'.-')
+        cla, plot(ucur,plotopts);
+        if ~isempty(YLim), ylim(YLim); end
         title(sprintf('t = %.3f,  len = %i',tt(nt+1),curlen)), drawnow
     end
 end
@@ -360,7 +367,7 @@ end
             % Evaluate the PDEFUN
             F = pdefun(U,t,x);
             
-            % Get the algebraic righthandsides (may be time-dependent)
+            % Get the algebraic right-hand sides (may be time-dependent)
             for l = 1:numel(rhs)
                 if isa(rhs{l},'function_handle')
                     q(l,1) = feval(rhs{l},t);
@@ -486,7 +493,6 @@ if (nargout == 3), return; end
 D4 = 4./Dx .* (Dw.*repmat(D3(ii),1,N+1) - D3);
 D4(ii) = 0; D4(ii) = - sum(D4,2);
 end
-
 
 
 
