@@ -3,7 +3,7 @@ function f = vectorcheck(f,x,warn)
 
 % Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
 try
-    dbz_state = warning('off','MATLAB:divideByZero');   % turn off warning because of removable sings
+    dbz_state = warning('off');   % turn off warnings off
     v = f(x(:));
     warning(dbz_state);
     if any(size(v) ~= size(x(:)))

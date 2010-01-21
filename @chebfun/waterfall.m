@@ -9,7 +9,7 @@ function varargout = waterfall(u,varargin)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-numpts = 51;
+numpts = chebfunpref('plot_numpts');
 
 trans = u(:,1).trans;
 if trans

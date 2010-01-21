@@ -88,7 +88,7 @@ for i = 1:length(ops)
             end
         case 'char'
             if ~isempty(str2num(op))
-                error('CHEBFUN:ctor_adapt:stringvals',['A chebfun cannot be constructed from a string with '...
+                error('CHEBFUN:ctor_adapt:stringvals',['A chebfun cannot be constructed from a string with'...
                     ' numerical values.'])
             end
 %             op = inline(op);

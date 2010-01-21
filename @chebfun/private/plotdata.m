@@ -94,8 +94,16 @@ if isempty(f)
 
     % line values of g
     gl = feval(g,fl);
-    if fl(1) == a, gl(1) = get(g.funs(1),'lval'); end
-    if fl(end) == b, gl(end) = get(g.funs(end),'rval'); end
+    if fl(1) == a, 
+        for k = 1:size(gl,2)
+            gl(1,k) = get(g(:,1).funs(1),'lval'); 
+        end
+    end
+    if fl(end) == b, 
+        for k = 1:size(gl,2)
+            gl(end,k) = get(g(:,k).funs(end),'rval'); 
+        end
+    end
        
     % deal with marks breakpoints
     for k = 1:numel(g)

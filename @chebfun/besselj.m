@@ -12,7 +12,7 @@ if r > 1 && c > 1
 end
 
 if max(size(nu)) > 1 && min(size(F)) > 1
-    error('CHEBUN:besselj:quasi','Cannot handle both a vector of nu and a quasimatrix input.');
+    error('CHEBUN:besselj:quasi','Cannot handle both a vector of nu and a quasimatrix input in besselj.');
 end
 
 if c == 1 && r == 1 % single nu
