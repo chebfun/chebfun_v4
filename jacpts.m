@@ -91,12 +91,12 @@ end
 
 % rescale to arbitrary interval
 if ~all(interval == [-1 1])
-    dab = diff(interval);
-    
     if ~any(isinf(interval))
         % finite interval
-        x = (x+1)/2*dab + interval(1);
-        w = dab*w/2;
+        c1 = .5*sum(interval); 
+        c2 = .5*diff(interval);
+        w = c2^(alpha+beta+1)*w;
+        x = c1+c2*x;        
     else
         % infinite interval
         m = maps(fun,{'unbounded'},interval); % use default map
