@@ -207,6 +207,10 @@ function  [ish,g] = ishappy(op,g,pref)
 %   generate the values in G. ISH is either true or false. If ISH is true,
 %   G2 is the simplified version of G. PREF is the chebfunpref structure.
 
+if isfield(pref,'scale')
+    g.scl.v = max(g.scl.v,pref.scale);
+end
+
 n = g.n;
 g = simplify(g,pref.eps,pref.chebkind);
 ish = g.n < n;

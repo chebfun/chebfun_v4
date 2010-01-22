@@ -23,6 +23,9 @@ function f = chebfun(varargin)
 % CHEBFUN(F,'map',{MAPNAME,MAPPARS}) allows the use of mapped Chebyshev
 % expansions. See help chebfun/maps for more information.
 %
+% CHEBFUN(F,'scale',SCALE) defines the relative accuracy of the constructed
+% chebfun relative to the value given by SCALE.
+%
 % CHEBFUN(F1,F2,...,Fm,ENDS), where ends is an increasing vector of length
 % m+1, constructs a piecewise smooth chebfun from the functions F1,...,Fm.
 % Each function Fi can be a string, a function handle or a doubles array,
@@ -112,6 +115,9 @@ else
             elseif strcmpi('degree',varargin{k})
                 pref.n = varargin{k+1};
                 k = k+2;
+            elseif strcmpi('scale',varargin{k})
+                pref.scale = varargin{k+1};
+                k = k+2;                
             elseif strcmpi('singmap',varargin{k})
                 sings = varargin{k+1};
                 k = k+2;               
