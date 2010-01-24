@@ -96,7 +96,7 @@ if isempty(f)
     gl = feval(g,fl);
     if fl(1) == a, 
         for k = 1:size(gl,2)
-            gl(1,k) = get(g(:,1).funs(1),'lval'); 
+            gl(1,k) = get(g(:,k).funs(1),'lval'); 
         end
     end
     if fl(end) == b, 
@@ -109,11 +109,7 @@ if isempty(f)
     for k = 1:numel(g)
         gk = g(:,k);
         endsk = get(gk,'ends');
-        
-%         % get the marks
-%         fmk = get(gk,'points');
-%         gmk = get(gk,'vals');
-       
+
         % With markfuns we need to adjust the vals when getting marks
         fmk = []; gmk = []; expsk = [];
         for j = 1:gk.nfuns

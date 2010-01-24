@@ -100,7 +100,7 @@ elseif isa(f1,'double')
             end
         end
         if fout.nfuns == f2.nfuns
-            fout.imps = 1./f2.imps;
+            fout.imps = f1./f2.imps;
         end
         fout.jacobian = anon('@(u) diag(-f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});
         fout.ID = newIDnum();
