@@ -2,10 +2,11 @@ function f = vectorcheck(f,x,warn)
 % Try to determine whether f is vectorized. 
 
 % Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+
+dbz_state = warning;    % store warning state
 try
-    dbz_state = warning('off');   % turn off warnings off
+    warning off         % turn off warnings off
     v = f(x(:));
-    warning(dbz_state);
     if any(size(v) ~= size(x(:)))
         if nargout == 1
             if warn
@@ -35,7 +36,11 @@ catch %ME
         rethrow(lasterror)
     end
     
+    warning(dbz_state);     % restore warnings
+    
 end
+
+warning(dbz_state);     % restore warnings
 
 end
 

@@ -1,6 +1,11 @@
 function [x,w] = legpts(n,varargin)
 %LEGPTS  Legendre points and Gauss Quadrature Weights.
-%  X = LEGPTS(N) returns N Legendre points X in (-1,1).
+%  LEGPTS(N) returns N Legendre points X in (-1,1).
+%
+%  LEGPTS(N,D) scales the nodes and weights for the domain D. D can be
+%  either a domain object or a vector with two components. If the interval
+%  is infinite, the map is chosen to be the default 'unbounded map' with
+%  mappref('parinf') = [1 0] and mappref('adaptinf') = 0.
 %
 %  [X,W] = LEGPTS(N) also returns a row vector of weights for Gauss quadrature.
 %
@@ -9,8 +14,6 @@ function [x,w] = legpts(n,varargin)
 %       which is best for when N is small. METHOD = 'FAST' will use the
 %       Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
 %       By default LEGPTS uses 'GW' when N < 128.
-%
-%  [X,W] = LEGPTS(N,[A,B]) scales the nodes and weights for the finite interval [A,B].
 %
 %  See also chebpts and jacpts.
 %

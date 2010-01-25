@@ -3,13 +3,16 @@ function varargout = mesh(u,varargin)
 %
 %  MESH(U) or MESH(U,T) where LENGTH(T) = MIN(SIZE(U))
 %
+%  MESH(U,'NUMPTS',N) or MESH(U,T,'NUMPTS',N) changes the number of points
+%  used in the mesh. (The default is 201).
+%
 %  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %  Copyright 2002-2009 by The Chebfun Team. 
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-numpts = 51;
+numpts = 201;
 
 trans = u(:,1).trans;
 if trans
@@ -21,6 +24,11 @@ t = 1:n;
 if nargin > 1 && isnumeric(varargin{1}) && length(varargin{1}) == size(u,2)
     t = varargin{1}; t = t(:).';
     varargin = {varargin{2:end}};
+end
+
+if numel(varargin) > 1 && strcmpi(varargin{1},'numpts')
+    numpts = varargin{2};
+    varargin(1:2) = [];
 end
 
 if length(t)~=n

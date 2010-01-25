@@ -65,6 +65,12 @@ if nargin > 3
     end
 end
 
+if nargout > 1 && any(isinf(interval)) % infinite intervals not yet supported
+                                       % (How do we scale the weights?) 
+    error('CHEBFUN:jacpts:infinterval', ...
+    'jacpts does not yet support infinite intervals');
+end
+
 % decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast')
     ab = a + b;
@@ -98,7 +104,7 @@ if ~all(interval == [-1 1])
         w = c2^(alpha+beta+1)*w;
         x = c1+c2*x;        
     else
-        % infinite interval
+        % infinite interval (not yet supported)
         m = maps(fun,{'unbounded'},interval); % use default map
         if nargout > 1
             w = w.*m.der(x.');

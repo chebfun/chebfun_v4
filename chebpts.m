@@ -78,6 +78,8 @@ if scale
         m = maps(fun,{'unbounded'},d); % use default map
         if nargout > 1
             w = w.*m.der(x.');
+            if isinf(d(1)), w(1) = 0; end
+            if isinf(d(end)), w(end) = 0; end
         end
         x = m.for(x);
         x([1 end]) = d([1 end]);
