@@ -51,9 +51,12 @@ F = linop(@matrix,@op,d);
 
 % Functional form. At each x, do an adaptive quadrature.
   function v = op(u)
-    % Result can be resolved relative to norm(u).
+    % Result can be resolved relative to norm(u). (For instance, if the
+    % kernel is nearly zero by cancellation on the interval, don't try to
+    % resolve it relative to its own scale.) 
     scale = norm(u);
-    int = @(x) sum(u.*chebfun(@(y) k(x,y),d,'resampling',false,'splitting',true,'exps',{0 0}));
+    opt = {'resampling',false,'splitting',true,'exps',{0 0}};
+    int = @(x) sum(u.* (chebfun(@(y) scale+k(x,y),d,opt{:})-scale) );
     v = chebfun( @(x) scale+int(x), d,'sampletest',false,'resampling',false,'exps',{0 0},'vectorize');
     v = v-scale;
   end
