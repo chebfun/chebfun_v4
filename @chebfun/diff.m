@@ -6,8 +6,13 @@ function Fout = diff(F,n)
 %
 % DIFF(F,N) is the Nth derivative of F.
 %
-% DIFF(F,u) where u is a chebfun returns the Jacobian of the chebfun F 
-% with respect to the chebfun u. Either F or u or both can be a quasimatrix.
+% DIFF(F,ALPHA) when ALPHA is not an integer offers some support for 
+% fractional derivatives (of degree ALPHA) of F.
+%
+% DIFF(F,U) where U is a chebfun returns the Jacobian of the chebfun F 
+% with respect to the chebfun U. Either F, U, or both can be a quasimatrix.
+%
+% See also chebfun/fracdiff, chebfun/jacobian
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -24,7 +29,6 @@ else
     end
 end
 
-
 % -------------------------------------------------------------------------
 function F = diffcol(f,n)
 
@@ -34,10 +38,16 @@ tol = max(chebfunpref('eps')*10, 1e-14) ;
 
 F = f;
 funs = f.funs;
-exps = get(f,'exps');
 ends = get(f,'ends');
 F.jacobian = anon(' @(u) diff(domain(f),n) * jacobian(f,u)',{'f' 'n'},{f n});
 F.ID = newIDnum;
+
+% Fractional derivatives are treated seperately
+if round(n) ~= n
+    F = fracdiff(f,n);
+    n = 0; 
+end
+
 for j = 1:n % loop n times for nth derivative
     
     % differentiate every piece and rescale
@@ -46,31 +56,6 @@ for j = 1:n % loop n times for nth derivative
         F.scl = max(F.scl, funs(i).scl.v);
     end
     F.funs = funs;
-    
-    % update function values in the first row of imps:
-    %if ~isinf(F.imps(1,1))
-    %    if exps(1,1) < 0
-    %        F.imps(1,1) = inf;
-    %    else
-    %        F.imps(1,1) = feval(F.funs(1),ends(1));      
-    %    end
-    %%end
-    %%for i=2:F.nfuns
-    %    if ~isinf(F.imps(1,i))
-    %        if (exps(i-1,2)<0 || exps(i,1)<0)       
-    %            F.imps(1,i) = inf;
-    %        else
-    %            F.imps(1,i) = .5*(feval(F.funs(i-1),ends(i))+feval(F.funs(i),ends(i)));
-    %        end
-    %    end
-    %end
-    %if ~isinf(F.imps(1,end))
-    %    if exps(end,2) < 0
-    %        F.imps(1,end) = inf;
-    %    else
-    %        F.imps(1,end) = feval(F.funs(F.nfuns),ends(end));      
-    %    end
-    %end   
 
     F.imps(1,:) = jumpvals(F.funs,ends);
     
