@@ -76,7 +76,7 @@ end
 ends = 2*[0:ends(1)]/ends(1)-1;
 % adjust the maps accordingly
 for k = 1:numel(f0);
-    m = maps(fun,{'linear',ends(k:k+1)});
+    m = maps(fun,{'linear'},ends(k:k+1));
     f0(k).map = m;
 end
 
