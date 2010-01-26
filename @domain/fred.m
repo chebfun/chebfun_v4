@@ -54,11 +54,9 @@ F = linop(@matrix,@op,d);
     % Result can be resolved relative to norm(u). (For instance, if the
     % kernel is nearly zero by cancellation on the interval, don't try to
     % resolve it relative to its own scale.) 
-    scale = norm(u);
-    opt = {'resampling',false,'splitting',true,'exps',{0 0}};
-    int = @(x) sum(u.* (chebfun(@(y) scale+k(x,y),d,opt{:})-scale) );
-    v = chebfun( @(x) scale+int(x), d,'sampletest',false,'resampling',false,'exps',{0 0},'vectorize');
-    v = v-scale;
+    opt = {'resampling',false,'splitting',true,'exps',{0 0},'scale',norm(u)};
+    int = @(x) sum(u.* (chebfun(@(y) scale+k(x,y),d,opt{:})));
+    v = chebfun( int, d,'sampletest',false,'resampling',false,'exps',{0 0},'vectorize','scale',norm(u));
   end
 
 % Matrix form. At given n, multiply function values by CC quadrature

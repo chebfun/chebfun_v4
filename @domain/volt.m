@@ -39,12 +39,10 @@ V = linop(@matrix,@op,d,-1);
     % Result can be resolved relative to norm(u). (For instance, if the
     % kernel is nearly zero by cancellation on the interval, don't try to
     % resolve it relative to its own scale.) 
-    scale = norm(u);
     opt = {'resampling',false,'splitting',true,'exps',{0 0}};
     % Return a chebfun for integrand at any x
-    h = @(x) (chebfun(@(y) scale+u(y).*k(x,y),[d.ends(1) x],opt{:}) - scale); 
-    v = chebfun(@(x) scale+sum(h(x)), d ,'exps',{0 0},'vectorize');
-    v = v-scale;
+    h = @(x) (chebfun(@(y) u(y).*k(x,y),[d.ends(1) x],opt{:},'scale',norm(u))); 
+    v = chebfun(@(x) sum(h(x)), d ,'exps',{0 0},'vectorize','scale',norm(u));
   end
 
 % Matrix form. Each row of the result, when taken as an inner product with
