@@ -16,7 +16,7 @@ function f = chebfun(varargin)
 % CHEBFUN(F,[A B],NP) specifies the interval of definition and the
 % number NP of Chebyshev points.
 %
-% CHEBFUN(F,'exps',{EXP1 EXP2}) allows the definition of singularities
+% CHEBFUN(F,'exps',[EXP1 EXP2]) allows the definition of singularities
 % in the function F at the end points of the interval. See help 
 % chebfun/blowup for more information.
 %
@@ -73,11 +73,9 @@ sings = []; % Default
 % Chebfun preferences:
 if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')
     pref = varargin{nargin};
-    if ~isfield(pref,'vecwarn'), pref.vecwarn = 1; end
     argin = varargin(1:end-1);
 else
     pref = chebfunpref;
-    pref.vecwarn = 1;
     % Find out if call changes preferences
     argin = varargin(1);
     k = 2; j = 2;
@@ -110,8 +108,14 @@ else
                 pref.exps = varargin{k+1};
                 k = k+2;
             elseif strcmpi('vectorize',varargin{k}) || strcmp('vectorise',varargin{k})
-                pref.vecwarn = 0;
+                pref.vectorize = 0;
                 k = k+1;  
+            elseif strcmpi('vectorcheck',varargin{k})
+                pref.vectorcheck = varargin{k+1};
+                k = k+2;                  
+            elseif strcmpi('extrapolate',varargin{k})
+                pref.extrapolate = varargin{k+1};
+                k = k+2;                  
             elseif strcmpi('degree',varargin{k})
                 pref.n = varargin{k+1};
                 k = k+2;

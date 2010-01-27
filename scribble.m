@@ -62,9 +62,15 @@ for j = 1:L
                c([.35 .45 .45+.05i .35+.05i .35])];
       case {'.'}, t = c([0 .05 .05+.05i .05i 0]);
       case {','}, t = c([-0.1-.15i -.05-.15i .1+.05i .05+.05i -.1-.15i]);
+      case {'-'}, t = c([.1+.5i .7+.5i]);
+      case {'+'}, t = c([.5i .7+.5i .4+.5i .4+.9i .4+.1i]);
       case {' '}, t = [];
       otherwise, 
-   end
+          t = [];
+          warning('CHEBFUN:scribble:unknownchar', ...
+              ['"', s(j), '" is not supported by scribble. (But please feel ', ...
+              'free write it and email it to chabfun@maths.ox.ac.uk)']);
+      end
    
    if ~isempty(t)
        f0 = [f0 t];

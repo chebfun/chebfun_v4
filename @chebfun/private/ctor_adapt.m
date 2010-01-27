@@ -47,7 +47,7 @@ if isfield(pref,'exps')
     if numel(exps) == 1, 
         exps = {exps{ones(1,2*numel(ends)-2)}};
     elseif numel(exps) == 2, 
-        if pref.blowup, ee = []; else ee = 0; end
+        if pref.blowup, ee = NaN; else ee = 0; end
         tmp = repmat({ee},1,2*numel(ends)-4);
         exps = [exps{1} tmp exps{2}];
     elseif numel(exps) == numel(ends)
@@ -97,10 +97,10 @@ for i = 1:length(ops)
                 error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input'); 
             end
             op = eval(['@(' depvar{:} ')' op]);
-            op = vectorcheck(op,ends(i:i+1),pref.vecwarn);         
+            op = vectorcheck(op,ends(i:i+1),pref);         
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
         case 'function_handle'
-            op = vectorcheck(op,ends(i:i+1),pref.vecwarn);        
+            op = vectorcheck(op,ends(i:i+1),pref);        
             [fs,es,scl] = auto(op,ends(i:i+1),scl,pref);
         case 'chebfun'
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)

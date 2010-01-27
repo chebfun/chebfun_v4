@@ -39,7 +39,8 @@ function F = fred(k,d,onevar)
 % tic, u = (1-diag(x)*F) \ sin(exp(3*x)); toc
 %   %(Elapsed time is 0.205714 seconds.)
 %
-%  See also volt, chebop.
+% See also volt, chebop.
+%
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by Toby Driscoll and Folkmar Bornemann.
@@ -55,7 +56,7 @@ F = linop(@matrix,@op,d);
     % kernel is nearly zero by cancellation on the interval, don't try to
     % resolve it relative to its own scale.) 
     opt = {'resampling',false,'splitting',true,'exps',{0 0},'scale',norm(u)};
-    int = @(x) sum(u.* (chebfun(@(y) scale+k(x,y),d,opt{:})));
+    int = @(x) sum(u.* (chebfun(@(y) k(x,y),d,opt{:})));
     v = chebfun( int, d,'sampletest',false,'resampling',false,'exps',{0 0},'vectorize','scale',norm(u));
   end
 

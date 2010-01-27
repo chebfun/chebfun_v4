@@ -21,5 +21,4 @@ u = (1-V)\f;
 pass(2) = norm( u - sin(x) ) < 1e6*tol;
 pass(3) = norm( (1-V)*u - f ) < 1e4*tol;
 
-pass = all(pass);
 

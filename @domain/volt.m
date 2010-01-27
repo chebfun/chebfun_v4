@@ -24,7 +24,8 @@ function V = volt(k,d,onevar)
 % V = volt(@(x,y) exp(x-y),d);  
 % u = (1+diag(x)*V) \ sin(exp(3*x)); 
 %
-%  See also fred, chebop.
+% See also fred, chebop.
+%
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2009 by Toby Driscoll.
