@@ -66,12 +66,15 @@ while (normres(j) > tol) && (j<maxiter)          % outer iterations
     % Next Krylov vector, with preconditioners.
     q = Q(:,n);                                    
     if ~isempty(M2inv), q = M2inv(q); end       
-    v = L(q);                                   
+    v = L(q);
+    % KLUDGE: The auto-diff facility will overwhelm memory if not shut down.
+    v.jacobian = anon('@(u) []','',[]);
     if ~isempty(M1inv), v = M1inv(v); end       
     % Modified Gram-Schmidt iteration.
     for k = 1:n                     
       H(k,n) = Q(:,k)' * v ;             
-      v = v - H(k,n)*Q(:,k);                        
+      v = v - H(k,n)*Q(:,k);  
+      v.jacobian = anon('@(u) []','',[]);  % disable auto-diff
     end 
     H(n+1,n) = norm(v);                          
     Q(:,n+1) = v / H(n+1,n);                     % new basis vector
