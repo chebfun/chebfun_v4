@@ -212,7 +212,8 @@ if isfield(pref,'trunc')
             I = (f.*T).*(1./sqrt(1-x.^2));
             c(N-k+1) = 2*sum(I)/pi;
         end
-        vals = chebpolyval(fliplr(c(1:N)));
+        c(N) = c(N)/2;
+        vals = chebpolyval(c);
         f = chebfun(vals,d);
     end
 end
