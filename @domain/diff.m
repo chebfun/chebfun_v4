@@ -37,6 +37,11 @@ if nargin > 1
     end
 end
 
+if round(m)~=m
+    error('CHEBFUN:domain:diff:fracdiff',...
+        'Fractional derivatives are not yet supported as operators.');
+end
+
 if isempty(d)
     D = linop;
     return

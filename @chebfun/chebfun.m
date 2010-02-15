@@ -6,7 +6,7 @@ function f = chebfun(varargin)
 % in most cases be "vectorized" in the sense that it may be evaluated at a 
 % column vector of points x(:) and return an output of size length(x(:)).
 % If F is a doubles array, [A1;A2;...;An], the numbers A1,...,An are used 
-% as the function values at n Chebyshev points.
+% as function values at n Chebyshev points of the 2nd kind, i.e. chebpts(n).
 %
 % CHEBFUN(F,[A B]) specifies an interval [A B] where the function is
 % defined. A and/or B may be infinite.
@@ -25,6 +25,10 @@ function f = chebfun(varargin)
 %
 % CHEBFUN(F,'scale',SCALE) defines the relative accuracy of the constructed
 % chebfun relative to the value given by SCALE.
+%
+% CHEBFUN(chebpolyval([C1,...,CN])) constructs a chebfun corresponding to the
+% Chebyshev polynomial P(x) = C1*T_{N-1}(x)+C2*T_{N-2}(x)+...+CN. One can use 
+% CHEBFUN([C1,...,CN],'coeffs').
 %
 % CHEBFUN(F1,F2,...,Fm,ENDS), where ends is an increasing vector of length
 % m+1, constructs a piecewise smooth chebfun from the functions F1,...,Fm.
@@ -110,6 +114,12 @@ else
             elseif strcmpi('vectorize',varargin{k}) || strcmp('vectorise',varargin{k})
                 pref.vectorize = 0;
                 k = k+1;  
+            elseif strcmpi('coeffs',varargin{k}) || strcmp('coefficients',varargin{k})
+                pref.coeffs = 1;
+                k = k+1; 
+            elseif strcmpi('trunc',varargin{k}) || strcmp('truncated',varargin{k})
+                pref.trunc = 1;
+                k = k+1;                 
             elseif strcmpi('vectorcheck',varargin{k})
                 pref.vectorcheck = varargin{k+1};
                 k = k+2;                  

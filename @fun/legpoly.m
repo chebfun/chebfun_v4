@@ -19,4 +19,4 @@ end
 
 % Coefficients are computed using inner products.
 norm2 = (ends(2)-ends(1))./(2*(0:f.n-1)+1).'; % 2-norm squared
-out = flipud((E'*chebfun(f))./norm2).';
+out = flipud((E'*chebfun(f,ends))./norm2).';

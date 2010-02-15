@@ -67,6 +67,9 @@ for i = 1:length(ops)
     if isfield(pref,'exps'), pref.exps = {exps{2*i+(-1:0)}}; end
     switch class(op)
         case 'double'
+            if isfield(pref,'coeffs')
+                op = chebpolyval(op);
+            end
             if ~isfield(pref,'map')
                 fs = fun(op,ends(i:i+1));
             else

@@ -94,11 +94,12 @@ function exponent = getExp2(f,loc)
     % decimal search    
     tol=0.00000000001;
     % main loop
-    while abs(b-a) > 1.1*tol             
-        points = a:(b-a)/10:b;   
+    while abs(b-a) > 1.1*tol     
+        numpts = 10;
+        points = a:(b-a)/numpts:b;   
         i=1; exponent = points(i);
         % main loop
-        while blowupA(softenR(f,loc,exponent),loc)     
+        while blowupA(softenR(f,loc,exponent),loc) && i<=numpts
             i=i+1;
             exponent=points(i);
         end
