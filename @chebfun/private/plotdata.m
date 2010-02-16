@@ -70,10 +70,11 @@ if isempty(f)
     ab = dom.ends; a = ab(1); b = ab(2);
     fl = linspace(a,b,numpts).';
     
-    % find all the ends
+    % find all the ends and get rid of high order imps
     ends = [];
     for k = 1:numel(g)
         ends = [ends g(:,k).ends];
+        g(:,k).imps = g(:,k).imps(1,:);
     end
     ends = unique(ends);         ends = ends(2:end-1);
 
@@ -91,9 +92,10 @@ if isempty(f)
     breaks = [0 ; indx2(3:3:3*length(ends))  ; length(fl)]; 
     db = diff(breaks);
     top = -inf; bot = inf;
-
+    
     % line values of g
     gl = feval(g,fl);
+
     if fl(1) == a, 
         for k = 1:size(gl,2)
             gl(1,k) = get(g(:,k).funs(1),'lval'); 

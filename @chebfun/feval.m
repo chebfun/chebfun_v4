@@ -12,7 +12,6 @@ function Fx = feval(F,x,varargin)
 % Because chebfuns are superior to function_handle, this call can result
 % when f is function_handle and x is chebfun. In that case, revert to the
 % built-in behavior.
-
 if isa(F,'function_handle')
   Fx = F(x,varargin{:});
   return
@@ -52,7 +51,7 @@ if any(I(:))
     fx(I) =  feval(funs(1),x(I));
 end
 for i = 1:f.nfuns
-   I = x>=ends(i) & x<=ends(i+1);
+   I = x > ends(i) & x < ends(i+1);
    if any(I(:))       
        fx(I) = feval(funs(i),x(I));
    end
@@ -62,11 +61,9 @@ if any(I(:))
     fx(I) =  feval(funs(f.nfuns),x(I));
 end
 
-if size(f.imps,1) == 1
-    % This doesn't work if repeated values of x intersect with ends.
-    %[val,loc,pos] = intersect(xin,ends);
-    %fx(loc) = f.imps(1,pos);
-    % RodP and NickH replacing with this to fix the problem
+if any(f.imps(1,:))
+    % RodP and NickH used this to fix the problem
+    % when repeated values of x intersect with ends.
     if f.nfuns < 10
         for k = 1:f.nfuns+1
             fx( x==ends(k) ) = f.imps(1,k);
@@ -76,18 +73,35 @@ if size(f.imps,1) == 1
           for k = 1:length(pos)
               fx( x == ends(pos(k)) ) = f.imps(1,pos(k));
           end
-           
-%         % Below doesn't work with repeated multiple breakpoint evalutions. 
-%         % Would need to find indices where j == loc
-%         [xu i j] = unique(x);
-%         [val,loc,pos] = intersect(xu,ends);
-%         fx(j(loc)) = f.imps(1,pos);
-   end
-    % ---- End fix (to be revisited in the near future) ---
-
-  
-elseif any(f.imps(2,:))
-  [val,loc,pos] = intersect(xin,ends);
-  fx(loc(any(f.imps(2:end,pos)>0,1))) = inf;
-  fx(loc(any(f.imps(2:end,pos)<0,1))) = -inf;
+    end
 end
+
+% NickH fixed this also for the case when there imps has two rows.
+if size(f.imps,1) > 1 && any(f.imps(2,:))
+  [val,loc,pos] = intersect(xin,ends);
+  for k = 1:length(pos)
+      
+%       % This might not be right ...
+%       if any(f.imps(2:end,pos(k)) < 0)
+%           fx( x == ends(pos(k)) ) = -inf;
+%       elseif any(f.imps(2:end,pos(k)) > 0)
+%           fx( x == ends(pos(k)) ) = inf;
+%       end
+      
+      % We take the sign of the largest degree impulse?
+      [I J sgn] = find(f.imps(2:end,pos(k)),1,'last');
+      if isempty(sgn)
+          % do nothing
+      elseif sgn < 0
+          fx( x == ends(pos(k)) ) = -inf;
+      elseif sgn > 0
+          fx( x == ends(pos(k)) ) = inf;
+      end
+
+  end
+
+end
+
+
+
+

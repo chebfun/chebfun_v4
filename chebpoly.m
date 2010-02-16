@@ -6,7 +6,7 @@ function f = chebpoly(n,d)
 % F = CHEBPOLY(N,D), where D is an interval or a domain, gives the same 
 % result scaled accordingly.
 %
-% See also chebpoly and legpoly.
+% See also chebfun/chebpoly and legpoly.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
