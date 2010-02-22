@@ -31,7 +31,7 @@ switch r
                     s = 'Thvi Nick Trefethen maelti svo!';
         end
         % Icelandic:
-        % Asgeir Birkenson
+        % Asgeir Birkisson
         
     case 5,
         if getfield(ver('matlab'),'Version') >= 7.9

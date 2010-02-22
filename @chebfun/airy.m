@@ -15,6 +15,6 @@ end
 
 Fout = comp(F, @(x) real(airy(K,x)));  
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('@(u) diag(airy(K+1,F))*jacobian(F,u)',{'F' 'K'},{F K});
+    Fout(k).jacobian = anon('@(u) diag(airy(K+1,F))*jacobian(F,u)',{'F' 'K'},{F(k) K});
     Fout(k).ID = newIDnum();
 end

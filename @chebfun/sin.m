@@ -12,6 +12,6 @@ end
 
 Fout = comp(F, @(x) sin(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('@(u) diag(cos(F))*jacobian(F,u)',{'F'},{F});
+    Fout(k).jacobian = anon('@(u) diag(cos(F))*jacobian(F,u)',{'F'},{F(k)});
     Fout(k).ID = newIDnum;
 end
