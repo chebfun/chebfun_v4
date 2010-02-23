@@ -3,6 +3,7 @@ function g = diff(g,k,c)
 % DIFF(G) is the derivative of the fun G.
 %
 % DIFF(G,K) is the K-th derivative of G.
+%
 % If the fun G of length n is represented as
 %
 %       SUM_{r=0}^{n-1} C_r T_r(x)

@@ -85,18 +85,11 @@ k = @(x,s) (x-s).^(alpha-1);
 newexps = exps(:).'; 
 newexps(1) = newexps(1)+alpha;
 
-% close all
-% hh = h(1)
-% chebpolyplot(hh)
-% error
-% return
-
 % the result
 u = 1./gamma(alpha)*chebfun(@(x) sum(h(x)), ends ,'vectorize','exps',newexps);
 
 % jacobian data
 u.jacobian = anon(' @(u) diff(domain(f),n) * jacobian(f,u)',{'f' 'n'},{u alpha});
 u.ID = newIDnum;
-
 
 end
