@@ -56,8 +56,12 @@ function f = chebfun(varargin)
 % PREFNAME with value specified by PREFVAL. See chebfunpref for possible
 % preferences.
 %
-% CHEBFUN(F,'vectorize') prevents the warning message from being displayed
-% when F does not appear to be a vectorized input.
+% CHEBFUN(F,'vectorize') wraps F in a for loop. This is useful when F
+% cannot be evaluated with a vector input.
+%
+% CHEBFUN(F,'trunc',N) returns an N point chebfun constructed by
+% constructing the Chebyshev series at degree N-1, rather than by
+% interpolation at Chebyshev points. 
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 % Copyright 2002-2009 by The Chebfun Team.

@@ -9,6 +9,11 @@ if nargin < 3, sides = [true true]; end
 
 % Get the domain
 d = f.map.par(1:2);
+
+if any(isinf(d)) % We can only do this with finite domains
+    return
+end
+
 % Get the exponents
 exps = get(f,'exps');
 f.exps = [0 0];
@@ -59,7 +64,7 @@ if strcmp(map.name,'linear')
     end
     f.exps = exps;
 
-elseif ~all(isinf(d))
+elseif ~any(isinf(d))
 % General finite maps are tricky.   
 % Perhaps we can do something similar to the above in the mapped case?
 % For now subtract out by force.

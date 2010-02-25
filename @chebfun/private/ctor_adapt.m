@@ -66,6 +66,7 @@ end
 % up function construction from string inputs.
 for ii = 1:length(ops)
     op = ops{ii};
+    es = ends(ii:ii+1);
     if isfield(pref,'exps'), pref.exps = {exps{2*ii+(-1:0)}}; end
     switch class(op)
         case 'double'
@@ -73,22 +74,20 @@ for ii = 1:length(ops)
                 op = chebpolyval(op);
             end
             if ~isfield(pref,'map')
-                fs = fun(op,ends(ii:ii+1));
+                fs = fun(op,es);
             else
-                fs = fun(op,maps(pref.map,ends(ii:ii+1)));
+                fs = fun(op,maps(pref.map,es));
             end
-            es = ends(ii:ii+1);
             scl.v = max(scl.v, fs.scl.v);
         case 'fun'
             if numel(op) > 1
             error('CHEBFUN:ctor_adapt:vecin',['A vector of funs cannot be used to construct '...
                 ' a chebfun.'])
             end
-            if norm(op.map.par(1:2)-ends(ii:ii+1)) > scl.h*1e-15
+            if norm(op.map.par(1:2)-es) > scl.h*1e-15
                 error('CHEBFUN:ctor_adapt:domain','Incosistent domains')
             else
                 fs = op;
-                es = ends(ii:ii+1);
                 scl.v = max(scl.v, fs.scl.v);
             end
         case 'char'
@@ -102,17 +101,17 @@ for ii = 1:length(ops)
                 error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input'); 
             end
             op = eval(['@(' depvar{:} ')' op]);
-            op = vectorcheck(op,ends(ii:ii+1),pref);         
-            [fs,es,scl] = auto(op,ends(ii:ii+1),scl,pref);
+            op = vectorcheck(op,es,pref);         
+            [fs,es,scl] = auto(op,es,scl,pref);
         case 'function_handle'
-            op = vectorcheck(op,ends(ii:ii+1),pref);        
-            [fs,es,scl] = auto(op,ends(ii:ii+1),scl,pref);
+            op = vectorcheck(op,es,pref);    
+            [fs,es,scl] = auto(op,es,scl,pref);
         case 'chebfun'
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)
                  warning('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain')
             end
             if isfield(pref,'exps'), pref.exps = {exps{2*ii+(-1:0)}}; end
-            [fs,es,scl] = auto(@(x) feval(op,x),ends(ii:ii+1),scl,pref);
+            [fs,es,scl] = auto(@(x) feval(op,x),es,scl,pref);
         case 'cell'
             error('CHEBFUN:ctor_adapt:inputcell',['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])

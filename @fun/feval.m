@@ -30,7 +30,13 @@ else
     out = bary(x,g.vals,g.map.for(xk));
 end
 
-if any(g.exps)
-    rescl = (2/diff(ends))^-sum(exps); 
+if any(g.exps) 
+    
+    % hack for unbounded functions on infinite intervals
+    if any(isinf(ends))
+        ends = [-1 1];   x = g.map.inv(x);
+    end
+    
+    rescl = (2/diff(ends))^-sum(exps);
     out = out.*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2))/rescl;
 end

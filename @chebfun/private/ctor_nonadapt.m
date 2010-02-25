@@ -68,16 +68,17 @@ scl.v=0; scl.h= hs;
 % up function construction from string inputs.
 for ii = 1:length(ops)
     op = ops{ii};
+    es = ends(ii:ii+1);
     switch class(op)
         case 'function_handle'
-            a = ends(ii); b = ends(ii+1);
+            a = es(1); b = es(2);
             op = vectorcheck(op,[a b],pref);
             pref.n = n(ii);
             if isfield(pref,'exps'), pref.exps = {exps{2*ii+(-1:0)}}; end
             if ~isfield(pref,'map')
                 g = fun(op, [a b], pref);
             else
-                g = fun(op, maps(pref.map,ends(ii:ii+1)), pref);
+                g = fun(op, maps(pref.map,es), pref);
             end
             funs = [funs g];
         case 'char'
@@ -98,11 +99,11 @@ for ii = 1:length(ops)
             if ~isfield(pref,'map')
                 g = fun(op, [a b], pref);
             else
-                g = fun(op, maps(pref.map,ends(ii:ii+1)), pref);
+                g = fun(op, maps(pref.map,es), pref);
             end
             funs = [funs g];
         case 'chebfun'
-            a = ends(ii); b = ends(ii+1);
+            a = es(1); b = es(2);
             if op.ends(1) > a || op.ends(end) < b
                 error('CHEBFUN:ctor_nonadapt:domain','chebfun is not defined in the domain')
             end
@@ -111,7 +112,7 @@ for ii = 1:length(ops)
             if ~isfield(pref,'map')
                 g = fun(@(x) feval(op,x), [a b], n(ii));
             else
-                g = fun(@(x) feval(op,x), maps(pref.map,ends(i:i+1)), n(ii));
+                g = fun(@(x) feval(op,x), maps(pref.map,es), n(ii));
             end
             funs = [funs g];
         case 'double'

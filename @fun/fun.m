@@ -8,7 +8,8 @@ function [g,ish] = fun(op,ends,varargin)
 % FUN(OP,ENDS,N) where N a positive integer creates a fun for OP with N Chebyshev
 % points. This option is not adaptive.
 %
-% FUN(OP,ENDS,PREF,SCL) creates a fun for OP adaptively using the preferences
+% FUN(OP,ENDS,PREF,SCL) creates a fun for OP adaptively using the
+% preferences
 % provided in the structure PREF (see chbfunpref).  Here SCL is a structure
 % with fields SCL.H (horizontal scale) and SCL.V (vertical scale).
 %
@@ -117,6 +118,28 @@ switch class(op)
         op = eval(['@(' depvar{:} ')' op]);
 end
 
+%% Hack for unbounded functions on infinite intervals
+infends = isinf(ends);
+if any(infends)
+    g.map = unbounded([ends mappref('parinf')]);
+    oldop = op;             op = @(x) op(g.map.for(x));
+    oldends = ends;         ends = [-1 1];
+    
+    vends = op(ends(infends));
+    if any(isinf(vends))
+        pref.blowup = 1;
+        if ~isfield(pref,'exps'), pref.exps = {0 0};  end
+        if infends(1) && ~isnan(pref.exps{1}) && ~pref.exps{1}
+            pref.exps{1} = NaN;
+        end
+        if infends(2) && ~isnan(pref.exps{2}) && ~pref.exps{2} 
+            pref.exps{2} = NaN;
+        end
+    end
+else
+    oldends = ends;    
+end
+
 %% Find 'exps' - the exponents in markfuns 
 % If op has blow up, we represent it by 
 %  op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
@@ -141,10 +164,19 @@ else
     exps = [0 0]; % Standard representation - no blowup
 end
 
-if any(exps)
+if any(exps) && ~any(isinf(oldends))
     rescl = (2/diff(ends))^-sum(exps);
     op = @(x) rescl*op(x)./((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)); % new op
 end
+
+if any(isinf(oldends))
+    op = oldop;
+    ends = oldends;
+    if any(exps)
+        op = @(x) op(x)./((g.map.inv(x)+1).^exps(1).*(1-g.map.inv(x)).^exps(2)); % new op
+    end
+end
+
 g.exps = exps;
     
 %% Call constructor depending on narg

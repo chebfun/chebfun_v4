@@ -64,35 +64,43 @@ if strcmp(g.map.name,'linear')
     
 % Unbounded map
 elseif norm(g.map.par(1:2),inf) == inf
-    
-    if any(g.exps), error('FUN:diff:infexps','Cannot diff inf interval funs with exps yet'); end
-    
     nz = 2; % number of zeros needed to augment coefficients due chain rule
     infboth = false;
     if isinf(g.map.par(1)) && isinf(g.map.par(2))
         nz = 45;            % 1/derivative of this map requires length 45 to represent
         infboth = true;
     end
-    for i = 1:k                             % loop for higher derivatives
-        if n == 1,
-            g = set(g,'vals',0); g.scl.v = 0;
-            return
-        end                                 % derivative of constant is zero
-        % increase length because because degree increases with
-        % derivatives (by 1);
-        cout = newcoeffs_der([zeros(nz,1); c]);
-        vals = chebpolyval(cout)./g.map.der(chebpts(n+nz-1));
-        g.vals = vals;
-        g.n = length(vals);
-        if i ~= k
-            c = chebpoly(g);
-            n = g.n;
+    
+    if ~any(g.exps) % old case with no exponents
+        for i = 1:k                             % loop for higher derivatives
+            if n == 1,
+                g = set(g,'vals',0); g.scl.v = 0;
+                return
+            end                                 % derivative of constant is zero
+            % increase length because because degree increases with
+            % derivatives (by 1);
+            cout = newcoeffs_der([zeros(nz,1); c]);
+            vals = chebpolyval(cout)./g.map.der(chebpts(n+nz-1));
+            g.vals = vals;
+            g.n = length(vals);
+            if i ~= k
+                c = chebpoly(g);
+                n = g.n;
+            end
         end
+        g.scl.v = max(g.scl.v,norm(vals,inf));
+        if infboth
+            g = simplify(g);
+        end
+        
+    else % apply product rule!
+
+        for i = 1:k
+            g = productruleinf(g);
+        end
+
     end
-    g.scl.v = max(g.scl.v,norm(vals,inf));
-    if infboth
-        g = simplify(g);
-    end
+        
 
 % sing maps 
 % A special case (as the map introduces exponents)    
@@ -224,3 +232,44 @@ else                                    % double exponent
     g = (exps(1)*setexps(g,[0 1])-exps(2)*setexps(g,[1 0]))+gp;
     g = setexps(g,g.exps+exps-[1 1]);
 end
+
+
+function g = productruleinf(g)
+% Apply the product rule to differentiate functions with exponents on
+% unbounded intervals
+
+if ~strcmp(g.map.name,'unbounded')
+    error('CHEBFUN:fun:diff','No support for nonstandard maps on infinite intervals')
+end
+
+exps = g.exps;
+map = g.map;
+s = map.par(3);
+ends = map.par(1:2);
+
+g.map = linear([-1 1]);
+g = setexps(g,[0 0]);
+gp = diff(g);
+
+if ~all(isinf(ends))
+    C = 1/(30*s);
+else
+    C = 1./(5*s);
+end
+
+if exps(1) && ~exps(2)                  % left exponent
+    gp = setexps(gp,[1 0]);
+    g = exps(1)*g+gp;
+    g = C*setexps(g,exps+[1 0]);
+elseif ~exps(1) && exps(2)              % right exponent
+    gp = setexps(gp,[0 1]);
+    g = -exps(2)*g+gp;
+    g = C*setexps(g,exps+[0 1]);
+else                                    % double exponent
+    gp = setexps(gp, gp.exps+[1 1]);
+    g = (exps(1)*setexps(g,[0 1])-exps(2)*setexps(g,[1 0]))+gp;
+    g = C*setexps(g,exps+[1 1]);
+    g = g.*fun(@(y) 1./(1+y.^2),[-1 1]);
+end
+
+g.map = map;

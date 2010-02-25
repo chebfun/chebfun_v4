@@ -100,47 +100,50 @@ end
 % (Linear map is an even simplier special case?)
 % if round([exps1 exps2]) == [exps1 exps2] % 'new way' is more general!
 if round(exps1-exps2) == exps1-exps2
-    g1.exps = [0 0]; g2.exps = [0 0];
-    pref = chebfunpref; 
-    pref.exps = {0 0};
-    pref.resampling = false;
     
-    scl.h = max(g1.scl.h,g2.scl.h);
-    scl.v = max(g1.scl.v,g2.scl.v);
-    
-% old way!
-%     % Reduce exponents greater that +1
-%     g1 = replace_roots(g1);
-%     g2 = replace_roots(g2);
-%
-%     exps1 = -exps1; exps2 = -exps2;
-%     g1 = g1.*fun(@(x) (x-ends(1)).^exps2(1).*(ends(2)-x).^exps2(2),g1.map,pref,scl) - ...
-%         g2.*fun(@(x) (x-ends(1)).^exps1(1).*(ends(2)-x).^exps1(2),g2.map,pref,scl);
-%     g1.exps = -sum([exps1 ; exps2]);
+        g1.exps = [0 0]; g2.exps = [0 0];
+        pref = chebfunpref; 
+        pref.exps = {0 0};
+        pref.resampling = false;
 
-% new way!
-    a1 = max(exps1(1),exps2(1)); a2 = min(exps1(1),exps2(1)); 
-    b1 = max(exps1(2),exps2(2)); b2 = min(exps1(2),exps2(2)); 
-    a12 = a1-a2; b12 = b1-b2;
-    a = ends(1); b = ends(2);
-    
-    s = (2./diff(ends));
-    c1 = s^(sum(exps1)-a2-b2);
-    c2 = s^(sum(exps2)-a2-b2);
-    
-    g1 = g1.*fun(@(x) c1*(x-a).^((a1==exps1(1))*a12).*(b-x).^((b1==exps1(2))*b12),g1.map,pref,scl) - ...
-        g2.*fun(@(x) c2*(x-a).^((a1==exps2(1))*a12).*(b-x).^((b1==exps2(2))*b12),g2.map,pref,scl);
-    g1.exps = [a2 b2];
-    
-    g1.scl = scl; 
-    g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
-    g1.n = length(g1.vals);
-    
-    if any(g1.exps < 0) || any(isinf(ends))
-        g1 = checkzero(g1);
-%         g1 = extract_roots(g1);
-    end
-    return
+        scl.h = max(g1.scl.h,g2.scl.h);
+        scl.v = max(g1.scl.v,g2.scl.v);
+
+        a1 = max(exps1(1),exps2(1)); a2 = min(exps1(1),exps2(1)); 
+        b1 = max(exps1(2),exps2(2)); b2 = min(exps1(2),exps2(2)); 
+        a12 = a1-a2; b12 = b1-b2;        
+        
+        if ~any(isinf(ends))
+            a = ends(1); b = ends(2);
+            s = (2./diff(ends));
+            c1 = s^(sum(exps1)-a2-b2);
+            c2 = s^(sum(exps2)-a2-b2);
+        else
+            a = -1; b = 1;
+            c1 = 1; c2 = 1;
+            map = g1.map;
+            g1.map = linear([-1,1]);
+            g2.map = linear([-1,1]);
+        end
+
+        g1 = g1.*fun(@(x) c1*(x-a).^((a1==exps1(1))*a12).*(b-x).^((b1==exps1(2))*b12),g1.map,pref,scl) - ...
+            g2.*fun(@(x) c2*(x-a).^((a1==exps2(1))*a12).*(b-x).^((b1==exps2(2))*b12),g2.map,pref,scl);
+        g1.exps = [a2 b2];
+
+        g1.scl = scl; 
+        g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
+        g1.n = length(g1.vals);
+        if any(isinf(ends))
+            g1.map = map;
+        end
+
+        if any(g1.exps < 0) || any(isinf(ends))
+            g1 = checkzero(g1);
+    %         g1 = extract_roots(g1);
+        end
+        
+        return
+       
 end
 
 % ------------- Difficult case: -------------
