@@ -131,7 +131,7 @@ if any(infends)
         pref.exps{1} = -pref.exps{1};
         pref.exps{2} = -pref.exps{2};
     end
-    vends = oldop(ends(infends));
+    vends = oldop(oldends(infends));
     if any(isinf(vends)) || any(isnan(vends))
         pref.blowup = 1;
         if infends(1) && ~isnan(pref.exps{1}) && ~pref.exps{1}
