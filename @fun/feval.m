@@ -37,6 +37,6 @@ if any(g.exps)
         ends = [-1 1];   x = g.map.inv(x);
     end
     
-    rescl = (2/diff(ends))^-sum(exps);
-    out = out.*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2))/rescl;
+    rescl = (2/diff(ends))^sum(exps);
+    out = out.*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2))*rescl;
 end

@@ -121,14 +121,19 @@ end
 %% Hack for unbounded functions on infinite intervals
 infends = isinf(ends);
 if any(infends)
-    g.map = unbounded([ends mappref('parinf')]);
+%     g.map = unbounded([ends mappref('parinf')]);
     oldop = op;             op = @(x) op(g.map.for(x));
     oldends = ends;         ends = [-1 1];
-    
-    vends = op(ends(infends));
-    if any(isinf(vends))
+    if ~isfield(pref,'exps'), 
+        if pref.blowup,  pref.exps = {NaN NaN};
+        else  pref.exps = {0 0}; end
+    else
+        pref.exps{1} = -pref.exps{1};
+        pref.exps{2} = -pref.exps{2};
+    end
+    vends = oldop(ends(infends));
+    if any(isinf(vends)) || any(isnan(vends))
         pref.blowup = 1;
-        if ~isfield(pref,'exps'), pref.exps = {0 0};  end
         if infends(1) && ~isnan(pref.exps{1}) && ~pref.exps{1}
             pref.exps{1} = NaN;
         end
@@ -170,16 +175,16 @@ if any(exps) && ~any(isinf(oldends))
 end
 
 if any(isinf(oldends))
-    op = oldop;
-    ends = oldends;
+    rescl = .5./(15*g.map.par(3));
+    ends = oldends;     op = oldop;
     if any(exps)
-        op = @(x) op(x)./((g.map.inv(x)+1).^exps(1).*(1-g.map.inv(x)).^exps(2)); % new op
+        op = @(x) rescl*op(x)./((g.map.inv(x)+1).^exps(1).*(1-g.map.inv(x)).^exps(2)); % new op
     end
 end
 
 g.exps = exps;
     
-%% Call constructor depending on narg
+%% Call constructor
 if pref.n
     % non-adaptive case exact number of points provided
     % map might still be adapted for that number of points

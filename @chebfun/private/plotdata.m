@@ -123,8 +123,13 @@ if isempty(f)
             fmkj(mask) = [];
             gmkj(mask) = [];
 
-            rescl = (2/diff(gk.funs(j).map.par(1:2)))^sum(expskj);
-            gmkj = rescl*gmkj.*((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
+            if all(isfinite(endsk(j:j+1)))
+                rescl = (2/diff(gk.funs(j).map.par(1:2)))^sum(expskj);
+                gmkj = rescl*gmkj.*((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
+            else
+                x = gk.funs(j).map.inv(fmkj);
+                gmkj = gmkj.*((x+1).^expskj(1).*(1-x).^expskj(2)); 
+            end
             
             expsk = [expsk ; expskj(1)];
 

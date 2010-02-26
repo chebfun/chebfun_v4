@@ -25,17 +25,17 @@ if any(isinf(ends)) % Not working for unbounded domains at the moment
     return
 end
 
-% Quick check values near endpoints! Is this still needed?
-gends = op(ends);
-if ~any(isinf(gends))
-    xvals = [ -0.616227322745569
-        0.718984852785806];
-    gvals = op(ends(2)*(xvals+1)/2+ends(1)*(1-xvals)/2);
-    if norm(gends,inf) < 1e4*norm(gvals,inf),
-        if ~leftrightflag, exps = [0 0]; else exps = 0; end
-        return
-    end
-end
+% % Quick check values near endpoints! Is this still needed?
+% gends = op(ends);
+% if ~any(isinf(gends))
+%     xvals = [ -0.616227322745569
+%         0.718984852785806];
+%     gvals = op(ends(2)*(xvals+1)/2+ends(1)*(1-xvals)/2);
+%     if norm(gends,inf) < 1e4*norm(gvals,inf),
+%         if ~leftrightflag, exps = [0 0]; else exps = 0; end
+%         return
+%     end
+% end
 
 exps = [];
 if leftrightflag <= 0
