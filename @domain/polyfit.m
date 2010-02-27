@@ -48,7 +48,8 @@ end
 return
 %% ----------------- method 2 -------------------
 
-Q = legpoly((0:n),d);
-Qx = Q(x,:);
+% Q = legpoly((0:n),d);
+% Qx = Q(x,:);
+% 
+% varargout{1} = Q*(Qx\y);
 
-f = Q*(Qx\y)

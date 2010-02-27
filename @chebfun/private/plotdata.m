@@ -54,7 +54,7 @@ elseif any(isinf(g(1).ends([1 end])))
     end     
 end
 % Don't exclude anything
-if isempty(interval), interval = [-inf,inf]; end
+if isempty(interval), interval = dom.ends([1 end]); end
 
 if isempty(f)
     % one real chebfun (or quasimatrix) input
@@ -69,10 +69,17 @@ if isempty(f)
     % equispaced points over domain
     ab = dom.ends; a = ab(1); b = ab(2);
     fl = linspace(a,b,numpts).';
+
     
     % find all the ends and get rid of high order imps
     ends = [];
     for k = 1:numel(g)
+        % old
+%         ends = [ends g(:,k).ends];
+%         g(:,k).imps = g(:,k).imps(1,:);
+        % new
+        endsk = g(:,k).ends;       
+        endsk(endsk<a | endsk>b) = [];
         ends = [ends g(:,k).ends];
         g(:,k).imps = g(:,k).imps(1,:);
     end
@@ -213,6 +220,9 @@ if isempty(f)
              end
         end
         
+        dg = domain(g);
+        if a~=dg(1), gl(1,:) = feval(g,a);   end
+        if b~=dg(end), gl(end,:) = feval(g,b);   end
         
         if greal
             % remove values outside interval
@@ -243,8 +253,8 @@ if isempty(f)
     lines = {fl, gl};
     misc = [infy bot top];
     
-    % With 'interval', there mightnot actually be any marks.
-    if numel(marks) == 0, marks = {[NaN] [NaN]}; end
+    % With 'interval', there might not actually be any marks.
+    if numel(marks) == 0, marks = {NaN NaN}; end
     
 elseif isempty(h) % Two quasimatrices case
     

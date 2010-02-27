@@ -217,10 +217,13 @@ for k = 1:length(h1)
     set(h1(k),'marker','none');
 end
 
+% if ~h && ~isempty(interval)
+%     set(gca,'xlim',interval)
+% end
+
 if all(~isinf([bot top])) && infy
     try
-        xl = get(gca,'xlim');
-        axis([xl(1) xl(2) bot top]);
+        set(gca,'ylim',[bot top])
     end
 end
 

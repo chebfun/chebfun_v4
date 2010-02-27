@@ -121,18 +121,22 @@ end
 %% Hack for unbounded functions on infinite intervals
 infends = isinf(ends);
 if any(infends)
-%     g.map = unbounded([ends mappref('parinf')]);
+%     if ~all(infends), g.map = unbounded([ends mappref('parinf')/30]);
+%     else              g.map = unbounded([ends mappref('parinf')/10]);    end
     oldop = op;             op = @(x) op(g.map.for(x));
     oldends = ends;         ends = [-1 1];
     if ~isfield(pref,'exps'), 
         if pref.blowup,  pref.exps = {NaN NaN};
         else  pref.exps = {0 0}; end
     else
-        pref.exps{1} = -pref.exps{1};
-        pref.exps{2} = -pref.exps{2};
+        if infends(1), pref.exps{1} = -pref.exps{1}; end
+        if infends(2), pref.exps{2} = -pref.exps{2}; end
     end
-    vends = oldop(oldends(infends));
-    if any(isinf(vends)) || any(isnan(vends))
+    % this is nasty ...
+    bignums = infends.*sign(ends)*1e10;
+    vends = oldop(bignums);
+    vends2 = oldop(oldends(infends));
+    if any(isinf(vends)) || any(isinf(vends2)) || any(isnan(vends)) || any(abs(vends) > 1e5)
         pref.blowup = 1;
         if infends(1) && ~isnan(pref.exps{1}) && ~pref.exps{1}
             pref.exps{1} = NaN;
@@ -175,7 +179,13 @@ if any(exps) && ~any(isinf(oldends))
 end
 
 if any(isinf(oldends))
-    rescl = .5./(15*g.map.par(3));
+    s = g.map.par(3);
+    if all(isinf(oldends))
+        rescl = .5/(5*s);
+    else
+        rescl = .5./(15*s);
+    end
+    rescl = rescl.^sum(-exps);
     ends = oldends;     op = oldop;
     if any(exps)
         op = @(x) rescl*op(x)./((g.map.inv(x)+1).^exps(1).*(1-g.map.inv(x)).^exps(2)); % new op

@@ -119,8 +119,17 @@ if round(exps1-exps2) == exps1-exps2
             c1 = s^(sum(exps1)-a2-b2);
             c2 = s^(sum(exps2)-a2-b2);
         else
+            if ~samemap(g1,g2), 
+                error('CHEBFUN:fun:minus:sameinfmap','Inf maps with exps must be the same');
+            end
             a = -1; b = 1;
-            c1 = 1; c2 = 1;
+            if all(isinf(ends))
+                s = .5/(5*g1.map.par(3));
+            else
+                s = .5/(15*g1.map.par(3));
+            end
+            c1 = s^(sum(exps1)-a2-b2);
+            c2 = s^(sum(exps2)-a2-b2);
             map = g1.map;
             g1.map = linear([-1,1]);
             g2.map = linear([-1,1]);
