@@ -14,14 +14,25 @@ if (subint(1)<ends(1)) || (subint(2)>ends(2)) || (subint(1)>subint(2))
   error('FUN:restrict:badinterval','Not given a valid interval.')
 end
 
+if all(subint(:)==ends(:)) % Nothing to do!
+  return
+end
+
 % unbounded case
 if norm(g.map.par(1:2),inf) == inf %&& mappref('adaptinf')
-    % adaptive
-    if any(g.exps), error('FUN:restruct:infmark1','Markfuns not supported on infinite intervals'); end
     pref = chebfunpref;
+    
+    if any(g.exps)
+        exps = g.exps;
+        if (subint(1) > ends(1)), exps(1) = 0; end  % Left exp has been removed
+        if (subint(2) < ends(2)), exps(2) = 0; end  % Right exp has been removed       
+        exps(isinf(subint)) = -exps(isinf(subint)); % Exponents are negated for inf intervals 
+        pref.exps = num2cell(exps);
+    end
+    
     pref.minsamples = g.n;
     g = fun(@(x) feval(g,x), subint, pref, g.scl);
-    
+
 % bounded cases
 elseif (subint(1) > ends(1) && g.exps(1)) || (subint(2) < ends(2) && g.exps(2)) || ~strcmp(g.map.name,'linear')
     % exps removed or non-linear map
@@ -29,9 +40,9 @@ elseif (subint(1) > ends(1) && g.exps(1)) || (subint(2) < ends(2) && g.exps(2)) 
     if isfield(g.map,'inherited') && g.map.inherited
         pars = g.map.par; pars(1:2) = [];
         map = maps(fun,{g.map.name,pars},subint);
-%         map = maps({g.map.name,pars},subint);
     else
-        map = linear(subint);
+%         map = linear(subint);
+        map = maps({mappref('name')},subint);
     end
 
     exps = g.exps;
@@ -61,26 +72,4 @@ else % Linear case with no removed exps is simple
     
 end
 
-% --- removed by NicH
-% % split this in two cases:
-% % 1) bounded 
-% if norm(g.map.par(1:2),inf) <inf && 
-%         (~strcmp(mappref('name'),g.map.name) || mappref('adapt')) 
-%     % adaptive
-%     g = fun(@(x) feval(g,x), subint, chebfunpref, g.scl);
-% % 2) unbounded
-% elseif norm(g.map.par(1:2),inf) == inf %&& mappref('adaptinf')
-%     % adaptive
-%     if any(g.exps), error('FUN:restruct:infmark1','Markfuns not supported on infinite intervals'); end
-%     pref = chebfunpref;
-%     pref.minsamples = g.n;
-%     g = fun(@(x) feval(g,x), subint, pref, g.scl);
-% else
-%     % non adaptive
-%     % This needs more thinking (& with markfuns)
-%     scl = g.scl;
-%     g = fun(@(x) feval(g,x), subint, g.n);
-%     g.scl = scl;
-%     g = simplify(g);
-% end
 

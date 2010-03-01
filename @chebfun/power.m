@@ -61,7 +61,9 @@ else
             if round(b) == b && b>0 && ~any(isinf(f.ends))
                 fout = comp(f,@(x) power(x,b));
             else % Introduce exps
-                f = add_breaks_at_roots(f);
+                if round(b) ~= b || b < 0
+                    f = add_breaks_at_roots(f);
+                end
                 fout = f;
                 % Loop through funs
                 for k = 1:f.nfuns

@@ -246,30 +246,32 @@ exps = g.exps;
 map = g.map;
 s = map.par(3);
 ends = map.par(1:2);
-
 g.map = linear([-1 1]);
-g = setexps(g,[0 0]);
-gp = diff(g);
+g = setexps(g,[0 0]); 
 
-if ~all(isinf(ends))
-    C = 1/(30*s);
-else
-    C = 1./(5*s);
+if all(isinf(ends)) 
+    C = s*100./5; % I have absolutely no justification for this...
+    % It may be that setexps isn't doing the right thing below.
+    % but doing whatever it's doing, this works.
 end
+gp = diff(g);
 
 if exps(1) && ~exps(2)                  % left exponent
     gp = setexps(gp,[1 0]);
     g = exps(1)*g+gp;
-    g = C*setexps(g,exps+[1 0]);
+    g = setexps(g,exps+[1 0]);
 elseif ~exps(1) && exps(2)              % right exponent
     gp = setexps(gp,[0 1]);
     g = -exps(2)*g+gp;
-    g = C*setexps(g,exps+[0 1]);
+    g = setexps(g,exps+[0 1]);
 else                                    % double exponent
     gp = setexps(gp, gp.exps+[1 1]);
     g = (exps(1)*setexps(g,[0 1])-exps(2)*setexps(g,[1 0]))+gp;
-    g = C*setexps(g,exps+[1 1]);
-    g = g.*fun(@(y) 1./(1+y.^2),[-1 1]);
+    g = C*setexps(g,exps+[1 1]).*fun(@(y) 1./(1+y.^2),[-1 1]);
 end
 
 g.map = map;
+
+
+
+

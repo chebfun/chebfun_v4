@@ -15,7 +15,7 @@ if nargin == 1
     prune = 0;
 end
 r = rootsunit(g,all,recurse,prune);
-if prune & ~recurse
+if prune && ~recurse
     rho = sqrt(eps)^(-1/g.n);
     rho_roots = abs(r+sqrt(r.^2-1));
     rho_roots(rho_roots<1) = 1./rho_roots(rho_roots<1);
@@ -31,10 +31,7 @@ function out = rootsunit(g,all,recurse,prune)
 % Assume that the map in g is the identity: compute the roots in the
 % interval [-1 1]!
 ends = g.map.par(1:2);
-g.map.for = @(y) y; 
-g.map.inv = @(x) x; 
-g.map.par(1:2) = [-1 1]; 
-g.map.name ='linear';
+g.map = linear([-1 1]);
 
 % Update horizontal scale accordingly
 if norm(ends,inf) < inf;

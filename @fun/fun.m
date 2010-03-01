@@ -154,6 +154,7 @@ end
 %  op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
 % (Note that for blowup exponents are now negative!)
 if isfield(pref,'exps') && ~all(isnan([pref.exps{:}]))
+
     if ~pref.blowup, pref.blowup = 1; end   % blowup = 1 is the default option
     if ~any(isnan([pref.exps{:}]))                  % both exps given
         exps(1) = pref.exps{1};

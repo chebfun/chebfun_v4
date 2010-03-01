@@ -113,7 +113,7 @@ if isempty(f)
             gl(end,k) = get(g(:,k).funs(end),'rval'); 
         end
     end
-       
+    
     % deal with marks breakpoints
     for k = 1:numel(g)
         gk = g(:,k);
@@ -135,7 +135,11 @@ if isempty(f)
                 gmkj = rescl*gmkj.*((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
             else
                 x = gk.funs(j).map.inv(fmkj);
-                gmkj = gmkj.*((x+1).^expskj(1).*(1-x).^expskj(2)); 
+                s = gk.funs(k).map.par(3);
+                if all(isinf(endsk)), rescl = .5/(5*s);
+                else                 rescl = .5/(15*s);               end
+                rescl = rescl.^sum(expskj);
+                gmkj = rescl*gmkj.*((x+1).^expskj(1).*(1-x).^expskj(2)); 
             end
             
             expsk = [expsk ; expskj(1)];
