@@ -5,10 +5,9 @@
 
 clc, clear, close all
 
-s = chebfun('s',[-1 1]);
-u = s+1
+u = chebfun('s+1',[-1 1]);
 
-v = fracint(u,.5)
+v = cumsum(u,.5)
 plot(u,'b',v,'r'), drawnow
 
 w = diff(u,.5)
@@ -42,12 +41,13 @@ u
 
 clc, clear, close all
 
-u = chebfun('sin(pi*x)',[-1 1]);
+u = chebfun('sin(x)',[0 20]);
 k = 1;
-for alpha = 0.1:.1:1
+% for alpha = linspace(0,2*pi,8)
+for alpha = [.5 .75 1 1.25 1.57]
     k = k + 1;
     u(:,k) = diff(u(:,1),alpha);
-    plot(u), drawnow
+    plot(u), drawnow, pause
 end
 u
 

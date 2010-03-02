@@ -19,7 +19,7 @@ end
 % exponential
 u = chebfun('exp(x)',[0 1]);
 up05 = diff(u,.5);
-uint05 = fracint(u,.5);
+uint05 = cumsum(u,.5);
 true = chebfun('erf(sqrt(x)).*exp(x)',[0 1],'exps',[.5 0]);
 pass(3) = norm(true-up05,inf) < tol;
 pass(4) = norm(true-uint05,inf) < tol;

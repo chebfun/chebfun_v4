@@ -1,28 +1,12 @@
-function u = fracint(u,alpha)
-% FRACINT Fractional integral of a chebfun
-%  V = FRACINT(U,ALPHA) computes the fractional integral V of order ALPHA
+function u = fraccalc(u,alpha)
+% FRACCALC Fractional calculus of a chebfun
+%  FRANCCALC(U,N) is called by DIFF(U,N) and CUMSUM(U,N) when N is not an
+%  integer and computes the fractional integral of order ALPHA
 %  (as defined by the Riemann–Liouville integral) of the chebfun U.
-%  
-%  If [a b] = domain(U), then V(a) = 0. 
-%
-%  U may be a quasimatrix, but piecewise chebfuns are not yet supported.
-%
-%  Example:
-%    u = chebfun('s',[0 1]);
-%    k = 1;
-%    for alpha = 0.1:.1:1
-%    k = k + 1;
-%    u(:,k) = fracint(u(:,1),alpha);
-%        plot(u), drawnow
-%    end
-%
-%  See also chebfun/fracdiff.
 %
 %  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 %
 %  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author: hale $: $Rev: 1017 $:
-%  $Date: 2010-01-22 08:53:23 +0000 (Fri, 22 Jan 2010) $:
 
 for k = 1:numel(u)
     u(:,k) = fracintcol(u(:,k),alpha);

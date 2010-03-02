@@ -22,6 +22,8 @@ if nargin==1, n=1; end
 
 if isa(n,'chebfun')
     Fout = jacobian(F,n);
+elseif round(n)~=n
+    Fout = fraccalc(diff(F,ceil(n)),ceil(n)-n);
 else
     Fout = F;
     for k = 1:numel(F)
