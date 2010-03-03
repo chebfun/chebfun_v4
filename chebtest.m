@@ -79,10 +79,19 @@ userpref.oppref = cheboppref;
 userpref.dirname = dirname;
 addpath(dirname)
 
+javacheck = true;
+if strcmp(version('-java'),'Java is not enabled')
+    javacheck = false;
+end
+
 for j = 1:length(mfile)
   
   fun = mfile{j}(1:end-2);
-  link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
+  if javacheck
+      link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
+  else
+      link = fun;
+  end
   msg = ['  Function #' num2str(j) ' (' link ')... ' ];
   msg = strrep(msg,'\','\\');  % escape \ for fprintf
   numchar = fprintf(msg);
