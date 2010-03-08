@@ -13,7 +13,12 @@ function map = strip(pars,plotflag)
 %
 %  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-a = pars(1); b = pars(2); rho = pars(3);
+a = pars(1); b = pars(2); 
+if numel(pars) > 2 
+    rho = pars(3);
+else
+    rho = 1.4; % for Historical reasons ...
+end
 
 scale = @(y) ((b-a)*y+b+a)/2;
 rescale = @(x) (2*x-b-a)/(b-a);
@@ -37,10 +42,10 @@ else
     m4 = tanh(pi/(4*alpha));   
     try % sc toolbox
         L = -2*log(m4)/pi;
-        [K Kp] = ellipkkp(L); 
+        [K Kp] = ellipkkp(L);
     catch no_sc
-        K = ellipke(m);
-        Kp = ellipke(1-m);
+        K = ellipke(1-m1);
+        Kp = ellipke(m1);
     end
     rho = exp(pi*Kp/(4*K));
     alpha = tmp;
