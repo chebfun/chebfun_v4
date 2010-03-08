@@ -5,7 +5,8 @@ function [failfun t] = chebtest(dirname)
 % value. If this value is true, the function is deemed to have 'passed'. 
 % If its result is false, the function 'failed'. If the function
 % threw an error, it is considered to have 'crashed'. A report is
-% generated in the command window.
+% generated in the command window, and in a file 'chebtestreport' in the
+% chebfun directory.
 %
 % CHEBTEST by itself tries to find a directory named 'chebtests' in the
 % directory in which chebtest.m resides.
@@ -40,6 +41,7 @@ end
 
 pref = chebfunpref;
 tol = pref.eps;
+createreport = true;
 
 matlabver = ver('matlab');
 if str2double(matlabver.Version(1)) < 7 || ...
@@ -63,6 +65,9 @@ end
 
 dirlist = dir( fullfile(dirname,'*.m') );
 mfile = {dirlist.name};
+chbtstdir = fileparts(which('chebtest.m'));
+fclose(fopen([chbtstdir,'/chebtestreport.txt'],'w+'));
+
 
 fprintf('\nTesting %i functions:\n\n',length(mfile))
 failed = zeros(length(mfile),1);
@@ -114,10 +119,24 @@ for j = 1:length(mfile)
   catch
     failed(j) = -1;
     fprintf('CRASHED: ')
-    msg = lasterror;  
+    msg = lasterror;
     lf = findstr(sprintf('\n'),msg.message); 
     if ~isempty(lf), msg.message(1:lf(end))=[]; end
     fprintf([msg.message '\n'])
+    
+    % Create an error report
+    if createreport
+        fid = fopen([chbtstdir,'/chebtestreport.txt'],'a');
+        fprintf(fid,[fun '  (crashed) \n']);
+        fprintf(fid,['identifier: ''' msg.identifier '''\n']);
+        fprintf(fid,['message: ''' msg.message '''\n']);
+        for k = 1:size(msg.stack,1)
+            fprintf(fid,[msg.stack(k).file ' \tline ' int2str(msg.stack(k).line) '\n']);
+        end
+    fprintf(fid,'\n');
+    fclose(fid);
+    end
+
   end
   
 end
@@ -132,9 +151,20 @@ if all(~failed)
   fprintf('\nAll tests passed!\n\n')
   if nargout>0, failfun = {}; end
 else
-  fprintf('\n%i failed and %i crashed\n\n',sum(failed>0),sum(failed<0))
+  fprintf('\n%i failed and %i crashed\n',sum(failed>0),sum(failed<0))
   failfun = mfile(failed~=0);
+  
+  if createreport
+      fun = 'chebtestreport.txt';
+      link = ['<a href="matlab: edit ' chbtstdir filesep fun '">' fun '</a>'];
+      msg = [' Error report available here: ' link '. ' ];
+      msg = strrep(msg,'\','\\');  % escape \ for fprintf
+      numchar = fprintf(msg); fprintf('\n')
+  end
+  fprintf('\n')
 end
+
+
 
 ts = sum(t); tm = ts/60;
 fprintf('Total time:%6.1f seconds =%5.2f minutes \n',ts,tm)
