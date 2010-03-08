@@ -58,7 +58,7 @@ else
         else
             % General case
             % Integer and positive powers (exps not needed)
-            if round(b) == b && b>0 && ~any(isinf(f.ends))
+            if round(b) == b && b>0 && ~any(any(get(f,'exps')<0))
                 fout = comp(f,@(x) power(x,b));
             else % Introduce exps
                 if round(b) ~= b || b < 0

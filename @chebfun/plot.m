@@ -124,7 +124,7 @@ while ~isempty(varargin)
     [lines marks jumps jumpval misc] = plotdata(f,g,[],numpts,interval);
     
     % limits for inf plots
-    if ~isempty(misc) 
+    if length(misc) == 3
         infy = max(infy,misc(1));
         bot = min(bot,misc(2)); 
         top = max(top,misc(3));

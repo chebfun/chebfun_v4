@@ -24,6 +24,7 @@ if isa(n,'chebfun')
     Fout = jacobian(F,n);
 elseif round(n)~=n
     Fout = fraccalc(diff(F,ceil(n)),ceil(n)-n);
+%     Fout = diff(fraccalc(F,ceil(n)-n),ceil(n));
 else
     Fout = F;
     for k = 1:numel(F)
@@ -43,12 +44,6 @@ funs = f.funs;
 ends = get(f,'ends');
 F.jacobian = anon(' @(u) diff(domain(f),n) * jacobian(f,u)',{'f' 'n'},{f n});
 F.ID = newIDnum;
-
-% Fractional derivatives are treated seperately
-if round(n) ~= n
-    F = fracdiff(f,n);
-    n = 0; 
-end
 
 for j = 1:n % loop n times for nth derivative
     

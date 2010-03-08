@@ -67,17 +67,20 @@ end
 UK = {};
 for j = k
     if quasi,
-        uk = chebpoly(u(:,j),1);      % coefficients of kth row
+        uk = chebpoly(u(:,j),1);    % coefficients of kth row
     else
         uk = chebpoly(u,j);         % coefficients of kth fun
     end
     uk = abs(uk(end:-1:1));         % flip
     uk(~uk) = eps*max(uk);          % remove zeros for LNT
-%     UK = [UK, {0:length(uk)-1, uk}]; % store
-    UK = [UK, {0:length(uk)-1, uk}, varargin]; % store
+    nk = length(uk)-1;
+    
+    if nk==0, plotopts = {'x'};     % If only one coeff, plot an x
+    else      plotopts = varargin; end
+    
+    UK = [UK, {0:nk, uk}, plotopts]; % store
 end
 
-% UK = [UK, varargin]; % store
 if ~ll
     h = semilogy(UK{:});            % semilogy plot
 else

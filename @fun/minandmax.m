@@ -9,6 +9,12 @@ function [y,x] = minandmax(g)
 
 x = [0 0]; y = [0 0];
 
+% % We have to be careful if there is blowup.
+% tol = 1e4*g.scl.v*chebfunpref('eps');
+% if any(g.exps<0) && norm(g.vals,inf) < tol
+%     return
+% end
+
 if g.exps(2) < 0
     if g.vals(end) >= 0, 
         y(2) = inf;   x(2) = g.n;

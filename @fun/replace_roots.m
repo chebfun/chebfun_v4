@@ -18,10 +18,17 @@ newexps = exps;
 newexps(mask) = exps(mask) - floor(exps(mask));
 pow = exps-newexps;
 
-ends = map.par(1:2);
-C = (2/diff(ends)).^sum(exps-newexps);
+infd = isinf(d);
+if any(infd)
+    d = [-1 1];  f.map = linear(d);
+    s = map.par(3);
+    if all(infd),  C = (.5./(5*s)).^sum(exps-newexps);
+    else           C = (.5./(15*s)).^sum(exps-newexps); end
+else
+    C = (2/diff(d)).^sum(exps-newexps);
+end
 
-if strcmp(map.name,'linear')
+if strcmp(map.name,'linear') || strcmp(map.name,'unbounded');
     f = prolong(f,f.n+sum(pow));
     x = get(f,'points');
     mult = (x-d(1)).^pow(1).*(d(2)-x).^pow(2);

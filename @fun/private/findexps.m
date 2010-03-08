@@ -1,5 +1,5 @@
 function exps = findexps(op,ends,leftrightflag,integerflag)
-% EXPS markfun exponents
+%FINDEXPS Find chebfun exponents
 % EXPS = FINDEXPS(H,ENDS) returns a vector EXPS such that
 % H(X).*(X-ENDS(1)).^EXPS(1).*(X+ENDS(2)).^EXPS(2) is a bounded function
 
@@ -50,7 +50,7 @@ warning(dbz_state);
 end
 % -------------------------------------------------------------------------
 function exponent = Rexp(f,loc,BLOWUPSTATE)
-% REXP markfun right-exponent
+% REXP right-exponent
 % Given a function f defined on [a,b], finds an exponent
 % E such that f*(b-x)^(-E) is bounded at b-eps(b).
 % Accepts a third argument BLOWUPSTATE:

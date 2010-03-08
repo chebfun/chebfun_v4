@@ -33,7 +33,7 @@ if g.scl.v == 0,
 %         error('FUN:simplify:InfEval', ...
 %                 'Function returned Inf when evaluated.')
 
-%     inf located, try markfun!
+%     inf located, try blowup?!
     return
 end
 c = chebpoly(g,kind);                      % coeffs of Cheb expansion of g

@@ -6,9 +6,7 @@ function Fout = sqrt(F)
 
 % Copyright 2002-2009 by The Chebfun Team.
 
-
-% Fout = comp(F, @(x) sqrt(x));
-
+Fout = F;
 for k = 1:numel(F)
     Fout(k) = sqrtcol(F(k));
     Fout(k).jacobian = anon('@(u) (1/2)*diag(1./Fout)*jacobian(F,u)',{'Fout','F'},{Fout(k) F(k)});
@@ -29,7 +27,7 @@ for k = 1:F.nfuns
     f = extract_roots(F.funs(k));
     exps = f.exps;
     f.exps = [0 0];
-    fout = compfun(f, @(x) sqrt(x));
+    fout = compfun(f, @sqrt);
     fout.exps = exps/2;
     fout = replace_roots(fout);
     Fout.funs(k) = fout;

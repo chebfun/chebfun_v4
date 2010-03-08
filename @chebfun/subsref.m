@@ -14,10 +14,10 @@ switch index(1).type
         varargout = { get(f,idx) };
     case '()'
         % --- transpose row chebfuns/quasimatrices -------
-        trans = 0;
         if get(f,'trans')   
             n = size(f,1);
-            s = idx{2}; % where to evaluate
+            if length(idx) == 2,  s = idx{2}; % where to evaluate 
+            else                  s = idx{1};            end
         else
             n = size(f,2);
             s = idx{1}; % where to evaluate

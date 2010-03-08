@@ -10,9 +10,9 @@ if nargin < 3, sides = [true true]; end
 % Get the domain
 d = f.map.par(1:2);
 
-if any(isinf(d)) % We can only do this with finite domains
-    return
-end
+% if any(isinf(d)) % We can only do this with finite domains
+%     return
+% end
 
 % Get the exponents
 exps = get(f,'exps');
@@ -31,12 +31,26 @@ if all(f0 > tol),
     return
 end
 
+% infinite intervals
+infd = isinf(d);
+if any(infd)
+    d = [-1 1];
+    f.map = linear(d);
+    s = map.par(3);
+    if all(infd),  rescl = 1./(.5./(5*s));
+    else           rescl = 1./(.5./(15*s)); end
+else
+    rescl = 1;
+end
+    
+
 num = 0;
-if strcmp(map.name,'linear')
+if strcmp(map.name,'linear') || strcmp(map.name,'unbounded')
 % Linear case is nice
     c = chebpoly(f); % The Chebyshev coefficients of f
     while any(f0 < tol) && f.n >1 && num < numroots
         c = flipud(c);
+        
         if f0(1) < tol
             % left
             a = d(1);   
@@ -56,7 +70,7 @@ if strcmp(map.name,'linear')
         % The new coefficients
         c = sgn*flipud(D\c(2:end));
         % Construct new f
-        f = fun(chebpolyval(c),map);
+        f = rescl*fun(chebpolyval(c),f.map);
         f0 = abs(f.vals([1 end]));
         f0(~sides) = inf;
         
@@ -64,10 +78,10 @@ if strcmp(map.name,'linear')
     end
     f.exps = exps;
 
-elseif ~any(isinf(d))
+else
 % General finite maps are tricky.   
 % Perhaps we can do something similar to the above in the mapped case?
-% For now subtract out by force.
+% For now subtract out by force.   
     while any(f0 < tol) && f.n >1 && num < numroots
         if f0(1) < tol && isfinite(d(1))
             % left
@@ -81,22 +95,20 @@ elseif ~any(isinf(d))
             break
         end
         % Not sure why we need to scale here and not above.
-        % The 1.5*f.n is hand-wavy.
+        rescl = diff(d)/2;
         pref = chebfunpref; pref.blowup = 0; %pref.n = f.n; 
         pref.extrapolate = true;
-        f = fun(@(x) newfun(x,f,d,sgn)*diff(d)/2,map,pref);
+        f = fun(@(x) rescl*newfun(x,f,d,sgn),f.map,pref);
         f0 = abs(f.vals([1 end]));
         f0(~sides) = inf;
         num = num+1;
     end
     f.exps = exps;
-        
-else
-    
-    warning('FUN:extract_roots:inf', ...
-        'Extract roots currently only works for finite domains!'); 
-    f.exps = exps; 
-    return
+       
+end
+
+if ~strcmp(f.map.name,map.name) % we've switched to linear for inf intervals. Switch back.
+    f.map = map;
 end
 
 function y = newfun(x,f,d,sgn)

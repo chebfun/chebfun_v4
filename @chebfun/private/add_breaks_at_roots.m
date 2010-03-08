@@ -1,16 +1,19 @@
-function F = add_breaks_at_roots(F,tol)
+function F = add_breaks_at_roots(F,tol,r)
 % Adds new breakpoints at the root sof a chebfun
 
-if nargin == 1,
+if nargin == 1 || isempty(tol),
     tol = 50*chebfunpref('eps');
 end
 
 % Add new break points at zeros
 ends = get(F,'ends');
-r = roots(F);
+if nargin < 3
+    r = roots(F);
+elseif isempty(r)
+    return
+end
 
 % Prune out ones that are near to existing breakpoints
-
 for k = 1:length(r)
     nearends = min(abs(r(k)-ends));
     if nearends < tol, r(k) = NaN; end
