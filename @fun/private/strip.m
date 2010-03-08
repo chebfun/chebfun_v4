@@ -13,8 +13,8 @@ function map = strip(pars,plotflag)
 %
 %  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-a = pars(1); b = pars(2); 
-if numel(pars) > 2 
+a = pars(1); b = pars(2);
+if length(pars) > 2 
     rho = pars(3);
 else
     rho = 1.4; % for Historical reasons ...
@@ -52,11 +52,21 @@ else
 end
 
 if m1 > 1e-5
-    map.for = @(y) scale(stripmap1(rescale(y),m4,0));
-    map.der = @(y) stripmap1(rescale(y),m4,1);
+    if all([a b]==[-1 1])
+        map.for = @(y) stripmap1(y,m4,0);
+        map.der = @(y) stripmap1(rescale(y),m4,1);
+    else
+        map.for = @(y) scale(stripmap1(rescale(y),m4,0));
+        map.der = @(y) stripmap1(rescale(y),m4,1);
+    end
 else
-    map.for = @(y) scale(stripmap2(rescale(y),rho,0));
-    map.der = @(y) stripmap2(rescale(y),rho,1);
+    if all([a b]==[-1 1])
+        map.for = @(y) stripmap2(y,rho,0);
+        map.der = @(y) stripmap2(y,rho,1);
+    else  
+        map.for = @(y) scale(stripmap2(rescale(y),rho,0));
+        map.der = @(y) stripmap2(rescale(y),rho,1);
+    end
     alpha = imag(map.for(.5i*(rho-1/rho)));
 end
     

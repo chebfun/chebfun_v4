@@ -39,8 +39,8 @@ elseif iscell(v1)
     end    
 else
     mapname = v1;
-    if length(varargin) > 2
-        pars = varargin(:).';
+    if length(varargin) >= 2
+        pars = [varargin{2:end}.'];
     else
         pars = []; 
     end  
