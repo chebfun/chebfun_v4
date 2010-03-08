@@ -44,10 +44,7 @@ elseif isreal(1i*F)          % Imaginary case
 else                         % Complex case
     
     Fout = add_breaks_at_roots(F);
-    % Loop through funs
-    for k = 1:Fout.nfuns
-        Fout.funs(k).vals = abs(Fout.funs(k).vals);
-    end
+    Fout = sqrt(conj(Fout).*Fout);
 
 end
 
