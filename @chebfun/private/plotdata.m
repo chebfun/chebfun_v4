@@ -135,7 +135,7 @@ if isempty(f)
                 gmkj = rescl*gmkj.*((fmkj-endsk(j)).^expskj(1).*(endsk(j+1)-fmkj).^expskj(2)); % adjust using exps
             else
                 x = gk.funs(j).map.inv(fmkj);
-                s = gk.funs(k).map.par(3);
+                s = gk.funs(j).map.par(3);
                 if all(isinf(endsk)), rescl = .5/(5*s);
                 else                 rescl = .5/(15*s);               end
                 rescl = rescl.^sum(expskj);
@@ -236,6 +236,8 @@ if isempty(f)
         
         % store jumps and marks
         jumps = [jumps, fjk, gjk];
+        % With 'interval', there might not actually be any marks.
+        if numel(fmk) == 0, fmk = NaN; gmk = NaN; end
         marks = [marks, fmk, gmk];
     end
 
@@ -256,9 +258,6 @@ if isempty(f)
     
     lines = {fl, gl};
     misc = [infy bot top];
-    
-    % With 'interval', there might not actually be any marks.
-    if numel(marks) == 0, marks = {NaN NaN}; end
     
 elseif isempty(h) % Two quasimatrices case
     
