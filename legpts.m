@@ -153,7 +153,8 @@ for j = N+1:n-1
     u = u(m+1:-1:1);
     up = up(m+1:-1:1);
     
-    hh = [ones(m,1) ; M];
+%     hh = [ones(m,1) ; M];
+    hh = [M;cumprod(M*h+zeros(m,1))];
     step = inf;
     l = 0;
     % Newton iteration

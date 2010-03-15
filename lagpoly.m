@@ -10,10 +10,10 @@ function L = lagpoly(n)
 % Copyright 2002-2009 by The Chebfun Team. 
 
 L = chebfun; % Empty chebfun
-L(:,1) = chebfun(@(x) 1,[0 inf],'exps',[0 0],1);
+L(:,1) = chebfun(1,[0 inf],'exps',[0 0]);
 L(:,2) = chebfun(@(x) 1-x,[0 inf],'exps',[0 1]);
 for k = 2:max(n) % Recurrence relation
-   L(:,k+1) = chebfun(@(x) 1/(k+1)*((2*k+1-x).*feval(L(:,k),x)-k*feval(L(:,k-1),x)),[0 inf],'exps',[0 k],k+1);
+   L(:,k+1) = chebfun(@(x) 1/(k)*((2*k-1-x).*feval(L(:,k),x)-(k-1)*feval(L(:,k-1),x)),[0 inf],'exps',[0 k]);
 end
 
 % Take only the ones we want
