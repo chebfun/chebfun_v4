@@ -41,7 +41,8 @@ end
 tol = 100*eps;
     
 if ~recurse || (g.n<101)                                    % for small length funs
-    c=chebpoly(g);                              % compute Cheb coeffs
+    coeffs = chebpoly(g);                              % compute Cheb coeffs
+    c = coeffs;
     if abs(c(1)) < 1e-14*norm(c,inf)
         ind= find(abs(c)>1e-14*norm(c,inf),1,'first');
         if isempty(ind), out = zeros(length(c),1);
@@ -80,10 +81,23 @@ if ~recurse || (g.n<101)                                    % for small length f
         mask=abs(imag(r))<tol*g.scl.h;           % filter imaginary roots
         r = real( r(mask) );
         out = sort(r(abs(r) <= 1+tol*g.scl.h));  % keep roots inside [-1 1]   
+        
+        % polish
+        if chebfunpref('polishroots')
+            gout = feval(g,out);
+            step = gout./feval(diff(g,1,coeffs),out);
+            step(isnan(step)) = 0;
+%             outnew = out - step;
+%             mask = abs(gout) > abs(feval(g,outnew));
+%             out(mask) = outnew(mask);
+            out = out-step;
+        end
+        
         if ~isempty(out)
             out(1) = max(out(1),-1);                % correct root -1
             out(end) = min(out(end),1);             % correct root  1
         end
+        
     elseif prune
         rho = sqrt(eps)^(-1/g.n);
         rho_roots = abs(r+sqrt(r.^2-1));
@@ -100,3 +114,17 @@ else
     out = [-1+(rootsunit(g1,all,recurse,prune)+1)*.5*(1+c);...        % find roots recursively 
         c+(rootsunit(g2,all,recurse,prune)+1)*.5*(1-c)];              % and rescale them
 end
+
+
+
+function cout = newcoeffs_der(c)
+% C is the coefficients of a chebyshev polynomials (on [-1,1])
+% COUT are the coefficiets of its derivative
+
+n = length(c);
+cout = zeros(n+1,1);                % initialize vector {c_r}
+v = [0; 0; 2*(n-1:-1:1)'.*c(1:end-1)]; % temporal vector
+cout(1:2:end) = cumsum(v(1:2:end)); % compute c_{n-2}, c_{n-4},...
+cout(2:2:end) = cumsum(v(2:2:end)); % compute c_{n-3}, c_{n-5},...
+cout(end) = .5*cout(end);           % rectify the value for c_0
+cout = cout(3:end);

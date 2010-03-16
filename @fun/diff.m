@@ -32,8 +32,10 @@ function g = diff(g,k,c)
 % $Date$:
 
 if isempty(g), return, end
-if (nargin==1), k=1; end
-c = chebpoly(g);  % obtain Cheb coeffs {C_r}
+if nargin==1, k=1; end
+if nargin < 3
+    c = chebpoly(g);  % obtain Cheb coeffs {C_r}
+end
 n = g.n;
 ends = g.map.par(1:2);
 
