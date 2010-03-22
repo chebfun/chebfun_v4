@@ -72,21 +72,21 @@ if nargout > 1 && any(isinf(interval)) % infinite intervals not yet supported
 end
 
 % % Special cases
-% Legendre
+% Legendre: alpha = beta = 0
 if ~(a || b) % The case alpha = beta = 0 is treated by legpts
     [x w] = legpts(n,varargin{:});
     return
 end
-% Gauss-Chebyshev
-if a == -.5 && b == -.5 % The case alpha = beta = -.5 is Gauss-Chebyshev
+% Gauss-Chebyshev: alpha = beta = -.5
+if a == -.5 && b == -.5
     x = chebpts(n,interval,1);
     w = repmat(pi/n,1,n);
     return
 end
-if a == .5 && b == .5 % The case alpha = beta = .5 is Gauss-Chebyshev 2
-    ii = (1:n)'/(n+1)*pi;
-    x = -cos(ii);
-    w = pi/(n+1)*(1-x.^2);   w = w';
+% Gauss-Chebyshev2:  alpha = beta = .5
+if a == .5 && b == .5
+    x = chebpts(n+2,2);     x = x(2:n+1);
+    w = pi/(n+1)*(1-x.^2);  w = w';
     [x w] = rescale(x,w,interval,alpha,beta);
     return
 end

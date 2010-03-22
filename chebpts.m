@@ -8,7 +8,8 @@ function [x w] = chebpts(n,d,kind)
 %   mappref('parinf') = [1 0] and mappref('adaptinf') = 0.
 %
 %   [X W] = CHEBPTS(N,D) returns also a row vector of the (scaled) weights 
-%   for Clenshaw-Curtis quadrature.
+%   for Clenshaw-Curtis quadrature. For nodes and weights of
+%   Gauss-Chebyshev quadrature, use [X W] = JACPTS(N,-.5,-.5,D).
 %
 %   CHEBPTS(N,KIND) or CHEBPTS(N,D,KIND) returns Chebysehv points of the
 %   first kind if KIND = 1 and second kind if KIND = 2 (default). 
