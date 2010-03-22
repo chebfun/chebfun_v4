@@ -7,7 +7,7 @@ function [x,w] = jacpts(n,alpha,beta,varargin)
 %  [X,W] = JACPTS(N,ALPHA,BETA,) also returns a vector of weights for 
 %       Gauss-Jacobi quadrature.
 %
-%  [X,W] = JACPTS(N,ALPHA,BETA,METHOD) allows the user to select which method to use.
+%  [X,W] = JACPTS(N,ALPHA,BETA,METHOD) allows choice in which method is used.
 %       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
 %       which is best suited for when N is small. METHOD = 'FAST' will use 
 %       the Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
@@ -15,6 +15,11 @@ function [x,w] = jacpts(n,alpha,beta,varargin)
 %
 %  [X,W] = JACPTS(N,ALPHA,BETA,[A,B]) scales the nodes and weights for the 
 %       finite interval [A,B].
+%
+%  The cases ALPHA = BETA = -.5 and ALPHA = BETA = .5 correspond to
+%  Gauss-Chebyshev nodes and quadrature, and are treated specially 
+%  (as a closed form of the nodes and weights is available). 
+%  ALPHA = BETA = 0 calls LEGPTS, which is a more efficient code.
 %
 %  See also legpts and chebpts.
 %
@@ -35,11 +40,6 @@ if alpha <= -1 || beta <= -1,
     error('CHEBFUN:jacpts:SizeAB','alpha and beta must be greater than -1')
 end
 a = alpha; b = beta;
-
-if ~(a || b) % The case alpha = beta = 0 is treated by legpts
-    [x w] = legpts(n,varargin);
-    return
-end
 
 % defaults
 interval = [-1,1];
@@ -71,6 +71,26 @@ if nargout > 1 && any(isinf(interval)) % infinite intervals not yet supported
     'jacpts does not yet support infinite intervals');
 end
 
+% % Special cases
+% Legendre
+if ~(a || b) % The case alpha = beta = 0 is treated by legpts
+    [x w] = legpts(n,varargin{:});
+    return
+end
+% Gauss-Chebyshev
+if a == -.5 && b == -.5 % The case alpha = beta = -.5 is Gauss-Chebyshev
+    x = chebpts(n,interval,1);
+    w = repmat(pi/n,1,n);
+    return
+end
+if a == .5 && b == .5 % The case alpha = beta = .5 is Gauss-Chebyshev 2
+    ii = (1:n)'/(n+1)*pi;
+    x = -cos(ii);
+    w = pi/(n+1)*(1-x.^2);   w = w';
+    [x w] = rescale(x,w,interval,alpha,beta);
+    return
+end
+
 % decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast')
     ab = a + b;
@@ -95,24 +115,31 @@ else   % Fast, see [2]
    
 end
 
+[x w] = rescale(x,w,interval,alpha,beta);
+
+function [x w] = rescale(x,w,interval,alpha,beta)
 % rescale to arbitrary interval
-if ~all(interval == [-1 1])
-    if ~any(isinf(interval))
-        % finite interval
-        c1 = .5*sum(interval); 
-        c2 = .5*diff(interval);
-        w = c2^(alpha+beta+1)*w;
-        x = c1+c2*x;        
-    else
-        % infinite interval (not yet supported)
-        m = maps(fun,{'unbounded'},interval); % use default map
-        if nargout > 1
-            w = w.*m.der(x.');
-        end
-        x = m.for(x);
-        x([1 end]) = interval([1 end]);
-    end
+if all(interval == [-1 1])
+    % Nothing to do
+    return
 end
+
+if ~any(isinf(interval))
+    % finite interval
+    c1 = .5*sum(interval); 
+    c2 = .5*diff(interval);
+    w = c2^(alpha+beta+1)*w;
+    x = c1+c2*x;        
+else
+    % infinite interval (not yet supported)
+    m = maps(fun,{'unbounded'},interval); % use default map
+    if nargout > 1
+        w = w.*m.der(x.');
+    end
+    x = m.for(x);
+    x([1 end]) = interval([1 end]);
+end
+
 
 function [roots ders] = alg0_Jac(n,a,b)
 if abs(a)<=.5 && abs(b)<=.5 % use asymptotic formula
