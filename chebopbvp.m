@@ -480,5 +480,7 @@ function fig_logo_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: place code in OpeningFcn to populate fig_logo
-axes(hObject)
-imshow('@chebop/private/cheblogo.png')
+logo = imread('@chebop/private/cheblogo.png');
+axes(hObject);
+image(logo), box off, axis off
+
