@@ -49,12 +49,5 @@ function varargout = mldivide(BVP,b)
 
 % This function calls solve or solve_newton_damped for the BVP and the RHS of \.
 
-% Switch on cheboppref.damped
-% if strcmp(cheboppref('damped'),'off')
-%     [varargout{1} varargout{2}] = solve(BVP,b);
-% else
-%     [varargout{1} varargout{2}] = solve_newton_damped(BVP,b);
-% end
-
 [varargout{1} varargout{2}] = solve_bvp_routines(BVP,b);
 end

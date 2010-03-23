@@ -1,4 +1,4 @@
-function varargout = solvebvp(N,rhs)
+function varargout = solvebvp(N,rhs,options,guihandles)
 % SOLVEBVP is the general chebop command for solving linear or nonlinear
 % ODE BVPs (boundary-value problems).  At the moment, it offers no features
 % beyond what can be obtained through the "nonlinear backslash" command.
@@ -25,6 +25,6 @@ function varargout = solvebvp(N,rhs)
 
 % Developed by Toby Driscoll and Asgeir Birkisson, 2009.
 
-[varargout{1} varargout{2}] = solve_bvp_routines(BVP,b);
+[varargout{1} varargout{2}] = solve_bvp_routines(N,rhs,options,guihandles);
 
 end

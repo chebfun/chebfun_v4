@@ -1,4 +1,4 @@
-function [u nrmduvec] = solve_bvp_routines(N,rhs)
+function [u nrmduvec] = solve_bvp_routines(N,rhs,options,guihandles)
 % SOLVE_BVP_ROUTINES Private function of the chebop class.
 %
 % This function gets called by nonlinear backslash and solvebvp. It both
@@ -8,8 +8,18 @@ function [u nrmduvec] = solve_bvp_routines(N,rhs)
 
 % Damped Newton iteration. More details will follow.
 
-% Begin by obtaining the nonlinop preferences
-pref = cheboppref;
+% If no options are passed, obtain the the nonlinop preferences
+switch nargin
+    case 2
+        pref = cheboppref;
+        guihandles = [];
+    case 3
+        pref = options;
+        guihandles = [];
+    case 4
+        pref = options;
+end
+
 restol = pref.restol;
 deltol = pref.deltol;
 maxIter = pref.maxiter;
@@ -92,9 +102,9 @@ lambdas = zeros(10,1);
 % Newton iteration, this counter will remain 0.
 stagCounter = 0;
 if dampedOn
-    solve_display('initNewton',u);
+    solve_display(pref,guihandles,'initNewton',u);
 else
-    solve_display('init',u);
+    solve_display(pref,guihandles,'init',u);
 end
 
 while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
@@ -164,15 +174,15 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
     % We want a slightly different output when we do a damped Newton
     % iteration. Also, in damped Newton, we check for stagnation.
     if dampedOn
-        solve_display('iterNewton',u,lambda*delta,nrmdu,normr,lambda)
+        solve_display(pref,guihandles,'iterNewton',u,lambda*delta,nrmdu,normr,lambda)
         stagCounter = checkForStagnation(stagCounter);
     else
-        solve_display('iter',u,lambda*delta,nrmdu,normr)
+        solve_display(pref,guihandles,'iter',u,lambda*delta,nrmdu,normr)
     end
 end
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
-solve_display('final',u,[],nrmdu,normr)
+solve_display(pref,guihandles,'final',u,[],nrmdu,normr)
 
 % Issue a warning message if stagnated. Should this in output argument
 % (i.e. flag)?
@@ -258,30 +268,41 @@ end
         sigma = 0.01; lambda_min = 0.1; tau = 0.1;
         
         % The objective function we want to minimize.
+        
+        % This objective function does not take into account BCs.
         g = @(a) 0.5*norm(A\problemFun(u+a*delta),'fro').^2;
+        
+        % Objective function with BCs - Using the functions.
+      g = @(a) 0.5*(norm(A\problemFun(u+a*delta),'fro').^2 +bcResidual(u+a*delta));
+        
+        % Objective function with BCs - Using linearized BCs
+%         g = @(a) 0.5*(norm(A\problemFun(u+a*delta),'fro').^2 +bcResidual2(u+a*delta));
+%          g = @(a) 0.5*(norm(A\problemFun(u+a*delta),'fro').^2 + ...
+%             norm(bcLeftOp\(problemFun(u+a*delta),'fro').^2);
+%         g = @(a) 0.5*(norm(problemFun(u+a*delta),'fro').^2 +bcResidual(u+a*delta));
         g0 = g(0);
         
         % Check whether the full Newton step is acceptable. If not, we
         % search for a mininum using fminbnd.
-        %         g1 = g(1);
-        %         if g1 < (1-2*sigma)*g0
-        %             lam = 1;
-        %         else
-        %             amin = fminbnd(g,0.095,1);
-        %             lam = amin;
-        %         end
-        %         if lam < lambda_min
-        %             if lambda_minCounter < 3
-        %                 lambda_minCounter = lambda_minCounter + 1;
-        %                 lam = lambda_min;
-        %             else
-        %                 %If we take three smallest step in a row, give the
-        %                 %solution process a "kick".
-        %                 lam = .6;
-        %                 lambda_minCounter = lambda_minCounter - 1;
-        %             end
-        %         end
-        %
+%                 g1 = g(1);
+%                 if g1 < (1-2*sigma)*g0
+%                     lam = 1;
+%                 else
+%                     amin = fminbnd(g,0.095,1);
+%                     lam = amin;
+%                 end
+%                 if lam < lambda_min
+%                     if lambda_minCounter < 3
+%                         lambda_minCounter = lambda_minCounter + 1;
+%                         lam = lambda_min;
+%                     else
+%                         %If we take three smallest step in a row, give the
+%                         %solution process a "kick".
+%                         lam = .6;
+%                         lambda_minCounter = lambda_minCounter - 1;
+%                     end
+%                 end
+%         
         % Explicit calculations, see Ascher, Mattheij, Russell [1995]
         
         lam = 1;
@@ -314,5 +335,39 @@ end
         else
             updatedStagCounter = max(0,currStagCounter-1);
         end
+    end
+
+    function bcRes = bcResidual(currentGuess)
+        bcRes = 0;
+        if ~leftEmpty
+            for bcCount = 1:length(bcFunLeft)
+                v = bcFunLeft{bcCount}(currentGuess);
+                bcRes = bcRes + v(a)^2;
+            end
+        end
+        
+        % Check whether a boundary happens to have no BC attached
+        if ~rightEmpty
+            for bcCount = 1:length(bcFunRight)
+                v = bcFunRight{bcCount}(currentGuess);
+                bcRes = bcRes + v(b)^2;
+            end
+        end
+    end
+
+    function bcRes2 = bcResidual2(currentGuess)
+        bcRes2 = 0;
+        bcLeftOp = bc.left.op;
+        bcLeftVal = bc.left.val;
+        bcRightOp = bc.right.op;
+        bcRightVal = bc.right.val;
+        
+        vl = bcFunLeft{1}(currentGuess);
+        wl = bcLeftOp\(vl-bcLeftVal);
+        bcRes2 = bcRes2 + wl(a)^2;
+        
+        vr = bcFunRight{1}(currentGuess);
+        wr = bcRightOp\(vr-bcRightVal);
+        bcRes2 = bcRes2 + wr(a)^2;
     end
 end

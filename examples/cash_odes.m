@@ -4,7 +4,7 @@
 
 % Set up for plotting. Throughout this script, the variable probCounter is
 % used to set up subplots etc.
-cheboppref('factory')
+cheboppref('factory'), cheboppref('damped','on'), cheboppref('display','iter')
 time = zeros(35,1);
 iter = zeros(35,1);
 figure;
@@ -542,6 +542,8 @@ if plotOn,
     subplot(7,5,probCounter),plot(u(:,2)),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
+
+plot(u)
 cheboppref('damped','on')
 %% Problem #34
 eps = 3.5;
@@ -558,7 +560,6 @@ if plotOn,
     subplot(7,5,probCounter),plot(u),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
-
 %% Problem #35
 eps = 0.03;
 [d,x,N] = domain(-1,1);

@@ -14,8 +14,10 @@ function A = linop(varargin)
 % LINOP(F,L,D,M) also defines a nonzero differential order for the
 % operator.
 %
-% Normally one does not call CHEBOP directly. Instead, use one of the
-% functions in the see-also line.
+% Normally one does not call LINOP directly. Instead, use one of the
+% five first functions in the see-also line.
+%
+% For information 
 %
 % See also domain/eye, domain/diff, domain/cumsum, chebfun/diag,
 % domain/zeros.

@@ -9,7 +9,7 @@ function [d,x,N] = domain(varargin)
 % [D,X] = DOMAIN(...) also returns the 'identity chebfun', the
 % result of CHEBFUN('x',D).
 %
-% [D,X,N] = DOMAIN(...) also returns a nonlinop N on D, whose
+% [D,X,N] = DOMAIN(...) also returns a chebop N on D, whose
 % fields can then be filled by N.op = ..., N.lbc = ..., etc.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.

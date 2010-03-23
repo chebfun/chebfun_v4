@@ -1,4 +1,4 @@
-function solve_display(phase,u,du,nrmdu,nrmres,lambda)
+function solve_display(pref,guihandles,phase,u,du,nrmdu,nrmres,lambda)
 
 % Utility routine for displaying iteration progress in the solve functions.
 
@@ -6,25 +6,45 @@ function solve_display(phase,u,du,nrmdu,nrmres,lambda)
 % show the stepsize as well).
 
 % Plot is now a seperate option (allowing both to show iter and plot).
-mode = lower(cheboppref('display'));
-plotMode = lower(cheboppref('plotting'));
+mode = lower(pref.display);%lower(cheboppref('display'));
+plotMode = lower(pref.plotting);%lower(cheboppref('plotting'));
 persistent fig
 persistent itercount;
+persistent iterInfo;
+
+% guiMode is equal to 1 if we are working with the chebopgui. Used as
+% control variable throughout.
+if ~isempty(guihandles)    
+    guiMode = 1;
+else
+    guiMode = 0;
+end
 
 switch(phase)
     case 'init'
         itercount = 0;
         if strcmp(mode,'iter')
-            fprintf('  Iter.       || update ||       length(update)      length(u)\n');
-            fprintf('------------------------------------------------------------\n');
+            initString = sprintf('   Iter.       || update ||       length(update)    length(u)\n');
+            if ~guiMode
+                fprintf(initString);
+                fprintf('------------------------------------------------------------\n');
+            else
+                set(guihandles{3},'String', initString);
+            end
         end
         
         if ~strcmp(plotMode,'off')
-            fig = figure('name','BVP solver convergence');
-            plot(u,'.-'), title('Initial guess of solution')
-            if strcmp(plotMode,'pause') 
-                pause
+            if ~guiMode
+                fig = figure('name','BVP solver convergence');
+                plot(u,'.-'), title('Initial guess of solution')
+                if strcmp(plotMode,'pause')
+                    pause
+                else
+                    pause(plotMode)
+                end
             else
+                axes(guihandles{1})
+                plot(u,'.-'), title('Initial guess of solution')
                 pause(plotMode)
             end
         end
@@ -32,66 +52,113 @@ switch(phase)
     case 'initNewton'
         itercount = 0;
         if strcmp(mode,'iter')
-            fprintf('  Iter.       || update ||      length(update)     stepsize      length(u)\n');
-            fprintf('---------------------------------------------------------------------------\n');
-        end
-        
-        if ~strcmp(plotMode,'off')
-            fig = figure('name','BVP solver convergence');
-            plot(u,'.-'), title('Initial guess of solution')
-            if strcmp(plotMode,'pause') 
-                pause
+            initString = sprintf('   Iter.       || update ||      length(update)     stepsize    length(u)\n');
+            if ~guiMode
+                fprintf(initString);
+                fprintf('---------------------------------------------------------------------------\n');
             else
-                pause(plotMode)
+                set(guihandles{3},'String', initString);
             end
         end
         
+        if ~strcmp(plotMode,'off')
+            if ~guiMode
+                fig = figure('name','BVP solver convergence');
+                plot(u,'.-'), title('Initial guess of solution')
+                if strcmp(plotMode,'pause')
+                    pause
+                else
+                    pause(plotMode)
+                end
+            else
+                axes(guihandles{1})
+                plot(u,'.-'), title('Initial guess of solution')
+                pause(plotMode)
+            end
+        end        
     case 'iter'
         itercount = itercount+1;
         if strcmp(mode,'iter')
-            fprintf('%5i %18.3e %13i %16i\n',itercount,nrmdu,qmlen(du),qmlen(u));
+            iterString = sprintf('%5i %18.3e %13i   %16i\n',itercount,nrmdu,qmlen(du),qmlen(u));
+            if ~guiMode
+                fprintf(iterString);
+            else
+                currString = get(guihandles{4},'String');
+                set(guihandles{4},'String', [currString;iterString]);
+                set(guihandles{4},'Value',itercount);
+            end
         end
         if ~strcmp(plotMode,'off')
-            figure(fig)
-            subplot(2,1,1)
-            plot(u,'.-'), title('Current solution')
-            subplot(2,1,2)
-            plot(du,'.-'), title('Current correction step')
-            if strcmp(plotMode,'pause') 
-                pause
+            if ~guiMode
+                figure(fig)
+                subplot(2,1,1)
+                plot(u,'.-'), title('Current solution')
+                subplot(2,1,2)
+                plot(du,'.-'), title('Current correction step')
+                if strcmp(plotMode,'pause')
+                    pause
+                else
+                    pause(plotMode)
+                end
             else
+                axes(guihandles{1})
+                plot(u,'.-'), title('Current solution')
+                axes(guihandles{2})
+                plot(du,'.-'), title('Current correction step')
                 pause(plotMode)
             end
         end
-        
+        drawnow
     case 'iterNewton'
         itercount = itercount+1;
         if strcmp(mode,'iter')
-            fprintf('%5i %18.3e %13i        %12.3g %13i\n',itercount,nrmdu,qmlen(du),lambda,qmlen(u));
+            iterString = sprintf('%5i %18.3e %13i        %12.3g   %13i\n',itercount,nrmdu,qmlen(du),lambda,qmlen(u));
+            if ~guiMode
+                fprintf(iterString);
+            else
+                currString = get(guihandles{4},'String');
+                set(guihandles{4},'String', [currString;iterString]);
+                set(guihandles{4},'Value',itercount);
+            end
         end
         if ~strcmp(plotMode,'off')
-            figure(fig) 
-            subplot(2,1,1)
-            plot(u,'.-'), title('Current solution')
-            subplot(2,1,2)
-            plot(du,'.-'), title('Current correction step')
-            if strcmp(plotMode,'pause') 
-                pause
+            if ~guiMode
+                figure(fig)
+                subplot(2,1,1)
+                plot(u,'.-'), title('Current solution')
+                subplot(2,1,2)
+                plot(du,'.-'), title('Current correction step')
+                if strcmp(plotMode,'pause')
+                    pause
+                else
+                    pause(plotMode)
+                end
             else
-                pause(plotMode)
+                axes(guihandles{1})
+                plot(u,'.-'), title('Current solution')
+                axes(guihandles{2})
+                plot(du,'.-'), title('Current correction step')
+                pause(2)
+            end
+        end
+        drawnow
+    case 'final'
+        if strcmp(mode,'iter') || strcmp(mode,'final')
+            if ~guiMode
+                fprintf('\n');
+                fprintf('%i iterations\n',itercount)
+                fprintf('Final residual norm: %.2e (interior) and %.2e (boundary conditions). \n\n',nrmres)
+            else
+                finalString = sprintf('%i iterations.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
+                set(guihandles{5},'String',finalString);
             end
         end
         
-    case 'final'
-        if strcmp(mode,'iter') || strcmp(mode,'final')
-            fprintf('\n')
-            fprintf('%i iterations\n',itercount)
-            fprintf('Final residual norm: %.2e (interior) and %.2e (boundary conditions). \n\n',nrmres)
-        end
-        
         if strcmp(plotMode,'on')
-            figure(fig), clf
-            plot(u), title('Solution at end of iteration')
+            if ~guiMode
+                figure(fig), clf
+                plot(u), title('Solution at end of iteration')
+            end
         end
         
 end
