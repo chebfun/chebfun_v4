@@ -138,7 +138,7 @@ switch(phase)
                 plot(u,'.-'), title('Current solution')
                 axes(guihandles{2})
                 plot(du,'.-'), title('Current correction step')
-                pause(2)
+                pause(plotMode)
             end
         end
         drawnow

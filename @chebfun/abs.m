@@ -28,7 +28,7 @@ elseif isreal(F)             % Real case
     if ~isempty(r)           % Avoid adding new breaks where not needed
         tol = 1000*chebfunpref('eps').*max(min(diff(F.ends)),1);
         Fbks = feval(F,repmat(r,1,2)+repmat([-1 1]*tol,length(r),1));
-        r(logical(sum(sign(Fbks)))) = [];
+        r(logical(sum(sign(Fbks),2))) = [];
     end
     % Add the new breaks
     Fout = add_breaks_at_roots(F,[],r);
