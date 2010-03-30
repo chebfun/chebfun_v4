@@ -109,7 +109,7 @@ switch class(op)
         end
         g.vals = op(:); g.n = length(op); g.scl.v = max(g.scl.v, norm(op,inf)); 
         g.exps = [0 0]; % Can't deal with blow up for numeric input
-        if nargin > 2
+        if nargin > 2 && pref.n
             warning('FUN:constructor:input',['Generating fun from double object on the first' ...
                 ' input argument. Other arguments are not used.'])
         end
