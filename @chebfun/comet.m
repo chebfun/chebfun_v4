@@ -1,12 +1,15 @@
-function comet(f,varargin)
+function comet(varargin)
 % COMET   Two-dimensional comet plot.
 % A comet graph is an animated graph in which a thick dot (the comet head) 
 % traces the data points on the screen. Notice that unlike the standard
 % Matlab comet command, the chebfun comet does not leave a trail.
 %
-% comet(F) displays a comet graph of the chebfun F, comet(F,G) displays a
-% comet of the chebfun F versus the chebfun G, and comet(F,G,H) displays a
+% COMET(F) displays a comet graph of the chebfun F, COMET(F,G) displays a
+% comet of the chebfun F versus the chebfun G, and COMET(F,G,H) displays a
 % comet in 3D-space using the three chebfuns as coordinates.
+%
+% COMET(...,'SPEED',S) where S is a real number will control the speed at which the
+% comet is updated. A larger S will result in a faster plot.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -15,32 +18,54 @@ function comet(f,varargin)
 ho=ishold;
 if ~ho, hold on; end
 
-if norm(f.ends([1,end]),inf) == inf
+if norm(varargin{1}.ends([1,end]),inf) == inf
     error('CHEBFUN:comet:restrict','comet requires a bounded interval, please use restrict')
 end
 
-p = 0;
-for k = 1:numel(varargin)
-    if isnumeric(varargin{k}), p = varargin{k}; break, end
+s = inf;
+for k = 1:numel(varargin)-1
+    if strcmpi(varargin{k},'speed'), 
+        s = varargin{k+1};
+        varargin(k:k+1) = [];
+        break
+    end
 end
 
-if nargin==1 && isreal(f)
+j = 1; f = chebfun; plotopts = {};
+for k = 1:numel(varargin)
+    if isa(varargin{k},'chebfun')
+        f(j) = varargin{k}; j = j+1; 
+    else
+        plotopts = [plotopts varargin{k}];
+    end
+end
+numchebfuns = j-1;
+
+if isempty(plotopts)
+    plotopts = {'.r','markersize',25};
+end
+
+N = 1000;
+p = 1./(1+s);
+
+if numchebfuns == 1 && isreal(f)
     [x0,x1] = domain(f);
-    x = linspace(x0,x1,300); x(end) = [];
+    x = linspace(x0,x1,N); x(end) = [];
     ydata = feval(f,x);
-    hh = plot(x(1),ydata(1),'.r','markersize',25);
+    hh = plot(x(1),ydata(1),plotopts{:});
     for j = 2:length(x)
          set(hh,'xdata',x(j),'ydata',ydata(j));
          drawnow, pause(p)
     end
 end
 
-if nargin==2 || ~isreal(f)
+if numchebfuns == 2 || ~isreal(f(1))
     if isreal(f)
-        g = varargin{1};
+        g = f(2);
+        f = f(1);
     else
-        g = imag(f);
-        f = real(f);
+        g = imag(f(1));
+        f = real(f(1));
     end
     [x0,x1] = domain(f); [y0,y1] = domain(g);
     hs = max(hscale(f),hscale(g));
@@ -48,32 +73,32 @@ if nargin==2 || ~isreal(f)
         disp('f and g must be defined on the same interval')
         return
     end
-    x = linspace(x0,x1,300);
+    x = linspace(x0,x1,N);
     xdata = feval(f,x);
     ydata = feval(g,x);
-    hh = plot(xdata(1),ydata(1),'.r','markersize',25);
+    hh = plot(xdata(1),ydata(1),plotopts{:});
     for j = 2:length(x)
         set(hh,'xdata',xdata(j),'ydata',ydata(j));
         drawnow, pause(p)
     end
 end
 
-if nargin==3
-    g = varargin{1}; h = varargin{2};
+if numchebfuns == 3
+    g = f(2); h = f(3); f = f(1);
     [x0,x1] = domain(f); [y0,y1] = domain(g); [z0,z1] = domain(h);
     hs = max([hscale(f) hscale(g) hscale(h)]);
     if (std([x0 y0 z0])>1e-12*hs) || (std([x1 y1 z1])>1e-12*hs)
         disp('f, g and h must be defined on the same interval')
         return
     end
-    x = linspace(x0,x1,300);
+    x = linspace(x0,x1,1000);
     xdata = feval(f,x);
     ydata = feval(g,x);
     zdata = feval(h,x);
-    hh = plot3(xdata(1),ydata(1),zdata(1),'.r','markersize',25);
+    hh = plot3(xdata(1),ydata(1),zdata(1),plotopts{:});
     for j = 2:length(x)
         set(hh,'xdata',xdata(j),'ydata',ydata(j),'zdata',zdata(j));
-        drawnow, pause(.005)
+        drawnow, pause(p)
     end
 end
 delete(hh);

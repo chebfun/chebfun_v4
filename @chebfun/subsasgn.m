@@ -71,7 +71,7 @@ switch index(1).type
             if ~isa(vin,'numeric')
                 error('CHEBFUN:subsasgn:conversion',...
                         ['Conversion to numeric from ',class(vin),...
-                        'is not possible.'])
+                        ' is not possible.'])
             end
             if length(vin) == 1
                vin = vin*ones(length(s),length(col));

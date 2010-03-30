@@ -5,7 +5,7 @@ function H = hermpoly(n,type)
 % weight exp(-x.^2)), where N may be a vector of positive integers.
 %
 % H = HERMPOLY(N,'PROB') normalises instead by the probablist's definition
-% (with weight exp(-x.^2/2)), which gives rise to monomials.
+% (with weight exp(-x.^2/2)), which gives rise to monic polynomials.
 %
 % See also chebpoly, legpoly, jacpoly, and lagpoly.
 %

@@ -135,7 +135,10 @@ else
                 k = k+2;
             elseif strcmpi('scale',varargin{k})
                 pref.scale = varargin{k+1};
-                k = k+2;                
+                k = k+2;    
+            elseif strcmpi('chebkind',varargin{k}) || strcmpi('kind',varargin{k})
+                pref.chebkind = varargin{k+1};
+                k = k+2;                    
             elseif strcmpi('singmap',varargin{k})
                 sings = varargin{k+1};
                 k = k+2;               

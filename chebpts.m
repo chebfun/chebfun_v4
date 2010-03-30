@@ -11,6 +11,9 @@ function [x w] = chebpts(n,d,kind)
 %   for Clenshaw-Curtis quadrature. For nodes and weights of
 %   Gauss-Chebyshev quadrature, use [X W] = JACPTS(N,-.5,-.5,D).
 %
+%   [X W] = CHEBPTS(F) returns the Chebyshev nodes and weights
+%   corresponding to the domain and length of the chebfun F.
+%
 %   CHEBPTS(N,KIND) or CHEBPTS(N,D,KIND) returns Chebysehv points of the
 %   first kind if KIND = 1 and second kind if KIND = 2 (default). 
 %
@@ -21,7 +24,32 @@ function [x w] = chebpts(n,d,kind)
 % Copyright 2002-2009 by The Chebfun Team. 
 
 scale = false;
-if nargin == 1
+if isa(n,'chebfun')
+    if numel(n) > 1
+        error('CHEBFUN:chebpts:quasi','chebpts does not work with quasi-matrices');
+    end
+    ends = get(n,'ends');
+    x = zeros(length(n),1);
+    counter = 1;
+    if nargin == 1, kind = 2; end
+    if nargout < 2
+        for k = 1:n.nfuns;
+            nn = n.funs(k).n;
+            x(counter:counter+nn-1) = chebpts(nn,ends(k:k+1),kind);
+            counter = counter+nn;
+        end
+    else
+        w = zeros(1,length(n));
+        for k = 1:n.nfuns;
+            nn = n.funs(k).n;
+            [xk wk] = chebpts(nn,ends(k:k+1),kind);
+            x(counter:counter+nn-1) = xk;
+            w(counter:counter+nn-1) = wk;
+            counter = counter+nn;
+        end
+    end 
+    return
+elseif nargin == 1
     kind = 2;
 elseif nargin==2
     if isa(d,'domain')

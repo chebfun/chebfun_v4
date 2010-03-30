@@ -44,7 +44,6 @@ end
 %-------------------------------------------------------
 % Deal with a single chebfun (op needs only ONE input)
 function f1 = compcol(f1, op, f2)
-    
 % Get preferences
 if chebfunpref('splitting'), n = chebfunpref('splitdegree')+1;    
 else n = chebfunpref('maxdegree')+1; end
@@ -68,7 +67,7 @@ for k = 1:f1.nfuns
     else
         newfun = compfun(f1.funs(k),op,f2.funs(k));
     end
-    if newfun.n < n % Happyness test
+    if newfun.n < n % Happiness test
        ffuns = [ffuns newfun];
        ends = [ends f1.ends(k+1)];
        if nargin == 2, imps = [imps op(f1.imps(1,k+1))];

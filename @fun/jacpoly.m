@@ -5,8 +5,6 @@ function jac = jacpoly(f,a,b)
 % Jacobi polynomial with paramters ALPHA and BETA, and F_1 denotes the first
 % fun of chebfun F.
 
-tic
-
 chebvals = get(f,'vals');
 N = length(chebvals)-1;
 

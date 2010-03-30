@@ -49,6 +49,9 @@ else
         if b == 0
             % Trivial case
             fout = chebfun(1,[f.ends(1) f.ends(end)]);
+        elseif b == 1
+            % Identity
+            fout = f;
         elseif b == .5
             % Sqrt
             fout = sqrt(f);

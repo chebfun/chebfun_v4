@@ -153,12 +153,26 @@ if nargin == 1
             return
         end
     end        
-elseif nargin>=1
+elseif nargin==2
     % Error catching ...
     [truepref, indpref] = ismember(varargin{1},options);
     if ~truepref
-        error('CHEBFUN:chebfunpref:argin','unknown chebfun preference')
+        error('CHEBFUN:chebfunpref:argin', ...
+        ['Unknown chebfun preference "',varargin{1},'".'])
+    return
     end
+elseif nargin > 2
+    if nargout == 1
+        varargout = {chebfunpref};
+    end
+    while ~isempty(varargin)  
+        if numel(varargin) == 1
+            error('CHEBFUN:chebfunpref:argin2','Incorrect number of input arguments');
+        end
+        chebfunpref(varargin{1:2});
+        varargin(1:2) = [];
+    end
+    return
 end
 
 % first call, set factory values

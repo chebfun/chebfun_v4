@@ -131,7 +131,8 @@ if ~resample && ~adapt && 2^npower+1 == n && nargin < 5
         end
         
         %update g
-        g.vals = v;  g.n = length(v);
+%         g.vals = v;  g.n = length(v);
+        g = set(g,'vals', v);
         g = extrapolate(g,pref,x); 
         [ish, g] = ishappy(op,g,pref);
         if ish || ind == length(kk), break, end
@@ -156,14 +157,16 @@ else % double sampling
   
         if adapt % adaptive infinite intervals
             [map,v,hscl] = unbounded(g.map.par, op, k);
-            g.vals = v; g.map = map; g.n = k;
+            g.vals = v;  g.n = k; % Don't update v scale!
+            g.map = map;
             g = extrapolate(g,pref);
             g.scl.h = hscl;
         else
             
             x = chebpts(k,pref.chebkind);
             xvals = g.map.for(x);
-            g.vals = op(xvals); g.n = k;
+%             g.vals = op(xvals); g.n = k;
+            g = set(g,'vals',op(xvals));
             
             % Deal with endpoint values
             g = extrapolate(g,pref,x);
@@ -229,7 +232,6 @@ if ish && pref.sampletest
         ish =  false;
     end
 end
-
 
 % -------------------------------------------------------------------------
 function iss = issing(op,e1,e2,vs)

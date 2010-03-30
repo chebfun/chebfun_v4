@@ -75,13 +75,13 @@ if isempty(f)
     ends = [];
     for k = 1:numel(g)
         % old
-%         ends = [ends g(:,k).ends];
-%         g(:,k).imps = g(:,k).imps(1,:);
-        % new
-        endsk = g(:,k).ends;       
-        endsk(endsk<a | endsk>b) = [];
         ends = [ends g(:,k).ends];
         g(:,k).imps = g(:,k).imps(1,:);
+        % new
+%         endsk = g(:,k).ends;       
+%         endsk(endsk<a | endsk>b) = [];
+%         ends = [ends g(:,k).ends];
+%         g(:,k).imps = g(:,k).imps(1,:);
     end
     ends = unique(ends);         ends = ends(2:end-1);
 
@@ -113,6 +113,11 @@ if isempty(f)
             gl(end,k) = get(g(:,k).funs(end),'rval'); 
         end
     end
+    
+    % Who put this here?
+    dg = domain(g);
+    if a~=dg(1), gl(1,:) = feval(g,a);   end
+    if b~=dg(end), gl(end,:) = feval(g,b);   end
     
     % deal with marks breakpoints
     for k = 1:numel(g)
@@ -166,10 +171,6 @@ if isempty(f)
             bot = min(bot,min(masked)-sd);
             top = max(top,max(masked)+sd);
         end
-         
-        % Removed to make markfuns work. Not sure what this was for? 
-%         gl(1,k) = gk.funs(1).vals(1);
-%         gl(end,k) = gk.funs(gk.nfuns).vals(end);
 
         % Jump lines (fjk,gjk) and jump values (jvalf,jvalg)
         nends = length(endsk(2:end-1));
@@ -183,8 +184,10 @@ if isempty(f)
         jvalf = endsk.';
         
         % remove jval data outside of 'interval'
-        mask = jvalf<a | jvalf>b;
-        jvalf(mask) = NaN; jvalg(mask) = NaN;
+        if greal
+            mask = jvalf<a | jvalf>b;
+            jvalf(mask) = NaN; jvalg(mask) = NaN;
+        end
 
         % Remove continuous breakpoints from jumps:
         for j = 1:length(endsk)
@@ -205,8 +208,8 @@ if isempty(f)
             fmk = real(gmk);
             gmk = imag(gmk);
             
-            mask = (fmk < interval(1)) | (fmk > interval(2));
-            fmk(mask) = []; gmk(mask) = [];
+%             mask = (fmk < interval(1)) | (fmk > interval(2));
+%             fmk(mask) = []; gmk(mask) = [];
         end
         
         % breakpoints
@@ -223,10 +226,6 @@ if isempty(f)
                 gl(indx2(3*(loc-1)+[1 3 2]+1),k) = jmpvls;
              end
         end
-        
-        dg = domain(g);
-        if a~=dg(1), gl(1,:) = feval(g,a);   end
-        if b~=dg(end), gl(end,:) = feval(g,b);   end
         
         if greal
             % remove values outside interval

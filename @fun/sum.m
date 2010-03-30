@@ -11,6 +11,13 @@ function out = sum(g)
 % Deal with divergent integrands
 exps = g.exps;
 ends = g.map.par(1:2);
+
+% Try to remove exps
+if any(exps<=-1)
+    g = extract_roots(g);
+    exps = g.exps;
+end
+
 if any(exps<=-1)
     sl = sign(g.vals(1));    sr = sign(g.vals(end));
     if all(exps <= -1)

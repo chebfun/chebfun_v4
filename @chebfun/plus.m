@@ -11,8 +11,12 @@ if (isempty(F1) || isempty(F2)), H=chebfun; return; end
 
 if isa(F1,'double')
     H = F2;
+    if numel(F1) == 1, F1 = repmat(F1,numel(F2),1); end
+    if numel(F1) ~= 1 && ~all(size(F1) == size(F2))
+        error('CHEBFUN:plus:sclsize','Matrix dimensions do not agree.'); 
+    end
     for k = 1:numel(F2)
-        H(k) = pluscol(F1,F2(k));
+        H(k) = pluscol(F1(k),F2(k));
     end
 elseif isa(F2,'double')
     H = F2 + F1;

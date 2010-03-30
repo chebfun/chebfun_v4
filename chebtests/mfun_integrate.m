@@ -1,10 +1,9 @@
-function pass = integrate
+function pass = mfun_integrate
 
 % perform a series of mfun integrations
 % Mark Richardson
 
 tol = 500*chebfunpref('eps');
-
 
 f = chebfun('(1-x).^-0.5.*(1+x).^-0.5','blowup',2);
 pass(1) = abs(sum(f)-pi) < tol;

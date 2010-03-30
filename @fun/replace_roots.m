@@ -40,3 +40,7 @@ else
 end
 f = C*f;    
 f.exps = newexps;
+
+if any(infd)
+    f.map = map;
+end

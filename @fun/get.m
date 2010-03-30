@@ -47,7 +47,11 @@ switch propName
             %val = g.vals(1).*diff(g.map.par(1:2)).^g.exps(2)/rescl;
             if isempty(g.vals), val = NaN;
             elseif all(isfinite(g.map.par(1:2)))
-                val = g.vals(1)*2^g.exps(2); 
+                if ~g.exps(2)
+                    val = g.vals(1);
+                else
+                    val = g.vals(1)*2^g.exps(2); 
+                end
             else
                 val = feval(g,g.map.par(1));
             end
@@ -61,7 +65,11 @@ switch propName
            % val = g.vals(end)*diff(g.map.par(1:2)).^g.exps(1)/rescl;
             if isempty(g.vals), val = NaN;
             elseif all(isfinite(g.map.par(1:2)))
-                val = g.vals(end)*2^g.exps(1); 
+                if ~g.exps(1)
+                    val = g.vals(end);
+                else
+                    val = g.vals(end)*2^g.exps(1); 
+                end
             else
                 val = feval(g,g.map.par(2));
             end

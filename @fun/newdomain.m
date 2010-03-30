@@ -13,7 +13,8 @@ map = g.map;
 a = map.par(1); b = map.par(2); c = ends(1); d = ends(2);
 
 if any(isinf(ends))
-    error('FUN:newdomain:infint','Newdomain does not support infinite intervals');
+%     error('FUN:newdomain:infint','Newdomain does not support infinite intervals');
+    return
 end
 
 if strcmp(map.name,'linear')

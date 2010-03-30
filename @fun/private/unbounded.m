@@ -5,7 +5,7 @@ function [m,v,scl] = unbounded(par,fh,n)
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
-a = par(1); b = par(2);
+a = par(1); b = par(2); par = par(:).';
 m = struct('for',[],'inv',[],'der',[]);
 
 % map parameter:

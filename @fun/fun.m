@@ -103,6 +103,10 @@ switch class(op)
         if min(size(op)) > 1
             error('FUN:constructor:double','Only vector inputs are allowed')
         end
+        if pref.chebkind == 1 
+            g.vals = op(:); g.n = length(op);
+            op = chebpolyval(chebpoly(g,1));
+        end
         g.vals = op(:); g.n = length(op); g.scl.v = max(g.scl.v, norm(op,inf)); 
         g.exps = [0 0]; % Can't deal with blow up for numeric input
         if nargin > 2

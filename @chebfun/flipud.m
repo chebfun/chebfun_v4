@@ -29,11 +29,14 @@ end
 function f = flipudcol(f)
 
 if ~f.trans
-    % Reverse the order of funs, and the funs themselves.
-    for k = 1:f.nfuns, f.funs(k) = flipud(f.funs(k)); end
-    f.funs = fliplr(f.funs);
     % Reverse and translate the breakpoints.
-    domf = domain(f);
-    f.ends = -fliplr(f.ends) + sum(domf.ends);
+    f.ends = -fliplr(f.ends) + sum(f.ends([1 end]));
     f.imps = fliplr(f.imps);
+    % Reverse the order of funs, 
+    f.funs = fliplr(f.funs);
+    % and the funs themselves.
+    for k = 1:f.nfuns, 
+        f.funs(k) = flipud(f.funs(k)); 
+        f.funs(k).map = maps(fun,f.funs(k).map.name,f.ends(k:k+1));
+    end
 end

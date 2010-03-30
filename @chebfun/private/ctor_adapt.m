@@ -74,9 +74,9 @@ for ii = 1:length(ops)
                 op = chebpolyval(op);
             end
             if ~isfield(pref,'map')
-                fs = fun(op,es);
+                fs = fun(op,es,pref);
             else
-                fs = fun(op,maps(pref.map,es));
+                fs = fun(op,maps(pref.map,es),pref);
             end
             scl.v = max(scl.v, fs.scl.v);
         case 'fun'
@@ -95,7 +95,6 @@ for ii = 1:length(ops)
                 error('CHEBFUN:ctor_adapt:stringvals',['A chebfun cannot be constructed from a string with'...
                     ' numerical values.'])
             end
-%             op = inline(op);
             depvar = symvar(op); 
             if numel(depvar) ~= 1, 
                 error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input'); 

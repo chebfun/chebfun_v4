@@ -9,10 +9,7 @@ if nargin < 3, sides = [true true]; end
 
 % Get the domain
 d = f.map.par(1:2);
-
-% if any(isinf(d)) % We can only do this with finite domains
-%     return
-% end
+infd = isinf(d);
 
 % Get the exponents
 exps = get(f,'exps');
@@ -22,9 +19,10 @@ map = f.map;
 
 % Tolerance for a root
 tol = 1000*chebfunpref('eps')*f.scl.v;
-
 f0 = abs(f.vals([1 end]));
 f0(~sides) = inf;
+% We're a bit more slack at infinite intervals
+f0(infd) = 1e-2*f0(infd);
 
 if all(f0 > tol),
     f.exps = exps;
@@ -32,7 +30,6 @@ if all(f0 > tol),
 end
 
 % infinite intervals
-infd = isinf(d);
 if any(infd)
     d = [-1 1];
     f.map = linear(d);
@@ -43,14 +40,12 @@ else
     rescl = 1;
 end
     
-
 num = 0;
 if strcmp(map.name,'linear') || strcmp(map.name,'unbounded')
 % Linear case is nice
     c = chebpoly(f); % The Chebyshev coefficients of f
     while any(f0 < tol) && f.n >1 && num < numroots
         c = flipud(c);
-        
         if f0(1) < tol
             % left
             a = d(1);   
