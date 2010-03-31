@@ -12,12 +12,13 @@ function out = chebpoly(g,kind)
 
 
 if (g.n==1), out = g.vals; return; end
-
-gvals = flipud(g.vals);
     
 if nargin == 1 || kind == 2 % 2nd kind is the default!
     n = g.n;
-    out = [gvals;gvals(end-1:-1:2)];
+%     gvals = flipud(g.vals);
+%     out = [gvals;gvals(end-1:-1:2)];
+    gvals = g.vals;
+    out = [gvals(end:-1:2) ; gvals(1:end-1)];
     if (isreal(gvals))
         out = fft(out)/(2*n-2);
         out = real(out);
@@ -31,6 +32,7 @@ if nargin == 1 || kind == 2 % 2nd kind is the default!
     if (n > 2), out(2:end-1)=2*out(2:end-1); end
 
 else % For values from Chebyshev points of the 1st kind
+    gvals = flipud(g.vals);
     if isreal(gvals)
         out = realcoefs(gvals);
     elseif (isreal(1i*gvals))

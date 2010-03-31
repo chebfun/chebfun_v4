@@ -91,7 +91,10 @@ else
         if ischar(varargin{k})
             varargin{k} = lower(varargin{k});
             % Is the argument a preference name?
-            if  any(strcmp(fieldnames(pref),varargin{k}))
+            if strcmpi('factory',varargin{k})
+                pref = chebfunpref('factory');
+                k = k+1;
+            elseif  any(strcmp(fieldnames(pref),varargin{k}))
                 % If ON or OFF used -> change to true or false
                 value = varargin{k+1};
                 if ischar(value)
@@ -104,7 +107,7 @@ else
                         value = chebfunpref(varargin{k},'factory');
                     else
                         error('CHEBFUN:chebfun:prefval', ...
-                            'Invalid chebfun preference value')
+                            'Invalid chebfun preference value.')
                     end
                 end
                 pref.(varargin{k}) = value;
@@ -112,6 +115,9 @@ else
             elseif strcmpi('map',varargin{k})
                 pref.map =  varargin{k+1};
                 k = k+2;
+            elseif strcmpi('map',varargin{k})
+                pref.map =  varargin{k+1};
+                k = k+2;                
             elseif strcmpi('exps',varargin{k})
                 pref.exps = varargin{k+1};
                 k = k+2;
@@ -155,7 +161,7 @@ end
 
 if ~isempty(sings)
     if isfield(pref,'map'),
-        warning('CHEBFUN:chebfun:singmap','Map is being overridden by singmap');
+        warning('CHEBFUN:chebfun:singmap','Map is being overridden by singmap.');
     end
     pref.map = {'sing',sings};
 end
@@ -180,6 +186,8 @@ if  length(argin) == 2,
     f = ctor_adapt(f,argin{:},pref);        % adaptive call
 elseif length(argin) == 3,
     f = ctor_nonadapt(f,argin{:},pref);     % non-adaptive call
+else
+    error('CHEBFUN:chebfun:nargin','Unrecognised input sequence.');
 end
 
 % Prune repeated endpoints and assign values to the imps matrix
