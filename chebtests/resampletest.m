@@ -7,11 +7,11 @@ function pass = resampletest
 global count % counts the number of evaluations
 
 count = 0;
-fon = chebfun(@myfun,'resampling','on','exps',{0 0});
+fon = chebfun(@myfun,'resampling','on','exps',[0 0]);
 counton = count;
 
 count = 0;
-foff = chebfun(@myfun,'resampling','off','exps',{0 0});
+foff = chebfun(@myfun,'resampling','off','exps',[0 0]);
 countoff = count;
 
 % Number of evaluations

@@ -31,38 +31,39 @@ end
 if nargin < 5, pref = chebfunpref; end
 funs = [];
 
+% Sort out whatever exponents have been passed.
 if isfield(pref,'exps') 
     exps = pref.exps;
-    if ~iscell(exps), exps = num2cell(exps); end
+%     if iscell(exps), exps = cell2mat(exps); end  % Convert cell to vector
     if numel(exps) == 1, 
-        exps = {exps{ones(1,2*numel(ends)-2)}};
+    % Only one exponent supplied, so repeat as necessary
+        exps = exps(ones(1,2*numel(ends)-2));
     elseif numel(exps) == 2, 
-        if pref.blowup, ee = []; else ee = 0; end
-        tmp = repmat({ee},1,2*numel(ends)-4);
-        exps = [exps{1} tmp exps{2}];
+    % Exponents only supplied at ends. Fill in those at breakpoints with
+    % NaNs if splitting is on, or zeros if slitting is off.
+        if pref.blowup, ee = NaN; else ee = 0; end
+        tmp = repmat(ee,1,2*numel(ends)-4);
+        exps = [exps(1) tmp exps(2)];
     elseif numel(exps) == numel(ends)
-        if numel(ends)~=2
-%             warning('CHEBFUN:ctor_nonadapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
-%             'Assuming exps are the same on either side of break.']);
-            exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
-        end
+    % Exponents supplied at breakpoints. Assume the same on either side.
+        exps = exps(ceil(1:.5:numel(exps)-.5));  
     elseif numel(exps) ~= 2*numel(ends)-2
-        error('CHEBFUN:ctor_nonadapt:exps_input2','Length of vector exps must correspond to breakpoints');
+    % Something is wrong.
+        error('CHEBFUN:ctor_nonadapt:exps_input2','Length of vector exps must correspond to breakpoints.');
     end
-%     if ~pref.blowup, pref.blowup = 1; end
 end
 
 % Initial horizontal scale.
 hs = norm(ends([1,end]),inf);
-if hs == inf
-   inends = isfinite(ends);
+if isinf(hs)
+   inends = ~isinf(ends);
    if any(inends)
-       hs = max(max(abs(ends(inends)+1)));
+       hs = max(max(abs(ends(inends))+1));
    else
-       hs = 1;
+       hs = 2;
    end
 end
-scl.v=0; scl.h= hs;
+scl.v = 0; scl.h = hs;
 
 % NOTE: Don't use an i variable, as this can  mess 
 % up function construction from string inputs.
@@ -74,7 +75,7 @@ for ii = 1:length(ops)
             a = es(1); b = es(2);
             op = vectorcheck(op,[a b],pref);
             pref.n = n(ii);
-            if isfield(pref,'exps'), pref.exps = {exps{2*ii+(-1:0)}}; end
+            if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
             if ~isfield(pref,'map')
                 g = fun(op, [a b], pref);
             else
@@ -84,18 +85,18 @@ for ii = 1:length(ops)
         case 'char'
             if ~isempty(str2num(op))
                 error('CHEBFUN:ctor_nonadapt:input_strvals',['A chebfun cannot be constructed from a string with '...
-                    ' numerical values.'])
+                    'numerical values.'])
             end
             a = ends(ii); b = ends(ii+1);
             depvar = symvar(op); 
             if numel(depvar) ~= 1, 
-                error('CHEBFUN:ctor_nonadapt:depvar','Incorrect number of dependent variables in string input'); 
+                error('CHEBFUN:ctor_nonadapt:depvar','Incorrect number of dependent variables in string input.'); 
             end
-            op = eval(['@(' depvar{:} ')' op]);
+            op = makeop(op,depvar);
             op = vectorcheck(op,[a b],pref);
             ops{ii} = op;
             pref.n = n(ii);
-            if isfield(pref,'exps'), pref.exps = {exps{2*ii+(-1:0)}}; end
+            if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
             if ~isfield(pref,'map')
                 g = fun(op, [a b], pref);
             else
@@ -105,10 +106,10 @@ for ii = 1:length(ops)
         case 'chebfun'
             a = es(1); b = es(2);
             if op.ends(1) > a || op.ends(end) < b
-                error('CHEBFUN:ctor_nonadapt:domain','chebfun is not defined in the domain')
+                error('CHEBFUN:ctor_nonadapt:domain','chebfun is not defined in the domain.')
             end
             pref.n = n(ii);
-            if isfield(pref,'exps'), pref.exps = {exps{2*ii+(-1:0)}}; end
+            if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
             if ~isfield(pref,'map')
                 g = fun(@(x) feval(op,x), [a b], n(ii));
             else
@@ -149,3 +150,8 @@ end
 % Assign fields to chebfuns.
 f.funs = funs; f.ends = ends; f.imps = imps; f.trans = false; f.scl = scl.v;
 f.ID = newIDnum();
+
+function op = makeop(op,depvar)
+% This is here as it's a clean function with no other variables hanging
+% around in the scope.
+op = eval(['@(' depvar{:} ')' op]);

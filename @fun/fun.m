@@ -130,11 +130,11 @@ if any(infends)
     oldop = op;             op = @(x) op(g.map.for(x));
     oldends = ends;         ends = [-1 1];
     if ~isfield(pref,'exps'), 
-        if pref.blowup,  pref.exps = {NaN NaN};
-        else  pref.exps = {0 0}; end
+        if pref.blowup,  pref.exps = [NaN NaN];
+        else  pref.exps = [0 0]; end
     else
-        if infends(1), pref.exps{1} = -pref.exps{1}; end
-        if infends(2), pref.exps{2} = -pref.exps{2}; end
+        if infends(1), pref.exps(1) = -pref.exps(1); end
+        if infends(2), pref.exps(2) = -pref.exps(2); end
     end
     % this is nasty ...
     bignums = infends.*sign(ends)*1e10;
@@ -142,33 +142,31 @@ if any(infends)
     vends2 = oldop(oldends(infends));
     if any(isinf(vends)) || any(isinf(vends2)) || any(isnan(vends)) || any(abs(vends) > 1e5)
         pref.blowup = 1;
-        if infends(1) && ~isnan(pref.exps{1}) && ~pref.exps{1}
-            pref.exps{1} = NaN;
+        if infends(1) && ~isnan(pref.exps(1)) && ~pref.exps(1)
+            pref.exps(1) = NaN;
         end
-        if infends(2) && ~isnan(pref.exps{2}) && ~pref.exps{2} 
-            pref.exps{2} = NaN;
+        if infends(2) && ~isnan(pref.exps(2)) && ~pref.exps(2)
+            pref.exps(2) = NaN;
         end
     end
 else
     oldends = ends;    
 end
 
-%% Find 'exps' - the exponents in markfuns 
+%% Find exponents 
 % If op has blow up, we represent it by 
 %  op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
-% (Note that for blowup exponents are now negative!)
-if isfield(pref,'exps') && ~all(isnan([pref.exps{:}]))
-
-    if ~pref.blowup, pref.blowup = 1; end   % blowup = 1 is the default option
-    if ~any(isnan([pref.exps{:}]))                  % both exps given
-        exps(1) = pref.exps{1};
-        exps(2) = pref.exps{2};
-    elseif ~isnan(pref.exps{1})                     % left exp given
-        exps(1) = pref.exps{1};     
+if isfield(pref,'exps') && ~all(isnan(pref.exps))
+    if ~pref.blowup, pref.blowup = blowup; end      % The default 'on' option
+    if ~any(isnan(pref.exps))                       % both exps given
+        exps(1) = pref.exps(1);
+        exps(2) = pref.exps(2);
+    elseif ~isnan(pref.exps(1))                     % left exp given
+        exps(1) = pref.exps(1);     
         exps(2) = findexps(op,ends,1,pref.blowup);
-    elseif ~isnan(pref.exps{2})                     % right exp given 
+    elseif ~isnan(pref.exps(2))                     % right exp given 
         exps(1) = findexps(op,ends,-1,pref.blowup);
-        exps(2) = pref.exps{2};
+        exps(2) = pref.exps(2);
     else
         exps = findexps(op,ends,0,pref.blowup);     % no exps given
     end

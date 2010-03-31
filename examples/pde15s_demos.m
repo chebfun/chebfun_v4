@@ -32,7 +32,7 @@ f = @(u,t,x,D) E*D(u,2)+D(u);
 lbc = struct( 'op', 'neumann', 'val', 0);
 rbc = struct( 'op', 'dirichlet', 'val', 0);
 bc = struct( 'left', lbc, 'right', rbc);
-opts = pdeset('HoldPlot','on');
+opts = pdeset('HoldPlot','off');
 tt = linspace(0,5,21);
 uu = pde15s(f,tt,u,bc,opts);
 figure, surf(uu,tt)
@@ -69,24 +69,25 @@ close all
 [d,x] = domain(-1,1);
 u = (1-x.^2).^2.*(1+sin(12*x))/2;
 f = @(u,D) u.*(1-u) + 5e-4*D(u,2);
-pde15s(f,0:0.1:5,u,'neumann');
+uu = pde15s(f,0:0.1:5,u,'neumann');
 
 %% Allen-Cahn 
 close all
 [d,x] = domain(-1,1);
 u = .53*x-.47*sin(1.5*pi*x);
 f = @(u,D) u.*(1-u.^2) + 5e-4*D(u,2);
-bc.left = struct('op','dirichlet','val',-1);
-bc.right = struct('op','dirichlet','val',1);
-pde15s(f,0:0.1:5,u,bc);
+bc.left = -1; bc.right = 1;
+uu = pde15s(f,0:0.1:5,u,bc);
+surf(uu,'facecolor','interp')
+xlabel('x'); ylabel('t'), zlabel('u')
+set(gca,'view',[-135.5000   50.0000])
 
 %% Burgers
 close all
 [d,x] = domain(-1,1);
 u = (1-x.^2).*exp(-30*(x+.5).^2);
 f = @(u,D) -D(u.^2)+.01*D(u,2);
-pde15s(f,0:.1:4,u,'dirichlet');
-
+uu = pde15s(f,0:.1:4,u,'dirichlet');
 %% KS
 clc, close all
 [d,x] = domain(-1,1);
@@ -95,8 +96,9 @@ u = 1 + 0.5*exp(-40*x.^2);
 bc.left = struct('op',{I,D},'val',{1,2});
 bc.right = struct('op',{I,D},'val',{1,2});
 f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
-opts = pdeset('Ylim',[-30 30])
+opts = pdeset('Ylim',[-30 30],'plot',0);
 u = pde15s(f,0:.01:2,u,bc,opts);
+surf(u)
 
 % %% Cahn-Hilliard - not working!
 % close all

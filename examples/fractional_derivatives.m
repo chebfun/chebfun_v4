@@ -43,11 +43,12 @@ clc, clear, close all
 
 u = chebfun('sin(x)',[0 20]);
 k = 1;
-% for alpha = linspace(0,2*pi,8)
-for alpha = [.5 .75 1 1.25 1.57]
+for alpha = linspace(0,1,8)
+% for alpha = [.5 .75 1 1.25 1.57]
+    alpha
     k = k + 1;
     u(:,k) = diff(u(:,1),alpha);
-    plot(u), drawnow, pause
+    plot(u), drawnow
 end
 u
 
@@ -61,7 +62,7 @@ k = 1;
 for alpha = 0.1:.1:1
     k = k + 1;
     u(:,k) = diff(u(:,1),alpha);
-    plot(u), drawnow
+    subplot(2,1,1),plot(u), drawnow
 end
 u
 
@@ -81,6 +82,9 @@ plot(x,v,'--r'); hold off
 norm(w(x)-v,inf)
 
 %%
+
+
+
 
 % %% singularities at right endpoint (not working)
 % 

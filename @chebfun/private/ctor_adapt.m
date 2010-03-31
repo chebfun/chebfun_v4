@@ -16,6 +16,8 @@ if any(diff(ends)<0),
     error('CHEBFUN:ctor_adapt:vecends','Vector of endpoints should have increasing values')
 end
 funs = [];
+
+% Initial horizontal scale.
 hs = norm(ends([1,end]),inf);
 if isinf(hs)
    inends = ~isinf(ends);
@@ -25,49 +27,53 @@ if isinf(hs)
        hs = 2;
    end
 end
-scl.v=0; scl.h= hs;
+scl.v = 0; scl.h = hs;
 newends = ends(1);
 newops = {};
 
 if isa(ops,'chebfun')
     if numel(ops) > 1
-        error('CHEBFUN:ctor_adapt:onechebfun','Only one chebfun is allowed for this call');
+        error('CHEBFUN:ctor_adapt:onechebfun','Only one chebfun is allowed for this call.');
     end
     if ops.ends(1) <= ends(1) && ops.ends(end) >= ends(end)
         f = restrict(f,[ends(1) ends(end)]);
     else
-        error('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain')
+        error('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain.')
     end
     return
 end
 
+% Sort out whatever exponents have been passed.
 if isfield(pref,'exps') 
     exps = pref.exps;
-    if ~iscell(exps), exps = num2cell(exps); end
+%     if iscell(exps), exps = cell2mat(exps); end  % Convert cell to vector
     if numel(exps) == 1, 
-        exps = {exps{ones(1,2*numel(ends)-2)}};
+    % Only one exponent supplied, so repeat as necessary
+        exps = exps(ones(1,2*numel(ends)-2));
     elseif numel(exps) == 2, 
+    % Exponents only supplied at ends. Fill in those at breakpoints with
+    % NaNs if splitting is on, or zeros if slitting is off.
         if pref.blowup, ee = NaN; else ee = 0; end
-        tmp = repmat({ee},1,2*numel(ends)-4);
-        exps = [exps{1} tmp exps{2}];
+        tmp = repmat(ee,1,2*numel(ends)-4);
+        exps = [exps(1) tmp exps(2)];
     elseif numel(exps) == numel(ends)
-        if numel(ends)~=2
-%             warning('CHEBFUN:ctor_adapt:exps_input1',['Length of vector exps equals length of assigned breakpoints. ', ...
-%             'Assuming exps are the same on either side of break.']);
-            exps = {exps{ceil(1:.5:numel(exps)-.5)}};  
-        end
+    % Exponents supplied at breakpoints. Assume the same on either side.
+        exps = exps(ceil(1:.5:numel(exps)-.5));  
     elseif numel(exps) ~= 2*numel(ends)-2
+    % Something is wrong.
         error('CHEBFUN:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
-%     if ~pref.blowup, pref.blowup = 1; end
 end
 
-% NOTE: Don't use an i variable, as this can  mess 
-% up function construction from string inputs.
-for ii = 1:length(ops)
+% NOTE: Don't use an i variable, as this can mess 
+% up function construction from string inputs!
+ii = 0;
+% for ii = 1:length(ops)
+while ii < length(ops)
+    ii = ii + 1;
     op = ops{ii};
     es = ends(ii:ii+1);
-    if isfield(pref,'exps'), pref.exps = {exps{2*ii+(-1:0)}}; end
+    if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
     switch class(op)
         case 'double'
             if isfield(pref,'coeffs')
@@ -91,17 +97,19 @@ for ii = 1:length(ops)
                 scl.v = max(scl.v, fs.scl.v);
             end
         case 'char'
-            if ~isempty(str2num(op))
-                error('CHEBFUN:ctor_adapt:stringvals',['A chebfun cannot be constructed from a string with'...
-                    ' numerical values.'])
+            sop = str2num(op);
+            if ~isempty(sop)
+                ops{ii} = sop;
+                ii = ii-1; es = []; fs = [];
+            else
+                depvar = symvar(op); 
+                if numel(depvar) ~= 1, 
+                    error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input'); 
+                end
+                op = makeop(op,depvar);
+                op = vectorcheck(op,es,pref);         
+                [fs,es,scl] = auto(op,es,scl,pref);
             end
-            depvar = symvar(op); 
-            if numel(depvar) ~= 1, 
-                error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input'); 
-            end
-            op = eval(['@(' depvar{:} ')' op]);
-            op = vectorcheck(op,es,pref);         
-            [fs,es,scl] = auto(op,es,scl,pref);
         case 'function_handle'
             op = vectorcheck(op,es,pref);    
             [fs,es,scl] = auto(op,es,scl,pref);
@@ -109,7 +117,7 @@ for ii = 1:length(ops)
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)
                  warning('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain')
             end
-            if isfield(pref,'exps'), pref.exps = {exps{2*ii+(-1:0)}}; end
+            if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
             [fs,es,scl] = auto(@(x) feval(op,x),es,scl,pref);
         case 'cell'
             error('CHEBFUN:ctor_adapt:inputcell',['Unrecognized input sequence: Attempted to use '...
@@ -162,6 +170,12 @@ end
 % Assign fields to chebfuns.
 f.funs = funs; f.ends = newends; f.imps = imps; f.trans = false; f.scl = scl.v;
 f.ID = newIDnum();
- if length(f.ends)>2         
+if length(f.ends)>2         
      f = merge(f,find(~ismember(newends,ends)),pref); % Avoid merging at specified breakpoints
- end
+end
+
+function op = makeop(op,depvar)
+% This is here as it's a clean function with no other variables hanging
+% around in the scope.
+op = eval(['@(' depvar{:} ')' op]);
+ 

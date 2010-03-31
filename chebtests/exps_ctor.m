@@ -15,7 +15,7 @@ for k = 1:3
   
     rescl = (2/diff(ends))^-sum(exps); % To compensate for the rescalling in the fun constructor (Rodrigo 2009)
     
-    f = chebfun(@(x) F(x).*(-ends(1)+x).^exps(1).*(ends(2)-x).^exps(2),ends,'exps',{exps(1) exps(2)});
+    f = chebfun(@(x) F(x).*(-ends(1)+x).^exps(1).*(ends(2)-x).^exps(2),ends,'exps',[exps(1) exps(2)]);
     g = chebfun(F,ends);
 
     ff = f.funs(1); ff.exps = [0 0]; f.funs(1) = ff; f.imps = [f.vals(1) f.vals(end)];

@@ -103,7 +103,7 @@ if round(exps1-exps2) == exps1-exps2
     
         g1.exps = [0 0]; g2.exps = [0 0];
         pref = chebfunpref; 
-        pref.exps = {0 0};
+        pref.exps = [0 0];
         pref.resampling = false;
 
         scl.h = max(g1.scl.h,g2.scl.h);
@@ -206,7 +206,7 @@ pows = pows-floor(pows); % Should be < 1;
 % The new map
 map = maps(fun,{'sing',pows},ends);
 % The new exponents
-pref.exps = {newexps(1) newexps(2)};
+pref.exps = [newexps(1) newexps(2)];
 pref.sampletest = 0;
 
 % Call the fun constructor

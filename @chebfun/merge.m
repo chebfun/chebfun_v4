@@ -85,7 +85,7 @@ else
     maxn = pref.splitdegree+1; 
 end
 
-pref.exps = {0 0}; % This prevents a call to FINDEXPS when merging!
+pref.exps = [0 0]; % This prevents a call to FINDEXPS when merging!
 
 scl.v = f.scl;
 scl.h = hscale(f);

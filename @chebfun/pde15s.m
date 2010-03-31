@@ -245,15 +245,15 @@ end
 ucur = u0;
 % storage
 if syssize == 1
-%     uu = repmat(chebfun(0,d),1,length(tt));
-%     uu(:,1) = ucur;
+    uu = repmat(chebfun(0,d),1,length(tt));
+    uu(:,1) = ucur;
 else
     % for systems, each functions is stored as a quasimatrix in a cell array
     uu = cell(1,syssize);
     for k = 1:syssize
-%         tmp = repmat(chebfun(0,d),1,length(tt));
-%         tmp(:,1) = ucur(:,k);
-%         uu{k} = tmp;
+        tmp = repmat(chebfun(0,d),1,length(tt));
+        tmp(:,1) = ucur(:,k);
+        uu{k} = tmp;
     end
 end
 

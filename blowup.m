@@ -1,4 +1,4 @@
-function blowup(on_off)
+function default = blowup(on_off)
 %BLOWUP     CHEBFUN blowup option
 % Chebfun offers limited support for function which diverge to infinity on
 % their domain. 
@@ -41,7 +41,13 @@ function blowup(on_off)
 %  Last commit: $Author: rodp $: $Rev: 445 $:
 %  $Date: 2009-05-01 11:56:27 +0100 (Fri, 01 May 2009) $:
 
+% This is default behavior for "blowup on"
+default = 1;
+
 if nargin==0 
+    if nargout == 1
+        return
+    end
     switch chebfunpref('blowup')
         case 0
             disp('BLOWUP=0: bounded functions only')
@@ -51,7 +57,9 @@ if nargin==0
             disp('BLOWUP=2: blowup of integer or non-integer orders permitted (experimental)')
     end
 else
-    if strcmpi(on_off, 'on') || strcmpi(on_off, '1')
+    if strcmpi(on_off, 'on')
+        chebfunpref('blowup',default)
+    elseif strcmpi(on_off, '1')
         chebfunpref('blowup',1)
     elseif strcmpi(on_off, 'off') 
         chebfunpref('blowup',0)

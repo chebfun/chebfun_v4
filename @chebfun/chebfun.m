@@ -12,7 +12,9 @@ function f = chebfun(varargin)
 % defined. A and/or B may be infinite.
 %
 % CHEBFUN(F,NP) overrides the adaptive construction process to specify
-% the number NP of Chebyshev points to construct the chebfun.
+% the number NP of Chebyshev points to construct the chebfun. This is
+% shorthand for CHEBFUN(F,'length',N).
+%
 % CHEBFUN(F,[A B],NP) specifies the interval of definition and the
 % number NP of Chebyshev points.
 %
@@ -35,9 +37,10 @@ function f = chebfun(varargin)
 % Each function Fi can be a string, a function handle or a doubles array,
 % and is defined in the interval [ENDS(i) ENDS(i+1)].
 %
-% CHEBFUN(F1,F2,...,Fm,ENDS,NP), where NP is a vector of length M, specifies
+% CHEBFUN(F1,F2,...,FM,ENDS,NP), where NP is a vector of length M, specifies
 % the number NP(i) of Chebyshev points for the construction of fi. If NP(i)
 % is NaN the length of the representation will be determined automatically.
+% Note, the ordering of ENDS and NP is important.
 %
 % CHEBFUN(CHEBS,ENDS) construct a piecewise smooth chebfun with m pieces
 % from a cell array chebs of size m x 1.  Each entry CHEBS{i} is a function 
@@ -76,8 +79,6 @@ f = default_f;
 % No arguments -> return empty chebfun
 if nargin == 0; return, end
 
-sings = []; % Default
-
 % Chebfun preferences:
 if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')
     pref = varargin{nargin};
@@ -90,19 +91,17 @@ else
     while k <= nargin
         if ischar(varargin{k})
             varargin{k} = lower(varargin{k});
-            % Is the argument a preference name?
             if strcmpi('factory',varargin{k})
                 pref = chebfunpref('factory');
                 k = k+1;
             elseif  any(strcmp(fieldnames(pref),varargin{k}))
-                % If ON or OFF used -> change to true or false
+                % Is the argument a preference name?
                 value = varargin{k+1};
                 if ischar(value)
-                    if strcmpi(value,'on')
-                        value = true;
-                    elseif strcmpi(value,'off')
-                        value = false;
-                        % Factory values from chebfunpref
+                    % If ON or OFF used -> change to true or false
+                    if strcmpi(value,'on')       value = true;
+                    elseif strcmpi(value,'off')  value = false;
+                    % Factory values from chebfunpref
                     elseif strcmpi(value,'factory')
                         value = chebfunpref(varargin{k},'factory');
                     else
@@ -114,10 +113,7 @@ else
                 k = k+2;
             elseif strcmpi('map',varargin{k})
                 pref.map =  varargin{k+1};
-                k = k+2;
-            elseif strcmpi('map',varargin{k})
-                pref.map =  varargin{k+1};
-                k = k+2;                
+                k = k+2;             
             elseif strcmpi('exps',varargin{k})
                 pref.exps = varargin{k+1};
                 k = k+2;
@@ -136,7 +132,7 @@ else
             elseif strcmpi('extrapolate',varargin{k})
                 pref.extrapolate = varargin{k+1};
                 k = k+2;                  
-            elseif strcmpi('degree',varargin{k})
+            elseif strcmpi('length',varargin{k}) || strcmpi('n',varargin{k})
                 pref.n = varargin{k+1};
                 k = k+2;
             elseif strcmpi('scale',varargin{k})
@@ -146,7 +142,7 @@ else
                 pref.chebkind = varargin{k+1};
                 k = k+2;                    
             elseif strcmpi('singmap',varargin{k})
-                sings = varargin{k+1};
+                pref.sings = varargin{k+1};
                 k = k+2;               
             else
                 argin{j} = varargin{k};
@@ -159,11 +155,13 @@ else
     end
 end
 
-if ~isempty(sings)
+% Deal with singmaps
+if isfield(pref,'sings')
     if isfield(pref,'map'),
         warning('CHEBFUN:chebfun:singmap','Map is being overridden by singmap.');
     end
-    pref.map = {'sing',sings};
+    pref.map = {'sing',pref.sings};
+    pref = rmfield(pref,'sings');
 end
 
 % Get domain
@@ -173,12 +171,15 @@ elseif isa(argin{2},'domain')
     argin{2} = double(argin{2});
 end
 
-if ~iscell(argin{1})
-    argin = unwrap_arg(argin{:});
-end
-
+% Deal with nonadaptiv calls using 'degree'.
 if isfield(pref,'n')
     argin = [argin {pref.n}];
+    pref = rmfield(pref,'n');
+end
+
+% Deal with multiple function inputs.
+if ~iscell(argin{1})
+    argin = unwrap_arg(argin{:});
 end
 
 % Construct chebfun

@@ -46,7 +46,7 @@ end
 
 pref.extrapolate = true;
 
-if isfield(pref,'exps'), exps = {pref.exps{:}}; end
+if isfield(pref,'exps'), exps = pref.exps; end
 
 % Try to get one smooth piece for the entire interval before splitting interval
 [funs,hpy,scl] = getfun(op,ends,pref,scl);    
@@ -105,14 +105,14 @@ while any(sad)
     if pref.blowup, blank = NaN; end             % Only looks for exps if blowup is on
     %  left
     if isfield(pref,'exps')                      % exps were passed to the constructor 
-        if i == 1, pref.exps = {exps{1}, blank}; % We should keep these at the ends.
-        else pref.exps = {blank blank}; end      % But not if an interior split.
+        if i == 1, pref.exps = [exps(1), blank]; % We should keep these at the ends.
+        else pref.exps = [blank blank]; end      % But not if an interior split.
     end
     [child1, hpy1, scl] = getfun(op, [a, edge], pref, scl);
     %  right
     if isfield(pref,'exps')                      % As above
-        if i+1 == length(ends), pref.exps = {blank, exps{2}};
-        else pref.exps = {blank blank}; end  
+        if i+1 == length(ends), pref.exps = [blank, exps(2)];
+        else pref.exps = [blank blank]; end  
     end
     [child2, hpy2, scl] = getfun(op, [edge, b], pref, scl);
     

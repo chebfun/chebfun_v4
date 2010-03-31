@@ -5,18 +5,6 @@
 clc, clear, close all
 
 [d,x] = domain(-1,1); 
-u = 1-erf(10*(x+0.7));
-
-f = @(u,D) 0.1*D(u,2);
-
-[tt uu] = pde15s(f,0:.05:3,u,'neumann');
-
-
-%%
-
-clc, clear, close all
-
-[d,x] = domain(-1,1); 
 u = [ chebfun(1,d)  chebfun(1,d) ];
 
 f = @(u,t,x,D) [ -u(:,1) + (x + 1).*u(:,2) + 0.1*D(u(:,1),2) , ...

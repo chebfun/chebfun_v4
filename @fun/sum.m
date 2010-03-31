@@ -191,7 +191,7 @@ else
         %             ['Warning sum for funs with nontirivial maps and exponents is not properly ', ...
         %             'implemented and may be slow!']);
 %         pref = chebfunpref;
-%         pref.exps = {g.exps(1) g.exps(2)};
+%         pref.exps = [g.exps(1) g.exps(2)];
 %         g = fun(@(x) feval(g,x),linear(g.map.par(1:2)), pref, g.scl);
         g = chebfun(@(x) feval(g,x),ends,'map',{'linear'}, ...
             'splitting','on','resampling','off','exps',g.exps);
