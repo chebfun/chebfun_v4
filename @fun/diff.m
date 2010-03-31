@@ -129,7 +129,7 @@ elseif strcmp(g.map.name,'sing')
                 % Singmap at both ends (SLOW?)
                 pref = chebfunpref;
                 pref.extrapolate = true;
-                pref.exps  = num2cell(newexps);
+                pref.exps = newexps;
                 if par(1) == .25
                     pref.n = length(vals)+23;
                     g = fun(@(x) bary(map.inv(x),vals)./map.der(map.inv(x)),map,pref);
@@ -159,7 +159,7 @@ elseif strcmp(g.map.name,'sing')
             
         else
             % This is the case of singmaps and exponents.
-            % We use the product rule, and it turns out the tricky bit reduces to
+            % We use the product rule, and it turns out the tricky bit simplifys to
             % the case where there aren't exponents which is dealt with above.
             
             g = productrule(g);   
