@@ -25,6 +25,10 @@ function varargout = solvebvp(N,rhs,options,guihandles)
 
 % Developed by Toby Driscoll and Asgeir Birkisson, 2009.
 
-[varargout{1} varargout{2}] = solve_bvp_routines(N,rhs,options,guihandles);
-
+if nargin < 3
+    [varargout{1} varargout{2}] = solve_bvp_routines(N,rhs);
+elseif nargin < 4
+    [varargout{1} varargout{2}] = solve_bvp_routines(N,rhs,options);
+else
+    [varargout{1} varargout{2}] = solve_bvp_routines(N,rhs,options,guihandles);
 end

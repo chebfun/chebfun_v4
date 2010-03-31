@@ -1,4 +1,4 @@
-function [out varNames] = lexer(str)
+function [out varNames indVarName] = lexer(str)
 % The cell array we return consisting of three columns, the token itself, a
 % label and a precedence
 out = [];
@@ -11,6 +11,9 @@ strfun = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...
     'sqrt', 'exp', 'log','log10');
 % Remove all whitespace
 str = strrep(str,' ','');
+
+% Change quotes (") to two apostrophes ('')
+str = strrep(str,'"','''''');
 % Vectorize the string
 str = vectorize(str);
 
@@ -21,6 +24,12 @@ varNames = symvar(str);
 xLoc = strcmp('x',varNames); varNames(xLoc) = [];
 tLoc = strcmp('t',varNames); varNames(tLoc) = [];
 
+% Return the name of the independent variable. Use x if none is found
+if sum(tLoc)
+    indVarName = 't';
+else
+    indVarName = 'x';
+end
 
 str(end+1) = '$';   % Add $ to the end of the string to mark its end
 % In order to spot unary operators we need to store the type of the
@@ -64,8 +73,8 @@ while ~strcmp(str,'$')
             switch type2
                 
                 case 'num'      % We have a float
-                    [m s e] = regexp(str, '[0-9]([eE][\+\-]?[0-9]+)?', 'match', 'start', 'end');
-                    nextnum = char(m(1));   % Convert from cell to string
+                    [m s e] = regexp(str, '[0-9]+([eE][\+\-]?[0-9]+)?', 'match', 'start', 'end');
+                    nextnum = ['.', char(m(1))];   % Add a . and convert from cell to string
                     expr_end = e(1);
                     out = [out; {nextnum, 'NUM'}];
                 case 'operator' % We have a pointwise operator

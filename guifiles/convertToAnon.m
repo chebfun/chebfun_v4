@@ -1,4 +1,4 @@
-function anFun = convertToAnon(str)
+function [anFun indVarNames] = convertToAnon(str)
 % In Matlab2007a and previous versions, the code runs into error if we
 % don't clear the functions cache before running the code. Contacting
 % technical support at Mathworks, they told me that this bug has been fixed
@@ -6,7 +6,7 @@ function anFun = convertToAnon(str)
 % clear functions
 
 % Put the original string through the lexer
-[lexOut varNames] = lexer(str);
+[lexOut varNames indVarNames] = lexer(str);
 % Parse the output from the lexer, looking for syntax errors.
 syntaxTree = parse(lexOut);
 % Obtain the prefix form.

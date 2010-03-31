@@ -1,39 +1,39 @@
-function varargout = chebopbvp(varargin)
-% CHEBOPBVP Help for the chebop BVP GUI
+function varargout = chebbvp(varargin)
+% CHEBBVP Help for the chebop BVP GUI
 %
 % Under construction
 
-% CHEBOPBVP M-file for chebopbvp.fig
-%      CHEBOPBVP, by itself, creates a new CHEBOPBVP or raises the existing
+% CHEBBVP M-file for chebbvp.fig
+%      CHEBBVP, by itself, creates a new CHEBBVP or raises the existing
 %      singleton*.
 %
-%      H = CHEBOPBVP returns the handle to a new CHEBOPBVP or the handle to
+%      H = CHEBBVP returns the handle to a new CHEBBVP or the handle to
 %      the existing singleton*.
 %
-%      CHEBOPBVP('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in CHEBOPBVP.M with the given input arguments.
+%      CHEBBVP('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in CHEBBVP.M with the given input arguments.
 %
-%      CHEBOPBVP('Property','Value',...) creates a new CHEBOPBVP or raises the
+%      CHEBBVP('Property','Value',...) creates a new CHEBBVP or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before chebopbvp_OpeningFcn gets called.  An
+%      applied to the GUI before chebbvp_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to chebopbvp_OpeningFcn via varargin.
+%      stop.  All inputs are passed to chebbvp_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help chebopbvp
+% Edit the above text to modify the response to help chebbvp
 
-% Last Modified by GUIDE v2.5 29-Mar-2010 22:36:10
+% Last Modified by GUIDE v2.5 31-Mar-2010 15:34:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @chebopbvp_OpeningFcn, ...
-    'gui_OutputFcn',  @chebopbvp_OutputFcn, ...
+    'gui_OpeningFcn', @chebbvp_OpeningFcn, ...
+    'gui_OutputFcn',  @chebbvp_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -47,15 +47,15 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before chebopbvp is made visible.
-function chebopbvp_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before chebbvp is made visible.
+function chebbvp_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to chebopbvp (see VARARGIN)
+% varargin   command line arguments to chebbvp (see VARARGIN)
 
-% Choose default command line output for chebopbvp
+% Choose default command line output for chebbvp
 handles.output = hObject;
 
 axes(handles.fig_sol);
@@ -70,16 +70,27 @@ set(handles.slider_pause,'Value',str2double(get(handles.input_pause,'String')));
 % Variable that determines whether a solution is available
 handles.hasSolution = 0;
 
+% Load an example depending on the user input (argument to the chebbvp
+% call). If no argument is passed, use a random example (which we will get
+% if the exampleNumber is negative).
+if isempty(varargin)
+    exampleNumber = -1;
+else
+    exampleNumber = varargin{1};
+end
+
+loadExample(handles,exampleNumber)
+
 % Update handles structure
 guidata(hObject, handles);
 
 
-% UIWAIT makes chebopbvp wait for user response (see UIRESUME)
+% UIWAIT makes chebbvp wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = chebopbvp_OutputFcn(hObject, eventdata, handles)
+function varargout = chebbvp_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -107,6 +118,9 @@ if (isempty(input))
 end
 
 set(handles.input_GUESS,'String','');
+set(handles.input_GUESS,'Enable','on');
+set(handles.toggle_useLatest,'Value',0);
+set(handles.toggle_useLatest,'Enable','off');
 guidata(hObject, handles);
 
 
@@ -139,6 +153,9 @@ if (isempty(input))
 end
 
 set(handles.input_GUESS,'String','');
+set(handles.input_GUESS,'Enable','on');
+set(handles.toggle_useLatest,'Value',0);
+set(handles.toggle_useLatest,'Enable','off');
 guidata(hObject, handles);
 
 
@@ -160,45 +177,71 @@ function button_solve_Callback(hObject, eventdata, handles)
 % hObject    handle to button_solve (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% Create a domain and the linear function on that domain. We use xt for the
+% linear function, later in the code we will be able to determine whether x
+% or t is used for the linear function.
 a = str2double(get(handles.dom_left,'String'));
 b = str2double(get(handles.dom_right,'String'));
-
 [d,xt] = domain(a,b);
-x = xt; t = xt;     % x and t are default choices for indep. var.
-% try
-%     Switch cheboppref between current and selected state
 
-% Check whether we are working with anonymous functions or natural syntax
-% string. Anonymous functions must include @, otherwise we assume natural
-% string.
+
+% Extract information from the GUI fields
 deInput = get(handles.input_DE,'String');
-
-DE = setupFields(deInput,xt,'DE');
-
 lbcInput = get(handles.input_LBC,'String');
 rbcInput = get(handles.input_RBC,'String');
+DErhsInput = get(handles.input_DE_RHS,'String');
 lbcRHSInput = get(handles.input_LBC_RHS,'String');
 rbcRHSInput = get(handles.input_RBC_RHS,'String');
+guessInput = get(handles.input_GUESS,'String');
 
 
-
-if ~isempty(lbcInput)
-    LBC = setupFields(lbcInput,xt,'BC',lbcRHSInput);
-else
-    LBC = [];
+try
+    % cd to the folder that contains the gui-work files
+    chebfunpath = which('chebfun');
+    guifilepath = [chebfunpath(1:end-18), 'guifiles'];
+    tmppath = pwd;
+    cd(guifilepath)
+    
+    % Convert the input to the an. func. format, get information about the
+    % linear function in the problem.
+    [deString indVarName] = setupFields(deInput,'abc','DE');
+    
+    % Assign x or t as the linear function on the domain
+    eval([indVarName, '=xt;']);
+    
+    % Convert the string to proper anon. function using eval
+    DE  = eval(deString);
+    
+    
+    if ~isempty(lbcInput)
+        [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC');
+        LBC = eval(lbcString);
+    else
+        LBC = [];
+    end
+    if ~isempty(rbcInput)
+        [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC');
+        RBC = eval(rbcString);
+    else
+        RBC = [];
+    end
+    
+    if isempty(lbcInput) && isempty(rbcInput)
+        error('chebfun:bvpgui','No boundary conditions specified');
+    end
+    
+    % cd back to original folder
+    cd(tmppath)
+catch
+    error(['chebfun:BVPgui','Incorrect input for differential ' ...
+        'equation or boundary conditions']);
 end
-if ~isempty(rbcInput)
-  RBC = setupFields(rbcInput,xt,'BC',rbcRHSInput);
-else
-    RBC = [];
-end
-
-if isempty(lbcInput) && isempty(rbcInput)
-    error('chebfun:bvpgui','No boundary conditions specified');
-end
 
 
-DErhsInput = get(handles.input_DE_RHS,'String');
+
+
+
 DErhsNum = str2num(DErhsInput);
 if isempty(DErhsNum)
     % RHS is a string representing a function -- convert to chebfun
@@ -208,7 +251,7 @@ else
     DE_RHS = DErhsNum;
 end
 
-guessInput = get(handles.input_GUESS,'String');
+
 
 useLatest = strcmpi(guessInput,'Using latest solution');
 if isempty(guessInput)
@@ -219,7 +262,7 @@ elseif useLatest
 else
     guess = eval(guessInput);
     if isnumeric(guess)
-        guess = 0*x+guess;
+        guess = 0*xt+guess;
     end
     N = chebop(d,DE,LBC,RBC,guess);
 end
@@ -285,7 +328,7 @@ handles.latestOptions = options;
 handles.hasSolution = 1;
 
 % Enable buttons
-set(handles.button_useLatest,'Enable','on');
+set(handles.toggle_useLatest,'Enable','on');
 set(handles.button_figures,'Enable','on');
 
 set(handles.text_norm,'Visible','On');
@@ -294,7 +337,7 @@ set(handles.text_norm,'Visible','On');
 axes(handles.fig_sol)
 plot(u), title('Solution at end of iteration')
 axes(handles.fig_norm)
-semilogy(vec,'-*'),title('Norm of updates'), xlabel('Number of iteration','FontSize',8)
+semilogy(vec,'-*'),title('Norm of updates'), xlabel('Number of iteration')
 if length(vec) > 1
     XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
     set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on
@@ -325,7 +368,16 @@ function input_RBC_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of input_RBC as text
 %        str2double(get(hObject,'String')) returns contents of input_RBC as a double
-
+newString = get(hObject,'String');
+if ~isempty(strfind(newString,'@')) || strcmpi(newString,'dirichlet') ...
+        || strcmpi(newString,'neumann') || ~isempty(str2num(newString))
+    set(handles.input_RBC_RHS,'Enable','off');
+    set(handles.text_eq3,'Enable','off');
+    set(handles.input_RBC_RHS,'String','');
+else
+    set(handles.input_RBC_RHS,'Enable','on');
+    set(handles.text_eq3,'Enable','on');
+end
 
 % --- Executes during object creation, after setting all properties.
 function input_RBC_CreateFcn(hObject, eventdata, handles)
@@ -552,47 +604,47 @@ axis([-1.02 .98 -2 2]), axis off
 
 
 
-function field  = setupFields(input,xt,type,bcValue)
-convertBCtoAnon  = 0;
-
-% Create the variables x and t (corresponding to the linear function on the
-% domain).
-x = xt; t = xt;
-if ~isempty(strfind(input,'@')) % User supplied anon. function
-    field = eval(input);
-    return
-elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
-    bcNum = str2num(input);
-    
-    % Check whether we have a number (OK), allowed strings (OK) or whether
-    % we will have to convert the string to anon. function (i.e. the input
-    % is on the form u' +1 = 0).
-    if ~isempty(bcNum)
-        field = bcNum;
-    elseif strcmpi(input,'dirichlet') || strcmpi(input,'neumann')
-        field = input;
-    else
-        input = [input ,'-',bcValue]; 
-        convertBCtoAnon = 1;
-    end
-end
-
-if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function
-    chebfunpath = which('chebfun');
-    guifilepath = [chebfunpath(1:end-18), 'guifiles'];
-    tmppath = pwd;
-    
-    try
-        cd(guifilepath)
-        field = convertToAnon(input);
-        field = eval(field);
-        cd(tmppath)
-    catch
-        error(['chebfun:BVPgui','Incorrect input for differential ' ...
-            'equation our boundary conditions']);
-        
-    end
-end
+% function field  = setupFields2(input,xt,type,bcValue)
+% convertBCtoAnon  = 0;
+%
+% % Create the variables x and t (corresponding to the linear function on the
+% % domain).
+% x = xt; t = xt;
+% if ~isempty(strfind(input,'@')) % User supplied anon. function
+%     field = eval(input);
+%     return
+% elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
+%     bcNum = str2num(input);
+%
+%     % Check whether we have a number (OK), allowed strings (OK) or whether
+%     % we will have to convert the string to anon. function (i.e. the input
+%     % is on the form u' +1 = 0).
+%     if ~isempty(bcNum)
+%         field = bcNum;
+%     elseif strcmpi(input,'dirichlet') || strcmpi(input,'neumann')
+%         field = input;
+%     else
+%         input = [input ,'-',bcValue];
+%         convertBCtoAnon = 1;
+%     end
+% end
+%
+% if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function
+%     chebfunpath = which('chebfun');
+%     guifilepath = [chebfunpath(1:end-18), 'guifiles'];
+%     tmppath = pwd;
+%
+%     try
+%         cd(guifilepath)
+%         field = convertToAnon(input);
+%         field = eval(field);
+%         cd(tmppath)
+%     catch
+%         error(['chebfun:BVPgui','Incorrect input for differential ' ...
+%             'equation our boundary conditions']);
+%
+%     end
+% end
 
 
 
@@ -723,22 +775,16 @@ function input_LBC_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of input_LBC as text
 %        str2double(get(hObject,'String')) returns contents of input_LBC as a double
-
-
-% --- Executes on button press in button_useLatest.
-function button_useLatest_Callback(hObject, eventdata, handles)
-% hObject    handle to button_useLatest (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-set(handles.input_GUESS,'String','Using latest solution');
-
-guidata(hObject, handles);
-% ifekki empty
-% setja i guess, skrifa latest
-% tomt
-% skilja eftir tomt
-
+newString = get(hObject,'String');
+if ~isempty(strfind(newString,'@')) || strcmpi(newString,'dirichlet') ...
+        || strcmpi(newString,'neumann') || ~isempty(str2num(newString))
+    set(handles.input_LBC_RHS,'Enable','off');
+    set(handles.input_LBC_RHS,'String','');
+    set(handles.text_eq2,'Enable','off');
+else
+    set(handles.input_LBC_RHS,'Enable','on');
+    set(handles.text_eq2,'Enable','on');
+end
 
 % --- Executes on slider movement.
 function slider_pause_Callback(hObject, eventdata, handles)
@@ -781,8 +827,8 @@ newVal = str2double(get(hObject,'String'));
 maxVal = get(handles.slider_pause,'Max');
 minVal = get(handles.slider_pause,'Min');
 if isnan (newVal) % Not a number input
-   set(hObject,'String',get(handles.slider_pause,'Value'));
-elseif newVal >= minVal && newVal <= maxVal 
+    set(hObject,'String',get(handles.slider_pause,'Value'));
+elseif newVal >= minVal && newVal <= maxVal
     set(handles.slider_pause,'Value',newVal);
 else
     extremaVal = maxVal*(sign(newVal)+1)/2; % Either 0 or maxVal
@@ -825,7 +871,7 @@ function fig_norm_CreateFcn(hObject, eventdata, handles)
 
 % --- Executes when selected object is changed in panel_updates.
 function panel_updates_SelectionChangeFcn(hObject, eventdata, handles)
-% hObject    handle to the selected object in panel_updates 
+% hObject    handle to the selected object in panel_updates
 % eventdata  structure with the following fields (see UIBUTTONGROUP)
 %	EventName: string 'SelectionChanged' (read only)
 %	OldValue: handle of the previously selected object or empty if none was selected
@@ -888,15 +934,15 @@ function button_export_Callback(hObject, eventdata, handles)
 % Offer more possibilities if solution exists
 if handles.hasSolution
     exportType = questdlg('Would you like to export the problem to:', ...
-                         'Export to...', ...
-                         'Workspace', '.m file', '.mat file', 'Workspace');
+        'Export to...', ...
+        'Workspace', '.m file', '.mat file', 'Workspace');
 else
     exportType = questdlg(['Would you like to export the problem to (more ' ...
-                         'possibilities will be available after solving a ' ...
-                         'problem):'],'Export to...', ...
-                         '.m file','Cancel', '.m file');
+        'possibilities will be available after solving a ' ...
+        'problem):'],'Export to...', ...
+        '.m file','Cancel', '.m file');
 end
-                     
+
 switch exportType
     case 'Workspace'
         assignin('base','u',handles.latestSolution);
@@ -905,25 +951,26 @@ switch exportType
         assignin('base','rhs',handles.latestRHS);
         assignin('base','options',handles.latestOptions);
     case '.m file'
-        % Change to the parsing directory for neater code
-        chebfunpath = which('chebfun');
-        guifilepath = [chebfunpath(1:end-18), 'guifiles'];
-        tmppath = pwd;
-        
         try
+            % Change to the guifiles path for neater code
+            
+            chebfunpath = which('chebfun');
+            guifilepath = [chebfunpath(1:end-18), 'guifiles'];
+            tmppath = pwd;
+            
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
                 '*.*',  'All Files (*.*)'}, ...
                 'Save as', 'bvp.m');
             
             cd(guifilepath)
-
+            
             export2mfile(pathname,filename,handles)
             cd(tmppath)
-        catch
-            error(['chebfun:BVPgui','Incorrect input for differential ' ...
-                'equation our boundary conditions']);
             
+            open([pathname,filename])
+        catch
+            error('chebfun:BVPgui','Error in exporting to .m file');
         end
     case '.mat file'
         u = handles.latestSolution;
@@ -936,4 +983,131 @@ switch exportType
         return;
 end
 
-                   
+
+
+
+% --- Executes on button press in toggle_useLatest.
+function toggle_useLatest_Callback(hObject, eventdata, handles)
+% hObject    handle to toggle_useLatest (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of toggle_useLatest
+newVal = get(hObject,'Value');
+
+if newVal % User wants to use latest solution
+    set(handles.input_GUESS,'String','Using latest solution');
+    set(handles.input_GUESS,'Enable','Off');
+else
+    set(handles.input_GUESS,'String','');
+    set(handles.input_GUESS,'Enable','On');
+end
+guidata(hObject, handles);
+
+
+% --- Executes on button press in botton_exportm.
+function botton_exportm_Callback(hObject, eventdata, handles)
+% hObject    handle to botton_exportm (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Change to the parsing directory for neater code
+chebfunpath = which('chebfun');
+guifilepath = [chebfunpath(1:end-18), 'guifiles'];
+tmppath = pwd;
+
+%         try
+%             [filename, pathname, filterindex] = uiputfile( ...
+%                 {'*.m','M-files (*.m)'; ...
+%                 '*.*',  'All Files (*.*)'}, ...
+%                 'Save as', 'bvp.m');
+%
+filename = 'bvp.m';
+pathname = 'C:\Users\Asgeir\Documents\My Dropbox\chebfun\Work\';
+cd(guifilepath)
+
+export2mfile(pathname,filename,handles)
+cd(tmppath)
+
+open([pathname,filename])
+%         catch
+%             error('chebfun:BVPgui','Error in exporting to .m file');
+
+%         end
+
+
+function loadExample(handles,exampleNumber)
+try
+    % cd to the folder that contains the gui-work files
+    chebfunpath = which('chebfun');
+    guifilepath = [chebfunpath(1:end-18), 'guifiles'];
+    tmppath = pwd;
+    cd(guifilepath)
+    
+    [a,b,DE,DErhs,LBC,LBCrhs,RBC,RBCrhs,guess,tol] = bvpexamples(exampleNumber);
+    
+    
+    % Fill the String fields of the handles
+    set(handles.dom_left,'String',a);
+    set(handles.dom_right,'String',b);
+    set(handles.input_DE,'String',DE);
+    set(handles.input_DE_RHS,'String',DErhs);
+    set(handles.input_LBC,'String',LBC);
+    set(handles.input_LBC_RHS,'String',LBCrhs);
+    set(handles.input_RBC,'String',RBC);
+    set(handles.input_RBC_RHS,'String',RBCrhs);
+    set(handles.input_GUESS,'String',guess);
+    set(handles.input_tol,'String',tol);
+    
+    % If input for BCs is a number, anon. func. or dirichlet/neumann,
+    % disable BC rhs input
+    
+    if ~isempty(strfind(LBC,'@')) || strcmpi(LBC,'dirichlet') ...
+            || strcmpi(LBC,'neumann') || ~isempty(str2num(LBC))
+        set(handles.input_LBC_RHS,'Enable','off');
+        set(handles.text_eq2,'Enable','off');
+    else
+        set(handles.input_LBC_RHS,'Enable','on');
+        set(handles.text_eq2,'Enable','on');
+    end
+    
+    if ~isempty(strfind(RBC,'@')) || strcmpi(RBC,'dirichlet') ...
+            || strcmpi(RBC,'neumann') || ~isempty(str2num(RBC))
+        set(handles.input_RBC_RHS,'Enable','off');
+        set(handles.text_eq3,'Enable','off');
+    else
+        set(handles.input_RBC_RHS,'Enable','on');
+        set(handles.text_eq3,'Enable','on');
+    end
+    cd(tmppath)
+catch
+    error(['chebfun:BVPgui','Error loading an example']);
+end
+
+
+% --- Executes on button press in button_demos.
+function button_demos_Callback(hObject, eventdata, handles)
+% hObject    handle to button_demos (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+chebfunpath = which('chebfun');
+guifilepath = [chebfunpath(1:end-18), 'guifiles'];
+tmppath = pwd;
+cd(guifilepath)
+
+% Obtain the DE of all available examples
+DE = '';
+demoString = [];
+counter = 1;
+while ~strcmp(DE,'0')
+    [a b DE DErhs] = bvpexamples(counter,'demo');
+    counter = counter+1;
+    demoString = [demoString,{[DE, ' = ', DErhs]}];
+end
+demoString(end) = []; % Throw away the last demo since it's the flag 0
+[selection,okPressed] = listdlg('PromptString','Select a demo:',...
+    'SelectionMode','single',...
+    'ListString',demoString);
+if okPressed
+    loadExample(handles,selection);
+end
+cd(tmppath)
