@@ -1,66 +1,87 @@
 function g = inv(f,varargin)
-% INV Invert a chebfun
-%  G = INV(F) will attempt to invert the monotonic chebfun F.
+% INV2 Invert a chebfun
+%  G = INV2(F) will attempt to invert the monotonic chebfun F.
 %  If F has zero derivatives at its endpoints, then it is advisable
 %  to turn Splitting ON.
 %
-%  G = INV(F,'SPLITTING','ON') will turn Splitting ON for the inv command.
+%  INV2(F,'SPLITTING','ON') turns Splitting ON locally for the inv command.
 %
-%  Note, this function is experimental and slow!
+%  INV2(F,'EPS',TOL) will construct with the relative tolerance set by TOL.
+%  If no tolerance is passed, TOL = chebfunpref('eps') is used.
+%
+%  INV2(F,'MONOCHECK','ON'/'OFF') turns the check for monotonicity ON or OFF
+%  respectively. It is OFF by default.
+%
+%  G = INV2(F,'RANGECHECK','ON'/'OFF') enforces that the range of G exactly
+%  matches the domain of F (by adding a linear function). RANGECHECK OFF is
+%  the default behaviour.
+%
+%  Any of the preferences above can be used in tandem.
 %
 %  Example: 
 %   x = chebfun('x');
 %   f = sign(x) + x;
 %   g = inv(f,'splitting',true);
 %
+%  Note, this function is experimental and slow! INV may be the better
+%  choice for piecewise functions, where as INV2 is good for smooth
+%  functions.
+%
+%  See also chebfun/inv2
+%
 %  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
+%  Copyright 2002-2009 by The Chebfun Team.
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-% no quasimatrix support
+% No quasimatrix support
 if numel(f) > 1
     error('CHEBFUN:inv:noquasi','no support for quasimatrices');
 end
 
-split_yn = [];
+% Default options
+split_yn = chebfunpref('splitting');
 tol = chebfunpref('eps');
+monocheck = false;
+rangecheck = false;
 
-% parse input  
+% Parse input
 while numel(varargin) > 1
-    if strcmpi(varargin{1},'splitting') && istrcmpi(varargin{2},'on')
-        split_yn = true; 
+    if strcmpi(varargin{1},'splitting')
+        split_yn = onoffcheck(varargin{2});
     elseif strcmpi(varargin{1},'eps')
         tol = varargin{2};
+    elseif strcmpi(varargin{1},'monocheck')
+        monocheck = onoffcheck(varargin{2});
+    elseif strcmpi(varargin{1},'rangecheck')
+        rangecheck = onoffcheck(varargin{2});
+    else
+        error('CHEBFUN:inv:inputs', ...
+            [varargin{1}, 'is an unrecognised input to inv.']);
     end
-    varargin(1:2) = [];       
+    varargin(1:2) = [];
 end
-
-% local splitting on
-if isempty(split_yn)
-    split_yn = chebfunpref('splitting');
-end
-
-domainf = domain(f);
 
 % turn splitting on if F is piecewise.
 if length(f.ends) > 2 && ~(chebfunpref('splitting') || split_yn)
     split_yn = true;
 end
 
-% monotonic check
-tpoints = roots(diff(f));
-if ~isempty(tpoints) 
-    endtest = zeros(length(tpoints),1);
-    for k = 1:length(tpoints)
-        endtest(k) = min(abs(tpoints(k)-domainf.ends));
-    end
-    if any(endtest > 100*abs(feval(f,tpoints))*tol)
-        error('CHEBFUN:inv:notmonotonic','chebfun F must be monotonic its domain.');
-    elseif ~(chebfunpref('splitting') || split_yn)
-         warning('CHEBFUN:inv:singularendpoints', ['F is monotonic, but ', ...
-         'INV(F) has singular endpoints. Suggest you try ''splitting on''.']);
+% Monotonicity check
+if monocheck
+    tpoints = roots(fp);
+    if ~isempty(tpoints)
+        endtest = zeros(length(tpoints),1);
+        for k = 1:length(tpoints)
+            endtest(k) = min(abs(tpoints(k)-domainf.ends));
+        end
+        if any(endtest > 100*abs(feval(f,tpoints))*tol)
+            error('CHEBFUN:inv:notmonotonic','chebfun F must be monotonic its domain.');
+        elseif ~split_yn
+            warning('CHEBFUN:inv:singularendpoints', ['F is monotonic, but ', ...
+                'INV(F) has singular endpoints. Suggest you try ''splitting on''.']);
+        end
     end
 end
 
@@ -68,10 +89,12 @@ end
 [domaing x] = domain(minandmax(f));
 g = chebfun(@(x) op(f,x), domaing, 'resampling', 0,'splitting',split_yn,'eps',tol);
 
-% scale so that the range of g is the domain of f
-[rangeg gx] = minandmax(g);
-g = g + (gx(2)-x)*(domainf(1)-rangeg(1))/diff(gx) ...
-      + (x-gx(1))*(domainf(2)-rangeg(2))/diff(gx);
+% Scale so that the range of g is the domain of f
+if rangecheck
+    [rangeg gx] = minandmax(g);
+    g = g + (gx(2)-x)*(f.ends(1)-rangeg(1))/diff(gx) ...
+        + (x-gx(1))*(f.ends(end)-rangeg(2))/diff(gx);
+end
   
 function r = op(f,x)
 tol = chebfunpref('eps');

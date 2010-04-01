@@ -80,7 +80,7 @@ plot(sinc,'m','interval',[-10 10])
 %%
 % Chebfun's capability of handling infinite intervals was introduced by
 % Rodrigo Platte in 2008-09.  The basis of these computations is a change
-% of variables, or mapping, which reduces the infinite interval to
+% of variables, or mapping, which simplifys the infinite interval to
 % [-1,1].  Let's take a look at what is going on in the case
 % of the function g just constructed.  We'll do this by digging inside
 % the chebfun system a bit -- with a warning that the details
@@ -124,7 +124,7 @@ m.der
 m.par
 
 %%
-% The use of mappings to reduce an unbounded domain to a bounded one
+% The use of mappings to simplify an unbounded domain to a bounded one
 % is an idea that has been employed many times
 % over the years.  One of the references we have benefitted especially from, which
 % also contains pointers to other works in this area, is the book [Boyd 2001].
@@ -193,7 +193,7 @@ plot(f), ylim([-30 30])
 % Less reliable but also sometimes useful is the possibility of working
 % with functions with algebraic singularities that are not poles.
 % Here's a function with inverse square root singularities at each end:
-w = chebfun('(2/pi)./(sqrt(1-x.^2))','exps',{-.5 -.5});
+w = chebfun('(2/pi)./(sqrt(1-x.^2))','exps',[-.5 -.5]);
 plot(w,'m'), ylim([0 10])
 
 %%
