@@ -16,13 +16,8 @@ end
 
 dbz_state = warning('off','MATLAB:divideByZero');   % turn off warning because of removable sings
 
-if any(isinf(ends)) % Not working for unbounded domains at the moment
-    if leftrightflag == 0
-        exps = [0 0];
-    else
-        exps = 0;
-    end
-    return
+if any(isinf(ends)) % Unbounded domains are mapped to [-1 1];
+    ends = [-1 1];
 end
 
 % % Quick check values near endpoints! Is this still needed?

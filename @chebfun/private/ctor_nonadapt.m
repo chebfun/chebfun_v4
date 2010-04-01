@@ -92,7 +92,7 @@ for ii = 1:length(ops)
             if numel(depvar) ~= 1, 
                 error('CHEBFUN:ctor_nonadapt:depvar','Incorrect number of dependent variables in string input.'); 
             end
-            op = makeop(op,depvar);
+            op = str2op(op,depvar);
             op = vectorcheck(op,[a b],pref);
             ops{ii} = op;
             pref.n = n(ii);
@@ -151,7 +151,10 @@ end
 f.funs = funs; f.ends = ends; f.imps = imps; f.trans = false; f.scl = scl.v;
 f.ID = newIDnum();
 
-function op = makeop(op,depvar)
-% This is here as it's a clean function with no other variables hanging
-% around in the scope.
+function op = str2op(op)
+% This is here as it's a clean function with no other variables hanging around in the scope.
+depvar = symvar(op); 
+if numel(depvar) ~= 1, 
+    error('CHEBFUN:ctor_nonadapt:depvars','Incorrect number of dependent variables in string input.'); 
+end
 op = eval(['@(' depvar{:} ')' op]);

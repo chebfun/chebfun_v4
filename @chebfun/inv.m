@@ -1,18 +1,18 @@
 function g = inv(f,varargin)
-% INV2 Invert a chebfun
-%  G = INV2(F) will attempt to invert the monotonic chebfun F.
+% INV Invert a chebfun
+%  G = INV(F) will attempt to invert the monotonic chebfun F.
 %  If F has zero derivatives at its endpoints, then it is advisable
 %  to turn Splitting ON.
 %
-%  INV2(F,'SPLITTING','ON') turns Splitting ON locally for the inv command.
+%  INV(F,'SPLITTING','ON') turns Splitting ON locally for the inv command.
 %
-%  INV2(F,'EPS',TOL) will construct with the relative tolerance set by TOL.
+%  INV(F,'EPS',TOL) will construct with the relative tolerance set by TOL.
 %  If no tolerance is passed, TOL = chebfunpref('eps') is used.
 %
-%  INV2(F,'MONOCHECK','ON'/'OFF') turns the check for monotonicity ON or OFF
+%  INV(F,'MONOCHECK','ON'/'OFF') turns the check for monotonicity ON or OFF
 %  respectively. It is OFF by default.
 %
-%  G = INV2(F,'RANGECHECK','ON'/'OFF') enforces that the range of G exactly
+%  G = INV(F,'RANGECHECK','ON'/'OFF') enforces that the range of G exactly
 %  matches the domain of F (by adding a linear function). RANGECHECK OFF is
 %  the default behaviour.
 %

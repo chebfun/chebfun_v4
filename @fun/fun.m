@@ -9,9 +9,9 @@ function [g,ish] = fun(op,ends,varargin)
 % points. This option is not adaptive.
 %
 % FUN(OP,ENDS,PREF,SCL) creates a fun for OP adaptively using the
-% preferences
-% provided in the structure PREF (see chbfunpref).  Here SCL is a structure
-% with fields SCL.H (horizontal scale) and SCL.V (vertical scale).
+% preferences provided in the structure PREF (see chebfunpref).  
+% Here SCL is a structure with fields SCL.H (horizontal scale) and SCL.V 
+% (vertical scale).
 %
 % Additionally, exponents can be pass within PREF by attaching them in a cell
 % array to PREF.EXPS, and a non-adaptive call can be forced by setting
@@ -30,61 +30,58 @@ function [g,ish] = fun(op,ends,varargin)
 %   $Date$:
 
 persistent default_g
-if isnumeric(default_g)
-    % Generate an empty fun!
+if isnumeric(default_g)                     % Generate an empty fun!
     default_g = struct('vals',[],'n',0,'exps',[0 0]);
     default_g.scl  = struct('h',[],'v',[]);
     default_g.map = struct('for',[],'inv',[],'der',[],'name',[],'par',[]);
     default_g = class(default_g,'fun');
 end
 g = default_g;
-ish = true;
+ish = true;                                 % Initialise happiness!
 
-if nargin == 0, return; end  % Return empty fun
-
-%% Look for domain in the second argument.
+if nargin == 0, return; end                 % Return empty fun
 if nargin == 1
-    if isa(op,'fun'), g = op; return, end      % returns the same fun
-    error('FUN:constructor:ends','Either endpoints or a map must be provided')
+    if isa(op,'fun'), g = op; return, end   % Returns the same fun
+    error('FUN:fun:ends','Either endpoints or a map must be provided.')
 end
 
-if nargin == 2
-     % Preferences not provided
-     pref = chebfunpref;
-     pref.n = 0;
-else
-    pref = varargin{1};
-    if ~isa(pref,'struct'), 
-        % Non-adaptive case (preferences not needed)
-        n = pref;
-        pref = chebfunpref;
-        pref.n = n;
-    elseif isfield(pref,'n')
-        % Non-adaptive case (preferences passed)
-        n = pref.n;
+% Default preferences
+pref = chebfunpref;
+pref.n = 0;                                 % Adaptive case by default
+if nargin > 2
+    if isa(varargin{1},'struct') 
+    % Preferences passed
+        pref = varargin{1};
+        if ~isfield(varargin{1},'n')
+            pref.n = 0;                     % Adaptive case
+        end
     else
-        % Adaptive case
-        pref.n = 0;
+    % Preferences not passed, just n
+        pref.n = varargin{1};               % Non-adaptive case
     end
 end
+% Switch NaNs (for adaptive case) to zeros.
 if isnan(pref.n), pref.n = 0; end
 
 %% Deal with endpoints and maps
-if ~isnumeric(ends)     % A map may optionally be passed in the second arg.
+if ~isnumeric(ends)     
+% A map may optionally be passed in the second arg.
     g.map = ends;
     ends = ends.for([-1,1]);
 elseif any(isinf(ends))
+% The default unbounded map.
     g.map = unbounded(ends);
 else
     g.map = linear(ends);
+%     The default map (taken from mappref)   
+%     mpref = mappref;
+%     g.map = maps(fun,{mpref.name,mpref.par},ends);
 end
 
 %% Set horizantal scale if not provided
 if nargin < 4 || isempty(varargin{2})
     hs = norm(ends,inf);
-    if hs == inf
-        hs = 1;
-    end
+    if hs == inf,  hs = 2;  end
     g.scl = struct('h',hs,'v',0);
 else
     g.scl = varargin{2};
@@ -92,131 +89,122 @@ end
 
 %% Deal with input op type
 switch class(op)
-    case 'fun'      % returns the same fun
+    case 'fun'      % Returns the same fun
         g = op;
         if nargin > 2
             warning('FUN:constructor:input',['Generating fun from fun on the first' ...
                 ' input argument. Other arguments are not used.'])
         end
         return
-    case 'double'   % assigns value to the Chebyshev points
+    case 'double'   % Assigns value to the Chebyshev points
         if min(size(op)) > 1
-            error('FUN:constructor:double','Only vector inputs are allowed')
+            error('FUN:constructor:double','Only vector inputs are allowed.')
         end
-        if pref.chebkind == 1 
-            g.vals = op(:); g.n = length(op);
-            op = chebpolyval(chebpoly(g,1));
-        end
-        g.vals = op(:); g.n = length(op); g.scl.v = max(g.scl.v, norm(op,inf)); 
-        g.exps = [0 0]; % Can't deal with blow up for numeric input
         if nargin > 2 && pref.n
             warning('FUN:constructor:input',['Generating fun from double object on the first' ...
                 ' input argument. Other arguments are not used.'])
         end
+        
+        if pref.chebkind == 1 
+        % Place values back in chebpoints of second kind.   
+            g.vals = op(:); g.n = length(op);
+            op = chebpolyval(chebpoly(g,1));
+        end
+        % Assign data to the fun.
+        g.vals = op(:); g.n = length(op); g.scl.v = max(g.scl.v, norm(op,inf)); 
+        if isfield(pref,'exps') && ~any(isnan(pref.exps)), g.exps = pref.exps; else g.exps = [0 0]; end
         return
     case 'char'
-        depvar = symvar(op); 
-        if numel(depvar) ~= 1, 
-            error('FUN:constructor:depvar','Incorrect number of dependent variables in string input'); 
-        end
-        op = eval(['@(' depvar{:} ')' op]);
+        % Convert string input to anonymous function.
+        op = str2op(op);
 end
 
 %% Hack for unbounded functions on infinite intervals
 infends = isinf(ends);
 if any(infends)
-%     if ~all(infends), g.map = unbounded([ends mappref('parinf')/30]);
-%     else              g.map = unbounded([ends mappref('parinf')/10]);    end
-    oldop = op;             op = @(x) op(g.map.for(x));
-    oldends = ends;         ends = [-1 1];
+    % Remember the op, and define a new one including the unbounded map.
+    oldop = op;         op = @(x) op(g.map.for(x));
     if ~isfield(pref,'exps'), 
-        if pref.blowup,  pref.exps = [NaN NaN];
-        else  pref.exps = [0 0]; end
+    % If there aren't any exps, then assign some.
+        if pref.blowup, pref.exps = [NaN NaN];
+        else            pref.exps = [0 0]; end
     else
-        if infends(1), pref.exps(1) = -pref.exps(1); end
-        if infends(2), pref.exps(2) = -pref.exps(2); end
+    % Exponents on unbounded intervals are negated (from the user's perspective).
+        if infends(1),  pref.exps(1) = -pref.exps(1); end
+        if infends(2),  pref.exps(2) = -pref.exps(2); end
     end
-    % this is nasty ...
-    bignums = infends.*sign(ends)*1e10;
-    vends = oldop(bignums);
-    vends2 = oldop(oldends(infends));
-    if any(isinf(vends)) || any(isinf(vends2)) || any(isnan(vends)) || any(abs(vends) > 1e5)
-        pref.blowup = 1;
+    % This is a dirty check for functions which appear to blowup at infinity.
+    bignums = infends.*[-1 1]*1e10;
+    vends = oldop([bignums ends(infends)]);
+    if any(isinf(vends)) || any(isnan(vends(1:2))) %|| any(abs(vends) > 1e5)
+        pref.blowup = blowup;
         if infends(1) && ~isnan(pref.exps(1)) && ~pref.exps(1)
             pref.exps(1) = NaN;
         end
         if infends(2) && ~isnan(pref.exps(2)) && ~pref.exps(2)
             pref.exps(2) = NaN;
         end
-    end
-else
-    oldends = ends;    
+    end   
 end
 
 %% Find exponents 
 % If op has blow up, we represent it by 
-%  op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
-if isfield(pref,'exps') && ~all(isnan(pref.exps))
+%      op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
+if isfield(pref,'exps')
+    exps = pref.exps;
     if ~pref.blowup, pref.blowup = blowup; end      % The default 'on' option
-    if ~any(isnan(pref.exps))                       % both exps given
-        exps(1) = pref.exps(1);
-        exps(2) = pref.exps(2);
-    elseif ~isnan(pref.exps(1))                     % left exp given
-        exps(1) = pref.exps(1);     
+    if all(isnan(pref.exps))                        % No exps given
+        exps = findexps(op,ends,0,pref.blowup);     
+    elseif isnan(exps(2))                           % Left exp given
         exps(2) = findexps(op,ends,1,pref.blowup);
-    elseif ~isnan(pref.exps(2))                     % right exp given 
+    elseif isnan(exps(1))                           % Right exp given 
         exps(1) = findexps(op,ends,-1,pref.blowup);
-        exps(2) = pref.exps(2);
-    else
-        exps = findexps(op,ends,0,pref.blowup);     % no exps given
     end
 elseif pref.blowup
-    exps = findexps(op,ends,0,pref.blowup);  % Compute exponents
+    % Blowup flag present. Check for blowup.
+    exps = findexps(op,ends,0,pref.blowup);
 else
-    exps = [0 0]; % Standard representation - no blowup
+    % Standard representation - No blowup.
+    exps = [0 0]; 
 end
+g.exps = exps;                                      % Assign exponents to fun
 
-if any(exps) && ~any(isinf(oldends))
+% Scaling for funs on bounded intervals with exponents.
+if any(exps) && ~any(infends)
     rescl = (2/diff(ends))^-sum(exps);
-    op = @(x) rescl*op(x)./((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)); % new op
+    op = @(x) rescl*op(x)./((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)); % New op
 end
 
-if any(isinf(oldends))
+% Scaling for funs on unbounded domain with exponents.
+if any(infends)
     s = g.map.par(3);
-    if all(isinf(oldends))
-        rescl = .5/(5*s);
-    else
-        rescl = .5./(15*s);
-    end
-    rescl = rescl.^sum(-exps);
-    ends = oldends;     op = oldop;
+    if all(infends),           rescl = .5/(5*s);
+    else                       rescl = .5./(15*s);    end
+    rescl = rescl.^sum(-exps); op = oldop;
     if any(exps)
-        op = @(x) rescl*op(x)./((g.map.inv(x)+1).^exps(1).*(1-g.map.inv(x)).^exps(2)); % new op
+        op = @(x) rescl*op(x)./((g.map.inv(x)+1).^exps(1).*(1-g.map.inv(x)).^exps(2)); % New op
     end
 end
-
-g.exps = exps;
     
 %% Call constructor
 if pref.n
-    % non-adaptive case exact number of points provided
-    % map might still be adapted for that number of points
-    x = chebpts(n,pref.chebkind);
+    % Non-adaptive case (exact number of points provided).
+    x = chebpts(pref.n,pref.chebkind);
     xvals = g.map.for(x);
-    vals = op(xvals);
-    g.vals = vals; g.n = n; 
-    if g.n>2 && (any(g.exps) || any(isnan(g.vals)) || any(isinf(g.map.par([1 2])))) % Extrapolate only in special cases
+    g.vals = op(xvals);    g.n = pref.n; 
+    if g.n > 2 && (any(g.exps) || any(isnan(g.vals)) || any(isinf(g.map.par([1 2])))) 
+    % Extrapolate only in special cases
         g = extrapolate(g,pref,x);
     else
-        g.scl.v = max(g.scl.v,norm(vals,inf));
+        g.scl.v = max(g.scl.v,norm(g.vals,inf));
     end
     if pref.chebkind == 1
-        % place values back in chebpoints of second kind
+    % Place values back in chebpoints of second kind
         g.vals = chebpolyval(chebpoly(g,1),2);
     end
 else
-    % adaptive case
-    % If map was provided in the chebfun call, overwrite previous assignment.
+    % Adaptive case
+    % If map was provided in the chebfun call then overwrite previous assignment.
     if isfield(pref,'map')
         if iscell(pref.map)
             mapfun = str2func(pref.map{1});
@@ -229,5 +217,14 @@ else
             g.map = pref.map;
         end
     end
+    % Call growfun to adaptivly construct the fun.
     [g,ish] = growfun(op,g,pref);
 end
+
+function op = str2op(op)
+% This is here as it's a clean function with no other variables hanging around in the scope.
+depvar = symvar(op); 
+if numel(depvar) ~= 1, 
+    error('CHEBFUN:fun:depvars','Incorrect number of dependent variables in string input.'); 
+end
+op = eval(['@(' depvar{:} ')' op]);

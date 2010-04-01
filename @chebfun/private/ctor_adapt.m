@@ -102,11 +102,7 @@ while ii < length(ops)
                 ops{ii} = sop;
                 ii = ii-1; es = []; fs = [];
             else
-                depvar = symvar(op); 
-                if numel(depvar) ~= 1, 
-                    error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input'); 
-                end
-                op = makeop(op,depvar);
+                op = str2op(op);
                 op = vectorcheck(op,es,pref);         
                 [fs,es,scl] = auto(op,es,scl,pref);
             end
@@ -174,8 +170,11 @@ if length(f.ends)>2
      f = merge(f,find(~ismember(newends,ends)),pref); % Avoid merging at specified breakpoints
 end
 
-function op = makeop(op,depvar)
-% This is here as it's a clean function with no other variables hanging
-% around in the scope.
+function op = str2op(op)
+% This is here as it's a clean function with no other variables hanging around in the scope.
+depvar = symvar(op); 
+if numel(depvar) ~= 1, 
+    error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input.'); 
+end
 op = eval(['@(' depvar{:} ')' op]);
  
