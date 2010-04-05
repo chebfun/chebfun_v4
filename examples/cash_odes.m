@@ -494,8 +494,8 @@ eps = 0.05;
 [d,x,N] = domain(0,1);
 N.op = @(u) [diff(u(:,1)) - sin(u(:,2)), diff(u(:,2)) - u(:,3), ...
     eps*diff(u(:,3))+u(:,4), eps*diff(u(:,4)) - (u(:,1)-1).*cos(u(:,2)) + u(:,3).*(sec(u(:,2))+eps*u(:,4).*tan(u(:,2)))];
-N.lbc = { @(u) u(:,1), @(u) u(:,3) };
-N.rbc = { @(u) u(:,1), @(u) u(:,3) };
+N.lbc = @(u)[ u(:,1),  u(:,3) ];
+N.rbc = @(u)[ u(:,1), u(:,3) ];
 N.guess = [0*x,0*x,0*x,0*x];
 tic
 [u nrmduvec] = N\0;
@@ -511,8 +511,8 @@ end
 eps = 100;
 [d,x,N] = domain(0,1);
 N.op = @(u) diff(u,4) - eps*(diff(u).*diff(u,2)-u.*diff(u,3));
-N.lbc = { @(u) u, @(u) diff(u) };
-N.rbc = { @(u) u-1, @(u) diff(u) };
+N.lbc = @(u)[ u,  diff(u) ];
+N.rbc = @(u)[ u-1, diff(u) ];
 tic
 [u nrmduvec] = N\0;
 probCounter = 32;
@@ -530,8 +530,8 @@ eps = 0.01;
 [d,x,N] = domain(0,1);
 N.op = @(u) [eps*diff(u(:,2),4) + u(:,2).*diff(u(:,2),3)+u(:,1).*diff(u(:,1)), ...
    eps*diff(u(:,1),2) - u(:,1).*diff(u(:,2),1)+u(:,2).*diff(u(:,1))];
-N.lbc = { @(u) u(:,1)+1, @(u) u(:,2), @(u) diff(u(:,2),1) };
-N.rbc = { @(u) u(:,1) - 1, @(u) u(:,2), @(u) diff(u(:,2),1)};
+N.lbc = @(u)[ u(:,1)+1,  u(:,2), diff(u(:,2),1) ];
+N.rbc = @(u)[ u(:,1) - 1, u(:,2), diff(u(:,2),1)];
 N.guess = [0*x+1,0*x+1];
 tic
 [u nrmduvec] = N\0;
@@ -542,8 +542,6 @@ if plotOn,
     subplot(7,5,probCounter),plot(u(:,2)),drawnow
     if titleOn, title(['Problem ', num2str(probCounter)]), end
 end
-
-plot(u)
 cheboppref('damped','on')
 %% Problem #34
 eps = 3.5;

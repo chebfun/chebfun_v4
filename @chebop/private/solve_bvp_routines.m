@@ -46,13 +46,22 @@ end
 
 % If RHS of the \ is 0, keep the original DE. If not, update it. Also check
 % whether we have a chebop, if so, perform subtraction in a different way.
+% The variable numberOfInputVariables is a flag that's used to evaluate
+% functions in the function evalProblemFun.
 if opType == 2  % Operator is a chebop. RHS is treated later
-    problemFun = N.op;
+    deFun = N.op;
+    numberOfInputVariables = 1;
 elseif isnumeric(rhs) && all(rhs == 0)
-    problemFun = N.op;
+    deFun = N.op;
+    numberOfInputVariables = nargin(deFun);
 else
-    problemFun = @(u) N.op(u)-rhs;
+    deFun = @(u) N.op(u)-rhs;
+    numberOfInputVariables = nargin(deFun);
 end
+
+% Create the variable currentGuessCell which is used for evaluation anon.
+% function with multiple input variables
+currentGuessCell = [];
 
 % Extract BC functions
 bcFunLeft = N.lbc;
@@ -83,14 +92,16 @@ end
 ab = dom.ends;
 a = ab(1);  b = ab(end);
 
-% Wrap the BCs in a cell
-if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
-if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
+% Wrap the DE and BCs in a cell
+% if ~iscell(deFun), deFun = {deFun}; end
+% if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
+% if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
 
 counter = 0;
 
 % Anon. fun. and linops now both work with N(u)
-r = problemFun(u);
+% r = deFun(u);
+r = evalProblemFun('DE',u);
 
 nrmdu = Inf;
 nnormr = Inf;
@@ -130,7 +141,7 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
             delta = -mldivide(A,r,deltol);
         end
     else
-        A = problemFun & bc; % problemFun is a chebop
+        A = deFun & bc; % deFun is a chebop
         
         % Do similar tricks as above for the tolerances.
         if counter == 1
@@ -152,7 +163,11 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
     u = u + lambda*delta;
     u = jacvar(u);      % Reset the Jacobian of the function
     
-    r = problemFun(u);
+    % Reset the currentGuessCell variable
+    currentGuessCell = [];
+    
+    %     r = deFun(u);
+    r = evalProblemFun('DE',u);
     
     normu = norm(u,'fro');
     nrmdu = norm(delta,'fro')/normu;
@@ -179,6 +194,8 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
     else
         solve_display(pref,guihandles,'iter',u,lambda*delta,nrmdu,normr)
     end
+    
+
 end
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
@@ -202,18 +219,18 @@ end
             if leftEmpty
                 bcOut.left = [];
             else
-                for j = 1:length(bcFunLeft)
-                    v = bcFunLeft{j}(u);
-                    bcOut.left(j) = struct('op',diff(v,u),'val',v(a));
+                v = evalProblemFun('LBC',u);
+                for j = 1:numel(v);
+                    bcOut.left(j) = struct('op',diff(v(:,j),u),'val',v(a,j));
                 end
             end
             % Check whether a boundary happens to have no BC attached
             if rightEmpty
                 bcOut.right = [];
             else
-                for j = 1:length(bcFunRight)
-                    v = bcFunRight{j}(u);
-                    bcOut.right(j) = struct('op',diff(v,u),'val',v(b));
+                v = evalProblemFun('RBC',u);
+                for j = 1:numel(v);
+                    bcOut.right(j) = struct('op',diff(v(:,j),u),'val',v(b,j));
                 end
             end
         end
@@ -229,27 +246,20 @@ end
         % have periodic BCs (i.e. we check for example whether u(0) = u(1),
         % u'(0) = u'(1) etc.).
         if strcmpi(bcFunLeft,'periodic')
-%             diffOrderA = struct(A).difforder;
+            %             diffOrderA = struct(A).difforder;
             for orderCounter = 0:diffOrderA - 1
                 sn(2) = sn(2) + norm(feval(diff(u,orderCounter),b)-feval(diff(u,orderCounter),a))^2;
             end
         else
-            
+            % Evaluate residuals of BCs
             if ~leftEmpty
-                for bcCount = 1:length(bcFunLeft)
-                    v = bcFunLeft{bcCount}(u);
-                    sn(2) = sn(2) + v(a)^2;
-                end
+                v = evalProblemFun('LBC',u);
+                sn(2) = sn(2) + v(a,:)*v(a,:)';
             end
             
-            % Check whether a boundary happens to have no BC attached
-            if rightEmpty
-                bc.right = [];
-            else
-                for bcCount = 1:length(bcFunRight)
-                    v = bcFunRight{bcCount}(u);
-                    sn(2) = sn(2) + v(b)^2;
-                end
+            if ~rightEmpty
+                v = evalProblemFun('RBC',u);
+                sn(2) = sn(2) + v(b,:)*v(b,:)';
             end
         end
         
@@ -270,39 +280,39 @@ end
         % The objective function we want to minimize.
         
         % This objective function does not take into account BCs.
-        g = @(a) 0.5*norm(A\problemFun(u+a*delta),'fro').^2;
+        g = @(a) 0.5*norm(A\deFun(u+a*delta),'fro').^2;
         
         % Objective function with BCs - Using the functions.
-      g = @(a) 0.5*(norm(A\problemFun(u+a*delta),'fro').^2 +bcResidual(u+a*delta));
+        g = @(a) 0.5*(norm(A\evalProblemFun('DE',u+a*delta),'fro').^2 +bcResidual(u+a*delta));
         
         % Objective function with BCs - Using linearized BCs
-%         g = @(a) 0.5*(norm(A\problemFun(u+a*delta),'fro').^2 +bcResidual2(u+a*delta));
-%          g = @(a) 0.5*(norm(A\problemFun(u+a*delta),'fro').^2 + ...
-%             norm(bcLeftOp\(problemFun(u+a*delta),'fro').^2);
-%         g = @(a) 0.5*(norm(problemFun(u+a*delta),'fro').^2 +bcResidual(u+a*delta));
+        %         g = @(a) 0.5*(norm(A\deFun(u+a*delta),'fro').^2 +bcResidual2(u+a*delta));
+        %          g = @(a) 0.5*(norm(A\deFun(u+a*delta),'fro').^2 + ...
+        %             norm(bcLeftOp\(deFun(u+a*delta),'fro').^2);
+        %         g = @(a) 0.5*(norm(deFun(u+a*delta),'fro').^2 +bcResidual(u+a*delta));
         g0 = g(0);
         
         % Check whether the full Newton step is acceptable. If not, we
         % search for a mininum using fminbnd.
-%                 g1 = g(1);
-%                 if g1 < (1-2*sigma)*g0
-%                     lam = 1;
-%                 else
-%                     amin = fminbnd(g,0.095,1);
-%                     lam = amin;
-%                 end
-%                 if lam < lambda_min
-%                     if lambda_minCounter < 3
-%                         lambda_minCounter = lambda_minCounter + 1;
-%                         lam = lambda_min;
-%                     else
-%                         %If we take three smallest step in a row, give the
-%                         %solution process a "kick".
-%                         lam = .6;
-%                         lambda_minCounter = lambda_minCounter - 1;
-%                     end
-%                 end
-%         
+        %                 g1 = g(1);
+        %                 if g1 < (1-2*sigma)*g0
+        %                     lam = 1;
+        %                 else
+        %                     amin = fminbnd(g,0.095,1);
+        %                     lam = amin;
+        %                 end
+        %                 if lam < lambda_min
+        %                     if lambda_minCounter < 3
+        %                         lambda_minCounter = lambda_minCounter + 1;
+        %                         lam = lambda_min;
+        %                     else
+        %                         %If we take three smallest step in a row, give the
+        %                         %solution process a "kick".
+        %                         lam = .6;
+        %                         lambda_minCounter = lambda_minCounter - 1;
+        %                     end
+        %                 end
+        %
         % Explicit calculations, see Ascher, Mattheij, Russell [1995]
         
         lam = 1;
@@ -340,18 +350,13 @@ end
     function bcRes = bcResidual(currentGuess)
         bcRes = 0;
         if ~leftEmpty
-            for bcCount = 1:length(bcFunLeft)
-                v = bcFunLeft{bcCount}(currentGuess);
-                bcRes = bcRes + v(a)^2;
-            end
+            v = evalProblemFun('LBC',currentGuess);
+            bcRes = bcRes + v(a,:)*v(a,:)';
         end
         
-        % Check whether a boundary happens to have no BC attached
         if ~rightEmpty
-            for bcCount = 1:length(bcFunRight)
-                v = bcFunRight{bcCount}(currentGuess);
-                bcRes = bcRes + v(b)^2;
-            end
+            v = evalProblemFun('RBC',currentGuess);
+            bcRes = bcRes + v(b,:)*v(b,:)';
         end
     end
 
@@ -370,4 +375,47 @@ end
         wr = bcRightOp\(vr-bcRightVal);
         bcRes2 = bcRes2 + wr(a)^2;
     end
+
+    function fOut = evalProblemFun(type,currentGuess)
+        % Don't need to take any special measurements if the number of
+        % input arguments is not greater than 1.
+        
+        % We have already created a flag which tells us whether the
+        % anonymous functions in the problem take one argument (i.e. a
+        % whole quasimatrix) or more (e.g. @(u,v)). In the former case,
+        % no special measurements have to be taken, but in the latter, in
+        % order to allow evaluation, we need to create a cell array with
+        % entries equal to each column of the quasimatrix representing the
+        % current solution.
+        
+        if numberOfInputVariables == 1
+            switch type
+                case 'DE'
+                    fOut = deFun(currentGuess);
+                case 'LBC'
+                    fOut = bcFunLeft(currentGuess);
+                case 'RBC'
+                    fOut = bcFunRight(currentGuess);
+            end
+        else
+            % Load the cell variable
+            if isempty(currentGuessCell)
+                currentGuessCell = cell(1,numel(currentGuess));
+                for quasiCounter = 1:numel(currentGuess)
+                    currentGuessCell{quasiCounter} = currentGuess(:,quasiCounter);
+                end
+            end
+            
+            switch type
+                case 'DE'
+                    fOut = deFun(currentGuessCell{:});
+                case 'LBC'
+                    fOut = bcFunLeft(currentGuessCell{:});
+                case 'RBC'
+                    fOut = bcFunRight(currentGuessCell{:});
+            end
+        end
+    end
+
+
 end

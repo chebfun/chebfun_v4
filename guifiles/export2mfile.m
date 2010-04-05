@@ -3,7 +3,18 @@ function export2mfile(pathname,filename,handles)
 fullFileName = [pathname,filename];
 fid = fopen(fullFileName,'wt');
 
+OSname = getenv('OS');
 
+if strcmp(OSname(1:3),'Win')
+    userName = getenv('UserName');
+else
+    userName = getenv('User');
+end
+
+
+fprintf(fid,'%% %s - Executable .m file for solving a boundary value problem.\n',filename);
+fprintf(fid,'%% Automatically created with from chebbvp GUI by user %s\n',userName);
+fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 a = get(handles.dom_left,'String');
 b = get(handles.dom_right,'String');
@@ -16,15 +27,15 @@ deRHS   = get(handles.input_DE_RHS,'String');
 
 
 
-fprintf(fid,['%% Creates a domain, the linear function on the domain and' ...
+fprintf(fid,['%% Create a domain, the linear function on the domain and' ...
     ' a chebop \n%% that operates on function on the domain.\n']);
 fprintf(fid,'[d,%s,N] = domain(%s,%s);\n',indVarName,a,b);
 
-fprintf(fid,'\n%% Makes an assignment to the differential eq. of the chebop.\n');
+fprintf(fid,'\n%% Make an assignment to the differential eq. of the chebop.\n');
 fprintf(fid,'N.op = %s;\n',deString);
 
 % Setup for the rhs
-fprintf(fid,'\n%% Sets up the rhs of the differential equation\n');
+fprintf(fid,'\n%% Set up the rhs of the differential equation\n');
 fprintf(fid,'rhs = %s;\n',deRHS);
 
 % Make assignments for left and right BCs.
@@ -104,13 +115,15 @@ fprintf(fid,'\n%% Create plot of the solution and the norm of the updates\n');
 
 
 
-fprintf(fid,'figure;\nplot(u),title(''Solution at the end of iteration'')\n');
-fprintf(fid,'figure;\nsemilogy(normVec,''-*''),title(''Norm of updates'')\n');
+fprintf(fid,'figure\nplot(u),title(''Solution at the end of iteration'')\n');
+fprintf(fid,'figure\nsemilogy(normVec,''-*''),title(''Norm of updates'')\n');
 fprintf(fid,'xlabel(''Number of iteration'')\n');
 fprintf(fid,...
     ['if length(normVec) > 1\n' ...
         '\tXTickVec = 1:max(floor(length(normVec)/5),1):length(normVec);\n'...
         '\tset(gca,''XTick'', XTickVec), xlim([1 length(normVec)]), grid on\n'...
+    'else\n'...
+    '   \tset(gca,''XTick'', 1)\n'...
     'end\n']);
 
 fclose(fid);

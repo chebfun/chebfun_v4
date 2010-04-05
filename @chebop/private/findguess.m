@@ -61,12 +61,12 @@ end
         % solution is a single chebfun rather then quasimatrix) we can try
         % to construct an initial guess such that it fullfills
         % (potentially) non-homogenous Dirichlet BCs.
-
+        
         leftEmpty = isempty(bcFunLeft);
         rightEmpty = isempty(bcFunRight);
         
-        if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
-        if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
+%         if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
+%         if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
         
         
         
@@ -78,22 +78,33 @@ end
         % Get values of BCs at the endpoints
         leftVals = zeros(length(bcFunLeft),1);
         rightVals = zeros(length(bcFunRight),1);
+        
+        % Create a cell variable, allows syntax like @(u,v)
+        guessCell = cell(1,numel(guess));
+        for quasiCounter = 1:numel(guess)
+            guessCell{quasiCounter} = guess(:,quasiCounter);
+        end
+        
         if leftEmpty
             leftVals = 0;
         else
-            for j = 1:length(bcFunLeft)
-                v = feval(bcFunLeft{j},guess);
-                leftVals(j) = v(a);
-            end
+            v = bcFunLeft(guessCell{:});
+            leftVals = v(a,:);
+            %             for j = 1:length(bcFunLeft)
+            %                 v = feval(bcFunLeft{j},guess);
+            %                 leftVals(j) = v(a);
+            %             end
         end
         
         if rightEmpty
             rightVals = 0;
         else
-            for j = 1:length(bcFunRight)
-                v = feval(bcFunRight{j},(guess));
-                rightVals(j) = v(b);
-            end
+            v = bcFunRight(guessCell{:});
+            rightVals = v(b,:);
+            %             for j = 1:length(bcFunRight)
+            %                 v = feval(bcFunRight{j},(guess));
+            %                 rightVals(j) = v(b);
+            %             end
         end
         % If we just have one column in our guess, perform a linear interpolation
         leftY = leftVals(min(find(leftVals ~= 0)));

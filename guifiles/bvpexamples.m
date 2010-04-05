@@ -56,8 +56,8 @@ switch exampleNumber
         b = '5';
         DE = '0.01*u''''-x.*u';
         DErhs = '1';
-        LBC = 'dirichlet';
-        LBCrhs = '';        
+        LBC = 'u';
+        LBCrhs = '0';        
         RBC = 'u';
         RBCrhs = '0';
         guess = '';

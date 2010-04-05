@@ -26,7 +26,7 @@ function varargout = chebbvp(varargin)
 
 % Edit the above text to modify the response to help chebbvp
 
-% Last Modified by GUIDE v2.5 31-Mar-2010 15:34:35
+% Last Modified by GUIDE v2.5 02-Apr-2010 12:29:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -181,6 +181,8 @@ function button_solve_Callback(hObject, eventdata, handles)
 % Create a domain and the linear function on that domain. We use xt for the
 % linear function, later in the code we will be able to determine whether x
 % or t is used for the linear function.
+defaultTol = 1e-10;
+
 a = str2double(get(handles.dom_left,'String'));
 b = str2double(get(handles.dom_right,'String'));
 [d,xt] = domain(a,b);
@@ -268,8 +270,17 @@ else
 end
 
 tolInput = get(handles.input_tol,'String');
-tolNum = str2num(tolInput);
+if isempty(tolInput)
+    tolNum = defaultTol;
+else
+    tolNum = str2double(tolInput);
+end
 
+if tolNum < chebfunpref('eps')
+    warndlg('Tolerance specified is less that current chebfun epsilon','Warning','modal');
+    uiwait(gcf)
+end
+    
 options = cheboppref;
 
 % Set the tolerance for the solution process
@@ -312,7 +323,7 @@ set(handles.fig_norm,'Visible','On');
 
 try
     [u vec] = solvebvp(N,DE_RHS,options,guihandles);
-catch
+catch ME
     errordlg('Error in solution process.', 'chebopbvp error', 'modal');
     return
 end
@@ -335,14 +346,20 @@ set(handles.text_norm,'Visible','On');
 
 
 axes(handles.fig_sol)
-plot(u), title('Solution at end of iteration')
+plot(u), 
+if length(vec) > 1
+    title('Solution at end of iteration')
+else
+    title('Solution');
+end
 axes(handles.fig_norm)
 semilogy(vec,'-*'),title('Norm of updates'), xlabel('Number of iteration')
 if length(vec) > 1
     XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
     set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on
+else % Don't display fractions on iteration plots
+    set(gca,'XTick', 1)
 end
-
 
 guidata(hObject, handles);
 
@@ -561,7 +578,7 @@ function button_help_Callback(hObject, eventdata, handles)
 % hObject    handle to button_help (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-doc('chebopbvp')
+doc('chebbvp')
 
 
 % --- Executes during object creation, after setting all properties.
@@ -683,6 +700,10 @@ set(handles.text_norm,'Visible','Off');
 % Disable export figures
 set(handles.button_figures,'Enable','off');
 
+% Enable RHS of BCs again
+set(handles.input_LBC_RHS,'Enable','on');
+set(handles.input_RBC_RHS,'Enable','on');
+
 % We don't have a solution available anymore
 handles.hasSolution = 0;
 
@@ -708,6 +729,8 @@ semilogy(latestNorms,'-*'),title('Norm of updates'), xlabel('Number of iteration
 if length(latestNorms) > 1
     XTickVec = 1:max(floor(length(latestNorms)/5),1):length(latestNorms);
     set(gca,'XTick', XTickVec), xlim([1 length(latestNorms)]), grid on
+else % Don't display fractions on iteration plots
+    set(gca,'XTick', 1)
 end
 set(gcf,'Position',[270   305   685   299]);
 
@@ -1111,3 +1134,53 @@ if okPressed
     loadExample(handles,selection);
 end
 cd(tmppath)
+
+
+% --- Executes on button press in button_stop.
+function button_stop_Callback(hObject, eventdata, handles)
+% hObject    handle to button_stop (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function input_system_Callback(hObject, eventdata, handles)
+% hObject    handle to input_system (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of input_system as text
+%        str2double(get(hObject,'String')) returns contents of input_system as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function input_system_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to input_system (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes when figure1 is resized.
+function figure1_ResizeFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in button_system.
+function button_system_Callback(hObject, eventdata, handles)
+% hObject    handle to button_system (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+sys = get(handles.input_system,'String');
+
+for sysCounter = 1:length(sys)
+    convertToAnon(sys{sysCounter})
+end
+1+2;
