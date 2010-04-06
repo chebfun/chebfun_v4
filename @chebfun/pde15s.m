@@ -54,7 +54,7 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-global ORDER
+global ORDER QUASIN
 ORDER = 0; % Initialise to zero
 
 if nargin < 4 
@@ -104,17 +104,62 @@ d = domain(u0);
 % Determine the size of the system
 syssize = min(size(u0));
 
-% If the differential operator is passed, redefine the anonymous function
-if nargin(pdefun) == 2
-    pdefun = @(u,t,x) pdefun(u,@Diff);
+% % If the differential operator is passed, redefine the anonymous function
+% tmp = NaN(1,syssize);
+% if nargin(pdefun) == 2
+%     pdefun = @(u,t,x) pdefun(u,@Diff);
+%     % get the ORDER (a global variable) by evaluating the RHS with NaNs
+%     pdefun(tmp);
+% elseif nargin(pdefun) == 4
+%     pdefun = @(u,t,x) pdefun(u,t,x,@Diff);
+%     pdefun(tmp,NaN,NaN); % (as above)
+% end
+
+% Determining the behaviour of the inputs to pdefun, i.e. is it of
+% quasimatrix-type, or pdefun(u,v,w,t,x,@diff) etc. (QUASIN TRUE/FALSE).
+tmp = NaN(1,syssize); QUASIN = true;
+% Determine if it's a quasimatrix
+if nargin(pdefun) == 4 && syssize ~= 1 
+    % This is the tricky case: we could have
+    %   op(u,t,x,@Diff) or op(u,v,w,@Diff)
+    try
+        tmp2 = repmat({tmp},1,nargin(pdefun)-2);
+        pdefun(tmp,tmp2{:},@Diff)
+    end
+    try
+        tmp2 = repmat({NaN},1,nargin(pdefun)-2);
+        pdefun(tmp,tmp2{:},@Diff);
+    end
+elseif syssize == 1 || nargin(pdefun) < 3
+    QUASIN = true;
+else
+    QUASIN = false;
+end
+% Convert pdefun to accept quasimatrix inputs, and determine syssize
+if nargin(pdefun) == 2 || (~QUASIN && nargin(pdefun) == syssize + 1)
+    % Deal with input variables (see conv2cell below)
+    pdefun = @(u,t,x) conv2cell(pdefun,u,@Diff);
     % get the ORDER (a global variable) by evaluating the RHS with NaNs
-    tmp = repmat(NaN,1,syssize);
     pdefun(tmp);
-elseif nargin(pdefun) == 4
-    pdefun = @(u,t,x) pdefun(u,t,x,@Diff);
-    tmp = repmat(NaN,1,syssize);
+elseif nargin(pdefun) == syssize + 3 || nargin(pdefun) == 4
+    pdefun = @(u,t,x) conv2cell(pdefun,u,t,x,@Diff);
     pdefun(tmp,NaN,NaN); % (as above)
 end
+    function newfun = conv2cell(pdefun,u,varargin)
+        % This little function allows the use of different letters in the
+        % anonymous function for pdefun, rather than using the clunky
+        % quasi-matrix notation.
+        if QUASIN
+            newfun = pdefun(u,varargin{:});
+        else
+            tmpcell = cell(1,syssize);
+            for qk = 1:syssize
+                tmpcell{qk} = u(:,qk);
+            end
+
+            newfun = pdefun(tmpcell{:},varargin{:});
+        end
+    end
 
 % some error checking on the bcs
 if ischar(bc) && (strcmpi(bc,'neumann') || strcmpi(bc,'dirichlet'))
@@ -405,17 +450,18 @@ function up = Diff(u,k)
     % Computes the k-th derivative of u using Chebyshev differentiation
     % matrices defined by barymat. The matrices are stored for speed.
     
-    global GLOBX ORDER
+    global GLOBX ORDER QUASIN
     persistent storage
     if isempty(storage), storage = struct([]); end
 
     % Assume first-order derivative
     if nargin == 1, k = 1; end
-    
+
     % For finding the order of the RHS
     if any(isnan(u)) 
         if isempty(ORDER), ORDER = k;
         else ORDER = max(ORDER,k); end
+        if size(u,2) > 1, QUASIN = false; end
         up = [];
         return
     end
@@ -493,6 +539,7 @@ if (nargout == 3), return; end
 D4 = 4./Dx .* (Dw.*repmat(D3(ii),1,N+1) - D3);
 D4(ii) = 0; D4(ii) = - sum(D4,2);
 end
+
 
 
 
