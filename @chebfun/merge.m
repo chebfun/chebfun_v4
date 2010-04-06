@@ -103,8 +103,7 @@ for k = bkpts
         v(1) = f.imps(1,k);
         v(2) = f.funs(k-1).vals(end);
         v(3) = f.funs(k).vals(1);
-        % Prevent merging if there are jumps (very loose tolerance) OR
-        % EXPONENTS
+        % Prevent merging if there are jumps (very loose tolerance) OR EXPONENTS
         if  norm(v(1) - v(2:3),inf) < 1e7*pref.eps*f.scl && ~(any(fout.funs(j-1).exps)||any(fout.funs(j).exps))
             [mergedfun, hpy] = getfun(@(x) feval(fout,x),  ... 
                                [fout.ends(j-1), fout.ends(j+1)], pref, scl);

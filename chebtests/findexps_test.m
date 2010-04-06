@@ -1,4 +1,4 @@
-function pass = findexps
+function pass = findexps_test
 
 % Tests automatic exps computation
 % Nick Hale, Nov 2009

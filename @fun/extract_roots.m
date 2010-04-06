@@ -18,7 +18,7 @@ f.exps = [0 0];
 map = f.map;
 
 % Tolerance for a root
-tol = 1000*chebfunpref('eps')*f.scl.v;
+tol = 100*chebfunpref('eps')*f.scl.v;
 f0 = abs(f.vals([1 end]));
 f0(~sides) = inf;
 % We're a bit more slack at infinite intervals

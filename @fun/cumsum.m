@@ -366,6 +366,8 @@ if ~strcmpi(f.map.name,'linear')
     error('FUN:cumsum:exps','cumsum does not yet support exponents <= 1 with arbitrary maps.');
 end
 
+error('CHEBFUN:fun:cumsum:unbdnd:fail','@FUN/CUMSUM is broken for functions which blowup');
+
 flip = false;
 
 exps = f.exps;

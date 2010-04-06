@@ -40,7 +40,7 @@ if isa(f2,'double')
     return
 end
     
-r = roots(f2);    
+r = roots(f2);
 if isa(f1,'double')
     ends = get(f2,'ends');
 else
@@ -78,7 +78,7 @@ elseif isa(f1,'double')
         exps = get(f2,'exps');
         poles = false;
         for k = 1:f2.nfuns
-            if abs(get(f2.funs(k),'lval'))<tol || abs(get(f2.funs(k),'rval'))<tol
+            if abs(get(f2.funs(k),'lval'))<10*tol || abs(get(f2.funs(k),'rval'))<10*tol
                 poles = true; break
             end
         end
@@ -94,8 +94,8 @@ elseif isa(f1,'double')
                 tmp = comp(chebfun(f2k,ends(k:k+1)),@(x) rdivide(f1,x));
                 tmp.funs(1).exps(1) = -expsk(1);
                 tmp.funs(end).exps(2) = -expsk(2);
-                tmp.funs(1) = replace_roots(tmp.funs(1));
-                tmp.funs(end) = replace_roots(tmp.funs(end));
+                tmp.funs(1) = extract_roots(tmp.funs(1),-tmp.funs(1).exps(1));
+                tmp.funs(end) = extract_roots(tmp.funs(end),-tmp.funs(end).exps(2));
                 fout = [fout ; tmp];
             end
         end
@@ -113,7 +113,7 @@ else
     exps1 = get(f1,'exps'); exps2 = get(f2,'exps');
     poles = false;
     for k = 1:f2.nfuns
-        if abs(get(f2.funs(k),'lval'))<tol || abs(get(f2.funs(k),'rval'))<tol
+        if abs(get(f2.funs(k),'lval'))<10*tol || abs(get(f2.funs(k),'rval'))<10*tol
             poles = true; break
         end
     end
@@ -129,8 +129,8 @@ else
             tmp = comp(chebfun(f1k,ends(k:k+1)), @rdivide, chebfun(f2k,ends(k:k+1)));
             tmp.funs(1).exps(1) = exps1k(1)-exps2k(1);
             tmp.funs(end).exps(2) = exps1k(2)-exps2k(2);
-            tmp.funs(1) = replace_roots(tmp.funs(1));
-            tmp.funs(end) = replace_roots(tmp.funs(end));
+            tmp.funs(1) = extract_roots(tmp.funs(1),-tmp.funs(1).exps(1));
+            tmp.funs(end) = extract_roots(tmp.funs(end),-tmp.funs(end).exps(2));
             fout = [fout ; tmp];
         end
     end

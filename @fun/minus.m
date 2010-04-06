@@ -64,6 +64,7 @@ if samemap(g1,g2) && all(exps1==exps2);
     
     if any(g1.exps < 0) || any(isinf(ends))
         g1 = checkzero(g1);
+%         g1 = extract_roots(g1);
     end
     return
 end
@@ -148,7 +149,7 @@ if round(exps1-exps2) == exps1-exps2
 
         if any(g1.exps < 0) || any(isinf(ends))
             g1 = checkzero(g1);
-    %         g1 = extract_roots(g1);
+            g1 = extract_roots(g1);
         end
         
         return
@@ -218,12 +219,13 @@ end
     
 if any(g1.exps < 0)
     g1 = checkzero(g1);
+    g1 = extract_roots(g1);
 end
 
 function g1 = checkzero(g1)
 % With exps, if the relative deifference is O(eps) we set it to zero.
 % Same goes for unbounded domains.
-if all(abs(g1.vals) < 10*g1.scl.v*chebfunpref('eps'))
+if all(abs(g1.vals) < 100*g1.scl.v*chebfunpref('eps'))
     g1.vals = 0;
     g1.n = 1; 
     g1.exps = [0 0];
