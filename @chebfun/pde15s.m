@@ -54,7 +54,7 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-global ORDER QUASIN
+global ORDER QUASIN GLOBX
 ORDER = 0; % Initialise to zero
 
 if nargin < 4 
@@ -145,19 +145,20 @@ elseif nargin(pdefun) == syssize + 3 || nargin(pdefun) == 4
     pdefun = @(u,t,x) conv2cell(pdefun,u,t,x,@Diff);
     pdefun(tmp,NaN,NaN); % (as above)
 end
-    function newfun = conv2cell(pdefun,u,varargin)
+    function newfun = conv2cell(oldfun,u,varargin)
         % This little function allows the use of different letters in the
         % anonymous function for pdefun, rather than using the clunky
         % quasi-matrix notation.
+
         if QUASIN
-            newfun = pdefun(u,varargin{:});
+            newfun = oldfun(u,varargin{:});
         else
             tmpcell = cell(1,syssize);
             for qk = 1:syssize
                 tmpcell{qk} = u(:,qk);
             end
 
-            newfun = pdefun(tmpcell{:},varargin{:});
+            newfun = oldfun(tmpcell{:},varargin{:});
         end
     end
 
@@ -191,9 +192,31 @@ if isfield(bc,'right') && ischar(bc.right)
     bc.right = struct('op',op,'val',repmat({0},1,syssize));
 end
 
-% Sort out boundary conditions (Left)
-nllbc = []; nlbcs = {}; nlrbc = []; rhs = {};
-if isfield(bc,'left') && numel(bc.left) > 0
+% Sort out left boundary conditions
+nllbc = []; nlbcs = {}; GLOBX = 1; funflagl = false; rhs = [];
+% 1) Deal with the case where bc is a function handle vector
+if isfield(bc,'left') && numel(bc.left) == 1 && isa(bc.left,'function_handle')
+	op = bc.left;
+    if nargin(op) == 2 || (~QUASIN && nargin(op) == syssize + 1)
+        op = @(u,t,x) conv2cell(op,u,@Diff);
+    else
+        op = @(u,t,x) conv2cell(op,u,t,x,@Diff);
+    end
+    tmp2 = ones(size(tmp));  evalop = op(tmp2,0,1);   s = size(evalop);
+%     if max(s) > 1 % Then we do have a vector input      
+        nllbc = 1:max(s);     dumop = repmat(eye(d),1,syssize);
+        bc.left = struct( 'op', [], 'val', []); 
+        for k = nllbc 
+            % Dummy entries
+            bc.left(k).op = dumop; bc.left(k).val = 0; rhs{k} = 0;
+            % Extract each component (inefficient)
+            nlbcs = [nlbcs {@(u,t,x) extract_opk(op,k,s,u,t,x)}];
+        end
+        funflagl = true;
+%     end
+end
+% 2) Deal with other forms of input
+if ~funflagl && isfield(bc,'left') && numel(bc.left) > 0
     if isa(bc.left,'function_handle') || isa(bc.left,'linop') || iscell(bc.left)
         bc.left = struct( 'op', bc.left);
     elseif isnumeric(bc.left)
@@ -201,53 +224,74 @@ if isfield(bc,'left') && numel(bc.left) > 0
     end
     % Extract nonlinear conditions
     for k = 1:numel(bc.left)
-        opk = bc.left(k).op;
+        opk = bc.left(k).op; rhs{k} = 0;
         if isnumeric(opk) && syssize == 1
             bc.left(k).op = repmat(eye(d),1,syssize);
             bc.left(k).val = opk;
-        end
+        end       
         if isa(opk,'function_handle')
             nllbc = [nllbc k];             % Store positions
-            if     nargin(opk) == 2,  nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
-            elseif nargin(opk) == 4,  nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)} ]; 
-            end
+            if nargin(opk) == 2, nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
+            else                 nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)}]; end
             bc.left(k).op = repmat(eye(d),1,syssize);
         end
         if isfield(bc.left(k),'val') && ~isempty(bc.left(k).val)
                 rhs{k} = bc.left(k).val;
-        else    rhs{k} = 0; end
-        bc.left(k).val = 0;  % set to homogeneous (to remove function handles
+        end
+        bc.left(k).val = 0;  % set to homogeneous (to remove function handles)
     end     
-elseif isfield(bc,'right') 
+elseif ~funflagl && isfield(bc,'right') 
     bc.left = [];
 end
-% (Right)
-numlbc = numel(rhs);
-if isfield(bc,'right') && numel(bc.right) > 0% && syssize == 1 % as above for rhs
+
+% Sort out right boundary conditions
+nlrbc = []; numlbc = numel(rhs); funflagr = false;
+% 1) Deal with the case where bc is a function handle vector
+if isfield(bc,'right') && numel(bc.right) == 1 && isa(bc.right,'function_handle')
+	op = bc.right;
+    if nargin(op) == 2 || (~QUASIN && nargin(op) == syssize + 1)
+        op = @(u,t,x) conv2cell(op,u,@Diff);
+    else
+        op = @(u,t,x) conv2cell(op,u,t,x,@Diff);
+    end
+    tmp2 = ones(size(tmp));  evalop = op(tmp2,0,1);   s = size(evalop);
+%     if max(s) > 1 % Then we do have a vector input      
+        nlrbc = 1:max(s);     dumop = repmat(eye(d),1,syssize);
+        bc.right = struct( 'op', [], 'val', []); 
+        for k = nlrbc 
+            % Dummy entries
+            bc.right(k).op = dumop; bc.right(k).val = 0; rhs{numlbc+k} = 0;
+            % Extract each component (inefficient)
+            nlbcs = [nlbcs {@(u,t,x) extract_opk(op,k,s,u,t,x)}];
+        end
+        funflagr = true;
+%     end
+end
+% 2) Deal with other forms of input
+if ~funflagr && isfield(bc,'right') && numel(bc.right) > 0
     if isa(bc.right,'function_handle') || isa(bc.right,'linop') || isa(bc.right,'cell')
         bc.right = struct( 'op', bc.right, 'val', 0);
     elseif isnumeric(bc.right)
         bc.right = struct( 'op', eye(d), 'val', bc.right);         
     end
     for k = 1:numel(bc.right)
-        opk = bc.right(k).op;
+        opk = bc.right(k).op; rhs{numlbc+k} = 0;
         if isnumeric(opk) && syssize == 1
             bc.right(k).op = eye(d);
             bc.right(k).val = opk;
         end
         if isa(opk,'function_handle')
             nlrbc = [nlrbc k];
-            if     nargin(opk) == 2,  nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
-            elseif nargin(opk) == 4,  nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)} ]; 
-            end
+            if nargin(opk) == 2,  nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
+            else                  nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)}]; end
             bc.right(k).op = repmat(eye(d),1,syssize);
         end
         if isfield(bc.right(k),'val') && ~isempty(bc.right(k).val)
                 rhs{numlbc+k} = bc.right(k).val;
-        else    rhs{numlbc+k} = 0; end
+        end
         bc.right(k).val = 0;
     end          
-elseif isfield(bc,'left') 
+elseif ~funflagr && isfield(bc,'left') 
     bc.right = [];
 end
 
@@ -363,7 +407,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%    ONESTEP   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constructs the result of one time chunk at fixed discretization
     function U = onestep(x)
-        global GLOBX
+%         global GLOBX
 
         if length(x) == 2, U = [0;0]; return, end      
         
@@ -420,7 +464,7 @@ end
                     q(l,1) = rhs{l};
                 end
             end
-
+            
             % replacements for the BC algebraic conditions           
             F(rows) = B*U(:)-q; 
             
@@ -436,7 +480,7 @@ end
                 tmp = feval(nlbcs{j},U,t,x);
                 F(rows(kk)) = tmp(end)-q(kk);
             end
-            
+
             % Reshape to single column
             F = F(:);
             
@@ -512,6 +556,11 @@ if N == 0
     x = chebpts(N);
 end
 
+if N == 1;
+    D1 = 1; D2 = 1; D3 = 1; D4 = 1; 
+    return
+end
+
 if nargin < 2           % Default to Chebyshev weights
     w = [.5 ; ones(N,1)]; 
     w(2:2:end) = -1;
@@ -540,7 +589,16 @@ D4 = 4./Dx .* (Dw.*repmat(D3(ii),1,N+1) - D3);
 D4(ii) = 0; D4(ii) = - sum(D4,2);
 end
 
+function y = extract_opk(opk,k,s,u,varargin)
 
+y = opk(u,varargin{:});
+if s(1) == 1
+    y = y(:,k);
+else
+    y = reshape(y,numel(y)/s(1),s(1));
+    y = y(:,k);
+end
+end
 
 
 

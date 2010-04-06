@@ -11,8 +11,9 @@ f = @(u,v,t,x,D) [ -u + (x + 1).*v + 0.1*D(u,2) , ...
                     u - (x + 1).*v + 0.2*D(v,2) ];
                    
 D = diff(d); Z = zeros(d);
-bc.left = {[D Z], [Z D]};
-bc.right = bc.left;
+
+% bc.left = {[D Z], [Z D]};  bc.right = bc.left;          % Old way
+bc.left = @(u,v,D) [D(u), D(v)];  bc.right = bc.left;   % New way
         
 uu = pde15s(f,0:.05:3,u,bc,32);
 
@@ -43,10 +44,10 @@ u = [ chebfun(1,d)  chebfun(1,d) ];
 f = @(u,v,t,x,D) [ -u + (x + 1).*v + 0.1*D(u,2) , ...
                     u - (x + 1).*v + 0.2*D(v,2) ];
 
-bc.left = {@(u,t,x,D) D(u(:,1))+t*sin(u(:,1))./u(:,2), @(u,t,x,D) D(u(:,2))};
-bc.right = {@(u,t,x,D) D(u(:,1)), @(u,t,x,D) D(u(:,2)).*u(:,2)+sin(5*pi*t)};
+bc.left =  @(u,v,t,x,D) [D(u)+t*sin(u)./v,  D(v)];
+bc.right = @(u,v,t,x,D) [D(u),              D(v).*v+sin(5*pi*t)];
         
-uu = pde15s(f,0:.05:.1,u,bc);
+uu = pde15s(f,0:.05:1,u,bc);
 
 %%
 
@@ -58,8 +59,9 @@ clc, clear, close all
 u = exp(-20*x.^2) .* sin(14*x);  u = [u -u];
 D = diff(d); I = eye(d); Z = zeros(d);
 f = @(u,v,D) [D(v) ; D(u)];
-bc.left = [I Z];
-bc.right = [I Z];
 
-opt = pdeset('eps',1e-6);
-uu = pde15s(f,0:.05:3,u,bc,opt,64);
+% bc.left = [I Z]; bc.right = [I Z];                % Old way
+bc.left = @(u,v,D) u; bc.right = @(u,v,D) v;        % New way
+
+opt = pdeset('eps',1e-6, 'Ylim',pi/2*[-1 1]);
+uu = pde15s(f,0:.05:2,u,bc,opt,64);

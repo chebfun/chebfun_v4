@@ -96,7 +96,7 @@ u = 1 + 0.5*exp(-40*x.^2);
 bc.left = struct('op',{I,D},'val',{1,2});
 bc.right = struct('op',{I,D},'val',{1,2});
 f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
-opts = pdeset('Ylim',[-30 30],'plot',0);
+opts = pdeset('Ylim',[-30 30],'plot',1);
 u = pde15s(f,0:.01:2,u,bc,opts);
 surf(u)
 
@@ -104,13 +104,13 @@ surf(u)
 % close all
 % E = 1e-1;
 % [d,x] = domain(-1,1); 
-% u = cos(pi*x)-exp(-6*pi*x.^2);
+% u = cos(pi*x)-exp(-6*pi*x.^2)
 % plot(u)
 % opts = pdeset('eps',1e-6,'abstol',1e-10,'reltol',1e-10,'plot',1);
 % lbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
 % rbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
-% f = @(t,x,u,D) -D(u,4) + D(u.^3,2)-D(u,2);
+% f = @(t,x,u,D) -E*D(u,4) + D(u.^3-u,2);
 % tt = linspace(0,.05,101);
-% uu = pde15s(f,tt,u,{lbc rbc},opts);
+% uu = pde15s(f,tt,u,{lbc rbc},opts,64);
 % surf(uu,tt)
 
