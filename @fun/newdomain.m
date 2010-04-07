@@ -8,6 +8,7 @@ function g = newdomain(g,ends)
 % $Date$:
 
 map = g.map;
+if isa(ends,'domain'), ends = ends.ends; end
 
 % endpoints!
 a = map.par(1); b = map.par(2); c = ends(1); d = ends(2);

@@ -149,7 +149,7 @@ if round(exps1-exps2) == exps1-exps2
 
         if any(g1.exps < 0) || any(isinf(ends))
             g1 = checkzero(g1);
-            g1 = extract_roots(g1);
+%             g1 = extract_roots(g1);
         end
         
         return

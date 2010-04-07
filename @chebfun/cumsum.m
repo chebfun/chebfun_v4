@@ -1,11 +1,15 @@
 function F = cumsum(F,n)
 %CUMSUM   Indefinite integral.
-% CUMSUM(F) is the indefinite integral of the chebfun F. Dirac deltas 
-% already existing in F will decrease their degree.
+% G = CUMSUM(F) is the indefinite integral of the chebfun F. Dirac deltas 
+% already existing in F will decrease their degree. G will typically be 
+% normalised so that G(F.ends(1)) = 0. The exception to this is when
+% computing indefinite integrals of functions with exponents less than
+% minus 1. In this case, the arbitrary constant in the indefinite integral
+% is chosen to make the representation of G as simple as possible.
 %
 % CUMSUM(F,N) returns the Nth integral of F. If N is not an integer CUMSUM(F,N)
-% returns the fractional integral of order N as defined by the
-% Riemann–Liouville integral.
+% returns the fractional integral of order N as defined by the Riemann–Liouville 
+% integral.
 %
 % CUMSUM does not currently support chebfuns whose indefinite integral diverges
 % (i.e. has exponents <-1) when using nontrivial maps. Even for chebfuns
@@ -65,7 +69,10 @@ end
 Fb = imps(1);
 funs = f.funs;
 for i = 1:f.nfuns
-    funs(i) = cumsum(funs(i)) + Fb;
+    cfi = cumsum(funs(i));
+    % This is because unbounded functions may not be zero at left.
+    if f.nfuns > 1, cfi = cfi - feval(cfi, cfi.map.par(1)); end 
+    funs(i) = cfi + Fb;
     Fb = funs(i).vals(end) + imps(i+1);
 end
 

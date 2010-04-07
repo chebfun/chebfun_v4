@@ -8,9 +8,9 @@ function [g gsing] = cumsum(g)
 % its integral is represented with a fun of length n+1 given by
 %
 %       SUM_{r=0}^{n} C_r T_r (x)
-% 
+%
 % where C_0 is determined from the constant of integration as
-% 
+%
 %       C_0 = SUM_{r=1}^{n} (-1)^(r+1) C_r;
 %
 % C_1 = c_0 - c_2/2, and for r > 0,
@@ -21,7 +21,7 @@ function [g gsing] = cumsum(g)
 %
 % See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 32-33.
 %
-% For functions with exponents, things are more complicated. We switch to 
+% For functions with exponents, things are more complicated. We switch to
 % a Jacobi polynomial representation with the correct weights. We can then
 % integrate all the terms for r > 0 exactly.
 %
@@ -30,50 +30,50 @@ function [g gsing] = cumsum(g)
 % will contain the terms which are harder to represent (using a sing-type
 % map). (This is very experimental!)
 %
-% There is limited support for functions whose indefinite integral is also 
+% There is limited support for functions whose indefinite integral is also
 % unbounded (i.e. G.exps <=1). In particular, the form of the blow up must
 % be an integer, and G may only have exponents at one end of it's interval.
 %
-% Functions with both exponents and nonlinear maps can only be dealt with 
+% Functions with both exponents and nonlinear maps can only be dealt with
 % by switching to and from a linear map, and are therefore often very slow.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team.
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
 ends = g.map.par(1:2);
-    
+
 % linear map (simplest case)
 if strcmp(g.map.name,'linear')
     
     if isempty(g), return, end
     
-    if ~any(g.exps)  
+    if ~any(g.exps)
         g.vals = g.vals*g.map.der(0); % From change of variables to [-1,1]
         g = cumsum_unit_interval(g);
         gsing = fun(0,g.map.par(1:2));
     elseif any(g.exps<=-1)
-        if nargout > 1 
+        if nargout > 1
             [g gsing] = unbdnd(g);
         else
             g = unbdnd(g);
         end
     else
-        if nargout > 1 
+        if nargout > 1
             [g gsing] = jacsum(g);
         else
             g = jacsum(g);
         end
     end
     
-% Infinite intervals
+    % Infinite intervals
 elseif any(isinf(ends))
     if any(g.exps)
         exps = g.exps;
         map = g.map;
-        s = map.par(3);
+%         s = map.par(3);
         g = setexps(g,exps-2*logical(exps));
         g.map = linear([-1,1]);
         
@@ -81,31 +81,32 @@ elseif any(isinf(ends))
         if strcmp(g.map.name,'linear')
             g.map = map;
         else
-%             error('FUN:cumsum:infmap','Singularities introduced by cumsum in inf map.');
-            warning(['FUN:cumsum:infmap','Singularities introduced by cumsum in inf map. Result may be inaccurate.']);
+            %             error('FUN:cumsum:infmap','Singularities introduced by cumsum in inf map.');
+            warning('FUN:cumsum:infmap',['Singularities introduced by cumsum in inf map. ',...
+                'Result may be inaccurate.']);
             pref = chebfunpref;   pref.exps = [g.exps(1) g.exps(2)];
             g = fun(@(x) feval(g,x),linear([-1,1]),pref);
             g.map = map;
         end
         
-%         [g gsing] = cumsum(g);
-%         if strcmp(gsing.map.name,'linear')
-%             g = g + gsing;
-%             g.map = map;
-%         else
-% %             error('FUN:cumsum:infmap','Singularities introduced by cumsum in inf map.');
-%             warning(['FUN:cumsum:infmap','Singularities introduced by cumsum in inf map. Result may be inaccurate.']);
-%             pref = chebfunpref;   pref.exps = [gsing.exps(1) gsing.exps(2)];
-%             pref.exps
-%             pref.scale = max(gsing.scl.v,g.scl.v);
-%             gsing = fun(@(x) feval(gsing,x),linear([-1,1]),pref);
-%             g = g + gsing;
-%             g.map = map;
-%         end
+        %         [g gsing] = cumsum(g);
+        %         if strcmp(gsing.map.name,'linear')
+        %             g = g + gsing;
+        %             g.map = map;
+        %         else
+        % %             error('FUN:cumsum:infmap','Singularities introduced by cumsum in inf map.');
+        %             warning(['FUN:cumsum:infmap','Singularities introduced by cumsum in inf map. Result may be inaccurate.']);
+        %             pref = chebfunpref;   pref.exps = [gsing.exps(1) gsing.exps(2)];
+        %             pref.exps
+        %             pref.scale = max(gsing.scl.v,g.scl.v);
+        %             gsing = fun(@(x) feval(gsing,x),linear([-1,1]),pref);
+        %             g = g + gsing;
+        %             g.map = map;
+        %         end
         
         return
     end
-
+    
     % constant case
     if g.n == 1
         if abs(g.vals) <= chebfunpref('eps')*10*g.scl.v
@@ -117,11 +118,11 @@ elseif any(isinf(ends))
             rescl = (.5/(5*s))*.5;  % Why is this the right constant!?
             g.vals = g.vals*rescl*[-1 ; 1];
             g.exps = [-1 -1];
-        elseif isinf(ends(1)), 
+        elseif isinf(ends(1)),
             g.exps = [-1 0];
             g.vals = g.vals*[-1 ; 0];
         elseif isinf(ends(2))
-            g.exps = [0 -1]; 
+            g.exps = [0 -1];
             g.vals = g.vals*[0 ; 1];
         end
         return
@@ -135,8 +136,8 @@ elseif any(isinf(ends))
         if all(abs(g.vals) <= chebfunpref('eps')*10*g.scl.v)
             g.vals = 0; g.scl.v = 0;
         else
-            error('FUN:cumsum:unbdblow','Representation of functions that blowup ',...
-                'logarithmically on unbounded intervals has not been implemented in this version')
+            error('FUN:cumsum:unbdblow',['Representation of functions that blowup ',...
+                'logarithmically on unbounded intervals has not been implemented in this version'])
         end
         return
     end
@@ -145,20 +146,20 @@ elseif any(isinf(ends))
     pref = chebfunpref;
     pref.extrapolate = true;
     pref.eps = pref.eps*10;
-
+    
     % Quadratic case (must be like f = c*(1/x^2) +b) -- semi-bounded case
     if g.n == 3 && sum(isinf(ends)) == 1
         vals = g.vals;
         g.vals = vals.*g.map.der(y);
         g = extrapolate(g,pref,y);
-        g = cumsum_unit_interval(g);   
+        g = cumsum_unit_interval(g);
         if (isinf(ends(1)) && abs(vals(1))/norm(vals,inf) > 10*eps) || ...
                 (isinf(ends(2)) && abs(vals(3))/norm(vals,inf) > 10*eps)
             error('FUN:cumsum:unbdblow','Representation of functions that blowup on unbounded intervals has not been implemented in this version')
         end
         return
     end
-           
+    
     % Check if not zero at infinity (unbounded integral, simple case)
     if isinf(ends(1))
         % integral is +-inf if endpoint value isn't zero
@@ -218,9 +219,9 @@ elseif any(isinf(ends))
     % Chain rule and extrapolate
     g.vals = g.vals.*g.map.der(y);
     g = extrapolate(g,pref,y);
-    g = cumsum_unit_interval(g);    
-
-% General map case
+    g = cumsum_unit_interval(g);
+    
+    % General map case
 else
     
     map = g.map;
@@ -253,18 +254,18 @@ end
 
 function g = cumsum_unit_interval(g)
 
-    n = g.n;
-    c = [0;0;chebpoly(g)];                        % obtain Cheb coeffs {c_r}
-    cout = zeros(n-1,1);                          % initialize vector {C_r}
-    cout(1:n-1) = (c(3:end-1)-c(1:end-3))./...    % compute C_(n+1) ... C_2
-        (2*(n:-1:2)');
-    cout(n,1) = c(end) - c(end-2)/2;              % compute C_1
-    v = ones(1,n); v(end-1:-2:1) = -1;
-    cout(n+1,1) = v*cout;                         % compute C_0
-    g.vals = chebpolyval(cout);
-    g.scl.v = max(g.scl.v, norm(g.vals,inf));
-    g.n = n+1;
-    
+n = g.n;
+c = [0;0;chebpoly(g)];                        % obtain Cheb coeffs {c_r}
+cout = zeros(n-1,1);                          % initialize vector {C_r}
+cout(1:n-1) = (c(3:end-1)-c(1:end-3))./...    % compute C_(n+1) ... C_2
+    (2*(n:-1:2)');
+cout(n,1) = c(end) - c(end-2)/2;              % compute C_1
+v = ones(1,n); v(end-1:-2:1) = -1;
+cout(n+1,1) = v*cout;                         % compute C_0
+g.vals = chebpolyval(cout);
+g.scl.v = max(g.scl.v, norm(g.vals,inf));
+g.n = n+1;
+
 end
 
 function [f G] = jacsum(f)
@@ -303,12 +304,12 @@ elseif exps(2)
     
     % Choose the right sing map
     mappar = [b a];
-    mappar(mappar<=0) = mappar(mappar<=0)+1; 
+    mappar(mappar<=0) = mappar(mappar<=0)+1;
     mappar(mappar>1) = mappar(mappar>1)-floor(mappar(mappar>1)) ;
     map = maps(fun,{'sing',mappar},ends);
-
+    
     pref = chebfunpref;
-    if all(mappar), pref.exps = [mappar(1) 0]; mappar(1) = 1; end
+    if all(mappar), pref.exps = [mappar(1) 0]; end
     G = fun(@(x) const*betainc((x-ends(1))/diff(ends),b+1,a+1),map,pref,f.scl);
 else
     G = fun(j(end)/(1+exps(1)),f.map.par(1:2));
@@ -338,8 +339,8 @@ apb = a + b;
 
 % Jacobi Vandermonde Matrix
 P = zeros(N+1,N+1);
-P(:,1) = 1;    
-P(:,2) = 0.5*(2*(a+1)+(apb+2)*(x-1));    
+P(:,1) = 1;
+P(:,2) = 0.5*(2*(a+1)+(apb+2)*(x-1));
 for k = 2:N
     k2 = 2*k;
     k2apb = k2+apb;
@@ -358,142 +359,183 @@ end
 
 
 
-function [f g] = unbdnd(f)
-% If only one output is asked for, f is the whole function
-% For two outputs, f is the smooth part, and g contains the log singularity
+function [u M] = unbdnd(f)
+% If only one output is asked for, u is the whole function.
+% For two outputs, u is the smooth part, and M contains the log singularity
 
+% Get the exponents. At least one of these is less than -1.
+exps = f.exps;
+% Get the ends
+ends = f.map.par(1:2);
+
+% If the numerator is constant, things are simple.
+if f.n == 1
+    M = fun(0, f.map);
+    if exps(1) && ~exps(2)
+        if exps(1) == -1
+            % Construct a representation of log
+            f = setexps(f,[0 0]);
+            u = makelog(f.vals(1),2,ends,f.scl.v);
+            if nargout == 2, M = u; u = fun(0,ends); end
+        else
+            u = setexps(f,[f.exps(1)+1 0])/(f.exps(1)+1); 
+            if round(exps(1))==exps(1), u = u - feval(u,ends(2)); end
+        end
+    elseif exps(2) && ~exps(1)
+        if exps(2) == -1
+            % Construct a representation of log
+            f = setexps(f,[0 0]);
+            u = makelog(f.vals(1),2,ends,f.scl.v);
+            % Flip it
+            u = flipud(u);
+            if strcmp(u.map.name,'sing')
+                u.map = maps(fun,{'sing',u.map.par([4 3])},u.map.par(1:2));
+            end
+            if nargout == 2, M = u; u = fun(0,ends); end
+        else
+            u = -setexps(f,[0 f.exps(2)+1])/(f.exps(2)+1);  
+            if round(exps(2))==exps(2), u = u - feval(u,ends(1)); end
+        end
+    else
+        error('FUN:cumsum:both1',['cumsum does not yet support functions whose ', ...
+            'definite integral diverges and has exponents at both boundaries.'])
+    end
+    return
+end
+
+% We can only do linear maps at the moment
 if ~strcmpi(f.map.name,'linear')
     error('FUN:cumsum:exps','cumsum does not yet support exponents <= 1 with arbitrary maps.');
 end
 
-error('CHEBFUN:fun:cumsum:unbdnd:fail','@FUN/CUMSUM is broken for functions which blowup');
-
+% We may need to flip so that singularity is at the left
 flip = false;
-
-exps = f.exps;
-
-oldends = f.map.par(1:2);
-
 if exps(2)~=0
-    if ~exps(1)
-        % Flip so singularity is on the left
-        f.vals = f.vals(end:-1:1);
-        exps = exps([2 1]);
-        f.exps = exps;
-        flip = true;
+    if ~exps(1)  % Flip so singularity is on the left
+        f = flipud(f); exps = f.exps;  flip = true;
     else
-        error('FUN:cumsum:both',['cumsum does not yet support functions whose ', ...
+        error('FUN:cumsum:both2',['cumsum does not yet support functions whose ', ...
             'definite integral diverges and has exponents at both boundaries.']);
     end
 end
 
-% Shift domain to origin
-f = newdomain(f,oldends-oldends(1));
-ends = f.map.par(1:2);
+% Remove exps from f
+f = setexps(f,[0 0]);
+% The order of the pole
+a = -exps(1);
+ra = max(round(a),1);               % ra = [a]
 
-f.exps = [0 0];
-d = domain(ends);
 x = fun('x',ends);
-a = -exps(1);                             % The order of the pole
+xf = (x-ends(1)).*f;
+aa = flipud(chebpoly(xf));
+N = length(xf)-1;
 
-ra = round(a);
-if ra == a
-    ck = feval(diff(f,a-1),0)/factorial(a-1);     % Coefficient of x^(a-1) in Taylor 
-                                                  % series about x = 0 (leads to log)                                    
-    if abs(ck) > 1e-10
-        xa1 = x; xa1.vals = chebpts(a,d).^(a-1); 
-        xa1.n = a;                                % =  % x^(a-1)                                          
-        p = f - ck*xa1;                           % Remove log contribution
-    else 
-        ck = 0;
-        p = f;
-    end
-else
-    ck = 0;
-    p = f;
+% The is the recurrence to get the coefficients for u'
+dd = zeros(N,1);
+dd(N) = 2*aa(N+1)./(1-a./N);
+dd(N-1) = 2*(aa(N)-dd(N))./(1-a./(N-1));
+for k = N-2:-1:ra+1
+    dd(k) = 2*(aa(k+1)-dd(k+1)-dd(k+2)*.5*(1+a./k))./(1-a./k);
 end
 
-% feval(diff(p,a-1),0)/factorial(a-1)       % This should be zero now?
+%%%%%
+% % Subtract out a suitable term
+% Cm = 2^(ra-1)*(aa(ra+1)-dd(ra+1)-dd(ra+2)*.5*(1+a./ra));
+% % Adjustment for arbitrary intervals
+de = diff(ends);
+K = (4/de)^(ra-1)/de;
+Cm = K*(2*aa(ra+1)-2*dd(ra+1)-dd(ra+2)*(1+a./ra));
 
-xp = x.*p;                      
-N = length(xp);
+% Find the new coefficients
+M1 = fun(@(x)(x-ends(1)).^ra,ends);
+aa(1:ra+1) = aa(1:ra+1) - Cm*flipud(chebpoly(M1));
 
-% % Backslash
-% D = diff(d); D = D(N); L = diag(get(xp,'points'))*D-diag(a*ones(N,1));
-% % D = diff(d); L = diag(chebfun(x,ends))*D-a*eye(domain(ends)); L = L(N);
-% if N > 1
-%     L(1,:) = []; L(:,1) = [];
-% end
-% % What is the correct boundary condition??
-% if N > 3,
-%     L(end,:) = []; L(:,end) = [];
-%     f = fun([0 ; L \ xp.vals(2:end-1) ; 0], ends);
-% %     L(end,:) = 0;  L(end,end) = 1;  xp.vals(end) = 0;
-% %     f = fun([0 ; L \ xp.vals(2:end)], ends);
-% %     L(1,:) = D(1,2:end);     xp.vals(2) = 0;
-% %     f = fun([0 ; L \ xp.vals(2:end)], ends);
-% %     L(end,:) = D(end,2:end);     xp.vals(end) = 0;
-% %     f = fun([0 ; L \ xp.vals(2:end)], ends);
-% else
-%     f = fun([0 ; L \ xp.vals(2:end)], ends);
-% end
-% f.exps = [-a 0];
+% % Some testing
+% df0 = feval(diff(f,ra-1),ends(1));% f^([a]-1)(-1). This is just for testing.
+% % f = f - Cm*fun(@(x) (x-ends(1)).^(ra-1),ends);
+% % xf = (x-ends(1)).*f;
+% test1 = aa(ra+1)-dd(ra+1)-dd(ra+2)*.5*(1+a./ra);
+% test2 = abs(df0-Cm);
+% fprintf(' This should be zero:              \t %12.12g \n',test1)
+% fprintf(' This should go to zero as a-->[a]:\t %12.12g \n',test2)
 
-% GMRES
-D = diff(d); D = D(N); L = diag(get(xp,'points'))*D-diag(a*ones(N,1));
-% D = diff(d); I = eye(d); L = diag(chebfun(x,ends))*D-a*eye(d); L = L(N);
-[vals flag] = gmres(L,xp.vals,N,1e-15);
-f = fun(vals,ends);
-f.exps = exps;
+for k = ra-1:-1:1
+    dd(k) = 2*(aa(k+1)-dd(k+1)-dd(k+2)*.5*(1+a./k))./(1-a./k);
+end
 
-% Bump the exponent by one
-% f = extract_roots(f,1,[1 0]);
+% Convert coefficients for u' to those of u
+kk = (1:N)';
+dd = .5*dd; dd1 = dd./kk; dd2 = -dd(3:end)./kk(1:end-2);
+cc = [0 ; dd1 + [dd2 ; 0 ; 0]];
 
-% Shft back to old domain
-f = newdomain(f,oldends);
+% Choose first coefficient so that u(ends(1)) = (x-ends(1))*f(ends(1)) = 0;
+cc(1) = sum(cc(2:2:end))-sum(cc(3:2:end));
+
+% Copnstruct the chebfun of the solution
+u = fun(chebpolyval(flipud(cc)),ends);
+
+% Plot for testing
+% plot(xf - Cm*M1,'-b'); hold on
+% plot((x-ends(1)).*diff(u)-a*u,'--r'); hold off
 
 % Adding in the log term
-g = fun;
-if abs(ck) > 1e-13 % some kind of scale needed here
-    if a == 1, a = 2; end
-    if a == 2, map = maps(fun,{'sing',[.125 1]},oldends);
-    else       map = maps(fun,{'sing',[.25 1]},oldends); end
-    pref = chebfunpref; pref.extrapolate = 1;
-    g = fun(@(x) ck*(x-oldends(1)).^(a-1).*log(x-oldends(1)),map,pref,f.scl);
-    g = (2./diff(ends)).^exps(1)*setexps(g,[1-a 0]);
+tol = chebfunpref('eps');
+if abs(ra-a) > tol*u.scl.v && 0     % No log term
     if nargout == 1
-        f = f+g;
-    end 
-else
-    g = fun(0,oldends);
-end
-
-fr = get(f,'rval');
-if abs(fr) > 1e-13
-    f = f - fun(fr,f.map);
-end
-
-f = replace_roots(f);
-
-if flip % Flip back so singularity is on the right
-    f.vals = -f.vals(end:-1:1);
-    f.exps = f.exps([2 1]);
-    if strcmp(f.map.name,'sing')
-        pars = f.map.par;
-        f.map = maps(fun,{'sing',pars([4 3])},pars(1:2));
+        u = u+(Cm/(ra-a))*M1;
+        u = setexps(u,exps);
+    else
+        u = setexps(u,exps);
+        M = Cm*(setexps(M1,exps)-1)/(ra-a);
     end
-    
-    if nargout == 2 && ~isempty(g)
-        g.vals = -g.vals(end:-1:1);
-        g.exps = g.exps([2 1]);
-        if strcmp(g.map.name,'sing')
-            pars = g.map.par;
-            g.map = maps(fun,{'sing',pars([4 3])},pars(1:2));
+else                                % Log term
+    u = setexps(u,exps);
+    if abs(Cm) < 1e3*tol*u.scl.v
+        % Contribution is small, so ignore it.
+        M = fun(0,ends);
+    else
+        % Construct a representation of log
+        M = makelog(Cm,ra,ends,u.scl.v);
+        if nargout == 1, u = u+M;  end
+    end
+end
+
+if strcmpi(u.map.name,'linear')
+    feval(u,ends(1))
+    u = u - feval(u,ends(1)); 
+end
+
+% Flip back so singularity is on the right
+if flip
+    u = -flipud(u);
+    if strcmp(u.map.name,'sing')
+        u.map = maps(fun,{'sing',u.map.par([4 3])},u.map.par(1:2));
+    end
+    if nargout == 2 && ~isempty(M)
+        M = -flipud(M);
+        if strcmp(M.map.name,'sing')
+            M.map = maps(fun,{'sing',M.map.par([4 3])},M.map.par(1:2));
         end
     end
-        
 end
 
 end
 
+function M = makelog(Cm,ra,ends,scl)
+% Constuct a representation of log(x-ends(1)) on interval ends
+if ra == 1, ra = 2; end
+if ra == 2, map = maps(fun,{'sing',[.125 1]},ends);
+else        map = maps(fun,{'sing',[.25 1]},ends); end
+pref = chebfunpref; pref.extrapolate = 1; pref.scl = scl;
+M = fun(@(x) Cm*(x-ends(1)).^(ra-1).*log(x-ends(1)),map,pref);
+M = setexps(M,[1-ra,0]);
 
+
+% % plots for testing
+% MM = chebfun(M,ends);
+% xx = linspace(ends(1),ends(2),1e5);
+% close all,
+% plot(MM); hold on
+% plot(xx,Cm*log(xx-ends(1)),'--r'); hold off
+% figure
+end
