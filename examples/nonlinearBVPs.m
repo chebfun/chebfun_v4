@@ -43,9 +43,9 @@ title('The solution of the BVP (2)')
 %% Second problem
 % Below, we show how to solve the problem
 %
-% u'' - sin(u) = 0
+% u'' - sin(v) = 0
 % v'' + cos(u) = 0                BVP(3)
-% u(-1) = 1,      v'(-1) = 0
+% u(-1) = 1,  $$    v'(-1) = 0
 % u'(1) = 0,   v(1) = 0
 
 % We use anonymous functions arrays to set up the problem:

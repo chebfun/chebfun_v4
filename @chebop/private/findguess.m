@@ -12,15 +12,38 @@ success = 0;
 counter = 0;
 
 
+% If N.op takes multiple arguments (i.e. on the form @(u,v)), we know how
+% many columns we'll be needing in the quasimatrix.
+NopArgin = nargin(N.op);
+
+if NopArgin > 1
+    success = 1;
+    
+%     guessCell = cell(1,numel(guess));
+    
+    for quasiCounter = 1:NopArgin
+        cheb0 = chebfun(0,dom);
+        guess = [guess cheb0];
+%         guessCell{quasiCounter} = cheb0;
+    end
+
+end
+% Won't be called if NopArgin > 1 since then we are already successful
 while ~success && counter < 10
     % Need to create new chebfun at each step in order to have the
     % correct ID of the chebfun
     cheb0 = chebfun(0,dom);
     guess = [guess cheb0];
+    
+    
     % Check whether we are successful in applying the operator to the
     % function.
     try
-        feval(N.op,guess);
+        if NopArgin == 1
+            feval(N.op,guess);
+        else
+            feval(N.op,guess{:});
+        end
         success = 1;
         counter = counter+1;
     catch % Should do some more accurate error catching
@@ -41,6 +64,8 @@ if counter == 10
         'columns in the quasimatrix. If this is really the case, set the ' ...
         'initial guess using N.guess.']);
 end
+
+
 % Once we have found the correct dimensions of the initial guess, try to
 % find a linear function that fulfills (potentially) the Dirichlet BC
 % imposed.
@@ -65,8 +90,8 @@ end
         leftEmpty = isempty(bcFunLeft);
         rightEmpty = isempty(bcFunRight);
         
-%         if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
-%         if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
+        %         if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
+        %         if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
         
         
         

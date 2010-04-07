@@ -26,7 +26,7 @@ function varargout = chebbvp(varargin)
 
 % Edit the above text to modify the response to help chebbvp
 
-% Last Modified by GUIDE v2.5 02-Apr-2010 12:29:01
+% Last Modified by GUIDE v2.5 06-Apr-2010 16:55:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -192,11 +192,20 @@ b = str2double(get(handles.dom_right,'String'));
 deInput = get(handles.input_DE,'String');
 lbcInput = get(handles.input_LBC,'String');
 rbcInput = get(handles.input_RBC,'String');
-DErhsInput = get(handles.input_DE_RHS,'String');
+deRHSInput = get(handles.input_DE_RHS,'String');
 lbcRHSInput = get(handles.input_LBC_RHS,'String');
 rbcRHSInput = get(handles.input_RBC_RHS,'String');
 guessInput = get(handles.input_GUESS,'String');
 
+% Wrap all input strings in a cell (if they're not a cell already)
+if isa(deInput,'char'), deInput = cellstr(deInput); end
+if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
+if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
+if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
+if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
+if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
+% !!! Should do a error check to see whether lhs and rhs number of line
+% match
 
 try
     % cd to the folder that contains the gui-work files
@@ -204,10 +213,10 @@ try
     guifilepath = [chebfunpath(1:end-18), 'guifiles'];
     tmppath = pwd;
     cd(guifilepath)
-    
+            
     % Convert the input to the an. func. format, get information about the
     % linear function in the problem.
-    [deString indVarName] = setupFields(deInput,'abc','DE');
+    [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
     
     % Assign x or t as the linear function on the domain
     eval([indVarName, '=xt;']);
@@ -216,13 +225,13 @@ try
     DE  = eval(deString);
     
     
-    if ~isempty(lbcInput)
+    if ~isempty(lbcInput{1})
         [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC');
         LBC = eval(lbcString);
     else
         LBC = [];
     end
-    if ~isempty(rbcInput)
+    if ~isempty(rbcInput{1}) 
         [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC');
         RBC = eval(rbcString);
     else
@@ -244,7 +253,7 @@ end
 
 
 
-DErhsNum = str2num(DErhsInput);
+DErhsNum = str2num(char(deRHSInput));
 if isempty(DErhsNum)
     % RHS is a string representing a function -- convert to chebfun
     DE_RHS = chebfun(DErhsInput,d);
@@ -253,7 +262,7 @@ else
     DE_RHS = DErhsNum;
 end
 
-
+% DE_RHS = 0;
 
 useLatest = strcmpi(guessInput,'Using latest solution');
 if isempty(guessInput)
@@ -327,6 +336,7 @@ catch ME
     errordlg('Error in solution process.', 'chebopbvp error', 'modal');
     return
 end
+
 % Store in handles latest chebop, solution, vector of norm of updates etc.
 % (enables exporting later on)
 handles.latestSolution = u;
@@ -617,52 +627,6 @@ k = [k; strmatch('Times',flist)];  % 3rd choice
 if ~isempty(k), set(h,'fontname',flist{k(1)}), end
 
 axis([-1.02 .98 -2 2]), axis off
-
-
-
-
-% function field  = setupFields2(input,xt,type,bcValue)
-% convertBCtoAnon  = 0;
-%
-% % Create the variables x and t (corresponding to the linear function on the
-% % domain).
-% x = xt; t = xt;
-% if ~isempty(strfind(input,'@')) % User supplied anon. function
-%     field = eval(input);
-%     return
-% elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
-%     bcNum = str2num(input);
-%
-%     % Check whether we have a number (OK), allowed strings (OK) or whether
-%     % we will have to convert the string to anon. function (i.e. the input
-%     % is on the form u' +1 = 0).
-%     if ~isempty(bcNum)
-%         field = bcNum;
-%     elseif strcmpi(input,'dirichlet') || strcmpi(input,'neumann')
-%         field = input;
-%     else
-%         input = [input ,'-',bcValue];
-%         convertBCtoAnon = 1;
-%     end
-% end
-%
-% if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function
-%     chebfunpath = which('chebfun');
-%     guifilepath = [chebfunpath(1:end-18), 'guifiles'];
-%     tmppath = pwd;
-%
-%     try
-%         cd(guifilepath)
-%         field = convertToAnon(input);
-%         field = eval(field);
-%         cd(tmppath)
-%     catch
-%         error(['chebfun:BVPgui','Incorrect input for differential ' ...
-%             'equation our boundary conditions']);
-%
-%     end
-% end
-
 
 
 
@@ -1084,8 +1048,8 @@ try
     % If input for BCs is a number, anon. func. or dirichlet/neumann,
     % disable BC rhs input
     
-    if ~isempty(strfind(LBC,'@')) || strcmpi(LBC,'dirichlet') ...
-            || strcmpi(LBC,'neumann') || ~isempty(str2num(LBC))
+    if ~size(LBC,1) == 1 && (~isempty(strfind(LBC,'@')) || strcmpi(LBC,'dirichlet') ...
+            || strcmpi(LBC,'neumann') || ~isempty(str2num(LBC)))
         set(handles.input_LBC_RHS,'Enable','off');
         set(handles.text_eq2,'Enable','off');
     else
@@ -1093,8 +1057,8 @@ try
         set(handles.text_eq2,'Enable','on');
     end
     
-    if ~isempty(strfind(RBC,'@')) || strcmpi(RBC,'dirichlet') ...
-            || strcmpi(RBC,'neumann') || ~isempty(str2num(RBC))
+    if ~size(RBC,1) == 1 &&  ( ~isempty(strfind(RBC,'@')) || strcmpi(RBC,'dirichlet') ...
+            || strcmpi(RBC,'neumann') || ~isempty(str2num(RBC)))
         set(handles.input_RBC_RHS,'Enable','off');
         set(handles.text_eq3,'Enable','off');
     else
@@ -1122,9 +1086,9 @@ DE = '';
 demoString = [];
 counter = 1;
 while ~strcmp(DE,'0')
-    [a b DE DErhs] = bvpexamples(counter,'demo');
+    [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(counter,'demo');
     counter = counter+1;
-    demoString = [demoString,{[DE, ' = ', DErhs]}];
+    demoString = [demoString,{name}];
 end
 demoString(end) = []; % Throw away the last demo since it's the flag 0
 [selection,okPressed] = listdlg('PromptString','Select a demo:',...
@@ -1171,16 +1135,3 @@ function figure1_ResizeFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in button_system.
-function button_system_Callback(hObject, eventdata, handles)
-% hObject    handle to button_system (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-sys = get(handles.input_system,'String');
-
-for sysCounter = 1:length(sys)
-    convertToAnon(sys{sysCounter})
-end
-1+2;

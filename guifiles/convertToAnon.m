@@ -1,4 +1,4 @@
-function [anFun indVarNames] = convertToAnon(str)
+function varargout = convertToAnon(str)
 % In Matlab2007a and previous versions, the code runs into error if we
 % don't clear the functions cache before running the code. Contacting
 % technical support at Mathworks, they told me that this bug has been fixed
@@ -19,5 +19,17 @@ varString = varNames{1};
 for varCounter = 2:length(varNames)
     varString = [varString,',',varNames{varCounter}];
 end
-anFun = ['@(', varString ')' anFun];
+anFunComplete = ['@(', varString ')' anFun];
+
+switch nargout
+    case 1
+        varargout{1} = anFunComplete;
+    case 2
+        varargout{1} = anFunComplete;
+        varargout{2} = indVarNames;
+    case 3
+        varargout{1} = anFun;
+        varargout{2} = indVarNames;
+        varargout{3} = varNames;
+end
 end
