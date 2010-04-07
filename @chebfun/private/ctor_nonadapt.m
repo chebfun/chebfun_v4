@@ -88,11 +88,7 @@ for ii = 1:length(ops)
                     'numerical values.'])
             end
             a = ends(ii); b = ends(ii+1);
-            depvar = symvar(op); 
-            if numel(depvar) ~= 1, 
-                error('CHEBFUN:ctor_nonadapt:depvar','Incorrect number of dependent variables in string input.'); 
-            end
-            op = str2op(op,depvar);
+            op = str2op(op);
             op = vectorcheck(op,[a b],pref);
             ops{ii} = op;
             pref.n = n(ii);
