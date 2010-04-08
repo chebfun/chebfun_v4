@@ -132,7 +132,7 @@ theta = pi*(4*k-1)/(4*n+2);
 roots(((n+4-s)/2):end) = (1-(n-1)/(8*n^3)-1/(384*n^4)*(39-28./sin(theta).^2)).*cos(theta);
 
 m = 30; % number of terms in Taylor expansion
-u = zeros(1,m+1); up = zeros(1,m+1);
+hh1 = ones(m+1,1); u = zeros(1,m+1); up = zeros(1,m+1);
 for j = N+1:n-1
     x = roots(j); % previous root
     
@@ -143,27 +143,24 @@ for j = N+1:n-1
     M = 1/h;
 
     % recurrence relation for Legendre polynomials (scaled)
+    c1 = 2*x/M; c2 = (1-x.^2);
     u(1) = 0;   u(2) = ders(j)/M;  up(1) = u(2); up(m+1) = 0;
     for k = 0:m-2
-        u(k+3) = (2*x*(k+1)/M*u(k+2)+(k-n*(n+1)/(k+1))*u(k+1)/M^2)./((1-x.^2)*(k+2));
+        u(k+3) = (c1*(k+1)*u(k+2)+(k-n*(n+1)/(k+1))*u(k+1)/M^2)./(c2*(k+2));
         up(k+2) = (k+2)*u(k+3)*M;
     end
     
     % flip for more accuracy in inner product calculation
-    u = u(m+1:-1:1);
-    up = up(m+1:-1:1);
+    u = u(m+1:-1:1);  up = up(m+1:-1:1);
     
-%     hh = [ones(m,1) ; M];
-    hh = [M;cumprod(M*h+zeros(m,1))];
-    step = inf;
-    l = 0;
     % Newton iteration
+    hh = hh1; step = inf;  l = 0;
     while (abs(step) > eps) && (l < 10)
         l = l + 1;
         step = (u*hh)/(up*hh);
         h = h - step;
         hh = [M;cumprod(M*h+zeros(m,1))]; % powers of h (This is the fastest way!)
-        hh = hh(end:-1:1);
+        hh = hh(end:-1:1); % flip for more accuracy in inner product calculation
     end
     
     % update
@@ -202,20 +199,16 @@ for k = 0:2:m-2
 end
 
 % flip for more accuracy in inner product calculation
-u = u(m+1:-1:1);
-up = up(m+1:-1:1);
+u = u(m+1:-1:1); up = up(m+1:-1:1);
 
-x1k = ones(m+1,1);
-
-step = inf;
-l = 0;
 % Newton iteration
+x1k = ones(m+1,1); step = inf; l = 0;
 while (abs(step) > eps) && (l < 10)
     l = l + 1;
     step = (u*x1k)/(up*x1k);
     x1 = x1 - step;
     x1k = [1;cumprod(M*x1+zeros(m,1))]; % powers of h (This is the fastest way!)
-    x1k = x1k(end:-1:1);
+    x1k = x1k(end:-1:1); % flip for more accuracy in inner product calculation
 end
 d1 = up*x1k;
 

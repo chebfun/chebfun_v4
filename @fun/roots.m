@@ -73,7 +73,7 @@ if ~recurse || (g.n<101)                                    % for small length f
         A = diag(oh,1)+diag(oh,-1);
         A(end-1,end) = 1;
         A(:,1) = flipud(c);
-        
+
         r=eig(A);                               % compute roots as eig(A)
         
     end

@@ -45,6 +45,9 @@ for k = 1:f.nfuns
         if ~isnan(midpt)
             index = struct('type','()','subs',{{midpt}});
             f = subsasgn(f,index,feval(f,midpt));
+            
+            fout = cumsumcol(f);
+            return
         elseif all(isinf(ends(k:k+1)))
             midpt = f.funs(k).map.par(4);
             fm = feval(f,midpt);
@@ -69,11 +72,18 @@ end
 Fb = imps(1);
 funs = f.funs;
 for i = 1:f.nfuns
-    cfi = cumsum(funs(i));
+    csfi = cumsum(funs(i));
+    
+    if f.nfuns > 1
     % This is because unbounded functions may not be zero at left.
-    if f.nfuns > 1, cfi = cfi - feval(cfi, cfi.map.par(1)); end 
-    funs(i) = cfi + Fb;
-    Fb = funs(i).vals(end) + imps(i+1);
+        lval = get(csfi,'lval');
+        if ~isinf(lval) && ~isnan(lval)
+            csfi = csfi - lval; 
+        end 
+    end
+    
+    funs(i) = csfi + Fb;
+    Fb = get(funs(i),'rval') + imps(i+1);
 end
 
 vals = zeros(1,f.nfuns+1);

@@ -7,7 +7,7 @@ function pass = cumsumunbnd
 chebfunpref('factory');
 tol = 2e-10;
 
-doplot = 0;
+doplot = 1;
 
 f = chebfun('(sin(1-x)-(1-x))./(1-x).^2',[1 4],'exps',[-2 0]);
 u = cumsum(f);
@@ -76,6 +76,18 @@ if doplot, subplot(4,2,7), plot(u,'b',h,'--g'), end
 err = h(xx)-u(xx);
 nerr(7) = norm(err,inf);
 pass(7) = nerr(7) < tol;
+
+f = chebfun('sin(pi*exp(x))./(4-x.^2).^2',[-2 2],'exps',[-2 -2]);
+u = cumsum(f);
+a = f.ends(1) + .1;
+b = f.ends(end) - .01;
+h = cumsum(f{a, b}); 
+h = h - h(0)+u(0);
+xx = linspace(a,b);
+if doplot, subplot(4,2,8), plot(u,'b',h,'--g'), end
+err = h(xx)-u(xx);
+nerr(8) = norm(err,inf);
+pass(8) = nerr(8) < tol;
 
 
 

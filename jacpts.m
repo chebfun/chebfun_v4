@@ -223,7 +223,7 @@ if flag, sgn = -1; else sgn = 1; end
 N = n-1;
 roots = [x1 ; zeros(N,1)]; ders = [up ; zeros(N,1)];
 m = 30; % number of terms in Taylor expansion
-u = zeros(1,m+1); up = zeros(1,m+1);
+hh1 = ones(m+1,1); u = zeros(1,m+1); up = zeros(1,m+1);
 for j = 1:N
     x = roots(j);
     h = rk2_Jac(sgn*pi/2,-sgn*pi/2,x,n,a,b) - x;
@@ -245,9 +245,8 @@ for j = 1:N
     u = u(m+1:-1:1);
     up = up(m+1:-1:1);
     
-    hh = [ones(m,1) ; M];
-    step = inf;
-    l = 0;
+%     hh = [ones(m,1) ; M];   
+    hh = hh1;   step = inf;   l = 0;
     % Newton iteration
     while (abs(step) > eps) && (l < 10)
         l = l + 1;
@@ -278,6 +277,7 @@ T = C + 1/(2*n+a+b+1)^2*((.25-a^2)*cot(.5*C)-(.25-b^2)*tan(.5*C));
 roots = [x1 ; cos(T).']; ders = [up ; zeros(length(T),1)];
 
 m = 30; % number of terms in Taylor expansion
+hh1 = ones(m+1,1);
 u = zeros(1,m+1); up = zeros(1,m+1);
 for j = 1:length(r)
     x = roots(j); % previous root
@@ -289,27 +289,25 @@ for j = 1:length(r)
     M = 1/h;
 
     % recurrence relation for Jacobi polynomials (scaled)
+    cx = (1-x.^2);
     u(1) = 0;   u(2) = ders(j)/M;  up(1) = u(2); up(m+1) = 0;    
     for k = 0:m-2
         u(k+3) = ((x*(2*k+ab+2)+a-b)*u(k+2)/M + ...
-            (k*(k+ab+1)-n*(n+ab+1))*u(k+1)/M^2/(k+1))./((1-x.^2)*(k+2));
+            (k*(k+ab+1)-n*(n+ab+1))*u(k+1)/M^2/(k+1))./(cx*(k+2));
         up(k+2) = (k+2)*u(k+3)*M;
     end
     
     % flip for more accuracy in inner product calculation
-    u = u(m+1:-1:1);
-    up = up(m+1:-1:1);
+    u = u(m+1:-1:1);  up = up(m+1:-1:1);
     
-    hh = [ones(m,1) ; M];
-    step = inf;
-    l = 0;
     % Newton iteration
+    hh = hh1; step = inf;  l = 0;
     while (abs(step) > eps) && (l < 10)
         l = l + 1;
         step = (u*hh)/(up*hh);
         h = h - step;
         hh = [M;cumprod(M*h+zeros(m,1))]; % powers of h (This is the fastest way!)
-        hh = hh(end:-1:1);
+        hh = hh(end:-1:1); % flip for more accuracy in inner product calculation
     end
 
     % update
