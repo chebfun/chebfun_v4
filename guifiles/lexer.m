@@ -1,6 +1,11 @@
 function [out varNames indVarName] = lexer(str)
-% The cell array we return consisting of three columns, the token itself, a
-% label and a precedence
+% LEXER Lexer for string expression in the chebfun system
+% [OUT VARNAMES INDVARNAME] = LEXER(STR) performs a lexical analysis on the
+% string STR. OUT is a cell array with two columns, the left is a token and
+% the right is a label. VARNAMES is a cell string with name of variables in
+% the expression. INDVARNAME is a string which represents the independent
+% variable in the problem (i.e. x or t).
+
 out = [];
 % A string array containing all functions we are interested in
 % differentiating
@@ -14,6 +19,8 @@ str = strrep(str,' ','');
 
 % Change quotes (") to two apostrophes ('')
 str = strrep(str,'"','''''');
+% Change two minuses to one +
+str = strrep(str,'--','+');
 % Vectorize the string
 str = vectorize(str);
 

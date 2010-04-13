@@ -3,12 +3,11 @@ function export2mfile(pathname,filename,handles)
 fullFileName = [pathname,filename];
 fid = fopen(fullFileName,'wt');
 
-OSname = getenv('OS');
 
-if strcmp(OSname(1:3),'Win')
+if ispc
     userName = getenv('UserName');
 else
-    userName = getenv('User');
+    userName = getenv('USER');
 end
 
 
@@ -16,13 +15,27 @@ fprintf(fid,'%% %s - Executable .m file for solving a boundary value problem.\n'
 fprintf(fid,'%% Automatically created with from chebbvp GUI by user %s\n',userName);
 fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
+% Extract information from the GUI fields
 a = get(handles.dom_left,'String');
 b = get(handles.dom_right,'String');
-
 deInput = get(handles.input_DE,'String');
-deRHS   = get(handles.input_DE_RHS,'String');
+lbcInput = get(handles.input_LBC,'String');
+rbcInput = get(handles.input_RBC,'String');
+deRHSInput = get(handles.input_DE_RHS,'String');
+lbcRHSInput = get(handles.input_LBC_RHS,'String');
+rbcRHSInput = get(handles.input_RBC_RHS,'String');
+guessInput = get(handles.input_GUESS,'String');
 
-[deString indVarName] = setupFields(deInput,deRHS,'DE');
+% Wrap all input strings in a cell (if they're not a cell already)
+if isa(deInput,'char'), deInput = cellstr(deInput); end
+if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
+if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
+if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
+if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
+if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
+
+
+[deString indVarName] = setupFields(deInput,deRHSInput,'DE');
 
 
 
@@ -36,28 +49,23 @@ fprintf(fid,'N.op = %s;\n',deString);
 
 % Setup for the rhs
 fprintf(fid,'\n%% Set up the rhs of the differential equation\n');
-fprintf(fid,'rhs = %s;\n',deRHS);
+fprintf(fid,'rhs = %s;\n',char(deRHSInput));
 
 % Make assignments for left and right BCs.
 
 
 fprintf(fid,'\n%% Assign boundary conditions to the chebop.\n');
-lbcInput = get(handles.input_LBC,'String');
-if ~isempty(lbcInput)
-    lbcRHSInput = get(handles.input_LBC_RHS,'String');
+if ~isempty(lbcInput{1})
     lbcString = setupFields(lbcInput,lbcRHSInput,'BC');
     fprintf(fid,'N.lbc = %s;\n',lbcString);
 end
 
-rbcInput = get(handles.input_RBC,'String');
-if ~isempty(lbcInput)
-    rbcRHSInput = get(handles.input_RBC_RHS,'String');
+if ~isempty(rbcInput{1})
     rbcString = setupFields(rbcInput,rbcRHSInput,'BC');
     fprintf(fid,'N.rbc = %s;\n',rbcString);
 end
 
 % Set up for the initial guess of the solution.
-guessInput = get(handles.input_GUESS,'String');
 useLatest = strcmpi(guessInput,'Using latest solution');
 if useLatest
     fprintf(fid,['\n%% Note that it is not possible to use the "Use latest"',...

@@ -1,4 +1,6 @@
 function varargout = convertToAnon(str)
+%
+
 % In Matlab2007a and previous versions, the code runs into error if we
 % don't clear the functions cache before running the code. Contacting
 % technical support at Mathworks, they told me that this bug has been fixed
