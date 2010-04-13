@@ -51,23 +51,21 @@ if str2double(matlabver.Version(1)) < 7 || ...
         ' with MATLAB 7.4 or a more recent version.'])
 end
 
+% Chebfun directory
+chbfundir = fileparts(which('chebtest.m'));
+
 if nargin < 1
-  % Attempt to find "chebtests" directory.
-  w = which('chebtest.m');
-  dirname = fileparts(w);
-  dirname = fullfile(dirname,'chebtests');
+    % Attempt to find "chebtests" directory.
+    dirname = fullfile(chbfundir,'chebtests');
 end
-  
-if exist(dirname)~=7
+if ~exist(dirname,'dir')
   msg = ['The name "' dirname '" does not appear to be a directory on the path.'];
   error('CHEBFUN:probe:nodir',msg)
 end
 
 dirlist = dir( fullfile(dirname,'*.m') );
 mfile = {dirlist.name};
-chbtstdir = fileparts(which('chebtest.m'));
-fclose(fopen([chbtstdir,'/chebtestreport.txt'],'w+'));
-
+fclose(fopen([chbfundir,'/chebtestreport.txt'],'w+'));
 
 fprintf('\nTesting %i functions:\n\n',length(mfile))
 failed = zeros(length(mfile),1);
@@ -126,7 +124,7 @@ for j = 1:length(mfile)
     
     % Create an error report
     if createreport
-        fid = fopen([chbtstdir,'/chebtestreport.txt'],'a');
+        fid = fopen([chbfundir,'/chebtestreport.txt'],'a');
         fprintf(fid,[fun '  (crashed) \n']);
         fprintf(fid,['identifier: ''' msg.identifier '''\n']);
         fprintf(fid,['message: ''' msg.message '''\n']);
@@ -156,7 +154,7 @@ else
   
   if createreport
       fun = 'chebtestreport.txt';
-      link = ['<a href="matlab: edit ' chbtstdir filesep fun '">' fun '</a>'];
+      link = ['<a href="matlab: edit ' chbfundir filesep fun '">' fun '</a>'];
       msg = [' Error report available here: ' link '. ' ];
       msg = strrep(msg,'\','\\');  % escape \ for fprintf
       numchar = fprintf(msg); fprintf('\n')

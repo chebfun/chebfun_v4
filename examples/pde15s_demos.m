@@ -9,6 +9,8 @@ u = exp(3*sin(pi*x));
 f = @(u,D) -D(u);
 pde15s(f,0:.05:2,u,'periodic',opts);
 
+error
+
 %% Nonuniform Advection
 clc, close all
 [d,x] = domain(-1,1);
@@ -20,7 +22,7 @@ pde15s(f,0:.05:3,u,'periodic');
 close all
 [d,x] = domain(-1,1);
 u = (1-x.^2).*exp(-30*(x+.5).^2);
-f = @(u,t,x,D) -D(u)+.002*D(u,2);
+f = @(u,t,x,D) D(u)+.002*D(u,2);
 pde15s(f,0:.05:3,u,'dirichlet');
 
 %% Advection-diffusion2
@@ -68,7 +70,7 @@ figure, surf(uu,tt)
 close all
 [d,x] = domain(-1,1);
 u = (1-x.^2).^2.*(1+sin(12*x))/2;
-f = @(u,D) u.*(1-u) + 5e-4*D(u,2);
+f = @(u,D) u.*(1-u.^2) + 5e-4*D(u,2);
 uu = pde15s(f,0:0.1:5,u,'neumann');
 
 %% Allen-Cahn 
@@ -98,7 +100,7 @@ bc.right = struct('op',{I,D},'val',{1,2});
 f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
 opts = pdeset('Ylim',[-30 30],'plot',1);
 u = pde15s(f,0:.01:2,u,bc,opts);
-surf(u)
+surf(u,tt)
 
 % %% Cahn-Hilliard - not working!
 % close all

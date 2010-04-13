@@ -88,6 +88,12 @@ if ~isempty(opt.Plot), doplot = strcmpi(opt.Plot,'on'); end
 if ~isempty(opt.HoldPlot), dohold = strcmpi(opt.HoldPlot,'on'); end
 if ~isempty(opt.PlotStyle), plotopts = opt.PlotStyle; end
 YLim = opt.YLim;
+if isfield(opt,'guihandles') 
+    axes(opt.guihandles{1})
+    guiflag = true;
+else
+    guiflag = false; 
+end
 
 % ODE tolerances
 atol = odeget(opt,'AbsTol',1e-7);
@@ -323,7 +329,10 @@ vscl = u0.scl;
 
 % Plotting setup
 if doplot
-    cla, shg, set(gcf,'doublebuf','on')
+    if ~guiflag
+        cla, shg
+    end
+    set(gcf,'doublebuf','on')
     plot(u0,plotopts)
     if dohold, ish = ishold; hold on, end
     if ~isempty(YLim), ylim(YLim);    end
@@ -385,7 +394,7 @@ for nt = 1:length(tt)-1
     
     % plotting
     if doplot
-        cla, plot(ucur,plotopts);
+        plot(ucur,plotopts);
         if ~isempty(YLim), ylim(YLim); end
         title(sprintf('t = %.3f,  len = %i',tt(nt+1),curlen)), drawnow
     end
