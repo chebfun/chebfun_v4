@@ -117,7 +117,7 @@ if (isempty(input))
     set(hObject,'String','0')
 end
 
-set(handles.input_GUESS,'String','');
+% set(handles.input_GUESS,'String','');
 set(handles.input_GUESS,'Enable','on');
 set(handles.toggle_useLatest,'Value',0);
 set(handles.toggle_useLatest,'Enable','off');
@@ -152,7 +152,7 @@ if (isempty(input))
     set(hObject,'String','0')
 end
 
-set(handles.input_GUESS,'String','');
+% set(handles.input_GUESS,'String','');
 set(handles.input_GUESS,'Enable','on');
 set(handles.toggle_useLatest,'Value',0);
 set(handles.toggle_useLatest,'Enable','off');
