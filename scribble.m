@@ -67,11 +67,12 @@ for j = 1:L
       case {''''}, t = c([.3+.7i .4+1i]);
       case {'"'}, t = [c([.33+.8i .33+1i]) c([.66+.8i .66+1i])];
       case {' '}, t = [];
+      
       otherwise, 
           t = [];
           warning('CHEBFUN:scribble:unknownchar', ...
               ['"', s(j), '" is not supported by scribble. (But please feel ', ...
-              'free write it and email it to chabfun@maths.ox.ac.uk)']);
+              'free write it and email it to chebfun@maths.ox.ac.uk)']);
       end
    
    if ~isempty(t)

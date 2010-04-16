@@ -3,7 +3,7 @@ if nargin < 2
     mode = 'start';
 end
 
-numberOfExamples = 6;
+numberOfExamples = 9;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -111,4 +111,47 @@ switch exampleNumber
         guess = {'1';'1'};
         tol = '1e-6';
         name = 'System 1';
+    case 7
+        a = '-1';
+        b = '1';
+        t = '0:.05:2';
+        DE = {'u - (x + 1).*v + 0.2*v"' ; '-u + (x + 1).*v + 0.1*u"'};
+        DErhs = {'v_t';'u_t'};
+        LBC = {'u''';'v'''};
+        LBCrhs = {'0';'0'};
+        RBC = {'u''';'v'''};
+        RBCrhs = {'0';'0'};
+        guess = {'1';'1'};
+        tol = '1e-6';
+        name = 'System 1 (flipped)';
+    case 8
+        a = '-1';
+        b = '1';
+        t = '0:.1:2';
+        DE = {'0.1*u"-100*u*v' ; '0.2*v"-100*u*v' ; '0.001*w"+200*u*v'};
+        DErhs = {'u_t';'v_t';'w_t'};
+        LBC = {'neumann'};
+%         LBC = {'u'''; 'v''' ; 'w'''};
+        LBCrhs = {'0' ; '0' ; '0'};
+        RBC = {'neumann'};
+%         RBC = {'u'''; 'v''' ; 'w'''};
+        RBCrhs = {'0' ; '0' ; '0'};
+        guess = {'1-erf(10*(x+0.7))' ; '1 + erf(10*(x-0.7))' ; '0'};
+        tol = '1e-6';
+        name = 'System 2 (3 eqns)';
+    case 9
+        a = '-1';
+        b = '1';
+        t = '0:.1:2';
+        DE = {'0.1*u"-100*u*v' ; '0.2*v"-100*u*v' ; '0.001*w"+200*u*v'};
+        DErhs = {'u_t';'v_t';'w_t'};
+%         LBC = {'neumann'};
+        LBC = {'u'''; 'v''' ; 'w'''};
+        LBCrhs = {'0' ; '0' ; '0'};
+%         RBC = {'neumann'};
+        RBC = {'u'''; 'v''' ; 'w'''};
+        RBCrhs = {'0' ; '0' ; '0'};
+        guess = {'1-erf(10*(x+0.7))' ; '1 + erf(10*(x-0.7))' ; '0'};
+        tol = '1e-6';
+        name = 'System 2 (3 eqns alt)';        
 end

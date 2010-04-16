@@ -204,8 +204,15 @@ function input_RBC_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of input_RBC as text
 %        str2double(get(hObject,'String')) returns contents of input_RBC as a double
 newString = get(hObject,'String');
-if ~isempty(strfind(newString,'@')) || strcmpi(newString,'dirichlet') ...
-        || strcmpi(newString,'neumann') || ~isempty(str2num(newString))
+flag = false;
+if ~iscell(newString), newString = {newString}; end
+for k = 1:numel(newString)
+    if ~isempty(strfind(newString{k},'@')) || strcmpi(newString{k},'dirichlet') ...
+        || strcmpi(newString{k},'neumann') || ~isempty(str2num(newString{k}))
+        flag = true; break
+    end
+end
+if flag
     set(handles.input_RBC_RHS,'Enable','off');
     set(handles.text_eq3,'Enable','off');
     set(handles.input_RBC_RHS,'String','');
@@ -537,8 +544,15 @@ function input_LBC_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of input_LBC as text
 %        str2double(get(hObject,'String')) returns contents of input_LBC as a double
 newString = get(hObject,'String');
-if ~isempty(strfind(newString,'@')) || strcmpi(newString,'dirichlet') ...
-        || strcmpi(newString,'neumann') || ~isempty(str2num(newString))
+flag = false;
+if ~iscell(newString), newString = {newString}; end
+for k = 1:numel(newString)
+    if ~isempty(strfind(newString{k},'@')) || strcmpi(newString{k},'dirichlet') ...
+        || strcmpi(newString{k},'neumann') || ~isempty(str2num(newString{k}))
+        flag = true; break
+    end
+end
+if flag
     set(handles.input_LBC_RHS,'Enable','off');
     set(handles.input_LBC_RHS,'String','');
     set(handles.text_eq2,'Enable','off');
@@ -726,9 +740,15 @@ try
     
     % If input for BCs is a number, anon. func. or dirichlet/neumann,
     % disable BC rhs input
-    
-    if ~size(LBC,1) == 1 && (~isempty(strfind(LBC,'@')) || strcmpi(LBC,'dirichlet') ...
-            || strcmpi(LBC,'neumann') || ~isempty(str2num(LBC)))
+    lflag = false;
+    if ~iscell(LBC), LBC = {LBC}; end
+    for k = 1:numel(LBC)
+        if ~isempty(strfind(LBC{k},'@')) || strcmpi(LBC{k},'dirichlet') ...
+            || strcmpi(LBC{k},'neumann') || ~isempty(str2num(LBC{k}))
+            lflag = true; break
+        end
+    end
+    if lflag
         set(handles.input_LBC_RHS,'Enable','off');
         set(handles.text_eq2,'Enable','off');
     else
@@ -736,8 +756,15 @@ try
         set(handles.text_eq2,'Enable','on');
     end
     
-    if ~size(RBC,1) == 1 &&  ( ~isempty(strfind(RBC,'@')) || strcmpi(RBC,'dirichlet') ...
-            || strcmpi(RBC,'neumann') || ~isempty(str2num(RBC)))
+    rflag = false;
+    if ~iscell(RBC), RBC = {RBC}; end
+    for k = 1:numel(RBC)
+        if ~isempty(strfind(RBC{k},'@')) || strcmpi(RBC{k},'dirichlet') ...
+            || strcmpi(RBC{k},'neumann') || ~isempty(str2num(RBC{k}))
+            rflag = true; break
+        end
+    end
+    if rflag
         set(handles.input_RBC_RHS,'Enable','off');
         set(handles.text_eq3,'Enable','off');
     else

@@ -11,7 +11,7 @@ f = @(u,v,t,x,diff) [ -u + (x + 1).*v + 0.1*diff(u,2) , ...
                     u - (x + 1).*v + 0.2*diff(v,2) ];
 bc.left = @(u,v,D) [D(u), D(v)];  bc.right = bc.left;   % New way
         
-uu = pde15s(f,0:.05:2,u,bc,32);
+uu = pde15s(f,0:.05:2,u,bc);
 
 
 %%
@@ -25,8 +25,19 @@ f = @(u,v,w,D)      [ 0.1*D(u,2) - 100*u.*v , ...
                       0.2*D(v,2) - 100*u.*v , ...
                      .001*D(w,2) + 2*100*u.*v ];                  
 bc = 'neumann';     
-
 uu = pde15s(f,0:.1:3,u,bc);
+
+%%
+    cc
+   [d,x] = domain(-1,1);  
+   u = [ 1-erf(10*(x+0.7)) , 1 + erf(10*(x-0.7)) , chebfun(0,d) ];
+   f = @(u,v,w,D)  [ 0.1*diff(u,2) - 100*u.*v , ...
+                     0.2*diff(v,2) - 100*u.*v , ...
+                    .001*diff(w,2) + 2*100*u.*v ];
+   bc = 'neumann';     
+   uu = pde15s(f,0:.1:3,u,bc);
+   mesh(uu{3})
+
 
 %%
 

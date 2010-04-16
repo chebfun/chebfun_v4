@@ -1,26 +1,61 @@
-function [field indVarName]  = setupFields(input,rhs,type)
+function [field indVarName pdeflag]  = setupFields(input,rhs,type)
 
 numOfRows = size(input,1);
+pdeflag = false;
 
 % Fyrir BCs tharf ad tekka hvort ad varNames innihaldi e-d sem er ekki i DE
 % varNames. Setja DE varNames sem parametra? Tekka a indVarName i deRHS
 % lika.
 
+% PDEFLAG is a binary output which is true or false depending on whether
+% a '_' is located in rhs.
+
 % [field indVarName]  = setupLine(input,rhs,type)
 
 if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
     [field indVarName] = setupLine(input{1},rhs{1},type);
+    if ~isempty(strfind(rhs{1}, '_')), % it's not a PDE (or we can't do this type yet!)
+        pdeflag = true;
+    end
 else
     % Keep track of every variable encountered in the problem
-    allVarNames = {}; allAnFun = []; allIndVarNames = {};
-    for lineCounter = 1:numOfRows
-        [anFun indVarName varNames] = setupLine(input{lineCounter},rhs{lineCounter},type);
-        allAnFun = [allAnFun, anFun,  ','];
+    allVarNames = {}; 
+    if numel(rhs) == 1, rhs = repmat(rhs,numOfRows,1); end
+    for k = 1:numOfRows
+        [anFun{k} indVarName varNames] = setupLine(input{k},rhs{k},type);
         allVarNames = [allVarNames;varNames];
     end
-    allAnFun(end) = []; % Remove the last comma
     allVarNames = unique(allVarNames); % Remove duplicate variable names
+
+    % For PDEs we need to reorder so that the order of the time derivatives 
+    % matches the order of the inout arguments.
+    indx = zeros(numOfRows,1);
+    for k = 1:numOfRows
+        rhsk = rhs{k};
+        idxk = strfind(rhsk, '_');
+        if isempty(idxk), % it's not a PDE (or we can't do this type yet!)
+            indx = 1:numOfRows; 
+            pdeflag = false;
+            break
+        end
+        pdeflag = true;
+        dvark = rhsk(1:idxk(1)-1);
+        for j = 1:numOfRows
+            if strcmp(dvark,allVarNames{j})
+                indx(k) = j;
+                break
+            end
+        end
+    end
     
+    % Construct the function
+    allAnFun = [];
+    for k = 1:numOfRows
+        allAnFun = [allAnFun, anFun{indx(k)},  ','];
+    end
+    allAnFun(end) = []; % Remove the last comma
+    
+    % Construct the handle part
     allVarString = allVarNames{1};
     for varCounter = 2:length(allVarNames)
         allVarString = [allVarString,',',allVarNames{varCounter}];
@@ -29,9 +64,39 @@ else
     field = ['@(', allVarString ')[' allAnFun,']'];
 end
 
-
-
 end
+% function [field indVarName]  = setupFields(input,rhs,type)
+% 
+% numOfRows = size(input,1);
+% 
+% % Fyrir BCs tharf ad tekka hvort ad varNames innihaldi e-d sem er ekki i DE
+% % varNames. Setja DE varNames sem parametra? Tekka a indVarName i deRHS
+% % lika.
+% 
+% % [field indVarName]  = setupLine(input,rhs,type)
+% 
+% if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
+%     [field indVarName] = setupLine(input{1},rhs{1},type);
+% else
+%     % Keep track of every variable encountered in the problem
+%     allVarNames = {}; allAnFun = []; allIndVarNames = {};
+%     for lineCounter = 1:numOfRows
+%         [anFun indVarName varNames] = setupLine(input{lineCounter},rhs{lineCounter},type);
+%         allAnFun = [allAnFun, anFun,  ','];
+%         allVarNames = [allVarNames;varNames];
+%     end
+%     allAnFun(end) = []; % Remove the last comma
+%     allVarNames = unique(allVarNames); % Remove duplicate variable names
+%     
+%     allVarString = allVarNames{1};
+%     for varCounter = 2:length(allVarNames)
+%         allVarString = [allVarString,',',allVarNames{varCounter}];
+%     end
+%     
+%     field = ['@(', allVarString ')[' allAnFun,']'];
+% end
+% 
+% end
 
 
 function [field indVarName varNames]  = setupLine(input,rhs,type)
@@ -80,15 +145,15 @@ elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
 end
 
 if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
-    try
+%     try
         if nargout == 2
             [field indVarName] = convertToAnon(input);
         else % Three output arguments -- Multiple rows
             [field indVarName varNames] = convertToAnon(input);
         end
-    catch
-        error(['chebfun:BVPgui','Incorrect input for differential ' ...
-            'equation or boundary conditions']);
-    end
+%     catch
+%         error(['chebfun:BVPgui','Incorrect input for differential ' ...
+%             'equation or boundary conditions']);
+%     end
 end
 end

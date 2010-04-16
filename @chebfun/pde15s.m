@@ -31,9 +31,9 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 % Example 3: Chemical reaction (system)
 %    [d,x] = domain(-1,1);  
 %    u = [ 1-erf(10*(x+0.7)) , 1 + erf(10*(x-0.7)) , chebfun(0,d) ];
-%    f = @(u,t,x,D)  [ 0.1*D(u(:,1),2) - 100*u(:,1).*u(:,2) , ...
-%                      0.2*D(u(:,2),2) - 100*u(:,1).*u(:,2) , ...
-%                     .001*D(u(:,3),2) + 2*100*u(:,1).*u(:,2) ];
+%    f = @(u,v,w,diff)  [ 0.1*diff(u,2) - 100*u.*v , ...
+%                      0.2*diff(v,2) - 100*u.*v , ...
+%                     .001*diff(w,2) + 2*100*u.*v ];
 %    bc = 'neumann';     
 %    uu = pde15s(f,0:.1:3,u,bc);
 %    mesh(uu{3})
@@ -96,13 +96,14 @@ else
 end
 
 % ODE tolerances
-atol = odeget(opt,'AbsTol',1e-7);
-rtol = odeget(opt,'RelTol',1e-7);
-% AbsTol and RelTol must be <= Tol/10
+% (AbsTol and RelTol must be <= Tol/10)
+atol = odeget(opt,'AbsTol',tol/10);
+rtol = odeget(opt,'RelTol',tol/10);
 if isnan(optN)
     atol = min(atol, tol/10);
     rtol = min(rtol, tol/10);
 end
+opt.AbsTol = atol; opt.RelTol = rtol;
 
 % Get the domain
 d = domain(u0);
@@ -130,7 +131,7 @@ if nargin(pdefun) == 4 && syssize ~= 1
     %   op(u,t,x,@Diff) or op(u,v,w,@Diff)
     try
         tmp2 = repmat({tmp},1,nargin(pdefun)-2);
-        pdefun(tmp,tmp2{:},@Diff)
+        pdefun(tmp,tmp2{:},@Diff);
     end
     try
         tmp2 = repmat({NaN},1,nargin(pdefun)-2);
@@ -141,51 +142,53 @@ elseif syssize == 1 || nargin(pdefun) < 3
 else
     QUASIN = false;
 end
+
 % Convert pdefun to accept quasimatrix inputs, and determine syssize
 if nargin(pdefun) == 2 || (~QUASIN && nargin(pdefun) == syssize + 1)
-    % Deal with input variables (see conv2cell below)
-    pdefun = @(u,t,x) conv2cell(pdefun,u,@Diff);
-    % get the ORDER (a global variable) by evaluating the RHS with NaNs
-    pdefun(tmp);
+    if QUASIN pdefun = @(u,t,x) pdefun(u,@Diff);
+    else      pdefun = @(u,t,x) conv2cell(pdefun,u,@Diff);
+    end
+    pdefun(tmp); % Get the ORDER (global) by evaluating the RHS with NaNs
 elseif nargin(pdefun) == syssize + 3 || nargin(pdefun) == 4
-    pdefun = @(u,t,x) conv2cell(pdefun,u,t,x,@Diff);
+    if QUASIN
+        pdefun = @(u,t,x) pdefun(u,t,x,@Diff);
+    else
+        pdefun = @(u,t,x) conv2cell(pdefun,u,t,x,@Diff);
+    end
     pdefun(tmp,NaN,NaN); % (as above)
 end
+
     function newfun = conv2cell(oldfun,u,varargin)
-        % This little function allows the use of different letters in the
-        % anonymous function for pdefun, rather than using the clunky
-        % quasi-matrix notation.
-
-        if QUASIN
-            newfun = oldfun(u,varargin{:});
-        else
-            tmpcell = cell(1,syssize);
-            for qk = 1:syssize
-                tmpcell{qk} = u(:,qk);
-            end
-
-            newfun = oldfun(tmpcell{:},varargin{:});
+    % This function allows the use of different variables in the anonymous 
+    % function, rather than using the clunky quasi-matrix notation.
+        tmpcell = cell(1,syssize);
+        for qk = 1:syssize
+            tmpcell{qk} = u(:,qk);
         end
+        newfun = oldfun(tmpcell{:},varargin{:});
+%         % This looks slicker, but is slower.
+%         u = num2cell(u,1);
+%         newfun = oldfun(u{:},varargin{:});
     end
 
-% some error checking on the bcs
+% Some error checking on the bcs
 if ischar(bc) && (strcmpi(bc,'neumann') || strcmpi(bc,'dirichlet'))
     if ORDER > 2
         error('CHEBFUN:pde15s:bcs',['Cannot assign "', bc, '" boundary conditions to a ', ...
         'RHS with differential order ', int2str(ORDER),'.']);
     end
     bc = struct( 'left', bc, 'right', bc);
-end
-if iscell(bc) && numel(bc) == 2
+elseif iscell(bc) && numel(bc) == 2
     bc = struct( 'left', bc{1}, 'right', bc{2});
 end
 
-% Shorthand bcs
+Z = zeros(d);  % This is used often.
+% Shorthand bcs - all neumann or all dirichlet
 if isfield(bc,'left') && ischar(bc.left)
     if strcmpi(bc.left,'dirichlet'),    A = eye(d);
     elseif strcmpi(bc.left,'neumann'),  A = diff(d);
     end
-    Z = zeros(d);        op = cell(1,syssize);
+    op = cell(1,syssize);
     for k = 1:syssize,   op{k} = [repmat(Z,1,k-1) A repmat(Z,1,syssize-k)];  end
     bc.left = struct('op',op,'val',repmat({0},1,syssize));
 end
@@ -193,7 +196,7 @@ if isfield(bc,'right') && ischar(bc.right)
     if strcmpi(bc.right,'dirichlet'),    A = eye(d);
     elseif strcmpi(bc.right,'neumann'),  A = diff(d);
     end
-    Z = zeros(d);        op = cell(1,syssize);
+    op = cell(1,syssize);
     for k = 1:syssize,   op{k} = [repmat(Z,1,k-1) A repmat(Z,1,syssize-k)];  end
     bc.right = struct('op',op,'val',repmat({0},1,syssize));
 end
@@ -204,23 +207,36 @@ nllbc = []; nlbcs = {}; GLOBX = 1; funflagl = false; rhs = [];
 if isfield(bc,'left') && numel(bc.left) == 1 && isa(bc.left,'function_handle')
 	op = bc.left;
     if nargin(op) == 2 || (~QUASIN && nargin(op) == syssize + 1)
-        op = @(u,t,x) conv2cell(op,u,@Diff);
-    else
-        op = @(u,t,x) conv2cell(op,u,t,x,@Diff);
-    end
-    tmp2 = ones(size(tmp));  evalop = op(tmp2,0,1);   s = size(evalop);
-%     if max(s) > 1 % Then we do have a vector input      
-        nllbc = 1:max(s);     dumop = repmat(eye(d),1,syssize);
-        bc.left = struct( 'op', [], 'val', []); 
-        for k = nllbc 
-            % Dummy entries
-            bc.left(k).op = dumop; bc.left(k).val = 0; rhs{k} = 0;
-            % Extract each component (inefficient)
-            nlbcs = [nlbcs {@(u,t,x) extract_opk(op,k,s,u,t,x)}];
+        if QUASIN, op = @(u,t,x) op(u,@Diff);
+        else       op = @(u,t,x) conv2cell(op,u,@Diff);
         end
-        funflagl = true;
-%     end
+    else
+        if QUASIN  op = @(u,t,x) op(u,t,x,@Diff);
+        else       op = @(u,t,x) conv2cell(op,u,t,x,@Diff);
+        end
+    end
+    tmp2 = ones(size(tmp));  sop = size(op(tmp2,0,1));   
+    nllbc = 1:max(sop);    
+    bc.left = struct( 'op', [], 'val', []); 
+    
+    % Dummy entries
+    if syssize == 1
+        for k = nllbc 
+            bc.left(k).op = repmat(eye(d),1,syssize);
+            bc.left(k).val = 0;
+        end
+    else
+        for k = nllbc 
+            bc.left(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
+            bc.left(k).val = 0;
+        end  
+    end
+    rhs = num2cell(zeros(1,max(sop)));
+    nlbcsl = op;
+    funflagl = true;
 end
+
+
 % 2) Deal with other forms of input
 if ~funflagl && isfield(bc,'left') && numel(bc.left) > 0
     if isa(bc.left,'function_handle') || isa(bc.left,'linop') || iscell(bc.left)
@@ -239,7 +255,8 @@ if ~funflagl && isfield(bc,'left') && numel(bc.left) > 0
             nllbc = [nllbc k];             % Store positions
             if nargin(opk) == 2, nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
             else                 nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)}]; end
-            bc.left(k).op = repmat(eye(d),1,syssize);
+%             bc.left(k).op = repmat(eye(d),1,syssize);
+            bc.left(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
         end
         if isfield(bc.left(k),'val') && ~isempty(bc.left(k).val)
                 rhs{k} = bc.left(k).val;
@@ -256,22 +273,32 @@ nlrbc = []; numlbc = numel(rhs); funflagr = false;
 if isfield(bc,'right') && numel(bc.right) == 1 && isa(bc.right,'function_handle')
 	op = bc.right;
     if nargin(op) == 2 || (~QUASIN && nargin(op) == syssize + 1)
-        op = @(u,t,x) conv2cell(op,u,@Diff);
-    else
-        op = @(u,t,x) conv2cell(op,u,t,x,@Diff);
-    end
-    tmp2 = ones(size(tmp));  evalop = op(tmp2,0,1);   s = size(evalop);
-%     if max(s) > 1 % Then we do have a vector input      
-        nlrbc = 1:max(s);     dumop = repmat(eye(d),1,syssize);
-        bc.right = struct( 'op', [], 'val', []); 
-        for k = nlrbc 
-            % Dummy entries
-            bc.right(k).op = dumop; bc.right(k).val = 0; rhs{numlbc+k} = 0;
-            % Extract each component (inefficient)
-            nlbcs = [nlbcs {@(u,t,x) extract_opk(op,k,s,u,t,x)}];
+        if QUASIN, op = @(u,t,x) op(u,@Diff);
+        else       op = @(u,t,x) conv2cell(op,u,@Diff);
         end
-        funflagr = true;
-%     end
+    else
+        if QUASIN  op = @(u,t,x) op(u,t,x,@Diff);
+        else       op = @(u,t,x) conv2cell(op,u,t,x,@Diff);
+        end
+    end
+    tmp2 = ones(size(tmp));  evalop = op(tmp2,0,1);   s = size(evalop);    
+    nlrbc = 1:max(s);
+    bc.right = struct( 'op', [], 'val', []); 
+    % Dummy entries
+    if syssize == 1
+        for k = nllbc 
+            bc.right(k).op = repmat(eye(d),1,syssize);
+            bc.right(k).val = 0;
+        end
+    else
+        for k = nllbc 
+            bc.right(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
+            bc.right(k).val = 0;
+        end  
+    end
+    rhs = [rhs num2cell(zeros(1,max(sop)))];
+    nlbcsr = op;
+    funflagr = true;
 end
 % 2) Deal with other forms of input
 if ~funflagr && isfield(bc,'right') && numel(bc.right) > 0
@@ -290,7 +317,8 @@ if ~funflagr && isfield(bc,'right') && numel(bc.right) > 0
             nlrbc = [nlrbc k];
             if nargin(opk) == 2,  nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
             else                  nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)}]; end
-            bc.right(k).op = repmat(eye(d),1,syssize);
+%             bc.right(k).op = repmat(eye(d),1,syssize);
+            bc.right(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
         end
         if isfield(bc.right(k),'val') && ~isempty(bc.right(k).val)
                 rhs{numlbc+k} = bc.right(k).val;
@@ -398,6 +426,15 @@ for nt = 1:length(tt)-1
         if ~isempty(YLim), ylim(YLim); end
         title(sprintf('t = %.3f,  len = %i',tt(nt+1),curlen)), drawnow
     end
+    
+    % Interupt comutation if stop button is pressed in the GUI.
+    if isfield(opt,'guihandles') && strcmp(get(opt.guihandles{6},'String'),'Stop') && strcmpi(get(opt.guihandles{6},'Enable'),'Off')
+        if syssize == 1,  
+            uu = uu(:,1:nt+1);
+            tt = tt(1:nt+1);
+        end
+        break
+    end
 end
 
 if doplot && dohold && ~ish, hold off, end
@@ -441,10 +478,10 @@ end
         end
         
         % ODE options (mass matrix)
-        opt = odeset(opt,'Mass',M,'MassSingular','yes','InitialSlope',odefun(tt(nt),U0));
+        opt2 = odeset(opt,'Mass',M,'MassSingular','yes','InitialSlope',odefun(tt(nt),U0));
 
         % Solve ODE over time chunk with ode15s
-        [ignored,U] = ode15s(@odefun,tt(nt:nt+1),U0,opt);
+        [ignored,U] = ode15s(@odefun,tt(nt:nt+1),U0,opt2);
         
         % Reshape solution
         U = reshape(U(end,:).',n,syssize);
@@ -476,18 +513,37 @@ end
             
             % replacements for the BC algebraic conditions           
             F(rows) = B*U(:)-q; 
+            B*U(:)-q;
             
             % replacements for the nonlinear BC conditions
-            j = 0;
-            for kk = 1:length(nllbc)
-                j = j + 1;
-                tmp = feval(nlbcs{j},U,t,x);
-                F(rows(kk)) = tmp(1)-q(kk);
+            indx = 1:length(nllbc);
+            if funflagl    
+                tmp = feval(nlbcsl,U,t,x);
+                if ~(size(tmp,1) == n)
+                    tmp = reshape(tmp,n,numel(tmp)/n);
+                end
+                F(rows(indx)) = tmp(1,:);
+            else
+                j = 0;
+                for kk = 1:length(nllbc)
+                    j = j + 1;
+                    tmp = feval(nlbcs{j},U,t,x);
+                    F(rows(kk)) = tmp(1)-q(kk);
+                end
             end
-            for kk = numel(rhs)+1-nlrbc
-                j = j + 1;
-                tmp = feval(nlbcs{j},U,t,x);
-                F(rows(kk)) = tmp(end)-q(kk);
+            indx = numel(rhs)+1-nlrbc;
+            if funflagr
+                tmp = feval(nlbcsr,U,t,x);
+                if ~(size(tmp,1) == n)
+                    tmp = reshape(tmp,n,numel(tmp)/n);
+                end
+                F(rows(indx)) = fliplr(tmp(end,:));                
+            else
+                for kk = numel(rhs)+1-nlrbc
+                    j = j + 1;
+                    tmp = feval(nlbcs{j},U,t,x);
+                    F(rows(kk)) = tmp(end)-q(kk);
+                end
             end
 
             % Reshape to single column
@@ -499,7 +555,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   DIFF   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % The differential operators
-function up = Diff(u,k)
+function up = Diff(u,k,lr)
     % Computes the k-th derivative of u using Chebyshev differentiation
     % matrices defined by barymat. The matrices are stored for speed.
     
@@ -543,7 +599,16 @@ function up = Diff(u,k)
     end
 
     % Find the derivative by muliplying by the kth-order differentiation matrix
-    up = storage(N).D{k}*u;
+    if nargin < 3
+        up = storage(N).D{k}*u;
+    else
+    % We only need the end value (for boundary conditions).
+        if strcmp(lr,'l')
+            up = storage(N).D{k}(1,:)*u;
+        else
+            up = storage(N).D{k}(N,:)*u;
+        end
+    end
 end       
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    BARMAT   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -607,6 +672,18 @@ else
     y = reshape(y,numel(y)/s(1),s(1));
     y = y(:,k);
 end
+end
+
+function u = DiffL(u,k)
+if nargin == 1, k = 1; end
+u(1) = Diff(u,k,'l');
+% u = Diff(u,k);
+end
+
+function u = DiffR(u,k)
+if nargin == 1, k = 1; end
+u(end) = Diff(u,k,'r');
+% u = Diff(u,k);
 end
 
 
