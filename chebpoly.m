@@ -26,7 +26,7 @@ if nargin == 1
     kind = defkind;
 elseif nargin == 2
     kind = defkind;
-    if numel(d) == 1
+    if numel(d) == 1 && ~isa(d,'domain')
         kind = d; d = defd;
     end
 end    
