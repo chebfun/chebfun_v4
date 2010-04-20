@@ -432,6 +432,10 @@ for nt = 1:length(tt)-1
         if syssize == 1,  
             uu = uu(:,1:nt+1);
             tt = tt(1:nt+1);
+        else
+            for k = 1:syssize
+                uu{k} = uu{k}(:,1:nt+1);
+            end
         end
         break
     end
@@ -513,7 +517,6 @@ end
             
             % replacements for the BC algebraic conditions           
             F(rows) = B*U(:)-q; 
-            B*U(:)-q;
             
             % replacements for the nonlinear BC conditions
             indx = 1:length(nllbc);

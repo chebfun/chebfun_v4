@@ -49,6 +49,7 @@ end
 w = bary_weights(x);
 % set preferences
 pref = chebfunpref; pref.sampletest = false; pref.maxdegree = length(x)-1;
+pref.minsamples = min(pref.minsamples,pref.maxdegree);
 % ill-conditioned computations may prevent convergence to high accuracy.
 warnstate = warning('off','CHEBFUN:auto');
 % Lebesgue function (breakpoints at interpolation nodes)
