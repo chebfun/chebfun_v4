@@ -209,29 +209,8 @@ end
 
 % 'Truncate' option
 if isfield(pref,'trunc')
-    if f.nfuns == 1 && ~any(get(f,'exps'))
-        c = fliplr(chebpoly(f));
-        N = min(pref.trunc,length(c));
-        if N < pref.trunc
-            warning('CHEBFUN:chebfun:truncate','Attempting to truncate a nonadaptive constructor call.');
-        end
-        vals = chebpolyval(fliplr(c(1:N)));
-        f = chebfun(vals,f.ends(1:2));
-    else
-%         warning('CHEBFUN:chebfun:truncatepieces',['There is not yet support for ',...
-%             'constructing piecewise truncated expansions.']);
-        N = pref.trunc;
-        [d x] = domain(f.ends(1),f.ends(end));
-        c = zeros(N,1);
-        for k = 1:N
-            T = chebpoly(k-1,d);
-            I = (f.*T).*(1./sqrt(1-x.^2));
-            c(N-k+1) = 2*sum(I)/pi;
-        end
-        c(N) = c(N)/2;
-        vals = chebpolyval(c);
-        f = chebfun(vals,d);
-    end
+    c = chebpoly(f,0,pref.trunc);
+    f = chebfun(chebpolyval(c),f.ends([1 end]));
 end
 
 end
