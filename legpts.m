@@ -1,4 +1,4 @@
-function [x,w] = legpts(n,varargin)
+function [x,w,ders] = legpts(n,varargin)
 %LEGPTS  Legendre points and Gauss Quadrature Weights.
 %  LEGPTS(N) returns N Legendre points X in (-1,1).
 %
@@ -141,20 +141,16 @@ for j = N+1:n-1
     % Recurrence Taylor coefficients (scaled & incl factorial terms).
     M = 1/h;                           % Scaling
     c1 = 2*x/M; c2 = 1./(1-x^2);       % Some constants
-    u([1 2]) = [0 ders(j)/M];  up(1) = u(2);
+    % Note, terms are flipped for more accuracy in inner product calculation.
+    u([m+1 m]) = [0 ders(j)/M];  up(m+1) = u(m);
     for k = 0:m-2
-%         u(k+3) = (c1*(k+1)*u(k+2)+(k-n*(n+1)/(k+1))*u(k+1)/M^2)/(c2*(k+2));
-        u(k+3) = (c1*(k+1)*u(k+2)+(k-n*(n+1)/(k+1))*u(k+1)/M^2)*c2/(k+2);
-        up(k+2) = (k+2)*u(k+3);
+        up(m-k) = (c1*(k+1)*u(m-k)+(k-n*(n+1)/(k+1))*u(m-k+1)/M^2)*c2;
+        u(m-(k+1)) = up(m-k)/(k+2);
     end
-    up(m+1) = 0;   
-
-    % Flip for more accuracy in inner product calculation.
-    u = u(m+1:-1:1);  up = up(m+1:-1:1);
-    
+    up(1) = 0;   
+           
     % Newton iteration
     hh = hh1; step = inf;  l = 0; 
-
     while (abs(step) > eps) && (l < 10)
         l = l + 1;
         step = (u*hh)/(up*hh)/M;
@@ -168,6 +164,7 @@ for j = N+1:n-1
     x = x + h;
     roots(j+1) = x;
     ders(j+1) = M*(up*hh);  
+       
 end
 
 % Nodes are symmetric.
@@ -187,22 +184,30 @@ m = 30; % Number of terms in Taylor expansion.
 M = 1/x1; % Scaling
 zz = zeros(m,1); u = [Pn0 zeros(1,m)]; up = zeros(1,m+1); % Allocate storage
 for k = 0:2:m-2
-    u(k+3) = (k-n*(n+1)/(k+1))*u(k+1)/(M^2*(k+2)); 
-    up(k+2) = (k+2)*u(k+3)*M;
+    up(k+2) = (k-n*(n+1)/(k+1))*u(k+1)/M^2;
+    u(k+3) = up(k+2)/(k+2);
 end
-
 % Flip for more accuracy in inner product calculation.
 u = u(m+1:-1:1); up = up(m+1:-1:1);
+
+% % Note, terms are flipped for more accuracy in inner product calculation.
+% zz = zeros(m,1); u = [zeros(1,m) Pn0]; up = zeros(1,m+1); % Allocate storage
+% for k = 0:2:m-2
+%     up(m-k) = (k-n*(n+1)/(k+1))*u(m-k+1)/M^2;
+%     u(m-(k+1)) = up(m-k)/(k+2);
+% end
 
 % Newton iteration
 x1k = ones(m+1,1); step = inf; l = 0;
 while (abs(step) > eps) && (l < 10)
     l = l + 1;
-    step = (u*x1k)/(up*x1k);
+    step = (u*x1k)/(up*x1k)/M;
     x1 = x1 - step;
     x1k = [1;cumprod(M*x1+zz)]; % Powers of h (This is the fastest way!)
     x1k = x1k(end:-1:1);        % Flip for more accuracy in inner product
 end
 
 % Get the derivative at this root, i.e. P'(x1).
-d1 = up*x1k;
+d1 = M*(up*x1k);
+
+

@@ -245,9 +245,8 @@ for j = 1:N
     u = u(m+1:-1:1);
     up = up(m+1:-1:1);
     
-%     hh = [ones(m,1) ; M];   
-    hh = hh1;   step = inf;   l = 0;
     % Newton iteration
+	hh = hh1; hh(end) = M;    step = inf;  l = 0; 
     while (abs(step) > eps) && (l < 10)
         l = l + 1;
         step = (u*hh)/(up*hh);
@@ -277,8 +276,7 @@ T = C + 1/(2*n+a+b+1)^2*((.25-a^2)*cot(.5*C)-(.25-b^2)*tan(.5*C));
 roots = [x1 ; cos(T).']; ders = [up ; zeros(length(T),1)];
 
 m = 30; % number of terms in Taylor expansion
-hh1 = ones(m+1,1);
-u = zeros(1,m+1); up = zeros(1,m+1);
+hh1 = ones(m+1,1); u = zeros(1,m+1); up = zeros(1,m+1);
 for j = 1:length(r)
     x = roots(j); % previous root
     
@@ -301,7 +299,7 @@ for j = 1:length(r)
     u = u(m+1:-1:1);  up = up(m+1:-1:1);
     
     % Newton iteration
-    hh = hh1; step = inf;  l = 0;
+    hh = hh1; hh(end) = M;    step = inf;  l = 0; 
     while (abs(step) > eps) && (l < 10)
         l = l + 1;
         step = (u*hh)/(up*hh);

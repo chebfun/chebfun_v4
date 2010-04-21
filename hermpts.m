@@ -45,7 +45,7 @@ while ~isempty(varargin)
     elseif strcmpi(s,'fast'), method = 'fast';   
     elseif strncmpi(s,'phys',3), type = 'phys'; 
     elseif strncmpi(s,'prob',3), type = 'prob'; 
-    else error('CHEBFUN:hermpts:input',['Unrecognised input string ', s]); 
+    else error('CHEBFUN:hermpts:input',['Unrecognised input string.', s]); 
     end
 end
 
@@ -119,9 +119,9 @@ for j = N+1:n-1
     % recurrence relation for Hermite polynomials
     c1 = -(2*n+1-x^2)/M^2; c2 = 2*x./M^3; c3 = 1./M^4;
     u(1) = 0; u(2) = ders(j)/M; 
-    u(3) = c1*u(1)/2;
+    u(3) = .5*c1*u(1);
     u(4) = (c1*u(2) + c2*u(1))/6;
-    up(1) = ders(j)/M; up(2) = 2*u(3)*M; up(3) = 3*u(4)*M; up(m+1) = 0;
+    up(1) = u(2); up(2) = 2*u(3)*M; up(3) = 3*u(4)*M; up(m+1) = 0;
     
     for k = 2:m-2
         u(k+3) = (c1*u(k+1) + c2*u(k) + c3*u(k-1))/((k+1)*(k+2));
@@ -132,7 +132,7 @@ for j = N+1:n-1
     u = u(m+1:-1:1);       up = up(m+1:-1:1);
     
     % Newton iteration
-    hh = hh1; step = inf;    l = 0;
+    hh = hh1; hh(end) = M;    step = inf;  l = 0; 
     while (abs(step) > eps) && (l < 10)
         l = l + 1;
         step = (u*hh)/(up*hh);
@@ -164,7 +164,7 @@ M = 1/x1;
 
 % recurrence relation for Legendre polynomials
 u = zeros(1,m+1); up = zeros(1,m+1);
-u(1) = Hn0; u(3) = -(2*n+1)*u(1)/M^2/2;
+u(1) = Hn0; u(3) = -.5*(2*n+1)*u(1)/M^2;
 up(1) = 0; up(2) = 2*u(3)*M;
 for k = 2:2:m-2
     u(k+3) = (-(2*n+1)*u(k+1)/M^2 + u(k-1)/M^4)/((k+1)*(k+2));
@@ -175,7 +175,7 @@ end
 u = u(m+1:-1:1);
 up = up(m+1:-1:1);
 
-x1k = [1;cumprod(M*x1+zeros(m,1))];
+x1k = [M;cumprod(M*x1+zeros(m,1))];
 
 step = inf; l = 0;
 % Newton iteration

@@ -27,7 +27,7 @@ if norm(g.map.par(1:2),inf) == inf %&& mappref('adaptinf')
         if (subint(1) > ends(1)), exps(1) = 0; end  % Left exp has been removed
         if (subint(2) < ends(2)), exps(2) = 0; end  % Right exp has been removed       
         exps(isinf(subint)) = -exps(isinf(subint)); % Exponents are negated for inf intervals 
-        pref.exps = num2cell(exps);
+        pref.exps = exps;
     end
     
     pref.minsamples = g.n;

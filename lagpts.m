@@ -35,7 +35,7 @@ end
 
 % decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
-   alpha = (2*(1:n)-1);  beta = 1:n-1;   % 3-term recurrence coeffs
+   alpha = 2*(1:n)-1;  beta = 1:n-1;     % 3-term recurrence coeffs
    T = diag(beta,1) + diag(alpha) + diag(beta,-1);  % Jacobi matrix
    [V,D] = eig(T);                       % eigenvalue decomposition
    [x,indx] = sort(diag(D));             % Laguerre points
@@ -50,10 +50,9 @@ w = (1/sum(w))*w;                        % normalise so that sum(w) = 1
 % -------------------- Routines for FAST algorithm ------------------------
 
 function [x ders] = alg0_Lag(n)
-x = zeros(n,1); 
 ders = zeros(n,1);
 xs = 1/(2*n+1);
-n1 = 20;
+n1 = 5;
 n1 = min(n1, n);
 x = zeros(n,1);
 for k = 1:n1
@@ -66,7 +65,7 @@ end
 
 % --------------------------- UNSCALED VERSION ------------------------------
 
-function [roots ders] = alg1_Lag(roots,ders,n,n1)
+function [roots ders] = alg1_Lag2(roots,ders,n,n1)
 m = 30;
 u = zeros(1,m+1); up = zeros(1,m+1);
 for j = n1:n-1
@@ -83,7 +82,9 @@ for j = n1:n-1
 %         u(k+3)=(-x*(2*k+1)*u(k+2)-(k*k+r)*u(k+1)-k*(n+.5-.5*x)*u(k)+.25*k*(k-1)*u(k-1))/p;
         u(k+3)=(-x*(2*k+1)*(k+1)*u(k+2)-(k*k+r)*u(k+1)-(n+.5-.5*x)*u(k)+.25*u(k-1))/(p*(k+2)*(k+1));
         up(k+2) = (k+2)*u(k+3);
-    end    
+    end   
+    
+    hh = [1;cumprod(h+zeros(m,1))];
    
     for l = 1:5
 %         hh = [1;cumprod(h*ones(m,1))];
@@ -96,6 +97,115 @@ for j = n1:n-1
 
 end
 
+
+
+
+% --------------------------- SCALED VERSION ------------------------------
+
+function [roots ders] = alg1_Lag(roots,ders,n,n1)
+m = 30;
+% Storage
+hh1 = ones(m+1,1); zz = zeros(m,1); u = zeros(1,m+1); up = zeros(1,m+1);
+x = roots(n1);
+for j = n1:n-1
+    h = rk2_Lag(pi/2,-pi/2,x,n) - x;
+    
+    M = 1/h; M2 = M^2; M3 = M^3; M4 = M^4;
+
+    r = x*(n + .5 - .25*x);  p = x^2;
+    u(1:2) = [0; ders(j)/M]; 
+    u(3) = -.5*u(2)/(M*x)-(n + .5 - .25*x)*u(1)/(x*M^2);
+    u(4) = -u(3)/(M*x)+(-(1+r)*u(2)/6/M^2-(n+.5-.5*x)*u(1)/M^3)/p;
+    up(1:3) = [u(2) ; 2*u(3)*M ; 3*u(4)*M];
+
+    for k = 2:m-2
+%         u(k+3) = (-x*(2*k+1)*u(k+2)-(k*k+r)*u(k+1)-k*(n+.5-.5*x)*u(k)+.25*k*(k-1)*u(k-1))/p;
+        u(k+3) = (-x*(2*k+1)*(k+1)*u(k+2)/M-(k*k+r)*u(k+1)/M2-(n+.5-.5*x)*u(k)/M3+.25*u(k-1)/M4)/(p*(k+2)*(k+1));
+        up(k+2) = (k+2)*u(k+3)*M;
+    end    
+    up(m+1) = 0;
+
+    % Flip for more accuracy in inner product calculation.
+    u = u(m+1:-1:1);  up = up(m+1:-1:1);
+
+    % Newton iteration
+    hh = hh1; hh(end) = M;    step = inf;  l = 0; 
+    
+    if M == 1
+        Mhzz = (M*h)+zz;
+        hh = [M;cumprod(Mhzz)];
+        hh = hh(end:-1:1);
+    end
+    
+    while (abs(step) > eps) && (l < 10)
+        l = l + 1;
+        step = (u*hh)/(up*hh);
+        h = h - step;        
+        Mhzz = (M*h)+zz;
+        hh = [M;cumprod(Mhzz)];     % Powers of h (This is the fastest way!)
+        hh = hh(end:-1:1);          % Flip for more accuracy in inner product 
+    end
+   
+    % Update
+    x = x + h;
+    roots(j+1) = x;
+    ders(j+1) = up*hh;    
+
+end
+
+% --------------------------- SCALED VERSION ------------------------------
+
+function [roots ders] = alg4_Lag(roots,ders,n,n1)
+m = 30;
+% Storage
+hh1 = ones(m+1,1); zz = zeros(m,1); u = zeros(1,m+1); up = zeros(1,m+1);
+x = roots(n1);
+for j = n1:n-1
+    h = rk2_Lag(pi/2,-pi/2,x,n) - x;
+    
+    M = 1/h; M2 = M^2; M3 = M^3; M4 = M^4;
+
+    r = x*(n + .5 - .25*x);  p = x^2;
+    u(1:2) = [0; ders(j)/M]; 
+    u(3) = -.5*u(2)/(M*x)-(n + .5 - .25*x)*u(1)/(x*M^2);
+    u(4) = -u(3)/(M*x)+(-(1+r)*u(2)/6/M^2-(n+.5-.5*x)*u(1)/M^3)/p;
+    up(1:3) = [u(2) ; 2*u(3)*M ; 3*u(4)*M];
+
+    for k = 2:m-2
+%         u(k+3) = (-x*(2*k+1)*u(k+2)-(k*k+r)*u(k+1)-k*(n+.5-.5*x)*u(k)+.25*k*(k-1)*u(k-1))/p;
+        u(k+3) = (-x*(2*k+1)*(k+1)*u(k+2)/M-(k*k+r)*u(k+1)/M2-(n+.5-.5*x)*u(k)/M3+.25*u(k-1)/M4)/(p*(k+2)*(k+1));
+        up(k+2) = (k+2)*u(k+3)*M;
+    end    
+    up(m+1) = 0;
+
+    % Flip for more accuracy in inner product calculation.
+    u = u(m+1:-1:1);  up = up(m+1:-1:1);
+
+    % Newton iteration
+    hh = hh1; hh(end) = M;    step = inf;  l = 0; 
+    
+    if M == 1
+        Mhzz = (M*h)+zz;
+        hh = [M;cumprod(Mhzz)];
+        hh = hh(end:-1:1);
+    end
+    
+    while (abs(step) > eps) && (l < 10)
+        l = l + 1;
+        step = (u*hh)/(up*hh);
+        h = h - step;        
+        Mhzz = (M*h)+zz;
+        hh = [M;cumprod(Mhzz)];     % Powers of h (This is the fastest way!)
+        hh = hh(end:-1:1);          % Flip for more accuracy in inner product 
+    end
+   
+    % Update
+    x = x + h;
+    roots(j+1) = x;
+    ders(j+1) = up*hh;    
+
+end
+
 % -------------------------------------------------------------------------
 
 function [x1 d1] = alg3_Lag(n,xs)
@@ -103,10 +213,15 @@ function [x1 d1] = alg3_Lag(n,xs)
 theta = atan(sqrt(xs/(n+.5-.25*xs))*up/u);
 x1 = rk2_Lag(theta,-pi/2,xs,n);
 
-for k = 1:10
+% Newton iteration
+step = inf;  l = 0;    
+while (abs(step) > eps || abs(u) > eps) && (l < 200)
+    l = l + 1;
     [u up] = eval_Lag(x1,n);
-    x1 = x1 - u/up;
+    step = u/up;
+    x1 = x1 - step;
 end
+
 [ignored d1] = eval_Lag(x1,n);
 
 % -------------------------------------------------------------------------
@@ -122,7 +237,7 @@ end
 % -------------------------------------------------------------------------
 
 function x = rk2_Lag(t,tn,x,n)
-m = 5; h = (tn-t)/m;
+m = 10; h = (tn-t)/m;
 for j = 1:m
     f1 = (n+.5-.25*x);
     k1 = -h/(sqrt(f1/x)+.25*(1/x-.25/f1)*sin(2*t));

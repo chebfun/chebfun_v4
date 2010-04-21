@@ -7,7 +7,7 @@ ends = f.map.par(1:2);
 infends = isinf(ends);
 if any(infends)
     s = f.map.par(3);
-    if all(infends),  rescl = (.5./(5*s))
+    if all(infends),  rescl = (.5./(5*s));
     else              rescl = (.5./(15*s)); end
 %     rescl = rescl^sum(oldexps-newexps);
 else

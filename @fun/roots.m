@@ -80,7 +80,7 @@ if ~recurse || (g.n<101)                                    % for small length f
     if ~all
         mask=abs(imag(r))<tol*g.scl.h;           % filter imaginary roots
         r = real( r(mask) );
-        out = sort(r(abs(r) <= 1+tol*g.scl.h));  % keep roots inside [-1 1]   
+        out = sort(r(abs(r) <= 1+2*tol*g.scl.h));  % keep roots inside [-1 1]   
         
         % polish
         if chebfunpref('polishroots')

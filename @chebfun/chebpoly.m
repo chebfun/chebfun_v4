@@ -29,10 +29,12 @@ if nargin < 2,
     end
     ii = 1; 
 end
-if nargin < 3, N = []; end
-
 if ii > f.nfuns
     error('CHEBFUN:chebpoly:nfuns2',['Chebfun only has ',num2str(f.nfuns),' funs']);
+end
+if nargin < 3, N = []; end
+if ii == 0 && isempty(N)
+    error('CHEBFUN:chebpoly:inputs','Input N must not be empty if I is zero.');
 end
 
 % No truncating or padding. So just default behavior.
@@ -41,8 +43,8 @@ if isempty(N)
     return
 end
 
-% Truncating or padding of a fun. Also deals with simple chebfun case.
-if ii > 0 || (f.nfuns == 1 && ~any(f.funs(1).exps))
+% Truncating or padding of a fun. Also deals with simple, linear chebfun case.
+if ii > 0 || (f.nfuns == 1 && ~any(f.funs(1).exps) && strcmp(f.funs(1).map.name,'linear'))
     if ii == 0, ii = 1; end
     c = chebpoly(f.funs(ii)).';
     c = [zeros(1,N-length(c)) c];
@@ -52,12 +54,17 @@ end
 
 % Compute coefficients via inner products.
 [d x] = domain(f.ends(1),f.ends(end));
-w = 1./sqrt((x-d(1)).*(d(2)-x));
-out = zeros(1,N);
-for k = 1:N
-    T = chebpoly(k-1,d);
-    I = (f.*T).*w;
-    out(N-k+1) = 2*sum(I)/pi;
+
+if any(isinf(d))
+    error('CHEBFUN:chebpoly:infint','Infinite intervals are not supported here.');
+else
+    w = 1./sqrt((x-d(1)).*(d(2)-x));
+    out = zeros(1,N);
+    for k = 1:N
+        T = chebpoly(k-1,d);
+        I = (f.*T).*w;
+        out(N-k+1) = 2*sum(I)/pi;
+    end
+    out(N) = out(N)/2;
 end
-out(N) = out(N)/2;
 

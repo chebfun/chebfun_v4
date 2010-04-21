@@ -31,6 +31,10 @@ elseif nargin == 2
     end
 end    
 
+if any(isinf(d))
+    error('CHEBFUN:chebpoly:infdomain','Chebyshev polynomials are defined over an unbounded domain.');
+end
+
 % Loop over n
 f = chebfun;
 for k = 1:length(n)

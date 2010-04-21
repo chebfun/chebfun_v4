@@ -91,7 +91,7 @@ while ii < length(ops)
                 ' a chebfun.'])
             end
             if norm(op.map.par(1:2)-es) > scl.h*1e-15
-                error('CHEBFUN:ctor_adapt:domain','Incosistent domains')
+                error('CHEBFUN:ctor_adapt:domain','Inconsistent domains')
             else
                 fs = op;
                 scl.v = max(scl.v, fs.scl.v);
