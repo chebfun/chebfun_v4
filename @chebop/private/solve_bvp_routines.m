@@ -161,7 +161,7 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
     
     % Add the correction to the current solution
     u = u + lambda*delta;
-    u = jacvar(u);      % Reset the Jacobian of the function
+    u = jacreset(u);      % Reset the Jacobian of the function
     
     % Reset the currentGuessCell variable
     currentGuessCell = [];

@@ -1,26 +1,26 @@
-function varargout = jacvar(varargin)
-% VARARGOUT Enables Jacobian calculation for multivariable functions
+function varargout = jacreset(varargin)
+% JACRESET Resets the Jacobian field of a chebfun such that the .jac field
+% of the output function is the identity operator.
 %
-% U = jacvar(v1,v2,...,vn) returns a quasimatrix which columns are the
+% U = jacreset(v1,v2,...,vn) returns a quasimatrix which columns are the
 % chebfuns v1, v2, ..., vn. The Jacobian for each column function is a 1xn
 % block matrix such that the Jacobian for column i is zero outside block i.
 %
-% [u1, u2, ..., un] = jacvar(v1,v2,...,vn) returns n column chebfuns v1, v2,
+% [u1, u2, ..., un] = jacreset(v1,v2,...,vn) returns n column chebfuns v1, v2,
 % ..., vn. The Jacobian for each function is a 1xn block matrix such that
 % the Jacobian for function i is zero outside block i.
 %
-% U = jacvar(V). Same as U = jacvar(v1,v2,...,vn) but for a quasimatrix V.
+% U = jacreset(V). Same as U = jacreset(v1,v2,...,vn) but for a quasimatrix V.
 %
-% [u1, u2, ..., un] = jacvar(V). Same as jacvar[u1, u2, ..., un] =
-% jacvar(v1,v2,...,vn) but for a quasimatrix V.
+% [u1, u2, ..., un] = jacreset(V). Same as jacreset[u1, u2, ..., un] =
+% jacreset(v1,v2,...,vn) but for a quasimatrix V.
 %
-% See also JACOBIAN
+% See also DIFF
 
-% Copyright 2008 by Asgeir Birkisson. 
 % See http://www.maths.ox.ac.uk/chebfun.
 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+%  Last commit: $Author: hale $: $Rev: 987 $:
+%  $Date: 2009-12-15 10:13:36 +0000 (Tue, 15 Dec 2009) $:
 
 % SKIP?
 % Begin by making sure all chebfuns passed in are column vectors. If not we
@@ -35,7 +35,7 @@ if nargin == 1 && nargout == 1
     
     for i = 1:numOfChebfuns
         jacVector = jacVectors(i,:);
-        quasiMat = [quasiMat jacReset(chebfuns(:,i),jacVector)];
+        quasiMat = [quasiMat jacResetFun(chebfuns(:,i),jacVector)];
     end
     varargout = {quasiMat};
 elseif nargin == 1 && nargout == numel(varargin{1})
@@ -46,7 +46,7 @@ elseif nargin == 1 && nargout == numel(varargin{1})
     
     for i = 1:numOfChebfuns
         jacVector = jacVectors(i,:);
-        varargout{i} = jacReset(chebfuns(:,i),jacVector);
+        varargout{i} = jacResetFun(chebfuns(:,i),jacVector);
     end
 elseif nargout == 1 && nargin > 1
     % Multiple chebfuns -> Quasimatrix
@@ -54,7 +54,7 @@ elseif nargout == 1 && nargin > 1
     quasiMat = [];
     for i = 1:nargin
         jacVector = jacVectors(i,:);
-        quasiMat = [quasiMat jacReset(varargin{i},jacVector)];
+        quasiMat = [quasiMat jacResetFun(varargin{i},jacVector)];
     end
     varargout = {quasiMat};
 elseif nargout == nargin
@@ -64,15 +64,15 @@ elseif nargout == nargin
     jacVectors = eye(nargin);
     for i=1:nargin
         jacVector = jacVectors(i,:);
-        varargout{i} = jacReset(varargin{i},jacVector);
+        varargout{i} = jacResetFun(varargin{i},jacVector);
     end
 else
-    error('CHEBFUN:jacvar:numout','Number of outputs does not match number of inputs');
+    error('CHEBFUN:jacreset:numout','Number of outputs does not match number of inputs');
 end
 
 end
 
-function out =  jacReset(F,jac)
+function out =  jacResetFun(F,jac)
 d = domain(F(1));
 I = eye(d);
 if isnumeric(jac)  % scalars given to represent Jacobians

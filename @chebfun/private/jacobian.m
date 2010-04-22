@@ -7,8 +7,8 @@ function J = jacobian(F,u)
 % Copyright 2008 by Asgeir Birkisson and Toby Driscoll.
 % See http://www.maths.ox.ac.uk/chebfun.
 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+%  Last commit: $Author: driscoll $: $Rev: 907 $:
+%  $Date: 2009-12-04 15:49:08 +0000 (Fri, 04 Dec 2009) $:
 
 % Obtain a list of all ID-s of the chebfun u (concat. the list if u is a
 % quasimatrix
@@ -23,13 +23,13 @@ for k = 1:numel(F)
     % to be the appropriate "semi-identity" chebop (i.e. a chebop that is
     % the identity chebop in one block and the zero chebop in other
     % blocks). The resetting of the Jacobians is done below in the function
-    % jacReset.
+    % jacResetFun.
     idx = find((F(k).ID(1) == IDlist(:,1)) == (F(k).ID(2) == IDlist(:,2)));
     if isempty(idx)              
         % Using subsref and feval for anons
         row = F(k).jacobian(u);
     else  
-        row = jacReset(domain(F(k)),numel(u),idx);
+        row = jacResetFun(domain(F(k)),numel(u),idx);
     end
     if isempty(row)
         row = zeros(domain(F(k)));
@@ -37,7 +37,7 @@ for k = 1:numel(F)
     J = [ J; row ];
 end
 
-function J =  jacReset(d,m,k)
+function J =  jacResetFun(d,m,k) % Takes care of initializing Jacobians
 I = eye(d);
 Z = zeros(d);
 J = [];
