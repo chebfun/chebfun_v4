@@ -52,7 +52,7 @@ w = (1/sum(w))*w;                        % normalise so that sum(w) = 1
 function [x ders] = alg0_Lag(n)
 ders = zeros(n,1);
 xs = 1/(2*n+1);
-n1 = 5;
+n1 = 20;
 n1 = min(n1, n);
 x = zeros(n,1);
 for k = 1:n1

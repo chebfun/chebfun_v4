@@ -26,8 +26,9 @@ if length(g2.vals) == 1 && ~any(g2.exps)
 end
 
 % Deal with exps 
-if any(g2.exps<0), g1 = extract_roots(g1); end
-if any(g1.exps<0), g2 = extract_roots(g2); end
+% NicH removed this 22/04/2010. Not sure it's needed.
+% if any(g2.exps<0), g1 = extract_roots(g1); end
+% if any(g1.exps<0), g2 = extract_roots(g2); end
 exps = sum([g1.exps ; g2.exps]); % (just have to add!)
  
 % Deal with maps

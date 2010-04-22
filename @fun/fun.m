@@ -119,7 +119,7 @@ switch class(op)
         op = str2op(op);
 end
 
-%% Hack for unbounded functions on infinite intervals
+%% Deal with unbounded functions on infinite intervals
 infends = isinf(ends);
 if any(infends)
     % Remember the op, and define a new one including the unbounded map.
@@ -134,17 +134,22 @@ if any(infends)
         if infends(2),  pref.exps(2) = -pref.exps(2); end
     end
     % This is a dirty check for functions which appear to blowup at infinity.
-    bignums = infends.*[-1 1]*1e10;
-    vends = oldop([bignums ends(infends)]);
-    if any(isinf(vends)) || any(isnan(vends(1:2))) %|| any(abs(vends) > 1e5)
-        pref.blowup = blowup;
-        if infends(1) && ~isnan(pref.exps(1)) && ~pref.exps(1)
+    % We check for infinite values, NaN's for very large x, and functions
+    % with a positive (negative) gradient very near plus (minus) infinity.
+    if infends(1) && ~isnan(pref.exps(1)) && ~pref.exps(1)
+        vends = op([-1 -1+2*eps -1+4*eps]);
+        if isinf(vends(1)) || any(isnan(vends(2:3))) || -sign(vends(3))*diff(vends(2:3)) > 0
+            pref.blowup = blowup;
             pref.exps(1) = NaN;
         end
-        if infends(2) && ~isnan(pref.exps(2)) && ~pref.exps(2)
+    end
+    if infends(2) && ~isnan(pref.exps(2)) && ~pref.exps(2)
+        vends = op([1-4*eps 1-2*eps 1]);
+        if isinf(vends(3)) || any(isnan(vends(1:2))) || sign(vends(1))*diff(vends(1:2)) > 0
+            pref.blowup = blowup;
             pref.exps(2) = NaN;
         end
-    end   
+    end
 end
 
 %% Find exponents 

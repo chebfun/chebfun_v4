@@ -71,6 +71,8 @@ elseif nargin == 3
     end
 end
 
+if nargin > 1 && all(d==[-1 1]), scale = false; end
+
 if      strcmpi(kind,'1st'), kind = 1;
 elseif  strcmpi(kind,'2nd'), kind = 2; end
         

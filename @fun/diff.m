@@ -244,6 +244,7 @@ if ~strcmp(g.map.name,'unbounded')
     error('CHEBFUN:fun:diff','No support for nonstandard maps on infinite intervals')
 end
 
+g = replace_roots(g);
 exps = g.exps;
 map = g.map;
 s = map.par(3);
@@ -251,6 +252,7 @@ ends = map.par(1:2);
 g.map = linear([-1 1]);
 g = setexps(g,[0 0]); 
 
+C = 1;
 if all(isinf(ends)) 
     C = s*100./5; % I have absolutely no justification for this...
     % It may be that setexps isn't doing the right thing below.

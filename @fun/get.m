@@ -15,17 +15,13 @@ end
 switch propName
     case 'vals'
         if kind == 1
-            val = bary(chebpts(g.n,1), g.vals); % is this right for general maps?
+            val = bary(chebpts(g.n,1), g.vals, g.map.for(chebpts(g.n,[-1 1])));
         else
             val = g.vals;
         end
     case 'points'
         % Returns mapped Chebyshev points (consistent with vals)
-        if kind == 1
-             val = g.map.for(chebpts(g.n,1));
-        else
-            val = g.map.for(chebpts(g.n));
-        end
+        val = g.map.for(chebpts(g.n,[-1 1],kind));
     case 'n'
         val = g.n;
     case 'scl'
@@ -40,17 +36,19 @@ switch propName
         val = g.exps;
     case 'lval'  % value at left endpoint
         if g.exps(1) < 0  % inf case, need to check sign
-            val = inf*sign(g.vals(1));
-        elseif g.exps(1) > 0, val = 0;
+            if g.n > 5
+                val = inf*sign(mean(g.vals(1:2)));
+            else
+                val = inf*sign(g.vals(1));
+            end
+        elseif g.exps(1) > 0
+            val = 0;
         else
-            %rescl = (2/diff(g.map.par(1:2)))^-g.exps(2); % scale (see feval)
-            %val = g.vals(1).*diff(g.map.par(1:2)).^g.exps(2)/rescl;
-            if isempty(g.vals), val = NaN;
+            if isempty(g.vals)
+                val = NaN;
             elseif all(isfinite(g.map.par(1:2)))
-                if ~g.exps(2)
-                    val = g.vals(1);
-                else
-                    val = g.vals(1)*2^g.exps(2); 
+                if ~g.exps(2), val = g.vals(1);
+                else           val = g.vals(1)*2^g.exps(2); 
                 end
             else
                 val = feval(g,g.map.par(1));
@@ -58,17 +56,19 @@ switch propName
         end
     case 'rval' % value at right endpoint 
         if g.exps(2) < 0  % inf case, need to check sign
-            val = inf*sign(g.vals(end));
-        elseif g.exps(2) > 0, val = 0;
+            if g.n > 5
+                val = inf*sign(mean(g.vals(end-1:end)));
+            else
+                val = inf*sign(g.vals(end));
+            end
+        elseif g.exps(2) > 0
+            val = 0;
         else          
-           % rescl = (2/diff(g.map.par(1:2)))^-g.exps(1); % scale (see feval) 
-           % val = g.vals(end)*diff(g.map.par(1:2)).^g.exps(1)/rescl;
-            if isempty(g.vals), val = NaN;
+            if isempty(g.vals)
+                val = NaN;
             elseif all(isfinite(g.map.par(1:2)))
-                if ~g.exps(1)
-                    val = g.vals(end);
-                else
-                    val = g.vals(end)*2^g.exps(1); 
+                if ~g.exps(1), val = g.vals(end);
+                else           val = g.vals(end)*2^g.exps(1); 
                 end
             else
                 val = feval(g,g.map.par(2));
