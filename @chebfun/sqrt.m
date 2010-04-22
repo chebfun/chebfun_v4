@@ -9,7 +9,7 @@ function Fout = sqrt(F)
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = sqrtcol(F(k));
-    Fout(k).jacobian = anon('@(u) (1/2)*diag(1./Fout)*jacobian(F,u)',{'Fout','F'},{Fout(k) F(k)});
+    Fout(k).jacobian = anon('@(u) (1/2)*diag(1./Fout)*diff(F,u)',{'Fout','F'},{Fout(k) F(k)});
     Fout(k).ID = newIDnum;
 end
 

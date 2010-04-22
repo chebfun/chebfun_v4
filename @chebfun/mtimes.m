@@ -95,5 +95,5 @@ end
 f.imps = a*f.imps;
 f.scl = abs(a)*f.scl;
 
-f.jacobian = anon('@(u) a*jacobian(f,u)',{'a' 'f'},{a f});
+f.jacobian = anon('@(u) a*diff(f,u)',{'a' 'f'},{a f});
 f.ID = newIDnum;

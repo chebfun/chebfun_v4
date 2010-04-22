@@ -21,7 +21,7 @@ elseif isa(F1,'chebfun')
     Fout = F1;
     for k = 1:numel(F1)
         Fout(k) = powercol(F1(k),F2);
-        Fout(k).jacobian = anon('@(u) F2*diag(F1.^(F2-1))*jacobian(F1,u)',{'F1', 'F2'},{F1(k) F2});
+        Fout(k).jacobian = anon('@(u) F2*diag(F1.^(F2-1))*diff(F1,u)',{'F1', 'F2'},{F1(k) F2});
         Fout(k).ID = newIDnum();
     end
 else
@@ -29,7 +29,7 @@ else
     Fout = F2;
     for k = 1:numel(F2)
         Fout(k) = powercol(F1,F2(k));
-        Fout(k).jacobian = anon('@(u) (diag(F1.^F2)*log(F1))*jacobian(F2,u)',{'F1', 'F2'},{F1 F2(k)});
+        Fout(k).jacobian = anon('@(u) (diag(F1.^F2)*log(F1))*diff(F2,u)',{'F1', 'F2'},{F1 F2(k)});
         Fout(k).ID = newIDnum();
     end
 end
@@ -42,7 +42,7 @@ if (isa(f,'chebfun') && isa(b,'chebfun'))
         error('CHEBFUN:powercol:interval','F and G must be defined in the same interval')
     end
     fout = comp(f,@power,b);
-    fout.jacobian = anon('@(u) diag(diag(b)*f.^(b-1))*jacobian(f,u) + diag(diag(f.^b)*log(f))*jacobian(b,u)',{'f' 'b'},{f b});
+    fout.jacobian = anon('@(u) diag(diag(b)*f.^(b-1))*diff(f,u) + diag(diag(f.^b)*log(f))*diff(b,u)',{'f' 'b'},{f b});
     fout.ID = newIDnum();
 else
     if isa(f,'chebfun') 

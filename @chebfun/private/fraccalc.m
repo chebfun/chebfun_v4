@@ -75,8 +75,8 @@ newends = ends;
 % the result
 v = 1./gamma(alpha)*chebfun(@(x) sum(h(x)), newends ,'vectorize','exps',newexps,'maxdegree',64);
 
-% jacobian data
-v.jacobian = anon(' @(u) diff(domain(f),n) * jacobian(f,u)',{'f' 'n'},{u alpha});
+% diff data
+v.jacobian = anon(' @(u) diff(domain(f),n) * diff(f,u)',{'f' 'n'},{u alpha});
 v.ID = newIDnum;
 
 return

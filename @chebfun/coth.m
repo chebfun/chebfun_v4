@@ -7,6 +7,6 @@ function Fout = coth(F)
 
 Fout = comp(F, @(x) coth(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('@(u) -diag(csch(F).^2)*jacobian(F,u)',{'F'},{F(k)});
+    Fout(k).jacobian = anon('@(u) -diag(csch(F).^2)*diff(F,u)',{'F'},{F(k)});
     Fout(k).ID = newIDnum();
 end

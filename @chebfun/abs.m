@@ -9,7 +9,7 @@ function Fout = abs(F)
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = abscol(F(k));
-    Fout(k).jacobian = anon('@(u) diag(sign(Fout))*jacobian(Fout,u)',{'Fout'},{Fout(k)});
+    Fout(k).jacobian = anon('@(u) diag(sign(Fout))*diff(Fout,u)',{'Fout'},{Fout(k)});
     Fout(k).ID = newIDnum;
 end
 
@@ -97,7 +97,7 @@ end
 %         end
 %     end
 %     
-%     Fout(k).jacobian = anon('@(u) diag(sign(fout))*jacobian(fout,u)',{'fout'},{Fout});
+%     Fout(k).jacobian = anon('@(u) diag(sign(fout))*diff(fout,u)',{'fout'},{Fout});
 % 	Fout(k).ID = newIDnum;
 %     
 % end

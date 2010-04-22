@@ -7,6 +7,6 @@ function Fout = acosh(F)
 
 Fout = comp(F, @(x) acosh(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('@(u) diag(1./sqrt(F.^2-1))*jacobian(F,u)',{'F'},{F(k)});
+    Fout(k).jacobian = anon('@(u) diag(1./sqrt(F.^2-1))*diff(F,u)',{'F'},{F(k)});
     Fout(k).ID = newIDnum();
 end

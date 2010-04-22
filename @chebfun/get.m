@@ -23,7 +23,7 @@ switch propName
         val = f.ends;
     case 'imps'
         val = f.imps;
-    case 'jacobian'
+    case 'diff'
             val = {f.jacobian};
     case 'nfuns'
         val = f.nfuns;        

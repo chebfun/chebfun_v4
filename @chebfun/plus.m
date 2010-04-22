@@ -70,7 +70,7 @@ else
     end
     h.scl = scl;
 
-    h.jacobian = anon('@(u) jacobian(f1,u)+jacobian(f2,u)',{'f1' 'f2'},{f1 f2});
+    h.jacobian = anon('@(u) diff(f1,u)+diff(f2,u)',{'f1' 'f2'},{f1 f2});
     h.ID = newIDnum();
     
 end

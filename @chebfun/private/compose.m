@@ -22,19 +22,19 @@ if numel(g) == 1
     for k = 1:numel(f)
         h(k) = composecol(f(k),g);
         % AD information when using compose
-        h(k).jacobian = anon('@(u) jacobian(f,g)*jacobian(g,u)',{'f' 'g'},{f(k),g});
+        h(k).jacobian = anon('@(u) diff(f,g)*diff(g,u)',{'f' 'g'},{f(k),g});
         h(k).ID = newIDnum;
     end
 elseif numel(f) == 1
     for k = 1:numel(g)
         h(k) = composecol(f,g(k));
-        h(k).jacobian = anon('@(u) jacobian(f,g)*jacobian(g,u)',{'f' 'g'},{f,g(k)});
+        h(k).jacobian = anon('@(u) diff(f,g)*diff(g,u)',{'f' 'g'},{f,g(k)});
         h(k).ID = newIDnum;
     end
 elseif size(f) == size(g)
     for k = 1:numel(f)
         h(k) = composecol(f(k),g(k));
-        h(k).jacobian = anon('@(u) jacobian(f,g)*jacobian(g,u)',{'f' 'g'},{f(k),g(k)});
+        h(k).jacobian = anon('@(u) diff(f,g)*diff(g,u)',{'f' 'g'},{f(k),g(k)});
         h(k).ID = newIDnum;
     end
 else

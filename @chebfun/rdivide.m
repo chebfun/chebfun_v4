@@ -72,7 +72,7 @@ if ~isempty(newbkpts)
 elseif isa(f1,'double')    
     if f1 == 0
 		fout = chebfun(0, f2.ends([1,end])); 
-      	fout.jacobian = anon('@(u) 0*jacobian(f2,u)',{'f2'},{f2});
+      	fout.jacobian = anon('@(u) 0*diff(f2,u)',{'f2'},{f2});
       	fout.ID = newIDnum();
     else   
         exps = get(f2,'exps');
@@ -102,7 +102,7 @@ elseif isa(f1,'double')
         if fout.nfuns == f2.nfuns
             fout.imps = f1./f2.imps;
         end
-        fout.jacobian = anon('@(u) diag(-f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});
+        fout.jacobian = anon('@(u) diag(-f1./f2.^2)*diff(f2,u)',{'f1','f2'},{f1 f2});
         fout.ID = newIDnum();
     end
 else
@@ -138,7 +138,7 @@ else
         fout.imps = f1.imps./f2.imps;
     end
     
-    fout.jacobian = anon('@(u) diag(1./f2)*jacobian(f1,u) - diag(f1./f2.^2)*jacobian(f2,u)',{'f1','f2'},{f1 f2});
+    fout.jacobian = anon('@(u) diag(1./f2)*diff(f1,u) - diag(f1./f2.^2)*diff(f2,u)',{'f1','f2'},{f1 f2});
     fout.ID = newIDnum();
 end
 

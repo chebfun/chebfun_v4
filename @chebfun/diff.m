@@ -12,7 +12,7 @@ function Fout = diff(F,n)
 % DIFF(F,U) where U is a chebfun returns the Jacobian of the chebfun F 
 % with respect to the chebfun U. Either F, U, or both can be a quasimatrix.
 %
-% See also chebfun/fracdiff, chebfun/jacobian
+% See also chebfun/fracdiff, chebfun/diff
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -42,7 +42,7 @@ tol = max(chebfunpref('eps')*10, 1e-14) ;
 F = f;
 funs = f.funs;
 ends = get(f,'ends');
-F.jacobian = anon(' @(u) diff(domain(f),n) * jacobian(f,u)',{'f' 'n'},{f n});
+F.jacobian = anon(' @(u) diff(domain(f),n) * diff(f,u)',{'f' 'n'},{f n});
 F.ID = newIDnum;
 
 for j = 1:n % loop n times for nth derivative

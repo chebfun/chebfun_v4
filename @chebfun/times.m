@@ -97,7 +97,7 @@ imps(1,:) = tmp;
 % end
 
 % Set chebfun: (use f)
-f.jacobian = anon('@(u) diag(f)*jacobian(g,u) + diag(g)*jacobian(f,u)',{'f' 'g'},{f g});
+f.jacobian = anon('@(u) diag(f)*diff(g,u) + diag(g)*diff(f,u)',{'f' 'g'},{f g});
 f.ID = newIDnum();
 
 % update scales in funs:

@@ -95,5 +95,5 @@ vals(f.nfuns+1) = get(funs(f.nfuns),'rval');
 fout = set(f, 'funs', funs); 
 fout.imps = [vals; f.imps(3:end,:)];
 
-fout.jacobian = anon('@(u) cumsum(domain(f))*jacobian(f,u)',{'f'},{f});
+fout.jacobian = anon('@(u) cumsum(domain(f))*diff(f,u)',{'f'},{f});
 fout.ID = newIDnum();
