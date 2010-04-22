@@ -34,7 +34,7 @@ h2 = diff(g2);
 % subplot(2,1,1)
 % plot(g,'b',g2,'--r')
 % subplot(2,1,2)
-plot(h,'b',h2,'--r')
+% plot(h,'b',h2,'--r')
 pass(3) = norm(g2-restrict(g,domain(g2)));
 pass(4) = norm(h2-restrict(h,domain(h2)));
 

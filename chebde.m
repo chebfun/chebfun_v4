@@ -1,5 +1,5 @@
-function varargout = chebpde(varargin)
-% CHEBPDE Help for the chebop PDE GUI
+function varargout = chebde(varargin)
+% CHEBDE Help for the chebop PDE GUI
 %
 % Under construction
 
@@ -8,8 +8,8 @@ function varargout = chebpde(varargin)
 gui_Singleton = 1;
 gui_State = struct('gui_Name', mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @chebpde_OpeningFcn, ...
-    'gui_OutputFcn',  @chebpde_OutputFcn, ...
+    'gui_OpeningFcn', @chebde_OpeningFcn, ...
+    'gui_OutputFcn',  @chebde_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -23,15 +23,15 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before chebpde is made visible.
-function chebpde_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before chebde is made visible.
+function chebde_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to chebpde (see VARARGIN)
+% varargin   command line arguments to chebde (see VARARGIN)
 
-% Choose default command line output for chebpde
+% Choose default command line output for chebde
 handles.output = hObject;
 
 initialisefigures(handles)
@@ -45,7 +45,7 @@ handles.hasSolution = 0;
 % This will be set to 1 when we want to interupt the computation.
 set(handles.slider_pause,'Value',false)
 
-% Load an example depending on the user input (argument to the chebpde
+% Load an example depending on the user input (argument to the chebde
 % call). If no argument is passed, use a random example (which we will get
 % if the exampleNumber is negative).
 if isempty(varargin)
@@ -57,17 +57,17 @@ temppath = pwd;
 chebfunpath = fileparts(which('chebtest.m'));
 guifilepath = fullfile(chebfunpath,'guifiles');
 cd(guifilepath);
-loadexample(handles,exampleNumber,'pde')
+loadexample(handles,exampleNumber,'bvp')
 cd(temppath)
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes chebpde wait for user response (see UIRESUME)
+% UIWAIT makes chebde wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 % --- Outputs from this function are returned to the command line.
-function varargout = chebpde_OutputFcn(hObject, eventdata, handles)
+function varargout = chebde_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -162,7 +162,11 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
         chebfunpath = fileparts(which('chebtest.m'));
         guifilepath = fullfile(chebfunpath,'guifiles');
         cd(guifilepath);
-        handles = solveGUIPDE(handles);
+        if get(handles.button_bvp,'Value')
+            handles = solveGUIBVP(handles);
+        else
+            handles = solveGUIPDE(handles);
+        end
         cd(temppath)
     % catch ME
     %     error(['chebfun:PDEgui','Incorrect input for differential ' ...
@@ -445,26 +449,45 @@ function button_figures_Callback(hObject, eventdata, handles)
 % hObject    handle to button_figures (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-u = handles.latestSolution;
-% latestNorms = handles.latestNorms;
-tt = handles.latestSolutionT;
 
-figure
-if ~iscell(u)
+
+if get(handles.button_bvp,'Value');
+    latestSolution = handles.latestSolution;
+    latestNorms = handles.latestNorms;
+
+    figure;
     subplot(1,2,1);
-    plot(u(:,end))
-    title('Solution at final time.')
+    plot(latestSolution), title('Solution at end of iteration')
+
+
     subplot(1,2,2);
-    surf(u,tt,'facecolor','interp')
-else
-    v = chebfun;
-    for k = 1:numel(u)
-        uk = u{k};
-        v(:,k) = uk(:,end);
+    semilogy(latestNorms,'-*'),title('Norm of updates'), xlabel('Number of iteration')
+    if length(latestNorms) > 1
+        XTickVec = 1:max(floor(length(latestNorms)/5),1):length(latestNorms);
+        set(gca,'XTick', XTickVec), xlim([1 length(latestNorms)]), grid on
+    else % Don't display fractions on iteration plots
+        set(gca,'XTick', 1)
     end
-    plot(v);
+else
+    u = handles.latestSolution;
+    % latestNorms = handles.latestNorms;
+    tt = handles.latestSolutionT;
+    figure
+    if ~iscell(u)
+        subplot(1,2,1);
+        plot(u(:,end))
+        title('Solution at final time.')
+        subplot(1,2,2);
+        surf(u,tt,'facecolor','interp')
+    else
+        v = chebfun;
+        for k = 1:numel(u)
+            uk = u{k};
+            v(:,k) = uk(:,end);
+        end
+        plot(v);
+    end
 end
-% set(gcf,'Position',[270   305   685   299]);
 
 % --- Executes during object creation, after setting all properties.
 function input_RBC_RHS_CreateFcn(hObject, eventdata, handles)
@@ -661,7 +684,7 @@ function button_export_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of button_export
 
 % Change to the guifiles path for neater code    
-try   
+% try   
     temppath = pwd;
     chebfunpath = fileparts(which('chebtest.m'));
     guifilepath = fullfile(chebfunpath,'guifiles');
@@ -669,10 +692,10 @@ try
     cd(guifilepath)
     export(handles);
     cd(temppath)
-catch ME
-    cd(temppath)
-    ME
-end
+% catch ME
+%     cd(temppath)
+%     ME
+% end
 
 
 
@@ -713,17 +736,28 @@ set(handles.button_solve,'String','Solve')
 DE = '';
 demoString = [];
 counter = 1;
-while ~strcmp(DE,'0')
-    [a b tt DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(counter,'demo');
-    counter = counter+1;
-    demoString = [demoString,{name}];
+
+if get(handles.button_bvp,'Value')
+    type = 'bvp';
+    while ~strcmp(DE,'0')
+        [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(counter,'demo');
+        counter = counter+1;
+        demoString = [demoString,{name}];
+    end
+else
+    type = 'pde';
+    while ~strcmp(DE,'0')
+        [a b tt DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(counter,'demo');
+        counter = counter+1;
+        demoString = [demoString,{name}];
+    end
 end
 demoString(end) = []; % Throw away the last demo since it's the flag 0
 [selection,okPressed] = listdlg('PromptString','Select a demo:',...
     'SelectionMode','single',...
     'ListString',demoString);
 if okPressed
-    loadexample(handles,selection,'pde');
+    loadexample(handles,selection,type);
 end
 cd(temppath)
 
@@ -762,3 +796,41 @@ cla(handles.fig_sol,'reset');
 title('Solutions'), axis off
 cla(handles.fig_norm,'reset');
 title('Updates'), axis off
+
+
+% --- Executes on button press in button_bvp.
+function button_bvp_Callback(hObject, eventdata, handles)
+% hObject    handle to button_bvp (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_bvp
+set(handles.button_pde,'Value',0)
+set(handles.uipanel1,'Visible','on')
+set(handles.panel_updates,'Visible','on')
+set(handles.text_pause1,'Visible','on')
+set(handles.text_pause2,'Visible','on')
+set(handles.input_pause,'Visible','on')
+set(handles.slider_pause,'Visible','on')
+
+set(handles.text_timedomain,'Visible','off')
+set(handles.timedomain,'Visible','off')
+
+
+% --- Executes on button press in button_pde.
+function button_pde_Callback(hObject, eventdata, handles)
+% hObject    handle to button_pde (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_pde
+set(handles.button_bvp,'Value',0)
+set(handles.uipanel1,'Visible','off')
+set(handles.panel_updates,'Visible','off')
+set(handles.text_pause1,'Visible','off')
+set(handles.text_pause2,'Visible','off')
+set(handles.input_pause,'Visible','off')
+set(handles.slider_pause,'Visible','off')
+
+set(handles.text_timedomain,'Visible','on')
+set(handles.timedomain,'Visible','on')

@@ -1,11 +1,15 @@
-function loadexample(handles,exampleNumber)   
-[a,b,tt,DE,DErhs,LBC,LBCrhs,RBC,RBCrhs,guess,tol] = pdeexamples(exampleNumber);
+function loadexample(handles,exampleNumber,type)  
 
+if strcmp(type,'bvp')
+    [a,b,DE,DErhs,LBC,LBCrhs,RBC,RBCrhs,guess,tol] = bvpexamples(exampleNumber);
+else
+    [a,b,tt,DE,DErhs,LBC,LBCrhs,RBC,RBCrhs,guess,tol] = pdeexamples(exampleNumber);
+    set(handles.timedomain,'String',tt);
+end
 
 % Fill the String fields of the handles
 set(handles.dom_left,'String',a);
 set(handles.dom_right,'String',b);
-set(handles.timedomain,'String',tt);
 set(handles.input_DE,'String',DE);
 set(handles.input_DE_RHS,'String',DErhs);
 set(handles.input_LBC,'String',LBC);
