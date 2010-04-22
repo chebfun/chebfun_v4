@@ -34,7 +34,7 @@ normf = norm(f);
 delta = 1;
 it = 1;
 deltamin = delta;
-while (delta/normf > tol) & it <=maxit
+while (delta/normf > tol) && it <=maxit
     fk = feval(f,xk);
     w = bary_weights(xk);
     h = (w'*fk)/(w'*sigma);             % levelled reference error  
@@ -75,7 +75,7 @@ er = [feval(e,rr(pos));v*h];
 er = er(m);                             
 s = r(1); es = er(1);                     % pts and vals to be kept
 for i = 2:length(r)
-  if sign(er(i)) == sign(es(end)) &...    % from adjacent pts w/ same sign 
+  if sign(er(i)) == sign(es(end)) &&...    % from adjacent pts w/ same sign 
           abs(er(i))>abs(es(end))         % keep the one w/ largest val
       s(end) = r(i); es(end) = er(i);
   elseif sign(er(i)) ~= sign(es(end))     % if sign changes, concatenate

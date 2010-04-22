@@ -139,8 +139,8 @@ else                              % rational case
     if rflag, % f is rational function (at least up to machine precision)
       [p,q,r] = chebpade(f,m-k,n-k);
       s = eps;
-      warning('chebfun:cf:chebpade', ...
-        'Functions looks close to rational, switching to CHEBPADE');
+      %warning('chebfun:cf:chebpade', ...
+      %  'Functions looks close to rational, switching to CHEBPADE');
       return;
     end
     nnew = n - k;

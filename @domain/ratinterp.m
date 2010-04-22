@@ -43,12 +43,13 @@ if nargin == 5
     n = varargin{1};
     xi = varargin{2};
     type = 'arbitrary';
-    if length(xi) ~= m+n+1
-        error('DOMAIN:ratinterp:input',['The vector of nodes must be of length M+N+1 = ',num2str(N+1),'.']);
-    end
+    %if length(xi) ~= m+n+1
+    %    error('DOMAIN:ratinterp:input',['The vector of nodes must be of length M+N+1 = ',num2str(N+1),'.']);
+    %end
 end
 % init some constants
-N = m+n;
+%N = m+n;
+N = length(xi)-1;
 xi = xi(:);
 fx = f(xi);
 if strcmp(type,'chebyshev')
@@ -73,7 +74,7 @@ if strcmp(type,'chebyshev')
     % get the null-space of Z
     alfa = null( Z );
     % did we get only one solution? try to restrict alfa if we did...
-    if size(alfa,2) > 1
+    if size(alfa,2)>1
         warning('DOMAIN:ratinterp','Denominator computed to be of degree %i.',n-size(alfa,2)+1);
         R = qr( flipud( alfa )' );
     	alfa = flipud( R(end,size(alfa,2):end)' );
@@ -95,13 +96,14 @@ elseif strcmp(type,'arbitrary')
     % construct the complex nodes and weights
     xk = (2*xi-a-b)/(b-a);                       % map [a,b] to [-1,1]
     % construct the vandermonde-linke matrix Z
-    Z = chebpoly(0:n); Z = Z(xk,:);
+    Z = chebpoly(0:N-m); Z = Z(xk,:);    
     % get the null-space of L*Z and make qk out of it
     wxk = bary_weights(xk);
-    M = Z(:,1:n).' * diag(fx.*wxk) * Z;
+    M = Z(:,1:N-m).' * diag(fx.*wxk) * Z(:,1:n+1);
     [u,s,v] = svd(M);
-    qk = Z * v(:,end);
+    qk = Z(:,1:n+1) * v(:,end);
     % construct the interpolants
+    % p = chebfun(@(x) bary(x,qk.*fx,xi,wxk),d.ends([1,end]),m+1);
     p = chebfun(@(x) bary(x,qk.*fx,xi,wxk),d.ends([1,end]),m+1);
     q = chebfun(@(x) bary(x,qk,xi,wxk),d.ends([1,end]),n+1);
     r_handle = @(x) bary(x,fx,xi,qk.*wxk);
