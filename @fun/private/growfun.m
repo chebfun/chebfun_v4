@@ -131,12 +131,16 @@ if any(isinf([a b]))
 end
 
 if ~resample && ~adapt     % SINGLE SAMPLING
-   
     % Initialise
     ind = 1; v = [];
     x = chebpts(kk(ind),2);
-    xvals = g.map.for(x);        
-    vnew = op(xvals); 
+    xvals = g.map.for(x);   
+    if isfield(pref,'extrapolate') && pref.extrapolate && ~pref.splitting
+    % Avoid evaluating at ends if is extrapolation is forced.
+    % Although we can't do this if splitting is on.
+        xvals([1 end]) = xvals([2 end-1]); 
+    end
+    vnew = op(xvals);
     % Loop over the vector of lengths
     while kk(ind)<=kk(end)
         % Update v (which stores the vals at the Chebyshev points)
@@ -144,17 +148,17 @@ if ~resample && ~adapt     % SINGLE SAMPLING
             v = vnew;
         else
             v(1:2:kk(ind)) = v;
-            v([1,2:2:end-1,end]) = vnew;
+            v(2:2:end-1) = vnew;
         end
         % Update g
         g = set(g,'vals', v);               % Set the values (and vscl)
         g = extrapolate(g,pref,x);          % Extrapolate if need be
         [ish, g] = ishappy(op,g,pref);      % Check for happiness
-        if ish || ind == length(kk), break, end % Ether happy, or failed.
+        if ish || ind == length(kk), break, end % Either happy, or failed.
         % New points and vals
         ind = ind + 1;
         x = chebpts(kk(ind),pref.chebkind);
-        xvals = g.map.for(x([1,2:2:end-1,end]));
+        xvals = g.map.for(x(2:2:end-1));
         vnew = op(xvals);            
     end   
 
@@ -176,8 +180,14 @@ else                      % DOUBLE SAMPLING
         else     % Standard case
             x = chebpts(k,pref.chebkind);
             xvals = g.map.for(x);
-            g = set(g,'vals',op(xvals));
-            g = extrapolate(g,pref,x);
+            if isfield(pref,'extrapolate') && pref.extrapolate
+                vals = op(xvals(2:k-1));
+                g = set(g,'vals',[NaN ; vals(:) ; NaN]);
+                g = extrapolate(g,pref,x);
+            else
+                g = set(g,'vals',op(xvals));
+                g = extrapolate(g,pref,x);
+            end
         end
         [ish, g] = ishappy(op,g,pref);
         if ish, break, end

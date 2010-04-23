@@ -25,9 +25,6 @@ function f = chebfun(varargin)
 % CHEBFUN(F,'map',{MAPNAME,MAPPARS}) allows the use of mapped Chebyshev
 % expansions. See help chebfun/maps for more information.
 %
-% CHEBFUN(F,'scale',SCALE) defines the relative accuracy of the constructed
-% chebfun relative to the value given by SCALE.
-%
 % CHEBFUN(chebpolyval([C1,...,CN])) constructs a chebfun corresponding to the
 % Chebyshev polynomial P(x) = C1*T_{N-1}(x)+C2*T_{N-2}(x)+...+CN. One can use 
 % CHEBFUN([C1,...,CN],'coeffs').
@@ -42,29 +39,41 @@ function f = chebfun(varargin)
 % is NaN the length of the representation will be determined automatically.
 % Note, the ordering of ENDS and NP is important.
 %
-% CHEBFUN(CHEBS,ENDS) construct a piecewise smooth chebfun with m pieces
+% CHEBFUN(CHEBS,ENDS) constructs a piecewise smooth chebfun with m pieces
 % from a cell array chebs of size m x 1.  Each entry CHEBS{i} is a function 
 % defined on [ENDS(i) ENDS(i+1)] represented by a string, a function handle 
 % or a number.  CHEBFUN(CHEBS,ENDS,NP) specifies the number NP(i) of 
 % Chebyshev points for the construction of the function in CHEBS{i}.
 %
-% CHEBFUN creates an empty fun.
-%
-% F = CHEBFUN(...) returns an object F of type chebfun.  A chebfun consists
+% G = CHEBFUN(...) returns an object G of type chebfun.  A chebfun consists
 % of a vector of 'funs', a vector 'ends' of length m+1 defining the
 % intervals where the funs apply, and a matrix 'imps' containing information
 % about possible delta functions at the breakpoints between funs.
 %
-% F = CHEBFUN(...,PREFNAME,PREFVAL) returns a chebfun using the preference
+% CHEBFUN creates an empty chebfun.
+%
+% G = CHEBFUN(...,PREFNAME,PREFVAL) returns a chebfun using the preference
 % PREFNAME with value specified by PREFVAL. See chebfunpref for possible
 % preferences.
 %
+% Advanced features:
+%
+% CHEBFUN(F,'scale',SCALE) defines the relative accuracy of the constructed
+% chebfun relative to the value given by SCALE.
+%
 % CHEBFUN(F,'vectorize') wraps F in a for loop. This is useful when F
-% cannot be evaluated with a vector input.
+% cannot be evaluated with a vector input. CHEBFUN(F,'vectorcheck','off') 
+% turns off the automatic checking for vector input.
 %
 % CHEBFUN(F,'trunc',N) returns an N point chebfun constructed by
 % constructing the Chebyshev series at degree N-1, rather than by
 % interpolation at Chebyshev points. 
+%
+% CHEBFUN(F,'extrapolate','on') prevents the constructor from evaluating
+% the function F at the endpoints of the domain. This may also be achieved
+% with CHEBFUN(F,'chebkind','1st','resampling','on') (which uses Chebyshev
+% points of the 1st kind during the construction process), although this 
+% functionality is still experimental.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 % Copyright 2002-2009 by The Chebfun Team.
@@ -91,18 +100,22 @@ else
     while k <= nargin
         if ischar(varargin{k})
             varargin{k} = lower(varargin{k});
+            
+            % If ON or OFF used -> change to true or false
+            if k < nargin
+                value = varargin{k+1};
+                if strcmpi(value,'on')       value = true;
+                elseif strcmpi(value,'off')  value = false;
+                end
+            end
             if strcmpi('factory',varargin{k})
                 pref = chebfunpref('factory');
                 k = k+1;
             elseif  any(strcmp(fieldnames(pref),varargin{k}))
                 % Is the argument a preference name?
-                value = varargin{k+1};
                 if ischar(value)
-                    % If ON or OFF used -> change to true or false
-                    if strcmpi(value,'on')       value = true;
-                    elseif strcmpi(value,'off')  value = false;
                     % Factory values from chebfunpref
-                    elseif strcmpi(value,'factory')
+                    if strcmpi(value,'factory')
                         value = chebfunpref(varargin{k},'factory');
                     else
                         error('CHEBFUN:chebfun:prefval', ...
@@ -112,37 +125,40 @@ else
                 pref.(varargin{k}) = value;
                 k = k+2;
             elseif strcmpi('map',varargin{k})
-                pref.map =  varargin{k+1};
+                pref.map =  value;
                 k = k+2;             
             elseif strcmpi('exps',varargin{k})
-                pref.exps = varargin{k+1};
+                pref.exps = value;
                 k = k+2;
-            elseif strcmpi('vectorize',varargin{k}) || strcmp('vectorise',varargin{k})
+            elseif strncmpi('vectori',varargin{k},7)
                 pref.vectorize = 0;
                 k = k+1;  
-            elseif strcmpi('coeffs',varargin{k}) || strcmp('coefficients',varargin{k})
+            elseif strncmpi('coeff',varargin{k},5)
                 pref.coeffs = 1;
                 k = k+1; 
-            elseif strcmpi('trunc',varargin{k}) || strcmp('truncate',varargin{k})
-                pref.trunc = varargin{k+1};
+            elseif strncmpi('trunc',varargin{k},5)
+                pref.trunc = value;
+                if pref.trunc, pref.splitting = true; end
                 k = k+2;                 
             elseif strcmpi('vectorcheck',varargin{k})
-                pref.vectorcheck = varargin{k+1};
+                pref.vectorcheck = value;
                 k = k+2;                  
             elseif strcmpi('extrapolate',varargin{k})
-                pref.extrapolate = varargin{k+1};
+                pref.extrapolate = value;
                 k = k+2;                  
             elseif strcmpi('length',varargin{k}) || strcmpi('n',varargin{k})
-                pref.n = varargin{k+1};
+                pref.n = value;
                 k = k+2;
             elseif strcmpi('scale',varargin{k})
-                pref.scale = varargin{k+1};
+                pref.scale = value;
                 k = k+2;    
             elseif strcmpi('chebkind',varargin{k}) || strcmpi('kind',varargin{k})
-                pref.chebkind = varargin{k+1};
+                if      strncmpi(value,'1st',1), value = 1;
+                elseif  strncmpi(value,'2nd',1), value = 2; end
+                pref.chebkind = value;
                 k = k+2;                    
             elseif strcmpi('singmap',varargin{k})
-                pref.sings = varargin{k+1};
+                pref.sings = value;
                 k = k+2;               
             else
                 argin{j} = varargin{k};

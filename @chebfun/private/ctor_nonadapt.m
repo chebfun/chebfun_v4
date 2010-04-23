@@ -104,6 +104,9 @@ for ii = 1:length(ops)
             if op.ends(1) > a || op.ends(end) < b
                 error('CHEBFUN:ctor_nonadapt:domain','chebfun is not defined in the domain.')
             end
+            if isfield(pref,'trunc')
+                error('CHEBFUN:ctor_nonadapt:trunc','''trunc'' cannot be used in nonadaptive call.')
+            end
             pref.n = n(ii);
             if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
             if ~isfield(pref,'map')

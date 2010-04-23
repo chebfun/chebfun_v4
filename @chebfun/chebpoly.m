@@ -19,7 +19,7 @@ function out = chebpoly(f,ii,N)
 % Copyright 2002-2009 by The Chebfun Team. 
  
 if numel(f) > 1, 
-    error('CHEBFUN:chebpoly:quasi','CHEBPOLY does not handle chebfun quasi-matrices')
+    error('CHEBFUN:chebpoly:quasi','CHEBPOLY does not handle chebfun quasi-matrices.')
 end
 if nargin < 2,  
     if f.nfuns > 1
@@ -30,11 +30,14 @@ if nargin < 2,
     ii = 1; 
 end
 if ii > f.nfuns
-    error('CHEBFUN:chebpoly:nfuns2',['Chebfun only has ',num2str(f.nfuns),' funs']);
+    error('CHEBFUN:chebpoly:nfuns2',['Chebfun only has ',num2str(f.nfuns),' funs.']);
 end
 if nargin < 3, N = []; end
 if ii == 0 && isempty(N)
     error('CHEBFUN:chebpoly:inputs','Input N must not be empty if I is zero.');
+end
+if ~isempty(N) && ~isnumeric(N)
+    error('CHEBFUN:chebpoly:inputN','Input N must be a scalar.');
 end
 
 % No truncating or padding. So just default behavior.

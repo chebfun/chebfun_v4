@@ -14,7 +14,7 @@ function [x w] = chebpts(n,d,kind)
 %   [X W] = CHEBPTS(F) returns the Chebyshev nodes and weights
 %   corresponding to the domain and length of the chebfun F.
 %
-%   CHEBPTS(N,KIND) or CHEBPTS(N,D,KIND) returns Chebysehv points of the
+%   CHEBPTS(N,KIND) or CHEBPTS(N,D,KIND) returns Chebyshev points of the
 %   first kind if KIND = 1 and second kind if KIND = 2 (default). 
 %
 %   See also legpts and jacpts.

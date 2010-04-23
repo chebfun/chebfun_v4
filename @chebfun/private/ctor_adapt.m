@@ -65,10 +65,7 @@ if isfield(pref,'exps')
     end
 end
 
-% NOTE: Don't use an i variable, as this can mess 
-% up function construction from string inputs!
 ii = 0;
-% for ii = 1:length(ops)
 while ii < length(ops)
     ii = ii + 1;
     op = ops{ii};
@@ -114,7 +111,11 @@ while ii < length(ops)
                  warning('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain')
             end
             if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
-            [fs,es,scl] = auto(@(x) feval(op,x),es,scl,pref);
+            if ~isfield(pref,'trunc')
+                fs = op.funs; es = op.ends; scl.v = max(op.scl,scl.v);
+            else
+                [fs,es,scl] = auto(@(x) feval(op,x),es,scl,pref);
+            end
         case 'cell'
             error('CHEBFUN:ctor_adapt:inputcell',['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])

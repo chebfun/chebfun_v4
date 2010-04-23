@@ -45,6 +45,8 @@ end
 % ----------------------------SPLITTING ON--------------------------------
 
 pref.extrapolate = true;
+% We extrapolate when splitting so that we can construct functions like
+% chebfun(@sign,[-1 1]), which otherwise would not be happy at x = 0.
 
 if isfield(pref,'exps'), exps = pref.exps; end
 
