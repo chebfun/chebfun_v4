@@ -53,11 +53,13 @@ if isempty(varargin)
 else
     exampleNumber = varargin{1};
 end
-temppath = pwd;
-chebfunpath = fileparts(which('chebtest.m'));
-guifilepath = fullfile(chebfunpath,'guifiles');
-cd(guifilepath);
+temppath = folderchange;
 loadexample(handles,exampleNumber,'bvp')
+loaddemos(handles,'bvp')
+
+% Create a new field that stores the problem type (cleaner than checking
+% for the value of the buttons every time)
+handles.problemType = 'bvp';
 cd(temppath)
 
 % Update handles structure
@@ -158,10 +160,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
     % CD to the guifiles directory and call the function solveGUIBVP which does
     % all the work of managing the solution process.
     % try
-        temppath = pwd;
-        chebfunpath = fileparts(which('chebtest.m'));
-        guifilepath = fullfile(chebfunpath,'guifiles');
-        cd(guifilepath);
+        temppath = folderchange;
         if get(handles.button_bvp,'Value')
             handles = solveGUIBVP(handles);
         else
@@ -291,24 +290,6 @@ function button_solve_KeyPressFcn(hObject, eventdata, handles)
 %	Character: character interpretation of the key(s) that was pressed
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in radiobutton1.
-function radiobutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton1
-
-
-% --- Executes on button press in radiobutton2.
-function radiobutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton2
 
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
@@ -675,31 +656,6 @@ end
 
 guidata(hObject, handles);
 
-% --- Executes on button press in button_export.
-function button_export_Callback(hObject, eventdata, handles)
-% hObject    handle to button_export (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of button_export
-
-% Change to the guifiles path for neater code    
-% try   
-    temppath = pwd;
-    chebfunpath = fileparts(which('chebtest.m'));
-    guifilepath = fullfile(chebfunpath,'guifiles');
-    
-    cd(guifilepath)
-    export(handles);
-    cd(temppath)
-% catch ME
-%     cd(temppath)
-%     ME
-% end
-
-
-
-
 % --- Executes on button press in toggle_useLatest.
 function toggle_useLatest_Callback(hObject, eventdata, handles)
 % hObject    handle to toggle_useLatest (see GCBO)
@@ -724,11 +680,7 @@ function button_demos_Callback(hObject, eventdata, handles)
 % hObject    handle to button_demos (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-temppath = pwd;
-chebfunpath = fileparts(which('chebtest.m'));
-guifilepath = fullfile(chebfunpath,'guifiles');
-cd(guifilepath);
-
+temppath = folderchange;
 set(handles.button_solve,'Enable','On')
 set(handles.button_solve,'String','Solve')
     
@@ -805,6 +757,7 @@ function button_bvp_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of button_bvp
+set(handles.button_bvp,'Value',1)
 set(handles.button_pde,'Value',0)
 set(handles.uipanel1,'Visible','on')
 set(handles.panel_updates,'Visible','on')
@@ -812,10 +765,21 @@ set(handles.text_pause1,'Visible','on')
 set(handles.text_pause2,'Visible','on')
 set(handles.input_pause,'Visible','on')
 set(handles.slider_pause,'Visible','on')
+set(handles.toggle_useLatest,'Visible','on')
 
 set(handles.text_timedomain,'Visible','off')
 set(handles.timedomain,'Visible','off')
 
+% Load a new random BVP example and change the demos popup menu
+temppath = folderchange;
+loadexample(handles,-1,'bvp')
+loaddemos(handles,'bvp')
+cd(temppath)
+
+% Create a new field that stores the problem type (cleaner than checking
+% for the value of the buttons every time)
+handles.problemType = 'bvp';
+guidata(hObject, handles);
 
 % --- Executes on button press in button_pde.
 function button_pde_Callback(hObject, eventdata, handles)
@@ -825,12 +789,66 @@ function button_pde_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of button_pde
 set(handles.button_bvp,'Value',0)
+set(handles.button_pde,'Value',1)
 set(handles.uipanel1,'Visible','off')
 set(handles.panel_updates,'Visible','off')
 set(handles.text_pause1,'Visible','off')
 set(handles.text_pause2,'Visible','off')
 set(handles.input_pause,'Visible','off')
 set(handles.slider_pause,'Visible','off')
+set(handles.toggle_useLatest,'Visible','off')
 
 set(handles.text_timedomain,'Visible','on')
 set(handles.timedomain,'Visible','on')
+
+
+
+temppath = folderchange;
+loadexample(handles,-1,'pde')
+loaddemos(handles,'pde')
+cd(temppath)
+
+% Create a new field that stores the problem type (cleaner than checking
+% for the value of the buttons every time)
+handles.problemType = 'pde';
+guidata(hObject, handles);
+
+% --- Executes on selection change in popupmenu_demos.
+function popupmenu_demos_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_demos (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_demos contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_demos
+
+demoNumber = get(hObject,'Value')-1; % Subtract 1 since Demos... is the first item in the list
+
+if demoNumber > 0 % Only update GUI if a demo was indeed selected
+temppath = folderchange;
+loadexample(handles,demoNumber,handles.problemType)
+cd(temppath);
+end
+
+set(hObject,'Value',1)
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu_demos_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_demos (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+function temppath = folderchange
+% The function cd-s to the chebfun folder, and returns the path to the
+% folder the user was currently in.
+temppath = pwd;
+chebfunpath = fileparts(which('chebtest.m'));
+guifilepath = fullfile(chebfunpath,'guifiles');
+cd(guifilepath);

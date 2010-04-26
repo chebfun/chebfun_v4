@@ -195,6 +195,13 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
         solve_display(pref,guihandles,'iter',u,lambda*delta,nrmdu,normr)
     end
     
+    % If the user has pressed the stop button on the GUI, we stop and
+    % return the latest solution
+    if nargin == 4 && strcmpi(get(guihandles{6},'Enable'),'Off')
+        nrmduvec(counter+1:end) = [];
+        solve_display(pref,guihandles,'final',u,[],nrmdu,normr)
+        return
+    end
 
 end
 % Clear up norm vector

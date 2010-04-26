@@ -72,7 +72,7 @@ if useLatest
         'option \n%% when exporting to .m files. \n']);
 elseif ~isempty(guessInput)
     fprintf(fid,'\n%% Assign an initial guess to the chebop.\n');
-    fprintf(fid,'N.guess = %s;\n',guessInput);
+    fprintf(fid,'N.guess = %s;\n',char(guessInput));
 end
 
 % Set up preferences

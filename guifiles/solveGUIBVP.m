@@ -1,4 +1,9 @@
 function handles = solveGUIBVP(handles)
+% SOLVEGUIBVP
+
+% Change the button from Solve to Stop
+set(handles.button_solve,'String','Stop');
+
 % Create a domain and the linear function on that domain. We use xt for the
 % linear function, later in the code we will be able to determine whether x
 % or t is used for the linear function.
@@ -126,7 +131,7 @@ end
 
 
 guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
-    handles.iter_list,handles.text_norm};
+    handles.iter_list,handles.text_norm,handles.button_solve};
 set(handles.text_norm,'Visible','Off');
 set(handles.fig_sol,'Visible','On');
 set(handles.fig_norm,'Visible','On');
@@ -148,6 +153,11 @@ handles.latestOptions = options;
 
 % Notify the GUI we have a solution available
 handles.hasSolution = 1;
+
+% Change button back to Solve
+set(handles.button_solve,'String','Solve');
+set(handles.button_solve,'Enable','On');
+
 
 % Enable buttons
 set(handles.toggle_useLatest,'Enable','on');
