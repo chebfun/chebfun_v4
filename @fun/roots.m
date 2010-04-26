@@ -1,4 +1,4 @@
-function out = roots(g,all,recurse,prune)
+function out = roots(g,varargin)
 % ROOTS	Roots in the interval [-1,1]
 % ROOTS(G) returns the roots of the FUN G in the interval [-1,1].
 % ROOTS(G,'all') returns all the roots.
@@ -9,13 +9,25 @@ function out = roots(g,all,recurse,prune)
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
-if nargin == 1
-    all = 0;
-    recurse = 1;
-    prune = 0;
+% Default preferences
+rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', 1);
+
+if nargin == 2
+    if isstruct(varargin{1})
+        rootspref = varargin{1};
+    else
+        rootspref.all = true;
+    end
+elseif nargin > 2
+    rootspref.all = varargin{1};
+    rootspref.recurse = varargin{2};
 end
-r = rootsunit(g,all,recurse,prune);
-if prune && ~recurse
+if nargin > 3
+    rootspref.prune = varargin{3};
+end
+
+r = rootsunit(g,rootspref);
+if rootspref.prune && ~rootspref.recurse
     rho = sqrt(eps)^(-1/g.n);
     rho_roots = abs(r+sqrt(r.^2-1));
     rho_roots(rho_roots<1) = 1./rho_roots(rho_roots<1);
@@ -25,8 +37,13 @@ else
 end
 out = g.map.for(out);
 
-function out = rootsunit(g,all,recurse,prune)
+function out = rootsunit(g,rootspref)
 % Computes the roots on the unit interval
+
+all = rootspref.all;
+recurse = rootspref.recurse;
+prune = rootspref.prune;
+polish = rootspref.polish;
 
 % Assume that the map in g is the identity: compute the roots in the
 % interval [-1 1]!
@@ -83,7 +100,7 @@ if ~recurse || (g.n<101)                                    % for small length f
         out = sort(r(abs(r) <= 1+2*tol*g.scl.h));  % keep roots inside [-1 1]   
         
         % polish
-        if chebfunpref('polishroots')
+        if polish
             gout = feval(g,out);
             step = gout./feval(diff(g,1,coeffs),out);
             step(isnan(step)) = 0;
@@ -111,8 +128,8 @@ else
     c = -0.004849834917525; % arbitrary splitting point to avoid a root at c
     g1 = restrict(g,[-1 c]);
     g2 = restrict(g,[c,1]);
-    out = [-1+(rootsunit(g1,all,recurse,prune)+1)*.5*(1+c);...        % find roots recursively 
-        c+(rootsunit(g2,all,recurse,prune)+1)*.5*(1-c)];              % and rescale them
+    out = [-1+(rootsunit(g1,rootspref)+1)*.5*(1+c);...        % find roots recursively 
+        c+(rootsunit(g2,rootspref)+1)*.5*(1-c)];              % and rescale them
 end
 
 

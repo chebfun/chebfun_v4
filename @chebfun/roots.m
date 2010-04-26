@@ -1,14 +1,23 @@
 function rts = roots(f,varargin)
 % ROOTS	  Roots of a chebfun.
 % ROOTS(F) returns the roots of F in the interval where it is defined.
+%
 % ROOTS(F,'all') returns the roots of all the polynomials representing the
 % smooth pieces of F.
+%
 % ROOTS(F,'norecurence') deactivates the recursion procedure used to
 % compute roots (see the Guide 3: Rootfinding and minima and maxima for
 % more information of this recursion procedure).
+%
 % ROOTS(F,'complex') returns the roots of all the polynomials representing
 % the smooth pieces of F that are inside a chebfun ellipse. This capability
 % may remove some spurious roots that can appear if using ROOTS(F,'all').
+%
+% ROOTS(F,'nopolish') deactivates the 'polishing' procedure of applying a 
+% Newton step after solving the colleage matrix eigenvalue problem to
+% obtain the roots. Since the Chebyshev coefficients of the function have
+% already been computed, this comes at very little cost.
+%
 % ROOTS(F,'all','norecurence') and ROOTS(F,'complex','norecurence')
 % deactivates the recursion procedure to compute the roots as explained in
 % the 'all' and 'complex' modes.
@@ -19,31 +28,35 @@ function rts = roots(f,varargin)
 % Last commit: $Author$: $Rev$:
 % $Date$:
  
-
 tol = 1e-14;
 
 if numel(f)>1
     error('CHEBFUN:roots:quasi','roots does not work with chebfun quasi-matrices')
 end
-all = 0; recurse = 1; prune = 0;
+
+% Default preferences
+rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots'));
 for k = 1:nargin-1
     argin = varargin{k};
-    if strcmp(argin,'all'), 
-        all = 1;
-        prune = 0;
-    elseif strcmp (argin,'norecurse'),
-        recurse = 0;
-    elseif strcmp (argin,'recurse'),
-        recurse = 1;
-    elseif strcmp (argin,'complex'),
-        prune = 1;
-        all = 1;
-    else
-        error('CHEBFUN:roots:UnknownOption','Unknown option.')
+    switch argin
+        case 'all', 
+            rootspref.all = 1;
+            rootspref.prune = 0;
+        case {'norecurse', 'norecurence'}
+            rootspref.recurse = 0;
+        case {'recurse', 'recurence'}
+            rootspref.recurse = 1;
+        case 'complex'
+            rootspref.prune = 1;
+            rootspref.all = 1;
+        case 'polish'
+            rootspref.polish = 1;
+        case 'nopolish'
+            rootspref.polish = 0;
+        otherwise
+            error('CHEBFUN:roots:UnknownOption','Unknown option.')
     end
 end
-
-
 
 ends = f.ends;
 hs = hscale(f);
@@ -51,7 +64,7 @@ rts = []; % all roots will be stored here
 for i = 1:f.nfuns
     a = ends(i); b = ends(i+1);
     lfun = f.funs(i);
-    rs = roots(lfun,all,recurse,prune);
+    rs = roots(lfun,rootspref);
     if ~isempty(rs)
         if ~isempty(rts)
             while length(rs)>=1 && abs(rts(end)-rs(1))<tol*hs
