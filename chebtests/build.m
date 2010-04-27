@@ -5,10 +5,10 @@ function pass = build
 
 pass = 1;
 
-for i = 0:0.75:5
+for j = 0:0.75:5
 
-    f = chebfun(@(x) sin(100*x)./((1+x).^i.*(2-x).^(i+1)),[-1 2],'blowup',2);
-    if f.exps ~= [-i -i-1]
+    f = chebfun(@(x) sin(100*x)./((1+x).^j.*(2-x).^(j+1)),[-1 2],'blowup',2);
+    if ~all(f.exps == [-j -j-1])
         pass = 0;
     end
 

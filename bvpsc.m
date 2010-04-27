@@ -30,7 +30,7 @@ function varargout = bvpsc(odefun,jacfun,bcmat,y0)
 %
 % See also bvp5c, bvpset, chebfun/bvp5c
 
-% Copyright 2009 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2009 by Toby Driscoll. See www.maths.ox.ac.uk/chebfun.
 % $Id$
 
 d = domain(y0);

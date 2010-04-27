@@ -13,7 +13,7 @@ function rts = roots(f,varargin)
 % the smooth pieces of F that are inside a chebfun ellipse. This capability
 % may remove some spurious roots that can appear if using ROOTS(F,'all').
 %
-% ROOTS(F,'nopolish') deactivates the 'polishing' procedure of applying a 
+% ROOTS(F,'nopolish') deactivates the 'polishing' procedure of applying a
 % Newton step after solving the colleage matrix eigenvalue problem to
 % obtain the roots. Since the Chebyshev coefficients of the function have
 % already been computed, this comes at very little cost.
@@ -24,10 +24,10 @@ function rts = roots(f,varargin)
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team.
 % Last commit: $Author$: $Rev$:
 % $Date$:
- 
+
 tol = 1e-14;
 
 if numel(f)>1
@@ -39,7 +39,7 @@ rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('po
 for k = 1:nargin-1
     argin = varargin{k};
     switch argin
-        case 'all', 
+        case 'all',
             rootspref.all = 1;
             rootspref.prune = 0;
         case {'norecurse', 'norecurence'}
@@ -60,31 +60,35 @@ end
 
 ends = f.ends;
 hs = hscale(f);
-rts = []; % all roots will be stored here
+rts = []; % All roots will be stored here
+realf = isreal(f);
 for i = 1:f.nfuns
-    a = ends(i); b = ends(i+1);
+    b = ends(i+1);
     lfun = f.funs(i);
-    rs = roots(lfun,rootspref);
-    if ~isempty(rs)
-        if ~isempty(rts)
-            while length(rs)>=1 && abs(rts(end)-rs(1))<tol*hs
-            rs=rs(2:end);
-        end
-        end
-        rts = [rts; rs];
+    rs = roots(lfun,rootspref); % Get the roots of the current fun
+    if ~isempty(rts)
+        % Trim out roots that are repeated on either side of the breakpoint.
+        while ~isempty(rs) && abs(rts(end)-rs(1))<tol*hs
+            rs = rs(2:end);
+        end       
     end
-    if isreal(f) && i<f.nfuns && (isempty(rts) || abs(rts(end)-b)>tol*hs )
+    rts = [rts; rs];
+    % We add roots at jumps if the sign of the function changes across them.
+    if realf && i<f.nfuns && (isempty(rts) || abs(rts(end)-b)>tol*hs )
         rfun = f.funs(i+1);
-        if lfun.vals(end)*rfun.vals(1) <= 0, 
+        if lfun.vals(end)*rfun.vals(1) <= 0,
+%             % but not if the function blows up there.
 %             if ~(lfun.exps(2) < 0) && ~(rfun.exps(1) < 0)
                 rts = [rts; b];
 %             end
         end
-%   if i < f.nfuns && ( isempty(rts) || abs(rts(end)-b) > 1e-14*hs )
-%       rfun = f.funs(i+1);
-%       fleft = feval(lfun,1); fright = feval(rfun,-1);
-%       if real(fleft)*real(fright) <= 0 && imag(fleft)*imag(fright) <= 0
-%           rts = [rts; b];
-        end
-    end    
-end 
+    end
+%     if i < f.nfuns && ( isempty(rts) || abs(rts(end)-b) > 1e-14*hs )
+%         rfun = f.funs(i+1);
+%         fleft = feval(lfun,1); fright = feval(rfun,-1);
+%         if real(fleft)*real(fright) <= 0 && imag(fleft)*imag(fright) <= 0
+%             rts = [rts; b];
+%         end
+%     end
+end
+

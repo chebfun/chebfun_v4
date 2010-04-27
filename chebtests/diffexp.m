@@ -1,12 +1,13 @@
 function pass = diffexp
-% Sheehan Olver
+% Tests derivatives on unbounded domains
+% Rodrigo Platte, May 2009
+
 tol = chebfunpref('eps');
 
-f = chebfun('exp(x)',[-sqrt(7),pi]);
-pass(1) = norm(f-diff(f),inf) < 2000*tol;
+f = chebfun(@(x) exp(x), [-inf,2]);
+pass(1) = norm(f-diff(f),inf) < tol*5000;
+pass(2) = norm(f-diff(f,2),inf) < max(1e-10, tol*1000);
 
-f = chebfun('exp(x)',[-inf,0]);
-pass(2) = norm(f-diff(f),inf) < 1000*tol;
-
-f = chebfun('exp(-x)',[0,inf]);
-pass(3) = norm(f+diff(f),inf) < 1000*tol;
+f = chebfun(@(x) exp(-x.^2), [-inf,inf]);
+df = chebfun(@(x) -2*x.*exp(-x.^2), [-inf,inf]);
+pass(3) = norm(df-diff(f),inf) < tol*100;

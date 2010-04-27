@@ -42,6 +42,7 @@ end
 pref = chebfunpref;
 tol = pref.eps;
 createreport = true;
+avgtimes = true;
 
 matlabver = ver('matlab');
 if str2double(matlabver.Version(1)) < 7 || ...
@@ -60,16 +61,41 @@ if nargin < 1
 end
 if ~exist(dirname,'dir')
   msg = ['The name "' dirname '" does not appear to be a directory on the path.'];
-  error('CHEBFUN:probe:nodir',msg)
+  error('CHEBFUN:chebtest:nodir',msg)
 end
 
 dirlist = dir( fullfile(dirname,'*.m') );
 mfile = {dirlist.name};
-fclose(fopen([chbfundir,'/chebtestreport.txt'],'w+'));
+namelen = 0;
+for k = 1:numel(mfile)
+    namelen = max(namelen,length(mfile{k}));
+end
+
+fclose(fopen(fullfile(dirname, filesep,'chebtest_report.txt'),'w+'));
 
 fprintf('\nTesting %i functions:\n\n',length(mfile))
 failed = zeros(length(mfile),1);
 t = failed;    % vector to store times
+
+% For looking at average time performance.
+if avgtimes
+    avgfile = fullfile(dirname, filesep ,'chebtest_avgs.txt');
+    if ~exist(avgfile,'file')
+        fclose(fopen(avgfile,'w+'));
+    end
+    avgfid = fopen(avgfile,'r');    
+    avgt = fscanf(avgfid,'%f',inf);
+    fclose(avgfid);
+    if length(t) ~= length(avgt)-1
+        % Number of chebtests has changed, so scrap averages.
+        fclose(fopen(avgfile,'w+'));
+        avgt = 0*t;
+    end
+    avgN = avgt(end);
+    avgTot = sum(avgt(1:end-1));
+else
+    avgN = 0; avgt = 0*t;
+end
 
 warnstate = warning;
 warning off
@@ -95,7 +121,8 @@ for j = 1:length(mfile)
   else
       link = fun;
   end
-  msg = ['  Function #' num2str(j) ' (' link ')... ' ];
+  ws = repmat(' ',1,namelen+1-length(fun)-length(num2str(j)));
+  msg = ['  Function #' num2str(j) ' (' link ')... ', ws ];
   msg = strrep(msg,'\','\\');  % escape \ for fprintf
   numchar = fprintf(msg);
   
@@ -110,7 +137,12 @@ for j = 1:length(mfile)
     if failed(j)
       fprintf('FAILED\n')
     else
-      fprintf('passed in %2.3fs \n',t(j))
+        if avgN == 0
+          fprintf('passed in %2.3fs \n',t(j))
+        else
+          fprintf('passed in %2.3fs (avg %2.3fs)\n',t(j),avgt(j))
+        end
+        avgt(j) = (avgN*avgt(j)+t(j))/(avgN+1);
       %pause(0.1)
       %fprintf( repmat('\b',1,numchar) )
     end
@@ -124,7 +156,7 @@ for j = 1:length(mfile)
     
     % Create an error report
     if createreport
-        fid = fopen([chbfundir,'/chebtestreport.txt'],'a');
+        fid = fopen([dirname filesep ,'chebtest_report.txt'],'a');
         fprintf(fid,[fun '  (crashed) \n']);
         fprintf(fid,['identifier: ''' msg.identifier '''\n']);
         fprintf(fid,['message: ''' msg.message '''\n']);
@@ -153,8 +185,8 @@ else
   failfun = mfile(failed~=0);
   
   if createreport
-      fun = 'chebtestreport.txt';
-      link = ['<a href="matlab: edit ' chbfundir filesep fun '">' fun '</a>'];
+      fun = 'chebtest_report.txt';
+      link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
       msg = [' Error report available here: ' link '. ' ];
       msg = strrep(msg,'\','\\');  % escape \ for fprintf
       numchar = fprintf(msg); fprintf('\n')
@@ -162,9 +194,20 @@ else
   fprintf('\n')
 end
 
-
-
 ts = sum(t); tm = ts/60;
-fprintf('Total time:%6.1f seconds =%5.2f minutes \n',ts,tm)
+if avgN == 0
+    fprintf('Total time: %1.1f seconds = %1.1f minutes \n',ts,tm)
+else
+    fprintf('Average time: %1.1f seconds (Lifetime Avg: %1.1f seconds)\n',ts,avgTot)
+end
+
+if avgtimes && all(~failed)
+    avgfid = fopen(avgfile,'w+');    
+    for k = 1:size(t,1)
+        fprintf(avgfid,'%f\n',avgt(k));
+    end
+    fprintf(avgfid,'%d \n',avgN+1);
+    fclose(avgfid);
+end
 
 end

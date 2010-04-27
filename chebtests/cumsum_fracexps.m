@@ -91,6 +91,17 @@ pass(8) = err(8)< tol;
 
 %%
 
+f = chebfun('1./sqrt(x)',[0 1],'exps',[-.5 -0]);
+g = cumsum(f);
+h = chebfun('2*sqrt(x)',[0 1],'exps',[.5 0]);
+if dotest
+    clc, display(f), display(g),plot(g,'b',h,'.r');
+end
+err(9) = norm(g(xx) - h(xx),inf);
+pass(9) = err(8)< tol;
+
+%%
+
 if dotest
     semilogy(err)
 end

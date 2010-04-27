@@ -23,7 +23,7 @@ Installation instructions:
 
 4. To check whether the system appears to be working, type "chebtest" at 
    the command window prompt. If a problem is reported, please contact  
-   chebfun@comlab.ox.ac.uk with the details (including output of the 
+   chebfun@maths.ox.ac.uk with the details (including output of the 
    "ver" command). 
 
 Point your web browser to the guide/html directory of the chebfun
