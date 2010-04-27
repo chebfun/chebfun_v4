@@ -180,7 +180,18 @@ else
 end
     
 
+% --- Executes on button press in button_export.
+function button_export_Callback(hObject, eventdata, handles)
+% hObject    handle to button_export (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
+% Hint: get(hObject,'Value') returns toggle state of button_export
+
+% Change to the guifiles path for neater code    
+temppath = folderchange;
+export(handles,temppath);
+cd(temppath)
 
 function input_RBC_Callback(hObject, eventdata, handles)
 % hObject    handle to input_RBC (see GCBO)
@@ -747,8 +758,7 @@ function initialisefigures(handles)
 cla(handles.fig_sol,'reset');
 title('Solutions'), axis off
 cla(handles.fig_norm,'reset');
-title('Updates'), axis off
-
+title('Updates')
 
 % --- Executes on button press in button_bvp.
 function button_bvp_Callback(hObject, eventdata, handles)
@@ -766,6 +776,12 @@ set(handles.text_pause2,'Visible','on')
 set(handles.input_pause,'Visible','on')
 set(handles.slider_pause,'Visible','on')
 set(handles.toggle_useLatest,'Visible','on')
+% set(handles.iter_list,'Visible','on')
+% set(handles.iter_text,'Visible','on')
+% set(handles.text_norm,'Visible','on')
+
+% Clear the figures
+initialisefigures(handles)
 
 set(handles.text_timedomain,'Visible','off')
 set(handles.timedomain,'Visible','off')
@@ -797,11 +813,15 @@ set(handles.text_pause2,'Visible','off')
 set(handles.input_pause,'Visible','off')
 set(handles.slider_pause,'Visible','off')
 set(handles.toggle_useLatest,'Visible','off')
+set(handles.iter_list,'Visible','off')
+set(handles.iter_text,'Visible','off')
+set(handles.text_norm,'Visible','off')
 
 set(handles.text_timedomain,'Visible','on')
 set(handles.timedomain,'Visible','on')
 
-
+% Clear the figures
+initialisefigures(handles)
 
 temppath = folderchange;
 loadexample(handles,-1,'pde')

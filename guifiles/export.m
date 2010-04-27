@@ -1,4 +1,4 @@
-function export(handles)
+function export(handles,temppath)
 
 % Offer more possibilities if solution exists
 if handles.hasSolution
@@ -20,15 +20,24 @@ switch exportType
         assignin('base','rhs',handles.latestRHS);
         assignin('base','options',handles.latestOptions);
     case '.m file'
+        % Obtain information about whether we are solving BVP or PDE
+        problemType = handles.problemType;
+        % Convert back to the current folder
+        chebpath = pwd;
+        cd(temppath)
         [filename, pathname, filterindex] = uiputfile( ...
             {'*.m','M-files (*.m)'; ...
             '*.*',  'All Files (*.*)'}, ...
-            'Save as', 'bvp.m');
+            'Save as', [problemType,'.m']);
         
+        cd(chebpath)
         if filename     % User did not press cancel
             try
-                export2mfile(pathname,filename,handles)
-                
+                if strcmp(problemType,'bvp')
+                    exportbvp2mfile(pathname,filename,handles)
+                else
+                    exportpde2mfile(pathname,filename,handles)
+                end
                 % Open the new file in the editor
                 open([pathname,filename])
             catch

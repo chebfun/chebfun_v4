@@ -1,4 +1,4 @@
-function export2mfile(pathname,filename,handles)
+function exportbvp2mfile(pathname,filename,handles)
 
 fullFileName = [pathname,filename];
 fid = fopen(fullFileName,'wt');
