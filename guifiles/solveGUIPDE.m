@@ -28,6 +28,9 @@ lbcRHSInput = get(handles.input_LBC_RHS,'String');
 rbcRHSInput = get(handles.input_RBC_RHS,'String');
 guessInput = get(handles.input_GUESS,'String');
 
+tolInput = get(handles.input_tol,'String');
+tt = eval(get(handles.timedomain,'String'));
+
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
@@ -109,7 +112,6 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 %     N = chebop(d,DE,LBC,RBC,guess);
 % end
 
-tolInput = get(handles.input_tol,'String');
 if isempty(tolInput)
     tolNum = defaultTol;
 else
@@ -149,8 +151,6 @@ end
 % end
 
 bc = struct( 'left', LBC, 'right', RBC);
-tt = eval(get(handles.timedomain,'String'));
-
 % Set up the initial condition
 if ischar(guessInput)
     u0 =  chebfun(guessInput,[a b]);

@@ -32,7 +32,7 @@ switch exportType
         
         cd(chebpath)
         if filename     % User did not press cancel
-            try
+%             try
                 if strcmp(problemType,'bvp')
                     exportbvp2mfile(pathname,filename,handles)
                 else
@@ -40,9 +40,9 @@ switch exportType
                 end
                 % Open the new file in the editor
                 open([pathname,filename])
-            catch
-                error('chebfun:BVPgui','Error in exporting to .m file');
-            end
+%             catch
+%                 error('chebfun:BVPgui','Error in exporting to .m file');
+%             end
         end
     case '.mat file'
         u = handles.latestSolution; %#ok<NASGU>

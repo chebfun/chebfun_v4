@@ -151,7 +151,7 @@ switch exampleNumber
 %         RBC = {'neumann'};
         RBC = {'u'''; 'v''' ; 'w'''};
         RBCrhs = {'0' ; '0' ; '0'};
-        guess = {'1-erf(10*(x+0.7))' ; '1 + erf(10*(x-0.7))' ; '0'};
+        guess = {'1-erf(10*(x+0.7))' ; '1+erf(10*(x-0.7))' ; '0'};
         tol = '1e-6';
         name = 'System 2 (3 eqns alt)';        
 end
