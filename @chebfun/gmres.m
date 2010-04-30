@@ -68,7 +68,7 @@ while (normres(j) > tol) && (j<maxiter)          % outer iterations
     if ~isempty(M2inv), q = M2inv(q); end       
     v = L(q);
     % KLUDGE: The auto-diff facility will overwhelm memory if not shut down.
-    v.jacobian = anon('@(u) []','',[]);
+%     v.jacobian = anon('@(u) []','',[]);
     if ~isempty(M1inv), v = M1inv(v); end       
     % Modified Gram-Schmidt iteration.
     for k = 1:n                     

@@ -202,7 +202,7 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
         solve_display(pref,guihandles,'final',u,[],nrmdu,normr)
         return
     end
-
+    
 end
 % Clear up norm vector
 nrmduvec(counter+1:end) = [];
@@ -400,9 +400,23 @@ end
                 case 'DE'
                     fOut = deFun(currentGuess);
                 case 'LBC'
-                    fOut = bcFunLeft(currentGuess);
+                    if ~iscell(bcFunLeft)
+                        fOut = bcFunLeft(currentGuess);
+                    else
+                        fOut = chebfun;
+                        for funCounter = 1:length(bcFunLeft)
+                            fOut(:,funCounter) = feval(bcFunLeft{funCounter},currentGuess);
+                        end
+                    end
                 case 'RBC'
-                    fOut = bcFunRight(currentGuess);
+                    if ~iscell(bcFunRight)
+                        fOut = bcFunRight(currentGuess);
+                    else
+                        fOut = chebfun;
+                        for funCounter = 1:length(bcFunRight)
+                            fOut(:,funCounter) = feval(bcFunRight{funCounter},currentGuess);
+                        end
+                    end
             end
         else
             % Load the cell variable

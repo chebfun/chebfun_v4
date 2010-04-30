@@ -43,6 +43,8 @@ switch propName
         end
     case 'trans'
         val = f(1).trans;
+    case 'jacobian'
+        val = f.jacobian;
     otherwise
         error('CHEBFUN:get:propnam',[propName,' is not a valid chebfun property'])
 end
