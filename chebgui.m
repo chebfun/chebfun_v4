@@ -1,39 +1,15 @@
-function varargout = chebbvp(varargin)
-% CHEBBVP Help for the chebop BVP GUI
+function varargout = chebgui(varargin)
+% CHEBGUI Help for the chebop PDE GUI
 %
 % Under construction
 
-% CHEBBVP M-file for chebbvp.fig
-%      CHEBBVP, by itself, creates a new CHEBBVP or raises the existing
-%      singleton*.
-%
-%      H = CHEBBVP returns the handle to a new CHEBBVP or the handle to
-%      the existing singleton*.
-%
-%      CHEBBVP('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in CHEBBVP.M with the given input arguments.
-%
-%      CHEBBVP('Property','Value',...) creates a new CHEBBVP or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before chebbvp_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to chebbvp_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help chebbvp
-
-% Last Modified by GUIDE v2.5 06-Apr-2010 16:55:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
-gui_State = struct('gui_Name',       mfilename, ...
+gui_State = struct('gui_Name', mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @chebbvp_OpeningFcn, ...
-    'gui_OutputFcn',  @chebbvp_OutputFcn, ...
+    'gui_OpeningFcn', @chebgui_OpeningFcn, ...
+    'gui_OutputFcn',  @chebgui_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -47,22 +23,18 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before chebbvp is made visible.
-function chebbvp_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before chebgui is made visible.
+function chebgui_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to chebbvp (see VARARGIN)
+% varargin   command line arguments to chebgui (see VARARGIN)
 
-% Choose default command line output for chebbvp
+% Choose default command line output for chebgui
 handles.output = hObject;
 
-axes(handles.fig_sol);
-fill([0 0 1 1],[0 1 1 0],[1 1 1]), title('Solutions'), axis off
-
-axes(handles.fig_norm);
-fill([0 0 1 1],[0 1 1 0],[1 1 1]), title('Updates'), axis off
+initialisefigures(handles)
 
 % Synchronise slider and edit field for pause in plotting
 set(handles.slider_pause,'Value',str2double(get(handles.input_pause,'String')));
@@ -70,7 +42,10 @@ set(handles.slider_pause,'Value',str2double(get(handles.input_pause,'String')));
 % Variable that determines whether a solution is available
 handles.hasSolution = 0;
 
-% Load an example depending on the user input (argument to the chebbvp
+% This will be set to 1 when we want to interupt the computation.
+set(handles.slider_pause,'Value',false)
+
+% Load an example depending on the user input (argument to the chebgui
 % call). If no argument is passed, use a random example (which we will get
 % if the exampleNumber is negative).
 if isempty(varargin)
@@ -78,19 +53,23 @@ if isempty(varargin)
 else
     exampleNumber = varargin{1};
 end
+temppath = folderchange;
+loadexample(handles,exampleNumber,'bvp')
+loaddemos(handles,'bvp')
 
-loadExample(handles,exampleNumber)
+% Create a new field that stores the problem type (cleaner than checking
+% for the value of the buttons every time)
+handles.problemType = 'bvp';
+cd(temppath)
 
 % Update handles structure
 guidata(hObject, handles);
 
-
-% UIWAIT makes chebbvp wait for user response (see UIRESUME)
+% UIWAIT makes chebgui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-
 % --- Outputs from this function are returned to the command line.
-function varargout = chebbvp_OutputFcn(hObject, eventdata, handles)
+function varargout = chebgui_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -98,8 +77,6 @@ function varargout = chebbvp_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-
-
 
 function dom_left_Callback(hObject, eventdata, handles)
 % hObject    handle to dom_left (see GCBO)
@@ -117,7 +94,7 @@ if (isempty(input))
     set(hObject,'String','0')
 end
 
-set(handles.input_GUESS,'String','');
+% set(handles.input_GUESS,'String','');
 set(handles.input_GUESS,'Enable','on');
 set(handles.toggle_useLatest,'Value',0);
 set(handles.toggle_useLatest,'Enable','off');
@@ -125,7 +102,7 @@ guidata(hObject, handles);
 
 
 % --- Executes during object creation, after setting all properties.
-function dom_left_CreateFcn(hObject, eventdata, handles)  %#ok<*INUSD>
+function dom_left_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to dom_left (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
@@ -152,7 +129,7 @@ if (isempty(input))
     set(hObject,'String','0')
 end
 
-set(handles.input_GUESS,'String','');
+% set(handles.input_GUESS,'String','');
 set(handles.input_GUESS,'Enable','on');
 set(handles.toggle_useLatest,'Value',0);
 set(handles.toggle_useLatest,'Enable','off');
@@ -178,23 +155,43 @@ function button_solve_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% CD to the guifiles directory and call the function solveGUIBVP which does
-% all the work of managing the solution process.
-try
-    temppath = pwd;
-    chebfunpath = fileparts(which('chebtest.m'));
-    guifilepath = fullfile(chebfunpath,'guifiles');
-    cd(guifilepath);
-    handles = solveGUIBVP(handles);
-    cd(temppath)
-catch ME
-    error(['chebfun:BVPgui','Incorrect input for differential ' ...
-        'equation or boundary conditions']);
-end
+if strcmp(get(handles.button_solve,'string'),'Solve')
+% In solve mode
+    % CD to the guifiles directory and call the function solveGUIBVP which does
+    % all the work of managing the solution process.
+    % try
+        temppath = folderchange;
+        if get(handles.button_bvp,'Value')
+            handles = solveGUIBVP(handles);
+        else
+            handles = solveGUIPDE(handles);
+        end
+        cd(temppath)
+    % catch ME
+    %     error(['chebfun:PDEgui','Incorrect input for differential ' ...
+    %         'equation or boundary conditions']);
+    % end
 
-% Update the GUI and return to the original directory
-guidata(hObject, handles);
-cd(temppath);
+    % Update the GUI and return to the original directory
+    guidata(hObject, handles);
+    cd(temppath);
+else
+    set(handles.button_solve,'Enable','Off');
+end
+    
+
+% --- Executes on button press in button_export.
+function button_export_Callback(hObject, eventdata, handles)
+% hObject    handle to button_export (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_export
+
+% Change to the guifiles path for neater code    
+temppath = folderchange;
+export(handles,temppath);
+cd(temppath)
 
 function input_RBC_Callback(hObject, eventdata, handles)
 % hObject    handle to input_RBC (see GCBO)
@@ -204,6 +201,8 @@ function input_RBC_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of input_RBC as text
 %        str2double(get(hObject,'String')) returns contents of input_RBC as a double
 newString = get(hObject,'String');
+
+% For syetems we check a row at a time
 flag = false;
 if ~iscell(newString), newString = {newString}; end
 for k = 1:numel(newString)
@@ -304,24 +303,6 @@ function button_solve_KeyPressFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in radiobutton1.
-function radiobutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton1
-
-
-% --- Executes on button press in radiobutton2.
-function radiobutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton2
-
-
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over button_solve.
 function button_solve_ButtonDownFcn(hObject, eventdata, handles)
@@ -364,7 +345,6 @@ function input_DE_RHS_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on button press in button_help.
 function button_help_Callback(hObject, eventdata, handles)
@@ -421,20 +401,20 @@ function button_clear_Callback(hObject, eventdata, handles)
 % Clear the input fields
 set(handles.dom_left,'String','');
 set(handles.dom_right,'String','');
+set(handles.timedomain,'String','');
 set(handles.input_DE,'String','');
 set(handles.input_LBC,'String','');
 set(handles.input_RBC,'String','');
 set(handles.input_DE_RHS,'String','');
 set(handles.input_LBC_RHS,'String','');
 set(handles.input_RBC_RHS,'String','');
+set(handles.input_GUESS,'String','');
+set(handles.timedomain,'String','');
 set(handles.input_tol,'String','');
 
 
 % Clear the figures
-axes(handles.fig_sol);
-fill([0 0 1 1],[0 1 1 0],[1 1 1]), title('Solutions'), axis off
-axes(handles.fig_norm);
-fill([0 0 1 1],[0 1 1 0],[1 1 1]), title('Updates'), axis off
+initialisefigures(handles)
 
 % Hide the iteration information
 set(handles.iter_list,'String','');
@@ -444,6 +424,8 @@ set(handles.text_norm,'Visible','Off');
 
 % Disable export figures
 set(handles.button_figures,'Enable','off');
+set(handles.button_solve,'Enable','on');
+set(handles.button_solve,'String','Solve');
 
 % Enable RHS of BCs again
 set(handles.input_LBC_RHS,'Enable','on');
@@ -454,30 +436,74 @@ handles.hasSolution = 0;
 
 guidata(hObject, handles);
 
-
-
 % --- Executes on button press in button_figures.
 function button_figures_Callback(hObject, eventdata, handles)
 % hObject    handle to button_figures (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-latestSolution = handles.latestSolution;
-latestNorms = handles.latestNorms;
-
-figure;
-subplot(1,2,1);
-plot(latestSolution), title('Solution at end of iteration')
 
 
-subplot(1,2,2);
-semilogy(latestNorms,'-*'),title('Norm of updates'), xlabel('Number of iteration')
-if length(latestNorms) > 1
-    XTickVec = 1:max(floor(length(latestNorms)/5),1):length(latestNorms);
-    set(gca,'XTick', XTickVec), xlim([1 length(latestNorms)]), grid on
-else % Don't display fractions on iteration plots
-    set(gca,'XTick', 1)
+if get(handles.button_bvp,'Value');
+    latestSolution = handles.latestSolution;
+    latestNorms = handles.latestNorms;
+
+    figure;
+    subplot(1,2,1);
+    plot(latestSolution), title('Solution at end of iteration')
+
+
+    subplot(1,2,2);
+    semilogy(latestNorms,'-*'),title('Norm of updates'), xlabel('Number of iteration')
+    if length(latestNorms) > 1
+        XTickVec = 1:max(floor(length(latestNorms)/5),1):length(latestNorms);
+        set(gca,'XTick', XTickVec), xlim([1 length(latestNorms)]), grid on
+    else % Don't display fractions on iteration plots
+        set(gca,'XTick', 1)
+    end
+else
+    u = handles.latestSolution;
+    % latestNorms = handles.latestNorms;
+    tt = handles.latestSolutionT;
+    
+    figure
+    if ~iscell(u)
+        subplot(1,2,1);
+        plot(u(:,end))
+        title('Solution at final time.')
+        subplot(1,2,2);
+        surf(u,tt,'facecolor','interp')
+        xlabel('x'), ylabel('t');
+    else
+        v = chebfun;
+        for k = 1:numel(u)
+            uk = u{k};
+            v(:,k) = uk(:,end);
+        end
+        plot(v);
+        title('Solution at final time.')
+        
+        varnames = get(handles.input_DE_RHS,'string');
+        for k = 1:numel(u)
+            idx = strfind(varnames{k},'_');
+            varnames{k} = varnames{k}(1:idx(1)-1);
+        end
+        legend(varnames{:})
+
+        figure
+        sfx = {'st','nd','rd'};
+        for k = 1:numel(u)
+            subplot(1,numel(u),k);
+            surf(u{k},tt,'facecolor','flat')
+            xlabel('x'), ylabel('t'), zlabel(varnames{k})
+            title(varnames{k})
+%             if k < 4
+%                 title([int2str(k),'^{',sfx{k},'} component of solution'])
+%             else
+%                 title([int2str(k),'^{th} component of solution'])
+%             end
+        end
+    end
 end
-set(gcf,'Position',[270   305   685   299]);
 
 % --- Executes during object creation, after setting all properties.
 function input_RBC_RHS_CreateFcn(hObject, eventdata, handles)
@@ -490,8 +516,6 @@ function input_RBC_RHS_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
 
 % --- Executes during object creation, after setting all properties.
 function input_LBC_RHS_CreateFcn(hObject, eventdata, handles)
@@ -516,16 +540,6 @@ function input_DE_RHS_Callback(hObject, eventdata, handles)
 
 
 
-function input_LBC_RHS_Callback(hObject, eventdata, handles)
-% hObject    handle to input_LBC_RHS (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of input_LBC_RHS as text
-%        str2double(get(hObject,'String')) returns contents of input_LBC_RHS as a double
-
-
-
 function input_RBC_RHS_Callback(hObject, eventdata, handles)
 % hObject    handle to input_RBC_RHS (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -544,6 +558,7 @@ function input_LBC_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of input_LBC as text
 %        str2double(get(hObject,'String')) returns contents of input_LBC as a double
 newString = get(hObject,'String');
+
 flag = false;
 if ~iscell(newString), newString = {newString}; end
 for k = 1:numel(newString)
@@ -560,6 +575,15 @@ else
     set(handles.input_LBC_RHS,'Enable','on');
     set(handles.text_eq2,'Enable','on');
 end
+
+function input_LBC_RHS_Callback(hObject, eventdata, handles)
+% hObject    handle to input_LBC_RHS (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of input_LBC_RHS as text
+%        str2double(get(hObject,'String')) returns contents of
+%        input_LBC_RHS as a double
 
 % --- Executes on slider movement.
 function slider_pause_Callback(hObject, eventdata, handles)
@@ -667,36 +691,8 @@ end
 
 guidata(hObject, handles);
 
-
-% --- Executes on button press in button_export.
-function button_export_Callback(hObject, eventdata, handles)
-% hObject    handle to button_export (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of button_export
-
-% Change to the guifiles path for neater code    
-try   
-    temppath = pwd;
-    chebfunpath = fileparts(which('chebtest.m'));
-    guifilepath = fullfile(chebfunpath,'guifiles');
-    
-    cd(guifilepath)
-    export(handles);
-    cd(temppath)
-catch ME
-    cd(temppath)
-    ME
-end
-
-
-
-
-
-
 % --- Executes on button press in toggle_useLatest.
-function toggle_useLatest_Callback(hObject, eventdata, handles) %#ok<*INUSL>
+function toggle_useLatest_Callback(hObject, eventdata, handles)
 % hObject    handle to toggle_useLatest (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -714,106 +710,198 @@ end
 guidata(hObject, handles);
 
 
-% --- Used to load example into the GUI
-function loadExample(handles,exampleNumber)
-try
-    % cd to the folder that contains the gui-work files
-    chebfunpath = which('chebfun');
-    guifilepath = [chebfunpath(1:end-18), 'guifiles'];
-    tmppath = pwd;
-    cd(guifilepath)
-    
-    [a,b,DE,DErhs,LBC,LBCrhs,RBC,RBCrhs,guess,tol] = bvpexamples(exampleNumber);
-    
-    
-    % Fill the String fields of the handles
-    set(handles.dom_left,'String',a);
-    set(handles.dom_right,'String',b);
-    set(handles.input_DE,'String',DE);
-    set(handles.input_DE_RHS,'String',DErhs);
-    set(handles.input_LBC,'String',LBC);
-    set(handles.input_LBC_RHS,'String',LBCrhs);
-    set(handles.input_RBC,'String',RBC);
-    set(handles.input_RBC_RHS,'String',RBCrhs);
-    set(handles.input_GUESS,'String',guess);
-    set(handles.input_tol,'String',tol);
-    
-    % If input for BCs is a number, anon. func. or dirichlet/neumann,
-    % disable BC rhs input
-    lflag = false;
-    if ~iscell(LBC), LBC = {LBC}; end
-    for k = 1:numel(LBC)
-        if ~isempty(strfind(LBC{k},'@')) || strcmpi(LBC{k},'dirichlet') ...
-            || strcmpi(LBC{k},'neumann') || ~isempty(str2num(LBC{k}))
-            lflag = true; break
-        end
-    end
-    if lflag
-        set(handles.input_LBC_RHS,'Enable','off');
-        set(handles.text_eq2,'Enable','off');
-    else
-        set(handles.input_LBC_RHS,'Enable','on');
-        set(handles.text_eq2,'Enable','on');
-    end
-    
-    rflag = false;
-    if ~iscell(RBC), RBC = {RBC}; end
-    for k = 1:numel(RBC)
-        if ~isempty(strfind(RBC{k},'@')) || strcmpi(RBC{k},'dirichlet') ...
-            || strcmpi(RBC{k},'neumann') || ~isempty(str2num(RBC{k}))
-            rflag = true; break
-        end
-    end
-    if rflag
-        set(handles.input_RBC_RHS,'Enable','off');
-        set(handles.text_eq3,'Enable','off');
-    else
-        set(handles.input_RBC_RHS,'Enable','on');
-        set(handles.text_eq3,'Enable','on');
-    end
-    cd(tmppath)
-catch
-    error(['chebfun:BVPgui','Error loading an example']);
-end
-
-
 % --- Executes on button press in button_demos.
 function button_demos_Callback(hObject, eventdata, handles)
 % hObject    handle to button_demos (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-chebfunpath = which('chebfun');
-guifilepath = [chebfunpath(1:end-18), 'guifiles'];
-tmppath = pwd;
-cd(guifilepath)
+set(handles.button_solve,'Enable','On')
+set(handles.button_solve,'String','Solve')
 
+temppath = folderchange;
+
+    
 % Obtain the DE of all available examples
 DE = '';
 demoString = [];
 counter = 1;
-while ~strcmp(DE,'0')
-    [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(counter,'demo');
-    counter = counter+1;
-    demoString = [demoString,{name}];
+
+if get(handles.button_bvp,'Value')
+    type = 'bvp';
+    while ~strcmp(DE,'0')
+        [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(counter,'demo');
+        counter = counter+1;
+        demoString = [demoString,{name}];
+    end
+else
+    type = 'pde';
+    while ~strcmp(DE,'0')
+        [a b tt DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(counter,'demo');
+        counter = counter+1;
+        demoString = [demoString,{name}];
+    end
 end
 demoString(end) = []; % Throw away the last demo since it's the flag 0
 [selection,okPressed] = listdlg('PromptString','Select a demo:',...
     'SelectionMode','single',...
     'ListString',demoString);
 if okPressed
-    loadExample(handles,selection);
+    loadexample(handles,selection,type);
+    set(handles.button_solve,'Enable','On')
+    set(handles.button_solve,'String','Solve')
 end
-cd(tmppath)
-
-
-% --- Executes on button press in button_stop.
-function button_stop_Callback(hObject, eventdata, handles)
-% hObject    handle to button_stop (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+cd(temppath)
 
 % --- Executes when figure1 is resized.
 function figure1_ResizeFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+
+function timedomain_Callback(hObject, eventdata, handles)
+% hObject    handle to timedomain (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of timedomain as text
+%        str2double(get(hObject,'String')) returns contents of timedomain as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function timedomain_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to timedomain (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function initialisefigures(handles)
+cla(handles.fig_sol,'reset');
+title('Solutions'), axis off
+cla(handles.fig_norm,'reset');
+title('Updates')
+
+% --- Executes on button press in button_bvp.
+function button_bvp_Callback(hObject, eventdata, handles)
+% hObject    handle to button_bvp (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_bvp
+set(handles.button_bvp,'Value',1)
+set(handles.button_pde,'Value',0)
+set(handles.uipanel1,'Visible','on')
+set(handles.panel_updates,'Visible','on')
+set(handles.text_pause1,'Visible','on')
+set(handles.text_pause2,'Visible','on')
+set(handles.input_pause,'Visible','on')
+set(handles.slider_pause,'Visible','on')
+set(handles.toggle_useLatest,'Visible','on')
+% set(handles.iter_list,'Visible','on')
+% set(handles.iter_text,'Visible','on')
+% set(handles.text_norm,'Visible','on')
+
+
+set(handles.text_initial,'String','Initial guess')
+
+% Clear the figures
+initialisefigures(handles)
+
+set(handles.text_timedomain,'Visible','off')
+set(handles.timedomain,'Visible','off')
+
+% Load a new random BVP example and change the demos popup menu
+temppath = folderchange;
+loadexample(handles,-1,'bvp')
+loaddemos(handles,'bvp')
+cd(temppath)
+
+% Create a new field that stores the problem type (cleaner than checking
+% for the value of the buttons every time)
+handles.problemType = 'bvp';
+guidata(hObject, handles);
+
+% --- Executes on button press in button_pde.
+function button_pde_Callback(hObject, eventdata, handles)
+% hObject    handle to button_pde (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_pde
+set(handles.button_bvp,'Value',0)
+set(handles.button_pde,'Value',1)
+set(handles.uipanel1,'Visible','off')
+set(handles.panel_updates,'Visible','off')
+set(handles.text_pause1,'Visible','off')
+set(handles.text_pause2,'Visible','off')
+set(handles.input_pause,'Visible','off')
+set(handles.slider_pause,'Visible','off')
+set(handles.toggle_useLatest,'Visible','off')
+set(handles.iter_list,'Visible','off')
+set(handles.iter_text,'Visible','off')
+set(handles.text_norm,'Visible','off')
+
+set(handles.text_initial,'String','Initial condition')
+
+set(handles.text_timedomain,'Visible','on')
+set(handles.timedomain,'Visible','on')
+
+% Clear the figures
+initialisefigures(handles)
+
+temppath = folderchange;
+loadexample(handles,-1,'pde')
+loaddemos(handles,'pde')
+cd(temppath)
+
+% Create a new field that stores the problem type (cleaner than checking
+% for the value of the buttons every time)
+handles.problemType = 'pde';
+guidata(hObject, handles);
+
+% --- Executes on selection change in popupmenu_demos.
+function popupmenu_demos_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_demos (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_demos contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_demos
+
+demoNumber = get(hObject,'Value')-1; % Subtract 1 since Demos... is the first item in the list
+
+if demoNumber > 0 % Only update GUI if a demo was indeed selected
+temppath = folderchange;
+loadexample(handles,demoNumber,handles.problemType)
+cd(temppath);
+end
+
+set(hObject,'Value',1)
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu_demos_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_demos (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+function temppath = folderchange
+% The function cd-s to the chebfun folder, and returns the path to the
+% folder the user was currently in.
+temppath = pwd;
+chebfunpath = fileparts(which('chebtest.m'));
+guifilepath = fullfile(chebfunpath,'guifiles');
+cd(guifilepath);

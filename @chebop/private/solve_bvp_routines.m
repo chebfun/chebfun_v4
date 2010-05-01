@@ -55,7 +55,11 @@ elseif isnumeric(rhs) && all(rhs == 0)
     deFun = N.op;
     numberOfInputVariables = nargin(deFun);
 else
-    deFun = @(u) N.op(u)-rhs;
+    % Need to do a string manipulation to make sure we're getting the
+    % correct arguments for the new anonymous function
+    deFunString = func2str(N.op);
+    deFunArgs = deFunString(2:min(strfind(deFunString,')')));
+    deFun = eval(['@', deFunArgs,' N.op', deFunArgs,'-rhs']);
     numberOfInputVariables = nargin(deFun);
 end
 
@@ -287,10 +291,13 @@ end
         % The objective function we want to minimize.
         
         % This objective function does not take into account BCs.
-        g = @(a) 0.5*norm(A\deFun(u+a*delta),'fro').^2;
+%         g = @(a) 0.5*norm(A\deFun(u+a*delta),'fro').^2;
         
         % Objective function with BCs - Using the functions.
-        g = @(a) 0.5*(norm(A\evalProblemFun('DE',u+a*delta),'fro').^2 +bcResidual(u+a*delta));
+%         g = @(a) 0.5*(norm(A\evalProblemFun('DE',u+a*delta),'fro').^2 +bcResidual(u+a*delta));
+ 
+        % Objective function without BCs - Using the functions.
+        g = @(a) 0.5*(norm(A\evalProblemFun('DE',u+a*delta),'fro')).^2;
         
         % Objective function with BCs - Using linearized BCs
         %         g = @(a) 0.5*(norm(A\deFun(u+a*delta),'fro').^2 +bcResidual2(u+a*delta));

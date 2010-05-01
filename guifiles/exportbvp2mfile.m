@@ -49,7 +49,19 @@ fprintf(fid,'N.op = %s;\n',deString);
 
 % Setup for the rhs
 fprintf(fid,'\n%% Set up the rhs of the differential equation\n');
-fprintf(fid,'rhs = %s;\n',char(deRHSInput));
+
+% If we have a coupled system, we need create a array of the inputs
+if size(deRHSInput,1) > 1
+    deRHSprint = ['['];
+    for deRHScounter = 1:size(deRHSInput,1)
+        deRHSprint = [deRHSprint char(deRHSInput{deRHScounter}) ','];
+    end
+    deRHSprint(end) = []; % Remove the last comma
+    deRHSprint = [deRHSprint,']'];
+else
+    deRHSprint = char(deRHSInput);
+end
+fprintf(fid,'rhs = %s;\n',deRHSprint);
 
 % Make assignments for left and right BCs.
 
@@ -95,9 +107,9 @@ dampedOnInput = get(handles.damped_on,'Value');
 
 fprintf(fid,'\n%% Option for damping \n');
 if dampedOnInput
-    fprintf(fid,'options.damping = ''on'';\n');
+    fprintf(fid,'options.damped = ''on'';\n');
 else
-    fprintf(fid,'options.damping = ''off'';\n');
+    fprintf(fid,'options.damped = ''off'';\n');
 end
 
 % Option for plotting
