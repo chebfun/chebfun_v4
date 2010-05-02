@@ -132,7 +132,7 @@ syssize = min(size(u0));
 tmp = NaN(1,syssize); QUASIN = true;
 % Determine if it's a quasimatrix
 if nargin(pdefun) == 4 && syssize ~= 1 
-    % This is the tricky case: we could have
+    % This is the tricky case: we could have1e-6
     %   op(u,t,x,@Diff) or op(u,v,w,@Diff)
     try
         tmp2 = repmat({tmp},1,nargin(pdefun)-2);
@@ -334,6 +334,7 @@ elseif ~funflagr && isfield(bc,'left')
     bc.right = [];
 end
 
+
 % Support for user-defined mass matrices - experimental!
 if ~isempty(opt.Mass)
     if isa(opt.Mass,'chebop')
@@ -352,6 +353,17 @@ if syssize > 1
     diffop = repmat(diffop,syssize,syssize);
 end
 
+% Check for (and try to remove) piecewise initial conditions
+% if get(u0,'trans'), u0 = transpose(u0); end
+% for k = 1:numel(u0)
+%     if u0(:,k).nfuns > 1
+%         u0(:,k) = merge(u0(:,k),tol);
+%         if u0(:,k).nfuns > 1
+%             error('CHEBFUN:pde15s:piecewise',...
+%                 'piecewise initial conditions are not supported'); 
+%         end
+%     end
+% end
 % simplify initial condition  to tolerance or fixed size in optN
 if isnan(optN)
     u0 = simplify(u0,tol);
@@ -433,7 +445,7 @@ for nt = 1:length(tt)-1
     end
     
     % Interupt comutation if stop button is pressed in the GUI.
-    if isfield(opt,'guihandles') && strcmp(get(opt.guihandles{6},'String'),'Stop') && strcmpi(get(opt.guihandles{6},'Enable'),'Off')
+    if isfield(opt,'guihandles') && strcmp(get(opt.guihandles{6},'String'),'Solve')
         tt = tt(1:nt+1);
         if syssize == 1,  
             uu = uu(:,1:nt+1);

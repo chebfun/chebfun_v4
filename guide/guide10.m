@@ -322,7 +322,7 @@ plot(u,'m',LW,lw)
 % Next came the linear equation u"=-u.  With chebops, there is
 % no need to reformulate the problem as a first-order system.  There
 % are two boundary conditions at the left, which can be imposed
-% by making N.lbc a functtion returning an array.
+% by making N.lbc a function returning an array.
 [d,t,N] = domain(0,10*pi);
 N.op = @(u) diff(u,2)+u;
 N.lbc = @(u) [u-1, diff(u)];

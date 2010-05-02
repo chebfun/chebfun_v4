@@ -92,7 +92,7 @@ if ~isempty(strfind(input,'@')) % User supplied anon. function
 elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
     bcNum = str2num(input);
     rhsNum = str2num(rhs);
-    if isempty(rhsNum) && strfind(rhs,'t'), rhsNum = 1; end
+    if isempty(rhsNum) && ~isempty(strfind(rhs,'t')), rhsNum = 1; end
     
     % Check whether we have a number (OK), allowed strings (OK) or whether
     % we will have to convert the string to anon. function (i.e. the input
@@ -106,7 +106,7 @@ elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
         indVarName = []; % Don't need to worry about lin. func. in this case
     else
         if ~isempty(rhsNum) && rhsNum % If rhs = 0, don't make a subtraction
-            input = [input ,'-',rhs];
+            input = [input ,'-(',rhs,')'];
         end
         convertBCtoAnon = 1;
     end

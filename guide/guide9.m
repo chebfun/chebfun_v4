@@ -80,7 +80,7 @@ plot(sinc,'m','interval',[-10 10])
 %%
 % Chebfun's capability of handling infinite intervals was introduced by
 % Rodrigo Platte in 2008-09.  The basis of these computations is a change
-% of variables, or mapping, which simplifys the infinite interval to
+% of variables, or mapping, which simplifies the infinite interval to
 % [-1,1].  Let's take a look at what is going on in the case
 % of the function g just constructed.  We'll do this by digging inside
 % the chebfun system a bit -- with a warning that the details

@@ -151,11 +151,13 @@ end
 bc = struct( 'left', LBC, 'right', RBC);
 % Set up the initial condition
 if ischar(guessInput)
+    guessInput = vectorize(guessInput);
     u0 =  chebfun(guessInput,[a b]);
 else
     u0 = chebfun;
     for k = 1:numel(guessInput)
-        u0(:,k) =  chebfun(guessInput{k},[a b]);
+        guess_k = vectorize(guessInput{k});
+        u0(:,k) =  chebfun(guessi_k,[a b]);
     end
 end
 

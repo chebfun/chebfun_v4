@@ -201,7 +201,7 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
     
     % If the user has pressed the stop button on the GUI, we stop and
     % return the latest solution
-    if nargin == 4 && strcmpi(get(guihandles{6},'Enable'),'Off')
+    if nargin == 4 && strcmpi(get(guihandles{6},'String'),'Solve')
         nrmduvec(counter+1:end) = [];
         solve_display(pref,guihandles,'final',u,[],nrmdu,normr)
         return

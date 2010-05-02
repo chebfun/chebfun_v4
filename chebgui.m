@@ -176,10 +176,9 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
     % Update the GUI and return to the original directory
     guidata(hObject, handles);
     cd(temppath);
-    set(handles.button_reset,'Visible','Off')
+    set(handles.button_solve,'String','Solve');
 else
-    set(handles.button_solve,'Enable','Off');
-    set(handles.button_reset,'Visible','On')
+    set(handles.button_solve,'String','Solve')
 end
     
 
@@ -902,7 +901,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 function temppath = folderchange
 % The function cd-s to the chebfun folder, and returns the path to the
 % folder the user was currently in.
@@ -911,12 +909,3 @@ chebfunpath = fileparts(which('chebtest.m'));
 guifilepath = fullfile(chebfunpath,'guifiles');
 cd(guifilepath);
 
-% --- Executes on button press in button_reset.
-function button_reset_Callback(hObject, eventdata, handles)
-% hObject    handle to button_reset (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-set(handles.button_solve,'Enable','On')
-set(handles.button_solve,'String','Solve')
-set(handles.button_reset,'Visible','Off')
