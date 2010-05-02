@@ -1,7 +1,7 @@
 function f = vectorcheck(f,x,pref)
 % Try to determine whether f is vectorized. 
 
-% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.maths.ox.ac.uk/chebfun/
 
 if isfield(pref,'vectorize') % force vectorization
     f = vec(f);
@@ -11,14 +11,14 @@ if isfield(pref,'vectorcheck') && pref.vectorcheck == false
     return              % Skip the check
 end
 
-dbz_state = warning;    % store warning state
+dbz_state = warning;    % Store warning state
 try
-    warning off         % turn off warnings off
-    v = f(x(:));
-    warning(dbz_state); % restore warnings
+    warning off         % Turn off warnings off
+    v = f(.99*x(:));    % Evaluate a vector of (near the) endpoints
+    warning(dbz_state); % Restore warnings
     if any(size(v) ~= size(x(:)))
         if nargout == 1 && ~isfield(pref,'vectorize')
-            warning('CHEBFUN:vectorwrap:shape',...
+            warning('CHEBFUN:vectorcheck:shape',...
                     ['Function failed to evaluate on array inputs; ',...
                     'vectorizing the function may speed up its evaluation and avoid ',...
                     'the need to loop over array elements. Use ''vectorize'' flag in ',...
@@ -26,14 +26,14 @@ try
             f = vec(f);
             vectorcheck(f,x,pref);
         else
-            warning('CHEBFUN:vectorwrap:shapeauto',...
+            warning('CHEBFUN:vectorcheck:shapeauto',...
                 'Automatic vectorization may not have been successful.')
         end
     end
 catch %ME
-    warning(dbz_state);     % restore warnings (is this needed here?)
+    warning(dbz_state);     % Restore warnings (is this needed here?)
     if nargout == 1 && ~isfield(pref,'vectorize')
-        warning('CHEBFUN:vectorwrap:vecfail',...
+        warning('CHEBFUN:vectorcheck:vecfail',...
                 ['Function failed to evaluate on array inputs; ',...
                 'vectorizing the function may speed up its evaluation and avoid ',...
                 'the need to loop over array elements. Use ''vectorize'' flag in ',...
