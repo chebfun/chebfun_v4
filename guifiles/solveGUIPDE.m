@@ -11,8 +11,6 @@ set(handles.fig_norm,'Visible','On');
 cla(handles.fig_sol,'reset')
 cla(handles.fig_norm,'reset')
 
-set(handles.button_solve,'String','Stop');
-
 opts = pdeset;
 defaultTol = opts.Eps;
 
@@ -162,7 +160,7 @@ else
 end
 
 opts.HoldPlot = false;
-opts.tol = tolNum;
+opts.Eps = tolNum;
 opts.guihandles = guihandles;
 
 % error
@@ -198,7 +196,15 @@ set(handles.button_figures,'Enable','on');
 
 axes(handles.fig_norm)
 if ~iscell(u)
-    surf(u)
+    surf(u,t,'facecolor','interp')
+else
+    surf(u{1},t,'facecolor','interp')
+    xlabel('x'), ylabel('t')
+    varnames = get(handles.input_DE_RHS,'string');
+    idx = strfind(varnames{1},'_');
+    varnames{k} = varnames{1}(1:idx(1)-1);
+    v = varnames{1}(1:idx(1)-1);
+    title(v),zlabel(v)
 end
 
 % if length(vec) > 1

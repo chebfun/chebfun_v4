@@ -1,4 +1,4 @@
-function pass = testpoly
+function pass = polytest
 % Tests the function poly. Rodp, Feb 2009.
 
 c = rand(1,5);

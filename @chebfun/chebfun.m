@@ -5,7 +5,7 @@ function f = chebfun(varargin)
 % @(x) x.^2 + 2*x +1, or a vector of numbers. For the first two, F should 
 % in most cases be "vectorized" in the sense that it may be evaluated at a 
 % column vector of points x(:) and return an output of size length(x(:)).
-% If F is a doubles array, [A1;A2;...;An], the numbers A1,...,An are used 
+% If F is a doubles array, [A1,A2,...,An], the numbers A1,...,An are used 
 % as function values at n Chebyshev points of the 2nd kind, i.e. chebpts(n).
 %
 % CHEBFUN(F,[A B]) specifies an interval [A B] where the function is
@@ -13,31 +13,22 @@ function f = chebfun(varargin)
 %
 % CHEBFUN(F,NP) overrides the adaptive construction process to specify
 % the number NP of Chebyshev points to construct the chebfun. This is
-% shorthand for CHEBFUN(F,'length',N).
+% shorthand for CHEBFUN(F,'length',NP). CHEBFUN(F,[A B],NP) specifies both
+% the interval of definition and the number of points. If NP is NaN, the
+% default adaptive process is used.
 %
-% CHEBFUN(F,[A B],NP) specifies the interval of definition and the
-% number NP of Chebyshev points.
+% CHEBFUN(F,...,'exps',[EXP1 EXP2]) allows the definition of singularities
+% in the function F at end points of the interval. If EXP1 and/or EXP2 is 
+% NaN, the constructor will attempt to determine the form of the singularity 
+% automatically. See help chebfun/blowup for more information.
 %
-% CHEBFUN(F,'exps',[EXP1 EXP2]) allows the definition of singularities
-% in the function F at the end points of the interval. See help 
-% chebfun/blowup for more information.
+% CHEBFUN([C1,...,CN],'coeffs') constructs a chebfun corresponding to the
+% Chebyshev polynomial P(x) = C1*T_{N-1}(x)+C2*T_{N-2}(x)+...+CN.
 %
-% CHEBFUN(F,'map',{MAPNAME,MAPPARS}) allows the use of mapped Chebyshev
-% expansions. See help chebfun/maps for more information.
-%
-% CHEBFUN(chebpolyval([C1,...,CN])) constructs a chebfun corresponding to the
-% Chebyshev polynomial P(x) = C1*T_{N-1}(x)+C2*T_{N-2}(x)+...+CN. One can use 
-% CHEBFUN([C1,...,CN],'coeffs').
-%
-% CHEBFUN(F1,F2,...,Fm,ENDS), where ends is an increasing vector of length
-% m+1, constructs a piecewise smooth chebfun from the functions F1,...,Fm.
-% Each function Fi can be a string, a function handle or a doubles array,
+% CHEBFUN(F1,F2,...,Fm,ENDS), where ENDS is an increasing vector of length
+% m+1, constructs a piecewise smooth chebfun for the functions F1,...,Fm.
+% Each function Fi can be a string, function handle, or doubles array,
 % and is defined in the interval [ENDS(i) ENDS(i+1)].
-%
-% CHEBFUN(F1,F2,...,FM,ENDS,NP), where NP is a vector of length M, specifies
-% the number NP(i) of Chebyshev points for the construction of fi. If NP(i)
-% is NaN the length of the representation will be determined automatically.
-% Note, the ordering of ENDS and NP is important.
 %
 % CHEBFUN(CHEBS,ENDS) constructs a piecewise smooth chebfun with m pieces
 % from a cell array chebs of size m x 1.  Each entry CHEBS{i} is a function 
@@ -49,8 +40,9 @@ function f = chebfun(varargin)
 % of a vector of 'funs', a vector 'ends' of length m+1 defining the
 % intervals where the funs apply, and a matrix 'imps' containing information
 % about possible delta functions at the breakpoints between funs.
-%
-% CHEBFUN creates an empty chebfun.
+% CHEBFUN(F,[A B]) specifies an interval [A B] where the function is
+% defined. A and/or B may be infinite. Calling CHEBFUN with no inputs 
+% creates an empty chebfun.
 %
 % G = CHEBFUN(...,PREFNAME,PREFVAL) returns a chebfun using the preference
 % PREFNAME with value specified by PREFVAL. See chebfunpref for possible
@@ -58,12 +50,12 @@ function f = chebfun(varargin)
 %
 % Advanced features:
 %
-% CHEBFUN(F,'scale',SCALE) defines the relative accuracy of the constructed
-% chebfun relative to the value given by SCALE.
-%
 % CHEBFUN(F,'vectorize') wraps F in a for loop. This is useful when F
 % cannot be evaluated with a vector input. CHEBFUN(F,'vectorcheck','off') 
 % turns off the automatic checking for vector input.
+%
+% CHEBFUN(F,'scale',SCALE) constructs a chebfun with relative accuracy given 
+% by SCALE.
 %
 % CHEBFUN(F,'trunc',N) returns an N point chebfun constructed by
 % constructing the Chebyshev series at degree N-1, rather than by
@@ -74,6 +66,9 @@ function f = chebfun(varargin)
 % with CHEBFUN(F,'chebkind','1st','resampling','on') (which uses Chebyshev
 % points of the 1st kind during the construction process), although this 
 % functionality is still experimental.
+%
+% CHEBFUN(F,...,'map',{MAPNAME,MAPPARS}) allows the use of mapped Chebyshev
+% expansions. See help chebfun/maps for more information.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 % Copyright 2002-2009 by The Chebfun Team.
@@ -133,8 +128,9 @@ else
             elseif strncmpi('vectori',varargin{k},7)
                 pref.vectorize = 0;
                 k = k+1;  
-            elseif strncmpi('coeff',varargin{k},5)
-                pref.coeffs = 1;
+            elseif strncmpi('coeff',varargin{k},4)
+                pref.coeffs = 1; 
+                if ~isfield(pref,'coeffkind'), pref.coeffkind = 1; end
                 k = k+1; 
             elseif strncmpi('trunc',varargin{k},5)
                 pref.trunc = value;
@@ -143,19 +139,24 @@ else
             elseif strcmpi('vectorcheck',varargin{k})
                 pref.vectorcheck = value;
                 k = k+2;                  
-            elseif strcmpi('extrapolate',varargin{k})
+            elseif strncmpi('extrap',varargin{k},6)
                 pref.extrapolate = value;
                 k = k+2;                  
             elseif strcmpi('length',varargin{k}) || strcmpi('n',varargin{k})
                 pref.n = value;
                 k = k+2;
-            elseif strcmpi('scale',varargin{k})
+            elseif strcmpi('scale',varargin{k}) || strcmpi('scl',varargin{k})
                 pref.scale = value;
                 k = k+2;    
             elseif strcmpi('chebkind',varargin{k}) || strcmpi('kind',varargin{k})
                 if      strncmpi(value,'1st',1), value = 1;
                 elseif  strncmpi(value,'2nd',1), value = 2; end
-                pref.chebkind = value;
+                if isfield(pref,'coeffs'), 
+                    pref.coeffkind = value;
+                    pref.chebkind = 2;
+                else
+                    pref.chebkind = value;
+                end
                 k = k+2;                    
             elseif strcmpi('singmap',varargin{k})
                 pref.sings = value;

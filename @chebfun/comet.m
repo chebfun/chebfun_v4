@@ -8,8 +8,11 @@ function comet(varargin)
 % comet of the chebfun F versus the chebfun G, and COMET(F,G,H) displays a
 % comet in 3D-space using the three chebfuns as coordinates.
 %
-% COMET(...,'SPEED',S) where S is a real number will control the speed at which the
-% comet is updated. A larger S will result in a faster plot.
+% COMET(...,'SPEED',S) where S is a real number will control the speed at 
+% which the comet is updated. A larger S will result in a faster plot.
+%
+% COMET(...,'INTERVAL',[A B]) will restrict the comet to plot in the
+% interval [A B], which should be a subset of domain(F).
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -26,6 +29,16 @@ s = inf;
 for k = 1:numel(varargin)-1
     if strcmpi(varargin{k},'speed'), 
         s = varargin{k+1};
+        varargin(k:k+1) = [];
+        break
+    end
+end
+
+interval = NaN;
+for k = 1:numel(varargin)-1
+    if strcmpi(varargin{k},'interval'), 
+        interval = varargin{k+1};
+        if isa(interval,'domain'), interval = interval.ends; end
         varargin(k:k+1) = [];
         break
     end
@@ -50,6 +63,12 @@ p = 1./(1+s);
 
 if numchebfuns == 1 && isreal(f)
     [x0,x1] = domain(f);
+    if ~isnan(interval)
+        if interval(1) >= x0, x0 = interval(1); 
+        else error('CHEBFUN:comet:int','Invalid interval definition.'); end
+        if interval(2) <= x1, x1 = interval(2); 
+        else error('CHEBFUN:comet:int','Invalid interval definition.'); end
+    end
     x = linspace(x0,x1,N); x(end) = [];
     ydata = feval(f,x);
     hh = plot(x(1),ydata(1),plotopts{:});
@@ -73,6 +92,12 @@ if numchebfuns == 2 || ~isreal(f(1))
         disp('f and g must be defined on the same interval')
         return
     end
+    if ~isnan(interval)
+        if interval(1) >= x0, x0 = interval(1); 
+        else error('CHEBFUN:comet:int','Invalid interval definition.'); end
+        if interval(2) <= x1, x1 = interval(2); 
+        else error('CHEBFUN:comet:int','Invalid interval definition.'); end
+    end
     x = linspace(x0,x1,N);
     xdata = feval(f,x);
     ydata = feval(g,x);
@@ -90,6 +115,12 @@ if numchebfuns == 3
     if (std([x0 y0 z0])>1e-12*hs) || (std([x1 y1 z1])>1e-12*hs)
         disp('f, g and h must be defined on the same interval')
         return
+    end
+    if ~isnan(interval)
+        if interval(1) >= x0, x0 = interval(1); 
+        else error('CHEBFUN:comet:int','Invalid interval definition.'); end
+        if interval(2) <= x1, x1 = interval(2); 
+        else error('CHEBFUN:comet:int','Invalid interval definition.'); end
     end
     x = linspace(x0,x1,1000);
     xdata = feval(f,x);

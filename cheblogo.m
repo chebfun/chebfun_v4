@@ -28,6 +28,6 @@ set(gcf,'unit','cent','pos',pos,...
   'menuBar','none','name','Chebfun logo','numbertitle','off')
 
 shg
-comet(f)
+comet(f,'interval',[-1,.957])
 
 end

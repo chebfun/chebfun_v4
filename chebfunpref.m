@@ -58,10 +58,11 @@ function varargout = chebfunpref(varargin)
 %        but in fact often does not result in an improvement.)
 %        Factory value is false.
 %
-% domain - Default interval of definition of a chebfun. Factory definition is [-1 1].
+% domain - Default interval of definition of a chebfun. 
+%        Factory definition is [-1 1].
 %
-% eps -  Relative tolerance. Factory value is 2^-52 (Matlab's factory value
-%        of machine epsilon).
+% eps -  Relative tolerance used in construction and subsequent operations.
+%        Factory value is 2^-52 (Matlab's factory value of machine epsilon).
 %
 % sampletest - Safety test option, true (1) or false (0).
 %        If true, the constructor tests the function at one more arbitrary
@@ -84,11 +85,11 @@ function varargout = chebfunpref(varargin)
 %        interior values rather than sampled. Extrapolation is used
 %        independently of this option if a function evaluation returns NaN.
 %        In some cases, however, functions values at end points maybe
-%        inaccurate and enabling extrapolation maybe helpful.
+%        inaccurate or undefined, and enabling extrapolation maybe helpful.
 %        Factory value is 0.
 %
-% plot_numpts - Number of points used to plot a chebfun. Factory value is
-%        2001.
+% plot_numpts - Number of points used to plot a chebfun. 
+%        Factory value is 2001.
 %
 % Examples
 %        chebfunpref
@@ -159,7 +160,6 @@ elseif nargin==2
     if ~truepref
         error('CHEBFUN:chebfunpref:argin', ...
         ['Unknown chebfun preference "',varargin{1},'".'])
-    return
     end
 elseif nargin > 2
     if nargout == 1
@@ -167,7 +167,7 @@ elseif nargin > 2
     end
     while ~isempty(varargin)  
         if numel(varargin) == 1
-            error('CHEBFUN:chebfunpref:argin2','Incorrect number of input arguments');
+            error('CHEBFUN:chebfunpref:argin2','Incorrect number of input arguments.');
         end
         chebfunpref(varargin{1:2});
         varargin(1:2) = [];
@@ -219,7 +219,7 @@ elseif nargin==2
             varargin{2} = false;
         else
             %  if ischar(varargin{2})
-            error('CHEBFUN:chebfunpref:argin','invalid second argument')
+            error('CHEBFUN:chebfunpref:argin','Invalid second argument.')
         end
         
     end
@@ -232,7 +232,7 @@ elseif nargin==2
     % If preference is 'eps', check for consistency!
     if strcmp(varargin{1},'eps') && varargin{2}<2^-52
         varargin{2} = 2^-52;
-        warning('CHEBFUN:chebfunpref:argin','eps value below machine precision. eps set to 2^-52');
+        warning('CHEBFUN:chebfunpref:argin','eps value below machine precision. eps set to 2^-52.');
     end
     % Set preference!
     prefs.(varargin{1}) = varargin{2};
@@ -243,7 +243,7 @@ elseif nargin==2
 %     end
     
     if ~prefs.resampling && prefs.chebkind == 1
-        warning('CHEBFUN:resampling_kind','RESAMPLING has been turned ON. Chebyshev points of 1st kind are being used')
+        warning('CHEBFUN:resampling_kind','RESAMPLING has been turned ON. Chebyshev points of 1st kind are being used.')
         prefs.resampling = true;
     end
     

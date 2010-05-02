@@ -74,7 +74,17 @@ while ii < length(ops)
     switch class(op)
         case 'double'
             if isfield(pref,'coeffs')
-                op = chebpolyval(op);
+                if pref.coeffkind == 2
+                % Coeffs of 2nd-kind are given. Convert to 1st-kind.    
+                    N = length(op)-1;
+                    op = 2*op(end:-1:1);
+                    c = op;
+                    for k = N-1:-1:2, c(k) = op(k) + c(k+2);    end
+                    if  N > 2,        c(1) = .5*(op(1) + c(3)); end
+                    op = c(end:-1:1);
+                end
+                op = chebpolyval(op,pref.chebkind);
+
             end
             if ~isfield(pref,'map')
                 fs = fun(op,es,pref);

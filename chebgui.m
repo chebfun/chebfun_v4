@@ -157,6 +157,7 @@ function button_solve_Callback(hObject, eventdata, handles)
 
 if strcmp(get(handles.button_solve,'string'),'Solve')
 % In solve mode
+    set(handles.button_solve,'String','Stop');
     % CD to the guifiles directory and call the function solveGUIBVP which does
     % all the work of managing the solution process.
     % try
@@ -175,8 +176,10 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
     % Update the GUI and return to the original directory
     guidata(hObject, handles);
     cd(temppath);
+    set(handles.button_reset,'Visible','Off')
 else
     set(handles.button_solve,'Enable','Off');
+    set(handles.button_reset,'Visible','On')
 end
     
 
@@ -884,6 +887,8 @@ cd(temppath);
 end
 
 set(hObject,'Value',1)
+set(handles.button_solve,'Enable','On')
+set(handles.button_solve,'String','Solve')
 
 % --- Executes during object creation, after setting all properties.
 function popupmenu_demos_CreateFcn(hObject, eventdata, handles)
@@ -905,3 +910,13 @@ temppath = pwd;
 chebfunpath = fileparts(which('chebtest.m'));
 guifilepath = fullfile(chebfunpath,'guifiles');
 cd(guifilepath);
+
+% --- Executes on button press in button_reset.
+function button_reset_Callback(hObject, eventdata, handles)
+% hObject    handle to button_reset (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+set(handles.button_solve,'Enable','On')
+set(handles.button_solve,'String','Solve')
+set(handles.button_reset,'Visible','Off')

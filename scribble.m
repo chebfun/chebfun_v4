@@ -19,6 +19,7 @@ f0 = [];
 ends = [0 1];
 for j = 1:L
    switch upper(s(j))
+% Alphabet
       case {'A'}, t = c([0 .4+1i .8 .6+.5i .2+.5i]);
       case {'B'}, t = c([0 1i .8+.9i .8+.6i .5i .8+.4i .8+.1i 0]);
       case {'C'}, t = c([.8+1i .8i .2i .8]);
@@ -45,6 +46,7 @@ for j = 1:L
       case {'X'}, t = c([1i .8 .4+.5i .8+1i 0]);
       case {'Y'}, t = c([1i .4+.5i .8+1i .4+.5i .4]);
       case {'Z'}, t = c([1i .8+1i 0 .8]);
+% Numerals          
       case {'1'}, t = c([0 .8 .4 .4+1i .1+.8i]);
       case {'2'}, t = c([.8 0 .5i .8+.5i .8+1i 1i]);
       case {'3'}, t = c([1i .8+1i .8+.5i .1+.5i .8+.5i .8 0]);
@@ -54,6 +56,7 @@ for j = 1:L
       case {'7'}, t = c([1i .8+1i .2]);  
       case {'8'}, t = c([1i .8+1i .8 0 .5i 1i .5i .8+.5i]);  
       case {'9'}, t = c([.8 .8+1i 1i .5i .8+.5i]); 
+% Punctuation          
       case {'?'}, 
           t = [c([.6i 1i .8+1i .8+.5i .4+.5i .4+.2i])  ...
                c([.35 .45 .45+.05i .35+.05i .35])]; 
@@ -64,9 +67,12 @@ for j = 1:L
       case {','}, t = c([-0.1-.15i -.05-.15i .1+.05i .05+.05i -.1-.15i]);
       case {'-'}, t = c([.1+.5i .7+.5i]);
       case {'+'}, t = c([.5i .7+.5i .4+.5i .4+.9i .4+.1i]);
+      case {'^'}, t = c([.2+.7i .4+1i .6+.7i]);
       case {''''}, t = c([.3+.7i .4+1i]);
       case {'"'}, t = [c([.33+.8i .33+1i]) c([.66+.8i .66+1i])];
       case {' '}, t = [];
+% misc
+      case {'Ê'}, t = [c([.8+1i 1i .5i .5i+.7 .5i 0 .8]) c([.1+1.1i .4+1.2i .7+1.1i])];
       
       otherwise, 
           t = [];
@@ -89,6 +95,7 @@ for k = 1:numel(f0);
     f0(k).map = m;
 end
 
+if isempty(f0), f = chebfun; return, end
 f = chebfun(0,ends);
 f.funs = f0;
 

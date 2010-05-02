@@ -113,7 +113,8 @@ if mod(n,2)                                                 % n is odd
     ders((n+1)/2) = n*Pm2;                                  % P'(0)    
 else                                                        % n is even
     [roots(n/2+1) ders(n/2+1)] = alg2_Leg(P,n);             % Find first root
-end        
+end       
+
 [roots ders] = alg1_Leg(roots,ders);          % Other roots and derivatives
 
 % -------------------------------------------------------------------------
@@ -147,8 +148,8 @@ for j = N+1:n-1
         up(m-k) = (c1*(k+1)*u(m-k)+(k-n*(n+1)/(k+1))*u(m-k+1)/M^2)*c2;
         u(m-(k+1)) = up(m-k)/(k+2);
     end
-    up(1) = 0;   
-           
+    up(1) = 0;  
+
     % Newton iteration
     hh = hh1; step = inf;  l = 0; 
     while (abs(step) > eps) && (l < 10)

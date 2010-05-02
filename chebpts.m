@@ -15,9 +15,11 @@ function [x w] = chebpts(n,d,kind)
 %   corresponding to the domain and length of the chebfun F.
 %
 %   CHEBPTS(N,KIND) or CHEBPTS(N,D,KIND) returns Chebyshev points of the
-%   first kind if KIND = 1 and second kind if KIND = 2 (default). 
+%   first kind if KIND = 1 and second kind if KIND = 2 (default).
+%   Note that chebpts will always return second kind points, regardless of
+%   the value of 'chebkind' in chebfunpref.
 %
-%   See also legpts and jacpts.
+%   See also legpts, jacpts, lagpts, and hermpts.
 %   
 %   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 

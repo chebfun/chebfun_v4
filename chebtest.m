@@ -27,7 +27,7 @@ persistent userpref
 
 if nargin ==1 && strcmpi(dirname,'restore')
     if isempty(userpref)
-        disp('First excution of chebtests (or information has been cleared), preferences unchanged')
+        disp('First excution of chebtests (or information has been cleared), preferences unchanged.')
         return
     end
     warning(userpref.warnstate)
@@ -42,14 +42,13 @@ end
 pref = chebfunpref;
 tol = pref.eps;
 createreport = true;
-avgtimes = true;
+avgtimes = false;
 
-matlabver = ver('matlab');
-if str2double(matlabver.Version(1)) < 7 || ...
-    (str2double(matlabver.Version(3)) < 4 && length(matlabver.Version) < 4)
-    disp(['Matlab version: ',matlabver.Version])
+if verLessThan('matlab','7.10')
+    matlabver = ver('matlab');
+    disp(['MATLAB version: ',matlabver.Version, ' ', matlabver.Release])
     error('CHEBFUN:chebtest:version',['Chebfun is compatible' ...
-        ' with MATLAB 7.4 or a more recent version.'])
+        ' with MATLAB 7.4 (R2007a) or a more recent version.'])
 end
 
 % Chebfun directory
@@ -64,18 +63,21 @@ if ~exist(dirname,'dir')
   error('CHEBFUN:chebtest:nodir',msg)
 end
 
+% Get the names of the tests
 dirlist = dir( fullfile(dirname,'*.m') );
 mfile = {dirlist.name};
-namelen = 0;
+namelen = 0; % Find the length of the names (for pretty display later).
 for k = 1:numel(mfile)
     namelen = max(namelen,length(mfile{k}));
 end
-
-fclose(fopen(fullfile(dirname, filesep,'chebtest_report.txt'),'w+'));
-
 fprintf('\nTesting %i functions:\n\n',length(mfile))
-failed = zeros(length(mfile),1);
-t = failed;    % vector to store times
+
+% Initialise some storage
+failed = zeros(length(mfile),1);   % Pass/fail
+t = failed;                        % Vector to store times
+
+% Clear the report file
+fclose(fopen(fullfile(dirname, filesep,'chebtest_report.txt'),'w+'));
 
 % For looking at average time performance.
 if avgtimes
@@ -97,6 +99,7 @@ else
     avgN = 0; avgt = 0*t;
 end
 
+% Turn off warnings for the test
 warnstate = warning;
 warning off
 
@@ -106,15 +109,18 @@ userpref.path = path;
 userpref.pref = pref;
 userpref.oppref = cheboppref;
 userpref.dirname = dirname;
+% Add chebtests directory to the path
 addpath(dirname)
 
+% If java is not enables, don't display html links.
 javacheck = true;
 if strcmp(version('-java'),'Java is not enabled')
     javacheck = false;
 end
 
+% loop through the tests
 for j = 1:length(mfile)
-  
+  % Print the test name
   fun = mfile{j}(1:end-2);
   if javacheck
       link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
@@ -125,7 +131,7 @@ for j = 1:length(mfile)
   msg = ['  Function #' num2str(j) ' (' link ')... ', ws ];
   msg = strrep(msg,'\','\\');  % escape \ for fprintf
   numchar = fprintf(msg);
-  
+  % Execute the test
   try
     close all
     chebfunpref('factory');
@@ -137,12 +143,12 @@ for j = 1:length(mfile)
     if failed(j)
       fprintf('FAILED\n')
     else
+        avgt(j) = (avgN*avgt(j)+t(j))/(avgN+1);
         if avgN == 0
           fprintf('passed in %2.3fs \n',t(j))
         else
           fprintf('passed in %2.3fs (avg %2.3fs)\n',t(j),avgt(j))
         end
-        avgt(j) = (avgN*avgt(j)+t(j))/(avgN+1);
       %pause(0.1)
       %fprintf( repmat('\b',1,numchar) )
     end
@@ -154,7 +160,7 @@ for j = 1:length(mfile)
     if ~isempty(lf), msg.message(1:lf(end))=[]; end
     fprintf([msg.message '\n'])
     
-    % Create an error report
+    % Create an error report entry
     if createreport
         fid = fopen([dirname filesep ,'chebtest_report.txt'],'a');
         fprintf(fid,[fun '  (crashed) \n']);
@@ -173,10 +179,10 @@ end
 rmpath(dirname)
 path(path,userpref.path); % If dirname was already in path, put it back.
 warning(warnstate)
-chebfunpref('factory');
 chebfunpref(pref);
 cheboppref(userpref.oppref);
 
+% Final output
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')
   if nargout>0, failfun = {}; end
@@ -193,14 +199,14 @@ else
   end
   fprintf('\n')
 end
-
 ts = sum(t); tm = ts/60;
 if avgN == 0
     fprintf('Total time: %1.1f seconds = %1.1f minutes \n',ts,tm)
 else
-    fprintf('Average time: %1.1f seconds (Lifetime Avg: %1.1f seconds)\n',ts,avgTot)
+    fprintf('Total time: %1.1f seconds (Lifetime Avg: %1.1f seconds)\n',ts,avgTot)
 end
 
+% Update average times (if enabled and no failures)
 if avgtimes && all(~failed)
     avgfid = fopen(avgfile,'w+');    
     for k = 1:size(t,1)

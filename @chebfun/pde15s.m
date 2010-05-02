@@ -31,12 +31,15 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 % Example 3: Chemical reaction (system)
 %    [d,x] = domain(-1,1);  
 %    u = [ 1-erf(10*(x+0.7)) , 1 + erf(10*(x-0.7)) , chebfun(0,d) ];
-%    f = @(u,v,w,diff)  [ 0.1*diff(u,2) - 100*u.*v , ...
-%                      0.2*diff(v,2) - 100*u.*v , ...
-%                     .001*diff(w,2) + 2*100*u.*v ];
+%    f = @(u,v,w,diff)  [ .1*diff(u,2) - 100*u.*v , ...
+%                         .2*diff(v,2) - 100*u.*v , ...
+%                         .001*diff(w,2) + 2*100*u.*v ];
 %    bc = 'neumann';     
 %    uu = pde15s(f,0:.1:3,u,bc);
 %    mesh(uu{3})
+%
+% See chebfun/examples/pde15s_demos.m and chebfun/examples/pde_systems.m
+% for more examples.
 %
 % UU = PDE15s(PDEFUN, TT, U0, BC, OPTS) will use nondefault options as
 % defined by the structure returned from OPTS = PDESET.
@@ -50,12 +53,14 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 %    BC.LEFT = @(u,t,x,D) D(u) + u - (1+2*sin(10*t));
 %    BC.RIGHT = struct( 'op', 'dirichlet', 'val', @(t) .1*sin(t));
 %
-% See also chebfun/examples/pde15s_demos, pdeset, ode15s
+% See also pdeset, ode15s, chebop/pde15s
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 global ORDER QUASIN GLOBX
 ORDER = 0; % Initialise to zero
+QUASIN = [];
+GLOBX = [];
 
 if nargin < 4 
     error('CHEBFUN:pde15s:argin','pde15s requires a minimum of 4 inputs');
@@ -429,9 +434,9 @@ for nt = 1:length(tt)-1
     
     % Interupt comutation if stop button is pressed in the GUI.
     if isfield(opt,'guihandles') && strcmp(get(opt.guihandles{6},'String'),'Stop') && strcmpi(get(opt.guihandles{6},'Enable'),'Off')
+        tt = tt(1:nt+1);
         if syssize == 1,  
             uu = uu(:,1:nt+1);
-            tt = tt(1:nt+1);
         else
             for k = 1:syssize
                 uu{k} = uu{k}(:,1:nt+1);
@@ -453,6 +458,10 @@ switch nargout
     otherwise
         error('CHEBFUN:pde15s:output','pde15s may only have a maximum of two outputs');
 end
+
+clear global ORDER
+clear global QUASIN
+clear global GLOBX
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%    ONESTEP   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constructs the result of one time chunk at fixed discretization
@@ -483,7 +492,6 @@ end
         
         % ODE options (mass matrix)
         opt2 = odeset(opt,'Mass',M,'MassSingular','yes','InitialSlope',odefun(tt(nt),U0));
-
         % Solve ODE over time chunk with ode15s
         [ignored,U] = ode15s(@odefun,tt(nt:nt+1),U0,opt2);
         
@@ -564,7 +572,7 @@ function up = Diff(u,k,lr)
     
     global GLOBX ORDER QUASIN
     persistent storage
-    if isempty(storage), storage = struct([]); end
+    if isempty(storage), storage = struct('D',[]); end
 
     % Assume first-order derivative
     if nargin == 1, k = 1; end
@@ -588,12 +596,16 @@ function up = Diff(u,k,lr)
         % Which differentiation matrices do we need?
         switch ORDER
             case 1
+                storage(N).D = {{1}};
                 storage(N).D{1} = barymat(x);
             case 2
+                storage(N).D = {{1 1}};
                 [storage(N).D{1} storage(N).D{2}] = barymat(x);
             case 3
+                storage(N).D = {{1 1 1}};
                 [storage(N).D{1} storage(N).D{2} storage(N).D{3}] = barymat(x);
             case 4
+                storage(N).D = {{1 1 1 1}};
                 [storage(N).D{1} storage(N).D{2} storage(N).D{3} storage(N).D{4}] = barymat(x);
             otherwise
                 error('CHEBFUN:Diff:order','Diff can only produce matrices upto 4th order');

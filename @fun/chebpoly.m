@@ -11,18 +11,16 @@ function out = chebpoly(g,kind)
 %   $Date$:
 
 
-if (g.n==1), out = g.vals; return; end
+if g.n==1, out = g.vals; return; end
     
 if nargin == 1 || kind == 2 % 2nd kind is the default!
     n = g.n;
-%     gvals = flipud(g.vals);
-%     out = [gvals;gvals(end-1:-1:2)];
     gvals = g.vals;
     out = [gvals(end:-1:2) ; gvals(1:end-1)];
-    if (isreal(gvals))
+    if isreal(gvals)
         out = fft(out)/(2*n-2);
         out = real(out);
-    elseif (isreal(1i*gvals))
+    elseif isreal(1i*gvals)
         out = fft(imag(out))/(2*n-2);
         out = 1i*real(out);
     else
@@ -32,7 +30,7 @@ if nargin == 1 || kind == 2 % 2nd kind is the default!
     if (n > 2), out(2:end-1)=2*out(2:end-1); end
 
 else % For values from Chebyshev points of the 1st kind
-    gvals = flipud(g.vals);
+    gvals = g.vals(end:-1:1);
     if isreal(gvals)
         out = realcoefs(gvals);
     elseif (isreal(1i*gvals))

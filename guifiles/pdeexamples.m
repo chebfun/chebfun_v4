@@ -83,7 +83,7 @@ switch exampleNumber
         RBC = 'dirichlet';
         RBCrhs = '';
         guess = '(1-x.^2).*exp(-30*(x+.5).^2)';
-        tol = '1e-10';
+        tol = '1e-6';
         name = 'Burgers''';
     case 5
         a = '-1';

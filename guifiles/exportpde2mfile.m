@@ -174,7 +174,13 @@ fprintf(fid,'[tt uu] = pde15s(pdefun,tt,u0,bc,opts);\n');
 % plotting
 if numel(deInput) == 1
     fprintf(fid,'\n%% Create plot of the solution.\n');
-    fprintf(fid,'surf(uu,tt)\n');
+    fprintf(fid,'surf(uu,tt,''facecolor'',''interp'')\n');
+else
+    fprintf(fid,'\n%% Create plot of the solution.\n');
+    fprintf(fid,'for k = 1:numel(uu)\n');
+    fprintf(fid,'   subplot(1,numel(uu),k)\n');
+     fprintf(fid,'   surf(uu{k},tt,''facecolor'',''interp'')\n');
+    fprintf(fid,'end\n');
 end
 
 fclose(fid);

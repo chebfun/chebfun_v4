@@ -1,4 +1,4 @@
-function pass = testpolyfit
+function pass = polyfittest
 % Rodrigo Platte Jan 2009
 % Tests the polyfit commmand
 

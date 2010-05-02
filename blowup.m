@@ -23,7 +23,7 @@ function default = blowup(on_off)
 % Nor is it required that the singular behavior result in a pole:
 %       f = chebfun('exp(x).*(1+x).^pi.*(1-x).^sqrt(2)','exps',[pi sqrt(2)])
 % When the order of the blowup is unknown, one can pass a NaN and chebfun
-% will attempt to compute the order automatically. (Currently it will on;y
+% will attempt to compute the order automatically. (Currently it will only
 % look for integer poles, i.e. BLOWUP == 1).
 %       f = chebfun('exp(x).*sqrt(1+x)./(1-x).^4','exps',[.5 NaN])
 %

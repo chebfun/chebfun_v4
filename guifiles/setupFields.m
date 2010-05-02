@@ -65,39 +65,6 @@ else
 end
 
 end
-% function [field indVarName]  = setupFields(input,rhs,type)
-% 
-% numOfRows = size(input,1);
-% 
-% % Fyrir BCs tharf ad tekka hvort ad varNames innihaldi e-d sem er ekki i DE
-% % varNames. Setja DE varNames sem parametra? Tekka a indVarName i deRHS
-% % lika.
-% 
-% % [field indVarName]  = setupLine(input,rhs,type)
-% 
-% if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
-%     [field indVarName] = setupLine(input{1},rhs{1},type);
-% else
-%     % Keep track of every variable encountered in the problem
-%     allVarNames = {}; allAnFun = []; allIndVarNames = {};
-%     for lineCounter = 1:numOfRows
-%         [anFun indVarName varNames] = setupLine(input{lineCounter},rhs{lineCounter},type);
-%         allAnFun = [allAnFun, anFun,  ','];
-%         allVarNames = [allVarNames;varNames];
-%     end
-%     allAnFun(end) = []; % Remove the last comma
-%     allVarNames = unique(allVarNames); % Remove duplicate variable names
-%     
-%     allVarString = allVarNames{1};
-%     for varCounter = 2:length(allVarNames)
-%         allVarString = [allVarString,',',allVarNames{varCounter}];
-%     end
-%     
-%     field = ['@(', allVarString ')[' allAnFun,']'];
-% end
-% 
-% end
-
 
 function [field indVarName varNames]  = setupLine(input,rhs,type)
 convertBCtoAnon  = 0;
@@ -125,6 +92,7 @@ if ~isempty(strfind(input,'@')) % User supplied anon. function
 elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
     bcNum = str2num(input);
     rhsNum = str2num(rhs);
+    if isempty(rhsNum) && strfind(rhs,'t'), rhsNum = 1; end
     
     % Check whether we have a number (OK), allowed strings (OK) or whether
     % we will have to convert the string to anon. function (i.e. the input

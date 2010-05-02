@@ -23,6 +23,17 @@ function u = pde15s(N, t, opt)
 %   u = pde15s(N,0:.01:.5);
 %   surf(u,0:.01:.5)
 %
+% Example 3: Chemical reaction (system)
+%   [d,x,N] = domain(-1,1);  
+%   N.guess = [ 1-erf(10*(x+0.7)) , 1 + erf(10*(x-0.7)) , chebfun(0,d) ];
+%   N.op = @(u,v,w,diff)  [ 0.1*diff(u,2) - 100*u.*v , ...
+%                      0.2*diff(v,2) - 100*u.*v , ...
+%                     .001*diff(w,2) + 2*100*u.*v ];
+%   N.lbc = 'neumann';     
+%   N.rbc = 'neumann';     
+%   uu = pde15s(N,0:.1:3);
+%   mesh(uu{3})
+%
 % See also chebfun/pde15s, pdeset
 
 pdefun = N.op;
@@ -32,11 +43,11 @@ if strcmpi(N.lbc,'periodic') || strcmpi(N.rbc,'periodic'),
     bc = 'periodic';
 else
     if strcmpi(N.lbcshow,'dirichlet') || strcmpi(N.lbcshow,'neumann')
-        N.lbc = struct('op',N.lbcshow,'val',0);
+        N.lbc = N.lbcshow;
     end
     bc.left = N.lbc;
     if strcmpi(N.rbcshow,'dirichlet') || strcmpi(N.rbcshow,'neumann')
-        N.rbc = struct('op',N.rbcshow,'val',0);
+        N.rbc = N.rbcshow;
     end
     bc.right = N.rbc;
 end

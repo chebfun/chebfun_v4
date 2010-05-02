@@ -7,6 +7,11 @@ function H = hermpoly(n,type)
 % H = HERMPOLY(N,'PROB') normalises instead by the probablist's definition
 % (with weight exp(-x.^2/2)), which gives rise to monic polynomials.
 %
+% Note, this is currently just a toy to play with the construction of
+% Hermite polynomials using a combination of chebfun's barycentric,
+% mapping, and 'blowup' technologies. See chebfun/chebtests/unbndpolys.m
+% for some testing.
+%
 % See also chebpoly, legpoly, jacpoly, and lagpoly.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
@@ -14,7 +19,7 @@ function H = hermpoly(n,type)
 % Copyright 2002-2009 by The Chebfun Team. 
 
 if nargin == 1
-    % by default we take the physicist's definition
+    % By default we take the physicist's definition
     type = 'phys';
 end
 

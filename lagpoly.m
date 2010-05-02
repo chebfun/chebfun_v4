@@ -3,6 +3,11 @@ function L = lagpoly(n)
 % L = LAGPOLY(N) returns the chebfun corresponding to the Laguerre polynomials 
 % L_N(x) on [0,inf], where N may be a vector of positive integers.
 %
+% Note, this is currently just a toy to play with the construction of
+% Hermite polynomials using a combination of chebfun's barycentric,
+% mapping, and 'blowup' technologies. See chebfun/chebtests/unbndpolys.m
+% for some testing.
+%
 % See also chebpoly, legpoly, jacpoly, and hermpoly.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
