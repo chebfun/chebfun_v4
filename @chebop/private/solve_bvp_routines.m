@@ -54,6 +54,19 @@ if opType == 2  % Operator is a chebop. RHS is treated later
 elseif isnumeric(rhs) && all(rhs == 0)
     deFun = N.op;
     numberOfInputVariables = nargin(deFun);
+elseif isnumeric(rhs)
+    % If we have nonzeros on the RHSs, we need to convert the rhs from
+    % vector to quasimatrix to allow subtraction and addition of columns
+    Ndom = N.dom;
+    rhsQuasimatrix = chebfun;
+    for rhsCounter = 1:length(rhs)
+        rhsQuasimatrix = [rhsQuasimatrix chebfun(rhs(rhsCounter),Ndom)];
+    end
+    
+    deFunString = func2str(N.op);
+    deFunArgs = deFunString(2:min(strfind(deFunString,')')));
+    deFun = eval(['@', deFunArgs,' N.op', deFunArgs,'-rhsQuasimatrix']);
+    numberOfInputVariables = nargin(deFun);
 else
     % Need to do a string manipulation to make sure we're getting the
     % correct arguments for the new anonymous function

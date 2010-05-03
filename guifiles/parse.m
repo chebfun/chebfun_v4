@@ -25,14 +25,13 @@ global NEXT;
 if ~isempty(strmatch(NEXT,char('NUM','VAR','INDVAR','FUNC','UN-','UN+','LPAR')))
     parseExp1();
     success = match('$');
-%     if success
-%         disp('Parsing successful');
-%     else
-%         disp('Parsing failed');
-%     end
+    
+    if ~success
+        reportError('parse:end','Input expression ended in unexpected manner');
+    end
 else
     success = 0;
-    reportError();
+    reportError('parse:start','Input field started with unaccepted symbol.');
 end
 end
 
@@ -74,7 +73,7 @@ elseif strcmp(NEXT,'LPAR')
     % parenthesis imbalance in the expression and we return an error.
     m = match('RPAR');  
     if ~m
-        error('parser:parenths', 'Error: Parenthesis imbalance')
+        reportError('parse:parenths', 'Parenthesis imbalance in input fields.')
     end
 elseif  strcmp(NEXT,'UN-') || strcmp(NEXT,'UN+') || strcmp(NEXT,'OP-') || strcmp(NEXT,'OP+') 
     % If + or - reaches this far, we have an unary operator.
@@ -87,7 +86,7 @@ elseif  strcmp(NEXT,'UN-') || strcmp(NEXT,'UN+') || strcmp(NEXT,'OP-') || strcmp
     newTree = tree(newCenterNode, rightArg);
     push(newTree);
 else
-    ERROR('MSGID')
+    reportError('parse:terminal','Unrecognized character in input field')
 end
 end
 
@@ -99,10 +98,10 @@ if strcmp(NEXT,'LPAR')
     
     m = match('RPAR');
     if ~m
-        error('parser:parenths', 'Error: Parenthesis imbalance')
+        reportError('parse:parenths', 'Parenthesis imbalance in input fields.')
     end
 else
-    error('parser:parenths', 'Error: Need parenthesis when using functions')
+    reportError('parse:parenths', 'Need parenthesis when using functions in input fields.')
 end
 end
 
@@ -128,7 +127,7 @@ elseif(strcmp(NEXT,'OP-'))
 elseif strcmp(NEXT,'RPAR') || strcmp(NEXT,'$')
 	% Do nothing
 else % If we don't have ) or the end symbol now something has gone wrong.
-    reportError()
+    reportError('parse:end','Syntax error in input fields.')
 end
 end
 
@@ -214,3 +213,7 @@ global pStack;
 [m n] = size(pStack);
 end
 
+function reportError(id,msg)
+ME = MException(id,msg);
+throw(ME);
+end

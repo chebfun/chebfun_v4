@@ -19,22 +19,22 @@ if numOfRows == 1 % Not a system, can call convert2anon with two output argument
     end
 else
     % Keep track of every variable encountered in the problem
-    allVarNames = {}; 
+    allVarNames = {};
     if numel(rhs) == 1, rhs = repmat(rhs,numOfRows,1); end
     for k = 1:numOfRows
         [anFun{k} indVarName varNames] = setupLine(input{k},rhs{k},type);
         allVarNames = [allVarNames;varNames];
     end
     allVarNames = unique(allVarNames); % Remove duplicate variable names
-
-    % For PDEs we need to reorder so that the order of the time derivatives 
+    
+    % For PDEs we need to reorder so that the order of the time derivatives
     % matches the order of the inout arguments.
     indx = zeros(numOfRows,1);
     for k = 1:numOfRows
         rhsk = rhs{k};
         idxk = strfind(rhsk, '_');
         if isempty(idxk), % it's not a PDE (or we can't do this type yet!)
-            indx = 1:numOfRows; 
+            indx = 1:numOfRows;
             pdeflag = false;
             break
         end
@@ -113,15 +113,10 @@ elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
 end
 
 if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
-%     try
-        if nargout == 2
-            [field indVarName] = convertToAnon(input);
-        else % Three output arguments -- Multiple rows
-            [field indVarName varNames] = convertToAnon(input);
-        end
-%     catch
-%         error(['chebfun:BVPgui','Incorrect input for differential ' ...
-%             'equation or boundary conditions']);
-%     end
+    if nargout == 2
+        [field indVarName] = convertToAnon(input);
+    else % Three output arguments -- Multiple rows
+        [field indVarName varNames] = convertToAnon(input);
+    end
 end
 end

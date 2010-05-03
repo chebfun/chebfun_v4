@@ -44,7 +44,7 @@ tol = pref.eps;
 createreport = true;
 avgtimes = false;
 
-if verLessThan('matlab','7.10')
+if verLessThan('matlab','7.4')
     matlabver = ver('matlab');
     disp(['MATLAB version: ',matlabver.Version, ' ', matlabver.Release])
     error('CHEBFUN:chebtest:version',['Chebfun is compatible' ...

@@ -1,8 +1,43 @@
 function varargout = chebgui(varargin)
-% CHEBGUI Help for the chebop PDE GUI
+% CHEBGUI Help for the chebop BVP and PDE GUI
 %
-% Under construction
-
+% CHEBGUI brings up the chebfun GUI for solving boundary value problems
+% (BVPs) and partial differential equations (PDEs). When the GUI is shown,
+% its field are loaded with a random BVP example from a collection of
+% examples.
+%
+% The GUI allows various types of syntax for describing the differential
+% equation and boundary conditions of problems. The differential equations
+% can either be on anonymous function form, e.g.
+%
+%   @(u) diff(u,2)+x.*sin(u)
+%
+% or a "natural syntax form", e.g.
+%   u''+x.*sin(u)
+%
+% Boundary conditions can be on either of these two forms, but furthermore,
+% one can specify homogeneous Dirichlet or Neumann conditions simply by
+% typing 'dirichlet' or 'neumann' in the relevant fields.
+%
+% The GUI supports system of coupled equations, where the problem can
+% either be set up on quasimatrix form, e.g.
+%
+%   @(u) diff(u(:,1))+sin(u(:,2))
+%   @(u) cos(u(:,1))+diff(u(:,2))
+%
+% or on multivariable form, e.g.
+%
+%   u'+sin(v)
+%   cos(u)+v'
+%
+% The GUI offers users functionality to export problems by pressing the
+% export button. This brings up a new dialog from which the user can select
+% to export the problem to an executable .m file, or to export the
+% variables to either a .mat file or directly into the Matlab workspace.
+%
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+%
+% Copyright 2002-2010 by The Chebfun Team. 
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -160,23 +195,33 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
     set(handles.button_solve,'String','Stop');
     % CD to the guifiles directory and call the function solveGUIBVP which does
     % all the work of managing the solution process.
-    % try
+    try
         temppath = folderchange;
         if get(handles.button_bvp,'Value')
             handles = solveGUIBVP(handles);
         else
             handles = solveGUIPDE(handles);
         end
-        cd(temppath)
-    % catch ME
-    %     error(['chebfun:PDEgui','Incorrect input for differential ' ...
-    %         'equation or boundary conditions']);
-    % end
-
-    % Update the GUI and return to the original directory
-    guidata(hObject, handles);
-    cd(temppath);
-    set(handles.button_solve,'String','Solve');
+        
+        % Update the GUI and return to the original directory
+        guidata(hObject, handles);
+        cd(temppath);
+        set(handles.button_solve,'String','Solve');
+    catch ME
+        % Update the GUI and return to the original directory
+        guidata(hObject, handles);
+        cd(temppath);
+        set(handles.button_solve,'String','Solve');
+        
+        MEID = ME.identifier;
+        if ~isempty(strfind(MEID,'parse:')) || ~isempty(strfind(MEID,'LINOP:'))
+            errordlg(ME.message, 'chebgui error', 'modal');
+            set(handles.button_solve,'String','Solve');
+        else
+            set(handles.button_solve,'String','Solve');
+            rethrow(ME)
+        end
+    end
 else
     set(handles.button_solve,'String','Solve')
 end
@@ -353,7 +398,7 @@ function button_help_Callback(hObject, eventdata, handles)
 % hObject    handle to button_help (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-doc('chebbvp')
+doc('chebgui')
 
 
 % --- Executes during object creation, after setting all properties.
@@ -908,4 +953,3 @@ temppath = pwd;
 chebfunpath = fileparts(which('chebtest.m'));
 guifilepath = fullfile(chebfunpath,'guifiles');
 cd(guifilepath);
-

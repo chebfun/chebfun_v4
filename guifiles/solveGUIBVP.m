@@ -139,8 +139,7 @@ set(handles.fig_norm,'Visible','On');
 try
     [u vec] = solvebvp(N,DE_RHS,options,guihandles);
 catch ME
-    errordlg('Error in solution process.', 'chebopbvp error', 'modal');
-    return
+    rethrow(ME);
 end
 
 % Store in handles latest chebop, solution, vector of norm of updates etc.
