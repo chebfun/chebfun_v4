@@ -157,7 +157,7 @@ else
     u0 = chebfun;
     for k = 1:numel(guessInput)
         guess_k = vectorize(guessInput{k});
-        u0(:,k) =  chebfun(guessi_k,[a b]);
+        u0(:,k) =  chebfun(guess_k,[a b]);
     end
 end
 
