@@ -1,6 +1,5 @@
 function varargout = chebgui(varargin)
-% CHEBGUI Help for the chebop BVP and PDE GUI
-%
+%CHEBGUI chebfun BVP and PDE GUI for solvebvp and pde15s
 % CHEBGUI brings up the chebfun GUI for solving boundary value problems
 % (BVPs) and partial differential equations (PDEs). When the GUI is shown,
 % its field are loaded with a random BVP example from a collection of
@@ -36,6 +35,8 @@ function varargout = chebgui(varargin)
 % variables to either a .mat file or directly into the Matlab workspace.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+%
+% See also chebop/solvebvp, chebfun/pde15s
 %
 % Copyright 2002-2010 by The Chebfun Team. 
 
