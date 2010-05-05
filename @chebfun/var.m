@@ -11,7 +11,8 @@ if F(1).trans
 else
     out = zeros(1,size(F,2));
     for k = 1:size(F,2)
-        out(k) = mean((F(:,k)-mean(F(:,k))).^2);
+        Y = F(:,k)-mean(F(:,k));
+        out(k) = mean(Y.*conj(Y));
     end
 end
 
