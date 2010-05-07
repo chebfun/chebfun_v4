@@ -131,7 +131,8 @@ set(handles.fig_norm,'Visible','On');
 
 try
     [u vec] = solvebvp(N,DE_RHS,options,guihandles);
-catch ME
+catch
+    ME = lasterror;
     rethrow(ME);
 end
 

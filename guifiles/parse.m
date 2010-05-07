@@ -214,6 +214,7 @@ global pStack;
 end
 
 function reportError(id,msg)
-ME = MException(id,msg);
-throw(ME);
+error(['CHEBFUN:', id],msg);
+% ME = MException(id,msg);
+% throw(ME);
 end

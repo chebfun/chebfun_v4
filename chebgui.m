@@ -199,7 +199,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
     
     % CD to the guifiles directory and call the function solveGUIBVP which does
     % all the work of managing the solution process.
-    try
+%     try
         temppath = folderchange;
         if get(handles.button_bvp,'Value')
             handles = solveGUIBVP(handles);
@@ -216,21 +216,22 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
         set(handles.toggle_useLatest,'Enable','on');
         set(handles.button_figures,'Enable','on');
         set(handles.button_figure1,'Enable','on');
-    catch ME
+%     catch
+%         ME = lasterror;
         % Update the GUI and return to the original directory
         guidata(hObject, handles);
         cd(temppath);
         set(handles.button_solve,'String','Solve');
         
-        MEID = ME.identifier;
-        if ~isempty(strfind(MEID,'parse:')) || ~isempty(strfind(MEID,'LINOP:'))
-            errordlg(ME.message, 'chebgui error', 'modal');
+%         MEID = ME.identifier;
+%         if ~isempty(strfind(MEID,'parse:')) || ~isempty(strfind(MEID,'LINOP:'))
+%             errordlg(ME.message, 'chebgui error', 'modal');
             set(handles.button_solve,'String','Solve');
-        else
+%         else
             set(handles.button_solve,'String','Solve');
-            rethrow(ME)
-        end
-    end
+%             rethrow(ME)
+%         end
+%     end
 else
 % In stop mode    
     set(handles.button_solve,'String','Solve')

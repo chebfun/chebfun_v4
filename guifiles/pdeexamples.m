@@ -9,7 +9,7 @@ numberOfExamples = 9;
 % than 0, bigger than the number of available examples, or no argument,
 % start with a random example.
 if exampleNumber < 0 || exampleNumber > numberOfExamples
-    exampleNumber = randi(numberOfExamples);
+    exampleNumber = ceil(numberOfExamples*rand(1));
     % If we call the function with the Demos button, we want to notify the
     % code that we have extracted information about all examples.
     if strcmp(mode,'demo')

@@ -1,14 +1,8 @@
 function infixOut = prefix2infix(prefIn)
-global prefixIn; global prefCounter;
 prefixIn = prefIn; prefCounter = 1; %#ok<NASGU> Disable warning message
 infixOut = getInfix();
 
-prefixIn = []; prefCounter = []; % Clear global variables
-
-end
-
 function infixOut = getInfix()
-global prefixIn; global prefCounter;
 next = char(prefixIn(prefCounter,2));
 if ~isempty(strmatch('OP',next))
     prefCounter = prefCounter + 1;
@@ -45,4 +39,8 @@ else
     infixOut = char(prefixIn(prefCounter,1));
     prefCounter = prefCounter + 1;
 end
+end
+
+prefixIn = []; prefCounter = []; % Clear global variables
+
 end

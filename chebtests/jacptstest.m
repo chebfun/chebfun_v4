@@ -11,7 +11,13 @@ f = @(x)sin(x);
 F = @(x)(x-a).^beta.*(b-x).^alpha.*f(x);
 
 warnstate = warning; warning off
-vquadgk = quadgk(F,a,b,'abstol',1e-10,'reltol',1e-10);
+if verLessThan('matlab','7.5')    
+    % There's no quadgk before 7.5
+    vquadgk = quadl(F,a,b,1e-10);
+else
+    vquadgk = quadgk(F,a,b,'abstol',1e-10,'reltol',1e-10);
+end
+
 warning(warnstate);
 
 njac=20; c1=(b+a)/2; c2=(b-a)/2;

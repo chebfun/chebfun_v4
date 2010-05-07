@@ -8,8 +8,10 @@ function varargout = convertToAnon(str)
 % clear functions
 
 % Put the original string through the lexer
+str
 [lexOut varNames indVarNames] = lexer(str);
 % Parse the output from the lexer, looking for syntax errors.
+lexOut
 syntaxTree = parse(lexOut);
 % Obtain the prefix form.
 prefixOut = tree2prefix(syntaxTree);

@@ -17,7 +17,7 @@ pass(1) = max(max(abs(sol.y' - feval(y,sol.x')))) < 2e-2;
 
 % Only test if Matlab ver > 7.4
 matlabver = ver('matlab');
-if ~verLessThan('matlab','7.4')    
+if ~verLessThan('matlab','7.5')    
     % Set new tolerance:
     opts = odeset('RelTol', 1e-6);
     
