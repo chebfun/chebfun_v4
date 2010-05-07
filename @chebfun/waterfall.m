@@ -9,7 +9,13 @@ function varargout = waterfall(u,varargin)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-numpts = chebfunpref('plot_numpts');
+% numpts = chebfunpref('plot_numpts');
+
+numpts = 0;
+for k = 1:numel(u)
+    numpts = max(numpts,length(u(k)));
+end
+numpts = ceil(min(numpts,500));
 
 trans = u(:,1).trans;
 if trans
@@ -19,7 +25,7 @@ n = min(size(u,2));
 t = 1:n;
 
 if nargin > 1 && isnumeric(varargin{1}) && length(varargin{1}) == size(u,2)
-    t = varargin{1}; t = t(:);
+    t = varargin{1}; t = t(:).';
     varargin = {varargin{2:end}};
 end
 
@@ -60,11 +66,13 @@ if ~trans
         y = [y ; t((k+1)/2)*ones(length(data3{k}),1)];
         z = [z ; data3{k+1}];
     end
-    ish = ishold;    hold on
-    plot3(x,y,z,'w');
-    if ~ish, hold off; end
-end
-    
+    if ~all(isnan(z))
+        ish = ishold;    hold on
+        plot3(x,y,z,'w');
+        if ~ish, hold off; end
+    end
+end 
+
 if nargout > 0
     varargout{1} = h;
 end

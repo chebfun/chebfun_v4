@@ -1,4 +1,4 @@
-function type = findtype(str,prevtype)
+function type = myfindtype(str,prevtype)
 
 if regexp(str, '[0-9]') % Breyta i float  [+-]?(([0-9]+(.[0-9]*)?|.[0-9]+)([eE][+-]?[0-9]+)?)
     type = 'num';

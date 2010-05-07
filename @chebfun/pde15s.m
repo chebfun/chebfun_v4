@@ -564,6 +564,9 @@ clear global GLOBX
             
             % Jacobians
             if dojac, J = makejac; end
+%             J
+%             J2 = myjac(U0,tt(nt),x)
+%             error
 %             if dojac, J = makejac2(ucur,tt(nt),n,B,rows,xd); end
         end
         
@@ -684,7 +687,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   DIFF   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % The differential operators
-function up = Diff(u,k)
+function up = Diff(u,k,flag)
     % Computes the k-th derivative of u using Chebyshev differentiation
     % matrices defined by barymat. The matrices are stored for speed.
     
@@ -732,6 +735,9 @@ function up = Diff(u,k)
         end
 
     end
+    
+    % If there are three inputs, return the differentiation matrix
+    if nargin == 3, up = storage(N).D{k}; return, end
 
     % Find the derivative by muliplying by the kth-order differentiation matrix
     up = storage(N).D{k}*u;
@@ -799,6 +805,15 @@ else
     y = y(:,k);
 end
 end
+
+
+function J = myjac(u,t,x)
+J = Diff(u,1,1)+.002*Diff(u,2,1);
+
+end
+
+
+
 
 
 

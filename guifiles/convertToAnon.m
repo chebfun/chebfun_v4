@@ -7,11 +7,13 @@ function varargout = convertToAnon(str)
 % for versions 2007b and onwards.
 % clear functions
 
+if verLessThan('matlab','7.5')
+    clear functions
+end
+
 % Put the original string through the lexer
-str
 [lexOut varNames indVarNames] = lexer(str);
 % Parse the output from the lexer, looking for syntax errors.
-lexOut
 syntaxTree = parse(lexOut);
 % Obtain the prefix form.
 prefixOut = tree2prefix(syntaxTree);

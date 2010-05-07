@@ -44,7 +44,7 @@ str(end+1) = '$';   % Add $ to the end of the string to mark its end
 prevtype = 'operator';
 while ~strcmp(str,'$')
     char1 = str(1);
-    type = findtype(char1,prevtype);
+    type = myfindtype(char1,prevtype);
     expr_end = 1;
     switch type
         case 'num'
@@ -76,7 +76,7 @@ while ~strcmp(str,'$')
             % If we have point, we need to check next symbol to see if we 
             % have an operator (e.g. .*) or a double (e.g. .1):
             char2 = str(2);
-            type2 = findtype(str(2),prevtype);
+            type2 = myfindtype(str(2),prevtype);
             switch type2
                 
                 case 'num'      % We have a float
