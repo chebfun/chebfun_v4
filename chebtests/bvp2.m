@@ -11,9 +11,9 @@ f = chebfun( 'x.*sin(3*x).^2',d );
 u = A\f;
 du = diff(u);
 
-pass = norm( diff(u,2) + 4*diff(u) + 200*u - f ) < 1e-10*(tol/eps);
-pass = pass && ( abs(du(d(1))+2*u(d(1))-1)<1e-11*(tol/eps) );
-pass = pass && ( abs(feval(diff(u),d(2)))<1e-11*(tol/eps) );
+pass(1) = norm( diff(u,2) + 4*diff(u) + 200*u - f ) < 1e-10*(tol/eps);
+pass(2) = abs(du(d(1))+2*u(d(1))-1)<1e-11*(tol/eps);
+pass(3) = abs(feval(diff(u),d(2)))<1e-11*(tol/eps);
 
 
 

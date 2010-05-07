@@ -10,9 +10,9 @@ A.rbc = 'neumann';
 f = chebfun( 'exp(sin(x))',d );
 u = A\f;
 
-pass = norm( diff(u,2) + 4*diff(u) + u - f ) < 1e-10*(tol/eps);
-pass = pass && ( abs(u(d(1))+1)<1e-12*(tol/eps) );
-pass = pass && ( abs(feval(diff(u),d(2)))<1e-11*(tol/eps) );
+pass(1) = norm( diff(u,2) + 4*diff(u) + u - f ) < 1e-10*(tol/eps);
+pass(2) = abs(u(d(1))+1)<1e-12*(tol/eps);
+pass(3) = abs(feval(diff(u),d(2)))<1e-11*(tol/eps);
 
 
 

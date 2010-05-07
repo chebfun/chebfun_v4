@@ -4,7 +4,7 @@ function pass = ad_vs_diff_2
 
 [d,x] = domain(0.1,0.9);
 cheb1 = chebfun(1,d);
-norms = zeros(18,1);
+norms = zeros(1,18);
 
 % Inverse trigonometric and hyperbolic functions
 norms(1) = norm(diag(diff(airy(2,x),x))-diff(airy(2,x)));
@@ -40,4 +40,4 @@ norms(17) = norm(diff(2.^x,x)*cheb1-diff(2.^x));
 % sqrt
 norms(18) = norm(diff(sqrt(x),x)*cheb1-diff(sqrt(x)));
 
-pass = all(norms < chebfunpref('eps')*1e3);
+pass = norms < chebfunpref('eps')*1e3;

@@ -8,4 +8,5 @@ h = chebfun(@(x) roots(x-g),'vectorise','resampling','off','blowup','off');
 
 h = simplify(h,tol);
 
-pass = (norm(f-h,inf) < tol) && (length(f) == length(h));
+pass(1) = (norm(f-h,inf) < tol);
+pass(2) = (length(f) == length(h));

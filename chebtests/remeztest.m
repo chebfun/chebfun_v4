@@ -16,4 +16,3 @@ pcf = cf(f,7);
 pbest = remez(f,7);
 pass(2) = (norm(pcf-pbest)<0.0003);
 
-pass = all(pass);

@@ -4,7 +4,7 @@ function pass = ad_vs_diff_1
 
 [d,x] = domain(0.1,0.9);
 cheb1 = chebfun(1,d);
-norms = zeros(24,1);
+norms = zeros(1,24);
 
 % Inverse trigonometric and hyperbolic functions
 norms(1) = norm(diag(diff(acos(x),x))-diff(acos(x)));
@@ -45,5 +45,4 @@ norms(22) = norm(diff(sinh(x),x)*cheb1-diff(sinh(x)));
 norms(23) = norm(diff(tan(x),x)*cheb1-diff(tan(x)));
 norms(24) = norm(diff(tanh(x),x)*cheb1-diff(tanh(x)));
 
-
-pass = all(norms < chebfunpref('eps')*1e4);
+pass = norms < chebfunpref('eps')*1e4;

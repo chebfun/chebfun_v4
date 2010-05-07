@@ -4,7 +4,7 @@ function pass = plus_qm
 % make sure plus requires quasimatrices of same sizes
 
  f = chebfun('x');
- pass  = false;
+ pass = false;
  try
     g = [f 2*f]+f;
  catch

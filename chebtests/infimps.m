@@ -7,4 +7,4 @@ tol = 2e3*chebfunpref('eps');
 gam = chebfun('gamma(x)',[-4:0 4],'blowup','on');
 gami = merge(1./gam);
 I = gami.*gam;
-pass(1) = norm(I-1,inf) < tol;
+pass = norm(I-1,inf) < tol;

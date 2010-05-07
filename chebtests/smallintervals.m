@@ -11,7 +11,7 @@ f3 = chebfun(@(x) x.^2, [-1 0]);
 pass = norm(f1.*f2 - f3,inf) < 10*chebfunpref('eps');
 
 f2 = chebfun(@(x) x, [-1 -1+eps 0]);
-pass = pass && norm(f1.*f2 - f3,inf) < 10*chebfunpref('eps');
+pass(2) = norm(f1.*f2 - f3,inf) < 10*chebfunpref('eps');
 
 % h = chebfun(@(x) 1-abs(x));
 % f = conv(h,conv(h,h));

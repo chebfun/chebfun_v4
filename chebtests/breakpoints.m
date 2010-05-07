@@ -4,9 +4,9 @@ function pass = breakpoints
 splitting on
 
 f=chebfun(@(x) ceil(x-.1), [0 1 2]);
-pass = length(f)==4;
+pass(1) = length(f) == 4;
 
 f=chebfun(@(x) ceil(x-.1));
-pass = pass & length(f) == 3;
+pass(2) = length(f) == 3;
 
 

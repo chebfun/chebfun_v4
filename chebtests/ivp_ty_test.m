@@ -22,9 +22,6 @@ pass(2) = max(max(abs(ym - feval(y,tm)))) < 1e-2;
 %[t,y] = ode113(@vdp1,domain(0,20),[2;0],opts); % chebfun solution
 %[tm,ym] = ode113(@vdp1,[0,20],[2;0],opts); % Matlab's solution
 %
-%pass3 = max(max(abs(ym - feval(y,tm)))) < 1e-5;
-%pass3 = 1; % commented out to save time
-
-%pass = pass1 && pass2 && pass3;
+%pass(3) = max(max(abs(ym - feval(y,tm)))) < 1e-5;
 
 

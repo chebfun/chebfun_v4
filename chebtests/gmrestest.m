@@ -9,5 +9,6 @@ w = 100;
 D = diff(d);
 L = D + 1i*w;
 [u,flag] = gmres(L,f);
-pass = ~flag && abs(sum(f.*exp(1i.*w.*x))-(u(1).*exp(1i.*w)-u(-1).*exp(-1i.*w))) < 10*tol;
+pass(1) = ~flag;
+pass(2) = abs(sum(f.*exp(1i.*w.*x))-(u(1).*exp(1i.*w)-u(-1).*exp(-1i.*w))) < 10*tol;
 

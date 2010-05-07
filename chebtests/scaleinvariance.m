@@ -9,17 +9,15 @@ f = chebfun(@(x) exp(x),d);
 maxf = max(f);
 
 f1 = chebfun(@(x) exp(x*scale),d/scale);
-pass1 = (max(f1)==maxf);
+pass(1) = (max(f1)==maxf);
 
 f2 = chebfun(@(x) exp(x/scale),d*scale);
-pass2 = (max(f2)==maxf);
+pass(2) = (max(f2)==maxf);
 
 f3 = chebfun(@(x) exp(x)*scale,d);
-pass3 = (max(f3)==maxf*scale);
+pass(3) = (max(f3)==maxf*scale);
 
 f4 = chebfun(@(x) exp(x)/scale,d);
-pass4 = (max(f4)==maxf/scale);
-
-pass = pass1 && pass2 && pass3 && pass4;
+pass(4) = (max(f4)==maxf/scale);
 
 

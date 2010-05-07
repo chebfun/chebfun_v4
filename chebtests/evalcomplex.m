@@ -12,8 +12,9 @@ f = chebfun(op);
 fzz = f(zz);
 pass = true;
 for k = 1:pts^2
+    pass(k+1) = true;
     if f(zz(k)) ~= fzz(k)
-        pass = false;
+        pass(k+1) = false;
     end
 end
 

@@ -1,6 +1,6 @@
 function pass = scale
 
-% Tests for scale invariace. 
+% Tests for scale invariance. 
 % Rodrigo Platte, May 2009.
 
 tol = chebfunpref('eps');

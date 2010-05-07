@@ -3,15 +3,11 @@ function pass = stringinput
 
 f = chebfun(@sin);
 
-try
-    f1 = chebfun('sin(x)');
-    pass(1) = ~norm(f-f1,inf);
-end
+f1 = chebfun('sin(x)');
+pass(1) = ~norm(f-f1,inf);
 
-try
-    f1 = chebfun('sin(y)');
-    pass(2) = ~norm(f-f1,inf);
-end
+f1 = chebfun('sin(y)');
+pass(2) = ~norm(f-f1,inf);
 
 try
     pass(3) = 0;

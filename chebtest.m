@@ -1,4 +1,4 @@
-function [failfun t] = chebtest(dirname)
+function varargout = chebtest(dirname)
 %CHEBTEST Probe chebfun system against standard test files.
 % CHEBTEST DIRNAME runs each M-file in the directory DIRNAME. Each M-file
 % should be a function that takes no inputs and returns a logical scalar 
@@ -11,13 +11,14 @@ function [failfun t] = chebtest(dirname)
 % CHEBTEST by itself tries to find a directory named 'chebtests' in the
 % directory in which chebtest.m resides.
 %
-% FAILED = CHEBTEST('DIRNAME') returns a cell array of all functions that
-% either failed or crashed. 
+% FAILED = CHEBTEST returns a cell array of all functions that either 
+% failed or crashed. 
 %
 % CHEBTEST RESTORE restores user preferences prior to CHEBTEST
 % execution. CHEBTEST modifies path, warning state, and chebfunpref during
 % execution. If a CHEBTEST execution is interrupted, the RESTORE option can
-% be used to reset these values. 
+% be used to reset these values. CHEBTEST RESTORE also resets the 'avg'
+% times also returned by chebtest.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -25,9 +26,9 @@ function [failfun t] = chebtest(dirname)
 
 persistent userpref
 
-if nargin ==1 && strcmpi(dirname,'restore')
+if nargin == 1 && strcmpi(dirname,'restore')
     if isempty(userpref)
-        disp('First excution of chebtests (or information has been cleared), preferences unchanged.')
+%         disp('First execution of chebtests (or information has been cleared), preferences unchanged.')
         return
     end
     warning(userpref.warnstate)
@@ -35,14 +36,14 @@ if nargin ==1 && strcmpi(dirname,'restore')
     path(path,userpref.path)
     chebfunpref(userpref.pref);
     cheboppref(userpref.oppref);
-    disp('Restored values of warning, path, and chebfunpref')
+    disp('Restored values of warning, path, and chebfunpref.')
     return
 end
 
 pref = chebfunpref;
 tol = pref.eps;
 createreport = true;
-avgtimes = false;
+avgtimes = true; % If turning off, remember to remove line from help comments.
 
 if verLessThan('matlab','7.4')
     matlabver = ver('matlab');
@@ -112,14 +113,15 @@ userpref.dirname = dirname;
 % Add chebtests directory to the path
 addpath(dirname)
 
-% If java is not enables, don't display html links.
+% If java is not enabled, don't display html links.
 javacheck = true;
-if strcmp(version('-java'),'Java is not enabled')
+if ~usejava('jvm') || ~usejava('desktop')
     javacheck = false;
 end
 
 % loop through the tests
 for j = 1:length(mfile)
+% for j = 44:48    
   % Print the test name
   fun = mfile{j}(1:end-2);
   if javacheck
@@ -138,10 +140,20 @@ for j = 1:length(mfile)
     cheboppref('factory');
     chebfunpref('eps',tol);
     tic
-    failed(j) = ~ all(feval( fun ));
+    pass = feval( fun );
     t(j) = toc;
+    failed(j) = ~ all(pass);
     if failed(j)
       fprintf('FAILED\n')
+      
+      % Create an error report entry for a failure
+      if createreport
+        fid = fopen([dirname filesep ,'chebtest_report.txt'],'a');
+        fprintf(fid,[fun '  (failed) \n']);
+        fprintf(fid,['pass: ''' int2str(pass) '''\n\n']);
+        fclose(fid);
+      end
+
     else
         avgt(j) = (avgN*avgt(j)+t(j))/(avgN+1);
         if avgN == 0
@@ -159,8 +171,8 @@ for j = 1:length(mfile)
     lf = findstr(sprintf('\n'),msg.message); 
     if ~isempty(lf), msg.message(1:lf(end))=[]; end
     fprintf([msg.message '\n'])
-    
-    % Create an error report entry
+   
+    % Create an error report entry for a crash
     if createreport
         fid = fopen([dirname filesep ,'chebtest_report.txt'],'a');
         fprintf(fid,[fun '  (crashed) \n']);
@@ -185,14 +197,18 @@ cheboppref(userpref.oppref);
 % Final output
 if all(~failed)
   fprintf('\nAll tests passed!\n\n')
-  if nargout>0, failfun = {}; end
+  failfun = {};
 else
   fprintf('\n%i failed and %i crashed\n',sum(failed>0),sum(failed<0))
   failfun = mfile(failed~=0);
   
   if createreport
       fun = 'chebtest_report.txt';
-      link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
+      if javacheck
+          link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
+      else
+          link = fullfile(dirname,filesep,fun);
+      end
       msg = [' Error report available here: ' link '. ' ];
       msg = strrep(msg,'\','\\');  % escape \ for fprintf
       numchar = fprintf(msg); fprintf('\n')
@@ -215,5 +231,23 @@ if avgtimes && all(~failed)
     fprintf(avgfid,'%d \n',avgN+1);
     fclose(avgfid);
 end
+
+% Output args
+if nargout > 0
+    varargout{1} = failfun; 
+else
+    fprintf('    ');
+    for k = 1:sum(abs(failed))
+        fun = failfun{k};
+        if javacheck
+            link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>    '];
+        else
+            link = fun;
+        end
+        fprintf(link)
+    end
+    fprintf('\n');
+end
+if nargout > 0, varargout{2} = t; end
 
 end
