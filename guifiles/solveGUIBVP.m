@@ -1,9 +1,6 @@
 function handles = solveGUIBVP(handles)
 % SOLVEGUIBVP
 
-% Change the button from Solve to Stop
-set(handles.button_solve,'String','Stop');
-
 % Create a domain and the linear function on that domain. We use xt for the
 % linear function, later in the code we will be able to determine whether x
 % or t is used for the linear function.
@@ -12,7 +9,6 @@ defaultTol = max(cheboppref('restol'),cheboppref('deltol'));
 a = str2num(get(handles.dom_left,'String'));
 b = str2num(get(handles.dom_right,'String'));
 [d,xt] = domain(a,b);
-
 
 % Extract information from the GUI fields
 deInput = get(handles.input_DE,'String');
@@ -105,7 +101,6 @@ options = cheboppref;
 options.deltol = tolNum;
 options.restol = tolNum;
 
-
 % Always display iter. information
 options.display = 'iter';
 
@@ -127,8 +122,6 @@ if plottingOnInput
 else
     options.plotting = 'off';
 end
-
-
 
 guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
     handles.iter_list,handles.text_norm,handles.button_solve};
@@ -152,15 +145,6 @@ handles.latestOptions = options;
 
 % Notify the GUI we have a solution available
 handles.hasSolution = 1;
-
-% Change button back to Solve
-set(handles.button_solve,'String','Solve');
-set(handles.button_solve,'Enable','On');
-
-
-% Enable buttons
-set(handles.toggle_useLatest,'Enable','on');
-set(handles.button_figures,'Enable','on');
 
 set(handles.text_norm,'Visible','On');
 

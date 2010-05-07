@@ -6,7 +6,7 @@ set(handles.button_solve,'String','Solve')
     
 % Obtain the DE of all available examples
 DE = '';
-demoString = ['Demos...'];
+demoString = '            Demos...';
 counter = 1;
 
 if strcmp(type,'bvp') % Setup BVPs demos

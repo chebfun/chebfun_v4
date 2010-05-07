@@ -5,7 +5,6 @@ function handles = solveGUIPDE(handles)
 
 guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
     handles.iter_list,handles.text_norm,handles.button_solve};
-% set(handles.text_norm,'Visible','Off');
 set(handles.fig_sol,'Visible','On');
 set(handles.fig_norm,'Visible','On');
 cla(handles.fig_sol,'reset')
@@ -25,7 +24,6 @@ deRHSInput = get(handles.input_DE_RHS,'String');
 lbcRHSInput = get(handles.input_LBC_RHS,'String');
 rbcRHSInput = get(handles.input_RBC_RHS,'String');
 guessInput = get(handles.input_GUESS,'String');
-
 tolInput = get(handles.input_tol,'String');
 tt = eval(get(handles.timedomain,'String'));
 
@@ -86,30 +84,6 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 %         'equation or boundary conditions']);
 % end
 
-% DErhsNum = str2num(char(deRHSInput));
-% if isempty(DErhsNum)
-%     % RHS is a string representing a function -- convert to chebfun
-%     DE_RHS = chebfun(DErhsInput,d);
-% else
-%     % RHS is a number - Don't need to construct chebfun
-%     DE_RHS = DErhsNum;
-% end
-% 
-% % DE_RHS = 0;
-% useLatest = strcmpi(guessInput,'Using latest solution');
-% if isempty(guessInput)
-%     N = chebop(d,DE,LBC,RBC);
-% elseif useLatest
-%     guess = handles.latestSolution;
-%     N = chebop(d,DE,LBC,RBC,guess);
-% else
-%     guess = eval(guessInput);
-%     if isnumeric(guess)
-%         guess = 0*xt+guess;
-%     end
-%     N = chebop(d,DE,LBC,RBC,guess);
-% end
-
 if isempty(tolInput)
     tolNum = defaultTol;
 else
@@ -121,34 +95,9 @@ if tolNum < chebfunpref('eps')
     uiwait(gcf)
 end
 
-% % Set the tolerance for the solution process
-% options.deltol = tolNum;
-% options.restol = tolNum;
-
-% % Always display iter. information
-% options.display = 'iter';
-
-% dampedOnInput = get(handles.damped_on,'Value');
-% plottingOnInput = get(handles.plotting_on,'Value');
-
-% if dampedOnInput
-%     options.damped = 'on';
-% else
-%     options.damped = 'off';
-% end
-
-% set(handles.iter_list,'String','');
-% set(handles.iter_text,'Visible','On');
-% set(handles.iter_list,'Visible','On');
-
-% guidata(hObject, handles);
-% if plottingOnInput
-%     options.plotting = str2double(get(handles.input_pause,'String'));
-% else
-%     options.plotting = 'off';
-% end
-
+% Boundary condition
 bc = struct( 'left', LBC, 'right', RBC);
+
 % Set up the initial condition
 if ischar(guessInput)
     guessInput = vectorize(guessInput);
@@ -173,28 +122,12 @@ opts.guihandles = guihandles;
 %     return
 % end
 
-set(handles.button_solve,'Enable','On');
-set(handles.button_solve,'String','Solve');
-
 % Store in handles latest chebop, solution, vector of norm of updates etc.
 % (enables exporting later on)
 handles.latestSolution = u;
 handles.latestSolutionT = t;
-% handles.latestNorms = vec;
-% handles.latestChebop = N;
-% handles.latestRHS = DE_RHS;
-% handles.latestOptions = options;
-
 % Notify the GUI we have a solution available
 handles.hasSolution = 1;
-
-% Enable buttons
-% set(handles.toggle_useLatest,'Enable','on');
-set(handles.button_figures,'Enable','on');
-% set(handles.text_norm,'Visible','On');
-
-% axes(handles.fig_sol)
-% plot(u)
 
 axes(handles.fig_norm)
 if ~iscell(u)
@@ -209,16 +142,3 @@ else
     title(v),zlabel(v)
 end
 
-% if length(vec) > 1
-%     title('Solution at end of iteration')
-% else
-%     title('Solution');
-% end
-% axes(handles.fig_norm)
-% semilogy(vec,'-*'),title('Norm of updates'), xlabel('Number of iteration')
-% if length(vec) > 1
-%     XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
-%     set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on
-% else % Don't display fractions on iteration plots
-%     set(gca,'XTick', 1)
-% end

@@ -193,7 +193,10 @@ function button_solve_Callback(hObject, eventdata, handles)
 
 if strcmp(get(handles.button_solve,'string'),'Solve')
 % In solve mode
+
+    % Set button to 'stop'
     set(handles.button_solve,'String','Stop');
+    
     % CD to the guifiles directory and call the function solveGUIBVP which does
     % all the work of managing the solution process.
     try
@@ -207,7 +210,12 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
         % Update the GUI and return to the original directory
         guidata(hObject, handles);
         cd(temppath);
+        
+        % Enable buttons, figures, etc
         set(handles.button_solve,'String','Solve');
+        set(handles.toggle_useLatest,'Enable','on');
+        set(handles.button_figures,'Enable','on');
+        set(handles.button_figure1,'Enable','on');
     catch ME
         % Update the GUI and return to the original directory
         guidata(hObject, handles);
@@ -224,6 +232,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')
         end
     end
 else
+% In stop mode    
     set(handles.button_solve,'String','Solve')
 end
     
@@ -472,6 +481,7 @@ set(handles.text_norm,'Visible','Off');
 
 % Disable export figures
 set(handles.button_figures,'Enable','off');
+set(handles.button_figure1,'Enable','off');
 set(handles.button_solve,'Enable','on');
 set(handles.button_solve,'String','Solve');
 
@@ -515,33 +525,33 @@ else
     
     figure
     if ~iscell(u)
-        subplot(1,2,1);
-        plot(u(:,end))
-        title('Solution at final time.')
-        subplot(1,2,2);
-        surf(u,tt,'facecolor','interp')
+%         subplot(1,2,1);
+%         plot(u(:,end))
+%         title('Solution at final time.')
+%         subplot(1,2,2);
+        surf(u,tt,'facecolor','interp','edgealpha',0)
         xlabel('x'), ylabel('t');
     else
-        v = chebfun;
-        for k = 1:numel(u)
-            uk = u{k};
-            v(:,k) = uk(:,end);
-        end
-        plot(v);
-        title('Solution at final time.')
+%         v = chebfun;
+%         for k = 1:numel(u)
+%             uk = u{k};
+%             v(:,k) = uk(:,end);
+%         end
+%         plot(v);
+%         title('Solution at final time.')
+%         figure
         
         varnames = get(handles.input_DE_RHS,'string');
         for k = 1:numel(u)
             idx = strfind(varnames{k},'_');
             varnames{k} = varnames{k}(1:idx(1)-1);
         end
-        legend(varnames{:})
-
-        figure
+%         legend(varnames{:})
+        
         sfx = {'st','nd','rd'};
         for k = 1:numel(u)
             subplot(1,numel(u),k);
-            surf(u{k},tt,'facecolor','flat')
+            surf(u{k},tt,'facecolor','interp','edgealpha',0)
             xlabel('x'), ylabel('t'), zlabel(varnames{k})
             title(varnames{k})
 %             if k < 4
@@ -550,6 +560,37 @@ else
 %                 title([int2str(k),'^{th} component of solution'])
 %             end
         end
+    end
+end
+
+% --- Executes on button press in button_figure1.
+function button_figure1_Callback(hObject, eventdata, handles)
+% hObject    handle to button_figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if get(handles.button_bvp,'Value');
+    latestSolution = handles.latestSolution;
+    latestNorms = handles.latestNorms;
+
+    figure
+    plot(latestSolution), title('Solution at end of iteration')
+else
+    u = handles.latestSolution;
+    tt = handles.latestSolutionT;
+    
+    figure
+    if ~iscell(u)
+        plot(u(:,end))
+        title('Solution at final time.')
+    else
+        v = chebfun;
+        for k = 1:numel(u)
+            uk = u{k};
+            v(:,k) = uk(:,end);
+        end
+        plot(v);
+        title('Solution at final time.')
     end
 end
 
@@ -797,6 +838,7 @@ if okPressed
     loadexample(handles,selection,type);
     set(handles.button_solve,'Enable','On')
     set(handles.button_solve,'String','Solve')
+    
 end
 cd(temppath)
 
@@ -896,9 +938,11 @@ set(handles.iter_list,'Visible','off')
 set(handles.iter_text,'Visible','off')
 set(handles.text_norm,'Visible','off')
 
-set(handles.text_initial,'String','Initial condition')
+set(handles.input_GUESS,'Enable','On')
+set(handles.toggle_useLatest,'Value',0)
 
 set(handles.text_timedomain,'Visible','on')
+set(handles.timedomain,'Visible','on')
 set(handles.timedomain,'Visible','on')
 
 % Clear the figures
@@ -934,6 +978,9 @@ end
 set(hObject,'Value',1)
 set(handles.button_solve,'Enable','On')
 set(handles.button_solve,'String','Solve')
+set(handles.iter_list,'Visible','off')
+set(handles.iter_text,'Visible','off')
+set(handles.text_norm,'Visible','off')
 
 % --- Executes during object creation, after setting all properties.
 function popupmenu_demos_CreateFcn(hObject, eventdata, handles)

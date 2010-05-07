@@ -63,7 +63,7 @@ QUASIN = [];
 GLOBX = [];
 
 if nargin < 4 
-    error('CHEBFUN:pde15s:argin','pde15s requires a minimum of 4 inputs');
+    error('CHEBFUN:pde15s:argin','pde15s requires a minimum of 4 inputs.');
 end
 
 % Default options
@@ -71,8 +71,9 @@ tol = 1e-6;             % 'eps' in chebfun terminology
 doplot = 1;             % plot after every time chunk?
 dohold = 0;             % hold plot?
 plotopts = '-';         % Plot Style
+dojac = true; J = [];  % Supply Jacobian
 
-% Parse the inputs
+% Parse the variable inputs
 if numel(varargin) == 2
     opt = varargin{1};     opt.N = varargin{2};
 elseif numel(varargin) == 1
@@ -92,6 +93,13 @@ if ~isempty(opt.Eps), tol = opt.Eps; end
 if ~isempty(opt.Plot), doplot = strcmpi(opt.Plot,'on'); end
 if ~isempty(opt.HoldPlot), dohold = strcmpi(opt.HoldPlot,'on'); end
 if ~isempty(opt.PlotStyle), plotopts = opt.PlotStyle; end
+if ~isempty(opt.Jacobian) && ischar(opt.Jacobian)
+    if strcmpi(opt.Jacobian,'auto'), dojac = 1;
+    elseif strcmpi(opt.Jacobian,'none'), dojac = 0; end
+    opt.Jacobian = [];
+end
+        
+% Determine which figure to plot to
 YLim = opt.YLim;
 if isfield(opt,'guihandles') 
     axes(opt.guihandles{1})
@@ -110,22 +118,12 @@ if isnan(optN)
 end
 opt.AbsTol = atol; opt.RelTol = rtol;
 
-% Get the domain
+% Get the domain and the independent variable 'x'
 d = domain(u0);
+xd = chebfun(@(x) x,d);
 
 % Determine the size of the system
 syssize = min(size(u0));
-
-% % If the differential operator is passed, redefine the anonymous function
-% tmp = NaN(1,syssize);
-% if nargin(pdefun) == 2
-%     pdefun = @(u,t,x) pdefun(u,@Diff);
-%     % get the ORDER (a global variable) by evaluating the RHS with NaNs
-%     pdefun(tmp);
-% elseif nargin(pdefun) == 4
-%     pdefun = @(u,t,x) pdefun(u,t,x,@Diff);
-%     pdefun(tmp,NaN,NaN); % (as above)
-% end
 
 % Determining the behaviour of the inputs to pdefun, i.e. is it of
 % quasimatrix-type, or pdefun(u,v,w,t,x,@diff) etc. (QUASIN TRUE/FALSE).
@@ -223,7 +221,6 @@ if isfield(bc,'left') && numel(bc.left) == 1 && isa(bc.left,'function_handle')
     tmp2 = ones(size(tmp));  sop = size(op(tmp2,0,1));   
     nllbc = 1:max(sop);    
     bc.left = struct( 'op', [], 'val', []); 
-    
     % Dummy entries
     if syssize == 1
         for k = nllbc 
@@ -240,8 +237,6 @@ if isfield(bc,'left') && numel(bc.left) == 1 && isa(bc.left,'function_handle')
     nlbcsl = op;
     funflagl = true;
 end
-
-
 % 2) Deal with other forms of input
 if ~funflagl && isfield(bc,'left') && numel(bc.left) > 0
     if isa(bc.left,'function_handle') || isa(bc.left,'linop') || iscell(bc.left)
@@ -252,23 +247,31 @@ if ~funflagl && isfield(bc,'left') && numel(bc.left) > 0
     % Extract nonlinear conditions
     for k = 1:numel(bc.left)
         opk = bc.left(k).op; rhs{k} = 0;
+        
+        % Numerical values
         if isnumeric(opk) && syssize == 1
             bc.left(k).op = repmat(eye(d),1,syssize);
             bc.left(k).val = opk;
         end       
+        
+        % Function handles
         if isa(opk,'function_handle')
+            dojac = false;
             nllbc = [nllbc k];             % Store positions
             if nargin(opk) == 2, nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
             else                 nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)}]; end
 %             bc.left(k).op = repmat(eye(d),1,syssize);
             bc.left(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
         end
+        
+        % Remove 'vals' from bc and construct cell of rhs entries
         if isfield(bc.left(k),'val') && ~isempty(bc.left(k).val)
                 rhs{k} = bc.left(k).val;
         end
-        bc.left(k).val = 0;  % set to homogeneous (to remove function handles)
+        bc.left(k).val = 0;  % remove function handles
     end     
 elseif ~funflagl && isfield(bc,'right') 
+    % There are no boundary conditions at the left
     bc.left = [];
 end
 
@@ -319,6 +322,7 @@ if ~funflagr && isfield(bc,'right') && numel(bc.right) > 0
             bc.right(k).val = opk;
         end
         if isa(opk,'function_handle')
+            dojac = false;
             nlrbc = [nlrbc k];
             if nargin(opk) == 2,  nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
             else                  nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)}]; end
@@ -334,6 +338,61 @@ elseif ~funflagr && isfield(bc,'left')
     bc.right = [];
 end
 
+% Compute Jacobians
+if dojac
+    t0 = tt(1);
+    Fu0 = pdefun(u0,t0,xd);
+    Jac = diff(Fu0,u0); J = [];
+%     udep = any(any(isnan(feval(diff(pdefun(utmp+NaN,tt(1),xd),utmp+NaN),9))))
+%     tdep = any(any(isnan(feval(diff(pdefun(utmp,NaN,xd),utmp),9))))
+    JacL = []; JL = []; JacR = []; JR = [];
+    if funflagl
+        uL = nlbcsl(u0,t0,xd);
+        JacL = diff(uL,u0);
+        
+        if syssize > 1
+            JacL5 = feval(JacL,5);
+            s = size(JacL5);
+            j = 1;
+            while j < s(1)
+                k = 1;tmpp = [];
+                while k < s(2)
+                    if any(any(logical(JacL5(j:j+4,k:k+4))))
+                        tmpp = [tmpp eye(d)];
+                    else
+                        tmpp = [tmpp Z];
+                    end
+                    k = k+5;
+                end
+                bc.left(floor(j/5+1)).op = tmpp;
+                j = j+5;
+            end
+        end
+    end
+    if funflagr
+        uR = nlbcsr(u0,t0,xd);
+        JacR = diff(uR,u0);
+        
+        if syssize > 1
+            JacR5 = feval(JacR,5);
+            s = size(JacR5);
+            j = 1;
+            while j < s(1)
+                k = 1;tmpp = [];
+                while k < s(2)
+                    if any(any(logical(JacR5(j:j+4,k:k+4))))
+                        tmpp = [tmpp eye(d)];
+                    else
+                        tmpp = [tmpp Z];
+                    end
+                    k = k+5;
+                end
+                bc.right(floor(j/5+1)).op = tmpp;
+                j = j+5;
+            end
+        end
+    end
+end
 
 % Support for user-defined mass matrices - experimental!
 if ~isempty(opt.Mass)
@@ -354,16 +413,16 @@ if syssize > 1
 end
 
 % Check for (and try to remove) piecewise initial conditions
-% if get(u0,'trans'), u0 = transpose(u0); end
-% for k = 1:numel(u0)
-%     if u0(:,k).nfuns > 1
-%         u0(:,k) = merge(u0(:,k),tol);
-%         if u0(:,k).nfuns > 1
-%             error('CHEBFUN:pde15s:piecewise',...
-%                 'piecewise initial conditions are not supported'); 
-%         end
-%     end
-% end
+if get(u0,'trans'), u0 = transpose(u0); end
+for k = 1:numel(u0)
+    if u0(:,k).nfuns > 1
+        u0(:,k) = merge(u0(:,k),tol);
+        if u0(:,k).nfuns > 1
+            error('CHEBFUN:pde15s:piecewise',...
+                'piecewise initial conditions are not supported'); 
+        end
+    end
+end
 % simplify initial condition  to tolerance or fixed size in optN
 if isnan(optN)
     u0 = simplify(u0,tol);
@@ -492,7 +551,10 @@ clear global GLOBX
             GLOBX = x;      % set the global variable x
             
             % See what the boundary replacement actions will be.
-
+%             jl = full(feval(JacL,n))
+%             bcl = full(feval(bc.left(1).op,n))
+%             jr = full(feval(JacR,n))
+%             bcr = full(feval(bc.right(1).op,n))
             [ignored,B,q,rows] = feval( diffop & bc, n, 'bc' );
             % Mass matrix is I except for algebraic rows for the BCs.
             M = speye(syssize*n);    M(rows,:) = 0;
@@ -500,10 +562,19 @@ clear global GLOBX
             % Multiply by user-defined mass matrix
             if usermass, M = feval(userM,n)*M; end
             
+            % Jacobians
+            if dojac, J = makejac; end
+%             if dojac, J = makejac2(ucur,tt(nt),n,B,rows,xd); end
         end
         
         % ODE options (mass matrix)
-        opt2 = odeset(opt,'Mass',M,'MassSingular','yes','InitialSlope',odefun(tt(nt),U0));
+        opt2 = odeset(opt,'Mass',M,'MassSingular','yes','InitialSlope',odefun(tt(nt),U0),'MStateDependence','none');
+        % ODE options (Jacobian)
+        if dojac
+%             J = makejac2(ucur,tt(nt),n,B,rows,xd);
+            opt2 = odeset(opt2,'Jacobian',J);
+        end
+        
         % Solve ODE over time chunk with ode15s
         [ignored,U] = ode15s(@odefun,tt(nt:nt+1),U0,opt2);
         
@@ -574,11 +645,46 @@ clear global GLOBX
             
         end
     end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   MAKEJAC   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function J = makejac
+            J = feval(Jac,n);
+            J(rows,:) = B;
+            % Replacements for the nonlinear BC conditions
+            if funflagl    
+                indx = rows(1:length(nllbc));
+                JL = feval(JacL,n);
+                J(indx,:) = JL(indx,:);
+            end
+            if funflagr
+                indx = rows((length(nllbc)+1):end);                
+                JR = feval(JacR,n);
+                J(indx,:) = JR(indx,:);
+            end
+        end
+
+        function J = makejac2(u,t,n,B,rows,xd)
+            Fu = pdefun(u,t,xd);
+            J = feval(diff(Fu,u),n);
+            J(rows,:) = B;
+            if funflagl
+                indx = rows(1:length(nllbc));
+                JacL = diff(nlbcsl(u,t,xd),u); 
+                JL = feval(JacL,n);
+                J(indx,:) = JL(indx,:);
+            end
+            if funflagr
+                indx = rows((length(nllbc)+1):end);
+                JacR = diff(nlbcsr(u,t,xd),u);
+                JR = feval(JacR,n);
+                J(indx,:) = JR(indx,:);                
+            end
+        end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   DIFF   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % The differential operators
-function up = Diff(u,k,lr)
+function up = Diff(u,k)
     % Computes the k-th derivative of u using Chebyshev differentiation
     % matrices defined by barymat. The matrices are stored for speed.
     
@@ -588,6 +694,8 @@ function up = Diff(u,k,lr)
 
     % Assume first-order derivative
     if nargin == 1, k = 1; end
+    
+    if isa(u,'chebfun'), up = diff(u,k); return, end
 
     % For finding the order of the RHS
     if any(isnan(u)) 
@@ -626,16 +734,7 @@ function up = Diff(u,k,lr)
     end
 
     % Find the derivative by muliplying by the kth-order differentiation matrix
-    if nargin < 3
-        up = storage(N).D{k}*u;
-    else
-    % We only need the end value (for boundary conditions).
-        if strcmp(lr,'l')
-            up = storage(N).D{k}(1,:)*u;
-        else
-            up = storage(N).D{k}(N,:)*u;
-        end
-    end
+    up = storage(N).D{k}*u;
 end       
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    BARMAT   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -701,17 +800,8 @@ else
 end
 end
 
-function u = DiffL(u,k)
-if nargin == 1, k = 1; end
-u(1) = Diff(u,k,'l');
-% u = Diff(u,k);
-end
 
-function u = DiffR(u,k)
-if nargin == 1, k = 1; end
-u(end) = Diff(u,k,'r');
-% u = Diff(u,k);
-end
+
 
 
 
