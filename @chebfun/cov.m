@@ -9,7 +9,7 @@ function out = cov(F,G)
 % Copyright 2002-2009 by The Chebfun Team. 
 
 % COV(F) is the same as VAR(F) if F is a single chebfun.
-if numel(F) == 1, out = var(F); return, end
+if nargin == 1 && numel(F) == 1, out = var(F); return, end
 
 if nargin == 3, error('CHEBFUN:cov:nargin', ...
         'Chebfun/cov does not support normalization.');

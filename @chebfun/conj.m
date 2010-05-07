@@ -1,6 +1,6 @@
 function F = conj(F)
 % CONJ	 Complex conjugate.
-% CONJ(F) is the complex conjugate  of F.
+% CONJ(F) is the complex conjugate of F.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
