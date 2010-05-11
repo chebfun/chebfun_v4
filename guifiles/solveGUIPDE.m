@@ -99,19 +99,48 @@ end
 bc = struct( 'left', LBC, 'right', RBC);
 
 % Set up the initial condition
+tol = tolNum;
 if ischar(guessInput)
     guessInput = vectorize(guessInput);
     u0 =  chebfun(guessInput,[a b]);
+    u0 = simplify(u0,tol);
+    lenu0 = length(u0);
 else
-    u0 = chebfun;
+    u0 = chebfun; 
+    lenu0 = 0;
     for k = 1:numel(guessInput)
         guess_k = vectorize(guessInput{k});
-        u0(:,k) =  chebfun(guess_k,[a b]);
+        u0k = chebfun(guess_k,[a b]);
+        u0k = simplify(u0k,tol);
+        u0(:,k) =  u0k;
+        lenu0 = max(lenu0,length(u0k));
     end
 end
 
+% gather options
 opts.HoldPlot = false;
 opts.Eps = tolNum;
+if get(handles.button_pdeploton,'Value')
+    opts.Plot = 'on';
+else
+    opts.Plot = 'off';
+end
+if get(handles.button_holdon,'Value');
+    opts.HoldPlot = 'on';
+else
+    opts.HoldPlot = 'off';
+end
+ylim1 = get(handles.ylim1,'String');
+ylim2 = get(handles.ylim2,'String');
+if ~isempty(ylim1) && ~isempty(ylim2)
+    opts.YLim = [str2num(ylim1) str2num(ylim2)];
+end
+opts.PlotStyle = get(handles.input_plotstyle,'String');    
+if get(handles.checkbox_fixN,'Value')
+    opts.N = str2num(get(handles.input_N,'String'));
+%     if isempty(opts.N), opts.N = lenu0; end
+    if isempty(opts.N), error('CHEBFUN:solveGUIPDE:fixN','N must be given.'); end
+end
 opts.guihandles = guihandles;
 
 % error
@@ -131,14 +160,29 @@ handles.hasSolution = 1;
 
 axes(handles.fig_norm)
 if ~iscell(u)
-    surf(u,t,'facecolor','interp')
+%     surf(u,t,'facecolor','interp')
+    waterfall(u,t,'simple','linewidth',1)
 else
-    surf(u{1},t,'facecolor','interp')
-    xlabel('x'), ylabel('t')
-    varnames = get(handles.input_DE_RHS,'string');
-    idx = strfind(varnames{1},'_');
-    varnames{k} = varnames{1}(1:idx(1)-1);
-    v = varnames{1}(1:idx(1)-1);
-    title(v),zlabel(v)
+%     surf(u{1},t,'facecolor','interp')
+%     xlabel('x'), ylabel('t')
+%     varnames = get(handles.input_DE_RHS,'string');
+%     idx = strfind(varnames{1},'_');
+%     varnames{k} = varnames{1}(1:idx(1)-1);
+%     v = varnames{1}(1:idx(1)-1);
+%     title(v),zlabel(v)
+    
+    
+    cols = get(0,'DefaultAxesColorOrder');
+    for k = 1:numel(u)
+        waterfall(u{k},t,'simple','linewidth',1,'edgecolor',cols(k,:)), hold on
+        xlabel('x'), ylabel('t')
+    end
+    hold off
+    
+    
+    
+    
+    
+    
 end
 

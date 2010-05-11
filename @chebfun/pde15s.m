@@ -71,7 +71,7 @@ tol = 1e-6;             % 'eps' in chebfun terminology
 doplot = 1;             % plot after every time chunk?
 dohold = 0;             % hold plot?
 plotopts = '-';         % Plot Style
-dojac = true; J = [];  % Supply Jacobian
+dojac = false; J = [];  % Supply Jacobian
 
 % Parse the variable inputs
 if numel(varargin) == 2
@@ -107,6 +107,29 @@ if isfield(opt,'guihandles')
 else
     guiflag = false; 
 end
+
+% Parse plotting options
+indx = strfind(plotopts,',');
+tmpopts = cell(numel(indx)+1,1);
+k = 0; j = 1;
+while k < numel(plotopts)
+    k = k+1;
+    sk = plotopts(k);
+    if strcmp(sk,',')
+        tmpopts{j} = plotopts(1:k-1);
+        plotopts(1:k) = [];
+        j = j+1;
+        k = 0;
+    end
+end
+tmpopts{j} = plotopts;
+plotopts = tmpopts;
+for k = 1:numel(plotopts)
+    if strcmpi(plotopts{k},'linewidth') || strcmpi(plotopts{k},'MarkerSize')
+        plotopts{k+1} = str2num(plotopts{k+1});
+    end
+end
+
 
 % ODE tolerances
 % (AbsTol and RelTol must be <= Tol/10)
@@ -436,8 +459,8 @@ if doplot
     if ~guiflag
         cla, shg
     end
-    set(gcf,'doublebuf','on')
-    plot(u0,plotopts)
+    set(gcf,'doublebuf','on');
+    plot(u0,plotopts{:});
     if dohold, ish = ishold; hold on, end
     if ~isempty(YLim), ylim(YLim);    end
     drawnow
@@ -462,6 +485,10 @@ end
 % initialise variables for onestep()
 B = []; q = []; rows = []; M = []; n = [];
 
+% Set the preferences
+pref = chebfunpref;
+pref.eps = tol; pref.resampling = 1; pref.splitting = 0; pref.sampletest = 0; pref.blowup = 0;
+
 % Begin time chunks
 for nt = 1:length(tt)-1
     
@@ -471,8 +498,8 @@ for nt = 1:length(tt)-1
     
     % solve one chunk
     if isnan(optN)
-        chebfun( @(x) vscl+onestep(x), d, 'eps', tol, 'minsamples',curlen, ...
-            'resampling','on','splitting','off','sampletest','off','blowup','off');
+        pref.minsamples = curlen;
+        chebfun( @(x) vscl+onestep(x), d, pref);
     else
         % non-adaptive in space
         onestep(chebpts(optN,d));
@@ -498,7 +525,7 @@ for nt = 1:length(tt)-1
     
     % plotting
     if doplot
-        plot(ucur,plotopts);
+        plot(ucur,plotopts{:});
         if ~isempty(YLim), ylim(YLim); end
         title(sprintf('t = %.3f,  len = %i',tt(nt+1),curlen)), drawnow
     end
@@ -562,11 +589,10 @@ clear global GLOBX
             % Multiply by user-defined mass matrix
             if usermass, M = feval(userM,n)*M; end
             
-            % Jacobians
+%             % Jacobians
             if dojac, J = makejac; end
-%             J
-%             J2 = myjac(U0,tt(nt),x)
-%             error
+%             makejac
+%             myjac(U0,tt(nt))
 %             if dojac, J = makejac2(ucur,tt(nt),n,B,rows,xd); end
         end
         
@@ -575,6 +601,7 @@ clear global GLOBX
         % ODE options (Jacobian)
         if dojac
 %             J = makejac2(ucur,tt(nt),n,B,rows,xd);
+%             J = @(t,u) myjac(u,t);
             opt2 = odeset(opt2,'Jacobian',J);
         end
         
@@ -808,8 +835,26 @@ end
 
 
 function J = myjac(u,t,x)
-J = Diff(u,1,1)+.002*Diff(u,2,1);
+% Some hand-coded jacobians for testing.
+% See jac_foo.m
 
+% J = Diff(u,1,1)+.002*Diff(u,2,1);
+% J(1,:) = 0; J(1,1) = 1;
+% J(end,:) = 0; J(end,end) = 1;
+
+% J = diag(1-3*u.^2) + 5e-4*Diff(u,2,1);
+% J(1,:) = 0; J(1,1) = 1;
+% J(end,:) = 0; J(end,end) = 1;
+
+D = Diff(u,1,1);
+D2 = Diff(u,2,1); 
+D4 = Diff(u,4,1);
+
+J = diag(u)*D+diag(D*u)-D2-.006*D4;
+J(1,:) = 0; J(1,1) = 1;
+J(2,:) = D(1,:);
+J(end-1,:) = D(end,:);
+J(end,:) = 0; J(end,end) = 1;
 end
 
 

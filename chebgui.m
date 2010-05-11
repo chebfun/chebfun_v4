@@ -530,7 +530,8 @@ else
 %         plot(u(:,end))
 %         title('Solution at final time.')
 %         subplot(1,2,2);
-        surf(u,tt,'facecolor','interp','edgealpha',0)
+        waterfall(u,tt,'simple','linewidth',2)
+%         waterfall(u,tt)
         xlabel('x'), ylabel('t');
     else
 %         v = chebfun;
@@ -550,9 +551,13 @@ else
 %         legend(varnames{:})
         
         sfx = {'st','nd','rd'};
+        cols = get(0,'DefaultAxesColorOrder');
         for k = 1:numel(u)
             subplot(1,numel(u),k);
-            surf(u{k},tt,'facecolor','interp','edgealpha',0)
+%             surf(u{k},tt,'facecolor','interp','edgealpha',0)
+%             waterfall(u{k},tt,'simple')
+            waterfall(u{k},tt,'simple','linewidth',2)
+%             waterfall(u{k},tt,'simple','linewidth',2,'edgecolor',cols(k,:)), hold on
             xlabel('x'), ylabel('t'), zlabel(varnames{k})
             title(varnames{k})
 %             if k < 4
@@ -899,6 +904,8 @@ set(handles.toggle_useLatest,'Visible','on')
 % set(handles.iter_text,'Visible','on')
 % set(handles.text_norm,'Visible','on')
 
+pdeplotopts(handles,0)
+
 
 set(handles.text_initial,'String','Initial guess')
 
@@ -938,6 +945,8 @@ set(handles.toggle_useLatest,'Visible','off')
 set(handles.iter_list,'Visible','off')
 set(handles.iter_text,'Visible','off')
 set(handles.text_norm,'Visible','off')
+
+pdeplotopts(handles,1)
 
 set(handles.input_GUESS,'Enable','On')
 set(handles.toggle_useLatest,'Value',0)
@@ -1002,3 +1011,150 @@ temppath = pwd;
 chebfunpath = fileparts(which('chebtest.m'));
 guifilepath = fullfile(chebfunpath,'guifiles');
 cd(guifilepath);
+
+
+function pdeplotopts(handles,onoff)
+% The function cd-s to the chebfun folder, and returns the path to the
+% folder the user was currently in.
+if onoff == 1
+    onoff = 'on';   
+elseif onoff == 0
+    onoff = 'off';
+end
+
+set(handles.plot_text,'visible',onoff);
+set(handles.button_pdeploton,'visible',onoff);
+set(handles.button_pdeplotoff,'visible',onoff);
+set(handles.hold_text,'visible',onoff);
+set(handles.button_holdon,'visible',onoff);
+set(handles.button_holdoff,'visible',onoff);
+set(handles.ylim_text,'visible',onoff);
+set(handles.ylim1,'visible',onoff);
+set(handles.text33,'visible',onoff);
+set(handles.ylim2,'visible',onoff);
+set(handles.plotstyle_text,'visible',onoff);
+set(handles.input_plotstyle,'visible',onoff);
+set(handles.FixN_text,'visible',onoff);
+set(handles.checkbox_fixN,'visible',onoff);
+set(handles.N_text,'visible',onoff);
+set(handles.input_N,'visible',onoff);
+
+
+% --- Executes on button press in button_pdeploton.
+function button_pdeploton_Callback(hObject, eventdata, handles)
+% hObject    handle to button_pdeploton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_pdeploton
+% set(handles.button_pdeplotoff,'Value',0);
+onoff = 'on';
+set(handles.button_pdeplotoff,'Value',0);
+set(handles.button_pdeploton,'Value',1);
+set(handles.hold_text,'Enable',onoff);
+set(handles.button_holdon,'Enable',onoff);
+set(handles.button_holdoff,'Enable',onoff);
+set(handles.ylim_text,'Enable',onoff);
+set(handles.ylim1,'Enable',onoff);
+set(handles.text33,'Enable',onoff);
+set(handles.ylim2,'Enable',onoff);
+set(handles.plotstyle_text,'Enable',onoff);
+set(handles.input_plotstyle,'Enable',onoff);
+
+
+% --- Executes on button press in button_pdeplotoff.
+function button_pdeplotoff_Callback(hObject, eventdata, handles)
+% hObject    handle to button_pdeplotoff (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_pdeplotoff
+% set(handles.button_pdeploton,'Value',0);
+onoff = 'off';
+set(handles.button_pdeploton,'Value',0);
+set(handles.button_pdeplotoff,'Value',1);
+set(handles.hold_text,'Enable',onoff);
+set(handles.button_holdon,'Enable',onoff);
+set(handles.button_holdoff,'Enable',onoff);
+set(handles.ylim_text,'Enable',onoff);
+set(handles.ylim1,'Enable',onoff);
+set(handles.text33,'Enable',onoff);
+set(handles.ylim2,'Enable',onoff);
+set(handles.plotstyle_text,'Enable',onoff);
+set(handles.input_plotstyle,'Enable',onoff);
+
+
+% --- Executes on button press in button_holdon.
+function button_holdon_Callback(hObject, eventdata, handles)
+% hObject    handle to button_holdon (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_holdon
+set(handles.button_holdoff,'Value',0);
+
+% --- Executes on button press in button_holdoff.
+function button_holdoff_Callback(hObject, eventdata, handles)
+% hObject    handle to button_holdoff (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of button_holdoff
+set(handles.button_holdon,'Value',0);
+
+function ylim1_CreateFcn(hObject, eventdata, handles)
+function ylim1_Callback(hObject, eventdata, handles)
+function ylim2_CreateFcn(hObject, eventdata, handles)
+function ylim2_Callback(hObject, eventdata, handles)
+function input_plotstyle_CreateFcn(hObject, eventdata, handles)
+
+
+
+function input_N_Callback(hObject, eventdata, handles)
+% hObject    handle to input_N (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of input_N as text
+%        str2double(get(hObject,'String')) returns contents of input_N as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function input_N_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to input_N (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in checkbox_fixN.
+function checkbox_fixN_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_fixN (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox_fixN
+if get(hObject,'Value')
+    set(handles.N_text,'Enable','on');
+    set(handles.input_N,'Enable','on');
+else
+    set(handles.N_text,'Enable','off');
+    set(handles.input_N,'Enable','off');
+end
+    
+    
+
+
+
+function input_plotstyle_Callback(hObject, eventdata, handles)
+% hObject    handle to input_plotstyle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of input_plotstyle as text
+%        str2double(get(hObject,'String')) returns contents of input_plotstyle as a double

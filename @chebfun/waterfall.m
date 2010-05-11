@@ -11,11 +11,22 @@ function varargout = waterfall(u,varargin)
 
 % numpts = chebfunpref('plot_numpts');
 
-numpts = 0;
-for k = 1:numel(u)
-    numpts = max(numpts,length(u(k)));
+numpts = 0; numptsmax = inf; numptsmin = 200;
+simple = 0;
+
+k = 1;
+while k <= numel(varargin)
+    if strcmpi(varargin{k},'numpts')
+        numpts = varargin{k+1};
+        varargin(k:k+1) = [];
+    elseif strcmpi(varargin{k},'simple')
+        varargin(k) = [];
+        simple = true;
+    else
+        k = k+1;
+    end
 end
-numpts = ceil(min(numpts,500));
+nargin = length(varargin)+1;
 
 trans = u(:,1).trans;
 if trans
@@ -38,7 +49,33 @@ if ~isreal(u) || ~all(isreal(t))
     warning('CHEBFUN:waterfall:imaginary',...
         'Imaginary parts of complex T and/or U arguments ignored');
     u = real(u); t = real(t);
-end       
+end    
+
+if simple, 
+    if numpts == 0
+        numpts = max(chebfunpref('plot_numpts')/10,10);
+    end
+%     varargin = [varargin, {'numpts',numpts}]; 
+%     x = chebfun('x',domain(u));
+%     ish = ishold; h = {};
+%     if u(1).trans, u = u.'; end
+%     for k = 1:numel(u)
+%         tk = t(k) + 0*x;
+%         h{k} = plot3(x,tk,u(:,k),varargin{:}); hold on
+%     end
+%     if ~ish, hold off, end
+%     if nargout > 0, varargout{1} = h; end
+% %     return
+end
+
+% Sort out number of points to use in plot
+if numpts == 0
+    for k = 1:numel(u)
+        numpts = max(numpts,length(u(k)));
+    end
+    numpts = max(min(numpts,numptsmax),numptsmin);
+end
+numpts = ceil(numpts);
 
 % get the data
 [data ignored data3] = plotdata([],u,[],numpts);
@@ -46,16 +83,43 @@ uu = data{2:end};
 xx = repmat(data{1},1,n);
 tt = repmat(t,length(xx(:,1)),1);
 
-
 % mask the NaNs
 mm = find(isnan(uu));
 uu(mm) = uu(mm+1);
 
+minuu = min(uu(:));
+
+if simple
+    ish = ishold;
+    mesh(xx.',tt.',uu.','edgecolor','none'); hold on,
+    % Intersperse with NaNs
+    xx = repmat(xx,1,4);
+    mid = repmat((t(1:end-1)+t(2:end))/2,size(tt,1),1);
+    tt = reshape([tt ; tt+eps ; [mid NaN*tt(:,end)] ; [tt(:,2:end)-eps NaN*tt(:,end)]],size(xx));
+%     uu1 = reshape([uu ; minuu + 0*uu ; NaN*uu ; minuu + 0*[uu(:,2:end) uu(:,end)]],size(xx));
+%     hold off,  mesh(xx.',tt.',uu1.','edgecolor','none'); hold on
+    uu = reshape([uu ; uu ; NaN*uu ; [uu(:,2:end) uu(:,end)]],size(xx));
+    mesh(xx.',tt.',uu.',varargin{:}); hold off
+    if ~ish, hold off; end
+    
+    % old way (using plot3)
+%     varargin = [varargin, {'numpts',numpts}]; 
+%     x = chebfun('x',domain(u));
+%     ish = ishold; h = {};
+%     if u(1).trans, u = u.'; end
+%     for k = 1:numel(u)
+%         tk = t(k) + 0*x;
+%         h{k} = plot3(x,tk,u(:,k),varargin{:}); hold on
+%     end
+%     if ~ish, hold off, end
+%     if nargout > 0, varargout{1} = h; end
+%     return
+end
+
+
 % plot the waterfall
-if ~trans
+if ~simple
     h = waterfall(xx.',tt.',uu.',varargin{:});
-else
-    h = waterfall(xx,tt,uu,varargin{:});
 end
 
 % hide the jumps
@@ -67,6 +131,9 @@ if ~trans
         z = [z ; data3{k+1}];
     end
     if ~all(isnan(z))
+        x([1 end]) = [];
+        y([1 end]) = [];
+        z([1 end]) = [];
         ish = ishold;    hold on
         plot3(x,y,z,'w');
         if ~ish, hold off; end

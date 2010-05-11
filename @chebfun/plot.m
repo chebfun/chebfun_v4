@@ -84,7 +84,7 @@ for k = length(varargin)-1:-1:1
             varargin(k:k+1) = [];
         elseif strcmpi(varargin{k},'Interval');      
             interval = varargin{k+1}; 
-            varargin(k:k+1) = [];            
+            varargin(k:k+1) = [];          
         end
     end
 end

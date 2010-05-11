@@ -1,14 +1,5 @@
 function exportpde2mfile(pathname,filename,handles)
 
-% disp('Export to .m file for PDEs is still under construction')
-% 
-% fullFileName = [pathname,filename];
-% fid = fopen(fullFileName,'wt');
-% 
-% fprintf(fid,'%% Export to .m file for PDEs is still under construction');
-% fclose(fid);
-
-
 fullFileName = [pathname,filename];
 fid = fopen(fullFileName,'wt');
 
@@ -19,8 +10,8 @@ else
 end
 
 fprintf(fid,'%% %s - Executable .m file for solving a PDE.\n',filename);
-fprintf(fid,'%% Automatically created with from chebde GUI by user %s\n',userName);
-fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
+fprintf(fid,'%% Automatically created from chebgui by user %s\n',userName);
+fprintf(fid,'%% %s, %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 % Extract information from the GUI fields
 a = get(handles.dom_left,'String');
@@ -32,7 +23,6 @@ deRHSInput = get(handles.input_DE_RHS,'String');
 lbcRHSInput = get(handles.input_LBC_RHS,'String');
 rbcRHSInput = get(handles.input_RBC_RHS,'String');
 guessInput = get(handles.input_GUESS,'String');
-
 tolInput = get(handles.input_tol,'String');
 tt = get(handles.timedomain,'String');
 
@@ -62,10 +52,6 @@ fprintf(fid,'tt = %s;\n',tt);
 fprintf(fid,'\n%% Make the rhs of the PDE.\n');
 fprintf(fid,'pdefun = %s;\n',deString);
 
-% % Setup for the rhs
-% fprintf(fid,'\n%% Set up the rhs of the differential equation\n');
-% fprintf(fid,'rhs = %s;\n',char(deRHSInput));
-
 % Make assignments for left and right BCs.
 fprintf(fid,'\n%% Assign boundary conditions.\n');
 if ~isempty(lbcInput{1})
@@ -91,21 +77,23 @@ end
 % Set up the initial condition
 fprintf(fid,'\n%% Create a chebfun of the initial condition(s).\n');
 if ischar(guessInput)
-%     u0 =  chebfun(guessInput,[a b]);
+    % Get the strings of the dependant variable.
+    idx = strfind(deString,')');
+    tmp = deString(3:idx(1)-10);
+    idx = strfind(tmp,',');
+    if isempty(idx)
+        s = tmp;
+    else
+        s = tmp(1:idx(1)-1);
+    end 
+    sol0 = [s '0']; sol = s;
     findx = strfind(guessInput,'x');
     if isempty(findx)
-        fprintf(fid,'u0 = chebfun(%s,d);\n',guessInput);
+        fprintf(fid,'%s = chebfun(%s,d);\n',sol0,guessInput);
     else
-        fprintf(fid,'u0 = %s;\n',guessInput);
+        fprintf(fid,'%s = %s;\n',sol0,guessInput);
     end        
 else
-% %     u0 = chebfun;
-%     fprintf(fid,'u0 = chebfun;\n');
-%     for k = 1:numel(guessInput)
-% %         u0(:,k) =  chebfun(guessInput{k},[a b]);
-%         fprintf(fid,'u0(:,%d) = chebfun(%s,d);\n',k,guessInput{k});
-%     end
-
     % Get the strings of the dependant variables.
     idx = strfind(deString,')');
     tmp = deString(3:idx(1)-10);
@@ -128,7 +116,6 @@ else
         findx = strfind(guessInput{k},'x');
         if ~isempty(findx), break, end
     end
-    
     % Print the conditions.
     catstr = [];
     for k = 1:numel(guessInput)
@@ -139,25 +126,41 @@ else
         end
         catstr = [catstr ', ' s{k}];
     end
-    fprintf(fid,'u0 = [%s];\n',catstr(3:end));
+    sol0 = 'sol0'; sol = 'sol';
+    fprintf(fid,'%s = [%s];\n',sol0,catstr(3:end));
 end
 
 % Option for tolerance
 opts = [];
 tolInput = get(handles.input_tol,'String');
-opts = [opts,'''Eps''',',',tolInput];
+opts = [opts,'''Eps'',',tolInput];
 
-% % Option for plotting
-% plottingOnInput = get(handles.plotting_on,'Value');
-% opts = [opts,'Eps, ',tolInput]
+% Options for plotting
+doplot = get(handles.button_pdeploton,'Value');
+if ~doplot
+    opts = [opts,''',Plot,''','''off'''];
+else
+    dohold = get(handles.button_holdon,'Value');
+    if dohold
+        opts = [opts,',''HoldPlot'',','''on'''];
+    end
+    ylim1 = get(handles.ylim1,'String');
+    ylim2 = get(handles.ylim2,'String');
+    if ~isempty(ylim1) && ~isempty(ylim2)
+        opts = [opts,',''Ylim'',[',ylim1,',',ylim2,']'];
+    end
+    plotstyle = get(handles.input_plotstyle,'String');
+    if ~isempty(plotstyle)
+        opts = [opts,',''PlotStyle'',''',plotstyle,''''];
+    end
+end
 
-% fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
-% if plottingOnInput
-%     pauseLengthInput = get(handles.input_pause,'String');
-%     fprintf(fid,'options.plotting = %s;\n',pauseLengthInput);
-% else
-%     fprintf(fid,'options.plotting = ''off'';\n');
-% end
+% Options for fixed N
+if get(handles.checkbox_fixN,'Value')
+    N = get(handles.input_N,'String');
+    if isempty(N), error('CHEBFUN:exportpde2mfile:N','N must be given.'); end
+    opts = [opts,',''N'',',N];
+end        
 
 % Set up preferences
 fprintf(fid,'\n%% Setup preferences for solving the problem.\n');
@@ -169,18 +172,33 @@ else
 end
 
 fprintf(fid,['\n%% Solve the problem using pde15s.\n']);
-fprintf(fid,'[tt uu] = pde15s(pdefun,tt,u0,bc,opts);\n');
+fprintf(fid,'[tt %s] = pde15s(pdefun,tt,%s,bc,opts);\n',sol,sol0);
+
+% Conver sol to variable names
+if numel(deInput) > 1
+    fprintf(fid,'\n%% Recover variable names.\n');
+    for k = 1:numel(s)
+        fprintf(fid,'%s = %s{%d};\n',s{k},sol,k);
+    end
+end
 
 % plotting
 if numel(deInput) == 1
     fprintf(fid,'\n%% Create plot of the solution.\n');
-    fprintf(fid,'surf(uu,tt,''facecolor'',''interp'')\n');
+%     fprintf(fid,'surf(%s,tt,''facecolor'',''interp'')\n',sol);
+    fprintf(fid,'waterfall(%s,tt,''simple'',''linewidth'',2)\n',sol);
 else
-    fprintf(fid,'\n%% Create plot of the solution.\n');
-    fprintf(fid,'for k = 1:numel(uu)\n');
-    fprintf(fid,'   subplot(1,numel(uu),k)\n');
-     fprintf(fid,'   surf(uu{k},tt,''facecolor'',''interp'')\n');
-    fprintf(fid,'end\n');
+    fprintf(fid,'\n%% Create plots of the solutions.\n');
+%     fprintf(fid,'for k = 1:numel(%s)\n',sol);
+%     fprintf(fid,'   subplot(1,numel(%s),k)\n',sol);
+%      fprintf(fid,'   surf(sol{k},tt,''facecolor'',''interp'')\n');
+%     fprintf(fid,'end\n');
+    M = numel(deInput);
+    for k = 1:numel(deInput)
+        fprintf(fid,'subplot(1,%d,%d)\n',M,k);
+        fprintf(fid,'waterfall(%s,tt,''simple'',''linewidth'',2)\n',s{k});
+        fprintf(fid,'xlabel(''x''), ylabel(''t''), title(''%s'')\n',s{k});
+    end
 end
 
 fclose(fid);

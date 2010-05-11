@@ -14,7 +14,7 @@ function varargout = plot3(varargin)
 
 %   This code is a modification of the code in chebfun/plot.
 
-numpts = 3001;   % more care needs to be taken with this
+numpts = chebfunpref('plot_numpts');
 
 % get jumpline style and jumpval markers
 jlinestyle = ':'; jmarker = 'x'; forcejmarks = false;
@@ -28,6 +28,9 @@ for k = length(varargin)-1:-1:1
             jmarker = varargin{k+1}; 
             forcejmarks = true;
             varargin(k:k+1) = [];
+        elseif strcmpi(varargin{k},'NumPts');      
+            numpts = varargin{k+1}; 
+            varargin(k:k+1) = [];            
         end
     end
 end
@@ -35,7 +38,7 @@ end
 linedata = {}; markdata = {}; jumpdata = {}; dummydata = {}; jvaldata = {};
 while ~isempty(varargin)
     % grab the chebfuns
-    if length(varargin)>1 && isa(varargin{2},'chebfun') && isa(varargin{3},'chebfun') % two chebfuns
+    if length(varargin)>1 && isa(varargin{2},'chebfun') && isa(varargin{3},'chebfun') % three chebfuns
         f = varargin{1};
         g = varargin{2};
         h = varargin{3};
@@ -45,8 +48,22 @@ while ~isempty(varargin)
                 'Imaginary parts of complex X and/or Y arguments ignored.');
             f = real(f); g = real(g); h = real(h);
         end
-    else                                                % one chebfun
-         error('CHEBFUN:plot3:argin','First three arguments must be chebfuns')
+    else                                                % one chebfun or quasi?
+        f = varargin{1};
+        if numel(f) == 3
+            if f(1).trans, f = f.'; end
+            g = f(:,1); h = f(:,2); f = f(:,1);
+            varargin(1) = [];
+            varargout = plot3(f,g,h,varargin{:});
+            return
+        elseif numel(f) > 3
+            varargin(1) = [];
+            waterfall(f,'simple',varargin{:});
+            return
+        else
+            error('CHEBFUN:plot3:argin','First three arguments must be chebfuns.')
+            
+        end
     end
     
     % other data
