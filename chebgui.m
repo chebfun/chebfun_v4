@@ -550,22 +550,19 @@ else
         end
 %         legend(varnames{:})
         
-        sfx = {'st','nd','rd'};
+%         sfx = {'st','nd','rd'};
         cols = get(0,'DefaultAxesColorOrder');
         for k = 1:numel(u)
-            subplot(1,numel(u),k);
-%             surf(u{k},tt,'facecolor','interp','edgealpha',0)
-%             waterfall(u{k},tt,'simple')
-            waterfall(u{k},tt,'simple','linewidth',2)
-%             waterfall(u{k},tt,'simple','linewidth',2,'edgecolor',cols(k,:)), hold on
-            xlabel('x'), ylabel('t'), zlabel(varnames{k})
-            title(varnames{k})
-%             if k < 4
-%                 title([int2str(k),'^{',sfx{k},'} component of solution'])
-%             else
-%                 title([int2str(k),'^{th} component of solution'])
-%             end
+%             subplot(1,numel(u)+1,k+1);
+% %             surf(u{k},tt,'facecolor','interp','edgealpha',0)
+% %             waterfall(u{k},tt,'simple')
+%             waterfall(u{k},tt,'simple','linewidth',2)
+%             xlabel('x'), ylabel('t'), zlabel(varnames{k})
+%             title(varnames{k})
+%             subplot(1,numel(u)+1,1);
+            waterfall(u{k},tt,'simple','linewidth',2,'edgecolor',cols(k,:)), hold on
         end
+        xlabel('x'), ylabel('t')
     end
 end
 

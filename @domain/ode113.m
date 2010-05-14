@@ -28,7 +28,7 @@ function [t,y] = ode113(varargin)
 % Convert domain to 2-vector of endpoints.
 j = find( cellfun('isclass',varargin,'domain') );
 varargin{j} = varargin{j}.ends;
-y = odesol( ode113(varargin{:}) ); 
+[y t] = odesol( ode113(varargin{:}) ); 
 
 % Check if the ode function was called with 1 or 2 arguments. If 1 argument
 % was used, we only want to return the solution y, if 2 arguments were used
@@ -40,8 +40,6 @@ y = odesol( ode113(varargin{:}) );
 
 if nargout == 1
     t = y; % As only t will be returned in this case
-elseif nargout == 2
-    t = get(y,'points'); % Get the values of t
 end
 
 end

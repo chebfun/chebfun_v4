@@ -1,4 +1,4 @@
-function y = odesol(sol)
+function [y t] = odesol(sol)
 %ODESOL  Convert an ODE solution to chebfun.
 
 % ODESOL(SOL,OPT) converts the solution of an ODE initial-value or 
@@ -10,7 +10,7 @@ function y = odesol(sol)
 % each piece. 
 %
 
-% Copyright 2009 by the Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2009 by the Chebfun Team. See www.maths.ox.ac.uk/chebfun.
 
 
 % Current tolerance used by user
@@ -47,5 +47,7 @@ y = chebfun;
 for j = 1:ncols
   y(:,j) = chebfun(@(x) deval(sol,x,j).', [ends(1) ends(end)],'eps', RelTol(j));
 end
+
+t = chebfun('t',domain(y(:,1)));
 
 end

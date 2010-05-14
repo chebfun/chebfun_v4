@@ -4,13 +4,21 @@ function val = get(f, propName)
 % the chebfun F. The string PROP can be 'funs', 'ends' or 'imps', to
 % retrieve the cell array of funs, the vector with endpoints or the matrix
 % with Dirac impulses respectively. Or 'nfuns', 'points', 'scl', 'vals',
-% 'exps', or 'trans'.
+% 'exps', or 'trans'. If F is a row (column) quasimatrix, GET will only return the 
+% property of the first row (column).
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 
 
 val = [];
+
+if numel(f) > 1
+    if strcmpi(propName,'trans'), val = f(1).trans; return
+    else
+        warning('CHEBFUN:get:quasi','''Get'' should not be called with quasimatrices');
+    end
+end
 
 switch propName
     case 'funs'
@@ -23,28 +31,19 @@ switch propName
         val = f.ends;
     case 'imps'
         val = f.imps;
-    case 'diff'
-            val = {f.jacobian};
     case 'nfuns'
         val = f.nfuns;        
-    case 'points'
-        % Returns mapped Chebyshev points (consistent with vals)
-        val = [];
-        for k = 1:f(1).nfuns
-            val = [val; f(1).funs(k).map.for(chebpts(f(1).funs(k).n))];
-        end
     case 'scl'
         val = f.scl;
-    case {'vals','exps'}
-        funs = f.funs;
-        val = [];
-        for i = 1:f.nfuns
-            val = [val;get(funs(i),propName)];
+    case {'vals','exps','points','pts'}
+        funs = f(1).funs;
+        for j = 1:f(1).nfuns
+            val = [val;get(funs(j),propName)];
         end
     case 'trans'
         val = f(1).trans;
-    case 'jacobian'
+    case {'jacobian','jac'}
         val = f.jacobian;
     otherwise
-        error('CHEBFUN:get:propnam',[propName,' is not a valid chebfun property'])
+        error('CHEBFUN:get:propnam',[propName,' is not a valid chebfun property.'])
 end

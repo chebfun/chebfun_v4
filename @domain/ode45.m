@@ -28,7 +28,7 @@ function [t,y] = ode45(varargin)
 j = find( cellfun('isclass',varargin,'domain') );
 varargin{j} = varargin{j}.ends;
 
-y = odesol( ode45(varargin{:}) );
+[y t] = odesol( ode45(varargin{:}) );
 
 % Check if the ode function was called with 1 or 2 arguments. If 1 argument
 % was used, we only want to return the solution y, if 2 arguments were used
@@ -39,8 +39,6 @@ y = odesol( ode45(varargin{:}) );
 % return the solution correctly.
 if nargout == 1
     t = y; % As only t will be returned in this case
-elseif nargout == 2
-    t = get(y,'points'); % Get the values of t
 end
 
 end

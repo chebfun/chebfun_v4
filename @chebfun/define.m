@@ -153,5 +153,8 @@ else                                             % DELETION
 end
 
 f.nfuns = numel(f.funs);
+for k = 1:f.nfuns
+    f.scl = max(f.scl, f.funs(k).scl.v);
+end
 
 end

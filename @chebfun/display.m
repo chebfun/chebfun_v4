@@ -112,9 +112,9 @@ function displaychebfun(f, columnstr)
         end
         
         if ~isreal(funs(j).vals)
-            fprintf('(%9.2g,%9.2g)   %7i      Complex values %s \n', ends(j), ends(j+1), len(j), exinfo);
+            fprintf('[%9.2g,%9.2g]   %7i      Complex values %s \n', ends(j), ends(j+1), len(j), exinfo);
         else
-            fprintf('(%9.2g,%9.2g)   %6i  %9.2g %9.2g %s \n', ends(j), ends(j+1), len(j), endvals, exinfo);
+            fprintf('[%9.2g,%9.2g]   %6i  %9.2g %9.2g %s \n', ends(j), ends(j+1), len(j), endvals, exinfo);
         end        
     end
     

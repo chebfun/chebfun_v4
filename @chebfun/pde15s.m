@@ -72,6 +72,7 @@ doplot = 1;             % plot after every time chunk?
 dohold = 0;             % hold plot?
 plotopts = '-';         % Plot Style
 dojac = false; J = [];  % Supply Jacobian
+dojacbc = true;
 
 % Parse the variable inputs
 if numel(varargin) == 2
@@ -362,12 +363,14 @@ elseif ~funflagr && isfield(bc,'left')
 end
 
 % Compute Jacobians
+t0 = tt(1);
 if dojac
-    t0 = tt(1);
     Fu0 = pdefun(u0,t0,xd);
     Jac = diff(Fu0,u0); J = [];
 %     udep = any(any(isnan(feval(diff(pdefun(utmp+NaN,tt(1),xd),utmp+NaN),9))))
 %     tdep = any(any(isnan(feval(diff(pdefun(utmp,NaN,xd),utmp),9))))
+end
+if dojac || dojacbc
     JacL = []; JL = []; JacR = []; JR = [];
     if funflagl
         uL = nlbcsl(u0,t0,xd);

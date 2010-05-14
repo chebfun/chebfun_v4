@@ -182,8 +182,12 @@ if isfield(pref,'sings')
 end
 
 % Get domain
-if  length(argin) == 1,
-    argin{2} = double(pref.domain);
+if length(argin) == 1,
+    if isa(argin{1},'fun')
+        argin{2} = argin{1}.map.par(1:2);
+    else
+        argin{2} = double(pref.domain);
+    end
 elseif isa(argin{2},'domain')
     argin{2} = double(argin{2});
 end

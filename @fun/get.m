@@ -19,7 +19,7 @@ switch propName
         else
             val = g.vals;
         end
-    case 'points'
+    case {'points','pts'}
         % Returns mapped Chebyshev points (consistent with vals)
         val = g.map.for(chebpts(g.n,[-1 1],kind));
     case 'n'
@@ -75,5 +75,5 @@ switch propName
             end
         end
     otherwise
-        error('FUN:get:propname',[propName,' Is not a valid fun property'])
+        error('FUN:get:propname',[propName,' is not a valid fun property.'])
 end
