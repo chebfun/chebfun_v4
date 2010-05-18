@@ -103,7 +103,11 @@ elseif any(isinf(ends))
         %             g = g + gsing;
         %             g.map = map;
         %         end
-        
+        if isinf(ends(1)) && exps(1)
+            g = extract_roots(g,1,[1 0]);
+        else
+            g = extract_roots(g,1,[0 1]);
+        end
         return
     end
     
@@ -427,8 +431,15 @@ ra = max(round(a),1);               % ra = [a]
 
 x = fun('x',ends);
 xf = (x-ends(1)).*f;
-aa = flipud(chebpoly(xf));
 N = length(xf)-1;
+oldN = N;
+if N < ra+2
+    % Put some padding in
+    N = ra+2;
+    xf = prolong(xf,N+1);
+end
+aa = flipud(chebpoly(xf));
+
 
 % The is the recurrence to get the coefficients for u'
 dd = zeros(N,1);
@@ -471,12 +482,14 @@ cc = [0 ; dd1 + [dd2 ; 0 ; 0]];
 % Choose first coefficient so that u(ends(1)) = (x-ends(1))*f(ends(1)) = 0;
 cc(1) = sum(cc(2:2:end))-sum(cc(3:2:end));
 
-% Copnstruct the chebfun of the solution
+% Reove some padding we put in
+if N > oldN+2, cc = cc(1:oldN+2); end
+% Construct the chebfun of the solution
 u = fun(chebpolyval(flipud(cc)),ends);
 
 % Plot for testing
-% plot(xf - Cm*M1,'-b'); hold on
-% plot((x-ends(1)).*diff(u)-a*u,'--r'); hold off
+plot(xf - Cm*M1,'-b'); hold on
+plot((x-ends(1)).*diff(u)-a*u,'--r'); hold off
 
 % Adding in the log term
 tol = chebfunpref('eps');
@@ -501,8 +514,10 @@ else                                % Log term
 end
 
 if strcmpi(u.map.name,'linear')
-    feval(u,ends(1))
-    u = u - feval(u,ends(1)); 
+%     u = extract_roots(u);
+    val = get(u,'lval');
+    if isinf(val) || isnan(val), val = get(u,'rval'); end
+    u = u - val; 
 end
 
 % Flip back so singularity is on the right

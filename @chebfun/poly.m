@@ -1,7 +1,9 @@
 function out = poly(f,n)
 % POLY	Polynomial coefficients.
-% POLY(F) returns the polynomial coefficients of the first fun of F. 
+% POLY(F) returns the polynomial coefficients of the first fun F_1 of the 
+% chebfun F so that F_1 = A(1) x^M + ... + A(M) x + 1.
 % POLY(F,N) returns the polynomial coefficients of the Nth fun of F.
+%
 % For numerical work, the Chebyshev polynomial coefficients returned
 % by CHEBPOLY are more useful.
 %

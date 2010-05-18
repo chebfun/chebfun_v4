@@ -63,14 +63,15 @@ if strcmp(map.name,'linear') || strcmp(map.name,'unbounded')
         D = spdiags([e sgn*2*e e], 0:2, n-1, n-1); 
         D(1,1) = 1;
         % The new coefficients
-        c = sgn*flipud(D\c(2:end));
+        c = rescl*sgn*flipud(D\c(2:end));
         % Construct new f
-        f = rescl*fun(chebpolyval(c),f.map);
+        f = fun(chebpolyval(c),f.map);
         f0 = abs(f.vals([1 end]));
         f0(~sides) = inf;
         
         num = num+1;
     end
+    
     f.exps = exps;
 
 else

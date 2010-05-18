@@ -86,7 +86,7 @@ if ischar(guessInput)
     else
         s = tmp(1:idx(1)-1);
     end 
-    sol0 = [s '0']; sol = s;
+    sol = s; sol0 = [sol '0'];
     findx = strfind(guessInput,'x');
     if isempty(findx)
         fprintf(fid,'%s = chebfun(%s,d);\n',sol0,guessInput);

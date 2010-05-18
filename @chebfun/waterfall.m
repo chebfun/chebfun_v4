@@ -99,7 +99,7 @@ if simple
 %     uu1 = reshape([uu ; minuu + 0*uu ; NaN*uu ; minuu + 0*[uu(:,2:end) uu(:,end)]],size(xx));
 %     hold off,  mesh(xx.',tt.',uu1.','edgecolor','none'); hold on
     uu = reshape([uu ; uu ; NaN*uu ; [uu(:,2:end) uu(:,end)]],size(xx));
-    mesh(xx.',tt.',uu.',varargin{:}); hold off
+    mesh(xx.',tt.',uu.',varargin{:});
     if ~ish, hold off; end
     
     % old way (using plot3)

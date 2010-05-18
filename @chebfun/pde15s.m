@@ -530,6 +530,7 @@ for nt = 1:length(tt)-1
     if doplot
         plot(ucur,plotopts{:});
         if ~isempty(YLim), ylim(YLim); end
+        if ~dohold, hold off, end
         title(sprintf('t = %.3f,  len = %i',tt(nt+1),curlen)), drawnow
     end
     
@@ -623,7 +624,6 @@ clear global GLOBX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    ODEFUN   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % This is what ode15s calls.
         function F = odefun(t,U)
-            
             % Reshape to n by syssize
             U = reshape(U,n,syssize);
             
@@ -735,10 +735,10 @@ function up = Diff(u,k,flag)
         if isempty(ORDER), ORDER = k;
         else ORDER = max(ORDER,k); end
         if size(u,2) > 1, QUASIN = false; end
-        up = [];
+        up = u;
         return
     end
-    
+
     N = length(u);
     
     % Retrieve or compute matrix.
