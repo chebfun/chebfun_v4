@@ -43,6 +43,37 @@ end
 idx = strfind(deString, ')');
 deString = [deString(1:idx(1)-1), ',t,x,diff', deString(idx(1):end)];
 
+
+% Print the PDE
+fprintf(fid,'%% Solving\n%%');
+for k = 1:numel(deInput)
+    fprintf(fid,'   %s = %s,\t',deInput{k},deRHSInput{k});
+end
+fprintf(fid,'\n');
+tmpt = eval(tt); 
+fprintf(fid,'%% for %s in [%s,%s] and t in [%s,%s]',indVarName,a,b,num2str(tmpt(1)),num2str(tmpt(end)));
+if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
+    fprintf(fid,',\n%% subject to\n%%');
+    if  ~isempty(lbcInput{1})
+        for k = 1:numel(lbcInput)
+            fprintf(fid,'   %s = %s,\t',lbcInput{k},lbcRHSInput{k});
+        end
+        fprintf(fid,'at %s = % s\n',indVarName,a);
+    end
+    if  ~isempty(lbcInput{1}) && ~isempty(rbcInput{1})
+        fprintf(fid,'%% and\n%%',indVarName,a);
+    end
+    if ~isempty(rbcInput{1})
+        for k = 1:numel(rbcInput)
+            fprintf(fid,'   %s = %s,\t',rbcInput{k},rbcRHSInput{k});
+        end
+        fprintf(fid,'at %s = % s\n',indVarName,b);
+    end
+    fprintf(fid,'\n');
+else
+    fprintf(fid,'.\n');
+end
+
 fprintf(fid,['%% Create a domain and the linear function on it.\n']);
 fprintf(fid,'[d,%s] = domain(%s,%s);\n',indVarName,a,b);
 

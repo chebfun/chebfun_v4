@@ -40,16 +40,16 @@ else
             indx = 1:numOfRows;
             pdeflag(k) = false;
             dvark = '';
-%             break
         else
-    %         pdeflag = true;
             dvark = rhsk(1:idxk(1)-1);
         end
-        for j = 1:numOfRows
-            if strcmp(dvark,allVarNames{j})
-                indx(j) = k;
-                indx(k) = j;
-                break
+        if strcmp(type,'DE')
+            for j = 1:numOfRows
+                if strcmp(dvark,allVarNames{j})
+                    indx(j) = k;
+                    indx(k) = j;
+                    break
+                end
             end
         end
     end

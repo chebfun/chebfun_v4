@@ -34,11 +34,36 @@ if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
 if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
 if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 
-
 [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
 
-
-
+% Print the BVP
+fprintf(fid,'%% Solving\n%%');
+for k = 1:numel(deInput)
+    fprintf(fid,'   %s = %s,\t',deInput{k},deRHSInput{k});
+end
+fprintf(fid,'\n');
+fprintf(fid,'%% for %s in [%s,%s]',indVarName,a,b);
+if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
+    fprintf(fid,',\n%% subject to\n%%');
+    if  ~isempty(lbcInput{1})
+        for k = 1:numel(lbcInput)
+            fprintf(fid,'   %s = %s,\t',lbcInput{k},lbcRHSInput{k});
+        end
+        fprintf(fid,'at %s = % s\n',indVarName,a);
+    end
+    if  ~isempty(lbcInput{1}) && ~isempty(rbcInput{1})
+        fprintf(fid,'%% and\n%%',indVarName,a);
+    end
+    if ~isempty(rbcInput{1})
+        for k = 1:numel(rbcInput)
+            fprintf(fid,'   %s = %s,\t',rbcInput{k},rbcRHSInput{k});
+        end
+        fprintf(fid,'at %s = % s\n',indVarName,b);
+    end
+    fprintf(fid,'\n');
+else
+    fprintf(fid,'.\n');
+end
 
 fprintf(fid,['%% Create a domain, the linear function on the domain and' ...
     ' a chebop \n%% that operates on function on the domain.\n']);
