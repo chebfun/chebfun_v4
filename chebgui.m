@@ -523,6 +523,7 @@ else
     u = handles.latestSolution;
     % latestNorms = handles.latestNorms;
     tt = handles.latestSolutionT;
+    varnames = handles.varnames;
     
     if ~iscell(u)
         figure
@@ -532,7 +533,7 @@ else
 %         subplot(1,2,2);
         waterfall(u,tt,'simple','linewidth',2)
 %         waterfall(u,tt)
-        xlabel('x'), ylabel('t');
+        xlabel('x'), ylabel('t'); zlabel(varnames{1});
     else
 %         v = chebfun;
 %         for k = 1:numel(u)
@@ -543,20 +544,18 @@ else
 %         title('Solution at final time.')
 %         figure
         
-        varnames = get(handles.input_DE_RHS,'string');
-        for k = 1:numel(u)
-            idx = strfind(varnames{k},'_');
-            if ~isempty(idx)
-                varnames{k} = varnames{k}(1:idx(1)-1);
-            else
-                varnames{k} = '';
-            end
-        end
-        legend(varnames{:})
+%         varnames = get(handles.input_DE_RHS,'string');
+%         for k = 1:numel(u)
+%             idx = strfind(varnames{k},'_');
+%             if ~isempty(idx)
+%                 varnames{k} = varnames{k}(1:idx(1)-1);
+%             else
+%                 varnames{k} = '';
+%             end
+%         end
+%         legend(varnames{:})
         
         figure
-%         sfx = {'st','nd','rd'};
-        cols = get(0,'DefaultAxesColorOrder');
         for k = 1:numel(u)
             subplot(1,numel(u),k);
             waterfall(u{k},tt,'simple','linewidth',2)
@@ -564,11 +563,21 @@ else
             title(varnames{k})
         end
         
+        tmp = u{k}(:,1);
+        u1 = tmp.vals(1);
+        tmp = get(tmp,'vals');
+        x1 = tmp(1);
+        
         figure
+        cols = get(0,'DefaultAxesColorOrder');
         for k = 1:numel(u)
-            waterfall(u{k},tt,'simple','linewidth',2,'edgecolor',cols(k,:)), hold on
+            plot3(x1,tt(1),u1,'linewidth',2,'color',cols(k,:)); hold on
         end
-        xlabel('x'), ylabel('t')
+        legend(varnames{:})
+        for k = 1:numel(u)
+            waterfall(u{k},tt,'simple','linewidth',2,'edgecolor',cols(k,:))
+        end
+        xlabel('x'), ylabel('t'), grid on
     end
 end
 

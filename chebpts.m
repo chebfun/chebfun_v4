@@ -73,6 +73,10 @@ elseif nargin == 3
     end
 end
 
+if numel(n) > 1, 
+    error('CHEBFUN:chebpts:vecn','input n should be an integer scalar');
+end
+
 if nargin > 1 && all(d==[-1 1]), scale = false; end
 
 if      strcmpi(kind,'1st'), kind = 1;

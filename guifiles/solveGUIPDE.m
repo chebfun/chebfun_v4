@@ -40,7 +40,9 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 % try           
     % Convert the input to the an. func. format, get information about the
     % linear function in the problem.
-    [deString indVarName pdeflag] = setupFields(deInput,deRHSInput,'DE');  
+    [deString indVarName pdeflag allVarNames] = setupFields(deInput,deRHSInput,'DE');  
+    handles.varnames = allVarNames;
+    
     if ~any(pdeflag)
         error('CHEBFUN:chebpde:notapde','Input does not appear to be a PDE, ', ...
             'or at least is not a supported type.');

@@ -1,4 +1,4 @@
-function [field indVarName pdeflag]  = setupFields(input,rhs,type)
+function [field indVarName pdeflag allVarNames]  = setupFields(input,rhs,type)
 
 numOfRows = size(input,1);
 pdeflag = false;
@@ -14,8 +14,10 @@ pdeflag = false;
 
 if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
     [field indVarName] = setupLine(input{1},rhs{1},type);
-    if ~isempty(strfind(rhs{1}, '_')), % it's not a PDE (or we can't do this type yet!)
+    idx = strfind(rhs{1}, '_');
+    if ~isempty(idx), % it's not a PDE (or we can't do this type yet!)
         pdeflag = true;
+        allVarNames = {rhs{1}(1:idx-1)};
     end
 else
     % Keep track of every variable encountered in the problem
