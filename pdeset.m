@@ -24,7 +24,10 @@ function varargout = pdeset(varargin)
 % YLim - Fix the limits of the Y axis if plotting. [ 2x1 vector | {NaN} ]
 %   If Ylim is NaN then the imits are determined automatically.
 %
-% PlotStyle - Change the plotting options. [ string | ''-''].
+% PlotStyle - Change the plotting options. [ string | ''-'' ].
+%
+% PDEflag - Specify which entries correspond to time derivatives. 
+%   [  vector of logicals {true} ].
 %
 % Jacobian - set whether chebfun should use AD functionality to determine 
 %   the Jacobian function automatically, or allow ode15s to compute it
@@ -35,7 +38,8 @@ names = ['Eps      '
          'Plot     '
          'HoldPlot '
          'YLim     '
-         'PlotStyle']; 
+         'PlotStyle'
+         'PDEflag  ']; 
 m = size(names,1);
 shortnames = cell(m,1);
 for k = 1:m
@@ -55,6 +59,7 @@ if nargin == 0,
         fprintf('        HoldPlot: [ on | {off} ]\n')
         fprintf('            YLim: [ 2x1 vector | {NaN} ]\n')
         fprintf('       PlotStyle: [ string | ''-'']\n')
+        fprintf('         PDEflag: [ vector of logicals {true} ]\n')
     else
         % Get the ode opts
         opts = odeset;

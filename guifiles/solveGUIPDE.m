@@ -41,7 +41,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
     % Convert the input to the an. func. format, get information about the
     % linear function in the problem.
     [deString indVarName pdeflag] = setupFields(deInput,deRHSInput,'DE');  
-    if ~pdeflag
+    if ~any(pdeflag)
         error('CHEBFUN:chebpde:notapde','Input does not appear to be a PDE, ', ...
             'or at least is not a supported type.');
     end
@@ -120,6 +120,9 @@ end
 % gather options
 opts.HoldPlot = false;
 opts.Eps = tolNum;
+if ~all(pdeflag)
+    opts.PDEflag = pdeflag;
+end
 if get(handles.button_pdeploton,'Value')
     opts.Plot = 'on';
 else

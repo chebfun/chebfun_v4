@@ -524,8 +524,8 @@ else
     % latestNorms = handles.latestNorms;
     tt = handles.latestSolutionT;
     
-    figure
     if ~iscell(u)
+        figure
 %         subplot(1,2,1);
 %         plot(u(:,end))
 %         title('Solution at final time.')
@@ -546,20 +546,26 @@ else
         varnames = get(handles.input_DE_RHS,'string');
         for k = 1:numel(u)
             idx = strfind(varnames{k},'_');
-            varnames{k} = varnames{k}(1:idx(1)-1);
+            if ~isempty(idx)
+                varnames{k} = varnames{k}(1:idx(1)-1);
+            else
+                varnames{k} = '';
+            end
         end
-%         legend(varnames{:})
+        legend(varnames{:})
         
+        figure
 %         sfx = {'st','nd','rd'};
         cols = get(0,'DefaultAxesColorOrder');
         for k = 1:numel(u)
-%             subplot(1,numel(u)+1,k+1);
-% %             surf(u{k},tt,'facecolor','interp','edgealpha',0)
-% %             waterfall(u{k},tt,'simple')
-%             waterfall(u{k},tt,'simple','linewidth',2)
-%             xlabel('x'), ylabel('t'), zlabel(varnames{k})
-%             title(varnames{k})
-%             subplot(1,numel(u)+1,1);
+            subplot(1,numel(u),k);
+            waterfall(u{k},tt,'simple','linewidth',2)
+            xlabel('x'), ylabel('t'), zlabel(varnames{k})
+            title(varnames{k})
+        end
+        
+        figure
+        for k = 1:numel(u)
             waterfall(u{k},tt,'simple','linewidth',2,'edgecolor',cols(k,:)), hold on
         end
         xlabel('x'), ylabel('t')

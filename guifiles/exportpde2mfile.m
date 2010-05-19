@@ -35,8 +35,8 @@ if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
 if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 
 % [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
-[deString indVarName pdeflag] = setupFields(deInput,deRHSInput,'DE');  
-if ~pdeflag
+[deString indVarName pdeflag] = setupFields(deInput,deRHSInput,'DE');
+if ~any(pdeflag)
     error('CHEBFUN:chebpde:notapde','Input does not appear to be a PDE, ', ...
         'or at least is not a supported type.');
 end
@@ -135,10 +135,14 @@ opts = [];
 tolInput = get(handles.input_tol,'String');
 opts = [opts,'''Eps'',',tolInput];
 
+if ~all(pdeflag)
+    opts = [opts,',''PDEflag'',','[',num2str(pdeflag),']'];
+end
+
 % Options for plotting
 doplot = get(handles.button_pdeploton,'Value');
 if ~doplot
-    opts = [opts,''',Plot,''','''off'''];
+    opts = [opts,',''Plot'',','''off'''];
 else
     dohold = get(handles.button_holdon,'Value');
     if dohold

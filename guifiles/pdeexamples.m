@@ -1,9 +1,9 @@
-function [a b t DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(exampleNumber,mode)
+function [a b t DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(exampleNumber,mode)
 if nargin < 2
     mode = 'start';
 end
 
-numberOfExamples = 9;
+numberOfExamples = 10;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -153,5 +153,18 @@ switch exampleNumber
         RBCrhs = {'0' ; '0' ; '0'};
         guess = {'1-erf(10*(x+0.7))' ; '1+erf(10*(x-0.7))' ; '0'};
         tol = '1e-6';
-        name = 'System 2 (3 eqns alt)';        
+        name = 'System 2 (3 eqns alt)'; 
+    case 10
+        a = '-1';
+        b = '1';
+        t = '0:.1:2';
+        DE = {'u"-v' ; 'v"-u'};
+        DErhs = {'u_t';0'};
+        LBC = {'u'; 'v'};
+        LBCrhs = {'1' ; '1'};
+        RBC = {'u'; 'v'};
+        RBCrhs = {'1' ; '1'};
+        guess = {'1' ; '1'};
+        tol = '1e-6';
+        name = 'Coupled PDE-BVP'; 
 end

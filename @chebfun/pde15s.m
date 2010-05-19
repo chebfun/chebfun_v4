@@ -99,6 +99,10 @@ if ~isempty(opt.Jacobian) && ischar(opt.Jacobian)
     elseif strcmpi(opt.Jacobian,'none'), dojac = 0; end
     opt.Jacobian = [];
 end
+
+% Experimental feature for coupled systems
+if isfield(opt,'PDEflag'), pdeflag = opt.PDEflag;
+else pdeflag = true; end
         
 % Determine which figure to plot to
 YLim = opt.YLim;
@@ -421,12 +425,25 @@ if dojac || dojacbc
 end
 
 % Support for user-defined mass matrices - experimental!
-if ~isempty(opt.Mass)
+if ~isempty(opt.Mass) || ~all(pdeflag)
+    usermass = true; userM = [];
+    if ~all(pdeflag)
+        I = eye(d); Z = zeros(d);
+        for k = 1:numel(pdeflag)
+            if pdeflag(k), A = I; else A = Z; end
+            userM = [userM ; repmat(Z,1,k-1) A repmat(Z,1,syssize-k)];
+        end
+    end    
     if isa(opt.Mass,'chebop')
-        usermass = true;
-        userM = opt.Mass;
-    else
-        error('CHEBFUN:pde15s:Mass','Mass matrix must be a chebop');
+        if isempty(userM)
+            userM = opt.Mass;
+        else
+            userM = userM*opt.Mass;
+        end
+    end
+    
+    if isempty(userM)
+        error('CHEBFUN:pde15s:Mass','Mass matrix must be a chebop.');
     end
 else
     usermass = false; 

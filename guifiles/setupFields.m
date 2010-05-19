@@ -29,19 +29,23 @@ else
     
     % For PDEs we need to reorder so that the order of the time derivatives
     % matches the order of the inout arguments.
-    indx = zeros(numOfRows,1);
+    indx = (1:numOfRows)';
+    pdeflag = ones(1,numOfRows);
     for k = 1:numOfRows
         rhsk = rhs{k};
         idxk = strfind(rhsk, '_');
         if isempty(idxk), % it's not a PDE (or we can't do this type yet!)
             indx = 1:numOfRows;
-            pdeflag = false;
-            break
+            pdeflag(k) = false;
+            dvark = '';
+%             break
+        else
+    %         pdeflag = true;
+            dvark = rhsk(1:idxk(1)-1);
         end
-        pdeflag = true;
-        dvark = rhsk(1:idxk(1)-1);
         for j = 1:numOfRows
             if strcmp(dvark,allVarNames{j})
+                indx(j) = k;
                 indx(k) = j;
                 break
             end
