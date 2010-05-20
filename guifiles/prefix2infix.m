@@ -31,11 +31,20 @@ elseif strcmp(next,'FUNC2')
     prefCounter = prefCounter + 1;
     funcArg1 = getInfix();
     funcArg2 = getInfix();
-    infixOut = [nextFun, '(', funcArg1 , ',', funcArg2 ,  ')'];
+    if (strcmp(nextFun,'diff') || strcmp(nextFun,'cumsum')) && strcmp(funcArg2,'1')
+        infixOut = [nextFun, '(', funcArg1, ')'];
+    else
+        infixOut = [nextFun, '(', funcArg1 , ',', funcArg2 ,  ')'];
+    end
 elseif strcmp(next(1:end-1),'DER')
     prefCounter = prefCounter + 1;
     derivArg = getInfix();
-    infixOut = ['diff(', derivArg , ',' num2str(next(end)) ')'];
+    derivOrder = next(4:end);
+    if ~strcmp(derivOrder,'1')
+        infixOut = ['diff(', derivArg , ',' derivOrder ')'];
+    else
+        infixOut = ['diff(', derivArg ')'];
+    end
 elseif ~isempty(strmatch('UN',next))
      nextUnary = char(prefixIn(prefCounter,1));
      prefCounter = prefCounter + 1;

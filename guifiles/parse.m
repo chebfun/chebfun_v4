@@ -75,7 +75,7 @@ elseif strcmp(NEXT,'FUNC2')
     % passed one argument to diff (e.g. diff(u) instead of diff(u,1)). If
     % that's the case, the stack will be empty at this point, so we create
     % a pseudo argument for diff
-    if strcmp(functionName,'diff') & ~stackRows
+    if (strcmp(functionName,'diff') || strcmp(functionName,'cumsum')) & ~stackRows
         firstArg = secondArg;
         secondArg = tree({'1','NUM'});
     else
