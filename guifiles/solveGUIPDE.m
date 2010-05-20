@@ -48,7 +48,18 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
             'or at least is not a supported type.');
     end
     idx = strfind(deString, ')');
-    deString = [deString(1:idx(1)-1), ',t,x,diff', deString(idx(1):end)];
+    
+    % Support for sum and cumsum
+    strfind(deString(idx(1):end),'cumsum(')
+    if ~isempty(strfind(deString(idx(1):end),'cumsum('));
+        sops = {',sum,cumsum'};
+    elseif ~isempty(strfind(deString(idx(1):end),'sum('));
+        sops = {',sum'};
+    else
+        sops = {''};
+    end
+        
+    deString = [deString(1:idx(1)-1), ',t,x,diff',sops{:},deString(idx(1):end)];
 %     deString = strrep(deString,'diff','D');
     
     % Convert the string to proper anon. function using eval

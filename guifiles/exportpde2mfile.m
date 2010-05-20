@@ -40,9 +40,19 @@ if ~any(pdeflag)
     error('CHEBFUN:chebpde:notapde','Input does not appear to be a PDE, ', ...
         'or at least is not a supported type.');
 end
-idx = strfind(deString, ')');
-deString = [deString(1:idx(1)-1), ',t,x,diff', deString(idx(1):end)];
 
+% Support for sum and cumsum
+sops = {''};
+strfind(deString(idx(1):end),'cumsum(')
+if ~isempty(strfind(deString(idx(1):end),'cumsum('));
+    sops = {',sum,cumsum'};
+elseif ~isempty(strfind(deString(idx(1):end),'sum('));
+    sops = {',sum'};
+else
+    sops = {''};
+end
+
+deString = [deString(1:idx(1)-1), ',t,x,diff',sops{:},deString(idx(1):end)];
 
 % Print the PDE
 fprintf(fid,'%% Solving\n%%');

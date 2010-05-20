@@ -59,7 +59,7 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 
 global ORDER QUASIN GLOBX
 ORDER = 0; % Initialise to zero
-QUASIN = [];
+QUASIN = true;
 GLOBX = [];
 
 if nargin < 4 
@@ -153,40 +153,63 @@ xd = chebfun(@(x) x,d);
 % Determine the size of the system
 syssize = min(size(u0));
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% parse inputs to pdefun %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Determining the behaviour of the inputs to pdefun, i.e. is it of
 % quasimatrix-type, or pdefun(u,v,w,t,x,@diff) etc. (QUASIN TRUE/FALSE).
-tmp = NaN(1,syssize); QUASIN = true;
-% Determine if it's a quasimatrix
-if nargin(pdefun) == 4 && syssize ~= 1 
-    % This is the tricky case: we could have1e-6
-    %   op(u,t,x,@Diff) or op(u,v,w,@Diff)
+% and how many operators are there? (@diff, :sum, @cumsum, etc).
+Nin = nargin(pdefun);
+tmp = NaN(1,syssize);
+% Number of operators, (i.e. diff, sum, cumsum) present in pdefun
+% Also computes QUASIN thropugh global variable in Diff.
+k = 1; Nops = [];
+while k < 4 && isempty(Nops)
+    tmp2 = repmat({tmp},1,nargin(pdefun)-(k+1));
+    tmp3 = repmat({@Diff},1,k);
     try
-        tmp2 = repmat({tmp},1,nargin(pdefun)-2);
-        pdefun(tmp,tmp2{:},@Diff);
+        pdefun(tmp,tmp2{:},tmp3{:});
+        Nops = k;
     end
-    try
-        tmp2 = repmat({NaN},1,nargin(pdefun)-2);
-        pdefun(tmp,tmp2{:},@Diff);
-    end
-elseif syssize == 1 || nargin(pdefun) < 3
-    QUASIN = true;
-else
-    QUASIN = false;
+    k = k+1;
+end
+% k = 1;
+% while k < 4 && isempty(Nops)
+%     warning('we went there')
+%     tmp2 = repmat({NaN},1,nargin(pdefun)-(k+1));
+%     tmp3 = repmat({@Diff},1,k);
+%     try
+%         pdefun(tmp,tmp2{:},tmp3{:})
+%         Nops = k;
+%     end
+%     k = k+1;
+% end
+if isempty(Nops)
+    error('CHEBFUN:pde15s:inputs','Unable to parse input pdefun.');
+elseif Nops == 1, ops = {@Diff};
+elseif Nops == 2, ops = {@Diff,@Sum};
+else              ops = {@Diff,@Sum,@Cumsum}; 
 end
 
-% Convert pdefun to accept quasimatrix inputs, and determine syssize
-if nargin(pdefun) == 2 || (~QUASIN && nargin(pdefun) == syssize + 1)
-    if QUASIN pdefun = @(u,t,x) pdefun(u,@Diff);
-    else      pdefun = @(u,t,x) conv2cell(pdefun,u,@Diff);
+if QUASIN, Ndep = 1; else Ndep = syssize; end
+Nind = Nin - Nops - Ndep;
+% We don't accept only time or space as input args (both or nothing).
+if Nind == 1
+    error('CHEBFUN:pde15s:inputs_ind',['Incorrect number of independant variables' ...
+        ' in pdefun. (Must be 0 or 2)']);
+end
+
+% Convert pdefun to accept quasimatrix inputs and remove ops from fun handle
+if QUASIN
+    if Nind == 0
+        pdefun = @(u,t,x) pdefun(u,ops{:});
+    elseif Nind == 2
+        pdefun = @(u,t,x) pdefun(u,t,x,ops{:});
     end
-    pdefun(tmp); % Get the ORDER (global) by evaluating the RHS with NaNs
-elseif nargin(pdefun) == syssize + 3 || nargin(pdefun) == 4
-    if QUASIN
-        pdefun = @(u,t,x) pdefun(u,t,x,@Diff);
-    else
-        pdefun = @(u,t,x) conv2cell(pdefun,u,t,x,@Diff);
+else
+    if Nind == 0
+        pdefun = @(u,t,x) conv2cell(pdefun,u,ops{:});
+    elseif Nind == 2
+        pdefun = @(u,t,x) conv2cell(pdefun,u,t,x,ops{:});
     end
-    pdefun(tmp,NaN,NaN); % (as above)
 end
 
     function newfun = conv2cell(oldfun,u,varargin)
@@ -201,7 +224,7 @@ end
 %         u = num2cell(u,1);
 %         newfun = oldfun(u{:},varargin{:});
     end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% parse boundary conditions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Some error checking on the bcs
 if ischar(bc) && (strcmpi(bc,'neumann') || strcmpi(bc,'dirichlet'))
     if ORDER > 2
@@ -366,7 +389,7 @@ elseif ~funflagr && isfield(bc,'left')
     bc.right = [];
 end
 
-% Compute Jacobians
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Copmpute Jacobians %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 t0 = tt(1);
 if dojac
     Fu0 = pdefun(u0,t0,xd);
@@ -737,11 +760,14 @@ end
 function up = Diff(u,k,flag)
     % Computes the k-th derivative of u using Chebyshev differentiation
     % matrices defined by barymat. The matrices are stored for speed.
-    
+       
     global GLOBX ORDER QUASIN
     persistent storage
     if isempty(storage), storage = struct('D',[]); end
 
+    if nargin == 0
+        error('CHEBFUN:pde15s:Diff:nargin','No input arguments recieved in Diff');
+    end
     % Assume first-order derivative
     if nargin == 1, k = 1; end
     
@@ -788,7 +814,101 @@ function up = Diff(u,k,flag)
 
     % Find the derivative by muliplying by the kth-order differentiation matrix
     up = storage(N).D{k}*u;
-end       
+end 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   SUM   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% The differential operators
+function I = Sum(u)
+    % Computes the k-th derivative of u using Chebyshev differentiation
+    % matrices defined by barymat. The matrices are stored for speed.
+    
+    global GLOBX QUASIN
+    persistent W
+    if isempty(W), W = {};    end
+    
+    if nargin == 0
+        error('CHEBFUN:pde15s:Sum:nargin','No input arguments recieved in Diff');
+    end
+    
+    if isa(u,'chebfun'), I = sum(u); return, end
+
+    % For finding the order of the RHS
+    if any(isnan(u)) 
+        if size(u,2) > 1, QUASIN = false; end
+        I = u;
+        return
+    end
+
+    N = length(u);
+    
+    % Retrieve or compute weights.
+    if N > 5 && numel(W) >= N && ~isempty(W{N})
+        % Weights are already in storage
+    else
+        x = GLOBX;
+        c = diff(x([1 end]))/2;
+        W{N} = c*weights2(N);
+    end
+
+    % Find the sum by muliplying by the weights vector
+    I = W{N}*u;
+end 
+
+function w = weights2(n) % 2nd kind
+    % Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis 
+    % quadrature rules", BIT Numerical Mathematics 43 (1), p. 001-018 (2004).
+    if n == 1
+         w = 2;
+    else
+        m = n-1;  
+        c = zeros(1,n);
+        c(1:2:n) = 2./[1 1-(2:2:m).^2 ]; 
+        f = real(ifft([c(1:n) c(m:-1:2)]));
+        w = [f(1) 2*f(2:m) f(n)];
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   CUMSUM   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% The differential operators
+function U = Cumsum(u,flag)
+    % Computes the k-th derivative of u using Chebyshev differentiation
+    % matrices defined by barymat. The matrices are stored for speed.
+    
+    global GLOBX QUASIN
+    persistent C
+    if isempty(C), C = {}; end
+
+    if nargin == 0
+        error('CHEBFUN:pde15s:Cumsum:nargin','No input arguments recieved in Cumsum');
+    end
+    
+    if isa(u,'chebfun'), U = cumsum(u); return, end
+
+    % For finding the order of the RHS
+    if any(isnan(u)) 
+        if size(u,2) > 1, QUASIN = false; end
+        U = u;
+        return
+    end
+
+    N = length(u);
+    
+    % Retrieve or compute matrix.
+    if N > 5 && numel(C) >= N && ~isempty(C{N})
+        % Matrix is already in storage
+    else
+        x = GLOBX;
+        % Which differentiation matrices do we need?
+        c = diff(x([1 end]))/2;
+        C{N} = c*cumsummat(N);
+    end
+    
+    % If there are three inputs, return the differentiation matrix
+    if nargin == 2, U = C{N}; return, end
+
+    % Find the indefinite integral by muliplying cumsum matrix
+    U = C{N}*u;
+end 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    BARMAT   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [D1 D2 D3 D4] = barymat(x,w)
@@ -882,6 +1002,43 @@ end
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% TRASH ! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%% find QUASIN (old) %%%%%%%%%%%%%%%%%%%%%%%%%
+% tmp = NaN(1,syssize); QUASIN = true;
+% % Determine if it's a quasimatrix
+% if nargin(pdefun) == 4 && syssize ~= 1 
+%     % This is the tricky case: we could have
+%     %   op(u,t,x,@Diff) or op(u,v,w,@Diff)
+%     try
+%         tmp2 = repmat({tmp},1,nargin(pdefun)-2);
+%         pdefun(tmp,tmp2{:},@Diff);
+%     end
+%     try
+%         tmp2 = repmat({NaN},1,nargin(pdefun)-2);
+%         pdefun(tmp,tmp2{:},@Diff);
+%     end
+% elseif syssize == 1 || nargin(pdefun) < 3
+%     QUASIN = true;
+% else
+%     QUASIN = false;
+% end
+% 
+% % Convert pdefun to accept quasimatrix inputs, and determine syssize
+% if nargin(pdefun) == 2 || (~QUASIN && nargin(pdefun) == syssize + 1)
+%     if QUASIN pdefun = @(u,t,x) pdefun(u,@Diff);
+%     else      pdefun = @(u,t,x) conv2cell(pdefun,u,@Diff);
+%     end
+%     pdefun(tmp); % Get the ORDER (global) by evaluating the RHS with NaNs
+% % elseif nargin(pdefun) == syssize + 3 || nargin(pdefun) == 4
+% else
+%     if QUASIN
+%         pdefun = @(u,t,x) pdefun(u,t,x,@Diff);
+%     else
+%         pdefun = @(u,t,x) conv2cell(pdefun,u,t,x,@Diff);
+%     end
+%     pdefun(tmp,NaN,NaN); % (as above)
+% end
 
 
 
