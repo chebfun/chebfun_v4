@@ -21,11 +21,17 @@ if ~isempty(strmatch('OP',next))
         case 'OP^'
             infixOut = ['(', exp1, '.^', exp2,')'];
     end
-elseif strcmp(next,'FUNC')
+elseif strcmp(next,'FUNC1')
     nextFun = char(prefixIn(prefCounter,1));
     prefCounter = prefCounter + 1;
     funcArg = getInfix();
     infixOut = [nextFun, '(', funcArg , ')'];
+elseif strcmp(next,'FUNC2')
+    nextFun = char(prefixIn(prefCounter,1));
+    prefCounter = prefCounter + 1;
+    funcArg1 = getInfix();
+    funcArg2 = getInfix();
+    infixOut = [nextFun, '(', funcArg1 , ',', funcArg2 ,  ')'];
 elseif strcmp(next(1:end-1),'DER')
     prefCounter = prefCounter + 1;
     derivArg = getInfix();

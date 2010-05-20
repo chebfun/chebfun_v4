@@ -7,13 +7,17 @@ function [out varNames indVarName] = lexer(str)
 % variable in the problem (i.e. x or t).
 
 out = [];
-% A string array containing all functions we are interested in
-% differentiating
-strfun = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...
+% A string array containing all functions which take one argument which 
+% we are interested in differentiating
+strfun1 = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...
     'sinh', 'cosh', 'tanh', 'coth', 'sech', 'csch', ...
     'asin', 'acos', 'atan', 'acot', 'asec', 'acsc', ...
     'asinh', 'acosh', 'atanh', 'acoth', 'asech', 'acsch', ...
     'sqrt', 'exp', 'log','log10','sum','cumsum');
+% A string array containing all functions which take two arguments which 
+% we are interested in differentiating
+strfun2 = char('besselj','diff','power');
+
 % Remove all whitespace
 str = strrep(str,' ','');
 
@@ -137,9 +141,14 @@ while ~strcmp(str,'$')
             % differentiating w.r.t.
             elseif any(strcmp(nextstring,varNames))
                 out = [out; {nextstring, 'VAR'}];   
-            % Check if this string is one of the function defined in strfun
-            elseif strmatch(nextstring,strfun,'exact')
-                out = [out; {nextstring, 'FUNC'}];       
+            % Check if this string is one of the function defined in
+            % strfun1 (functions with one argument)
+            elseif strmatch(nextstring,strfun1,'exact')
+                out = [out; {nextstring, 'FUNC1'}];
+            % Check if this string is one of the function defined in
+            % strfun2 (functions with two arguments)
+            elseif strmatch(nextstring,strfun2,'exact')
+                out = [out; {nextstring, 'FUNC2'}];    
             % If not a function nor the variable we are interested in
             % differentiating with respect to, we treat this variable just
             % as number (this enables us e.g. to be able to differentiate w.r.t.
@@ -148,6 +157,8 @@ while ~strcmp(str,'$')
                 out = [out; {nextstring, 'INDVAR'}];
             end
             % Finna function eda breytuheiti
+        case 'comma'
+            out = [out; {char1,'COMMA'}];
         case 'error'
             disp('error');
             % Throw error

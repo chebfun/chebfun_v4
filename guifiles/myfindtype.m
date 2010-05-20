@@ -13,6 +13,8 @@ elseif regexp(str,'.?[\+\-\*\/\.\^\(\)]')
     type = 'operator';
 elseif regexp(str,'''')
     type = 'deriv';
+elseif strcmp(str,',')
+    type = 'comma';
 else
     type = 'error';
 end

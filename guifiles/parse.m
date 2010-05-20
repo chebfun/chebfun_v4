@@ -22,7 +22,7 @@ function success = parseSst
 global NEXT;
 % Our expression can only start with certain labels, make sure we are
 % starting with one of them.
-if ~isempty(strmatch(NEXT,char('NUM','VAR','INDVAR','FUNC','UN-','UN+','LPAR')))
+if ~isempty(strmatch(NEXT,char('NUM','VAR','INDVAR','FUNC1','FUNC2','UN-','UN+','LPAR')))
     parseExp1();
     success = match('$');
     
@@ -59,12 +59,29 @@ if strcmp(NEXT,'NUM') || strcmp(NEXT,'VAR') || strcmp(NEXT,'INDVAR')
     newLeaf = tree({char(LEXOUT(NEXTCOUNTER)), char(NEXT)});
     push(newLeaf);
     advance();
-elseif strcmp(NEXT,'FUNC')
+elseif strcmp(NEXT,'FUNC1')
     functionName = char(LEXOUT(NEXTCOUNTER));
     advance();
-    parseFunction();
+    parseFunction1();
     rightArg =  pop();
-    newTree = tree({functionName, 'FUNC'}, rightArg);
+    newTree = tree({functionName, 'FUNC1'}, rightArg);
+    push(newTree);
+elseif strcmp(NEXT,'FUNC2')
+    functionName = char(LEXOUT(NEXTCOUNTER));
+    advance();
+    parseFunction2();
+    secondArg =  pop();
+    % Diff can either take one or two argument. Need a fix if user just
+    % passed one argument to diff (e.g. diff(u) instead of diff(u,1)). If
+    % that's the case, the stack will be empty at this point, so we create
+    % a pseudo argument for diff
+    if strcmp(functionName,'diff') & ~stackRows
+        firstArg = secondArg;
+        secondArg = tree({'1','NUM'});
+    else
+        firstArg =  pop();
+    end
+    newTree = tree(firstArg, {functionName, 'FUNC2'}, secondArg);
     push(newTree);
 elseif strcmp(NEXT,'LPAR')
     advance();
@@ -90,7 +107,22 @@ else
 end
 end
 
-function parseFunction()
+function parseFunction1()
+global NEXT;
+if strcmp(NEXT,'LPAR')
+    advance();
+    parseExp1();
+    
+    m = match('RPAR');
+    if ~m
+        reportError('parse:parenths', 'Parenthesis imbalance in input fields.')
+    end
+else
+    reportError('parse:parenths', 'Need parenthesis when using functions in input fields.')
+end
+end
+
+function parseFunction2()
 global NEXT;
 if strcmp(NEXT,'LPAR')
     advance();
@@ -124,6 +156,10 @@ elseif(strcmp(NEXT,'OP-'))
 
     push(tree(leftArg, {'-', 'OP-'} ,rightArg));
     parseExp1pr();
+elseif strcmp(NEXT,'COMMA')
+    advance();
+    parseExp1();
+	% Do nothing
 elseif strcmp(NEXT,'RPAR') || strcmp(NEXT,'$')
 	% Do nothing
 else % If we don't have ) or the end symbol now something has gone wrong.
@@ -162,7 +198,7 @@ if strcmp(NEXT,'OP^')
     rightArg = pop();
     push(tree(leftArg,{'.^','OP^'},rightArg));
     parseExp3pr();
-elseif strcmp(NEXT(1:end-1),'DER')
+elseif ~isempty(strfind(NEXT,'DER'))
     leftArg  = pop();
     push(tree({'D',NEXT},leftArg));
     advance();

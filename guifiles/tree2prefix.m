@@ -27,8 +27,10 @@ switch nextType
     case {'NUM', 'VAR', 'INDVAR'}
         prefixOut = {nextSymbol, nextType};
     % A function only has one argument which is to the right
-    case 'FUNC'
-        prefixOut = [{nextSymbol,'FUNC'}; tree2prefix(syntaxTree.leafs.right)];
+    case 'FUNC1'
+        prefixOut = [{nextSymbol,'FUNC1'}; tree2prefix(syntaxTree.leafs.right)];
+    case 'FUNC2'
+        prefixOut = [{nextSymbol,'FUNC2'}; tree2prefix(syntaxTree.leafs.left); tree2prefix(syntaxTree.leafs.right)];
     otherwise % Only possible token left is a derivative
         prefixOut = [{nextSymbol,nextType}; tree2prefix(syntaxTree.leafs.right)];
 end
