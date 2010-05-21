@@ -50,7 +50,6 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
     idx = strfind(deString, ')');
     
     % Support for sum and cumsum
-    strfind(deString(idx(1):end),'cumsum(')
     if ~isempty(strfind(deString(idx(1):end),'cumsum('));
         sops = {',sum,cumsum'};
     elseif ~isempty(strfind(deString(idx(1):end),'sum('));
@@ -69,7 +68,17 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
         [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC');
         idx = strfind(lbcString, ')');
         if ~isempty(idx)
-            lbcString = [lbcString(1:idx(1)-1), ',t,x,diff', lbcString(idx(1):end)];
+            
+            % Support for sum and cumsum
+            if ~isempty(strfind(lbcString(idx(1):end),'cumsum('));
+                sops = {',sum,cumsum'};
+            elseif ~isempty(strfind(lbcString(idx(1):end),'sum('));
+                sops = {',sum'};
+            else
+                sops = {''};
+            end
+            
+            lbcString = [lbcString(1:idx(1)-1), ',t,x,diff',sops{:},lbcString(idx(1):end)];
 %             lbcString = strrep(lbcString,'diff','D');
         end
         LBC = eval(lbcString);
@@ -80,7 +89,17 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
         [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC');
         idx = strfind(rbcString, ')');
         if ~isempty(idx)
-            rbcString = [rbcString(1:idx(1)-1), ',t,x,diff', rbcString(idx(1):end)];
+            
+            % Support for sum and cumsum
+            if ~isempty(strfind(rbcString(idx(1):end),'cumsum('));
+                sops = {',sum,cumsum'};
+            elseif ~isempty(strfind(rbcString(idx(1):end),'sum('));
+                sops = {',sum'};
+            else
+                sops = {''};
+            end
+            
+            rbcString = [rbcString(1:idx(1)-1), ',t,x,diff',sops{:},rbcString(idx(1):end)];
 %             rbcString = strrep(rbcString,'diff','D');
         end
         RBC = eval(rbcString);

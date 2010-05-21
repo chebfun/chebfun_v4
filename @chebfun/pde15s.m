@@ -135,7 +135,6 @@ for k = 1:numel(plotopts)
     end
 end
 
-
 % ODE tolerances
 % (AbsTol and RelTol must be <= Tol/10)
 atol = odeget(opt,'AbsTol',tol/10);
@@ -157,73 +156,8 @@ syssize = min(size(u0));
 % Determining the behaviour of the inputs to pdefun, i.e. is it of
 % quasimatrix-type, or pdefun(u,v,w,t,x,@diff) etc. (QUASIN TRUE/FALSE).
 % and how many operators are there? (@diff, :sum, @cumsum, etc).
-Nin = nargin(pdefun);
-tmp = NaN(1,syssize);
-% Number of operators, (i.e. diff, sum, cumsum) present in pdefun
-% Also computes QUASIN thropugh global variable in Diff.
-k = 1; Nops = [];
-while k < 4 && isempty(Nops)
-    tmp2 = repmat({tmp},1,nargin(pdefun)-(k+1));
-    tmp3 = repmat({@Diff},1,k);
-    try
-        pdefun(tmp,tmp2{:},tmp3{:});
-        Nops = k;
-    end
-    k = k+1;
-end
-% k = 1;
-% while k < 4 && isempty(Nops)
-%     warning('we went there')
-%     tmp2 = repmat({NaN},1,nargin(pdefun)-(k+1));
-%     tmp3 = repmat({@Diff},1,k);
-%     try
-%         pdefun(tmp,tmp2{:},tmp3{:})
-%         Nops = k;
-%     end
-%     k = k+1;
-% end
-if isempty(Nops)
-    error('CHEBFUN:pde15s:inputs','Unable to parse input pdefun.');
-elseif Nops == 1, ops = {@Diff};
-elseif Nops == 2, ops = {@Diff,@Sum};
-else              ops = {@Diff,@Sum,@Cumsum}; 
-end
+pdefun = parsefun(pdefun,syssize);
 
-if QUASIN, Ndep = 1; else Ndep = syssize; end
-Nind = Nin - Nops - Ndep;
-% We don't accept only time or space as input args (both or nothing).
-if Nind == 1
-    error('CHEBFUN:pde15s:inputs_ind',['Incorrect number of independant variables' ...
-        ' in pdefun. (Must be 0 or 2)']);
-end
-
-% Convert pdefun to accept quasimatrix inputs and remove ops from fun handle
-if QUASIN
-    if Nind == 0
-        pdefun = @(u,t,x) pdefun(u,ops{:});
-    elseif Nind == 2
-        pdefun = @(u,t,x) pdefun(u,t,x,ops{:});
-    end
-else
-    if Nind == 0
-        pdefun = @(u,t,x) conv2cell(pdefun,u,ops{:});
-    elseif Nind == 2
-        pdefun = @(u,t,x) conv2cell(pdefun,u,t,x,ops{:});
-    end
-end
-
-    function newfun = conv2cell(oldfun,u,varargin)
-    % This function allows the use of different variables in the anonymous 
-    % function, rather than using the clunky quasi-matrix notation.
-        tmpcell = cell(1,syssize);
-        for qk = 1:syssize
-            tmpcell{qk} = u(:,qk);
-        end
-        newfun = oldfun(tmpcell{:},varargin{:});
-%         % This looks slicker, but is slower.
-%         u = num2cell(u,1);
-%         newfun = oldfun(u{:},varargin{:});
-    end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% parse boundary conditions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Some error checking on the bcs
 if ischar(bc) && (strcmpi(bc,'neumann') || strcmpi(bc,'dirichlet'))
@@ -238,51 +172,41 @@ end
 
 Z = zeros(d);  % This is used often.
 % Shorthand bcs - all neumann or all dirichlet
-if isfield(bc,'left') && ischar(bc.left)
+if isfield(bc,'left') && ischar(bc.left) || (iscell(bc.left) && ischar(bc.left{1}))
+    if iscell(bc.left), v = bc.left{2}; bc.left = bc.left{1}; else v = 0; end
     if strcmpi(bc.left,'dirichlet'),    A = eye(d);
     elseif strcmpi(bc.left,'neumann'),  A = diff(d);
     end
     op = cell(1,syssize);
     for k = 1:syssize,   op{k} = [repmat(Z,1,k-1) A repmat(Z,1,syssize-k)];  end
-    bc.left = struct('op',op,'val',repmat({0},1,syssize));
+    bc.left = struct('op',op,'val',repmat({v},1,syssize));
 end
-if isfield(bc,'right') && ischar(bc.right)
+if isfield(bc,'right') && ischar(bc.right) || (iscell(bc.right) && ischar(bc.right{1}))
+    if iscell(bc.right), v = bc.right{2}; bc.right = bc.right{1}; else v = 0; end
     if strcmpi(bc.right,'dirichlet'),    A = eye(d);
     elseif strcmpi(bc.right,'neumann'),  A = diff(d);
     end
     op = cell(1,syssize);
     for k = 1:syssize,   op{k} = [repmat(Z,1,k-1) A repmat(Z,1,syssize-k)];  end
-    bc.right = struct('op',op,'val',repmat({0},1,syssize));
+    bc.right = struct('op',op,'val',repmat({v},1,syssize));
 end
 
 % Sort out left boundary conditions
 nllbc = []; nlbcs = {}; GLOBX = 1; funflagl = false; rhs = [];
 % 1) Deal with the case where bc is a function handle vector
 if isfield(bc,'left') && numel(bc.left) == 1 && isa(bc.left,'function_handle')
-	op = bc.left;
-    if nargin(op) == 2 || (~QUASIN && nargin(op) == syssize + 1)
-        if QUASIN, op = @(u,t,x) op(u,@Diff);
-        else       op = @(u,t,x) conv2cell(op,u,@Diff);
-        end
-    else
-        if QUASIN  op = @(u,t,x) op(u,t,x,@Diff);
-        else       op = @(u,t,x) conv2cell(op,u,t,x,@Diff);
-        end
-    end
-    tmp2 = ones(size(tmp));  sop = size(op(tmp2,0,1));   
+    op = parsefun(bc.left,syssize);
+    sop = size(op(ones(1,syssize),0,mean(d.ends)));   
     nllbc = 1:max(sop);    
     bc.left = struct( 'op', [], 'val', []); 
     % Dummy entries
-    if syssize == 1
-        for k = nllbc 
+    for k = nllbc 
+        if syssize == 1
             bc.left(k).op = repmat(eye(d),1,syssize);
-            bc.left(k).val = 0;
-        end
-    else
-        for k = nllbc 
+        else
             bc.left(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
-            bc.left(k).val = 0;
         end  
+        bc.left(k).val = 0;
     end
     rhs = num2cell(zeros(1,max(sop)));
     nlbcsl = op;
@@ -290,14 +214,15 @@ if isfield(bc,'left') && numel(bc.left) == 1 && isa(bc.left,'function_handle')
 end
 % 2) Deal with other forms of input
 if ~funflagl && isfield(bc,'left') && numel(bc.left) > 0
-    if isa(bc.left,'function_handle') || isa(bc.left,'linop') || iscell(bc.left)
+    if isa(bc.left,'linop') || iscell(bc.left)
         bc.left = struct( 'op', bc.left);
     elseif isnumeric(bc.left)
         bc.left = struct( 'op', eye(d), 'val', bc.left); 
     end
     % Extract nonlinear conditions
     for k = 1:numel(bc.left)
-        opk = bc.left(k).op; rhs{k} = 0;
+        opk = bc.left(k).op; 
+        rhs{k} = 0;
         
         % Numerical values
         if isnumeric(opk) && syssize == 1
@@ -307,17 +232,14 @@ if ~funflagl && isfield(bc,'left') && numel(bc.left) > 0
         
         % Function handles
         if isa(opk,'function_handle')
-            dojac = false;
             nllbc = [nllbc k];             % Store positions
-            if nargin(opk) == 2, nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
-            else                 nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)}]; end
-%             bc.left(k).op = repmat(eye(d),1,syssize);
+            nlbcs = [nlbcs {parsefun(opk)}];
             bc.left(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
         end
         
         % Remove 'vals' from bc and construct cell of rhs entries
         if isfield(bc.left(k),'val') && ~isempty(bc.left(k).val)
-                rhs{k} = bc.left(k).val;
+            rhs{k} = bc.left(k).val;
         end
         bc.left(k).val = 0;  % remove function handles
     end     
@@ -330,30 +252,18 @@ end
 nlrbc = []; numlbc = numel(rhs); funflagr = false;
 % 1) Deal with the case where bc is a function handle vector
 if isfield(bc,'right') && numel(bc.right) == 1 && isa(bc.right,'function_handle')
-	op = bc.right;
-    if nargin(op) == 2 || (~QUASIN && nargin(op) == syssize + 1)
-        if QUASIN, op = @(u,t,x) op(u,@Diff);
-        else       op = @(u,t,x) conv2cell(op,u,@Diff);
-        end
-    else
-        if QUASIN  op = @(u,t,x) op(u,t,x,@Diff);
-        else       op = @(u,t,x) conv2cell(op,u,t,x,@Diff);
-        end
-    end
-    tmp2 = ones(size(tmp));  evalop = op(tmp2,0,1);   s = size(evalop);    
-    nlrbc = 1:max(s);
+    op = parsefun(bc.right,syssize);
+    sop = size(op(ones(1,syssize),0,mean(d.ends)));    
+    nlrbc = 1:max(sop);
     bc.right = struct( 'op', [], 'val', []); 
     % Dummy entries
-    if syssize == 1
-        for k = nllbc 
+    for k = nlrbc 
+        if syssize == 1
             bc.right(k).op = repmat(eye(d),1,syssize);
-            bc.right(k).val = 0;
-        end
-    else
-        for k = nllbc 
+        else
             bc.right(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
-            bc.right(k).val = 0;
-        end  
+        end
+        bc.right(k).val = 0;
     end
     rhs = [rhs num2cell(zeros(1,max(sop)))];
     nlbcsr = op;
@@ -361,27 +271,25 @@ if isfield(bc,'right') && numel(bc.right) == 1 && isa(bc.right,'function_handle'
 end
 % 2) Deal with other forms of input
 if ~funflagr && isfield(bc,'right') && numel(bc.right) > 0
-    if isa(bc.right,'function_handle') || isa(bc.right,'linop') || isa(bc.right,'cell')
+    if isa(bc.right,'linop') || isa(bc.right,'cell')
         bc.right = struct( 'op', bc.right, 'val', 0);
     elseif isnumeric(bc.right)
         bc.right = struct( 'op', eye(d), 'val', bc.right);         
     end
     for k = 1:numel(bc.right)
-        opk = bc.right(k).op; rhs{numlbc+k} = 0;
+        opk = bc.right(k).op; 
+        rhs{numlbc+k} = 0;
         if isnumeric(opk) && syssize == 1
             bc.right(k).op = eye(d);
             bc.right(k).val = opk;
         end
         if isa(opk,'function_handle')
-            dojac = false;
             nlrbc = [nlrbc k];
-            if nargin(opk) == 2,  nlbcs = [nlbcs {@(u,t,x) opk(u,@Diff)} ];
-            else                  nlbcs = [nlbcs {@(u,t,x) opk(u,t,x,@Diff)}]; end
-%             bc.right(k).op = repmat(eye(d),1,syssize);
+            nlbcs = [nlbcs {parsefun(opk)}];
             bc.right(k).op = [repmat(Z,1,k-1) eye(d) repmat(Z,1,syssize-k)];
         end
         if isfield(bc.right(k),'val') && ~isempty(bc.right(k).val)
-                rhs{numlbc+k} = bc.right(k).val;
+            rhs{numlbc+k} = bc.right(k).val;
         end
         bc.right(k).val = 0;
     end          
@@ -389,7 +297,7 @@ elseif ~funflagr && isfield(bc,'left')
     bc.right = [];
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% Copmpute Jacobians %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Compute Jacobians %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 t0 = tt(1);
 if dojac
     Fu0 = pdefun(u0,t0,xd);
@@ -821,13 +729,13 @@ end
 function I = Sum(u)
     % Computes the k-th derivative of u using Chebyshev differentiation
     % matrices defined by barymat. The matrices are stored for speed.
-    
+
     global GLOBX QUASIN
     persistent W
     if isempty(W), W = {};    end
     
     if nargin == 0
-        error('CHEBFUN:pde15s:Sum:nargin','No input arguments recieved in Diff');
+        error('CHEBFUN:pde15s:Sum:nargin','No input arguments recieved in Diff.');
     end
     
     if isa(u,'chebfun'), I = sum(u); return, end
@@ -840,7 +748,7 @@ function I = Sum(u)
     end
 
     N = length(u);
-    
+
     % Retrieve or compute weights.
     if N > 5 && numel(W) >= N && ~isempty(W{N})
         % Weights are already in storage
@@ -873,13 +781,13 @@ end
 function U = Cumsum(u,flag)
     % Computes the k-th derivative of u using Chebyshev differentiation
     % matrices defined by barymat. The matrices are stored for speed.
-    
+
     global GLOBX QUASIN
     persistent C
     if isempty(C), C = {}; end
 
     if nargin == 0
-        error('CHEBFUN:pde15s:Cumsum:nargin','No input arguments recieved in Cumsum');
+        error('CHEBFUN:pde15s:Cumsum:nargin','No input arguments recieved in Cumsum.');
     end
     
     if isa(u,'chebfun'), U = cumsum(u); return, end
@@ -892,6 +800,7 @@ function U = Cumsum(u,flag)
     end
 
     N = length(u);
+    if N == 1, U = u; return, end
     
     % Retrieve or compute matrix.
     if N > 5 && numel(C) >= N && ~isempty(C{N})
@@ -962,17 +871,6 @@ D4 = 4./Dx .* (Dw.*repmat(D3(ii),1,N+1) - D3);
 D4(ii) = 0; D4(ii) = - sum(D4,2);
 end
 
-function y = extract_opk(opk,k,s,u,varargin)
-
-y = opk(u,varargin{:});
-if s(1) == 1
-    y = y(:,k);
-else
-    y = reshape(y,numel(y)/s(1),s(1));
-    y = y(:,k);
-end
-end
-
 
 function J = myjac(u,t,x)
 % Some hand-coded jacobians for testing.
@@ -997,9 +895,71 @@ J(end-1,:) = D(end,:);
 J(end,:) = 0; J(end,end) = 1;
 end
 
+function outfun = parsefun(infun,syssize)
+global QUASIN
+Nin = nargin(infun);
+tmp = NaN(1,syssize);
+% Number of operators, (i.e. diff, sum, cumsum) present in infun
+% Also computes QUASIN thropugh global variable in Diff.
+k = 1; Nops = [];
+opslist = {@Diff,@Sum,@Cumsum};
+while k < 4 && isempty(Nops)
+    tmp2 = repmat({tmp},1,nargin(infun)-(k+1));
+    try
+        ops = opslist(1:k);
+        infun(tmp,tmp2{:},ops{:});
+        Nops = k;
+    end
+    k = k+1;
+end
 
+% Check for 'sum' and 'cumsum' in string, in case the above failed
+% (which can happen if 'diff' is not present).
+funstr = func2str(infun);
+if ~isempty(findstr(lower(funstr),'cumsum'))
+    Nops = 3;
+elseif ~isempty(findstr(lower(funstr),'sum'))
+    Nops = 2;
+end
 
+if isempty(Nops)
+    error('CHEBFUN:pde15s:inputs','Unable to parse input function.');
+end
 
+if QUASIN, Ndep = 1; else Ndep = syssize; end
+Nind = Nin - Nops - Ndep;
+% We don't accept only time or space as input args (both or nothing).
+if ~(Nind == 0 || Nind == 2)
+    error('CHEBFUN:pde15s:inputs_ind',['Incorrect number of independant variables' ...
+        ' in input function. (Must be 0 or 2).']);
+end
+% Convert infun to accept quasimatrix inputs and remove ops from fun handle
+ops = opslist(1:Nops);
+if QUASIN
+    if Nind == 0
+        outfun = @(u,t,x) infun(u,ops{:});
+    elseif Nind == 2
+        outfun = @(u,t,x) infun(u,t,x,ops{:});
+    end
+else
+    if Nind == 0
+        outfun = @(u,t,x) conv2cell(infun,u,ops{:});
+    elseif Nind == 2
+        outfun = @(u,t,x) conv2cell(infun,u,t,x,ops{:});
+    end
+end
+
+    function newfun = conv2cell(oldfun,u,varargin)
+    % This function allows the use of different variables in the anonymous 
+    % function, rather than using the clunky quasi-matrix notation.
+        tmpcell = cell(1,syssize);
+        for qk = 1:syssize
+            tmpcell{qk} = u(:,qk);
+        end
+        newfun = oldfun(tmpcell{:},varargin{:});
+    end
+
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% TRASH ! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1040,6 +1000,28 @@ end
 %     pdefun(tmp,NaN,NaN); % (as above)
 % end
 
+% function y = extract_opk(opk,k,s,u,varargin)
+%     y = opk(u,varargin{:});
+%     if s(1) == 1
+%         y = y(:,k);
+%     else
+%         y = reshape(y,numel(y)/s(1),s(1));
+%         y = y(:,k);
+%     end
+% end
+
+% % From parsefun
+% k = 1;
+% while k < 4 && isempty(Nops)
+%     warning('we went there')
+%     tmp2 = repmat({NaN},1,nargin(infun)-(k+1));
+%     tmp3 = repmat({@Diff},1,k);
+%     try
+%         infun(tmp,tmp2{:},tmp3{:})
+%         Nops = k;
+%     end
+%     k = k+1;
+% end
 
 
 

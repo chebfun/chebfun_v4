@@ -3,7 +3,7 @@ if nargin < 2
     mode = 'start';
 end
 
-numberOfExamples = 10;
+numberOfExamples = 11;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -167,4 +167,17 @@ switch exampleNumber
         guess = {'1' ; '1'};
         tol = '1e-6';
         name = 'Coupled PDE-BVP'; 
+    case 11
+        a = '-1';
+        b = '1';
+        t = '0:.1:4';
+        DE = {'.02*u"+cumsum(u)*sum(u)'};
+        DErhs = {'u_t';0'};
+        LBC = {'dirichlet'};
+        LBCrhs = {''};
+        RBC = {'dirichlet'};
+        RBCrhs = {''};
+        guess = {'(1-x^2)*exp(-30*(x+.5)^2)'};
+        tol = '1e-6';
+        name = 'Integro-Differential Eqn.'; 
 end

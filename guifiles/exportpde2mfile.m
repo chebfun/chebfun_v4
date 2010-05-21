@@ -41,9 +41,10 @@ if ~any(pdeflag)
         'or at least is not a supported type.');
 end
 
+idx = strfind(deString, ')');
+
 % Support for sum and cumsum
 sops = {''};
-strfind(deString(idx(1):end),'cumsum(')
 if ~isempty(strfind(deString(idx(1):end),'cumsum('));
     sops = {',sum,cumsum'};
 elseif ~isempty(strfind(deString(idx(1):end),'sum('));

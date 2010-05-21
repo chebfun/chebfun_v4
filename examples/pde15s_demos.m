@@ -116,9 +116,8 @@ close all, clc, clear
 [d,x] = domain(-1,1);
 u = (1-x.^2).*exp(-30*(x+.5).^2);
 f = @(u,t,x,diff,sum,cumsum) .02*diff(u,2)+cumsum(u)*sum(u);
-[tt uu] = pde15s(f,0:.05:2,u,'dirichlet');
+[tt uu] = pde15s(f,0:.1:4,u,'dirichlet');
 waterfall(uu,tt,'simple')
-
 
 
 %% Cahn-Hilliard - not working!
@@ -127,10 +126,10 @@ waterfall(uu,tt,'simple')
 % [d,x] = domain(-1,1); 
 % u = cos(pi*x)-exp(-6*pi*x.^2)
 % plot(u)
-% opts = pdeset('eps',1e-6,'abstol',1e-10,'reltol',1e-10,'plot',1);
+% opts = pdeset('eps',1e-6);
 % lbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
 % rbc = struct( 'op', {'dirichlet','neumann'}, 'val', {-1,0});
-% f = @(t,x,u,D) E*D(u,4) + D(u.^3-u,2);
+% f = @(u,D) E*D(u,4) + D(u.^3-u,2);
 % tt = linspace(0,.05,101);
 % uu = pde15s(f,tt,u,{lbc rbc},opts,64);
 % surf(uu,tt)

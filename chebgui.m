@@ -915,6 +915,7 @@ set(handles.toggle_useLatest,'Visible','on')
 % set(handles.iter_list,'Visible','on')
 % set(handles.iter_text,'Visible','on')
 % set(handles.text_norm,'Visible','on')
+set(handles.text_initial,'String','Initial guess')
 
 pdeplotopts(handles,0)
 
@@ -957,6 +958,7 @@ set(handles.toggle_useLatest,'Visible','off')
 set(handles.iter_list,'Visible','off')
 set(handles.iter_text,'Visible','off')
 set(handles.text_norm,'Visible','off')
+set(handles.text_initial,'String','Initial condition')
 
 pdeplotopts(handles,1)
 
