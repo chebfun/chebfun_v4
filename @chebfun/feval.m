@@ -42,21 +42,21 @@ function fx = fevalcolumn(f,x)
 
 fx = zeros(size(x));
 
-funs=f.funs;
+funs = f.funs;
 ends = f.ends;
-xin=x(:).';
+xin = x(:).';
 
 I = x < ends(1);
 if any(I(:))
     fx(I) =  feval(funs(1),x(I));
 end
 for i = 1:f.nfuns
-    I = x > ends(i) & x < ends(i+1);
+    I = x >= ends(i) & x < ends(i+1);
     if any(I(:))
         fx(I) = feval(funs(i),x(I));
     end
 end
-I = x > ends(f.nfuns+1);
+I = x >= ends(f.nfuns+1);
 if any(I(:))
     fx(I) =  feval(funs(f.nfuns),x(I));
 end
