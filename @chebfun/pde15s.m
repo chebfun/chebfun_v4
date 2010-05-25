@@ -14,7 +14,7 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 % Example 1: Nonuniform advection
 %   [d,x] = domain(-1,1);
 %   u = exp(3*sin(pi*x));
-%   f = @(u,t,x,D) -(1+0.6*sin(pi*x)).*D(u);
+%   f = @(u,t,x,diff) -(1+0.6*sin(pi*x)).*diff(u);
 %   uu = pde15s(f,0:.05:3,u,'periodic');
 %   surf(u,0:.05:3)
 %
@@ -24,7 +24,7 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 %   u = 1 + 0.5*exp(-40*x.^2);
 %   bc.left = struct('op',{I,D},'val',{1,2});
 %   bc.right = struct('op',{I,D},'val',{1,2});
-%   f = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
+%   f = @(u,diff) u.*diff(u)-diff(u,2)-0.006*diff(u,4);
 %   uu = pde15s(f,0:.01:.5,u,bc);
 %   surf(u,0:.01:.5)
 % 

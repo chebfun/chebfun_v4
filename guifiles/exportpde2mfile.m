@@ -89,7 +89,7 @@ fprintf(fid,['%% Create a domain and the linear function on it.\n']);
 fprintf(fid,'[d,%s] = domain(%s,%s);\n',indVarName,a,b);
 
 fprintf(fid,['\n%% Construct a discretisation of the time domain to solve on.\n']);
-fprintf(fid,'tt = %s;\n',tt);
+fprintf(fid,'t = %s;\n',tt);
 
 fprintf(fid,'\n%% Make the rhs of the PDE.\n');
 fprintf(fid,'pdefun = %s;\n',deString);
@@ -100,7 +100,15 @@ if ~isempty(lbcInput{1})
     [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC');
     idx = strfind(lbcString, ')');
     if ~isempty(idx)
-        lbcString = [lbcString(1:idx(1)-1), ',t,x,diff', lbcString(idx(1):end)];
+        % Support for sum and cumsum
+        if ~isempty(strfind(lbcString(idx(1):end),'cumsum('));
+            sops = {',sum,cumsum'};
+        elseif ~isempty(strfind(lbcString(idx(1):end),'sum('));
+            sops = {',sum'};
+        else
+            sops = {''};
+        end
+        lbcString = [lbcString(1:idx(1)-1), ',t,x,diff', sops{:},lbcString(idx(1):end)];
 %             lbcString = strrep(lbcString,'diff','D');
     end
     fprintf(fid,'bc.left = %s;\n',lbcString);
@@ -110,7 +118,15 @@ if ~isempty(rbcInput{1})
     [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC');
     idx = strfind(rbcString, ')');
     if ~isempty(idx)
-        rbcString = [rbcString(1:idx(1)-1), ',t,x,diff', rbcString(idx(1):end)];
+        % Support for sum and cumsum
+        if ~isempty(strfind(rbcString(idx(1):end),'cumsum('));
+            sops = {',sum,cumsum'};
+        elseif ~isempty(strfind(rbcString(idx(1):end),'sum('));
+            sops = {',sum'};
+        else
+            sops = {''};
+        end
+        rbcString = [rbcString(1:idx(1)-1), ',t,x,diff',sops{:},rbcString(idx(1):end)];
 %             rbcString = strrep(rbcString,'diff','D');
     end
     fprintf(fid,'bc.right = %s;\n',rbcString);
@@ -133,7 +149,8 @@ if ischar(guessInput)
     if isempty(findx)
         fprintf(fid,'%s = chebfun(%s,d);\n',sol0,guessInput);
     else
-        fprintf(fid,'%s = %s;\n',sol0,guessInput);
+        guessinput
+        fprintf(fid,'%s = %s;\n',sol0,vectorize(guessInput));
     end        
 else
     % Get the strings of the dependant variables.
@@ -162,7 +179,7 @@ else
     catstr = [];
     for k = 1:numel(guessInput)
         if ~isempty(findx)
-            fprintf(fid,'%s = %s;\n',s{k},guessInput{k});
+            fprintf(fid,'%s = %s;\n',s{k},vectorize(guessInput{k}));
         else
             fprintf(fid,'%s = chebfun(%s,d);\n',s{k},guessInput{k});
         end
@@ -218,7 +235,7 @@ else
 end
 
 fprintf(fid,['\n%% Solve the problem using pde15s.\n']);
-fprintf(fid,'[tt %s] = pde15s(pdefun,tt,%s,bc,opts);\n',sol,sol0);
+fprintf(fid,'[t %s] = pde15s(pdefun,t,%s,bc,opts);\n',sol,sol0);
 
 % Conver sol to variable names
 if numel(deInput) > 1
@@ -231,18 +248,18 @@ end
 % plotting
 if numel(deInput) == 1
     fprintf(fid,'\n%% Create plot of the solution.\n');
-%     fprintf(fid,'surf(%s,tt,''facecolor'',''interp'')\n',sol);
-    fprintf(fid,'waterfall(%s,tt,''simple'',''linewidth'',2)\n',sol);
+%     fprintf(fid,'surf(%s,t,''facecolor'',''interp'')\n',sol);
+    fprintf(fid,'waterfall(%s,t,''simple'',''linewidth'',2)\n',sol);
 else
     fprintf(fid,'\n%% Create plots of the solutions.\n');
 %     fprintf(fid,'for k = 1:numel(%s)\n',sol);
 %     fprintf(fid,'   subplot(1,numel(%s),k)\n',sol);
-%      fprintf(fid,'   surf(sol{k},tt,''facecolor'',''interp'')\n');
+%      fprintf(fid,'   surf(sol{k},t,''facecolor'',''interp'')\n');
 %     fprintf(fid,'end\n');
     M = numel(deInput);
     for k = 1:numel(deInput)
         fprintf(fid,'subplot(1,%d,%d)\n',M,k);
-        fprintf(fid,'waterfall(%s,tt,''simple'',''linewidth'',2)\n',s{k});
+        fprintf(fid,'waterfall(%s,t,''simple'',''linewidth'',2)\n',s{k});
         fprintf(fid,'xlabel(''x''), ylabel(''t''), title(''%s'')\n',s{k});
     end
 end

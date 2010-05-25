@@ -172,7 +172,7 @@ switch exampleNumber
         b = '1';
         t = '0:.1:4';
         DE = {'.02*u"+cumsum(u)*sum(u)'};
-        DErhs = {'u_t';0'};
+        DErhs = {'u_t'};
         LBC = {'dirichlet'};
         LBCrhs = {''};
         RBC = {'dirichlet'};
