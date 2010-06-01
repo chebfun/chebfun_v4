@@ -1,14 +1,16 @@
-function out = sum(F,dim)
+function out = sum(F,dim,b)
 % SUM	Definite integral or chebfun sum.
-% If F is a chebfun, SUM(F) is the integral of F in the interval 
-% where it is defined.
+% If F is a chebfun, SUM(F) is the integral of F in the interval where it 
+% is defined. SUM(F,A,B) integrates F over [A,B], which must be a subset 
+% of domain(F).
 %
-% If F is a quasimatrix, SUM(F,DIM) sums along the dimension DIM. Summing 
+% SUM(F,DIM), where F is a quasimatrix, sums along the dimension DIM. Summing 
 % in the chebfun dimension computes a definite integral of each chebfun; 
 % summing in the indexed dimension adds together all of the chebfuns to
-% return a single chebfun.
+% return a single chebfun. For a column quasimatrix, SUM(F) is the same as 
+% SUM(F,1).
 %
-% For a column quasimatrix, SUM(F) is the same as SUM(F,1).
+%  is the integral of if
 %
 % Examples:
 %   x = chebfun('x',[0 1]);
@@ -26,14 +28,22 @@ function out = sum(F,dim)
 
 if isempty(F), out = 0; return, end    % empty chebfun has sum 0
 
+% Deal with 3 input args case.
+if nargin == 3
+    out = sum_subint(F,dim,b);
+    return
+end
+
 F_trans = F(1).trans;                  % default sum along columns
-if nargin < 2
+if (nargin == 1) || (nargin == 3)
     if min(size(F))==1 && F_trans
        dim = 2;                        % ...except for single row chebfun
     else
        dim = 1;
     end 
 end
+
+
 
 if F_trans
   F = transpose(F);
@@ -94,4 +104,27 @@ end
 % Deal with impulses
 if not(isempty(f.imps(2:end,:)))
     out = out + sum(f.imps(end,:));
+end
+
+function out = sum_subint(F,a,b)
+[d1 d2] = domain(F);
+if isnumeric(a) && isnumeric(b)
+    if a < d1 || b > d2
+        error('CHEBFUN:sum:ab','Interval outside of domain.');
+    end
+    out = cumsum(F);
+    out = feval(out,b)-feval(out,a);
+elseif isa(b,'chebfun')
+    if a < d1 
+        error('CHEBFUN:sum:a','Interval outside of domain.');
+    end
+    out = cumsum(F);
+%         out = restrict(compose(out,b),[a,F.ends(end)])-feval(out,a);
+    out = compose(out,b)-feval(out,a);
+elseif isa(a,'chebfun')
+    if b > d2
+        error('CHEBFUN:sum:b','Interval outside of domain.');
+    end
+    out = cumsum(F);
+    out = feval(out,b)-compose(out,a);
 end
