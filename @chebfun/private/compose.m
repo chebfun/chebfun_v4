@@ -19,6 +19,13 @@ if isa(g,'chebfun') && f(1).trans ~= g(1).trans
 end
 
 if numel(g) == 1
+    
+    % Avoid composing with independant variable.
+    xg = chebfun('x',domain(g),2);
+    if norm(g-xg,2) == 0,h = f; return, end
+    xf = chebfun('x',domain(f),2);
+    if norm(f-xf,2) == 0,h = g; return, end
+    
     for k = 1:numel(f)
         h(k) = composecol(f(k),g);
         % AD information when using compose
@@ -26,6 +33,11 @@ if numel(g) == 1
         h(k).ID = newIDnum;
     end
 elseif numel(f) == 1
+    
+    % Avoid composing with independant variable.
+    x = chebfun('x',domain(f),2);
+    if norm(f-x,2) == 0,h = g; return, end
+    
     for k = 1:numel(g)
         h(k) = composecol(f,g(k));
         h(k).jacobian = anon('@(u) diff(f,g)*diff(g,u)',{'f' 'g'},{f,g(k)});

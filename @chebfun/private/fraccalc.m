@@ -75,4 +75,8 @@ v = 1./gamma(alpha)*chebfun(@(x) sum(h(x)), newends ,'vectorize','exps',newexps)
 v.jacobian = anon(' @(u) diff(domain(f),n) * diff(f,u)',{'f' 'n'},{u alpha});
 v.ID = newIDnum;
 
+if newexps(1) < 0
+    v.funs(1) = extract_roots(v.funs(1));
+end
+
 end

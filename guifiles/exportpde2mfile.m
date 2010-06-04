@@ -53,6 +53,14 @@ else
     sops = {''};
 end
 
+% Support for periodic boundary conditions
+if (~isempty(lbcInput{1}) && strcmpi(lbcInput{1},'periodic')) || ...
+        (~isempty(rbcInput{1}) && strcmpi(rbcInput{1},'periodic'))
+    lbcInput{1} = []; rbcInput{1} = []; periodic = true;
+else
+    periodic = false;
+end
+
 deString = [deString(1:idx(1)-1), ',t,x,diff',sops{:},deString(idx(1):end)];
 
 % Print the PDE
@@ -65,9 +73,13 @@ tmpt = eval(tt);
 fprintf(fid,'%% for %s in [%s,%s] and t in [%s,%s]',indVarName,a,b,num2str(tmpt(1)),num2str(tmpt(end)));
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     fprintf(fid,',\n%% subject to\n%%');
-    if  ~isempty(lbcInput{1})
+    if ~isempty(lbcInput{1})
         for k = 1:numel(lbcInput)
-            fprintf(fid,'   %s = %s,\t',lbcInput{k},lbcRHSInput{k});
+            if isempty(lbcRHSInput{k})
+                fprintf(fid,'   %s ',lbcInput{k});
+            else
+                fprintf(fid,'   %s = %s,\t',lbcInput{k},lbcRHSInput{k});
+            end
         end
         fprintf(fid,'at %s = % s\n',indVarName,a);
     end
@@ -76,11 +88,17 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     end
     if ~isempty(rbcInput{1})
         for k = 1:numel(rbcInput)
-            fprintf(fid,'   %s = %s,\t',rbcInput{k},rbcRHSInput{k});
+            if isempty(rbcRHSInput{k})
+                fprintf(fid,'   %s ',rbcInput{k});
+            else
+                fprintf(fid,'   %s = %s,\t',rbcInput{k},rbcRHSInput{k});
+            end
         end
         fprintf(fid,'at %s = % s\n',indVarName,b);
     end
     fprintf(fid,'\n');
+elseif periodic
+    fprintf(fid,',\n%% subject to periodic boundary conditions.\n\n');
 else
     fprintf(fid,'.\n');
 end
@@ -132,6 +150,10 @@ if ~isempty(rbcInput{1})
     fprintf(fid,'bc.right = %s;\n',rbcString);
 end
 
+if periodic
+    fprintf(fid,'bc = ''periodic'';\n');
+end
+
 % Set up the initial condition
 fprintf(fid,'\n%% Create a chebfun of the initial condition(s).\n');
 if ischar(guessInput)
@@ -149,7 +171,6 @@ if ischar(guessInput)
     if isempty(findx)
         fprintf(fid,'%s = chebfun(%s,d);\n',sol0,guessInput);
     else
-        guessinput
         fprintf(fid,'%s = %s;\n',sol0,vectorize(guessInput));
     end        
 else

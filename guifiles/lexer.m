@@ -127,7 +127,6 @@ while ~strcmp(str,'$')
             
             out = [out; {m{1}, ['DER' num2str(order)]}];
             % Find the order of the derivative
-            1+2;
         case 'char'
             [m s e] = regexp(str, '[a-zA-Z_][a-zA-Z_0-9]*', 'match', 'start', 'end');
             nextstring = char(m(1));   % Convert from cell to string

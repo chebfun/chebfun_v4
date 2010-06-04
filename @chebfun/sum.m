@@ -43,8 +43,6 @@ if (nargin == 1) || (nargin == 3)
     end 
 end
 
-
-
 if F_trans
   F = transpose(F);
   dim = 3-dim;
@@ -106,21 +104,32 @@ if not(isempty(f.imps(2:end,:)))
     out = out + sum(f.imps(end,:));
 end
 
+% ------------------------------------------
 function out = sum_subint(F,a,b)
 [d1 d2] = domain(F);
 if isnumeric(a) && isnumeric(b)
     if a < d1 || b > d2
         error('CHEBFUN:sum:ab','Interval outside of domain.');
     end
+    if a == d1 && b == d2
+        out = sum(F);
+        return
+    end
     out = cumsum(F);
     out = feval(out,b)-feval(out,a);
+elseif isa(a,'chebfun') && isa(b,'chebfun')
+    out = cumsum(F);
+    out = compose(out,b)-compose(out,a);
 elseif isa(b,'chebfun')
     if a < d1 
         error('CHEBFUN:sum:a','Interval outside of domain.');
     end
     out = cumsum(F);
-%         out = restrict(compose(out,b),[a,F.ends(end)])-feval(out,a);
-    out = compose(out,b)-feval(out,a);
+    if norm(chebfun('x',domain(b),2)-b) == 0
+        out = out - feval(out,a);
+    else
+        out = feval(out,b)-feval(out,a);
+    end
 elseif isa(a,'chebfun')
     if b > d2
         error('CHEBFUN:sum:b','Interval outside of domain.');

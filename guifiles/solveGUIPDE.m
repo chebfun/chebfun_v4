@@ -64,6 +64,14 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
     % Convert the string to proper anon. function using eval
     DE = eval(deString);
     
+    % Support for periodic boundary conditions
+    if (~isempty(lbcInput{1}) && strcmpi(lbcInput{1},'periodic')) || ...
+            (~isempty(rbcInput{1}) && strcmpi(rbcInput{1},'periodic'))
+        lbcInput{1} = []; rbcInput{1} = []; periodic = true;
+    else
+        periodic = false;
+    end
+    
     if ~isempty(lbcInput{1})
         [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC');
         idx = strfind(lbcString, ')');
@@ -128,7 +136,11 @@ if tolNum < chebfunpref('eps')
 end
 
 % Boundary condition
-bc = struct( 'left', LBC, 'right', RBC);
+if periodic
+    bc = 'periodic';
+else
+    bc = struct( 'left', LBC, 'right', RBC);
+end
 
 % Set up the initial condition
 tol = tolNum;

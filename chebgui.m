@@ -261,12 +261,14 @@ function input_RBC_Callback(hObject, eventdata, handles)
 newString = get(hObject,'String');
 
 % For syetems we check a row at a time
-flag = false;
+flag = false; flag2 = false;
 if ~iscell(newString), newString = {newString}; end
 for k = 1:numel(newString)
     if ~isempty(strfind(newString{k},'@')) || strcmpi(newString{k},'dirichlet') ...
         || strcmpi(newString{k},'neumann') || ~isempty(str2num(newString{k}))
         flag = true; break
+    elseif strcmpi(newString{k},'periodic');
+        flag = true; flag2 = true; break
     end
 end
 if flag
@@ -277,6 +279,18 @@ else
     set(handles.input_RBC_RHS,'Enable','on');
     set(handles.text_eq3,'Enable','on');
 end
+
+if flag2
+    set(handles.input_LBC,'String','');
+    set(handles.input_LBC,'Enable','off');
+    set(handles.input_LBC_RHS,'String','');
+    set(handles.input_LBC_RHS,'Enable','off');
+    set(handles.text_eq2,'Enable','off');
+else
+    set(handles.input_LBC,'Enable','on');
+end
+    
+    
 
 % --- Executes during object creation, after setting all properties.
 function input_RBC_CreateFcn(hObject, eventdata, handles)
@@ -487,7 +501,9 @@ set(handles.button_solve,'Enable','on');
 set(handles.button_solve,'String','Solve');
 
 % Enable RHS of BCs again
+set(handles.input_LBC,'Enable','on');
 set(handles.input_LBC_RHS,'Enable','on');
+set(handles.input_RBC,'Enable','on');
 set(handles.input_RBC_RHS,'Enable','on');
 
 % We don't have a solution available anymore
@@ -666,12 +682,14 @@ function input_LBC_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of input_LBC as a double
 newString = get(hObject,'String');
 
-flag = false;
+flag = false; flag2 = false;
 if ~iscell(newString), newString = {newString}; end
 for k = 1:numel(newString)
     if ~isempty(strfind(newString{k},'@')) || strcmpi(newString{k},'dirichlet') ...
         || strcmpi(newString{k},'neumann') || ~isempty(str2num(newString{k}))
         flag = true; break
+    elseif strcmpi(newString{k},'periodic');
+        flag = true; flag2 = true; break
     end
 end
 if flag
@@ -681,6 +699,16 @@ if flag
 else
     set(handles.input_LBC_RHS,'Enable','on');
     set(handles.text_eq2,'Enable','on');
+end
+
+if flag2
+    set(handles.input_RBC,'String','');
+    set(handles.input_RBC,'Enable','off');
+    set(handles.input_RBC_RHS,'String','');
+    set(handles.input_RBC_RHS,'Enable','off');
+    set(handles.text_eq3,'Enable','off');
+else
+    set(handles.input_RBC,'Enable','on');
 end
 
 function input_LBC_RHS_Callback(hObject, eventdata, handles)
@@ -1005,6 +1033,8 @@ set(handles.button_solve,'String','Solve')
 set(handles.iter_list,'Visible','off')
 set(handles.iter_text,'Visible','off')
 set(handles.text_norm,'Visible','off')
+set(handles.input_LBC,'Enable','on')
+set(handles.input_RBC,'Enable','on')
 
 % --- Executes during object creation, after setting all properties.
 function popupmenu_demos_CreateFcn(hObject, eventdata, handles)

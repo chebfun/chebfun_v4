@@ -106,7 +106,7 @@ elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
     if ~isempty(bcNum)
         field = input;
         indVarName = []; % Don't need to worry about lin. func. in this case
-    elseif strcmpi(input,'dirichlet') || strcmpi(input,'neumann')
+    elseif strcmpi(input,'dirichlet') || strcmpi(input,'neumann') || strcmpi(input,'periodic')
         % Add extra 's to allow evaluation of the string
         field = ['''',input,''''];
         indVarName = []; % Don't need to worry about lin. func. in this case

@@ -72,7 +72,7 @@ doplot = 1;             % plot after every time chunk?
 dohold = 0;             % hold plot?
 plotopts = '-';         % Plot Style
 dojac = false; J = [];  % Supply Jacobian
-dojacbc = true;
+dojacbc = true;         % Use AD to figure out BC positions.
 
 % Parse the variable inputs
 if numel(varargin) == 2
@@ -172,7 +172,7 @@ end
 
 Z = zeros(d);  % This is used often.
 % Shorthand bcs - all neumann or all dirichlet
-if isfield(bc,'left') && ischar(bc.left) || (iscell(bc.left) && ischar(bc.left{1}))
+if isfield(bc,'left') && (ischar(bc.left) || (iscell(bc.left) && ischar(bc.left{1})))
     if iscell(bc.left), v = bc.left{2}; bc.left = bc.left{1}; else v = 0; end
     if strcmpi(bc.left,'dirichlet'),    A = eye(d);
     elseif strcmpi(bc.left,'neumann'),  A = diff(d);
@@ -181,7 +181,7 @@ if isfield(bc,'left') && ischar(bc.left) || (iscell(bc.left) && ischar(bc.left{1
     for k = 1:syssize,   op{k} = [repmat(Z,1,k-1) A repmat(Z,1,syssize-k)];  end
     bc.left = struct('op',op,'val',repmat({v},1,syssize));
 end
-if isfield(bc,'right') && ischar(bc.right) || (iscell(bc.right) && ischar(bc.right{1}))
+if isfield(bc,'right') && (ischar(bc.right) || (iscell(bc.right) && ischar(bc.right{1})))
     if iscell(bc.right), v = bc.right{2}; bc.right = bc.right{1}; else v = 0; end
     if strcmpi(bc.right,'dirichlet'),    A = eye(d);
     elseif strcmpi(bc.right,'neumann'),  A = diff(d);
@@ -397,9 +397,11 @@ for k = 1:numel(u0)
         end
     end
 end
-% simplify initial condition  to tolerance or fixed size in optN
+% simplify initial condition to tolerance or fixed size in optN
 if isnan(optN)
     u0 = simplify(u0,tol);
+else
+    u0.funs(1) = prolong(u0.funs(1),optN);
 end
 
 % The vertical scale of the intial condition
@@ -439,7 +441,10 @@ B = []; q = []; rows = []; M = []; n = [];
 % Set the preferences
 pref = chebfunpref;
 pref.eps = tol; pref.resampling = 1; pref.splitting = 0; pref.sampletest = 0; pref.blowup = 0;
+pref.vectorcheck = 0;
 
+try
+    
 % Begin time chunks
 for nt = 1:length(tt)-1
     
@@ -496,6 +501,12 @@ for nt = 1:length(tt)-1
     end
 end
 
+catch
+    err = lasterror;
+    err.stack = err.stack([end]);
+    rethrow(err)
+end
+
 if doplot && dohold && ~ish, hold off, end
 
 switch nargout
@@ -530,10 +541,6 @@ clear global GLOBX
             GLOBX = x;      % set the global variable x
             
             % See what the boundary replacement actions will be.
-%             jl = full(feval(JacL,n))
-%             bcl = full(feval(bc.left(1).op,n))
-%             jr = full(feval(JacR,n))
-%             bcr = full(feval(bc.right(1).op,n))
             [ignored,B,q,rows] = feval( diffop & bc, n, 'bc' );
             % Mass matrix is I except for algebraic rows for the BCs.
             M = speye(syssize*n);    M(rows,:) = 0;
@@ -726,7 +733,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   SUM   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % The differential operators
-function I = Sum(u)
+function I = Sum(u,a,b)
     % Computes the k-th derivative of u using Chebyshev differentiation
     % matrices defined by barymat. The matrices are stored for speed.
 
@@ -738,7 +745,14 @@ function I = Sum(u)
         error('CHEBFUN:pde15s:Sum:nargin','No input arguments recieved in Diff.');
     end
     
-    if isa(u,'chebfun'), I = sum(u); return, end
+    if isa(u,'chebfun'), 
+        if nargin == 1
+            I = sum(u); 
+        else
+            I = sum(u,a,b);
+        end
+        return
+    end
 
     % For finding the order of the RHS
     if any(isnan(u)) 
@@ -746,8 +760,43 @@ function I = Sum(u)
         I = u;
         return
     end
-
+    
     N = length(u);
+    
+    % Deal with the 3 args case. This can be integrating a sub-domain or
+    % indefinite integration. (Or integrating the whole domain...)
+    if nargin == 3
+        x = GLOBX;
+        if length(b) > 1
+            if ~all(b==x)
+                error('CHEBFUN:pde15s:sumb', ...
+                    'Limits in sum must be scalars or the indep space var (typically ''x'').');
+            elseif a < x(1)
+                error('CHEBFUN:pde15s:sumint', 'Limits of integration outside of domain.');
+            end
+            
+            I = Cumsum(u);
+            I = I - bary(a,I,x);
+            return
+        elseif length(a) > 1
+            if ~all(a==x)
+                error('CHEBFUN:pde15s:suma', ...
+                    'Limits in sum must be scalars or the indep space var (typically ''x'').');
+            elseif b > x(end)
+                error('CHEBFUN:pde15s:sumint', 'Limits of integration outside of domain.');
+            end
+            I = Cumsum(u);
+            I = bary(b,I,x) - I;
+            return
+        elseif a ~= x(1) || b ~= x(end)
+            if a < x(1) || b > x(end)
+                error('CHEBFUN:pde15s:sumint', 'Limits of integration outside of domain.');
+            end
+            I = Cumsum(u);
+            I = bary(b,I,x) - bary(a,I,x);
+            return
+        end
+    end
 
     % Retrieve or compute weights.
     if N > 5 && numel(W) >= N && ~isempty(W{N})
@@ -918,7 +967,7 @@ end
 funstr = func2str(infun);
 if ~isempty(findstr(lower(funstr),'cumsum'))
     Nops = 3;
-elseif ~isempty(findstr(lower(funstr),'sum'))
+elseif ~isempty(findstr(lower(funstr),'sum')) || ~isempty(findstr(lower(funstr),'int'))
     Nops = 2;
 end
 
