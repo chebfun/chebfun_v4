@@ -1,4 +1,4 @@
-function [u nrmduvec] = solve_bvp_routines(N,rhs,options,guihandles)
+function [u nrmDeltaRelvec] = solve_bvp_routines(N,rhs,options,guihandles)
 % SOLVE_BVP_ROUTINES Private function of the chebop class.
 %
 % This function gets called by nonlinear backslash and solvebvp. It both
@@ -117,13 +117,13 @@ a = ab(1);  b = ab(end);
 counter = 0;
 
 % Anon. fun. and linops now both work with N(u)
-% r = deFun(u);
-r = evalProblemFun('DE',u);
+[deResFun, lbcResFun, rbcResFun] = evalResFuns();
 
-nrmdu = Inf;
+nrmDeltaRel = Inf;
 nnormr = Inf;
-nrmduvec = zeros(10,1);
+nrmDeltaRelvec = zeros(10,1);
 normrvec = zeros(10,1);
+normu = norm(u,'fro');
 
 lambdas = zeros(10,1);
 % Counter that checks whether we are stagnating. If we are doing pure
@@ -135,7 +135,7 @@ else
     solve_display(pref,guihandles,'init',u);
 end
 
-while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
+while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
     counter = counter + 1;
     
     bc = setupBC();
@@ -143,34 +143,39 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
     % linearization using diff. Note that if the operator is a chebop, we
     % need to handle the rhs differently.
     if opType == 1
-        A = diff(r,u) & bc;
+        A = diff(deResFun,u) & bc;
         
         % Using A.scale if we are in the first iteration - Handles linear
         % problems better
         if counter == 1
-            subsasgn(A,struct('type','.','subs','scale'), norm(u,'fro'));
-            delta = -(A\r);
+            subsasgn(A,struct('type','.','subs','scale'), normu);
+            delta = -(A\deResFun);
             % After the first iteration, we lower the tolerance of the chebfun
             % constructor (so not to use the default tolerance of chebfuns
             % but rather a size related to the tolerance requested).
         else
             % Linop backslash with the third argument added
-            delta = -mldivide(A,r,deltol);
+            delta = -mldivide(A,deResFun,deltol);
         end
     else
         A = deFun & bc; % deFun is a chebop
         
         % Do similar tricks as above for the tolerances.
         if counter == 1
-            subsasgn(A,struct('type','.','subs','scale'), norm(u,'fro'));
+            subsasgn(A,struct('type','.','subs','scale'), normu);
             delta = -(A\(r-rhs));
         else
             delta = -mldivide(A,r-rhs,deltol);
         end
     end
     
-    % Find the optimal stepsize of the dampe Newton iteration
-    if dampedOn
+    % Find the optimal stepsize of the dampe Newton iteration. Only use
+    % damped if contraction factor is greater than 1
+    nrmDeltaAbs = norm(delta,'fro');
+    if counter > 1
+        contraFactor(counter-1) = nrmDeltaAbs/nrmDeltaAbsVec(counter-1);
+    end
+    if dampedOn %&& (counter == 1 || (counter > 1 && contraFactor(counter-1) > 1))
         lambda = optStep();
     else
         lambda = 1;
@@ -182,12 +187,11 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
     
     % Reset the currentGuessCell variable
     currentGuessCell = [];
-    
-    %     r = deFun(u);
-    r = evalProblemFun('DE',u);
-    
+        
+    [deResFun, lbcResFun, rbcResFun] = evalResFuns;
+
     normu = norm(u,'fro');
-    nrmdu = norm(delta,'fro')/normu;
+    nrmDeltaRel = nrmDeltaAbs/normu;
     normr = solNorm/normu;
     nnormr = norm(normr);
     
@@ -199,31 +203,33 @@ while nrmdu > deltol && nnormr > restol && counter < maxIter && stagCounter < ma
     % columnwise and use the sum of those inner products as an estimate for
     % the residuals (this is certainly correct if the preferred norm is
     % be the Frobenius norm).
-    nrmduvec(counter) = nrmdu;
+    nrmDeltaAbsVec(counter) = nrmDeltaAbs;
+    nrmDeltaRelvec(counter) = nrmDeltaRel;
     normrvec(counter) = nnormr/normu;
+%     contraFactor = 
     lambdas(counter) = lambda;
     
     % We want a slightly different output when we do a damped Newton
     % iteration. Also, in damped Newton, we check for stagnation.
     if dampedOn
-        solve_display(pref,guihandles,'iterNewton',u,lambda*delta,nrmdu,normr,lambda)
+        solve_display(pref,guihandles,'iterNewton',u,lambda*delta,nrmDeltaRel,normr,lambda)
         stagCounter = checkForStagnation(stagCounter);
     else
-        solve_display(pref,guihandles,'iter',u,lambda*delta,nrmdu,normr)
+        solve_display(pref,guihandles,'iter',u,lambda*delta,nrmDeltaRel,normr)
     end
     
     % If the user has pressed the stop button on the GUI, we stop and
     % return the latest solution
     if nargin == 4 && strcmpi(get(guihandles{6},'String'),'Solve')
-        nrmduvec(counter+1:end) = [];
-        solve_display(pref,guihandles,'final',u,[],nrmdu,normr)
+        nrmDeltaRelvec(counter+1:end) = [];
+        solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr)
         return
     end
     
 end
 % Clear up norm vector
-nrmduvec(counter+1:end) = [];
-solve_display(pref,guihandles,'final',u,[],nrmdu,normr)
+nrmDeltaRelvec(counter+1:end) = [];
+solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr)
 
 % Issue a warning message if stagnated. Should this in output argument
 % (i.e. flag)?
@@ -231,6 +237,20 @@ if stagCounter == maxStag
     warning('CHEBOP:Solvebvp', 'Function exited with stagnation flag.')
 end
 
+% Function which returns all residual functions
+    function [deResFun, lbcResFun, rbcResFun] = evalResFuns()
+        deResFun = evalProblemFun('DE',u);
+        if ~leftEmpty
+            lbcResFun = evalProblemFun('LBC',u);
+        else
+            lbcResFun = 0;
+        end
+        if ~rightEmpty
+            rbcResFun = evalProblemFun('RBC',u);
+        else
+            rbcResFun = 0;
+        end
+    end
 % Function that sets up the boundary conditions of the linearized operator
     function bcOut = setupBC()
         % If we have a periodic BC, simply let bc be 'periodic'. We have
@@ -243,7 +263,7 @@ end
             if leftEmpty
                 bcOut.left = [];
             else
-                v = evalProblemFun('LBC',u);
+                v = lbcResFun;
                 for j = 1:numel(v);
                     bcOut.left(j) = struct('op',diff(v(:,j),u),'val',v(a,j));
                 end
@@ -252,7 +272,7 @@ end
             if rightEmpty
                 bcOut.right = [];
             else
-                v = evalProblemFun('RBC',u);
+                v = rbcResFun;
                 for j = 1:numel(v);
                     bcOut.right(j) = struct('op',diff(v(:,j),u),'val',v(b,j));
                 end
@@ -277,18 +297,18 @@ end
         else
             % Evaluate residuals of BCs
             if ~leftEmpty
-                v = evalProblemFun('LBC',u);
+                v = lbcResFun;
                 sn(2) = sn(2) + v(a,:)*v(a,:)';
             end
             
             if ~rightEmpty
-                v = evalProblemFun('RBC',u);
+                v = rbcResFun;
                 sn(2) = sn(2) + v(b,:)*v(b,:)';
             end
         end
         
         if opType == 1
-            sn(1) = sn(1) + norm(r,'fro').^2;
+            sn(1) = sn(1) + norm(deResFun,'fro').^2;
         else
             sn(1) = sn(1) + norm(r-rhs,'fro').^2;
         end
@@ -367,40 +387,11 @@ end
 
 % Function used in the stagnation check for damped Newton iteration.
     function updatedStagCounter = checkForStagnation(currStagCounter)
-        if nrmdu > min(nrmduvec(1:counter)) && norm(normr)/normu > min(normrvec(1:counter))
+        if nrmDeltaRel > min(nrmDeltaRelvec(1:counter)) && norm(normr)/normu > min(normrvec(1:counter))
             updatedStagCounter = currStagCounter+1;
         else
             updatedStagCounter = max(0,currStagCounter-1);
         end
-    end
-
-    function bcRes = bcResidual(currentGuess)
-        bcRes = 0;
-        if ~leftEmpty
-            v = evalProblemFun('LBC',currentGuess);
-            bcRes = bcRes + v(a,:)*v(a,:)';
-        end
-        
-        if ~rightEmpty
-            v = evalProblemFun('RBC',currentGuess);
-            bcRes = bcRes + v(b,:)*v(b,:)';
-        end
-    end
-
-    function bcRes2 = bcResidual2(currentGuess)
-        bcRes2 = 0;
-        bcLeftOp = bc.left.op;
-        bcLeftVal = bc.left.val;
-        bcRightOp = bc.right.op;
-        bcRightVal = bc.right.val;
-        
-        vl = bcFunLeft{1}(currentGuess);
-        wl = bcLeftOp\(vl-bcLeftVal);
-        bcRes2 = bcRes2 + wl(a)^2;
-        
-        vr = bcFunRight{1}(currentGuess);
-        wr = bcRightOp\(vr-bcRightVal);
-        bcRes2 = bcRes2 + wr(a)^2;
     end
 
     function fOut = evalProblemFun(type,currentGuess)

@@ -14,7 +14,7 @@ persistent iterInfo;
 
 % guiMode is equal to 1 if we are working with the chebopgui. Used as
 % control variable throughout.
-if ~isempty(guihandles)    
+if ~isempty(guihandles)
     guiMode = 1;
 else
     guiMode = 0;
@@ -75,7 +75,7 @@ switch(phase)
                 plot(u,'.-'), title('Initial guess of solution')
                 pause(plotMode)
             end
-        end        
+        end
     case 'iter'
         itercount = itercount+1;
         if strcmp(mode,'iter')
@@ -146,10 +146,18 @@ switch(phase)
         if strcmp(mode,'iter') || strcmp(mode,'final')
             if ~guiMode
                 fprintf('\n');
-                fprintf('%i iterations\n',itercount)
+                if itercount == 1
+                    fprintf('%i iteration\n',itercount)
+                else
+                    fprintf('%i iterations\n',itercount)
+                end
                 fprintf('Final residual norm: %.2e (interior) and %.2e (boundary conditions). \n\n',nrmres)
             else
-                finalString = sprintf('%i iterations.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
+                if itercount == 1
+                    finalString = sprintf('%i iteration.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
+                else
+                    finalString = sprintf('%i iterations.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
+                end
                 set(guihandles{5},'String',finalString);
             end
         end
