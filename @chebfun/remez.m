@@ -20,8 +20,11 @@ if numel(f) > 1, error('CHEBFUN:remez:quasi',...
 if any(get(f,'exps')<0), error('CHEBFUN:remez:inf',...
         'Remez does not currently support functions which diverge to infinity'); end
 
-if n < 15, tol = 1e-14; elseif n < 100, tol = 2e-14; elseif n <= 1000, tol = 1e-10; else tol = 2e-7; end
-maxit = 50; %tol = 1e-15; 
+spl_ini = chebfunpref('splitting');
+splitting off,
+
+if n < 15, tol = 1e-14; elseif n < 100, tol = 1e-13; elseif n <= 1000, tol = 1e-10; else tol = 2e-10; end
+maxit = 50; %tol = 1e-16; 
 [a,b] = domain(f);
 % xk = cos(pi*(n+1:-1:0)'/(n+1));       % initial reference 
 % xk = (b*(xk+1)-a*(xk-1))/2;
@@ -54,12 +57,13 @@ while (delta/normf > tol) && it <=maxit
         errmin = err;
         xkmin = xk;
     end
-    [num2str(delta/normf) ' ' num2str(h)] ;                             % uncomment to see progress
+    [num2str(delta/normf) ' ' num2str(h)];                              % uncomment to see progress
     it = it+1;
 end
 p = pmin;
 err = errmin;
 xk = xkmin;
+chebfunpref('splitting',spl_ini)
     
 function [xk,norme] = exchange(xk,e,h,method)
 
