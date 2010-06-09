@@ -11,7 +11,7 @@ function [g,ish] = growfun(op,g,pref,g1,g2)
 %   OP(G1,G2), where G1 and G2 are funs.
 %
 
-% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.maths.ox.ac.uk/chebfun/
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
@@ -44,7 +44,7 @@ end
 l2n = log2(maxn-1); oldmaxn = maxn;
 if maxn < 2^minpower % We also do this if maxdegree < minsamples.
     l2n = minpower-.1;
-    if minn == pref.minsamples
+    if minn > maxn
         warning('CHEBFUN:fun:growfun:minmax', 'maxdegree was less than minsamples.');
     end
 end

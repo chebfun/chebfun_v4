@@ -21,10 +21,14 @@ end
 if numel(g) == 1
     
     % Avoid composing with independant variable.
-    xg = chebfun('x',domain(g),2);
-    if norm(g-xg,2) == 0,h = f; return, end
-    xf = chebfun('x',domain(f),2);
-    if norm(f-xf,2) == 0,h = g; return, end
+    if isa(g,'chebfun')
+        xg = chebfun('x',domain(g),2);
+        if norm(g-xg,2) == 0,h = f; return, end
+    end
+    if isa(f,'chebfun')
+        xf = chebfun('x',domain(f),2);
+        if norm(f-xf,2) == 0,h = g; return, end
+    end
     
     for k = 1:numel(f)
         h(k) = composecol(f(k),g);
@@ -35,8 +39,10 @@ if numel(g) == 1
 elseif numel(f) == 1
     
     % Avoid composing with independant variable.
-    x = chebfun('x',domain(f),2);
-    if norm(f-x,2) == 0,h = g; return, end
+    if isa(f,'chebfun')
+        x = chebfun('x',domain(f),2);
+        if norm(f-x,2) == 0,h = g; return, end
+    end
     
     for k = 1:numel(g)
         h(k) = composecol(f,g(k));
@@ -56,7 +62,6 @@ end
 
 function h  = composecol(f,g)
 % Composition of two column chebfuns.
-
 
 gischeb = true;
 if isa(g,'function_handle')

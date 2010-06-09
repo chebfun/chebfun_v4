@@ -89,6 +89,9 @@ uu(mm) = uu(mm+1);
 
 minuu = min(uu(:));
 
+
+uu(1) = uu(1)+eps;
+
 if simple
     ish = ishold;
     mesh(xx.',tt.',uu.','edgecolor','none'); hold on,
@@ -116,7 +119,6 @@ if simple
 %     return
 end
 
-
 % plot the waterfall
 if ~simple
     h = waterfall(xx.',tt.',uu.',varargin{:});
@@ -140,6 +142,17 @@ if ~trans
     end
 end 
 
+u = reshape(uu,numel(uu),1);
+umin = min(u); umax = max(u);
+if umin - umax == 0
+    zl = get(gca,'zlim')
+    if abs(diff(zl)) < 1e-6
+        umin+1e-2*[-1 1]
+        set(gca,'zlim',umin+1e-2*[-1 1]);
+    end
+end
+
 if nargout > 0
     varargout{1} = h;
 end
+
