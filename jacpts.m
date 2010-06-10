@@ -1,19 +1,22 @@
-function [x,w] = jacpts(n,alpha,beta,varargin)
+function [x,w,v] = jacpts(n,alpha,beta,varargin)
 %JACPTS  Legendre points and Gauss Quadrature Weights.
 %  X = JACPTS(N,ALPHA,BETA) returns the N roots of the degree N Jacobi 
 %       polynomial with parameters ALPHA and BETA (which must both be 
 %       greater than or equal -1)
 %
-%  [X,W] = JACPTS(N,ALPHA,BETA,) also returns a vector of weights for 
+%  [X,W] = JACPTS(N,ALPHA,BETA,) also returns a row vector W of weights for 
 %       Gauss-Jacobi quadrature.
 %
-%  [X,W] = JACPTS(N,ALPHA,BETA,METHOD) allows choice in which method is used.
+%  [X,W,V] = JACPTS(N,ALPHA,BETA,) returns additionally a column vector V of 
+%       weights in the barycentric formula corresponding to the points X.
+%
+%  [X,W,V] = JACPTS(N,ALPHA,BETA,METHOD) allows choice in which method is used.
 %       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
 %       which is best suited for when N is small. METHOD = 'FAST' will use 
 %       the Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
 %       By default JACPTS will use 'GW' when N < 128.
 %
-%  [X,W] = JACPTS(N,ALPHA,BETA,[A,B]) scales the nodes and weights for the 
+%  [X,W,V] = JACPTS(N,ALPHA,BETA,[A,B]) scales the nodes and weights for the 
 %       finite interval [A,B].
 %
 %  The cases ALPHA = BETA = -.5 and ALPHA = BETA = .5 correspond to
@@ -74,12 +77,12 @@ end
 % % Special cases
 % Legendre: alpha = beta = 0
 if ~(a || b) % The case alpha = beta = 0 is treated by legpts
-    [x w] = legpts(n,varargin{:});
+    [x w v] = legpts(n,varargin{:});
     return
 end
 % Gauss-Chebyshev: alpha = beta = -.5
 if a == -.5 && b == -.5
-    x = chebpts(n,interval,1);
+    [x ignored v] = chebpts(n,interval,1);
     w = repmat(pi/n,1,n);
     return
 end
@@ -87,6 +90,7 @@ end
 if a == .5 && b == .5
     x = chebpts(n+2,2);     x = x(2:n+1);
     w = pi/(n+1)*(1-x.^2);  w = w';
+    if nargout == 3, v = (1-x.^2);  v(2:2:end) = -v(2:2:end); end
     [x w] = rescale(x,w,interval,alpha,beta);
     return
 end
@@ -100,19 +104,22 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast')
     bb = [2*sqrt( (1 + a)*(1 + b)/(ab + 3))/(ab + 2) ; 
         2*sqrt(ii.*(ii + a).*(ii + b).*(ii + ab)./(abi.^2 - 1))./abi];
     TT = diag(bb,1) + diag(aa) + diag(bb,-1); % Jacobi matrix
-    [v x] = eig( TT );                        % eigenvalue decomposition
+    [V x] = eig( TT );                        % Eigenvalue decomposition
     x = diag(x);                              % Jacobi points
-    w = v(1,:).^2*( 2^(ab + 1) * gamma(a + 1) * gamma(b + 1) / gamma(2 + ab) ); %weights
+    w = V(1,:).^2*( 2^(ab + 1) * gamma(a + 1) * gamma(b + 1) / gamma(2 + ab) ); % Quadrature weights
+    v = sqrt(1-x.^2).*abs(V(1,:))';           % Barycentric weights
+    v = v./max(v); v(2:2:n) = -v(2:2:end); 
 else   % Fast, see [2]
-   [x ders] = alg0_Jac(n,a,b);                % nodes and P_n'(x)
-   w = 1./((1-x.^2).*ders.^2)';               % weights
-   if a && b
-       C = 2^(a+b+1)*gamma(2+a)*gamma(2+b)/(gamma(2+a+b)*(a+1)*(b+1)); % Get the right constant
+   [x ders] = alg0_Jac(n,a,b);                % Nodes and P_n'(x)
+   w = 1./((1-x.^2).*ders.^2)';               % Quadrature weights
+   if a && b                                  % Get the right constant
+       C = 2^(a+b+1)*gamma(2+a)*gamma(2+b)/(gamma(2+a+b)*(a+1)*(b+1));
        w = C*w/sum(w);
    else
        w = 2^(a+b+1)*w;
    end
-   
+   v = 1./ders; v = v./max(abs(v));           % Barycentric weights
+   if ~mod(n,2), v = -v;   end
 end
 
 [x w] = rescale(x,w,interval,alpha,beta);

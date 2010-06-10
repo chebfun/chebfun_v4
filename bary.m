@@ -35,7 +35,7 @@ if nargin < 4           % Default to Chebyshev weights
     % Weights for 1st kind points (at the moment only second kind should be
     % used)
     %ek = sin((2*(0:n-1)+1)*pi/(2*n)).';
-    %ek(2:2:end) = - ek(2:2:end);
+    %ek(2:2:end) = -ek(2:2:end);
 end
 if nargin < 3           % Default to Chebyshev nodes
     xk = chebpts(n);

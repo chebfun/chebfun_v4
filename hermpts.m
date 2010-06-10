@@ -1,11 +1,12 @@
-function [x w] = hermpts(n,varargin)
+function [x w v] = hermpts(n,varargin)
 %HERMPTS  Hermite points and Gauss-Hermite Quadrature Weights.
 %  HERMPTS(N) returns N Hermite points X in (-1,1). By default these are
 %  roots of the 'physicist'-type Hermite polynomials, which are orthogonal
 %  with respect to the weight exp(-x.^2).
 %
-%  [X,W] = HERMPTS(N) also returns a row vector of weights for Gauss-Hermite
-%  quadrature.
+%  [X,W] = HERMPTS(N) also returns a row vector W of weights for Gauss-Hermite
+%  quadrature. [X,W,V] = HERMPTS(N) returns in addition a column vector V
+%  of the barycentric weights corresponding to X.
 %
 %  HERMPTS(N,'PROB') normalises instead by the probablist's definition
 %  (with weight exp(-x.^2/2)), which gives rise to monomials.
@@ -55,24 +56,32 @@ end
 
 % Decide to use GW or FAST
 if n == 1
-    x = 0; w = sqrt(pi);                  % n = 1 case is trivial
+    x = 0; w = sqrt(pi); v = 1;            % n = 1 case is trivial
 elseif (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
     beta = sqrt(.5*(1:n-1));              % 3-term recurrence coeffs
     T = diag(beta,1) + diag(beta,-1);     % Jacobi matrix
-    [V,D] = eig(T);                       % eigenvalue decomposition
+    [V,D] = eig(T);                       % Eigenvalue decomposition
     [x,indx] = sort(diag(D));             % Hermite points
     w = sqrt(pi)*V(1,indx).^2;            % weights
+    v = abs(V(1,indx)).';                 % Barycentric weights
+    v = v./max(v); v(2:2:n) = -v(2:2:n);
     
     % Enforce symmetry
     ii = 1:floor(n/2);  x = x(ii);  w = w(ii);
+    vmid = v(floor(n/2)+1); v = v(ii);
     if mod(n,2)
         x = [x ; 0 ; -flipud(x)];   w = [w  sqrt(pi)-sum(2*w) fliplr(w)];
+        v = [v ; vmid ; v(end:-1:1)];
     else
         x = [x ; -flipud(x)];       w = [w fliplr(w)];
+        v = [v ; -v(end:-1:1)];
     end
 else                                                            % Fast, see [2]
     [x ders] = alg0_Herm(n);              % Nodes and H_n'(x)
-    w = (2*exp(-x.^2)./ders.^2)';         % Weights
+    w = (2*exp(-x.^2)./ders.^2)';         % Quadrature weights
+    v = exp(-x.^2/2)./ders;               % Barycentric weights
+    v = v./max(abs(v));
+    if ~mod(n,2), ii = (n/2+1):n; v(ii) = -v(ii); end
 end
 w = (sqrt(pi)/sum(w))*w;                  % Normalise so that sum(w) = sqrt(pi)
 

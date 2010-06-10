@@ -1,9 +1,10 @@
-function [x w] = lagpts(n,method)
+function [x w v] = lagpts(n,method)
 %LAGPTS  Laguerre points and Gauss-Laguerre Quadrature Weights.
 %  LAGPTS(N) returns N Laguerre points X in (-1,1).
 %
-%  [X,W] = LAGPTS(N) also returns a row vector of weights for Gauss-Laguerre 
-%  quadrature.
+%  [X,W] = LAGPTS(N) also returns a row vector W of weights for Gauss-Laguerre 
+%  quadrature. [X,W,V] = LAGPTS(N) returns in addition a column vector V
+%  of the barycentric weights corresponding to X.
 %
 %  [X,W] = LAGPTS(N,METHOD) allows the user to select which method to use.
 %  METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
@@ -39,11 +40,14 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
    T = diag(beta,1) + diag(alpha) + diag(beta,-1);  % Jacobi matrix
    [V,D] = eig(T);                       % eigenvalue decomposition
    [x,indx] = sort(diag(D));             % Laguerre points
-   w = V(1,indx).^2;                     % weights
+   w = V(1,indx).^2;                     % Quadrature weights
+   v = sqrt(x).*abs(V(1,indx)).';        % Barycentric weights
+   v = v./max(v); v(2:2:n) = -v(2:2:n);
 else                                                            % Fast, see [2]
-   [x ders] = alg0_Lag(n);               % nodes and L_n'(x)
-   w = exp(-x)./(x.*ders.^2);            % weights
-   w = w';
+   [x ders] = alg0_Lag(n);               % Nodes and L_n'(x)
+   w = exp(-x)./(x.*ders.^2); w = w';    % Quadrature weights
+   v = exp(-x/2)./ders;                  % Barycentric weights
+   v = -v./max(abs(v));
 end
 w = (1/sum(w))*w;                        % normalise so that sum(w) = 1
 

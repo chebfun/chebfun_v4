@@ -1,4 +1,4 @@
-function [x,w,ders] = legpts(n,varargin)
+function [x,w,v] = legpts(n,varargin)
 %LEGPTS  Legendre points and Gauss Quadrature Weights.
 %  LEGPTS(N) returns N Legendre points X in (-1,1).
 %
@@ -7,7 +7,10 @@ function [x,w,ders] = legpts(n,varargin)
 %  is infinite, the map is chosen to be the default 'unbounded map' with
 %  mappref('parinf') = [1 0] and mappref('adaptinf') = 0.
 %
-%  [X,W] = LEGPTS(N) also returns a row vector of weights for Gauss quadrature.
+%  [X,W] = LEGPTS(N) also returns a row vector W of weights for Gauss quadrature.
+%
+%  [X,W,V] = LEGPTS(N) returns additionally a column vector V of weights in
+%  the barycentric formula corresponding to the points X.
 %
 %  [X,W] = LEGPTS(N,METHOD) allows the user to select which method to use.
 %       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
@@ -63,18 +66,27 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast')
    T = diag(beta,1) + diag(beta,-1);     % Jacobi matrix
    [V,D] = eig(T);                       % Eigenvalue decomposition
    x = diag(D); [x,i] = sort(x);         % Legendre points
-   w = 2*V(1,i).^2;                      % Weights
+   w = 2*V(1,i).^2;                      % Quadrature weights
+   v = sqrt(1-x.^2).*abs(V(1,i))';       % Barycentric weights
+   v = v./max(v);
+   
    % Enforce symmetry
-   ii = 1:floor(n/2);  x = x(ii);  w = w(ii);
+   ii = 1:floor(n/2);  x = x(ii);  w = w(ii); 
+   vmid = v(floor(n/2)+1); v = v(ii);
    if mod(n,2)
-        x = [x ; 0 ; -flipud(x)];  w = [w  2-sum(2*w) fliplr(w)];
+        x = [x ; 0 ; -x(end:-1:1)];  w = [w  2-sum(2*w) w(end:-1:1)];
+        v = [v ; vmid ; v(end:-1:1)];
    else
-        x = [x ; -flipud(x)];      w = [w fliplr(w)];
+        x = [x ; -x(end:-1:1)];      w = [w w(end:-1:1)];      
+        v = [v ; v(end:-1:1)];
    end
+   v(2:2:n) = -v(2:2:end); 
 else
 % Fast, see [2]
    [x ders] = alg0_Leg(n);               % Nodes and P_n'(x)
-   w = 2./((1-x.^2).*ders.^2)';          % Weights
+   w = 2./((1-x.^2).*ders.^2)';          % Quadrature weights
+   v = 1./ders; v = v./max(abs(v));      % Barycentric weights
+   if ~mod(n,2), ii = (floor(n/2)+1):n;  v(ii) = -v(ii);   end
 end
 
 % Normalise so that sum(w) = 2

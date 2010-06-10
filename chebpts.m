@@ -1,4 +1,4 @@
-function [x w] = chebpts(n,d,kind)
+function [x w v] = chebpts(n,d,kind)
 %CHEBPTS  Chebyshev points in [-1,1].
 %   CHEBPTS(N) returns N Chebyshev points of the second kind in [-1,1].
 %
@@ -10,6 +10,9 @@ function [x w] = chebpts(n,d,kind)
 %   [X W] = CHEBPTS(N,D) returns also a row vector of the (scaled) weights 
 %   for Clenshaw-Curtis quadrature. For nodes and weights of
 %   Gauss-Chebyshev quadrature, use [X W] = JACPTS(N,-.5,-.5,D).
+%
+%   [X W V] = CHEBPTS(N,D) returns, in addition to the points and Gauss 
+%   quadrature weights, the barycentric weights corresponding to the points X.
 %
 %   [X W] = CHEBPTS(F) returns the Chebyshev nodes and weights
 %   corresponding to the domain and length of the chebfun F.
@@ -82,7 +85,7 @@ if nargin > 1 && all(d==[-1 1]), scale = false; end
 if      strcmpi(kind,'1st'), kind = 1;
 elseif  strcmpi(kind,'2nd'), kind = 2; end
         
-w = 2;
+w = 2; v = 1;
 if n <= 0, 
     error('CHEBFUN:chebpts:posinpt','Input should be a positive number');
 elseif n == 1,
@@ -92,12 +95,26 @@ else
     if kind == 1
         x = sin(pi*(-m:2:m)/(2*m+2)).';
         if nargout > 1
+            % quadrature weights
             w = weights1(n);
+        end
+        if nargout > 2
+            % barycentric weights
+            v = sin((2*(0:n-1)+1)*pi/(2*n)).';
+            v(2:2:end) = -v(2:2:end);
+            if ~mod(n,2), v = v./max(abs(v)); end
         end
     else
         x = sin(pi*(-m:2:m)/(2*m)).';
         if nargout > 1
+            % quadrature weights            
             w = weights2(n);
+        end
+        if nargout > 2
+            % barycentric weights
+            v = [.5 ; ones(n-1,1)]; 
+            v(2:2:end) = -1;
+            v(end) = .5*v(end);
         end
     end
 end
@@ -120,9 +137,7 @@ if scale
         end
         x = m.for(x);
         x([1 end]) = d([1 end]);
-        
-    end
-        
+    end        
 end
 
 function w = weights2(n) % 2nd kind
