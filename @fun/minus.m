@@ -23,7 +23,7 @@ if isa(g1,'double')
         g1 = g2;
         return
     else
-        if g1 == 0, g1 = g2; return, end
+        if g1 == 0, g1 = -g2; return, end
         g1 = fun(g1,g2.map);
     end
 elseif isa(g2,'double') 
