@@ -26,11 +26,8 @@ splitting off,
 if n < 15, tol = 1e-14; elseif n < 100, tol = 1e-13; elseif n <= 1000, tol = 1e-10; else tol = 2e-10; end
 maxit = 50; %tol = 1e-16; 
 [a,b] = domain(f);
-% xk = cos(pi*(n+1:-1:0)'/(n+1));       % initial reference 
-% xk = (b*(xk+1)-a*(xk-1))/2;
 xk = chebpts(n+2,[a b]);                % initial reference 
 xo = xk;
-% sigma = (-1).^[0:n+1]';               % alternating signs
 sigma = ones(n+2,1); 
 sigma(2:2:end) = -1;                    % alternating signs
 normf = norm(f);
@@ -67,27 +64,28 @@ chebfunpref('splitting',spl_ini)
     
 function [xk,norme] = exchange(xk,e,h,method)
 
-rr = [a; roots(diff(e)); b];             % critical pts of the error
-if method == 1                            % one-point exchange
+rr = [a; roots(diff(e)); b];                 % critical pts of the error
+if method == 1                               % one-point exchange
     [tmp,pos] = max(abs(feval(e,rr))); pos = pos(1);
-else                                      % full exchange                  
-    pos = find(abs(feval(e,rr))>=abs(h)); % vals above leveled error
+else                                         % full exchange                  
+    pos = find(abs(feval(e,rr))>=abs(h));    % vals above leveled error
 end
 [r,m] = sort([rr(pos); xk]);   
 v = ones(length(xk),1); v(2:2:end) = -1;
 er = [feval(e,rr(pos));v*h];
 er = er(m);                             
-s = r(1); es = er(1);                     % pts and vals to be kept
+s = r(1); es = er(1);                        % pts and vals to be kept
 for i = 2:length(r)
-  if sign(er(i)) == sign(es(end)) &&...    % from adjacent pts w/ same sign 
-          abs(er(i))>abs(es(end))         % keep the one w/ largest val
+  if sign(er(i)) == sign(es(end)) &&...      % from adjacent pts w/ same sign 
+          abs(er(i))>abs(es(end))            % keep the one w/ largest val
       s(end) = r(i); es(end) = er(i);
-  elseif sign(er(i)) ~= sign(es(end))     % if sign changes, concatenate
-      s = [s; r(i)]; es = [es; er(i)];    % pts and vals
+  elseif sign(er(i)) ~= sign(es(end)) && ... % if sign of error changes and 
+          abs(es(end)-er(i)) > 1e-15         % it is not zero, concatenate
+      s = [s; r(i)]; es = [es; er(i)];       % pts and vals
   end            
 end
-[norme,idx] = max(abs(es));               % choose n+2 consecutive pts
-d = max(idx-length(xk)+1,1);              % that include max of error
+[norme,idx] = max(abs(es));                  % choose n+2 consecutive pts
+d = max(idx-length(xk)+1,1);                 % that include max of error
 xk = s(d:d+length(xk)-1);
 end
 end
