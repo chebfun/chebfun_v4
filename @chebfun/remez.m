@@ -23,8 +23,8 @@ if any(get(f,'exps')<0), error('CHEBFUN:remez:inf',...
 spl_ini = chebfunpref('splitting');
 splitting off,
 
-if n < 15, tol = 1e-14; elseif n < 100, tol = 1e-13; elseif n <= 1000, tol = 1e-10; else tol = 2e-10; end
-maxit = 50; %tol = 1e-16; 
+if n < 15, tol = 1e-15; elseif n < 100, tol = 1e-14; elseif n <= 1000, tol = 1e-11; else tol = 2e-10; end
+maxit = 25; 
 [a,b] = domain(f);
 xk = chebpts(n+2,[a b]);                % initial reference 
 xo = xk;
@@ -54,7 +54,7 @@ while (delta/normf > tol) && it <=maxit
         errmin = err;
         xkmin = xk;
     end
-    [num2str(delta/normf) ' ' num2str(h)];                              % uncomment to see progress
+    %[num2str(delta/normf) ' ' num2str(h)]       uncomment to see progress
     it = it+1;
 end
 p = pmin;
@@ -73,16 +73,19 @@ end
 [r,m] = sort([rr(pos); xk]);   
 v = ones(length(xk),1); v(2:2:end) = -1;
 er = [feval(e,rr(pos));v*h];
-er = er(m);                             
+er = er(m); 
+repeated = diff(r)==0;
+r(repeated) = []; er(repeated) = [];         % delete repeated pts
 s = r(1); es = er(1);                        % pts and vals to be kept
 for i = 2:length(r)
   if sign(er(i)) == sign(es(end)) &&...      % from adjacent pts w/ same sign 
           abs(er(i))>abs(es(end))            % keep the one w/ largest val
       s(end) = r(i); es(end) = er(i);
-  elseif sign(er(i)) ~= sign(es(end)) && ... % if sign of error changes and 
-          abs(es(end)-er(i)) > 1e-15         % it is not zero, concatenate
+  elseif sign(er(i)) ~= sign(es(end))        % if sign of error changes and 
       s = [s; r(i)]; es = [es; er(i)];       % pts and vals
-  end            
+  end     
+  %plot(e), hold on, plot(r,er,'.r','markersize',14);   % plot selection of points
+  %plot(s,es,'.k','markersize',16), hold off,
 end
 [norme,idx] = max(abs(es));                  % choose n+2 consecutive pts
 d = max(idx-length(xk)+1,1);                 % that include max of error
