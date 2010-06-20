@@ -76,8 +76,13 @@ elseif nargin == 3
     end
 end
 
-if numel(n) > 1, 
+if numel(n) < 0, 
     error('CHEBFUN:chebpts:vecn','input n should be an integer scalar');
+end
+
+% Return empty vector if n == 0
+if n == 0
+    x = []; w = []; v = []; return
 end
 
 if nargin > 1 && all(d==[-1 1]), scale = false; end

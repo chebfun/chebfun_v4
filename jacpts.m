@@ -39,14 +39,20 @@ function [x,w,v] = jacpts(n,alpha,beta,varargin)
 %       calculation of the roots of special functions", SIAM Journal  
 %       on Scientific Computing", 29(4):1420-1438:, 2007.
 
-if alpha <= -1 || beta <= -1,
-    error('CHEBFUN:jacpts:SizeAB','alpha and beta must be greater than -1')
-end
-a = alpha; b = beta;
 
 % defaults
 interval = [-1,1];
 method = 'default';
+
+% Return empty vector if n == 0
+if n == 0
+    x = []; w = []; v = []; return
+end
+
+if alpha <= -1 || beta <= -1,
+    error('CHEBFUN:jacpts:SizeAB','alpha and beta must be greater than -1')
+end
+a = alpha; b = beta;
 
 % check inputs
 if nargin > 3
@@ -94,6 +100,9 @@ if a == .5 && b == .5
     [x w] = rescale(x,w,interval,alpha,beta);
     return
 end
+
+% Fix n == 1 case for GW
+if n == 1, method = 'fast'; end
 
 % decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast')

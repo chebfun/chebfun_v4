@@ -39,6 +39,11 @@ function [x w v] = hermpts(n,varargin)
 method = 'default';
 type = 'phys';
 
+% Return empty vector if n == 0
+if n == 0
+    x = []; w = []; v = []; return
+end
+
 % Check the inputs
 while ~isempty(varargin)
     s = varargin{1}; varargin(1) = [];

@@ -59,6 +59,11 @@ while ~isempty(varargin)
     end
 end
 
+% Return empty vector if n == 0
+if n == 0
+    x = []; w = []; v = []; return
+end
+
 % Decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') 
 % GW, see [1]

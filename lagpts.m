@@ -34,6 +34,11 @@ if nargin == 1
     method = 'default';
 end
 
+% Return empty vector if n == 0
+if n == 0
+    x = []; w = []; v = []; return
+end
+
 % decide to use GW or FAST
 if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
    alpha = 2*(1:n)-1;  beta = 1:n-1;     % 3-term recurrence coeffs
