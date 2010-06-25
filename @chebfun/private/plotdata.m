@@ -62,14 +62,17 @@ if isempty(f)
     % is g real?
     greal = isreal(g);
     
+    % Make g a column chebfun
     if g(1).trans
         g = g.';
     end
     
+    % initialise y limits (auto adjusted if there are exps)
+    top = -inf; bot = inf;
+    
     % equispaced points over domain
     ab = dom.ends; a = ab(1); b = ab(2);
     fl = linspace(a,b,numpts).';
-
     
     % find all the ends and get rid of high order imps
     ends = [];
@@ -84,22 +87,18 @@ if isempty(f)
 %         g(:,k).imps = g(:,k).imps(1,:);
     end
     ends = unique(ends);         ends = ends(2:end-1);
+    ends(ends<a | ends>b) = [];
 
     % evaluation points
-    fl = [a ; reshape(repmat(ends,3,1),3*length(ends),1) ; b ; setdiff(fl,[a ; ends.' ; b])];
+    fl = [reshape(repmat(ends,3,1),3*length(ends),1) ; setdiff(fl,ends.')];
     if greal
         % remove values outside interval
-        mask = (fl < interval(1)) | (fl > interval(2));
+        mask = (fl < a) | (fl > b);
         fl(mask) = [];
     end
     % sort
     [fl indx] = sort(fl);    [ignored indx2] = sort(indx);
-    
-    % where the breaks occur. Needed for yscaling in markfun plots
-    breaks = [0 ; indx2(3:3:3*length(ends))  ; length(fl)]; 
-    db = diff(breaks);
-    top = -inf; bot = inf;
-    
+
     % line values of g
     gl = feval(g,fl);
 
@@ -123,6 +122,7 @@ if isempty(f)
     for k = 1:numel(g)
         gk = g(:,k);
         endsk = get(gk,'ends');
+        endsmask = endsk(endsk<a | endsk > b);
 
         % With markfuns we need to adjust the vals when getting marks
         fmk = []; gmk = []; expsk = [];
@@ -154,14 +154,31 @@ if isempty(f)
         end 
         expsk = [expsk ; expskj(2)];
         
+        % Auto adjust y limits based upon standard deviation
         if any(expsk<0)
             infy = true;
             val = 0.1; mintrim = 3;
-            nnl = max(round(-val*db.*expsk(1:end-1)),mintrim);
-            nnr = max(round(-val*db.*expsk(2:end)),mintrim);
+            
+            % Find the break points for the current quasimatrix
+            breaksk = zeros(length(endsk),1);
+            for l = 1:length(endsk)
+                if endsk(l) < a
+                    breaksk(l) = 1;
+                elseif endsk(l) > b
+                    breaksk(l) = length(fl);
+                elseif isinf(endsk(l))
+                    breaksk(l) = length(fl)*(1+sign(endsk(l)))/2;
+                else
+                    breaksk(l) = find(fl==endsk(l),1);
+                end
+            end
+            dbk = diff(breaksk);
+            
+            nnl = max(round(-val*dbk.*expsk(1:end-1)),mintrim);
+            nnr = max(round(-val*dbk.*expsk(2:end)),mintrim);
             mask = [];
-            for j = 1:length(breaks)-1
-                mask = [mask breaks(j)+nnl(j):breaks(j+1)-nnr(j)];
+            for j = 1:length(breaksk)-1
+                mask = [mask breaksk(j)+nnl(j):breaksk(j+1)-nnr(j)];
             end
             if ~isempty(mask)
                 mask([1 end]) = [];
@@ -214,22 +231,25 @@ if isempty(f)
         
         % breakpoints
         for j = 2:length(endsk)-1
-            [TL loc] = ismember(endsk(j),ends);
-            if TL && ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
-                % values on either side of jump
-%                 jmpvls = [ gk.funs(j-1).vals(end); NaN ; gk.funs(j).vals(1) ];
-%                 jmpvls = [  gk.funs(j-1).vals(end)*diff(endsk(j-1:j)).^sum(gk.funs(j-1).exps)
-%                             NaN
-%                             gk.funs(j).vals(1)*diff(endsk(j:j+1)).^sum(gk.funs(j).exps)];
-%                 [jmpvls ignored ignored] = jumpvals(g(k),endsk(j-1:j+1));
-                jmpvls = gjk2(3*(j-2)+[1:3]);
-                gl(indx2(3*(loc-1)+[1 3 2]+1),k) = jmpvls;
-             end
+            if endsk(j) >= interval(1) && endsk(j) <= interval(2)
+                [TL loc] = ismember(endsk(j),ends);
+                if TL && ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
+                    % values on either side of jump
+    %                 jmpvls = [ gk.funs(j-1).vals(end); NaN ; gk.funs(j).vals(1) ];
+    %                 jmpvls = [  gk.funs(j-1).vals(end)*diff(endsk(j-1:j)).^sum(gk.funs(j-1).exps)
+    %                             NaN
+    %                             gk.funs(j).vals(1)*diff(endsk(j:j+1)).^sum(gk.funs(j).exps)];
+    %                 [jmpvls ignored ignored] = jumpvals(g(k),endsk(j-1:j+1));
+                    jmpvls = gjk2(3*(j-2)+[1:3]);
+    %                 gl(indx2(3*(loc-1)+[1 3 2]+1),k) = jmpvls;
+                    gl(fl==endsk(j),k) = jmpvls;
+                end
+            end
         end
         
         if greal
             % remove values outside interval
-            mask = (fjk < interval(1)) | (fjk > interval(2));
+            mask = (fjk < a) | (fjk > b);
             fjk(mask) = []; gjk(mask) = [];
         end
         
