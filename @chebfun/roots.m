@@ -5,7 +5,7 @@ function rts = roots(f,varargin)
 % ROOTS(F,'all') returns the roots of all the polynomials representing the
 % smooth pieces of F.
 %
-% ROOTS(F,'norecurence') deactivates the recursion procedure used to
+% ROOTS(F,'norecursion') deactivates the recursion procedure used to
 % compute roots (see the Guide 3: Rootfinding and minima and maxima for
 % more information of this recursion procedure).
 %
@@ -18,7 +18,7 @@ function rts = roots(f,varargin)
 % obtain the roots. Since the Chebyshev coefficients of the function have
 % already been computed, this comes at very little cost.
 %
-% ROOTS(F,'all','norecurence') and ROOTS(F,'complex','norecurence')
+% ROOTS(F,'all','norecursion') and ROOTS(F,'complex','norecursion')
 % deactivates the recursion procedure to compute the roots as explained in
 % the 'all' and 'complex' modes.
 %
@@ -42,10 +42,6 @@ for k = 1:nargin-1
         case 'all',
             rootspref.all = 1;
             rootspref.prune = 0;
-        case {'norecurse', 'norecurence'}
-            rootspref.recurse = 0;
-        case {'recurse', 'recurence'}
-            rootspref.recurse = 1;
         case 'complex'
             rootspref.prune = 1;
             rootspref.all = 1;
@@ -54,7 +50,13 @@ for k = 1:nargin-1
         case 'nopolish'
             rootspref.polish = 0;
         otherwise
-            error('CHEBFUN:roots:UnknownOption','Unknown option.')
+            if strncmpi(argin,'rec',3),       % recursion
+                rootspref.recurse = 1;
+            elseif strncmpi(argin,'norec',5), % no recursion
+                rootspref.recurse = 0;
+            else
+                error('CHEBFUN:roots:UnknownOption','Unknown option.')
+            end
     end
 end
 

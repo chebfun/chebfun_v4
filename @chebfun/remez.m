@@ -1,4 +1,4 @@
-function [p,err,xk] = remez(f,n); 
+function [p,err,xk] = remez(f,n) 
 % Best polynomial approximation.
 %
 % P = REMEZ(F,N) computes the chebfun of the best polynomial approximation
@@ -54,7 +54,7 @@ while (delta/normf > tol) && it <=maxit
         errmin = err;
         xkmin = xk;
     end
-    %[num2str(delta/normf) ' ' num2str(h)]       uncomment to see progress
+    %[num2str(delta/normf) ' ' num2str(h)]       % uncomment to see progress
     it = it+1;
 end
 p = pmin;
@@ -85,7 +85,7 @@ for i = 2:length(r)
       s = [s; r(i)]; es = [es; er(i)];       % pts and vals
   end     
   %plot(e), hold on, plot(r,er,'.r','markersize',14);   % plot selection of points
-  %plot(s,es,'.k','markersize',16), hold off,
+  %plot(s,es,'.k','markersize',16), hold off, pause,
 end
 [norme,idx] = max(abs(es));                  % choose n+2 consecutive pts
 d = max(idx-length(xk)+1,1);                 % that include max of error
