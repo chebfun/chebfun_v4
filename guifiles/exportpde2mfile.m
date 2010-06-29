@@ -37,8 +37,8 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 % [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
 [deString indVarName pdeflag] = setupFields(deInput,deRHSInput,'DE');
 if ~any(pdeflag)
-    error('CHEBFUN:chebpde:notapde','Input does not appear to be a PDE, ', ...
-        'or at least is not a supported type.');
+    error('CHEBFUN:chebpde:notapde',['Input does not appear to be a PDE, ', ...
+        'or at least is not a supported type.']);
 end
 
 idx = strfind(deString, ')');
@@ -103,7 +103,7 @@ else
     fprintf(fid,'.\n');
 end
 
-fprintf(fid,['%% Create a domain and the linear function on it.\n']);
+fprintf(fid, '%% Create a domain and the linear function on it.\n');
 fprintf(fid,'[d,%s] = domain(%s,%s);\n',indVarName,a,b);
 
 fprintf(fid,['\n%% Construct a discretisation of the time domain to solve on.\n']);
@@ -155,7 +155,11 @@ if periodic
 end
 
 % Set up the initial condition
-fprintf(fid,'\n%% Create a chebfun of the initial condition(s).\n');
+if iscell(guessInput) && numel(guessInput) > 1
+    fprintf(fid,'\n%% Create a chebfun of the initial conditions.\n');
+else
+    fprintf(fid,'\n%% Create a chebfun of the initial condition.\n');
+end
 if ischar(guessInput)
     % Get the strings of the dependant variable.
     idx = strfind(deString,')');

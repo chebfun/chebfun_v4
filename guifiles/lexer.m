@@ -24,7 +24,30 @@ str = strrep(str,' ','');
 % Change quotes (") to two apostrophes ('')
 str = strrep(str,'"','''''');
 % Change two minuses to one +
-str = strrep(str,'--','+');
+k = 1;
+while k < numel(str)-1
+    if strcmp(str(k),'-')
+        if strcmp(str(k+1),'-')
+            str(k) = '+';
+            str(k+1) = [];
+        elseif strcmp(str(k+1),'+')
+            str(k+1) = [];
+        else
+            k = k+1;
+        end
+    elseif strcmp(str(k),'+')
+        if strcmp(str(k+1),'-')
+            str(k) = '-';
+            str(k+1) = [];
+        elseif strcmp(str(k+1),'+')
+            str(k+1) = [];
+        else
+            k = k+1;
+        end
+    else
+        k = k+1;
+    end
+end
 % Vectorize the string
 str = vectorize(str);
 

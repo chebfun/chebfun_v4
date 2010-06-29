@@ -25,7 +25,7 @@ varString = varNames{1};
 for varCounter = 2:length(varNames)
     varString = [varString,',',varNames{varCounter}];
 end
-anFunComplete = ['@(', varString ')' anFun];
+anFunComplete = ['@(', varString ') ' anFun];
 
 switch nargout
     case 1

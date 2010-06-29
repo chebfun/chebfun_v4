@@ -11,15 +11,15 @@ if ~isempty(strmatch('OP',next))
     % We now return different outputs depending on which operator we have.
     switch next
         case 'OP+'
-            infixOut = ['(', exp1, '+', exp2,')'];
+            infixOut = ['(', exp1, '+', exp2, ')'];
         case 'OP-'
-            infixOut = ['(', exp1, '-', exp2,')'];
+            infixOut = ['(', exp1, '-', exp2, ')'];
         case 'OP*'
-            infixOut = ['(', exp1, '.*', exp2,')'];
+            infixOut = [exp1, '.*', exp2];
         case 'OP/'
-            infixOut = ['(', exp1, './', exp2,')'];
+            infixOut = [exp1, './', exp2];
         case 'OP^'
-            infixOut = ['(', exp1, '.^', exp2,')'];
+            infixOut = [exp1, '.^', exp2];
     end
 elseif strcmp(next,'FUNC1')
     nextFun = char(prefixIn(prefCounter,1));
@@ -55,6 +55,24 @@ else
     prefCounter = prefCounter + 1;
 end
 end
+
+% Remove bracket pairs
+idx1 = strfind(infixOut,'((');
+idx1 = [idx1 length(infixOut)];
+for j = 1:numel(idx1)-1
+    idx2 = strfind(infixOut(idx1(j):idx1(j+1)),')');
+    if ~isempty(idx2) && idx1(j)+idx2(1) <= idx1(end)
+        idx2 = idx2(1);
+        tmp = infixOut(idx1(j)+idx2);
+        if strcmp(tmp,')') || strcmp(tmp,',')
+            infixOut(idx1(j)+idx2-1) = [];
+            infixOut(idx1(j)+1) = [];
+            idx1 = idx1-2;
+        end
+    end
+end      
+% Remove surrounding brackets
+infixOut([1 end]) = [];
 
 prefixIn = []; prefCounter = []; % Clear global variables
 
