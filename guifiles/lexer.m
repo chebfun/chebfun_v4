@@ -23,7 +23,7 @@ str = strrep(str,' ','');
 
 % Change quotes (") to two apostrophes ('')
 str = strrep(str,'"','''''');
-% Change two minuses to one +
+% Change two minuses to one +, etc
 k = 1;
 while k < numel(str)-1
     if strcmp(str(k),'-')
