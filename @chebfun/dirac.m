@@ -22,9 +22,9 @@ if abs(ends(end)-ends(end-1)) < 10*tol*f.scl, ends(end-1) = []; end
 df = diff(f);
 dfends = feval(df,ends(2:end-1));
 
-if any(dfends(:)==0)
-    error('CHEBFUN:dirac', 'Function has multiple roots');
-end
+% if any(dfends(:)==0)
+%     error('CHEBFUN:dirac', 'Function has multiple roots');
+% end
 
 d = chebfun(0,ends);
 d.imps(2,2:end-1) = 1./abs(dfends);

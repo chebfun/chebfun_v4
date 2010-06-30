@@ -157,7 +157,7 @@ if isempty(f)
         % Auto adjust y limits based upon standard deviation
         if any(expsk<0)
             infy = true;
-            val = 0.1; mintrim = 3;
+            val = 0.1; mintrim = 5;
             
             % Find the break points for the current quasimatrix
             breaksk = zeros(length(endsk),1);
@@ -184,6 +184,10 @@ if isempty(f)
                 mask([1 end]) = [];
             end
             masked = gl(mask,k);
+%             % Remove things that look too big.
+%             diffmasked = diff(abs(masked));
+%             toobig = find(abs(diffmasked) > 1e13);
+%             masked(toobig+.5*(1+sign(diffmasked(toobig)))) = [];
             sd = std(masked);
             bot = min(bot,min(masked)-sd);
             top = max(top,max(masked)+sd);
@@ -240,7 +244,7 @@ if isempty(f)
     %                             NaN
     %                             gk.funs(j).vals(1)*diff(endsk(j:j+1)).^sum(gk.funs(j).exps)];
     %                 [jmpvls ignored ignored] = jumpvals(g(k),endsk(j-1:j+1));
-                    jmpvls = gjk2(3*(j-2)+[1:3]);
+                    jmpvls = gjk2(3*(j-2)+[1 3 2]);
     %                 gl(indx2(3*(loc-1)+[1 3 2]+1),k) = jmpvls;
                     gl(fl==endsk(j),k) = jmpvls;
                 end
