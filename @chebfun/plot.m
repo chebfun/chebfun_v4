@@ -69,22 +69,31 @@ numpts = chebfunpref('plot_numpts');
 % get jumpline style and jumpval markers
 jlinestyle = ':'; jmarker = 'x'; forcejmarks = false; 
 infy = false; interval = [];
-for k = length(varargin)-1:-1:1
+for k = length(varargin):-1:1
     if isa(varargin,'chebfun'), break, end
+    vk = varargin{k};
     if ischar(varargin{k})
-        if strcmpi(varargin{k},'JumpLine');            
+        if strcmpi(vk,'JumpLine');            
             jlinestyle = varargin{k+1};
             varargin(k:k+1) = [];
-        elseif strcmpi(varargin{k},'JumpMarker');      
+        elseif strcmpi(vk,'JumpMarker');      
             jmarker = varargin{k+1}; 
             forcejmarks = true;
             varargin(k:k+1) = [];
-        elseif strcmpi(varargin{k},'NumPts');      
+        elseif strcmpi(vk,'NumPts');      
             numpts = varargin{k+1}; 
             varargin(k:k+1) = [];
-        elseif strcmpi(varargin{k},'Interval');      
+        elseif strcmpi(vk,'Interval');      
             interval = varargin{k+1}; 
             varargin(k:k+1) = [];          
+        end    
+    elseif isnumeric(vk) && length(vk) == 2
+        if diff(vk)<0
+            error('CHEBFUN:plot:interval','Plotting interval must be positive.');
+        end
+        if ~strcmpi(varargin{k-1},'Interval')
+            interval = vk;
+            varargin(k) = [];
         end
     end
 end
@@ -221,7 +230,9 @@ end
 %     set(gca,'xlim',interval)
 % end
 
-if all(~isinf([bot top])) && infy
+if length(interval) == 4
+    set(gca,'ylim',interval(3:4))
+elseif all(~isinf([bot top])) && infy
     try
         set(gca,'ylim',[bot top])
     end

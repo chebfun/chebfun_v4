@@ -17,6 +17,8 @@ function [lines marks jumps jval misc] = plotdata(f,g,h,numpts,interval)
 misc = []; infy = false;
 if nargin < 5, interval = []; end
 
+unbndd_def = 10; % Default interval for functions on unbounded domains.
+
 % Check domains: f,g,h must have the same domain
 if ~isempty(f)
     if any(f(1).ends([1,end]) ~= g(1).ends([1,end]))
@@ -42,15 +44,15 @@ if ~isempty(interval)
     if isa(interval,'domain'); interval = interval.ends; end
     if interval(1) < dom(1), interval(1) = dom(1); end
     if interval(2) > dom(2), interval(2) = dom(2); end
-    dom = domain(interval);
+    dom = domain(interval(1:2));
 elseif any(isinf(g(1).ends([1 end]))) 
     % defaults for unbounded domains
     if all(isinf(g(1).ends([1 end])))
-        dom = domain(-10,10);
+        dom = domain(-unbndd_def,unbndd_def);
     elseif isinf(g(1).ends(end))
-        dom = domain(g(1).ends(1),g(1).ends(1)+10);
+        dom = domain(g(1).ends(1),g(1).ends(1)+unbndd_def);
     elseif isinf(g(1).ends(1))
-        dom = domain(-10+g(1).ends(end),g(1).ends(end));
+        dom = domain(-unbndd_def+g(1).ends(end),g(1).ends(end));
     end     
 end
 % Don't exclude anything
@@ -235,7 +237,7 @@ if isempty(f)
         
         % breakpoints
         for j = 2:length(endsk)-1
-            if endsk(j) >= interval(1) && endsk(j) <= interval(2)
+            if endsk(j) >= a && endsk(j) <= b
                 [TL loc] = ismember(endsk(j),ends);
                 if TL && ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
                     % values on either side of jump
@@ -311,7 +313,7 @@ elseif isempty(h) % Two quasimatrices case
     
     % lines 
     h = [f g];
-    lines = plotdata([],h,[],numpts);
+    lines = plotdata([],h,[],numpts,interval);
     fl = lines{2}(:,1:nf);
     gl = lines{2}(:,(nf+1):end);
     lines = {fl, gl};
@@ -354,6 +356,8 @@ elseif isempty(h) % Two quasimatrices case
                 fm = [fm; fkf.vals];
             end
         end
+        mask = fm < interval(1) | fm > interval(2);
+        fm(mask) = []; gm(mask) = [];
         marks{2*k-1} = fm;
         marks{2*k} = gm;
     end
