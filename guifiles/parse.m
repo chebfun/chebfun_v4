@@ -51,6 +51,11 @@ parseExp3pr();
 end
 
 function parseExp4()
+parseExp5();
+parseExp4pr();
+end
+
+function parseExp5()
 global NEXT; global NEXTCOUNTER; global LEXOUT; 
 % Setja upp strmatch
 if strcmp(NEXT,'NUM') || strcmp(NEXT,'VAR') || strcmp(NEXT,'INDVAR')
@@ -208,6 +213,17 @@ else
 end
 end
 
+function parseExp4pr()
+global NEXT;
+if ~isempty(strfind(NEXT,'DER'))
+    leftArg  = pop();
+    push(tree({'D',NEXT},leftArg));
+    advance();
+    parseExp3pr();
+else
+    % Do nothing
+end
+end
 
 function advance()
 global NEXT; global NEXTCOUNTER; global LEXOUT;
