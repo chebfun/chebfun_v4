@@ -60,22 +60,6 @@ newlen = length(infixOut); len = inf;
 while newlen ~= len
     len = newlen;
     
-%     % Remove bracket pairs
-%     idx1 = strfind(infixOut,'((');
-%     idx1 = [idx1 length(infixOut)];
-%     for j = 1:numel(idx1)-1
-%         idx2 = strfind(infixOut(idx1(j):idx1(j+1)),')');
-%         if ~isempty(idx2) && idx1(j)+idx2(1) <= idx1(end)
-%             idx2 = idx2(1);
-%             tmp = infixOut(idx1(j)+idx2);
-%             if strcmp(tmp,')') || strcmp(tmp,',')
-%                 infixOut(idx1(j)+idx2-1) = [];
-%                 infixOut(idx1(j)+1) = [];
-%                 idx1 = idx1-2;
-%             end
-%         end
-%     end     
-
     % Change two minuses to one +, etc
     k = 1;
     while k < numel(infixOut)-1
@@ -101,19 +85,10 @@ while newlen ~= len
             k = k+1;
         end
     end
-    
-    % Remove unnecessary parentheses
-    infixOut = parent_remove(infixOut);
-    
+        
     newlen = length(infixOut);
-    infixOut;
+
 end
-
-
-% % Remove surrounding brackets
-% if strcmp(infixOut(1),'(')
-%     infixOut([1 end]) = [];
-% end
 
 
 prefixIn = []; prefCounter = []; % Clear global variables
