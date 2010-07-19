@@ -121,7 +121,6 @@ end
 
 % loop through the tests
 for j = 1:length(mfile)
-% for j = 44:48    
   % Print the test name
   fun = mfile{j}(1:end-2);
   if javacheck

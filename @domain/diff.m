@@ -108,7 +108,7 @@ if nargin == 2 && length(w)-1~=N
         w = [];
     else
         error('DOMAIN:diff:barymat:lengthin',['Length of weights vector ', ...
-        'must match length of points']);
+        'must match length of points.']);
     end
 end
 
@@ -121,19 +121,18 @@ end
 if nargin < 3, k = 1; end
 
 ii = (1:N+2:(N+1)^2)';
-Dw = repmat(w',N+1,1) ./ repmat(w ,1,N+1) - eye(N+1);
-Dx = repmat(x ,1,N+1) -  repmat(x',N+1,1) + eye(N+1);
+Dx = bsxfun(@minus,x,x');   % all pairwise differences
+Dx(ii) = Dx(ii) + 1;        % add identity
+Dw = bsxfun(@rdivide,w.',w);
+Dw(ii) = Dw(ii) - 1;        % subtract identity
 
 % k = 1
 Dk = Dw ./ Dx;
 Dk(ii) = 0; Dk(ii) = - sum(Dk,2);
-
 if k == 1, return; end
-
 % k = 2
 Dk = 2*Dk .* (repmat(Dk(ii),1,N+1) - 1./Dx);
 Dk(ii) = 0; Dk(ii) = - sum(Dk,2);
-
 % higher orders
 for j = 3:k
     Dk = j./Dx .* (Dw.*repmat(Dk(ii),1,N+1) - Dk);

@@ -903,9 +903,16 @@ if nargout > 4
         'matrices upto and including order 4']);
 end
 
+% ii = (1:N+2:(N+1)^2)';
+% Dw = repmat(w',N+1,1) ./ repmat(w,1,N+1) - eye(N+1);
+% Dx = repmat(x ,1,N+1) - repmat(x',N+1,1) + eye(N+1);
+
+% New way
 ii = (1:N+2:(N+1)^2)';
-Dw = repmat(w',N+1,1) ./ repmat(w,1,N+1) - eye(N+1);
-Dx = repmat(x ,1,N+1) - repmat(x',N+1,1) + eye(N+1);
+Dx = bsxfun(@minus,x,x');   % all pairwise differences
+Dx(ii) = Dx(ii) + 1;        % add identity
+Dw = bsxfun(@rdivide,w.',w);
+Dw(ii) = Dw(ii) - 1;        % subtract identity
 
 D1 = Dw ./ Dx;
 D1(ii) = 0; D1(ii) = - sum(D1,2);

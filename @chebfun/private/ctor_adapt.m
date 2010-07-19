@@ -46,7 +46,8 @@ end
 % Sort out whatever exponents have been passed.
 if isfield(pref,'exps') 
     exps = pref.exps;
-%     if iscell(exps), exps = cell2mat(exps); end  % Convert cell to vector
+    if iscell(exps), exps = cell2mat(exps); end  % Convert cell to vector
+    if numel(exps) == 0, exps = NaN; end
     if numel(exps) == 1, 
     % Only one exponent supplied, so repeat as necessary
         exps = exps(ones(1,2*numel(ends)-2));
