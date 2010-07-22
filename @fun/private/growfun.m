@@ -40,7 +40,7 @@ else
     maxn = pref.maxdegree + 1;
 end
 % If maxdegree (maxn-1) is not a power of 2 then with 
-% resampling 'on' we oversample and then trim back to maxn.
+% resampling 'off' we oversample and then trim back to maxn.
 l2n = log2(maxn-1); oldmaxn = maxn;
 if maxn < 2^minpower % We also do this if maxdegree < minsamples.
     l2n = minpower-.1;

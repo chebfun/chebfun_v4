@@ -81,7 +81,10 @@ end
 f = default_f;
 
 % No arguments -> return empty chebfun
-if nargin == 0; return, end
+if nargin == 0; 
+    f.ID = newIDnum();
+    return
+end
 
 % Chebfun preferences:
 if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')

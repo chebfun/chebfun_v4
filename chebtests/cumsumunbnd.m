@@ -7,7 +7,7 @@ function pass = cumsumunbnd
 chebfunpref('factory');
 tol = 2e-10;
 
-doplot = 1;
+doplot = 0;
 
 f = chebfun('(sin(1-x)-(1-x))./(1-x).^2',[1 4],'exps',[-2 0]);
 u = cumsum(f);
