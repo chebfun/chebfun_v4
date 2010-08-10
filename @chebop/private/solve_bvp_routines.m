@@ -175,7 +175,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     if counter > 1
         contraFactor(counter-1) = nrmDeltaAbs/nrmDeltaAbsVec(counter-1);
     end
-    if dampedOn %&& (counter == 1 || (counter > 1 && contraFactor(counter-1) > 1))
+    if dampedOn && (counter > 1 && contraFactor(counter-1) > 1)
         lambda = optStep();
     else
         lambda = 1;
