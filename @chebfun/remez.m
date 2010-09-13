@@ -2,9 +2,10 @@ function [p,err,xk] = remez(f,n)
 % Best polynomial approximation.
 %
 % P = REMEZ(F,N) computes the chebfun of the best polynomial approximation
-% of degree N of a chebfun F defined in [a b]. It uses the barycentri-
-% Remez algorithm (see "Barycentric-Remez algorithms for best polynomial 
-% approximation in the chebfun system" by Pachon and Trefethen, 2008). 
+% of degree N of a chebfun F defined in [a,b]. It uses the barycentric
+% Remez algorithm (see Pachon and Trefethen, "Barycentric-Remez algorithms
+% for best polynomial approximation in the chebfun system", BIT Numerical
+% Mathematics 49 (2009), 721-741).
 %
 % [P,ERR] = REMEZ(F,N) also returns the maximum error ERR.    
 %
