@@ -139,14 +139,14 @@ if any(infends)
     if infends(1) && ~isnan(pref.exps(1)) && ~pref.exps(1)
         vends = op([-1 -1+2*eps -1+4*eps]);
         if isinf(vends(1)) || any(isnan(vends(2:3))) || -sign(vends(3))*diff(vends(2:3)) > 0
-            pref.blowup = blowup;
+            pref.blowup = blowup(NaN);
             pref.exps(1) = NaN;
         end
     end
     if infends(2) && ~isnan(pref.exps(2)) && ~pref.exps(2)
         vends = op([1-4*eps 1-2*eps 1]);
         if isinf(vends(3)) || any(isnan(vends(1:2))) || sign(vends(1))*diff(vends(1:2)) > 0
-            pref.blowup = blowup;
+            pref.blowup = blowup(NaN);
             pref.exps(2) = NaN;
         end
     end

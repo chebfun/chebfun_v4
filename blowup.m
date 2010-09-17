@@ -1,4 +1,4 @@
-function default = blowup(on_off)
+function varargout = blowup(on_off)
 %BLOWUP     CHEBFUN blowup option
 % Chebfun offers limited support for function which diverge to infinity on
 % their domain. 
@@ -8,6 +8,10 @@ function default = blowup(on_off)
 %   BLOWUP=0 (or 'off'): bounded functions only (default)
 %   BLOWUP=1 (or 'on' ): poles are permitted (integer order)
 %   BLOWUP=2           : blowup of arbitrary orders permitted (experimental)
+%
+% DEFUALT = BLOWUP(NaN) will return 1 or 2, depending on whether blowups
+% can only have integer or arbitrary order. This can be manually adjusted
+% in this mfile.
 %
 % If the singular behaviour of the function is known in advance, it is
 % usually beneficial to specify this manually. This is achieved by defining
@@ -43,12 +47,13 @@ function default = blowup(on_off)
 
 % This is default behavior for "blowup on"
 default = 1;
+if nargin == 1 && isnan(on_off)
+    if nargout == 1, varargout{1} = default;  end
+    return
+end
 
-if nargin==0 
-    if nargout == 1
-        return
-    end
-    switch chebfunpref('blowup')
+if nargin == 0 
+    switch chebfunpref('blowup');
         case 0
             disp('BLOWUP=0: bounded functions only')
         case 1 
@@ -59,14 +64,18 @@ if nargin==0
 else
     if strcmpi(on_off, 'on')
         chebfunpref('blowup',default)
-    elseif strcmpi(on_off, '1')
-        chebfunpref('blowup',1)
-    elseif strcmpi(on_off, 'off') 
+    elseif strcmpi(on_off, 'off') || all(on_off==0);
         chebfunpref('blowup',0)
-    elseif strcmpi(on_off, '2')
+    elseif strcmpi(on_off, '1') || all(on_off==1);
+        chebfunpref('blowup',1)
+    elseif strcmpi(on_off, '2') || all(on_off==2);
         chebfunpref('blowup',2)      
     else
         error('CHEBFUN:blowup:UnknownOption',...
-          'Unknown blowup option: only ON, OFF, 1, & 2 are valid options.')
+          'Unknown blowup option: only ON, OFF, 0, 1, 2, and NaN are valid options.')
     end
+end
+
+if nargout == 1
+    varargout{1} = chebfunpref('blowup');
 end
