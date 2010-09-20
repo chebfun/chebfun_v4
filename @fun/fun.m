@@ -157,7 +157,7 @@ end
 %      op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
 if isfield(pref,'exps')
     exps = pref.exps;
-    if ~pref.blowup, pref.blowup = blowup; end      % The default 'on' option
+    if ~pref.blowup, pref.blowup = blowup(NaN); end      % The default 'on' option
     if all(isnan(pref.exps))                        % No exps given
         exps = findexps(op,ends,0,pref.blowup);     
     elseif isnan(exps(2))                           % Left exp given
