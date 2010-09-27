@@ -1,0 +1,8 @@
+roots Rootfinding  
+opt Optimization  
+quad Quadrature  
+linalg Linear algebra  
+approx Approximation of functions  
+complex Complex variables  
+ode Ordinary differential equations  
+pde Partial differential equations 

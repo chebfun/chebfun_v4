@@ -1,0 +1,9 @@
+        </div> <!-- END CONTENT -->
+        <div class="hr1"> <hr /> </div>
+        <!--#include virtual="/chebfun/includes/footer.html" -->
+</div>
+<div id="footimg"></div>
+
+
+</body>
+</html>
