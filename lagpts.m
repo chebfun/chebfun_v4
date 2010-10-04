@@ -1,6 +1,6 @@
 function [x w v] = lagpts(n,method)
 %LAGPTS  Laguerre points and Gauss-Laguerre Quadrature Weights.
-%  LAGPTS(N) returns N Laguerre points X in (-1,1).
+%  LAGPTS(N) returns N Laguerre points X in (0,inf).
 %
 %  [X,W] = LAGPTS(N) also returns a row vector W of weights for Gauss-Laguerre 
 %  quadrature. [X,W,V] = LAGPTS(N) returns in addition a column vector V

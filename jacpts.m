@@ -4,10 +4,10 @@ function [x,w,v] = jacpts(n,alpha,beta,varargin)
 %       polynomial with parameters ALPHA and BETA (which must both be 
 %       greater than or equal -1)
 %
-%  [X,W] = JACPTS(N,ALPHA,BETA,) also returns a row vector W of weights for 
+%  [X,W] = JACPTS(N,ALPHA,BETA) also returns a row vector W of weights for 
 %       Gauss-Jacobi quadrature.
 %
-%  [X,W,V] = JACPTS(N,ALPHA,BETA,) returns additionally a column vector V of 
+%  [X,W,V] = JACPTS(N,ALPHA,BETA) returns additionally a column vector V of 
 %       weights in the barycentric formula corresponding to the points X.
 %
 %  [X,W,V] = JACPTS(N,ALPHA,BETA,METHOD) allows choice in which method is used.
@@ -40,9 +40,13 @@ function [x,w,v] = jacpts(n,alpha,beta,varargin)
 %       on Scientific Computing", 29(4):1420-1438:, 2007.
 
 
-% defaults
+% Defaults
 interval = [-1,1];
 method = 'default';
+
+if n <= 0
+    error('CHEBFUN:jacpts:n','First input should be a positive number.');
+end
 
 % Return empty vector if n == 0
 if n == 0

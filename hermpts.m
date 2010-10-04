@@ -1,15 +1,15 @@
 function [x w v] = hermpts(n,varargin)
 %HERMPTS  Hermite points and Gauss-Hermite Quadrature Weights.
-%  HERMPTS(N) returns N Hermite points X in (-1,1). By default these are
+%  HERMPTS(N) returns N Hermite points X in (-inf,inf). By default these are
 %  roots of the 'physicist'-type Hermite polynomials, which are orthogonal
 %  with respect to the weight exp(-x.^2).
+%
+%  HERMPTS(N,'PROB') normalises instead by the probablist's definition
+%  (with weight exp(-x.^2/2)), which gives rise to monomials.
 %
 %  [X,W] = HERMPTS(N) also returns a row vector W of weights for Gauss-Hermite
 %  quadrature. [X,W,V] = HERMPTS(N) returns in addition a column vector V
 %  of the barycentric weights corresponding to X.
-%
-%  HERMPTS(N,'PROB') normalises instead by the probablist's definition
-%  (with weight exp(-x.^2/2)), which gives rise to monomials.
 %
 %  [X,W] = HERMPTS(N,METHOD) where METHOD is one of 'GW' or 'FAST' allows 
 %  the user to select which method is used. 'GW' will use the traditional 
@@ -39,6 +39,10 @@ function [x w v] = hermpts(n,varargin)
 method = 'default';
 type = 'phys';
 
+if n <= 0
+    error('CHEBFUN:hermpts:n','First input should be a positive number');
+end
+
 % Return empty vector if n == 0
 if n == 0
     x = []; w = []; v = []; return
@@ -55,13 +59,10 @@ while ~isempty(varargin)
     end
 end
 
-if n <= 0
-    error('CHEBFUN:hermpts:n','First input should be a positive number');
-end
 
 % Decide to use GW or FAST
 if n == 1
-    x = 0; w = sqrt(pi); v = 1;            % n = 1 case is trivial
+    x = 0; w = sqrt(pi); v = 1;           % n = 1 case is trivial
 elseif (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') % GW, see [1]
     beta = sqrt(.5*(1:n-1));              % 3-term recurrence coeffs
     T = diag(beta,1) + diag(beta,-1);     % Jacobi matrix

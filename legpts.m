@@ -1,4 +1,4 @@
-function [x,w,v] = legpts(n,varargin)
+function [x,w,v] = legpts(n,int,meth)
 %LEGPTS  Legendre points and Gauss Quadrature Weights.
 %  LEGPTS(N) returns N Legendre points X in (-1,1).
 %
@@ -36,32 +36,37 @@ function [x,w,v] = legpts(n,varargin)
 %       calculation of the roots of special functions", SIAM Journal  
 %       on Scientific Computing", 29(4):1420-1438:, 2007.
 
-if n <= 0
-    error('CHEBFUN:legpts:n','First input should be a positive number.');
-end
-
 % Defaults
 interval = [-1,1];
 method = 'default';
 
-% Check inputs
-% Check the inputs
-while ~isempty(varargin)
-    s = varargin{1}; varargin(1) = [];
-    if ischar(s)
-        if strcmpi(s,'GW'), method = 'GW';
-        elseif strcmpi(s,'fast'), method = 'fast';   
-        else error('CHEBFUN:legpts:inputs',['Unrecognised input string.', s]); 
-        end
-    elseif isa(s,domain), interval = s.ends;
-    elseif isa(varargin{2},'double') && length(varargin{2}) == 2, interval = s;
-    else error('CHEBFUN:legpts:input','Unrecognised input.');
-    end
+if n <= 0
+    error('CHEBFUN:legpts:n','First input should be a positive number.');
 end
 
 % Return empty vector if n == 0
 if n == 0
     x = []; w = []; v = []; return
+end
+
+% Check the inputs
+if nargin > 1
+    if nargin == 3
+        interval = int; method = meth;
+    elseif nargin == 2
+        if ischar(int), method = int; else interval = int; end
+    end
+    if ~(strcmpi(method,'default') || strcmpi(method,'GW') || strcmpi(method,'fast'))
+        error('CHEBFUN:legpts:inputs',['Unrecognised input string.', method]); 
+    end
+    if isa(interval,'domain')
+        interval = interval.endsandbreaks;
+    end
+    if numel(interval) > 2,
+        warning('CHEBFUN:legpts:domain',...
+            'Piecewise intervals not supported and will be ignored.');
+        interval = interval([1 end]);
+    end
 end
 
 % Decide to use GW or FAST
