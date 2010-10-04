@@ -39,7 +39,7 @@ function [x w v] = hermpts(n,varargin)
 method = 'default';
 type = 'phys';
 
-if n <= 0
+if n < 0
     error('CHEBFUN:hermpts:n','First input should be a positive number');
 end
 

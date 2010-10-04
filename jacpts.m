@@ -44,7 +44,7 @@ function [x,w,v] = jacpts(n,alpha,beta,varargin)
 interval = [-1,1];
 method = 'default';
 
-if n <= 0
+if n < 0
     error('CHEBFUN:jacpts:n','First input should be a positive number.');
 end
 

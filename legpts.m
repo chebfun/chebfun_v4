@@ -2,12 +2,12 @@ function [x,w,v] = legpts(n,int,meth)
 %LEGPTS  Legendre points and Gauss Quadrature Weights.
 %  LEGPTS(N) returns N Legendre points X in (-1,1).
 %
+%  [X,W] = LEGPTS(N) also returns a row vector W of weights for Gauss quadrature.
+%
 %  LEGPTS(N,D) scales the nodes and weights for the domain D. D can be
 %  either a domain object or a vector with two components. If the interval
 %  is infinite, the map is chosen to be the default 'unbounded map' with
 %  mappref('parinf') = [1 0] and mappref('adaptinf') = 0.
-%
-%  [X,W] = LEGPTS(N) also returns a row vector W of weights for Gauss quadrature.
 %
 %  [X,W,V] = LEGPTS(N) returns additionally a column vector V of weights in
 %  the barycentric formula corresponding to the points X.
@@ -40,7 +40,7 @@ function [x,w,v] = legpts(n,int,meth)
 interval = [-1,1];
 method = 'default';
 
-if n <= 0
+if n < 0
     error('CHEBFUN:legpts:n','First input should be a positive number.');
 end
 

@@ -1,4 +1,4 @@
-function [x w v] = lagpts(n,method)
+function [x w v] = lagpts(n,int,meth)
 %LAGPTS  Laguerre points and Gauss-Laguerre Quadrature Weights.
 %  LAGPTS(N) returns N Laguerre points X in (0,inf).
 %
@@ -6,13 +6,16 @@ function [x w v] = lagpts(n,method)
 %  quadrature. [X,W,V] = LAGPTS(N) returns in addition a column vector V
 %  of the barycentric weights corresponding to X.
 %
+%  LAGPTS(N,D) scales the nodes and weights for the semi-infinite domain D. 
+%  D can be either a domain object or a vector with two components.
+%
 %  [X,W] = LAGPTS(N,METHOD) allows the user to select which method to use.
 %  METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
 %  which is best for when N is small. METHOD = 'FAST' will use the
 %  Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
 %  By default LEGPTS uses 'GW' when N < 128.
 %
-%  See also chebpts, legpts, and jacpts.
+%  See also chebpts, legpts, hermpts, and jacpts.
 %
 %  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -30,13 +33,40 @@ function [x w v] = lagpts(n,method)
 %       calculation of the roots of special functions", SIAM Journal  
 %       on Scientific Computing", 29(4):1420-1438:, 2007.
 
-if nargin == 1
-    method = 'default';
+method = 'default';
+interval = [0 inf];
+
+if n < 0
+    error('CHEBFUN:lagpts:n','First input should be a positive number.');
 end
 
 % Return empty vector if n == 0
 if n == 0
     x = []; w = []; v = []; return
+end
+
+% Check the inputs
+if nargin > 1
+    if nargin == 3
+        interval = int; method = meth;
+    elseif nargin == 2
+        if ischar(int), method = int; else interval = int; end
+    end
+    if ~(strcmpi(method,'default') || strcmpi(method,'GW') || strcmpi(method,'fast'))
+        error('CHEBFUN:lagpts:inputs',['Unrecognised input string.', method]); 
+    end
+    if isa(interval,'domain')
+        interval = interval.endsandbreaks;
+    end
+    if numel(interval) > 2,
+        warning('CHEBFUN:lagpts:domain',...
+            'Piecewise intervals not supported and will be ignored.');
+        interval = interval([1 end]);
+    end
+end
+
+if ~sum(isinf(interval)) == 1
+    error('CHEBFUN:lagpts:inf','lagpts only supports semi-infinite domains.');
 end
 
 % decide to use GW or FAST
@@ -54,7 +84,20 @@ else                                                            % Fast, see [2]
    v = exp(-x/2)./ders;                  % Barycentric weights
    v = -v./max(abs(v));
 end
-w = (1/sum(w))*w;                        % normalise so that sum(w) = 1
+w = (1/sum(w))*w;                        % Normalise so that sum(w) = 1
+
+% Nonstandard interval
+if ~all(interval == [0 inf])
+    a = interval(1); b = interval(2);
+    if isinf(b)
+        x = x + a;
+        w = w*exp(-a);
+    else
+        x = - x + b;
+        w = w*exp(b);
+    end
+end
+        
 
 % -------------------- Routines for FAST algorithm ------------------------
 
