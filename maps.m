@@ -50,8 +50,8 @@ function map = maps(varargin)
 %  Currently if singularites are required at the end, the parameter can
 %  only be [.5 .5] or [.25 .25], yet such a map can still do well even when
 %  these exponents aren't exactly correct. For example
-%     m = maps({'sing',[.25 .25]},[-2 -2)
-%     f = chebfun('(4-x.^2).^.3',[-2 2],m)
+%     m = maps({'sing',[.25 .25]},[-2 -2])
+%     f = chebfun('(4-x.^2).^.3',[-2 2],'map',m)
 %  SING type maps can be called directly in the constructor via
 %     f = chebfun('(4-x.^2).^.3',[-2 2],'singmap',[.25 .25])
 
