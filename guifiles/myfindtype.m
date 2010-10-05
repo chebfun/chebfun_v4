@@ -9,7 +9,7 @@ elseif regexp(str,'[A-Za-z_]')
     type = 'char';
 elseif str == '.' % We need to be able to distinguish between doubles and operators
     type = 'point';
-elseif regexp(str,'.?[\+\-\*\/\.\^\(\)]')
+elseif regexp(str,'\.?[\+\-\*\/\.\^\(\)]')
     type = 'operator';
 elseif regexp(str,'''')
     type = 'deriv';
