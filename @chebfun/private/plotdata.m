@@ -56,7 +56,10 @@ elseif any(isinf(g(1).ends([1 end])))
     end     
 end
 % Don't exclude anything
-if isempty(interval), interval = dom.ends([1 end]); end
+if isempty(interval), 
+    if isempty(f), interval = dom.ends([1 end]);
+    else interval = [-inf inf]; end
+end
 
 if isempty(f)
     % one real chebfun (or quasimatrix) input
