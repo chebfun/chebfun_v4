@@ -10,7 +10,7 @@ function out = roots(g,varargin)
 % $Date$:
 
 % Default preferences
-rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', 1);
+rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots'));
 
 if nargin == 2
     if isstruct(varargin{1})
@@ -98,12 +98,11 @@ if ~recurse || (g.n<101)                                    % for small length f
         mask=abs(imag(r))<tol*g.scl.h;           % filter imaginary roots
         r = real( r(mask) );
         out = sort(r(abs(r) <= 1+2*tol*g.scl.h));  % keep roots inside [-1 1]   
-        
         % polish
         if polish
             gout = feval(g,out);
             step = gout./feval(diff(g,1,coeffs),out);
-            step(isnan(step)) = 0;
+            step(isnan(step) | isinf(step)) = 0;
 %             outnew = out - step;
 %             mask = abs(gout) > abs(feval(g,outnew));
 %             out(mask) = outnew(mask);
