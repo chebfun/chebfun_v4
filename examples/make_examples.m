@@ -38,9 +38,12 @@ end
 if clean
     for j = 1:numel(dirs)
         cd(dirs{j})
-        !rm *.html *.shtml
-        !rm -r html/
-        !rm -r pdf/
+        delete *.html *.shtml
+        rmdir html s
+        rmdir pdf s
+        %!rm *.html *.shtml
+        %!rm -r html/
+        %!rm -r pdf/
         cd ..
     end
     return
@@ -62,6 +65,9 @@ for j = 1:numel(dirs)
     titletxt = fgetl(fidc);
     while ~strncmp(dirs{j},titletxt,3)
         titletxt = fgetl(fidc);
+        if isequal(titletxt,-1)  % EOF
+          break
+        end
     end
     titletxt = titletxt(length(dirs{j})+2:end);
     fclose(fidc);
@@ -75,8 +81,8 @@ for j = 1:numel(dirs)
     % Make dirname/dirname.html
     fid = fopen([dirs{j},'.html'],'w+');
     % Write title
-    if shtml, fprintf(fid,['<div style="position:relative; left:-20px;">\n']);  end
-    fprintf(fid,['<h2 class="bigger">Chebfun Examples: ',titletxt,'</h2>\n']);
+    if shtml, fprintf(fid,'<div style="position:relative; left:-20px;">\n');  end
+    fprintf(fid,'<h2 class="bigger">Chebfun Examples: %s</h2>\n',titletxt);
     if shtml, fprintf(fid,'</div>\n');  end
     if shtml
         % Make dirname/index.shtml
@@ -112,11 +118,11 @@ for j = 1:numel(dirs)
         end
         if shtml && exist(fullfile('html',[mfile{k}(1:end-2),'.shtml']),'file')
         % Link to dirname/html/filename.shtml
-            fprintf(fid,['<a href="html/',mfile{k}(1:end-2),'.shtml">html</a>, ']);
+            fprintf(fid,'<a href="html/%s.shtml">html</a>, ',mfile{k}(1:end-2));
         elseif exist(fullfile('html',[mfile{k}(1:end-2),'.html']),'file')
             % Link to dirname/html/filename.html
             link = fullfile('html',[mfile{k}(1:end-2),'.html']);
-            fprintf(fid,['<a href="',link,'">html</a>, ']);
+            fprintf(fid,'<a href="%s">html</a>, ',link);
         end
         
         %%% PDF %%%
@@ -125,7 +131,7 @@ for j = 1:numel(dirs)
             publish(mfile{k},optsPDF);        close all
             try
                 cd pdf
-                !rm *.pdf
+                delete *.pdf    % !rm *.pdf
                 !latex *.tex
                 !dvips *.dvi
                 !ps2pdf *.ps file.pdf
@@ -142,22 +148,22 @@ for j = 1:numel(dirs)
             else
                 link = fullfile('pdf',[mfile{k}(1:end-2),'.pdf']);
             end
-            fprintf(fid,['<a href="',link,'" target="_blank">PDF</a>, ']);
+            fprintf(fid,'<a href="%s" target="_blank">PDF</a>, ',link);
         end
         
         % Link to dirname/pdf/file.pdf
         if exist(fullfile('pdf','file.pdf'),'file')            
             if shtml
-                link = ['pdf/file.pdf'];
+                link = 'pdf/file.pdf';
             else
                 link = fullfile('pdf','file.pdf');
             end
-            fprintf(fid,['<a href="',link,'" target="_blank">PDF</a>, ']);
+            fprintf(fid,'<a href="%s" target="_blank">PDF</a>, ',link);
         end
         
         %%% M-FILES %%%
-        fprintf(fid,['<a href="',mfile{k},'">M-file</a>)\n']);
-        fprintf(fid,['                <br/>\n\n']);
+        fprintf(fid,'<a href="%s">M-file</a>)\n',mfile{k});
+        fprintf(fid,'                <br/>\n\n');
         
 
     end
