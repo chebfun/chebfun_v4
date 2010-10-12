@@ -74,7 +74,7 @@ while (normres(j) > tol) && (j<maxiter)          % outer iterations
     for k = 1:n                     
       H(k,n) = Q(:,k)' * v ;             
       v = v - H(k,n)*Q(:,k);  
-      v.jacobian = anon('@(u) []','',[]);  % disable auto-diff
+      v.jacobian = anon([],[],[],Inf);  % disable auto-diff
     end 
     H(n+1,n) = norm(v);                          
     Q(:,n+1) = v / H(n+1,n);                     % new basis vector

@@ -9,5 +9,5 @@ function fout = jacreset(fin)
 
 fout = fin;
 for funCounter = 1:numel(fin)
-    fout(funCounter).jacobian = anon('@(u) []','',[]);
+    fout(funCounter).jacobian = anon([],[],[],0); % Sets new AD depth to be 0
 end

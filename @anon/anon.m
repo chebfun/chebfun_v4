@@ -19,45 +19,50 @@ function ADH = anon(varargin)
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team.
+maxdepth = chebfunpref('addepth');
 
+% Store a persistent dummy anon
+persistent dummyAnon
 
-ADH = struct([]);
-
-% Begin by checking whether any input function has a maxsize memory flag.
-% If so, all derived functions will also be flagged, so no need to do all
-% the work involved in creating an anon.
-maxFlag = 0;
-for argCounter = 1:length(varargin{3})
-    arg = varargin{3}{argCounter};
-    if isa(arg,'chebfun')
-        funJacobian = get(varargin{3}{argCounter},'jacobian');
-        if strmatch(funJacobian.function,'max_memsize')
-            maxFlag = 1;
-        end
+if isempty(dummyAnon)
+    dummyAnon(1).function = [];
+    dummyAnon(1).variablesName = [];
+    dummyAnon(1).workspace = [];
+    dummyAnon(1).depth = maxdepth;
+    dummyAnon = class(dummyAnon,'anon');
+end
+if maxdepth % If maxdepth == 0, AD is turned off
+    % Begin by checking whether we will be exceeding the maxdepth
+    if nargin > 3
+        newdepth = varargin{4};
+    else
+        newdepth = max(cellfun(@(c) varDepth(c), varargin{3}))+1;
     end
-end
-
-if maxFlag
-   ADH(1).function = 'max_memsize';
-   ADH(1).variablesName = [];
-   ADH(1).workspace = [];
-   ADH = class(ADH,'anon');
-   return;
-end
-
-ADH(1).function = varargin{1};
-ADH(1).variablesName = varargin{2};
-ADH(1).workspace = varargin{3};
-
-whosADH = whos('ADH');
-sizeADH = whosADH.bytes/(1024^2); % Size in MB
-
-if sizeADH < 100
+    
+    % If maxdepth is exceeded, return a dummy anon
+    if newdepth > maxdepth
+        ADH = dummyAnon;
+        return
+    end
+    
+    % If not, continue and create the anon properly
+    ADH = struct([]);
+    
+    ADH(1).function = varargin{1};
+    ADH(1).variablesName = varargin{2};
+    ADH(1).workspace = varargin{3};
+    ADH(1).depth = newdepth;
+    
+    % Convert struct to anon object
     ADH = class(ADH,'anon');
+else % If AD is turned off, return a dummy anon
+    ADH = dummyAnon;
+end
+end
+function vd = varDepth(c)
+if isa(c,'chebfun')
+    vd = max(c.jacobian.depth);
 else
-    % Clear the fields and return a dummy anon
-    ADH(1).function = 'max_memsize';
-    ADH(1).variablesName = [];
-    ADH(1).workspace = [];
-    ADH = class(ADH,'anon');
+    vd = 0;
+end
 end

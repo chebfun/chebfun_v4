@@ -2,8 +2,8 @@ function Fx = feval(Fin,anonArgument,varargin)
 % FEVAL Evaluates an anon with an input argument, similar to f(u) where f
 % is an anonymous function and u is some argument.
 
-if strmatch(Fin.function,'max_memsize')
-    error('Error while evaluating AD derivative. Variables have grown to big in memory. Please contact the chebfun team at chebfun@maths.ox.ac.uk.');
+if isempty(Fin.function)
+    error('Unable to evaluate AD derivative, maximum AD depth reached. Try increasing chebfunpref(''addepth''). Please contact the chebfun team at chebfun@maths.ox.ac.uk for more information.');
 end
 % Extract variable names and values
 Fvar = Fin.variablesName;
