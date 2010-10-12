@@ -1,0 +1,53 @@
+%% THE GAMMA FUNCTION AND ITS POLES
+% Nick Hale, December 2009
+
+%%
+% (Chebfun example approx/GammaFun.m)
+
+%%
+% This script displays some of the features introduced in version 3 for unbounded 
+% functions by demonstrating with the gamma function on the interval [-4 4].
+
+%%
+% The gamma function on [-4 4] has simple poles at the negative integers
+% and zero. Chebfun determines the location of these, and the correct order 
+% (shown by 'exponents'):
+
+LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
+gam = chebfun('gamma(x)',[-4 4],'blowup','on','splitting','on')
+plot(gam,'b',LW,1.6), hold on
+title('Gamma function',FS,16)
+
+%%
+% We can now treat the gamma function like any other chebfun. 
+% For example, we can: 
+%
+% 1) Find its reciprocal
+
+gam_i = 1./gam;
+
+%%
+% 2) Compute the square root of abs(gamma)
+
+sqrtgam = real(sqrt(abs(gam)))
+
+%%
+% 3) Plot these functions
+
+plot(gam_i,'r', sqrtgam,'-g',LW,1.6)
+legend('\Gamma(x)', '1/\Gamma(x)', 'sqrt(|\Gamma(x)|)')
+title('Various related functions',FS,16)
+
+%%
+% 4) Plot the critical points
+
+[y r] = minandmax(gam,'local');
+[yi ri] = minandmax(gam_i,'local');
+[ys rs] = minandmax(sqrtgam,'local');
+
+plot(r,gam(r),'.k',ri,gam_i(ri),'.k', ...
+    rs,sqrtgam(rs),'.k',MS,16,LW,1.6), hold off
+title('Gamma function on [-4 4] and its critical points',LW,16)
+
+%%
+% 5) And much more!

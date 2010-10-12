@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>example</title>
+<!--#include virtual="/chebfun/includes/head.html" -->
+</head>
+
+<body>
+<div id="headimg"></div>
+<div id="wrapper">
+<!--#include virtual="/chebfun/includes/header.html" -->
+        <!--#include virtual="/chebfun/includes/mainmenu.html" -->
+
+        <h2 class="bigger"> CHEBFUN EXAMPLES</h2>
+        <div id="mycontent">
+            
+
+            <p> 
+                The quickest way to solve your problem with Chebfun may be to find a similar problem someone else has solved to use as a template. This page connects you to dozens of such templates, called Chebfun Examples. Each example is an M-file producing text and/or graphical output which executes, in most cases, in less than 5 seconds. You can also execute the example with Matlab's PUBLISH command to get a more informative story. Type open(publish('filename')) to see the quickest version on your screen or publish('filename','latex') for a better formatted LaTeX version, which will appear in a directory called html. The published output is also available for direct download as a pdf file.
+            </p>
+            <p>
+                Each example is signed by the author, and we welcome new contributions. Please send drafts to <a href="mailto:chebfun@maths.ox.ac.uk" style="color:#000">chebfun@maths.ox.ac.uk</a> with an indication of which section they belong in. To help maintain some uniformity across the examples, please take a look at the <a href="conventions.txt">formatting conventions</a>.
+            </p> 
+ 
+            <ol> 
+              <li><a href="roots/">Rootfinding</a></li> 
+              <li><a href="opt/">Optimization</a></li> 
+              <li><a href="quad/">Quadrature</a></li> 
+              <li><a href="linalg/">Linear algebra</a></li> 
+              <li><a href="approx/">Approximation of functions</a></li> 
+              <li><a href="complex/">Complex variables</a></li> 
+              <li><a href="ode/">Ordinary differential equations</a></li> 
+              <li><a href="integro/">Integral and integro-differential equations</a></li> 
+              <li><a href="pde/">Partial differential equations</a></li> 
+            </ol> 
+
+        </div> <!-- END CONTENT -->
+
+        <div class="hr1"> <hr /> </div>
+        <!--#include virtual="/chebfun/includes/footer.html" -->
+</div>
+<div id="footimg"></div>
+
+
+</body>
+</html>

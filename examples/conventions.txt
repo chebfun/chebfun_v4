@@ -1,0 +1,56 @@
+
+FORMATTING CONVENTIONS FOR CHEBFUN EXAMPLES
+
+You can ignore all this if you wish and just send your
+example to chebfun@maths.ox.ac.uk.  However it is most
+helpful for us if you don't ignore it and approximately
+follow the formatting conventions described below.
+
+TEMPLATE.  Use any of the existing Examples as a template.
+
+SPEED.  Try to make your example run in 5 seconds or less.
+
+TESTING.  Run your example in both modes
+publish(<filename>,'latex') and open(publish(<filename>)) and
+make sure there are no errors and that the result looks
+reasonably good.  We do not expect perfection.
+
+TITLE.  Begin with %% and a title, like %% EINSTEIN EQUATIONS.
+Try to put the most distinctive word first so that your Example
+will be easily found in an alphabetized list.
+
+YOUR NAME.  Follow immediatedly with % Your Name.
+
+FILE NAME.  Then put a blank line beginning %%, and a line with
+the file name like  % (Chebfun example pde/EinsteinEquations.m).
+Note that we use "CamelCase" for the file names (no underscores please).
+
+MATHEMATICS.  Try to avoid using LaTeX mathematical commands
+(enclosed in dollar signs).  Unfortunately, they do not format
+very well in PUBLISH html mode.
+
+BOLD FACE AND ITALICS.  Similarly we tend to avoid bold face, italics,
+and other formatting niceties.
+
+GRAPHICS.  If possible an example should contain some graphics.  
+Try to make it visually arresting (and also, of course, informative).
+This usually means increasing Matlab's defaults.  The suggestions
+below often do a pretty good job of coming out well in both HTML
+and LaTeX modes.
+
+TITLES. Please put titles on your figures. It makes your Example 
+more accessible.
+
+LINE WIDTHS.  'linewidth',1.6  is often a good choice.
+We often define the abbrevation LW = 'linewidth'. 
+
+FONT SIZE.  'fontsize',16 is often good for a title, 14 for an axis label.
+We often define the abbrevation FS = 'fontsize'. 
+
+MARKER SIZE.  This very much depends on the plot but often
+'markersize',16 is good.
+We often define the abbrevation MS = 'markersize'. 
+
+REFERENCES.  Chebfun Examples are expected to be simple and appealing.
+They don't have to have any references at the end.  However, we often
+include a reference or two. 

@@ -1,11 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 4.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 
-<head>
-<title>example</title>
 <!--#include virtual="/chebfun/includes/head.html" -->
+<link href="/chebfun/css/examples.css" rel="stylesheet" type="text/css" />
 </head>
-
+<html>
 <body>
 <div id="headimg"></div>
 <div id="wrapper">
