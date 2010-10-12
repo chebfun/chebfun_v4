@@ -52,6 +52,8 @@ switch index(1).type
             if ischar(col) && col==':'
                 col = 1:n;
             elseif max(col) > n
+                % Create an empty chebfun if we're assigning to empty
+                if isempty(f), f = chebfun; end
                 % Domain check to make sure chebfuns have same domain
                 if isempty(f(:,1)) || all(f(:,1).ends([1,end]) == vin(:,1).ends([1,end]))
                     f(:,n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);     
