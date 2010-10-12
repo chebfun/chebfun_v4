@@ -36,7 +36,17 @@ if maxdepth % If maxdepth == 0, AD is turned off
     if nargin > 3
         newdepth = varargin{4};
     else
-        newdepth = max(cellfun(@(c) varDepth(c), varargin{3}))+1;
+        currdepth = 0;
+        for vararginCounter = 1:length(varargin{3})
+            currVar = varargin{3}{vararginCounter};
+            if isa(currVar,'chebfun')
+                varDepth = currVar.jacobian.depth;
+                if varDepth > currdepth
+                    currdepth = varDepth;
+                end
+            end
+        end
+        newdepth = currdepth+1;
     end
     
     % If maxdepth is exceeded, return a dummy anon
@@ -57,12 +67,5 @@ if maxdepth % If maxdepth == 0, AD is turned off
     ADH = class(ADH,'anon');
 else % If AD is turned off, return a dummy anon
     ADH = dummyAnon;
-end
-end
-function vd = varDepth(c)
-if isa(c,'chebfun')
-    vd = max(c.jacobian.depth);
-else
-    vd = 0;
 end
 end
