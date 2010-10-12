@@ -112,7 +112,8 @@ function varargout = chebgui_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
+% varargout{1} = handles.output;
+varargout{1} = 2;
 
 function dom_left_Callback(hObject, eventdata, handles)
 % hObject    handle to dom_left (see GCBO)
@@ -1202,3 +1203,13 @@ function input_plotstyle_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of input_plotstyle as text
 %        str2double(get(hObject,'String')) returns contents of input_plotstyle as a double
+
+
+% --- Executes on selection change in iter_list.
+function iter_list_Callback(hObject, eventdata, handles)
+% hObject    handle to iter_list (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns iter_list contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from iter_list
