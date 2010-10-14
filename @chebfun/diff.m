@@ -1,5 +1,5 @@
-function Fout = diff(F,n)
-% DIFF	Differentiation of a chebfun.
+function F = diff(F,n,dim)
+%DIFF   Differentiation of a chebfun.
 % DIFF(F) is the derivative of the chebfun F. At discontinuities, DIFF
 % creates a Dirac delta with coefficient equal to the size of the jump.
 % Dirac deltas already existing in F will increase their degree.
@@ -12,28 +12,55 @@ function Fout = diff(F,n)
 % DIFF(F,U) where U is a chebfun returns the Jacobian of the chebfun F 
 % with respect to the chebfun U. Either F, U, or both can be a quasimatrix.
 %
+% DIFF(U,N,DIM) is the Nth difference function along dimension DIM. 
+%      If N >= size(U,DIM), DIFF returns an empty chebfun.
+%
 % See also chebfun/fracdiff, chebfun/diff
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 
 
-if nargin==1, n=1; end
+% Check inputs
+if nargin == 1, n = 1; end
+if nargin < 3, dim = 1+F(1).trans; end
+if ~(dim == 1 || dim == 2)
+    error('CHEBFUN:diff:dim','Input DIM should take a value of 1 or 2');
+end
 
-if isa(n,'chebfun')
-    Fout = jacobian(F,n);
-elseif round(n)~=n
-    Fout = fraccalc(diff(F,ceil(n)),ceil(n)-n);
-%     Fout = diff(fraccalc(F,ceil(n)-n),ceil(n));
-else
-    Fout = F;
+if isa(n,'chebfun')     
+    % AD
+    F = jacobian(F,n);
+    
+elseif round(n)~=n      
+    % Fractional derivatives
+    F = fraccalc(diff(F,ceil(n)),ceil(n)-n);
+%     F = diff(fraccalc(F,ceil(n)-n),ceil(n));
+
+elseif dim == 1+F(1).trans
+    % Differentiate along continuous variable
     for k = 1:numel(F)
-        Fout(k) = diffcol(F(k),n);
+        F(k) = diffcol(F(k),n);
     end
+    
+else
+    % Diff along discrete dimension
+    if numel(F) <= n, F = chebfun; return, end % Return empty chebfun
+    if F(1).trans
+        for k = 1:n
+            F = F(2:end,:)-F(1:end-1,:);
+        end 
+    else
+        for k = 1:n
+            F = F(:,2:end)-F(:,1:end-1);
+        end 
+    end
+    
 end
 
 % -------------------------------------------------------------------------
 function F = diffcol(f,n)
+% Differentiate column along continuous variable to an integer order 
 
 if isempty(f.funs(1).vals), F=chebfun; return, end
 
