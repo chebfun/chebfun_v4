@@ -109,6 +109,11 @@ markdata = [markdata, s];
 
 h = ishold;
 
+% Do not plot jumplines
+if isempty(jlinestyle) || strcmpi(jlinestyle,'none')
+    jumpdata = {NaN, NaN, NaN};
+end
+    
 % dummy plot for legends
 hdummy = plot3(dummydata{:}); hold on
 

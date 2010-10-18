@@ -188,6 +188,11 @@ if all(~isinf([bot top])) && infy
     end
 end
 
+% Do not plot jumplines
+if isempty(jlinestyle) || strcmpi(jlinestyle,'none')
+    jumpdata = {NaN, NaN};
+end
+
 % dummy plot for legends
 hdummy = plot(dummydata{:}); hold on
 
