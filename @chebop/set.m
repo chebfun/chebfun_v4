@@ -1,4 +1,4 @@
-function F = set(F,varargin)
+function N = set(N,varargin)
 % SET Set chebop properties.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
@@ -12,46 +12,49 @@ while length(propertyArgIn) >= 2,
     propertyArgIn = propertyArgIn(3:end);
     switch prop
         case 'dom'
-            F.dom = val;
+            N.dom = val;
         case 'bc'
-          if isa(val,'struct')  % given .left and .right
-            if isfield(val,'left')
-              F = set(F,'lbc',val.left);
-             end
-            if isfield(val,'right')
-              F = set(F,'rbc',val.right);
+            if isa(val,'struct')  % given .left and .right
+                if isfield(val,'left')
+                    N = set(N,'lbc',val.left);
+                end
+                if isfield(val,'right')
+                    N = set(N,'rbc',val.right);
+                end
+            else  % given same for both sides
+                N = set(N,'lbc',val);
+                N = set(N,'rbc',val);
             end
-          else  % given same for both sides
-            F = set(F,'lbc',val);
-            F = set(F,'rbc',val);
-          end
         case 'lbc'
-            F.lbc = createbc(val);
-            F.lbcshow = val;
+            N.lbc = createbc(val);
+            N.lbcshow = val;
         case 'rbc'
-            F.rbc = createbc(val);
-            F.rbcshow = val;
+            N.rbc = createbc(val);
+            N.rbcshow = val;
         case 'op'
             if isa(val,'function_handle') || (iscell(val) && isa(val{1},'function_handle'))
-                F.optype = 'anon_fun';
+                N.optype = 'anon_fun';
             elseif isa(val,'chebop') || (isa(val,'cell') && isa(val{1},'chebop'))
-                F.optype = 'chebop';
+                N.optype = 'chebop';
             else
                 error('CHEBOP:set:opType','Operator must by a function handle or linop.')
             end
-            F.op = val;
+            N.op = val;
             if ~iscell(val)
-              F.opshow = {char(val)}; 
+                N.opshow = {char(val)};
             else
-              F.opshow = cellfun(@char,val,'uniform',false);
+                N.opshow = cellfun(@char,val,'uniform',false);
             end
         case 'guess'
             % Convert constant initial guesses to chebfuns
             if isnumeric(val)
-                F.guess = chebfun(val,F.dom);
+                N.guess = chebfun(val,N.dom);
             else
-                F.guess = val;
+                N.guess = val;
             end
+        case 'dim'
+            % Sets the dimension of the quasimatrices N operates on
+            N.dim = val;
         otherwise
             error('CHEBOP:set:unknownprop','Unknown chebop property')
     end

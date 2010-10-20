@@ -8,6 +8,7 @@ function guess = findguess(N)
 
 guess = [];
 dom = N.dom;
+Ndim = N.dim;
 success = 0;
 counter = 0;
 
@@ -18,16 +19,23 @@ NopArgin = nargin(N.op);
 
 if NopArgin > 1
     success = 1;
-    
-%     guessCell = cell(1,numel(guess));
-    
+       
     for quasiCounter = 1:NopArgin
         cheb0 = chebfun(0,dom);
         guess = [guess cheb0];
-%         guessCell{quasiCounter} = cheb0;
     end
 
 end
+
+if NopArgin == 1 && ~isempty(Ndim)
+    success = 1;
+       
+    for quasiCounter = 1:Ndim
+        cheb0 = chebfun(0,dom);
+        guess = [guess cheb0];
+    end
+end
+
 % Won't be called if NopArgin > 1 since then we are already successful
 while ~success && counter < 10
     % Need to create new chebfun at each step in order to have the
@@ -46,9 +54,8 @@ while ~success && counter < 10
         end
         success = 1;
         counter = counter+1;
-    catch % Should do some more accurate error catching
-        exception = lasterror;
-        if strcmp(exception.identifier,'MATLAB:badsubscript')
+    catch ME
+        if strcmp(ME.identifier,'CHEBFUN:mtimes:dim') || strcmp(ME.identifier,'MATLAB:badsubscript')
             counter = counter + 1;
         else
             fprintf(['Error in constructing initial guess. \nCould it be that ' ...

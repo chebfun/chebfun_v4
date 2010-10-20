@@ -32,6 +32,9 @@ function N = chebop(varargin)
 % with associated initial guess when nonlinear boundary value problems
 % involved with the chebop is solved.
 %
+% N = CHEBOP(D,F,LBC,RBC,GUESS,DIM) where DIM is an integer, defines a
+% chebop which operates on quasimatrices of dimension Inf x Dim.
+%
 % Chebops can also be created using the syntax
 %   [D,X,N] = domain(a,b)
 % where a and b are the endpoints of the domain.
@@ -72,6 +75,9 @@ if nargin > 0
           else
             N.guess = varargin{5};
           end
+          if nargin > 5
+              N.dim = varargin{6};
+          end
         end
       end
     end
@@ -91,4 +97,5 @@ N(1).rbc = [];
 N(1).rbcshow = [];
 N(1).guess = [];
 N(1).optype = [];
+N(1).dim = [];
 end
