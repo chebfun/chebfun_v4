@@ -29,19 +29,21 @@ function m = slitp(par,plotflag)
     end
 
     % interval scaling
-    l = @(x) .5*(b-a)*(x-pi)/pi - a;
-    linv = @(x) 2*pi*(x-a)/(b-a) - pi;
-
+    l = @(y) ((b-a)*y/pi+b+a)/2;
+    linv = @(x) pi*(2*x-b-a)/(b-a);
+    scaleder = 0.5*(b-a)/pi;
+    linvw = linv(w);
+    
     if length(w) == 1 % single slit
-        m.for = @(z) l(slitmap_p1(linv(w),linv(z),0));
-        m.der = @(z) .5*(b-a)/pi*slitmap_p1(linv(w),linv(z),1);
-        [ignored eta] = slitmap_p1(linv(w),linv(0),0);
+        m.for = @(z) l(slitmap_p1(linvw,z,0));
+        m.der = @(z) scaleder*slitmap_p1(linv(w),z,1);
+        [ignored eta] = slitmap_p1(linvw,0,0);
         y = [];
     else   % multiple slits
         % compute map paramters
-        [ignored eta y] = slitmap_pm(linv(w),linv([a b]),[],1,0,plotflag);
-        m.for = @(z) l(slitmap_pm(linv(w),linv(z),y,0,0,0));
-        m.der = @(z) slitmap_pm(linv(w),linv(z),y,0,1,0);
+        [ignored eta y] = slitmap_pm(linvw,0,[],1,0,plotflag);
+        m.for = @(z) l(slitmap_pm(linvw,z,y,0,0,0));
+        m.der = @(z) scaleder*slitmap_pm(linvw,z,y,0,1,0);
     end
 
     m.par = [a b w(:).'];

@@ -26,19 +26,21 @@ function  m = slit(par,plotflag)
     if nargin == 2, plotflag = true; else plotflag = false; end
     
     % interval scaling
-    l = @(x) .5*(b-a)*(x-1) - a;
-    linv = @(x) 2*(x-a)/(b-a) - 1;
-    
+    l = @(y) ((b-a)*y+b+a)/2;
+    linv = @(x) (2*x-b-a)/(b-a);
+    scaleder = 0.5*(b-a);
+    linvw = linv(w);
+
     if length(w) == 1 % single slit
-        m.for = @(z) l(slitmap1(linv(w),linv(z)));
-        m.der = @(z) slitmap1(linv(w),linv(z),1);
-        [ignored rho] = slitmap1(linv(w),linv(0));   
+        m.for = @(z) l(slitmap1(linvw,z));
+        m.der = @(z) scaleder*slitmap1(linvw,z,1);
+        [ignored rho] = slitmap1(linvw,linv(0));   
         y = [];
     else   % multiple slits
         % compute map paramters
-        [ignored rho y] = slitmapm(linv(w),linv([a b]),[],1,0,plotflag);
-        m.for = @(z) l(slitmapm(linv(w),linv(z),y,0,0,0));
-        m.der = @(z) slitmapm(linv(w),linv(z),y,0,1,0);
+        [ignored rho y] = slitmapm(linvw,[-1 1],[],1,0,plotflag);
+        m.for = @(z) l(slitmapm(linvw,z,y,0,0,0));
+        m.der = @(z) scaleder*slitmapm(linvw,z,y,0,1,0);
     end
 
     m.par = [a b w(:).'];
@@ -54,11 +56,11 @@ function [gout rho] = slitmap1(wk,z,ignored) % single pair of slits
     c = sign(d)*realsqrt(0.5*((d^2+e^2+1)-realsqrt((d^2+e^2+1)^2-4*d^2)));
     s = realsqrt(1-c^2);
     m14 = (-e+realsqrt(e^2+s^2))/s;   m = m14^4;
-    try % sc toolbox
+    if exist('ellipkkp','file') 
         L = -2*log(m14)/pi;
         [K Kp] = ellipkkp(L);
         [sn cn dn] = ellipjc(2*K*asin(z)/pi,L);
-    catch no_sc
+    else %no_sc
         K = ellipke(m);
         Kp = ellipke(1-m);
         [sn cn dn] = ellipj(2*K*asin(z)/pi,m);
