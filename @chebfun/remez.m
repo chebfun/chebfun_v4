@@ -24,7 +24,7 @@ if any(get(f,'exps')<0), error('CHEBFUN:remez:inf',...
 spl_ini = chebfunpref('splitting');
 splitting off,
 
-if n < 15, tol = 1e-15; elseif n < 100, tol = 1e-14; elseif n <= 1000, tol = 1e-11; else tol = 2e-10; end
+if n < 15, tol = 1e-15; elseif n < 100, tol = 1e-12; elseif n <= 1000, tol = 1e-11; else tol = 2e-10; end
 maxit = 25; 
 [a,b] = domain(f);
 xk = chebpts(n+2,[a b]);                % initial reference 
@@ -61,8 +61,8 @@ end
 p = pmin;
 err = errmin;
 xk = xkmin;
-chebfunpref('splitting',spl_ini)
-    
+chebfunpref('splitting',spl_ini), 
+
 function [xk,norme] = exchange(xk,e,h,method)
 
 rr = [a; roots(diff(e)); b];                 % critical pts of the error

@@ -1,16 +1,31 @@
-function [p,q,r_handle] = ratinterp(f,d,m,varargin)
+function [p,q,rh] = ratinterp(f,d,m,varargin)
 % RATIONAL INTERPOLATION
 % [P,Q,R_HANDLE] = RATINTERP(F,M,N) constructs the [M/N]-rational interpolant 
-% R = P/Q in M+N+1 Chebyshev points. P is a chebfun of length M+1 and Q is 
-% a chebfun of length N+1. R_HANDLE is a function handle that evaluates the
-% rational function using the barycentric formula.
+% R = P/Q of a chebfun F in M+N+1 Chebyshev points. P is a chebfun of length 
+% M+1 and Q is a chebfun of length N+1. R_HANDLE is a function handle that 
+% evaluates the rational function using the barycentric formula. (A function 
+% handle is used because constructing a chebfun for a quotient P./Q may be very
+% inefficient).
 %
 % [P,Q,R_HANDLE] = RATINTERP(F,M,N,XGRID) constructs the [M/N]-rational
 % interpolant R_HANDLE = P/Q on a grid XGRID of length M+N+1 which should
-% normally lie in the domain of F.
+% lie in the domain of F.
 %
-% [P,Q,R_HANDLE] = RATINTERP(F_HANDLE,D,M,N,XGRID) uses a function handle
-% F_HANDLE on a domain F to construct the rational interpolant.
+% RATINTERP(F,M,N,'chebpts',KIND) specifies a grid of Chebyshev points
+% of the first kind if KIND = 1 and second kind if KIND = 2. If not
+% specified, the kind of Chebyshev points is taken from
+% CHEBFUNPREF('CHEBKIND').
+%
+% RATINTERP(F_HANDLE,D,M,N), RATINTERP(F_HANDLE,D,M,N,XGRID) and
+% RATINTERP(F_HANDLE,D,M,N,'chebpts',KIND) use a function handle
+% F_HANDLE on a domain D to construct the rational interpolant.
+%
+% RATINTERP uses the algorithm introduced in Pachón R., Gonnet P., van Deun J., 
+% "Fast and stable rational interpolation in roots of unity and Chebyshev 
+% points", submitted. The case of rational interpolation in roots of unity
+% and arbitrary grids on the complex plane are also treated in that paper
+% although not implemented in RATINTERP. See also CHEBPADE and CF for other
+% rational approximation methods in Chebfun.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -21,90 +36,78 @@ function [p,q,r_handle] = ratinterp(f,d,m,varargin)
 %  This version of RATINTERP lives in @domain.
 %  There is a companion code in @chebfun.
 
-a = d.ends(1); b = d.ends(end);
-if nargin == 3,
-    n = 0; xi = chebpts(m+1,[a,b]); % polynomial interpolation in Chebyshev points
-    type = 'chebyshev';
-end
-if nargin == 4
-    if length(varargin{1}) == 1
+a = d.ends(1); b = d.ends(end);              
+chebkind = chebfunpref('chebkind');
+if nargin == 3,                              % polynomial interpolation in Chebyshev points 
+    p = chebfun(f,[a,b],m+1);                % (uses the Chebfun constructor)
+    q = chebfun(1);
+    xk = chebpts(m+1,[a,b],chebkind);
+    rh = @(x) bary(x,p.vals,xk,bary_weights(xk));
+    return;
+elseif nargin == 4
+    if length(varargin{1}) == 1              % rational interpolation in Chebyshev points
         n = varargin{1};
-        xi = chebpts(m+n+1,[a,b]);
+        xk = chebpts(m+n+1,[a,b],chebkind);
         type = 'chebyshev';
-    elseif length(varargin{1}) == m+1  % polynomial interpolation on arbitrary grid
-        n = 0;
-        xi = varargin{1};
+    elseif length(varargin{1}) == m+1        % polynomial interpolation in arbitrary grid
+        xk = varargin{1};                    % (uses chebfun/interp1)
+        p = interp1(xk,feval(f,xk),d);
+        q = chebfun(1);
+        rh = @(x) bary(x,p.vals,xk,bary_weights(xk));
+        return;        
+    else
+        error('DOMAIN:ratinterp:input','Unrecognized input sequence.'); 
+    end
+elseif nargin == 5
+    n = varargin{1};
+    if length(varargin{2}) == m+n+1          % rational interpolation in arbitrary grid
+        xk = varargin{2};
         type = 'arbitrary';
     else
         error('DOMAIN:ratinterp:input','Unrecognized input sequence.'); 
     end
-end
-if nargin == 5
+elseif nargin == 6        
     n = varargin{1};
-    xi = varargin{2};
-    type = 'arbitrary';
-    %if length(xi) ~= m+n+1
-    %    error('DOMAIN:ratinterp:input',['The vector of nodes must be of length M+N+1 = ',num2str(N+1),'.']);
-    %end
+    if strcmp(varargin{2},'chebpts')         % rational interpolation in Chebyshev points
+        chebkind = varargin{3};              % of specific kind
+        xk = chebpts(m+n+1,[a,b],chebkind);
+        type = 'chebyshev';
+    else
+        error('DOMAIN:ratinterp:input','Unrecognized input sequence.'); 
+    end
 end
-% init some constants
-%N = m+n;
-N = length(xi)-1;
-xi = xi(:);
-fx = f(xi);
-if strcmp(type,'chebyshev')
-    % get the Chebyshev coefficients of fx (not f!)
-    gama = flipud( chebpoly( chebfun ( fx ) )' );
-    % assemble the matrix Z
-    Z = zeros(n,n+1);
-    for i=m+1:N, for j=0:n
-        for k=0:N
-            if i + j == k || i + k == j || j + k == i || ...
-               2*N - (i+j) == k || 2*N - (i+k) == j || 2*N - (j+k) == i
-                if (i == N && k == N) || (j == 0 && k == 0)
-                    Z(i-m,j+1) = Z(i-m,j+1) + 2 * gama(k+1);
-                elseif i == N || k == N || j == 0 || k == 0
-                    Z(i-m,j+1) = Z(i-m,j+1) + gama(k+1);
-                else
-                    Z(i-m,j+1) = Z(i-m,j+1) + gama(k+1) / 2;
-                end;
-            end;
-        end;
-    end; end;
-    % get the null-space of Z
-    alfa = null( Z );
-    % did we get only one solution? try to restrict alfa if we did...
-    if size(alfa,2)>1
-        warning('DOMAIN:ratinterp','Denominator computed to be of degree %i.',n-size(alfa,2)+1);
-        R = qr( flipud( alfa )' );
-    	alfa = flipud( R(end,size(alfa,2):end)' );
-    end;
-    % construct q
-    q = chebfun( chebpolyval( flipud( alfa ) ) , [a,b] );
-    qi = feval(q,xi);
-    % construct p
-    p = chebfun( qi.* fx , [a,b] );
-    c = chebpoly(p);
-    p = chebfun( chebpolyval( c( n+1:end ) ) , [a,b] );
-    % construct r
-    w = [.5 ; ones(N,1)]; 
-    w(2:2:end) = -1;
-    w(end) = .5*w(end);
-    w = w.* qi;
-    r_handle = @(x) bary(x,fx,xi,w);
+N = m+n;
+xk = xk(:);
+fk = feval(f,xk);                                         % function values 
+if strcmp(type,'chebyshev') 
+    if chebkind == 1                                  
+        D = dct(diag(fk));                                % compute C'(Phi')
+        Z = dct(D(1:n+1,:)');                             % compute C'(C'(Phi'))'
+        [u,s,v] = svd(Z(m+2:N+1,:));                      % svd of syst w size nx(n+1)
+        qk = idct(v(:,end),N+1);                          % values of q at Cheb pts 
+        wk = (-1).^(0:N)'.*sin((2*(0:N)+1)*pi/(2*N+2))';  % barycentric weights      
+    elseif chebkind == 2  % <- this case can be modified to use FFTs
+        xko = chebpts(m+n+1,chebkind);                    % chebpts on interval [-1,1]
+        C(:,1) = ones(N+1,1); C(:,2) = xko;               % Vandermonde-type matrix
+        for k = 2:N, 
+            C(:,k+1) = 2*xko.*C(:,k)-C(:,k-1);            % 3-term recurrence
+        end
+        half = [1/2; ones(N-1,1);1/2];
+        Z = C(:,m+2:N+1).' * diag(half.*fk)*C(:,1:n+1);   % modified matrix Z
+        [u,s,v] = svd(Z);                                 % svd of syst w size nx(n+1)
+        qk = C(:,1:n+1) * v(:,end);                       % values of q at Cheb pts 
+        wk = half.*(-1).^((0:N)');                        % barycentric weights        
+    end
+    p = chebfun(qk.*fk,[a,b],'chebkind',chebkind);        % chebfun of numerator
+    q = chebfun(qk,[a,b],'chebkind',chebkind);            % chebfun of denominator
+    rh = @(x) bary(x,fk,xk,qk.*wk);                       % function handle of rat interp
 elseif strcmp(type,'arbitrary')
-    % construct the complex nodes and weights
-    xk = (2*xi-a-b)/(b-a);                       % map [a,b] to [-1,1]
-    % construct the vandermonde-linke matrix Z
-    Z = chebpoly(0:N-m); Z = Z(xk,:);    
-    % get the null-space of L*Z and make qk out of it
-    wxk = bary_weights(xk);
-    M = Z(:,1:N-m).' * diag(fx.*wxk) * Z(:,1:n+1);
-    [u,s,v] = svd(M);
-    qk = Z(:,1:n+1) * v(:,end);
-    % construct the interpolants
-    % p = chebfun(@(x) bary(x,qk.*fx,xi,wxk),d.ends([1,end]),m+1);
-    p = chebfun(@(x) bary(x,qk.*fx,xi,wxk),d.ends([1,end]),m+1);
-    q = chebfun(@(x) bary(x,qk,xi,wxk),d.ends([1,end]),n+1);
-    r_handle = @(x) bary(x,fx,xi,qk.*wxk);
+    [C,~] = qr(fliplr(vander(xk)));                       % construct orth matrix
+    Z = C(:,m+2:N+1).' * diag(fk) * C(:,1:n+1);           % assemble matrix
+    [u,s,v] = svd(Z);                                     % svd of syst w size nx(n+1)
+    qk = C(:,1:n+1) * v(:,end);                           % values of q at grid
+    wk = bary_weights(xk);                                % barycentric weights
+    p = chebfun(@(x) bary(x,qk.*fk,xk,wk),[a,b],m+1);     % chebfun of numerator
+    q = chebfun(@(x) bary(x,qk,xk,wk),[a,b],n+1);         % chebfun of denominator
+    rh = @(x) bary(x,fk,xk,qk.*wk);                       % handle to evaluate in C
 end
