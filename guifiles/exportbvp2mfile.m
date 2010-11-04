@@ -34,7 +34,7 @@ if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
 if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
 if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 
-[deString indVarName] = setupFields(deInput,deRHSInput,'DE');
+[deString indVarName dummyPDEflag dummyAllVarName allVarString] = setupFields(deInput,deRHSInput,'DE');
 
 % Print the BVP
 fprintf(fid,'%% Solving\n%%');
@@ -93,12 +93,12 @@ fprintf(fid,'rhs = %s;\n',deRHSprint);
 
 fprintf(fid,'\n%% Assign boundary conditions to the chebop.\n');
 if ~isempty(lbcInput{1})
-    lbcString = setupFields(lbcInput,lbcRHSInput,'BC');
+    lbcString = setupFields(lbcInput,lbcRHSInput,'BC',allVarString);
     fprintf(fid,'N.lbc = %s;\n',lbcString);
 end
 
 if ~isempty(rbcInput{1})
-    rbcString = setupFields(rbcInput,rbcRHSInput,'BC');
+    rbcString = setupFields(rbcInput,rbcRHSInput,'BC',allVarString);
     fprintf(fid,'N.rbc = %s;\n',rbcString);
 end
 

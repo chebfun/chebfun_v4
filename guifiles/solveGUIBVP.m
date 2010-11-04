@@ -32,7 +32,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString indVarName] = setupFields(deInput,deRHSInput,'DE');
+[deString indVarName dummyPDEflag dummyAllVarName allVarString] = setupFields(deInput,deRHSInput,'DE');
 
 % Assign x or t as the linear function on the domain
 eval([indVarName, '=xt;']);
@@ -41,13 +41,13 @@ eval([indVarName, '=xt;']);
 DE  = eval(deString);
 
 if ~isempty(lbcInput{1})
-    [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC');
+    lbcString = setupFields(lbcInput,lbcRHSInput,'BC',allVarString);
     LBC = eval(lbcString);
 else
     LBC = [];
 end
 if ~isempty(rbcInput{1})
-    [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC');
+    rbcString = setupFields(rbcInput,rbcRHSInput,'BC',allVarString);
     RBC = eval(rbcString);
 else
     RBC = [];

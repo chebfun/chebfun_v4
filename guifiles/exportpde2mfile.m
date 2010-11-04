@@ -35,7 +35,7 @@ if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
 if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 
 % [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
-[deString indVarName pdeflag] = setupFields(deInput,deRHSInput,'DE');
+[deString indVarName pdeflag dummyVarNames allVarString] = setupFields(deInput,deRHSInput,'DE');
 if ~any(pdeflag)
     error('CHEBFUN:chebpde:notapde',['Input does not appear to be a PDE, ', ...
         'or at least is not a supported type.']);
@@ -115,7 +115,7 @@ fprintf(fid,'pdefun = %s;\n',deString);
 % Make assignments for left and right BCs.
 fprintf(fid,'\n%% Assign boundary conditions.\n');
 if ~isempty(lbcInput{1})
-    [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC');
+    [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC', allVarString);
     idx = strfind(lbcString, ')');
     if ~isempty(idx)
         % Support for sum and cumsum
@@ -133,7 +133,7 @@ if ~isempty(lbcInput{1})
 end
 
 if ~isempty(rbcInput{1})
-    [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC');
+    [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC', allVarString);
     idx = strfind(rbcString, ')');
     if ~isempty(idx)
         % Support for sum and cumsum

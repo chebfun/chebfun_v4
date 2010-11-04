@@ -40,7 +40,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 % try           
     % Convert the input to the an. func. format, get information about the
     % linear function in the problem.
-    [deString indVarName pdeflag allVarNames] = setupFields(deInput,deRHSInput,'DE');  
+    [deString indVarName pdeflag allVarNames allVarString] = setupFields(deInput,deRHSInput,'DE');  
     handles.varnames = allVarNames;
     
     if ~any(pdeflag)
@@ -73,7 +73,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
     end
     
     if ~isempty(lbcInput{1})
-        [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC');
+        [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC',allVarString);
         idx = strfind(lbcString, ')');
         if ~isempty(idx)
             
@@ -94,7 +94,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
         LBC = [];
     end
     if ~isempty(rbcInput{1}) 
-        [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC');
+        [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC',allVarString);
         idx = strfind(rbcString, ')');
         if ~isempty(idx)
             
