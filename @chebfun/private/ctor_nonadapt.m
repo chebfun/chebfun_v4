@@ -111,6 +111,8 @@ for ii = 1:length(ops)
             if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
             if ~isfield(pref,'map')
                 g = fun(@(x) feval(op,x), [a b], n(ii));
+                % Need to maintain same Jacobian information
+                f.jacobian = op.jacobian;
             else
                 g = fun(@(x) feval(op,x), maps(pref.map,es), n(ii));
             end
