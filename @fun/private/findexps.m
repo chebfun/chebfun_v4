@@ -76,7 +76,7 @@ end
 function exponent = getExp1(f,loc)
 % 'poles only' : integer exponent output
     exponent = 0;
-    while blowupB(softenR(f,loc,exponent),loc)
+    while blowupB(softenR(f,loc,exponent),loc) && exponent < 101
         exponent = exponent +1;
     end 
 end
@@ -88,8 +88,9 @@ function exponent = getExp2(f,loc)
     a=b-1;
     % decimal search    
     tol=0.00000000001;
+    count = 0;
     % main loop
-    while abs(b-a) > 1.1*tol     
+    while abs(b-a) > 1.1*tol && count < 101
         numpts = 10;
         points = a:(b-a)/numpts:b;   
         i=1; exponent = points(i);
@@ -105,6 +106,7 @@ function exponent = getExp2(f,loc)
         else
             a=points(i-1); b=points(i);
         end
+        count = count + 1;
     end
 end
 
