@@ -38,7 +38,7 @@ if ~pref.resampling
 %     warning('resampling ''off'' is not supported in chebsys.'); 
     pref.resampling = 1;
 end
-if isfield(pref,'exps') && any(pref.exps), 
+if isfield(pref,'exps') && ~all(pref.exps | isinf(pref.exps))
     warning('CHEBFUN:chebsys:exp','Exps not supported in chebsys.'); 
 end
 % -------------------------------------------------------------------------

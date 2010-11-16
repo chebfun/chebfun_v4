@@ -19,11 +19,13 @@ function D = diff(d,varargin)
 
 % defaults
 m = 1;
-if all(isfinite(d.ends))
-    map = maps(fun,{'linear'},d.ends);    % standard linear map
-else
-    map = maps(fun,{'unbounded'},d.ends); % default unbounded map
-end
+% if all(isfinite(d.ends))
+%     map = maps(fun,{'linear'},d.ends);    % standard linear map
+% else
+%     map = maps(fun,{'unbounded'},d.ends); % default unbounded map
+% end
+map = maps(d);
+
 
 % parse inputs
 if nargin > 1
@@ -48,7 +50,7 @@ if isempty(d)
 elseif all(isfinite(d.ends))
     D = linop( @(n) mat(n,m), @(u) diff(u,m), d, m );   
 else
-    D = linop( @(n) diag(1./map.der(chebpts(n)))*diffmat(n), @(u) diff(u), d, 1 );
+    D = linop( @(n) mat(n,m), @(u) diff(u), d, 1 );
     if m > 1, D = mpower(D,m); end
 end
 
@@ -62,8 +64,6 @@ end
             n = n{1};
         end
         
-        % Force a default map for unbounded domains.
-        if any(isinf(d)) && isempty(map), map = maps(d); end
         % Inherit the breakpoints from the domain.
         breaks = union(breaks, d.ends);
         if isa(breaks,'domain'), breaks = breaks.ends; end
@@ -77,6 +77,11 @@ end
                 error('DOMAIN:diff:numints','Vector N does not match domain D.');
             end
         end
+        
+        % Force a default map for unbounded domains.
+        if any(isinf(d)) && isempty(map)
+            if isempty(breaks), map = maps(d); end
+        end            
 
         if isempty(map) && isempty(breaks)
             % Standard case

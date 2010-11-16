@@ -6,7 +6,7 @@ function pref = chebopdefaults
 %  $Date$:
 
 pref = chebfunpref;
-pref.splitting = false;
+% pref.splitting = false;
 pref.sampletest = false;
 pref.resampling = true;
 pref.exps = [inf inf];

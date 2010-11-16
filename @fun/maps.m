@@ -8,13 +8,16 @@ if length(varargin) == 1 && isa(varargin{1},'domain')
 % We check for the special case where the input is a domain and if so
 % return the default map for that domain.
     d = varargin{1};
-    if ~any(isinf(d)) % Get default map from mappref 
-        map = feval(mappref('name'),[d mappref('par')]);
-        return
-    else % Use default unbounded map
-        varargin{1} = 'unbounded';
-        varargin{2} = d;
+    d = d.endsandbreaks;
+    for k = 1:numel(d)-1
+        dk = d(k:k+1);
+        if ~any(isinf(dk)) % Get default map from mappref 
+            map(k) = feval(mappref('name'),[dk mappref('par')]);
+        else % Use default unbounded map
+            map(k) = maps(fun,'unbounded',dk);
+        end
     end
+    return
 end
 
     

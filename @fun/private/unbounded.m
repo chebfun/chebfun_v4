@@ -6,7 +6,7 @@ function [m,v,scl] = unbounded(par,fh,n)
 % $Date$:
 
 a = par(1); b = par(2); par = par(:).';
-m = struct('for',[],'inv',[],'der',[]);
+m = struct('for',[],'inv',[],'der',[],'name',[],'par',[],'inherited',[]);
 
 % map parameter:
 if length(par) == 2
@@ -106,6 +106,7 @@ if nargout > 1
 end
 
 m.name = 'unbounded';
+m.inherited = 0;
 
 
 % function y = mfor_inf_inf(x,s,c)
