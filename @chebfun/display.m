@@ -12,6 +12,10 @@ function display(F)
 
 % Copyright 2002-2009 by The Chebfun Team. 
 
+if strcmp(get(0,'FormatSpacing'),'loose')
+    fprintf('\n')
+end
+    
 disp([inputname(1) ' = '])
 
 if numel(F)>1
@@ -27,6 +31,9 @@ if numel(F)>1
     
         displaychebfun(F(k),columnstr)
         
+        if k~=numel(F)% && strcmp(get(0,'FormatSpacing'),'loose')
+            fprintf('\n')
+        end
     end
         
 else
@@ -41,6 +48,9 @@ else
     
 end
 
+if strcmp(get(0,'FormatSpacing'),'loose')
+    fprintf('\n')
+end
 
 % -----------------------------------------------------
 
@@ -77,14 +87,15 @@ function displaychebfun(f, columnstr)
     % If any non-trivial exponents
     extras =' ';
     if exps
-        extras = '   exponents';
+        extras = '  exponents';
     end
     % If non-linear map, display "mapped Chebyshev instead"
     if mapped        
-        extras= [extras '     mapping'];
+        if ~exps, sp = ' '; else sp = '   '; end
+        extras = [extras sp 'mapping'];
     end
      
-    fprintf('       interval          length    endpoint values %s \n',extras)
+    fprintf('       interval       length   endpoint values %s \n',extras)
     for j = 1:f.nfuns
         len(j)= funs(j).n;
         
@@ -97,7 +108,7 @@ function displaychebfun(f, columnstr)
             infends = isinf(f.funs(j).map.par(1:2));
             expsj(infends) = -expsj(infends);
             expsj(~logical(expsj)) = 0; % This prevents the display of -0 (a bug in matlab)
-            exinfo = ['    ' num2str(expsj, '%5.2g') '  '];            
+            exinfo = ['  ' num2str(expsj, '%5.2g') '  '];            
         else
             exinfo = ' ';
         end
@@ -108,13 +119,13 @@ function displaychebfun(f, columnstr)
         if mapped
             pars = funs(j).map.par(3:end);
             if numel(pars) > 2 && ~strcmpi(funs(j).map.name,'sing'), pars = []; end
-            exinfo = [exinfo '    ' funs(j).map.name ' ' num2str(pars,'%5.2g')];    
+            exinfo = [exinfo ' ' funs(j).map.name ' ' num2str(pars,'%5.2g')];    
         end
         
         if ~isreal(funs(j).vals)
-            fprintf('[%9.2g,%9.2g]   %7i      Complex values %s \n', ends(j), ends(j+1), len(j), exinfo);
+            fprintf('[%8.2g,%8.2g]   %6i    complex values %s \n', ends(j), ends(j+1), len(j), exinfo);
         else
-            fprintf('[%9.2g,%9.2g]   %6i  %9.2g %9.2g %s \n', ends(j), ends(j+1), len(j), endvals, exinfo);
+            fprintf('[%8.2g,%8.2g]   %6i %8.2g %8.2g %s \n', ends(j), ends(j+1), len(j), endvals, exinfo);
         end        
     end
     
@@ -123,4 +134,4 @@ function displaychebfun(f, columnstr)
     else
         fprintf('vertical scale = %3.2g \n', f.scl)
     end
-    disp(' ')
+    

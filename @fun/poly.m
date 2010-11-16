@@ -8,24 +8,46 @@ function out = poly(f)
 % Last commit: $Author$: $Rev$:
 % $Date$:
 
-v=chebpoly(f);
-n=length(v);
-tnold2=1;
-tnold1=[0 1];
+v = chebpoly(f);
+n = length(v);
+out = zeros(1,n);
+    
+% Coefficients on the unit interval
 if (n==1)
-  out = tnold2*v;
+  out = v;
 elseif (n==2)
-  out = [0 v(2)*tnold2]+v(1)*tnold1(end:-1:1);
+  out(1:2) = v;
 else
-  temp = [0 v(end)*tnold2]+v(end-1)*tnold1(end:-1:1);
-  for i=3:n
-    tn=zeros(1,length(tnold1)+1);
-    tn(2:end)=2*tnold1;
-    tn=tn-[tnold2 0 0];
-    out=v(end-i+1)*tn(end:-1:1);
-    out=out+[0 temp];
-    temp=out;
-    tnold2=tnold1;
-    tnold1=tn;
+  % Initialise  
+  tn = zeros(1,n);
+  tnold1 = [0 1 zeros(1,n-2)];
+  tnold2 = [1 zeros(1,n-1)];
+  out = zeros(1,n);
+  out(1:2) = [0 v(end)*tnold2(1)]+v(end-1)*tnold1(2:-1:1);
+  % Recurrence
+  for k = 3:n
+    tn(1:k) = [0 2*tnold1(1:k-1)]-[tnold2(1:k-2) 0 0];
+    out(1:k) = v(end-k+1)*tn(k:-1:1)+[0 out(1:k-1)];
+    tnold2 = tnold1;
+    tnold1 = tn;
   end
+end
+
+a = f.map.par(1);
+b = f.map.par(2);
+% Rescale if necessary
+if ( a~=-1 || b~=1 )
+    out = out(end:-1:1);
+    
+    % Constants for rescaling
+    alpha = 2/(b-a); 
+    beta = -(b+a)/(b-a);
+
+    % Rescale coefficients to actual interval
+    for j = 0:n-1
+        k = j:n-1;
+        binom = factorial(k)./(factorial(k-j)*factorial(j)); % Binomial coeff
+        out(j+1) = sum(out(k+1).*binom.*beta.^(k-j).*alpha^(j));
+    end
+    out = out(end:-1:1);
 end

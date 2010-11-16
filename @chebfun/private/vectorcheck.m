@@ -16,7 +16,9 @@ try
     warning off         % Turn off warnings off
     v = f(.99*x(:));    % Evaluate a vector of (near the) endpoints
     warning(dbz_state); % Restore warnings
-    if any(size(v) ~= size(x(:)))
+%     if any(size(v) ~= size(x(:)))
+    sv = size(v);    sx = size(x(:));
+    if ( all(sv>1) || ~any(sv==sx(1) | sv ==sx(2)) )
         if nargout == 1 && ~isfield(pref,'vectorize')
             warning('CHEBFUN:vectorcheck:shape',...
                     ['Function failed to evaluate on array inputs; ',...
@@ -29,6 +31,8 @@ try
             warning('CHEBFUN:vectorcheck:shapeauto',...
                 'Automatic vectorization may not have been successful.')
         end
+    elseif any(size(v) ~= size(x(:)))
+        f = @(x) f(x)';
     end
 catch %ME
     warning(dbz_state);     % Restore warnings (is this needed here?)

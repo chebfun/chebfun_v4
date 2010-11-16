@@ -34,16 +34,18 @@ function varargout = plot(varargin)
 % PLOT(F1,G1,'-',F2,G2,'--','LineWidth',2,'Color',[.6 0 0]) will plot dark
 % red lines of width 2 points. 
 %
-% Besides the usual parameters that control the specifications of lines 
-% (see linespec), the parameters JumpLine and JumpMarker determine the type 
-% of line and style of markers respectively for discontinuities of the 
-% chebfun. For example, PLOT(F,'JumpLine','-r')  will plot discontinuities 
-% as a solid red line, and PLOT(F,'-or','JumpMarker,'.k') will plot the jump 
-% values with black dots. Notice that it is not possible to modify other 
-% properties for jump lines or markers, that the defaults are ':' and 'x' 
-% respectively with colours  chosen to match the lines they correspond to, 
-% and that the jump values are  only plotted when the Chebyshev points are 
-% also plotted, unless an input 'JumpLine','S' is passed.
+% Besides the usual parameters that control the specifications of lines
+% (see linespec), the parameters JumpLine and JumpMarker determine the type
+% of line and style of markers respectively for discontinuities of the
+% chebfun. For example, PLOT(F,'JumpLine','-r')  will plot discontinuities
+% as a solid red line, and PLOT(F,'-or','JumpMarker,'.k') will plot the
+% jump values with black dots. By default the plotting styles for jumplines
+% and jumpmarkers are ':' and 'x' respectively with colours chosen to match
+% the lines they correspond to, and jump values are only plotted when the
+% Chebyshev points are also plotted, unless an input 'JumpLine','S' is
+% passed. It is possibly to modify other properties of jumplines and
+% jumpmarkers with syntax like PLOT(F,'JumpLine',{'r','LineWidth',5}).
+% Jumplines can be suppressed with the argument 'JumpLine','none'.
 %
 % PLOT(F,'interval',[A B]) restricts the plot to the interval [A,B] which 
 % can be useful when the domain of F is infinite, or for 'zooming in' 
@@ -189,7 +191,7 @@ if all(~isinf([bot top])) && infy
 end
 
 % Do not plot jumplines
-if isempty(jlinestyle) || strcmpi(jlinestyle,'none')
+if isempty(jlinestyle) || (ischar(jlinestyle) && strcmpi(jlinestyle,'none'))
     jumpdata = {NaN, NaN};
 end
 

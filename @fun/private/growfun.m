@@ -87,24 +87,85 @@ if kk(end)~=maxn, kk(end+1) = maxn; end
 % Composition case: gout = op(g), or gout = op(g1,g2). (see FUN/COMP.M)
 if nargin > 3
     % This uses chebpts of 2nd kind!
-    ish = false; 
-    for k = kk
-        v1 = get(prolong(g1,k),'vals');
+    ish = false;
+    if ~resample % Single Sampling
+        v = []; ind = 1;
+        v1 = get(prolong(g1,kk(ind)),'vals');
         if nargin == 5
-            v2 = get(prolong(g2,k),'vals');
-            v = op(v1,v2);
-        else
-            v = op(v1);
+            v2 = get(prolong(g2,kk(ind)),'vals');
         end
-        g = set(g,'vals', v);
-        g = extrapolate(g,pref);        
-        g = simplify(g, pref.eps);
-        if g.n < k
-            ish = true;     % We're happy
-            break           % so quit.
+        if isfield(pref,'extrapolate') && pref.extrapolate && ~pref.splitting
+        % Avoid evaluating at ends if is extrapolation is forced.
+        % Although we can't do this if splitting is on.
+            v1([1 end]) = v1([2 end-1]); 
+            if nargin == 5
+                v2([1 end]) = v2([2 end-1]); 
+            end
+        end
+        if nargin == 5
+            vnew = op(v1,v2);
+        else
+            vnew = op(v1);
+        end
+        % Loop over the vector of lengths
+        while ind <= numel(kk)
+            % Update v (which stores the vals at the Chebyshev points)
+            if isempty(v)
+                v = vnew;
+            else
+                v(1:2:kk(ind)) = v;
+                v(2:2:end-1) = vnew;
+            end
+            g = set(g,'vals', v);               % Set the values (and vscl)
+            g = extrapolate(g,pref);            % Extrapolate if need be
+            g = simplify(g, pref.eps);
+            if g.n < kk(ind)
+                ish = true;     % We're happy
+                break           % so quit.
+            end
+            if ind == length(kk), break, end    % We've failed. Quit.
+            
+            % New vals
+            ind = ind + 1;
+            v1 = get(prolong(g1,kk(ind)),'vals');
+            v1 = v1(2:2:end-1);
+            if nargin == 5
+                v2 = get(prolong(g2,kk(ind)),'vals');
+                v2 = v2(2:2:end-1);
+                vnew = op(v1,v2);  
+            else
+                vnew = op(v1);  
+            end
+        end
+    else % Double sampling
+        for k = kk
+            v1 = get(prolong(g1,k),'vals');
+            if nargin == 5
+                v2 = get(prolong(g2,k),'vals');
+                if isfield(pref,'extrapolate') && pref.extrapolate 
+                    v = op(v1(2:k-1),v2(2:k-1));
+                    v = [NaN ; v(:) ; NaN];
+                else
+                    v = op(v1,v2);
+                end
+            else
+                if isfield(pref,'extrapolate') && pref.extrapolate 
+                    v = op(v1(2:k-1));
+                    v = [NaN ; v(:) ; NaN];
+                else
+                    v = op(v1);
+                end
+            end
+            g = set(g,'vals', v);               % Set the values (and vscl)
+            g = extrapolate(g,pref);            % Extrapolate if need be       
+            g = simplify(g, pref.eps);          % Simplify
+            if g.n < k
+                ish = true;     % We're happy
+                break           % so quit.
+            end
         end
     end
-    
+            
     % Original maxn was wasn't a power of 2, so trim g back.
     if trimflag && g.n > oldmaxn
         g = prolong(g,oldmaxn);

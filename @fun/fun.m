@@ -172,6 +172,8 @@ else
     % Standard representation - No blowup.
     exps = [0 0]; 
 end
+if isfield(pref,'exps'), pref.exps(isinf(exps)) = 0; end
+exps(isinf(exps)) = 0;
 g.exps = exps;                                      % Assign exponents to fun
 
 % Scaling for funs on bounded intervals with exponents.

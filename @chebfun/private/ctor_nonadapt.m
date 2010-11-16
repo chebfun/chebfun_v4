@@ -33,6 +33,7 @@ funs = [];
 
 % Sort out whatever exponents have been passed.
 if isfield(pref,'exps') 
+    pref.exps(isinf(pref.exps)) = 0;
     exps = pref.exps;
 %     if iscell(exps), exps = cell2mat(exps); end  % Convert cell to vector
     if numel(exps) == 1, 
