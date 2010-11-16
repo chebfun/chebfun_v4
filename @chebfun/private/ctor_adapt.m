@@ -64,7 +64,11 @@ if isfield(pref,'exps')
     % Something is wrong.
         error('CHEBFUN:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
+    
+    % Inf exps are a way of passsing no exps. Remove these.
+    exps(isinf(exps)) = 0;
 end
+
 
 ii = 0;
 while ii < length(ops)
@@ -115,7 +119,13 @@ while ii < length(ops)
                 [fs,es,scl] = auto(op,es,scl,pref);
             end
         case 'function_handle'
-            op = vectorcheck(op,es,pref);    
+            [op flag] = vectorcheck(op,es,pref);
+            if ~isempty(flag)
+                % Force systems
+                [op ends] = vectorcheck(op,ends,pref);
+                f = autosys(op,ends,pref);
+                return
+            end
             [fs,es,scl] = auto(op,es,scl,pref);
         case 'chebfun'
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)
@@ -132,7 +142,7 @@ while ii < length(ops)
                 'more than one cell array to define the chebfun.'])
         otherwise
             error('CHEBFUN:ctor_adapt:inputclass',['The input argument of class ' class(op) ...
-                'cannot be used to construct a chebfun object.'])
+                ' cannot be used to construct a chebfun object.'])
     end
     % Concatenate funs, ends and handles (or ops)   
     funs = [funs fs];

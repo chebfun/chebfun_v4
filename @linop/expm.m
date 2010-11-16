@@ -31,13 +31,13 @@ function E = expm(A)
 maxdegree = cheboppref('maxdegree');
 
 % Check for warnings/errors.
-[L,B,c,rowrep] = feval(A,10,'bc');
+[L,B,c,rowrep] = feval(A,10,'oldschool');
 if any(c~=0)
   warning('LINOP:expm:boundarydata',...
     'Ignoring nonzero boundary data--setting to zero.')
 end
 
-if (A.numbc~=A.difforder) && all(A.blocksize==[1 1])
+if all(A.blocksize==[1 1]) && (A.numbc~=A.difforder)
   warning('LINOP:expm:bc',...
     'Operator may not have the right number of boundary conditions.')
 end
@@ -59,6 +59,14 @@ F.blocksize = [m m];
 
 
   function E = expm_mat(n)
+    in = n;
+    breaks = []; map = [];
+    if iscell(n)
+        if numel(n) > 1, map = n{2}; end
+        if numel(n) > 2, breaks = n{3}; end
+        n = n{1};
+    end
+      
     % Function may be called with n=2. Punt.
     if A.numbc >= n
       E = eye(n*m);
@@ -69,7 +77,7 @@ F.blocksize = [m m];
       error('LINOP:expm:NoConverge',msg)
     end
 
-    [L,B,c,rowrep] = feval(A,n,'bc');
+    [L,B,c,rowrep] = feval(A,n,'oldschool',map,breaks);
     elim = false(n*m,1);  elim(rowrep) = true;
     % Use algebra with the BCs to remove degrees of freedom.
     R = -L(elim,elim)\L(elim,~elim);  % maps interior to removed values

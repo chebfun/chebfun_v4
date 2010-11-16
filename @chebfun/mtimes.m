@@ -37,12 +37,13 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         f = F1(:,i);
         g = F2(i,:);
         op = @(u) f * (g*u);  % operational form
+                    
         % Matrix form available only for unsplit functions.
         if f.nfuns==1 && g.nfuns==1 
           x = @(n) d(1) + (1+sin(pi*(2*(1:n)'-n-1)/(2*n-2)))/2*length(d);
           C = cumsum(d);
           w = C(end,:);  % Clenshaw-Curtis weights, any n
-          mat = @(n) feval(f,x(n)) * (w(n) .* feval(g,x(n)).');
+          mat = @(n) matfun(n,w,x,f,g);
         else
           mat = [];
         end
@@ -85,6 +86,7 @@ else
     Fout = mtimes(F2.',F1.').';
 end
 
+end
 
 % ------------------------------------
 function f = mtimescol(a,f)
@@ -97,3 +99,10 @@ f.scl = abs(a)*f.scl;
 
 f.jacobian = anon('@(u) a*diff(f,u)',{'a' 'f'},{a f});
 f.ID = newIDnum;
+end
+
+
+function m = matfun(n,w,x,f,g)
+    if iscell(n), n = n{1}; end
+    m = feval(f,x(n)) * (w(n) .* feval(g,x(n)).');
+end

@@ -1,4 +1,4 @@
-function u = simplify(u,k,tol)
+function u = simplify(u,k,tol,force)
 % SIMPLIFY a chebfun
 %   U = SIMPLIFY(U,TOL) removes leading Chebyshev coefficients of the 
 %   chebfun U that are below epsilon, relative to the verical scale 
@@ -8,6 +8,10 @@ function u = simplify(u,k,tol)
 %   U = SIMPLIFY(U,K,TOL) simplifies only the funs of U given by the 
 %   entries of the integer vector K.
 %
+%   U = SIMPLIFY(U,TOL,'force') or SIMPLIFY(U,K,TOL,'force') forces an 
+%   agressive simplify, where any trailing coefficients less than TOL are
+%   removed.
+%
 %   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   Copyright 2002-2009 by The Chebfun Team. 
@@ -15,17 +19,30 @@ function u = simplify(u,k,tol)
 %   $Date$:
 
 % deal with input arguments
-if nargin ==1
+if nargin < 4, force = []; end
+if nargin == 1
     tol = chebfunpref('eps');
     k = [];
-elseif nargin == 2
+    force = 0;
+elseif ischar(k)
+    force = k;
+    k = [];
+    tol = chebfunpref('eps');
+else
     if min(k) < 1
+        if nargin > 2, force = tol; end
         tol = max(min(k),eps);
         k = [];
-    else
+    elseif nargin == 2
         tol = chebfunpref('eps');
     end
 end
+
+% Check inputs for forcing.
+if ischar(k), force = k; k = [];
+elseif ischar(tol), force = tol; end
+force = strcmpi(force,'force');
+
 if ~isempty(k) && numel(u)>1 && numel(u)~=length(k)
     error('CHEBFUN:simplify:quasimatrices',['For quasimatrices, '...
         'second imput must be a vector with length matching the '...
@@ -40,7 +57,7 @@ for j = 1:numel(u)
     end
     
     for kk = kfun
-        u(j).funs(kk) = simplify(u(j).funs(kk),tol);
+        u(j).funs(kk) = simplify(u(j).funs(kk),tol,[],force);
     end
     
 end

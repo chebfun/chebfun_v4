@@ -1,6 +1,6 @@
 function NewInputArg = unwrap_arg(varargin)
 
-% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team. See www.maths.ox.ac.uk/chebfun/
 
 if length(varargin) == 2
     var2 = varargin{2};
@@ -8,7 +8,7 @@ if length(varargin) == 2
         if isa(var2,'domain')
         % Deal with the domain class
             var2 = double(var2);
-        else
+        elseif ~iscell(var2)
         % If the last argument isn't a domain or a vector, there's a problem.
             error('CHEBFUN:unwraparg:inseq', ['Unrecognized input sequence: ',...
                 ' Last input argument was recognized neither as the vector of',...
@@ -69,6 +69,7 @@ else % More than 2 inputs
             end
         end
         NewInputArg = {varargin(1:end-2), varend2, varend};
+%     elseif ~iscell(var2)
     else
         %         NewInputArg = unwrap_arg(varargin{1:end-2},varend,varargin{end-1});
         error('CHEBFUN:unwraparg:inseq5', ['Unrecognized input sequence: ',...

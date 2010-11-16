@@ -40,9 +40,23 @@ while length(propertyArgIn) >= 2,
             F.funs(k).scl.v = val;
         end
     case 'trans'
-        F.trans = val;     
+        F.trans = val;
+    case 'domain'
+        old = get(F,'ends');
+        if isa(val,'domain'), val = val.ends; end
+        if numel(val) > 2
+            warning('CHEBFUN:set:domainasgn','Can only scale. Breakpoints ignored.');
+        elseif numel(val) == 1
+            error('CHEBFUN:set:domainasgn2','2 vector required.');
+        end
+        scl = diff(val)./diff(old([1 end]));
+        new = val(1)+(old-old(1))*scl;
+        F.ends = new;
+        for k = 1:F.nfuns
+            F.funs(k) = newdomain(F.funs(k),new(k:k+1));
+        end        
     otherwise
-        error('CHEBFUN:set:UnknwonProperty','chebfun properties: funs, ends and imps')
+        error('CHEBFUN:set:UnknownProperty','chebfun properties: funs, ends and imps')
     end
 end
 

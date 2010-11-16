@@ -1,11 +1,12 @@
-function f = extract_roots(f,numroots,sides)
+function f = extract_roots(f,numroots,sides,tol)
 % Extract roots from ends of funs.
-% Numroots is total number of roots to extract
-% sides = [1 0] will extract only from left, [0 1] only
+% NUMROOTS is total number of roots to extract
+% SIDES = [1 0] will extract only from left, [0 1] only
 % from the right, and [1 1] from both.
+% TOL manually adjusts the tolerance
 
-if nargin < 2, numroots = inf; end
-if nargin < 3, sides = [true true]; end
+if nargin < 2 || isempty(numroots), numroots = inf; end
+if nargin < 3 || isempty(sides), sides = [true true]; end
 
 % Get the domain
 d = f.map.par(1:2);
@@ -18,7 +19,11 @@ f.exps = [0 0];
 map = f.map;
 
 % Tolerance for a root
-tol = 500*chebfunpref('eps')*f.scl.v;
+if nargin < 4
+    tol = 500*chebfunpref('eps')*f.scl.v;
+else
+    tol = tol*f.scl.v;
+end
 f0 = abs(f.vals([1 end]));
 f0(~sides) = inf;
 % We're a bit more slack at infinite intervals
@@ -44,6 +49,7 @@ num = 0;
 if strcmp(map.name,'linear') || strcmp(map.name,'unbounded')
 % Linear case is nice
     c = chebpoly(f); % The Chebyshev coefficients of f
+    
     while any(f0 < tol) && f.n >1 && num < numroots
         c = flipud(c);
         if f0(1) < tol
@@ -68,7 +74,6 @@ if strcmp(map.name,'linear') || strcmp(map.name,'unbounded')
         f = fun(chebpolyval(c),f.map);
         f0 = abs(f.vals([1 end]));
         f0(~sides) = inf;
-        
         num = num+1;
     end
     

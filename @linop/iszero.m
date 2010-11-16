@@ -10,12 +10,14 @@ function isz = iszero(A)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
+dimExpand = 10;
+Aexpand = full(feval(A,dimExpand));
 
-if norm(full(feval(A,10))) == 0
-    isz = 1;
-else
-    isz = 0;
+isz = zeros(A.blocksize(1),A.blocksize(2));
+for rowcounter = 1:A.blocksize(1)
+    for colcounter = 1:A.blocksize(2)
+        isz(rowcounter,colcounter) = norm(Aexpand(1+(rowcounter-1)*dimExpand:rowcounter*dimExpand,1+(colcounter-1)*dimExpand:colcounter*dimExpand)) == 0;
+    end
 end
-
 
 end

@@ -2,15 +2,12 @@ function g = extrapolate(g,pref,x)
 % Extrapolate at endpoints if needed using "Fejer's 2nd rule" type of
 % barycentric formula. Also updates the vertical scale of g.
 
-if pref.extrapolate || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(g.vals)) 
-    
+if pref.extrapolate || pref.splitting || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(g.vals)) 
     if pref.chebkind == 2
            
         v = g.vals(2:end-1);
         
-        %if pref.sampletest || pref.splitting || any(g.exps) || any(isnan(g.vals)) || any(isinf(g.vals))
-        % Always extrapolate! But put endpoint values back in if they seem
-        % right!
+        % Always extrapolate! But put endpoint values back in if they seem right!
         
         if nargin < 3
             x = chebpts(g.n);

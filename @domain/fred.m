@@ -51,26 +51,83 @@ function F = fred(k,d,onevar)
 F = linop(@matrix,@op,d);
 
 % Functional form. At each x, do an adaptive quadrature.
-  function v = op(u)
+  function v = op(z)
     % Result can be resolved relative to norm(u). (For instance, if the
     % kernel is nearly zero by cancellation on the interval, don't try to
     % resolve it relative to its own scale.) 
-    opt = {'resampling',false,'splitting',true,'exps',[0 0],'scale',norm(u)};
-    int = @(x) sum(u.* (chebfun(@(y) k(x,y),d,opt{:})));
-    v = chebfun( int, d,'sampletest',false,'resampling',false,'exps',[0 0],'vectorize','scale',norm(u));
+    nrmf = norm(z);
+    opt = {'resampling',false,'splitting',true,'exps',[0 0],'scale',nrmf};
+    int = @(x) sum(z.* (chebfun(@(y) k(x,y),d,opt{:})));
+    v = chebfun( int, d,'sampletest',false,'resampling',false,'exps',[0 0],'vectorize','scale',nrmf);
+    newjac =  anon('@(u) F*diff(z,u)',{'F','z'},{F,z});
+    v = jacreset(v,newjac);
   end
 
 % Matrix form. At given n, multiply function values by CC quadrature
 % weights, then apply kernel as inner products. 
 if nargin==2, onevar=false; end
   function A = matrix(n)
-    [x s] = chebpts(n,d);
+    breaks = []; map = [];
+    if iscell(n)
+        if numel(n) > 1, map = n{2}; end
+        if numel(n) > 2, breaks = n{3}; end
+        n = n{1};
+    end
+    
+    % Force a default map for unbounded domains.
+    if any(isinf(d)) && isempty(map), map = maps(d); end
+    % Inherit the breakpoints from the domain.
+    breaks = union(breaks, d.ends);
+    if isa(breaks,'domain'), breaks = breaks.ends; end
+    if numel(breaks) == 2
+        % Breaks are the same as the domain ends. Set to [] to simplify.
+        breaks = [];
+    elseif numel(breaks) > 2
+        numints = numel(breaks)-1;
+        if numel(n) == 1, n = repmat(n,1,numints); end
+        if numel(n) ~= numints
+            error('DOMAIN:fred:numints','Vector N does not match domain D.');
+        end
+    end
+
+    if isempty(breaks) || isempty(map)
+        % Not both maps and breaks
+        if ~isempty(map)
+            [x s] = chebpts(n);
+            s = map.der(x.').*s;
+            x = map.for(x);
+        else
+            if isempty(breaks), breaks = d.ends; end
+            [x s] = chebpts(n,breaks);
+            n = sum(n);
+        end
+    else
+        % Maps and breaks
+        csn = [0 cumsum(n)];
+        x = zeros(csn(end),1);
+        s = zeros(1,csn(end));
+        if iscell(map) && numel(map) == 1, map = map{1}; end
+        mp = map;
+        for j = 1:numints
+            if numel(map) > 1
+                if iscell(map), mp = map{j}; end
+                if isstruct(map), mp = map(j); end
+            end
+            ii = csn(j)+(1:n(j));
+            [xj sj] = chebpts(n(j));
+            s(ii) = mp.der(xj.').*sj;
+            x(ii) = mp.for(xj);
+        end
+        n = sum(n);
+    end
+    
     if onevar  % experimental
       A = k(x)*spdiags(s',0,n,n);
     else
       [X,Y] = ndgrid(x);
       A = k(X,Y) * spdiags(s',0,n,n);
     end
+
   end
-    
+
 end

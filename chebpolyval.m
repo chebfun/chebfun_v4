@@ -27,7 +27,7 @@ if nargin == 1 || kind == 2
         v=ifft(v);
     end
     v = (lc-1)*[2*v(1); (v(ii)+v(2*lc-ii)); 2*v(lc)];
-    v=flipud(v);
+    v = v(end:-1:1);
     
 else % 1st kind
     if isreal(c)
@@ -53,4 +53,4 @@ else % odd case
     c(1:2:n) = vv(1:(n+1)/2);
     c(n-1:-2:2) = vv((n+1)/2+1:n);
 end
-c = flipud(c);
+c = c(end:-1:1);

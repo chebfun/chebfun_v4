@@ -5,6 +5,7 @@ function pass = eigsho
 tol = chebfunpref('eps');
 d = domain(0,pi);
 A = diff(d,2) & 'dirichlet';
+
 [V,D] = eigs(A,10);
 lam = diag(D);
 k = sqrt(-lam);

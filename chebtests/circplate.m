@@ -14,9 +14,11 @@ B.lbc(1)=D; B.lbc(2)=D^3;   % symmetry at origin
 B.rbc(1)=I; B.rbc(2)=D;     % clamped at boundary
 
 u1 = B\(r.^3.*f);
-u = solution;
+u2 = chebfun(solution,d);
 
-pass = norm(u-u1) < 1e-10*(tol/eps);
+% chebpolyplot(u1); hold on
+% chebpolyplot(u2,'--r'); hold off
+pass = norm(u1-u2) < 1e-9*(tol/eps);
 
 
 function y = solution

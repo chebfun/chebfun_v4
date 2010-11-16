@@ -58,7 +58,7 @@ while j <= length(r)
         j = j+1;
     end
 end
-    
+
 % The new breakpoints
 newbkpts = setdiff(r,ends);
 

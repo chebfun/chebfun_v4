@@ -50,5 +50,6 @@ if rem(n,2) == 0 % Even case
 else % odd case
     vv = [v(1:2:n); v(n-1:-2:2)];
 end
-c = flipud(real(w.*fft(vv)));
+c = real(w.*fft(vv));
+c = c(end:-1:1);
 c(end) = c(end)/2;

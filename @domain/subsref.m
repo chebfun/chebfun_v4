@@ -27,6 +27,8 @@ switch(s(1).type)
     elseif isequal(k,':')
       t = chebfun(@(x) x,d);
       %t = d.ends([1 end]);
+    elseif isnumeric(k) && min(k)>0 && max(k)<=length(d.ends)
+      t = domain(d.ends(k));
     else
       valid = false;
     end
@@ -42,6 +44,8 @@ switch(s(1).type)
         end
       case 'ends'
         t = d.ends([1 end]);
+      case 'endsandbreaks'
+        t = d.ends;
       otherwise
         valid = false;
     end

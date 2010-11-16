@@ -30,7 +30,7 @@ else % Use FFTs to prolong
         g.vals = chebpolyval( [zeros(m,1); c] ); g.n = nout; 
     else
         % To shorten a fun, we need to consider aliasing
-        c = flipud(c);
+        c = c(end:-1:1);
         calias = zeros(nout,1);
         nn = 2*nout-2;
         calias(1) = sum(c(1:nn:end));        
@@ -38,7 +38,7 @@ else % Use FFTs to prolong
             calias(k) = sum(c(k:nn:end))+sum(c(nn-k+2:nn:end));
         end
         calias(nout) = sum(c(nout:nn:end));
-        calias = flipud(calias);
+        calias = calias(end:-1:1);
         g.vals = chebpolyval(calias); g.n = nout; 
     end
 end

@@ -71,7 +71,14 @@ switch s(1).type
       case 'bc'                    % BC MNEMONICS OR STRUCT
         A = setbc(A,B);
         valid = true;
-                          
+        
+      case 'oparray'               % REASSIGN OPARRAY
+        A.oparray = B;
+        valid = true;
+      case {'domain','fundomain'}               % REASSIGN DOMAIN
+          if isnumeric(B), B = domain(B); end
+        A.fundomain = B;
+        valid = true;                      
     end
 end
 

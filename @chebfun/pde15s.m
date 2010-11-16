@@ -4,8 +4,13 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 % arguments u, t, x, and D, TT is a vector, U0 is a chebfun, and BC is a 
 % chebop boundary condition structure will solve the PDE dUdt = PDEFUN(UU,t,x)
 % with the initial condition U0 and boundary conditions BC over the time
-% interval TT. D in PDEFUN represents the differential operator of U, and
-% D(u,K) will represent the Kth derivative of u.
+% interval TT. 
+%
+% PDEFUN should take the form @(U1,U2,...,UN,T,X,D,S,C), where U1,...,UN
+% are the unknown dependent variables to be solved for, T is time, X is
+% space, D is the differential operator, S is the definite integral
+% operator (i.e., 'sum'), and C the indefinite integral operator (i.e.,
+% 'cumsum').
 %
 % For equations of one variable, UU is output as a quasimatrix, where UU(:,k)
 % is the solution at TT(k). For systems, the solution is returned as a
@@ -52,6 +57,7 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 % There is some support for nonlinear boundary conditions, such as
 %    BC.LEFT = @(u,t,x,D) D(u) + u - (1+2*sin(10*t));
 %    BC.RIGHT = struct( 'op', 'dirichlet', 'val', @(t) .1*sin(t));
+% with the input format being the same as PDEFUN described above.
 %
 % See also pdeset, ode15s, chebop/pde15s
 %
@@ -72,7 +78,7 @@ doplot = 1;             % plot after every time chunk?
 dohold = 0;             % hold plot?
 plotopts = '-';         % Plot Style
 dojac = false; J = [];  % Supply Jacobian
-dojacbc = true;         % Use AD to figure out BC positions.
+dojacbc = false;         % Use AD to figure out BC positions.
 
 % Parse the variable inputs
 if numel(varargin) == 2
@@ -401,7 +407,9 @@ end
 if isnan(optN)
     u0 = simplify(u0,tol);
 else
-    u0.funs(1) = prolong(u0.funs(1),optN);
+    for k = 1:numel(u0)
+        u0(:,k).funs(1) = prolong(u0(:,k).funs(1),optN);
+    end
 end
 
 % The vertical scale of the intial condition
@@ -423,13 +431,13 @@ end
 ucur = u0;
 % storage
 if syssize == 1
-    uu = repmat(chebfun(0,d),1,length(tt));
+%     uu = repmat(chebfun(0,d),1,length(tt));
     uu(:,1) = ucur;
 else
     % for systems, each functions is stored as a quasimatrix in a cell array
     uu = cell(1,syssize);
     for k = 1:syssize
-        tmp = repmat(chebfun(0,d),1,length(tt));
+%         tmp = repmat(chebfun(0,d),1,length(tt));
         tmp(:,1) = ucur(:,k);
         uu{k} = tmp;
     end
@@ -541,7 +549,8 @@ clear global GLOBX
             GLOBX = x;      % set the global variable x
             
             % See what the boundary replacement actions will be.
-            [ignored,B,q,rows] = feval( diffop & bc, n, 'bc' );
+            [ignored,B,q,rows] = feval( diffop & bc, n, 'oldschool');
+
             % Mass matrix is I except for algebraic rows for the BCs.
             M = speye(syssize*n);    M(rows,:) = 0;
         
@@ -976,6 +985,8 @@ if ~isempty(findstr(lower(funstr),'cumsum'))
     Nops = 3;
 elseif ~isempty(findstr(lower(funstr),'sum')) || ~isempty(findstr(lower(funstr),'int'))
     Nops = 2;
+elseif ~isempty(findstr(funstr,'D(')) || ~isempty(findstr(lower(funstr),'diff('))
+    Nops = 1; % Well, we might as well give this a shot...
 end
 
 if isempty(Nops)

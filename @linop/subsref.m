@@ -1,6 +1,6 @@
 function A = subsref(A,s)
 %SUBSREF  Extract information from a linop.
-% A{N} returns a realization of the linop A at dimension N. If N is
+% A(N) returns a realization of the linop A at dimension N. If N is
 % infinite, the functional form of the operator is returned as a function
 % handle. If N is finite, any boundary conditions on A will be applied to
 % some rows of A. (This is equivalent to the output of FEVAL(A,N,'bc').)
@@ -37,7 +37,7 @@ switch s(1).type
     if isa(t{1},'chebfun')
       A = mtimes(A,t{1});
       valid = true;
-    elseif length(t)==2
+    elseif length(t)==2 && strcmp(t{2},':')
       % Will return first row, last row, or both only.
       firstrow = t{1}==1;
       lastrow = isinf(t{1}) & real(t{1})==0;
@@ -50,12 +50,18 @@ switch s(1).type
         A = linop(mat,op,A.fundomain );
         valid = true;
       end
-    elseif length(t)==1 && isnumeric(t{1})  % return a realization (feval)
-      if A.numbc > 0
-        A = feval(A,t{1},'bc');
-      else
-        A = feval(A,t{1});
+    elseif isnumeric(t{1}) % return a realization (feval)
+%       if length(t) > 1 && ~iscell(t{2}) && strcmpi(t{2},'bc'), t(2) = []; end
+      if length(t) == 1, t{2} = []; end
+      if ~ischar(t{2})
+          if numel(t) == 4, t(2) = []; end
+          if A.numbc > 0
+              t = {t{1} 'bc' t{2:end}}; % By default we apply the bcs
+%           else
+%               t = {t{1} 'rect' t{2:end}}; % By default return rectmat
+          end
       end
+      A = feval(A,t{:});
       valid = true;
    end
   case '.'
@@ -83,6 +89,10 @@ switch s(1).type
         A = A.difforder;
       case 'ID'
         A = A.ID;
+      case 'mat'
+        A = A.varmat;
+      case {'domain','fundomain'}
+        A = A.fundomain;
       otherwise 
         valid = false;
     end

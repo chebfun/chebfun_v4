@@ -36,14 +36,20 @@ C = cumsum(d);
 V = linop(@matrix,@op,d,-1);
 
 % Functional form. At each x, do an adaptive quadrature.
-  function v = op(u)
+  function v = op(z)
     % Result can be resolved relative to norm(u). (For instance, if the
     % kernel is nearly zero by cancellation on the interval, don't try to
     % resolve it relative to its own scale.) 
     opt = {'resampling',false,'splitting',true,'blowup','off'};
     % Return a chebfun for integrand at any x
-    h = @(x) (chebfun(@(y) u(y).*k(x,y),[d.ends(1) x],opt{:},'scale',norm(u),'exps',[0 0])); 
-    v = chebfun(@(x) sum(h(x)), d,'exps',[0 0],'vectorize','scale',norm(u));
+    dom = domain(z);  brk = dom.ends(2:end-1); 
+    nrm = norm(z);
+    h = @(x) chebfun(@(y) z(y).*k(x,y),[dom.ends(1) brk(brk<x) x], ...
+        opt{:},'scale',nrm,'exps',[0 0]);    
+    v = chebfun(@(x) sum(h(x)), [d.ends(1) brk d.ends(2)], ...
+        'exps',[0 0],'vectorize','scale',nrm);
+    newjac =  anon('@(u) V*diff(z,u)',{'V','z'},{V,z});
+    v = jacreset(v,newjac);
   end
 
 % Matrix form. Each row of the result, when taken as an inner product with
@@ -51,14 +57,63 @@ V = linop(@matrix,@op,d,-1);
 % be triangular for low-order quadrature, for spectral methods it is not.
 if nargin==2, onevar=false; end
   function A = matrix(n)
-    x = chebpts(n,d);
-    if onevar  
-      A = k(x);
-    else
-      [X,Y] = ndgrid(x);
-      A = k(X,Y);
+    breaks = []; map = [];
+    if iscell(n)
+        if numel(n) > 1, map = n{2}; end
+        if numel(n) > 2, breaks = n{3}; end
+        n = n{1};
     end
-    A = A.*C(n);
+    
+    % Force a default map for unbounded domains.
+    if any(isinf(d)) && isempty(map), map = maps(d); end
+    % Inherit the breakpoints from the domain.
+    breaks = union(breaks, d.ends);
+    if isa(breaks,'domain'), breaks = breaks.ends; end
+    if numel(breaks) == 2
+        % Breaks are the same as the domain ends. Set to [] to simplify.
+        breaks = [];
+    elseif numel(breaks) > 2
+        numints = numel(breaks)-1;
+        if numel(n) == 1, n = repmat(n,1,numints); end
+        if numel(n) ~= numints
+            error('DOMAIN:volt:numints','Vector N does not match domain D.');
+        end
+    end
+   
+    if isempty(breaks) || isempty(map)
+        % Not both maps and breaks
+        if ~isempty(map)
+            x = map.for(chebpts(n));
+        else
+            if isempty(breaks), breaks = d.ends; end
+            x = chebpts(n,breaks);
+        end
+    else
+        % Maps and breaks
+        csn = [0 cumsum(n)];
+        x = zeros(csn(end),1);
+        if iscell(map) && numel(map) == 1, map = map{1}; end
+        mp = map;
+        for j = 1:numints
+            if numel(map) > 1
+                if iscell(map), mp = map{j}; end
+                if isstruct(map), mp = map(j); end
+            end
+            ii = csn(j)+(1:n(j));
+            x(ii) = mp.for(chebpts(n(j)));
+        end
+    end
+    
+    if onevar  
+        A = k(x);
+    else
+        [X,Y] = ndgrid(x);
+        A = k(X,Y);
+    end
+    A = A.*feval(C,n,0,map,breaks);
+        
+    
+    
   end
     
 

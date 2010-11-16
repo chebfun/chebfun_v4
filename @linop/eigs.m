@@ -20,6 +20,10 @@ function varargout = eigs(A,varargin)
 % be chosen appropriately for the given operator; for example, 'LM' for an
 % unbounded operator will fail to converge!
 %
+% EIGS(A,MAP), where MAP is a map structure (such as returned by the call
+% maps('kte',.99) ), returns the eigenvalues of the linop D under the map
+% MAP.
+%
 % Despite the syntax, this version of EIGS does not use iterative methods
 % as in the built-in EIGS for sparse matrices. Instead, it uses the
 % built-in EIG on dense matrices of increasing size, stopping when the 
@@ -42,12 +46,16 @@ function varargout = eigs(A,varargin)
 %  $Date$:
 
 % Parsing.
-B = [];  k = 6;  sigma = [];
+B = [];  k = 6;  sigma = []; map = []; breaks = [];
 gotk = false;
 j = 1;
 while (nargin > j)
   if isa(varargin{j},'linop')
     B = varargin{j};
+  elseif isstruct(varargin{j}) && isfield(varargin{j},'name')
+      if ~strcmp(varargin{j}.name,'linear')
+        map = varargin{j};
+      end
   else
     % k must be given before sigma.
     if ~gotk
@@ -61,53 +69,93 @@ while (nargin > j)
 end
 
 maxdegree = cheboppref('maxdegree');
+maxdegree = 511;
 m = A.blocksize(2);
 if m~=A.blocksize(1)
   error('LINOP:eigs:notsquare','Block size must be square.')
 end
 
+domA = A.fundomain;
+if ~isempty(B)
+    domB = B.fundomain;
+    dom = union(domA,domB);
+    A.fundomain = dom;
+    B.fundomain = dom;
+else
+    dom = domA;
+end
+breaks = dom.endsandbreaks;
+numints = numel(breaks)-1;
+
 if isempty(sigma)
   % Try to determine where the 'most interesting' eigenvalue is.
-  [V1,D1] = bc_eig(A,B,33,33,0);
-  [V2,D2] = bc_eig(A,B,65,65,0);
+  if numel(breaks) == 2
+      [V1,D1] = bc_eig(A,B,33,33,0,map,breaks);
+      [V2,D2] = bc_eig(A,B,65,65,0,map,breaks);
+  else
+      [V1,D1] = bc_eig_sys(A,B,33,33,0,map,breaks);
+      [V2,D2] = bc_eig_sys(A,B,65,65,0,map,breaks);
+  end
   lam1 = diag(D1);  lam2 = diag(D2);
   dif = repmat(lam1.',length(lam2),1) - repmat(lam2,1,length(lam1));
   delta = min( abs(dif) );   % diffs from 33->65
   bigdel = (delta > 1e-12*norm(lam1,Inf));
-  if all(bigdel) 
+  if all(bigdel)
     % All values changed somewhat--choose the one changing the least.
     [tmp,idx] = min(delta);
     sigma = lam1(idx);
-  else
-    % Of those that did not change much, take the smallest cheb coeff
-    % vector. 
-    lam1(bigdel) = [];
-    V1 = reshape( V1, [33,m,size(V1,2)] );  % [x,varnum,modenum]
-    V1(:,:,bigdel) = [];
-    V1 = permute(V1,[1 3 2]);       % [x,modenum,varnum]
-    C = zeros(size(V1));
-    for j = 1:size(C,3)  % fpr each variable
-      C(:,:,j) = abs( cd2cp(V1(:,:,j)) );  % cheb coeffs of all modes
-    end
-    mx = max( max(C,[],1), [], 3 );  % max for each mode over all vars
-    [cmin,idx] = min( sum(sum(C,1),3)./mx );  % min 1-norm of each mode
-    sigma = lam1(idx);
+  elseif numel(breaks) == 1 % Smooth
+      'smooth'
+        % Of those that did not change much, take the smallest cheb coeff
+        % vector. 
+        lam1(bigdel) = [];
+        V1 = reshape( V1, [33,m,size(V1,2)] );  % [x,varnum,modenum]
+        V1(:,:,bigdel) = [];
+        V1 = permute(V1,[1 3 2]);       % [x,modenum,varnum]
+        C = zeros(size(V1));
+        for j = 1:size(C,3)  % for each variable
+          C(:,:,j) = abs( cd2cp(V1(:,:,j)) );  % cheb coeffs of all modes
+        end
+        mx = max( max(C,[],1), [], 3 );  % max for each mode over all vars
+        [cmin,idx] = min( sum(sum(C,1),3)./mx );  % min 1-norm of each mode
+        sigma = lam1(idx);
+  else                      % Piecewise
+        lam1(bigdel) = [];
+        V1 = reshape( V1, [33,numints,m,size(V1,2)] );  % [x,interval,varnum,modenum]
+        V1(:,:,:,bigdel) = [];
+        V1 = permute(V1,[1 4 2 3]);       % [x,modenum,varnum]
+        C = zeros(size(V1));
+        for j = 1:size(C,4)  % for each variable
+            for l = 1:numints
+              C(:,:,l,j) = abs( cd2cp(V1(:,:,l,j)) );  % cheb coeffs of all modes
+            end
+        end
+        mx = max( max( max(C,[],1), [], 3 ) , [], 4);  % max for each mode over all vars
+        [cmin,idx] = min( sum(sum(sum(C,1),3),4)./mx );  % min 1-norm of each mode
+        sigma = lam1(idx);
   end
 end
 
 % These assignments cause the nested function value() to overwrite them.
-V = [];  D = [];
-% Adaptively construct the sum of eigenfunctions.
-v = chebfun( @(x) A.scale + value(x), chebopdefaults) - A.scale;
+V = [];  D = [];  Nout = [];
 
+% Default settings
+settings = chebopdefaults;
+settings.scale = A.scale;
+
+% Adaptively construct the sum of eigenfunctions.
+if numel(breaks) == 2
+    chebfun( @(x) value(x), dom, settings);
+else
+    chebfun( @(x,N,bks) value_sys(x,N,bks), {breaks} , settings);
+end
 % Now V,D are already defined at the highest value of N used.
 
-if nargout<2
+if nargout < 2
   varargout = { diag(D) };
-else
-  dom = A.fundomain;
+elseif numel(breaks) == 2
   V = reshape( V, [N,m,k] );
-  Vfun = {}; 
+  Vfun = cell(1,m);
   for j = 1:k
     nrm2 = 0;
     for i = 1:m
@@ -121,8 +169,38 @@ else
       Vfun{i}(:,j) = Vfun{i}(:,j)/sqrt(nrm2);
     end
   end
-  if m==1, Vfun = Vfun{1}; end
+  if m == 1, Vfun = Vfun{1}; end
   varargout = { Vfun, D };
+else
+    N = Nout;
+    V = mat2cell(V(:),repmat(N,1,m*k),1);
+
+    Vfun = cell(1,m);
+    for l = 1:m, Vfun{l} = chebfun; end % initialise
+    settings.maxdegree = maxdegree;  settings.maxlength = maxdegree;
+    
+    for kk = 1:k % Loop over each eigenvector
+        nrm2 = 0;
+        for l = 1:m % Loop through the equations in the system
+            tmp = chebfun; 
+            % Build a chebfun from the piecewise parts on each interval
+            for j = 1:numel(breaks)-1
+                funj = fun( filter(V{1},1e-8), breaks(j:j+1), settings);
+                tmp = [tmp ; set(chebfun,'funs',funj,'ends',breaks(j:j+1),...
+                    'imps',[funj.vals(1) funj.vals(end)],'trans',0)];
+                V(1) = [];
+            end
+            % Simplify it
+            tmp = simplify(tmp,settings.eps);
+            Vfun{l}(:,kk) = tmp;
+            nrm2 = nrm2 + norm(tmp)^2;
+        end
+        for l = 1:m % Normalise
+            Vfun{l}(:,kk) = Vfun{l}(:,kk)/sqrt(nrm2);
+        end
+    end
+    if m == 1, Vfun = Vfun{1}; end % Return a quasimatrix in this case
+    varargout = { Vfun, D };
 end
 
   % Called by the chebfun constructor. Returns values of the sum of the
@@ -140,26 +218,73 @@ end
       v = ones(N,1); 
       v(2:2:end) = -1;
     else
-      [V,D] = bc_eig(A,B,N,k,sigma);
+      [V,D] = bc_eig(A,B,N,k,sigma,map,breaks);
       v = sum( sum( reshape(V,[N,m,k]),2), 3);
       v = filter(v,1e-8);
     end
   end
 
+  % Called by the chebfun constructor. Returns values of the sum of the
+  % "interesting" eigenfunctions. 
+  function v = value_sys(y,N,bks)
+    if nargin == 1, v = y; return, end
+    N = N{:};   bks = bks{:};     % We allow only the same discretization
+                                    % size and breaks for each system
+    maxdo = max(A.difforder(:));  % the maximum derivative order of the system
+    
+    if m*sum(N) > maxdegree+1
+      error('LINOP:mldivide:NoConverge',['Failed to converge with ',int2str(maxdegree+1),' points.'])
+    elseif any(N==1)
+      error('LINOP:mldivide:OnePoint',...
+        'Solution requested at a lone point. Check for a bug in the linop definition.')
+    elseif any(N < maxdo+1)
+      % Too few points: force refinement
+      jj = find(N < maxdo+1);
+      csN = [0 ; cumsum(N)];
+      v = y;
+      for ll = 1:length(jj)
+          e = ones(N(jj(ll)),1); e(2:2:end) = -1;
+          v{csN(jj(ll))+(1:N(jj(ll)))} = e; 
+      end
+      return
+    end    
+
+    [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks);
+    
+    v = sum(reshape(V,[sum(N),k,m]),3);  % Combine equations
+    v = sum(v,2);                        % Combine nodes
+
+    % Filter
+    csN = cumsum([0 N]);
+    for jj = 1:numel(N)
+      ii = csN(jj) + (1:N(jj));
+      v(ii) = filter(v(ii),1e-8);
+    end
+    v = {v};  
+
+    % Store these to be used by the wrapper function
+    Nout = N;
+
+  end
 
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [V,D] = bc_eig(A,B,N,k,sigma)
+function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
+breaks = union(breaks,A.fundomain.endsandbreaks);
+% N = 5;
+if (numel(N) == 1 && numel(breaks) > 2)
+    N = repmat(N,1,numel(breaks)-1);
+end
 % Computes the (discrete) e-vals and e-vecs. 
-
 m = A.blocksize(1);
 % Instantiate A, with row replacements.
-L = feval(A,N);
-[Abdy,c,rowrep] = bdyreplace(A,N);
+L = feval(A,N,map,breaks);
+[Abdy,c,rowrep] = bdyreplace(A,N,map,breaks);
 L(rowrep,:) = Abdy;
 elim = false(N*m,1);
 elim(rowrep) = true;
+
 if isempty(B)
   % Use algebra with the BCs to remove degrees of freedom.
   R = -L(elim,elim)\L(elim,~elim);  % maps interior to removed values
@@ -171,7 +296,7 @@ if isempty(B)
   V(elim,:) = R*V(~elim,:);
 else
   % Use generalized problem to impose the BCs.
-  M = feval(B,N);
+  M = feval(B,N,map);
   %FIXME: Kludge when B is given BCs. We have to assume that these are 
   % given in the same order as they are in A. I can't see any way to check 
   % up on this. 
@@ -196,6 +321,44 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks)
+    % y is a cell array with the points for each function.
+    % N{j}(k) contains the # of pts for equation j on interval k.
+    % bks{j}(k:k+1) is the ends of the interval j for equation k.
+    
+    m = A.blocksize(1);
+    numints = numel(bks)-1;
+    if numel(N) == 1, N = repmat(N,1,numints); end
+
+    if ~isempty(B), error('No support for generalised pw eval problems.'); end  
+
+    % Evaluate the Matrix with boundary conditions attached
+    [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,bks);
+    % Compute the (discrete) e-vals and e-vecs using generalised e-val
+    % problem.
+    
+    if m == 1
+        Pmat = [P ; zeros(numel(c),sum(N)*m)];
+    else
+        Pmat = zeros(sum(N)*m);
+        i1 = 0; i2 = 0;
+        for j = 1:A.blocksize(1)
+            ii1 = i1+(1:size(P{j},1));
+            ii2 = i2+(1:size(P{j},2));
+            Pmat(ii1,ii2) = P{j};
+            i1 = ii1(end); i2 = ii2(end);
+        end   
+    end
+
+    [W,D] = eig(full(Amat),full(Pmat));
+    idx = nearest(diag(D),sigma,k);
+    V = W(:,idx);
+
+    D = D(idx,idx);
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Returns index vector that sorts eigenvalues by the given criterion.
 function idx = nearest(lam,sigma,k)
 
@@ -213,6 +376,8 @@ else
       [junk,idx] = sort(real(lam));
     case 'LM'
       [junk,idx] = sort(abs(lam),'descend');
+    otherwise
+      error('CHEBFUN:linop:eigs:sigma', 'Unidentified input ''sigma''.');
   end
 end
 

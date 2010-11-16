@@ -1,8 +1,11 @@
-function f = vectorcheck(f,x,pref)
-% Try to determine whether f is vectorized. 
+function [f ends] = vectorcheck(f,x,pref)
+% Try to determine whether f is vectorized or maybe returns a system. 
+%
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. See www.maths.ox.ac.uk/chebfun/
+% Copyright 2002-2009 by The Chebfun Team.
 
+ends = [];
 if isfield(pref,'vectorize') % force vectorization
     f = vec(f);
 end
@@ -34,21 +37,28 @@ try
     elseif any(size(v) ~= size(x(:)))
         f = @(x) f(x)';
     end
+    
 catch %ME
-    warning(dbz_state);     % Restore warnings (is this needed here?)
-    if nargout == 1 && ~isfield(pref,'vectorize')
-        warning('CHEBFUN:vectorcheck:vecfail',...
-                ['Function failed to evaluate on array inputs; ',...
-                'vectorizing the function may speed up its evaluation and avoid ',...
-                'the need to loop over array elements. Use ''vectorize'' flag in ',...
-                 'the chebfun constructor call to avoid this warning message.'])
-        f = vec(f);
-        vectorcheck(f,x,pref);
-    else
-        rethrow(lasterror)
+    
+    try 
+        % Perhaps it's a system?
+        s = size(f(repmat({.99*x(:)},1,1e4)));
+        ends = repmat({x(:).'},1,length(s));
+    catch
+        if nargout == 1 && ~isfield(pref,'vectorize')
+            warning('CHEBFUN:vectorcheck:vecfail',...
+                    ['Function failed to evaluate on array inputs; ',...
+                    'vectorizing the function may speed up its evaluation and avoid ',...
+                    'the need to loop over array elements. Use ''vectorize'' flag in ',...
+                     'the chebfun constructor call to avoid this warning message.'])
+            f = vec(f);
+            vectorcheck(f,x,pref);
+        else
+            rethrow(lasterror)
+        end
     end
 end
-
+warning(dbz_state); % Restore warnings
 
 
 end

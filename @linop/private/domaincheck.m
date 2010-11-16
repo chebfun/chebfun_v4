@@ -15,9 +15,11 @@ if nargin==0
 end
 dom = domain(varargin{1});
 for k = 2:nargin
-  if ~eq(domain(varargin{k}),dom)
+  dk = domain(varargin{k});
+  if ~eq(dk,dom)
     error('LINOP:domaincheck:nomatch','Function domains do not match.')
   end
+  dom = union(dom,dk);
 end
 
 

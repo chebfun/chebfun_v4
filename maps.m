@@ -54,5 +54,7 @@ function map = maps(varargin)
 %     f = chebfun('(4-x.^2).^.3',[-2 2],'map',m)
 %  SING type maps can be called directly in the constructor via
 %     f = chebfun('(4-x.^2).^.3',[-2 2],'singmap',[.25 .25])
+%
+%  M = MAPS(D) returns the default map for the domain D.
 
 map = maps(fun,varargin{:});

@@ -29,7 +29,7 @@ function A = linop(varargin)
 A.varmat = [];
 A.oparray = oparray;     % inf-dim representation
 A.difforder = 0;
-A.fundomain = domain([-1 1]);
+A.fundomain = domain(chebfunpref('domain'));
 A.lbc = struct([]);
 A.rbc = struct([]);
 A.numbc = 0;
@@ -53,7 +53,7 @@ else
   end
   % Third argument supplies the function domain. 
   if nargin>=3 
-    d = domain( varargin{3}.ends );
+    d = domain( [varargin{3}] );
     A.fundomain = d;
   end
   % 4th argument is differential order

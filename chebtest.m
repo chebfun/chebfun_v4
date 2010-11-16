@@ -77,8 +77,16 @@ fprintf('\nTesting %i functions:\n\n',length(mfile))
 failed = zeros(length(mfile),1);   % Pass/fail
 t = failed;                        % Vector to store times
 
-% Clear the report file
-fclose(fopen(fullfile(dirname, filesep,'chebtest_report.txt'),'w+'));
+% Clear the report file (and check we can open file)
+[fid message] = fopen(fullfile(dirname, filesep,'chebtest_report.txt'),'w+');
+if fid < 0
+    warning('CHEBFUB:chebtest:fopenfail', ...
+        ['Cannot create chebtest report: ', message]);
+    createreport = false;
+    avgtimes = false;
+else
+    fclose(fid);
+end
 
 % For looking at average time performance.
 if avgtimes

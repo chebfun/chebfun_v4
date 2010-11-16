@@ -5,16 +5,21 @@ function [x w v] = chebpts(n,d,kind)
 %   CHEBPTS(N,D) scales the nodes and weights for the domain D. D can be
 %   either a domain object or a vector with two components. If the interval
 %   is infinite, the map is chosen to be the default 'unbounded map' with
-%   mappref('parinf') = [1 0] and mappref('adaptinf') = 0.
+%   mappref('parinf') = [1 0] and mappref('adaptinf') = 0. 
+%
+%   If D is a domain with breakpoints (or a vector of length greater than 2)
+%   and N a vector of length(D.BREAKS)+1 (or length(D)-1), then CHEBPTS
+%   returns a column vector of the stacked N(k) Chebyshev points on the 
+%   subintervals D(k:k+1). If length(N) is 1, then D is taken as D.ENDS.
 %
 %   [X W] = CHEBPTS(N,D) returns also a row vector of the (scaled) weights 
-%   for Clenshaw-Curtis quadrature. For nodes and weights of
-%   Gauss-Chebyshev quadrature, use [X W] = JACPTS(N,-.5,-.5,D).
+%   for Clenshaw-Curtis quadrature (compjuted using [1]). For nodes and 
+%   weights of Gauss-Chebyshev quadrature, use [X W] = JACPTS(N,-.5,-.5,D).
 %
 %   [X W V] = CHEBPTS(N,D) returns, in addition to the points and Gauss 
 %   quadrature weights, the barycentric weights corresponding to the points X.
 %
-%   [X W] = CHEBPTS(F) returns the Chebyshev nodes and weights
+%   [X W V] = CHEBPTS(F) returns the Chebyshev nodes and weights
 %   corresponding to the domain and length of the chebfun F.
 %
 %   CHEBPTS(N,KIND) or CHEBPTS(N,D,KIND) returns Chebyshev points of the
@@ -26,66 +31,99 @@ function [x w v] = chebpts(n,d,kind)
 %   
 %   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team.
+%
+% [1] Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis
+% quadrature rules", BIT Numerical Mathematics 43 (1), pp 1--18 (2004).
 
+
+% Intialise
+x = []; w = []; v = [];
 scale = false;
+
+% Parse the inputs
 if isa(n,'chebfun')
     if numel(n) > 1
         error('CHEBFUN:chebpts:quasi','chebpts does not work with quasi-matrices');
     end
-    ends = get(n,'ends');
-    x = zeros(length(n),1);
-    counter = 1;
+    d = get(n,'ends');
     if nargin == 1, kind = 2; end
-    if nargout < 2
+    if nargout == 1
         for k = 1:n.nfuns;
-            nn = n.funs(k).n;
-            x(counter:counter+nn-1) = chebpts(nn,ends(k:k+1),kind);
-            counter = counter+nn;
+            nk = n.funs(k).n;
+            x = [x ; chebpts(nk,d(k:k+1),kind)];
+        end
+    elseif nargout == 2
+        for k = 1:n.nfuns;
+            nk = n.funs(k).n;
+            [xk wk vk] = chebpts(nk,d(k:k+1),kind);
+            x = [x ; xk]; w = [w  wk];
         end
     else
-        w = zeros(1,length(n));
         for k = 1:n.nfuns;
-            nn = n.funs(k).n;
-            [xk wk] = chebpts(nn,ends(k:k+1),kind);
-            x(counter:counter+nn-1) = xk;
-            w(counter:counter+nn-1) = wk;
-            counter = counter+nn;
+            nk = n.funs(k).n;
+            [xk wk vk] = chebpts(nk,d(k:k+1),kind);
+            x = [x ; xk]; w = [w  wk]; v = [v ; vk];
         end
-    end 
+    end        
     return
 elseif nargin == 1
+    d = [-1 1];
     kind = 2;
-elseif nargin==2
+elseif nargin == 2
     if isa(d,'domain')
-       d = domain(d);
-       d = d.ends;
        scale = true;
        kind = 2;
-    elseif length(d) == 2
+    elseif length(d) == 1
+       kind = d;
+       d = [-1 1];
+    else
        scale = true;
        kind = 2; 
-    else
-        kind = d;
     end
-elseif nargin == 3
+elseif nargin >= 3
     scale = true; 
-    if isa(d,'domain')
-        d = domain(d);
-        d = d.ends;   
+end
+
+if isa(d,'domain')
+    d = d.endsandbreaks;   
+end
+if isempty(d) || ~any(n)
+    return % Return empty vector if domain is empty or n == 0
+end
+if numel(n) == 1
+    d = d([1 end]);
+end
+
+% Deal with the piecewise case (where d has breakpoints and n is a vector).
+numints = numel(d)-1; 
+if numints > 1
+    if numel(n) ~= numints
+        error('CHEBFUN:chebpts:numints','Vector N does not match domain D.'); 
     end
+    if nargout == 1
+        for k = 1:numints
+           x = [x ; chebpts(n(k),d(k:k+1),kind)];
+        end
+    elseif nargout == 2
+        for k = 1:numints
+           [xk wk] = chebpts(n(k),d(k:k+1),kind);
+           x = [x ; xk]; w = [w  wk];
+        end
+    else
+        for k = 1:numints
+           [xk wk vk] = chebpts(n(k),d(k:k+1),kind);
+           x = [x ; xk]; w = [w  wk]; v = [v ; vk];
+        end
+    end
+    return
+end    
+
+if numel(n) > 1, 
+    error('CHEBFUN:chebpts:vecn','Vector N does not match domain D.');
 end
 
-if numel(n) < 0, 
-    error('CHEBFUN:chebpts:vecn','input n should be an integer scalar');
-end
-
-% Return empty vector if n == 0
-if n == 0
-    x = []; w = []; v = []; return
-end
-
-if nargin > 1 && all(d==[-1 1]), scale = false; end
+if nargin > 1 && (all(d==[-1 1])), scale = false; end
 
 if      strcmpi(kind,'1st'), kind = 1;
 elseif  strcmpi(kind,'2nd'), kind = 2; end

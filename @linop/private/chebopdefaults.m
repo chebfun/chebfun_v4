@@ -12,5 +12,6 @@ pref.resampling = true;
 pref.exps = [inf inf];
 pref.blowup = 0;
 pref.vecwarn = 0;
+pref.vectorcheck = 0;
 pref.chebkind = 2;
 

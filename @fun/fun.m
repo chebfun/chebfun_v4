@@ -112,7 +112,11 @@ switch class(op)
         end
         % Assign data to the fun.
         g.vals = op(:); g.n = length(op); g.scl.v = max(g.scl.v, norm(op,inf)); 
-        if isfield(pref,'exps') && ~any(isnan(pref.exps)), g.exps = pref.exps; else g.exps = [0 0]; end
+        if isfield(pref,'exps') && ~any(isnan(pref.exps)) && ~any(isinf(pref.exps)), 
+            g.exps = pref.exps; 
+        else
+            g.exps = [0 0]; 
+        end
         return
     case 'char'
         % Convert string input to anonymous function.
@@ -157,7 +161,7 @@ end
 %      op(x) ./ ( (x-ends(1))^exps(1) * (ends(2)-x)^exps(2) )
 if isfield(pref,'exps')
     exps = pref.exps;
-    if ~pref.blowup, pref.blowup = blowup(NaN); end      % The default 'on' option
+    if ~pref.blowup, pref.blowup = blowup(NaN); end % Get the default 'on' option
     if all(isnan(pref.exps))                        % No exps given
         exps = findexps(op,ends,0,pref.blowup);     
     elseif isnan(exps(2))                           % Left exp given
@@ -192,14 +196,14 @@ if any(infends)
         op = @(x) rescl*op(x)./((g.map.inv(x)+1).^exps(1).*(1-g.map.inv(x)).^exps(2)); % New op
     end
 end
-    
+
 %% Call constructor
 if pref.n
     % Non-adaptive case (exact number of points provided).
     x = chebpts(pref.n,pref.chebkind);
     xvals = g.map.for(x);
-    g.vals = op(xvals);    g.n = pref.n; 
-    if g.n > 2 && (any(g.exps) || any(isnan(g.vals)) || any(isinf(g.map.par([1 2])))) 
+    g.vals = op(xvals);    g.n = pref.n;
+    if g.n > 2 && (any(g.exps) || any(isnan(g.vals)) || any(isinf(g.map.par([1 2])))) || pref.extrapolate || pref.splitting
     % Extrapolate only in special cases
         g = extrapolate(g,pref,x);
     else

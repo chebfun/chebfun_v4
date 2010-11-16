@@ -8,12 +8,13 @@ A = [ -I D;D Z ];
 A.lbc = [I Z];
 A.rbc = [I Z];
 
-lam = eigs(A,16);
+[V D] = eigs(A,16);
+lam = diag(D);
 
 lamcorrect = [
-   -0.000000000000000                     
+ -0.000000000000000                     
   0.000000000000002                     
- -0.499999999999999+0.866025403784436i
+ -0.499999999999999+ 0.866025403784436i
  -0.499999999999999- 0.866025403784436i
  -0.500000000000001+ 1.936491673103704i
  -0.500000000000001- 1.936491673103704i
@@ -29,4 +30,9 @@ lamcorrect = [
  -0.499999999999998- 6.982120021884483i
  ];
 
-pass = norm( lam-lamcorrect, inf ) < 1e-12;
+pass(1) = norm( lam-lamcorrect, inf ) < 1e-12;
+
+A.fundomain = domain(0,pi/2,pi);
+[V D] = eigs(A,16);
+lam_pw = diag(D);
+pass(2) = norm( lam_pw(1:end-1)-lamcorrect(2:end), inf ) < 1e-12;

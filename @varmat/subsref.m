@@ -55,6 +55,7 @@ end
     num = zeros(size(idx));
     i = isinf(idx);
     num(~i) = idx(~i);
+    if iscell(n), n = n{1}; end
     num(i) = n+real(idx(i));
   end
 

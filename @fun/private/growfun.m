@@ -84,7 +84,7 @@ end
 if kk(end)~=maxn, kk(end+1) = maxn; end
 
 % ---------------------------------------------------
-% Composition case: gout = op(g), or gout = op(g1,g2). (see FUN/COMP.M)
+% Composition case: gout = op(g), or gout = op(g1,g2). (see FUN/COMPFUN.M)
 if nargin > 3
     % This uses chebpts of 2nd kind!
     ish = false;
@@ -171,7 +171,9 @@ if nargin > 3
         g = prolong(g,oldmaxn);
         if ish, [ish, g] = ishappy(op,g,pref); end  % Check happiness again
     end
+    
     return
+
 end
 % ---------------------------------------------------
 
@@ -251,7 +253,12 @@ else                      % DOUBLE SAMPLING
             end
         end
         [ish, g] = ishappy(op,g,pref);
-        if ish, break, end
+        if ish, 
+            if isfield(pref,'simplify') && ~pref.simplify
+                g = prolong(g,k);
+            end
+            break
+        end
     end
     
 end

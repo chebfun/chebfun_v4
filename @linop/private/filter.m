@@ -1,4 +1,4 @@
-function v = filter(v,thresh)
+function [v cut] = filter(v,thresh)
 
 % The chebfun constructor is happy only when coefficient sizes drop below a
 % level that is tied to machine precision. For solutions of BVPs, this is
@@ -14,11 +14,12 @@ function v = filter(v,thresh)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
+cut = inf;
 n = length(v);
-if n < 64, return, end
+if n < 17, return, end
 
 c = cd2cp(v);    % coeffs in ascending degree
-ac = abs(c)/norm(v,inf);
+ac = abs(c);
 
 % Smooth using a windowed max to overcome symmetry oscillations.
 maxac = ac;
@@ -41,8 +42,9 @@ for k = 1:2
 end
 %cut = t+k+8 + find(mindmax < 0.02*min(mindmax), 1, 'last');
 cut = find(mindmax > 0.01*min(mindmax), 3);
-cut = cut(end) + t + k + 8;
+cut = cut(end) + t + k + 3;
 c(cut:end) = 0;
+
 v = cp2cd(c);
 
 end

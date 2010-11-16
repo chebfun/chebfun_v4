@@ -1,4 +1,4 @@
-function g = diff(g,k,c)
+function [g c] = diff(g,k,c)
 % DIFF	Differentiation
 % DIFF(G) is the derivative of the fun G.
 %
@@ -53,7 +53,8 @@ if strcmp(g.map.name,'linear')
             c = newcoeffs_der(c);
             n = n-1;
         end
-        g = fun(chebpolyval(c)/g.map.der(1).^k, g.map.par(1:2));
+        c = c/g.map.der(1).^k;
+        g = fun(chebpolyval(c), g.map.par(1:2));
                 
     else % function which blows up, need product rule
         
@@ -85,7 +86,7 @@ elseif norm(g.map.par(1:2),inf) == inf
             vals = chebpolyval(cout)./g.map.der(chebpts(n+nz-1));
             g.vals = vals;
             g.n = length(vals);
-            if i ~= k
+            if i ~= k || nargout > 1
                 c = chebpoly(g);
                 n = g.n;
             end
@@ -93,6 +94,7 @@ elseif norm(g.map.par(1:2),inf) == inf
         g.scl.v = max(g.scl.v,norm(vals,inf));
         if infboth
             g = simplify(g);
+            if nargout > 1, c = chebpoly(g); end
         end
         
     else % apply product rule!
@@ -118,8 +120,8 @@ elseif strcmp(g.map.name,'sing')
             end                                 % derivative of constant is zero
             
             % Compute derivative of g with respect to Cheby variable
-            cout = newcoeffs_der(c);
-            vals = chebpolyval(cout);
+            c = newcoeffs_der(c);
+            vals = chebpolyval(c);
             
             map = g.map;
             par = g.map.par(3:4);

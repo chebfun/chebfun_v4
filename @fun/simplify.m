@@ -1,4 +1,4 @@
-function g = simplify(g,tol,kind)
+function g = simplify(g,tol,kind,force)
 % This function removes leading Chebyshev coefficients that are below 
 % epsilon, relative to the verical scale stored in g.scl.v
 %
@@ -17,7 +17,7 @@ end
 if nargin == 1
     tol = chebfunpref('eps');
 end
-if nargin < 3
+if nargin < 3 || isempty(kind)
     kind = 2; % Second kind is default
 end
 epstol = 2^-52;
@@ -38,6 +38,20 @@ if g.scl.v == 0,
 end
 c = chebpoly(g,kind);                      % coeffs of Cheb expansion of g
 ac = abs(c)/g.scl.v;                  % abs value relative to scale of f
+
+% Force
+if nargin == 4 && force == 1
+    v = chebpolyval(c(find(ac > tol,1):end),2);  % chop the tail 
+    if length(v) > 1 && kind == 2
+        % forces interpolation at endpoints
+        g.vals = [g.vals(1);v(2:end-1);g.vals(end)];              
+    else
+        g.vals = v;
+    end
+    g.n = length(v);
+    return
+end
+
 Tlen = min(g.n,max(4,round((gn-1)/8)));% length of tail to test
 % which basically is the same as:
 % Tlen = n,             for n = 1:3
@@ -52,6 +66,7 @@ df = max(diff(xpts),eps*g.scl.h);
 mdiff =  (g.scl.h/g.scl.v)*norm(diff(g.vals)./df,inf);
 % Choose maximum between prescribed tolerance and estimated rounding errors
 Tmax = max(tol,epstol*min(1e12,max(mdiff,Tlen^(2/3))));
+
 % ---------------------------------------------------
 if max(ac(1:Tlen)) < Tmax             % we have converged; now chop tail
     Tend = find(ac>=Tmax,1,'first');  % pos of last entry below Tmax

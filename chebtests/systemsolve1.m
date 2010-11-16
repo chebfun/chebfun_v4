@@ -17,5 +17,13 @@ A.rbc = [Z I];
 u = A\f;
 
 u1 = u(:,1); u2 = u(:,2);
-pass(1) = norm( u1 - cos(x)) < 100*tol;
-pass(2) = norm( u2 - sin(x) ) < 100*tol;
+pass(1) = norm( u1 - cos(x),inf) < 100*tol;
+pass(2) = norm( u2 - sin(x),inf) < 100*tol;
+
+f(0,1) = f(0,1);
+u = A\f;
+
+u1 = u(:,1); u2 = u(:,2);
+pass(3) = norm( u1 - cos(x),inf) < 2000*tol;
+pass(4) = norm( u2 - sin(x),inf) < 2000*tol;
+

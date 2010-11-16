@@ -4,6 +4,20 @@ function map = maps(fun,varargin)
 %  @fun/private. It will not usually be called directly by the user, 
 %  but rather by its sister function maps.m in the trunk.
 
+if length(varargin) == 1 && isa(varargin{1},'domain')
+% We check for the special case where the input is a domain and if so
+% return the default map for that domain.
+    d = varargin{1};
+    if ~any(isinf(d)) % Get default map from mappref 
+        map = feval(mappref('name'),[d mappref('par')]);
+        return
+    else % Use default unbounded map
+        varargin{1} = 'unbounded';
+        varargin{2} = d;
+    end
+end
+
+    
 if length(varargin) == 1,
     varargin = {varargin};
     ends = chebfunpref('domain');

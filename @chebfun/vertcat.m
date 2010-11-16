@@ -41,7 +41,7 @@ if Fout(1).trans
                 if ~v(1).trans
                     error('CHEBFUN:vertcat:dims','CAT arguments dimensions are not consistent.')
                 elseif  ~(domain(v(1))==d)
-                    error('CHEBFUN:vertcat:doms','Domains are not consistent');
+                    error('CHEBFUN:vertcat:doms','Domains are not consistent.');
                 end
             end
         end
@@ -53,7 +53,7 @@ if Fout(1).trans
 else      
         
     if thereisdouble
-         error('CHEBFUN:vertcat:inargs','Incorrect input arguments')  % Cannot Tobycat doubles with chebfuns
+         error('CHEBFUN:vertcat:inargs','Incorrect input arguments.')  % Cannot Tobycat doubles with chebfuns
     end
     
     % TOBYCAT!
@@ -69,7 +69,7 @@ else
                 end
             end
         else
-            error('CHEBFUN:vertcat:numinargs','Incorrect input arguments')  % Cannot Tobycat doubles with chebfuns
+            error('CHEBFUN:vertcat:numinargs','Incorrect input arguments.')  % Cannot Tobycat doubles with chebfuns
         end
     end
     

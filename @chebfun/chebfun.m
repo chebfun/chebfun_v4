@@ -87,7 +87,7 @@ if nargin == 0;
 end
 
 % Chebfun preferences:
-if isstruct(varargin{nargin}) && ~strcmpi(varargin{nargin-1},'map')
+if isstruct(varargin{nargin}) & ~strcmpi(varargin{nargin-1},'map')
     pref = varargin{nargin};
     argin = varargin(1:end-1);
 else
@@ -130,7 +130,10 @@ else
                 k = k+2;
             elseif strncmpi('vectori',varargin{k},7)
                 pref.vectorize = 0;
-                k = k+1;  
+                k = k+1; 
+            elseif strncmpi('sys',varargin{k},3)
+                pref.syssize = value;
+                k = k+2; 
             elseif strncmpi('coeff',varargin{k},4)
                 pref.coeffs = 1; 
                 if ~isfield(pref,'coeffkind'), pref.coeffkind = 1; end
@@ -144,7 +147,10 @@ else
                 k = k+2;                  
             elseif strncmpi('extrap',varargin{k},6)
                 pref.extrapolate = value;
-                k = k+2;                  
+                k = k+2;     
+            elseif strcmpi('simplify',varargin{k})
+                pref.simplify = value;
+                k = k+2;           
             elseif strcmpi('length',varargin{k}) || strcmpi('n',varargin{k})
                 pref.n = value;
                 k = k+2;
@@ -195,25 +201,57 @@ elseif isa(argin{2},'domain')
     argin{2} = double(argin{2});
 end
 
-% Deal with nonadaptiv calls using 'degree'.
+% Deal with nonadaptive calls using 'degree'.
 if isfield(pref,'n')
     argin = [argin {pref.n}];
     pref = rmfield(pref,'n');
 end
 
 % Deal with multiple function inputs.
-if ~iscell(argin{1})
+if ~iscell(argin{1}) && ~iscell(argin{2})
     argin = unwrap_arg(argin{:});
 end
 
+if isfield(pref,'syssize') && ~iscell(argin{2})
+    if isa(argin{2},'domain') || (isnumeric(argin{2}) && numel(argin{2}) > 1)
+        argin{2} = repmat({argin{2}},1,pref.syssize);
+    else
+        domain = chebfunpref('domain');
+        argin{2} = repmat({domain},1,pref.syssize);
+    end
+end
+    
+if iscell(argin{2})
+    if numel(argin) >= 3, pref.n = argin{3}; argin(3:end) = []; end
+    f = autosys(argin{:},pref);
+    if iscell(f) && numel(f) == 1
+        f = f{:};
+    end
+    
+    % 'Truncate' option
+    if isfield(pref,'trunc')
+        warning('CHEBFUN:chebfun:truncsys','Truncation is not supported for systems.');
+    end
+    return
+end
+
 % Construct chebfun
-if  length(argin) == 2,
+if length(argin) == 2,
     f = ctor_adapt(f,argin{:},pref);        % adaptive call
 elseif length(argin) == 3,
     f = ctor_nonadapt(f,argin{:},pref);     % non-adaptive call
 else
     error('CHEBFUN:chebfun:nargin','Unrecognised input sequence.');
 end
+
+if iscell(f)
+    % 'Truncate' option
+    if isfield(pref,'trunc')
+        warning('CHEBFUN:chebfun:truncsys','Truncation is not supported for systems.');
+    end
+    return
+end
+    
 
 % Prune repeated endpoints and assign values to the imps matrix
 if f.nfuns > 1 && any(diff(f.ends) == 0)
@@ -249,6 +287,6 @@ f(1).scl = 0;
 f(1).ends = [];
 f(1).imps = [];
 f(1).trans = false;
-f(1).jacobian = anon('@(u) []','',[],0); % Set the anon to be a dummy anon with depth 0
+f(1).jacobian = anon('@(u) []','',[]);
 f(1).ID = []; % ID gets assigned in ctor_adapt and ctor_nonadapt, so leave empty here
 end

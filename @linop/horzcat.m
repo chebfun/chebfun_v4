@@ -34,8 +34,15 @@ V = horzcat(V{:});
 op = cellfun( @(A) A.oparray, varargin, 'uniform',false );
 op = horzcat( op{:} );
 
-% We disable differential order.
-difford = 0;
+% Nick H, 5/Aug/2010
+% Instead of disabling, we keep track of all difforders
+difford = [];
+for k = 1:numel(varargin)
+    difford = [difford varargin{k}.difforder];
+end
+% difford = cellfun(@(A) A.difforder, varargin, 'UniformOutput', 0)
+% difford = max(cellfun( @(A) A.difforder(1), varargin ));
+% difford = 0;    % We disable differential order.
 
 A = linop( V, op, dom, difford );
 

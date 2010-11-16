@@ -15,6 +15,7 @@ val = [];
 
 if numel(f) > 1
     if strcmpi(propName,'trans'), val = f(1).trans; return
+    elseif strcmpi(propName,'domain'), val = f(1).ends([1 end]); return
     else
         warning('CHEBFUN:get:quasi','''Get'' should not be called with quasimatrices');
     end
@@ -29,6 +30,8 @@ switch propName
         end
     case 'ends'
         val = f.ends;
+    case 'domain'
+        val = f.ends([1 end]);        
     case 'imps'
         val = f.imps;
     case 'nfuns'

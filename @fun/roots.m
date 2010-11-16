@@ -66,8 +66,10 @@ if ~recurse || (g.n<101)                                    % for small length f
             return
         end
         c=c(ind:end);
-        g.vals = chebpolyval(c);
-        g.n = length(c);
+        if length(c) < 5
+            g.vals = chebpolyval(c);
+            g.n = length(c);
+        end
     end
     if (g.n<=4)
         r=roots(poly(g));
@@ -92,7 +94,7 @@ if ~recurse || (g.n<101)                                    % for small length f
         A(:,1) = flipud(c);
 
         r=eig(A);                               % compute roots as eig(A)
-        
+
     end
     if ~all
         mask=abs(imag(r))<tol*g.scl.h;           % filter imaginary roots
@@ -107,6 +109,8 @@ if ~recurse || (g.n<101)                                    % for small length f
 %             mask = abs(gout) > abs(feval(g,outnew));
 %             out(mask) = outnew(mask);
             out = out-step;
+            
+            if any(isnan(out)), error, end
         end
         
         if ~isempty(out)

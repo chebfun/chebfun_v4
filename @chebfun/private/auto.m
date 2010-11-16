@@ -28,7 +28,7 @@ lenf = 0;
 
 % ----------------------------SPLITTING OFF-------------------------------
 
-% In  mode, seek only one piece with length no greater than maxdegree (default is 2^16)
+% In off mode, seek only one piece with length no greater than maxdegree (default is 2^16)
 if ~pref.splitting
      maxn = pref.maxdegree+1;
      
@@ -55,7 +55,7 @@ if isfield(pref,'exps'), exps = pref.exps; end
 sad = ~hpy; 
 
 % MAIN LOOP
-% If the above didn't work, anter main loop and start splitting 
+% If the above didn't work, enter main loop and start splitting 
 % (at least one breakpoint will be introduced).
 while any(sad)       
     % If a fun is sad in a subinterval, split this subinterval.

@@ -40,9 +40,9 @@ if ~isstruct(bc)
   switch(lower(type))
     case 'dirichlet'
       if A.difforder > 0
-        bc.left = struct('op',I,'val',val);
+        bc.left = struct('op',I,'val',val(1));
         if A.difforder > 1
-          bc.right = struct('op',I,'val',val);
+          bc.right = struct('op',I,'val',val(end));
           if A.difforder > 2
             warning('LINOP:setbc:order',...
               'Dirichlet may not be appropriate for differential order greater than 2.')
@@ -51,9 +51,9 @@ if ~isstruct(bc)
       end
     case 'neumann'
       if A.difforder > 0
-        bc.left = struct('op',D,'val',val);
+        bc.left = struct('op',D,'val',val(1));
         if A.difforder > 1
-          bc.right = struct('op',D,'val',val);
+          bc.right = struct('op',D,'val',val(end));
           if A.difforder > 2
             warning('LINOP:setbc:order',...
               'Neumann may not be appropriate for differential order greater than 2.')

@@ -19,7 +19,6 @@ if isa(g,'chebfun') && f(1).trans ~= g(1).trans
 end
 
 if numel(g) == 1
-    
     % Avoid composing with independant variable.
     if isa(g,'chebfun')
         xg = chebfun('x',domain(g),2);
@@ -27,7 +26,7 @@ if numel(g) == 1
     end
     if isa(f,'chebfun')
         xf = chebfun('x',domain(f),2);
-        if norm(f-xf,2) == 0,h = g; return, end
+        if norm(f-xf,2) == 0,h = chebfun(g); return, end
     end
     
     for k = 1:numel(f)
@@ -56,7 +55,7 @@ elseif size(f) == size(g)
         h(k).ID = newIDnum;
     end
 else
-    error('CHEBFUN:compose:QMdim','Inconsistent quasimatrix dimensions')
+    error('CHEBFUN:compose:QMdim','Inconsistent quasimatrix dimensions.')
 end
 
 

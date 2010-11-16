@@ -46,47 +46,94 @@ if isempty(d)
     D = linop;
     return
 elseif all(isfinite(d.ends))
-    if strcmp(map.name,'linear')
-        D = linop( @(n) diffmat(n)*2/length(d), @(u) diff(u), d, 1 );
-    else
-        D = linop( @(n) barymat(map.for(chebpts(n))), @(u) diff(u), d, 1 );
-    end
+    D = linop( @(n) mat(n,m), @(u) diff(u,m), d, m );   
 else
     D = linop( @(n) diag(1./map.der(chebpts(n)))*diffmat(n), @(u) diff(u), d, 1 );
-    
+    if m > 1, D = mpower(D,m); end
 end
 
-if m > 1, D = mpower(D,m); end
+%%
+    function D = mat(n,m)
+        breaks = []; map = [];
+        if iscell(n)
+            if numel(n) > 1, map = n{2}; end
+            if numel(n) > 2, breaks = n{3}; end
+            if isa(breaks,'domain'), breaks = breaks.ends; end
+            n = n{1};
+        end
+        
+        % Force a default map for unbounded domains.
+        if any(isinf(d)) && isempty(map), map = maps(d); end
+        % Inherit the breakpoints from the domain.
+        breaks = union(breaks, d.ends);
+        if isa(breaks,'domain'), breaks = breaks.ends; end
+        if numel(breaks) == 2
+            % Breaks are the same as the domain ends. Set to [] to simplify.
+            breaks = [];
+        elseif numel(breaks) > 2
+            numints = numel(breaks)-1;
+            if numel(n) == 1, n = repmat(n,1,numints); end
+            if numel(n) ~= numints
+                error('DOMAIN:diff:numints','Vector N does not match domain D.');
+            end
+        end
+
+        if isempty(map) && isempty(breaks)
+            % Standard case
+            D = diffmat(n,m)*(2/length(d))^m;
+        elseif isempty(breaks)
+            % Map / no breakpoints
+            if isstruct(map) 
+                if m == 1 && isfield(map,'der') && ~isempty(map.der)
+                    D = diag(1./map.der(chebpts(n)))*diffmat(n);
+                else
+                    D = barydiffmat(map.for(chebpts(n)),[],m);
+                end 
+            else
+                D = barydiffmat(map(chebpts(n)),[],m);
+            end
+        elseif isempty(map)
+            % Breakpoints / no maps 
+            csn = [0 cumsum(n)];
+            D = zeros(csn(end));
+            for k = 1:numints
+                ii = csn(k)+(1:n(k));
+                D(ii,ii) = diffmat(n(k),m)*(2/diff(breaks(k:k+1)))^m;
+            end
+        else
+            % Breaks and maps
+            csn = [0 cumsum(n)];
+            D = zeros(csn(end));
+            if iscell(map) && numel(map) == 1
+                map = map{1};
+            end
+            mp = map;
+            for k = 1:numints
+                if numel(map) > 1
+                    if iscell(map), mp = map{k}; end
+                    if isstruct(map), mp = map(k); end
+                end
+                ii = csn(k)+(1:n(k));
+                if m == 1 && isfield(mp,'der') && ~isempty(mp.der)
+                    D(ii,ii) = diag(1./mp.der(chebpts(n(k))))*diffmat(n(k));
+                else
+                    D(ii,ii) = barydiffmat(mp.for(chebpts(n(k))),[],m);
+                end 
+            end
+        end    
+    end
 
 end
 
 
-%%
-% % Above diff(f,2) is in fact diff(diff(f,2)), which corresonds to how
-% % chebfuns are differentiated. 
-% if isempty(d)
-%     D = linop;
-%     return
-% elseif all(isfinite(d.ends))
-%     D = linop( @(n) barymat(map.for(chebpts(n)),[],m), @(u) diff(u,m), d, 1 );   
-% else
-%     D = linop( @(n) diag(1./map.der(chebpts(n)))*diffmat(n), @(u) diff(u), d, 1 );
-%     if m > 1, D = mpower(D,m); end
-% end
-
-%%
-
-
-
-
-function Dk = barymat(x,w,k)  
-% BARYMAT  Barycentric differentiation matrix with arbitrary weights/nodes.
-%  D = BARYMAT(X,W) creates the first-order differentiation matrix with
+function Dk = barydiffmat(x,w,k)  
+% BARYDIFFMAT  Barycentric differentiation matrix with arbitrary weights/nodes.
+%  D = BARYDIFFMAT(X,W) creates the first-order differentiation matrix with
 %       nodes X and weights W.
 %
-%  D = BARYMAT(X) assumes Chebyshev weights. 
+%  D = BARYDIFFMAT(X) assumes Chebyshev weights. 
 %
-%  DK = BARYMAT(X,W,K) returns the differentiation matrice of DK of order K.
+%  DK = BARYDIFFMAT(X,W,K) returns the differentiation matrice of DK of order K.
 %
 %  All inputs should be column vectors.
 %
@@ -107,7 +154,7 @@ if nargin == 2 && length(w)-1~=N
         k = w; 
         w = [];
     else
-        error('DOMAIN:diff:barymat:lengthin',['Length of weights vector ', ...
+        error('DOMAIN:diff:barydiffmat:lengthin',['Length of weights vector ', ...
         'must match length of points.']);
     end
 end
@@ -140,3 +187,4 @@ for j = 3:k
 end
 
 end
+    

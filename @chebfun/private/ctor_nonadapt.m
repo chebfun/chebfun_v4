@@ -14,7 +14,7 @@ if length(ends) ~= length(ops)+1
 end
 if length(n) ~= length(ops)
     if length(n) == 1
-        n = repmat(n,length(ops));
+        n = repmat(n,1,length(ops));
     else
         error('CHEBFUN:ctor_nonadapt:input_ptsfun',['Unrecognized input sequence: Number of Chebyshev '...
         'points was not specified for all the funs.'])
@@ -52,6 +52,8 @@ if isfield(pref,'exps')
     % Something is wrong.
         error('CHEBFUN:ctor_nonadapt:exps_input2','Length of vector exps must correspond to breakpoints.');
     end
+    % Inf exps are a way of passsing no exps. Remove these.
+    exps(isinf(exps)) = 0;
 end
 
 % Initial horizontal scale.
@@ -74,7 +76,14 @@ for ii = 1:length(ops)
     switch class(op)
         case 'function_handle'
             a = es(1); b = es(2);
-            op = vectorcheck(op,[a b],pref);
+            [op flag] = vectorcheck(op,[a b],pref);    
+            if ~isempty(flag)
+                % Force systems
+                pref.n = n;
+                [op ends] = vectorcheck(op,ends,pref);
+                f = growsys(op,ends,pref);
+                return
+            end           
             pref.n = n(ii);
             if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
             if ~isfield(pref,'map')
@@ -119,8 +128,16 @@ for ii = 1:length(ops)
             end
             funs = [funs g];
         case 'double'
-            error('CHEBFUN:ctor_nonadapt:vecpts',['Generating fun from a numerical vector. '...
-                'Associated number of Chebyshev points is not used.']);
+            pref.n = n;
+            if numel(n) > 1, pref.n = n(ii); end
+            if numel(op) == 1
+                % This is a bit dirty. We fool it into using an adaptive call.
+                g = ctor_adapt(f,{@(x) 0*x+op},es,pref); g = g.funs(1);
+                funs = [funs g];
+            else
+                warning('CHEBFUN:ctor_nonadapt:vecpts',['Generating fun from a numerical vector. '...
+                    'Associated number of Chebyshev points is not used.']);
+            end
         case 'fun'
             if numel(op) > 1
                 error('CHEBFUN:ctor_nonadapt:vecfuns',['A vector of funs cannot be used to construct '...
