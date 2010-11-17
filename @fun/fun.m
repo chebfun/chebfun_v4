@@ -130,8 +130,8 @@ if any(infends)
     oldop = op;         op = @(x) op(g.map.for(x));
     if ~isfield(pref,'exps'), 
     % If there aren't any exps, then assign some.
-        if pref.blowup, pref.exps = [NaN NaN];
-        else            pref.exps = [0 0]; end
+        if pref.blowup > 0, pref.exps = [NaN NaN];
+        else                pref.exps = [0 0]; end
     else
     % Exponents on unbounded intervals are negated (from the user's perspective).
         if infends(1),  pref.exps(1) = -pref.exps(1); end
@@ -140,14 +140,14 @@ if any(infends)
     % This is a dirty check for functions which appear to blowup at infinity.
     % We check for infinite values, NaN's for very large x, and functions
     % with a positive (negative) gradient very near plus (minus) infinity.
-    if infends(1) && ~isnan(pref.exps(1)) && ~pref.exps(1)
+    if infends(1) && ~isnan(pref.exps(1)) && ~pref.exps(1) && pref.blowup >=0
         vends = op([-1 -1+2*eps -1+4*eps]);
         if isinf(vends(1)) || any(isnan(vends(2:3))) || real(-sign(vends(3))*diff(vends(2:3))) > 1e4*pref.eps;
             pref.blowup = blowup(NaN);
             pref.exps(1) = NaN;
         end
     end
-    if infends(2) && ~isnan(pref.exps(2)) && ~pref.exps(2)
+    if infends(2) && ~isnan(pref.exps(2)) && ~pref.exps(2) && pref.blowup >=0
         vends = op([1-4*eps 1-2*eps 1]);
         if isinf(vends(3)) || any(isnan(vends(1:2))) || real(sign(vends(1))*diff(vends(1:2))) > 1e4*pref.eps;
             pref.blowup = blowup(NaN);
@@ -155,6 +155,7 @@ if any(infends)
         end
     end
 end
+if pref.blowup < 0, pref.blowup = 0; end
 
 %% Find exponents 
 % If op has blow up, we represent it by 
@@ -176,8 +177,6 @@ else
     % Standard representation - No blowup.
     exps = [0 0]; 
 end
-if isfield(pref,'exps'), pref.exps(isinf(exps)) = 0; end
-exps(isinf(exps)) = 0;
 g.exps = exps;                                      % Assign exponents to fun
 
 % Scaling for funs on bounded intervals with exponents.

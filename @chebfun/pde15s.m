@@ -511,7 +511,7 @@ end
 
 catch
     err = lasterror;
-    err.stack = err.stack([end]);
+    err.stack = err.stack([1:end]);
     rethrow(err)
 end
 
@@ -565,6 +565,8 @@ clear global GLOBX
         end
         
         % ODE options (mass matrix)
+%         U0
+%         error
         opt2 = odeset(opt,'Mass',M,'MassSingular','yes','InitialSlope',odefun(tt(nt),U0),'MStateDependence','none');
         % ODE options (Jacobian)
         if dojac

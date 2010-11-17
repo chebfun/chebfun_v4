@@ -167,12 +167,11 @@ end
       [Bmat,c,rowidx] = bdyreplace(A,N,map,ends);
 
       if dorectmat && m == 1% New rectangular matrix method
-       x1 = chebpts(N-A.numbc,ends,1);
-       Amat = [barymat(x1,x)*Amat; Bmat];
+        x1 = chebpts(N-A.numbc,ends,1);
+        Amat = [barymat(x1,x)*Amat; Bmat];
       else                   % Do things the old way
         Amat(rowidx,:) = Bmat;
       end
-
       [L,U] = lu(Amat);
       if use_store && N > 5   % store L and U
         % Very crude garbage collection! If over capacity, clear out
@@ -201,7 +200,7 @@ end
 
     % Solve.
     v = U\(L\f);
-    
+
     V = reshape(v,N,m);
     v = sum(V,2);
     v = filter(v,1e-8);

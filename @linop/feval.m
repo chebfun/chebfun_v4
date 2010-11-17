@@ -173,7 +173,11 @@ else
                   'feval size is not large enough for linop.difforder.');
           end
 %           Pk = barymatp(nk,breaks,n,breaks);
-          Pk = barymatp12(nk,breaks,n,breaks);
+          if isempty(breaks)
+              Pk = barymatp12(nk,[-1 1],n,[-1 1]);
+          else
+              Pk = barymatp12(nk,breaks,n,breaks);
+          end
           ii = ((k-1)*sn+1):k*sn;
           MM = [MM ; Pk*M(ii,:)];
           if nargout == 5, P{k} = Pk; end % Store P

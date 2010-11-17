@@ -33,7 +33,6 @@ funs = [];
 
 % Sort out whatever exponents have been passed.
 if isfield(pref,'exps') 
-    pref.exps(isinf(pref.exps)) = 0;
     exps = pref.exps;
 %     if iscell(exps), exps = cell2mat(exps); end  % Convert cell to vector
     if numel(exps) == 1, 
@@ -52,8 +51,6 @@ if isfield(pref,'exps')
     % Something is wrong.
         error('CHEBFUN:ctor_nonadapt:exps_input2','Length of vector exps must correspond to breakpoints.');
     end
-    % Inf exps are a way of passsing no exps. Remove these.
-    exps(isinf(exps)) = 0;
 end
 
 % Initial horizontal scale.

@@ -54,7 +54,7 @@ if isfield(pref,'exps')
     elseif numel(exps) == 2, 
     % Exponents only supplied at ends. Fill in those at breakpoints with
     % NaNs if splitting is on, or zeros if slitting is off.
-        if pref.blowup, ee = NaN; else ee = 0; end
+        if pref.blowup > 0, ee = NaN; else ee = 0; end
         tmp = repmat(ee,1,2*numel(ends)-4);
         exps = [exps(1) tmp exps(2)];
     elseif numel(exps) == numel(ends)
@@ -64,11 +64,7 @@ if isfield(pref,'exps')
     % Something is wrong.
         error('CHEBFUN:ctor_adapt:exps_input2','Length of vector exps must correspond to breakpoints');
     end
-    
-    % Inf exps are a way of passsing no exps. Remove these.
-    exps(isinf(exps)) = 0;
 end
-
 
 ii = 0;
 while ii < length(ops)

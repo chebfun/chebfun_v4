@@ -179,7 +179,9 @@ if scale
             if isinf(d(end)), w(end) = 0; end
         end
         x = m.for(x);
-        x([1 end]) = d([1 end]);
+        if kind == 2
+            x([1 end]) = d([1 end]);
+        end
     end        
 end
 
