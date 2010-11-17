@@ -85,7 +85,7 @@ switch(class(B))
     V = [];  % Initialise V so that the nested function overwrites it.
     
     % Call the constructor 
-    if numel(ends) == 2          % Smooth
+    if numel(ends) == 2 && ~chebfunpref('splitting')          % Smooth
         if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
           C = chebfun( @(x) A.scale(x)+value(x), ends, settings) - A.scale;
         else
