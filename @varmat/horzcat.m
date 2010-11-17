@@ -4,6 +4,10 @@ function C = horzcat(varargin)
 % Copyright 2008 by Toby Driscoll.
 % See www.comlab.ox.ac.uk/chebfun.
 
+% Take out empties.
+empty = cellfun( @isempty, varargin );
+varargin(empty) = [];
+
 C = varmat( @hcat );
 
    function B = hcat(n)

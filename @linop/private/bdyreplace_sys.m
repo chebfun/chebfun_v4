@@ -23,7 +23,7 @@ if nargin < 4, breaks = []; end
 q = 1;
 for k = 1:length(A.lbc)
   op = A.lbc(k).op;
-  if size(op,2)~=m
+  if size(op,2)~=m && ~isa(op,'varmat')
     error('LINOP:bdyreplace:systemsize',...
       'Boundary conditions not consistent with system size.')
   end
@@ -57,7 +57,7 @@ end
 % elimnext = cumsum(n);  % in each variable, next row to eliminate
 for k = 1:length(A.rbc)
   op = A.rbc(k).op;
-  if size(op,2)~=m
+  if size(op,2)~=m && ~isa(op,'varmat')
     error('LINOP:bdyreplace:systemsize',...
       'Boundary conditions not consistent with system size.')
   end

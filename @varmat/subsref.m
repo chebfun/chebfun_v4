@@ -56,7 +56,9 @@ end
     i = isinf(idx);
     num(~i) = idx(~i);
     if iscell(n), n = n{1}; end
-    num(i) = n+real(idx(i));
+    if any(i)
+        num(i) = sum(n)+real(idx(i));
+    end
   end
 
 end

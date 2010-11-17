@@ -1,5 +1,4 @@
 function A = setbc(A,bc)
-
 % Set one or more of the boundary conditions. 
 %
 % Two options for bc: struct or mnemonic.
@@ -61,16 +60,36 @@ if ~isstruct(bc)
         end
       end
     case 'periodic'
-      B = I.varmat;
-      for k = 1:A.difforder
-        if rem(k,2)==1
-          bc.left(end+1).op = B(1,:) - B(end,:);
-          bc.left(end).val = 0;
-        else
-          bc.right(end+1).op = B(1,:) - B(end,:);
-          bc.right(end).val = 0;
-        end
-        B = D.varmat*B;
+      m = max(A.blocksize);
+      if m == 1 % Single system case
+          B = I.varmat;
+          for k = 1:A.difforder
+            if rem(k,2)==1
+              bc.left(end+1).op = B(1,:) - B(end,:);
+              bc.left(end).val = 0;
+            else
+              bc.right(end+1).op = B(1,:) - B(end,:);
+              bc.right(end).val = 0;
+            end
+            B = D.varmat*B;
+          end
+      else      % Systems case
+          order = max(A.difforder,[],1);
+          for j = 1:numel(order)
+              B = I.varmat; Z = zeros(A.fundomain); Z = Z.varmat;
+              Zl = repmat(Z,j-1,1); if j > 1, Zl = Zl(1,:); end
+              Zr = repmat(Z,m-j,1); if j < m, Zr = Zr(1,:); end
+              for k = 1:order(j)
+                if rem(k,2)==1
+                  bc.left(end+1).op = [Zl B(1,:)-B(end,:) Zr];
+                  bc.left(end).val = 0;
+                else
+                  bc.right(end+1).op = [Zl B(1,:)-B(end,:) Zr];
+                  bc.right(end).val = 0;
+                end
+                B = D.varmat*B;
+              end
+          end
       end
     otherwise
       error('LINOP:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
