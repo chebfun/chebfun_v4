@@ -41,7 +41,17 @@ if nargin==2
     error('CHEBFUN:max:twoout',...
       'Max with two inputs and two outputs is not supported.')
   end
-  y = maxfun(f,g);
+  nf = numel(f); ng = numel(g);
+  if nf > 1 && ng > 1
+      if nf ~= ng, error('CHEBFUN:max:dim','Matrix dimensions must agree.'); end
+      for k = 1:nf, y(k) = maxfun(f(k),g(k)); end
+  elseif nf > 1
+      for k = 1:nf, y(k) = maxfun(f(k),g);    end
+  elseif ng > 1
+      for k = 1:ng, y(k) = maxfun(f,g(k));    end
+  else
+      y = maxfun(f,g);
+  end
 else   % 1 or 3 inputs
   % Provide a default for the dim argument.
   if nargin==1

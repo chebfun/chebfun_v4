@@ -10,8 +10,6 @@ function out = sum(F,dim,b)
 % return a single chebfun. For a column quasimatrix, SUM(F) is the same as 
 % SUM(F,1).
 %
-%  is the integral of if
-%
 % Examples:
 %   x = chebfun('x',[0 1]);
 %   sum(x)      % returns 1/2
@@ -28,9 +26,20 @@ function out = sum(F,dim,b)
 
 if isempty(F), out = 0; return, end    % empty chebfun has sum 0
 
-% Deal with 3 input args case.
+subint = false;
 if nargin == 3
-    out = sum_subint(F,dim,b);
+    a = dim; subint = true;
+elseif nargin == 1
+    % nothing to do here
+elseif isa(dim,'domain')
+    dim = dim.ends; a = dim(1); b = dim(end); subint = true;
+elseif numel(dim) > 1
+    a = dim(1); b = dim(end); subint = true;
+end
+
+% Deal with subinterval case.
+if subint
+    out = sum_subint(F,a,b);
     return
 end
 
@@ -128,7 +137,7 @@ elseif isa(b,'chebfun')
     if norm(chebfun('x',domain(b),2)-b) == 0
         out = out - feval(out,a);
     else
-        out = feval(out,b)-feval(out,a);
+        out = compose(out,b)-feval(out,a);
     end
 elseif isa(a,'chebfun')
     if b > d2
