@@ -75,10 +75,13 @@ if ~isstruct(bc)
           end
       else      % Systems case
           order = max(A.difforder,[],1);
+           Z = zeros(A.fundomain); Z = Z.varmat;
           for j = 1:numel(order)
-              B = I.varmat; Z = zeros(A.fundomain); Z = Z.varmat;
-              Zl = repmat(Z,j-1,1); if j > 1, Zl = Zl(1,:); end
-              Zr = repmat(Z,m-j,1); if j < m, Zr = Zr(1,:); end
+              B = I.varmat;
+              Zl = repmat(Z,1,j-1);
+              if j > 1, Zl = Zl(1,:); end
+              Zr = repmat(Z,1,m-j);
+              if j < m, Zr = Zr(1,:); end
               for k = 1:order(j)
                 if rem(k,2)==1
                   bc.left(end+1).op = [Zl B(1,:)-B(end,:) Zr];

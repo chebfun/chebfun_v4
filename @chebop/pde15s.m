@@ -1,7 +1,8 @@
-function u = pde15s(N, t, opt)
+function u = pde15s(N, t, varargin)
 %PDE15S for chebops.
 % PDE15S(N, T) solves the PDE u_t = N.op(u,t,x) where N is a nonlinop 
-% with the initial condition given by N.guess.
+% with the initial condition given by N.guess. See CHEBFUN/PDE15S for 
+% more detailed information.
 %
 % PDE15S(N, T, OPTS) allows extra input options defined by OPTS = PDESET
 %
@@ -36,9 +37,6 @@ function u = pde15s(N, t, opt)
 %
 % See also chebfun/pde15s, pdeset
 
-pdefun = N.op;
-u0 = N.guess;
-
 if strcmpi(N.lbc,'periodic') || strcmpi(N.rbc,'periodic'), 
     bc = 'periodic';
 else
@@ -52,6 +50,18 @@ else
     bc.right = N.rbc;
 end
 
-if nargin < 3, opt = []; end
+if nargin > 2
+    v1 = varargin{1};
+    if strcmpi(v1,'dirichlet')
+        bc = 'dirichlet';
+        varargin(1) = [];
+    elseif strcmpi(v1,'neumann')
+        bc = 'neumann';
+        varargin(1) = [];
+    elseif strcmpi(v1,'periodic')
+        bc = 'periodic';
+        varargin(1) = [];
+    end
+end
 
-u = pde15s( pdefun, t, u0, bc, opt);
+u = pde15s( N.op, t, N.guess, bc, varargin{:} );

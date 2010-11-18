@@ -14,6 +14,19 @@ bc.left = @(u,v,D) [D(u), D(v)];  bc.right = bc.left;   % New way
 opts = pdeset('Jacobian','auto','plot',1);
 uu = pde15s(f,0:.05:2,u,bc,opts);
 
+%% % Periodic boundary conditions
+
+clc, clear, close all
+
+[d,x] = domain(-1,1); 
+u = [ chebfun(1,d)  chebfun(1,d) ];
+
+f = @(u,v,t,x,diff) [ -u + (x + 1).*v + 0.1*diff(u,2) , ...
+                    u - (sin(3*pi*x) + 1).*v + 0.2*diff(v,2) ];
+bc = 'periodic';    
+opts = pdeset('plot',1);
+uu = pde15s(f,0:.05:2,u,bc,opts);
+
 
 %% % Crazy nonlinear boundary conditions
 

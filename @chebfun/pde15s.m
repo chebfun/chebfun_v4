@@ -604,7 +604,7 @@ clear global GLOBX
                     q(l,1) = rhs{l};
                 end
             end
-            
+
             % replacements for the BC algebraic conditions           
             F(rows) = B*U(:)-q; 
             
