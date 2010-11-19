@@ -17,6 +17,25 @@ if length(varargin)==1
   return
 end
 
+% Reassign numeric inputs to linops
+isnum = cellfun( @isnumeric, varargin );
+if any(isnum)
+    d = domain(varargin{find(~isnum,1)});
+    Z = zeros(d); I = eye(d);
+    idx = find(isnum);
+    for k = 1:numel(idx)
+        if numel(varargin{idx(k)}) > 1
+            varargin{idx(k)}
+            error('CHEBFUN:linop:vertcat', ...
+                'Syntax not supported in linop construction.');
+        elseif varargin{idx(k)} == 0
+            varargin{idx(k)} = Z;
+        else
+            varargin{idx(k)} = varargin{idx(k)}*I;
+        end
+    end
+end
+
 % Size compatability.
 bs1 = cellfun( @(A) A.blocksize(1), varargin );
 if any(bs1~=bs1(1))

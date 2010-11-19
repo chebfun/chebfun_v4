@@ -17,6 +17,26 @@ if length(varargin)==1
   return
 end
 
+% Reassign numeric inputs to linops
+isnum = cellfun( @isnumeric, varargin );
+if any(isnum)
+    d = domain(varargin{find(~isnum,1)});
+    Z = zeros(d); I = eye(d);
+    idx = find(isnum);
+    for k = 1:numel(idx)
+        vi = varargin{idx(k)};
+        tmp = [];
+        for j = 1:numel(vi)
+            if vi == 0
+                tmp = [tmp Z];
+            else
+                tmp = [tmp vi(j)*I];
+            end
+        end      
+        varargin{idx(k)} = tmp;
+    end
+end
+
 % Size compatability.
 bs2 = cellfun( @(A) A.blocksize(2), varargin );
 if any(bs2~=bs2(1))

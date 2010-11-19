@@ -26,7 +26,7 @@ else
     s = char(s,sprintf('   with %ix%i block definitions',A.blocksize),' ');
   end
     
-  if any(A.difforder~=0)
+  if any(A.difforder(:)~=0)
       if numel(A.difforder) == 1
         s = char(s, ['   and differential order ' num2str(A.difforder)],' ');
       else
