@@ -61,22 +61,31 @@ switch(class(B))
     op =  A.oparray * B.oparray;
 
     % Find the zeros
-    isz = ~(double(~A.iszero).*double(~B.iszero));
+    isz = ~(double(~A.iszero)*double(~B.iszero));
     
     % Get the difforder
     [jj kk] = meshgrid(1:size(A,1),1:size(B,2));
     order = zeros(numel(jj),size(A,2));
+    zr = zeros(numel(jj),size(A,2));
     for l = 1:size(A,2)
         order(:,l) = A.difforder(jj,l)+B.difforder(l,kk)';
+        zr(:,l) = ~(~A.iszero(jj,l).*~B.iszero(l,kk)');
     end
+    order(logical(zr)) = 0;
     order = max(order,[],2);
     order = reshape(order,size(A,1),size(B,2));
-%     order = A.difforder + B.difforder;
+    if size(A,1)==size(B,2)
+        order = order'; % What? WHY!?
+    end
     order(isz) = 0;
-    
+        
     C = linop(mat,op,dom,order);
     C.blocksize = [size(A,1) size(B,2)];
     C.iszero = isz;
+    
+    if ~all(size(C)==size(C.difforder))
+        error
+    end
 
 
   case 'chebfun'    % linop * chebfun

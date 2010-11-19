@@ -43,3 +43,24 @@ do = [ 3     2     0     0     0     0     0
        0     0     0     0     3     0     0
        0     0     0     0     0     0     1 ];
 pass(7) = ~(any(any(B.difforder-do)));
+
+% Check 3x3
+A = [ D I Z ; Z Z D ; D^2 I Z];
+E = [ diff(d,2) D D ; diff(d,3) D 0 ; diff(d,3) diff(d,2) D];
+
+% Check mtimes
+B = A*A;
+pass(8) = ~(any(any(B.difforder-E.difforder)));
+C = A^2;
+pass(9) = ~(any(any(C.difforder-E.difforder)));
+
+% Check the 3rd power
+E = A*[ diff(d,2) D D ; diff(d,3) D 0 ; diff(d,3) diff(d,2) D];
+C = A^3;
+pass(10) = ~(any(any(C.difforder-E.difforder)));
+
+% Final test
+A = [D I Z];
+B = D*A;
+pass(11) = ~(any(any(B.difforder-[2 1 0])));
+

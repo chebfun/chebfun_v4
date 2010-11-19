@@ -29,19 +29,26 @@ if (m > 0)
   for j = 2:m
       [jj kk] = meshgrid(1:s(1),1:s(2));
       order = zeros(numel(jj),s(2));
+      zr = zeros(numel(jj),s(2));
+      tmp = double(~A.iszero)^(j-1);
       for l = 1:size(A,2)
           order(:,l) = difforder(jj,l)+A.difforder(l,kk)';
+          zr(:,l) = ~(tmp(jj,l).*~A.iszero(l,kk)');
       end
+      order(logical(zr)) = 0;
       order = max(order,[],2);
-      difforder = reshape(order,s(1),s(2));
+      difforder = reshape(order,s(1),s(2))';
   end
-%   difforder = m*A.difforder;
   difforder(isz) = 0;
-
  
   C.difforder = difforder;
   C.blocksize = s;
   C.iszero = isz;
+  
+      if ~all(size(C)==size(C.difforder))
+        error
+      end
+    
 else
   C = blockeye(A.fundomain,s(1));
 end
