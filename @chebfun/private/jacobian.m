@@ -32,7 +32,7 @@ for k = 1:numel(F)
         row = jacResetFun(domain(F(k)),numel(u),idx);
     end
     if isempty(row)
-        row = zeros(domain(F(k)));
+        row = repmat(zeros(domain(F(k))),1,numel(u));
     end
     J = [ J; row ];
 end
