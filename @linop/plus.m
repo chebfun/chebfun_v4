@@ -51,16 +51,18 @@ if isa(B,'linop') % linop + linop
         C = A;
         return
     end
-
-    
+   
     if ~all(A.blocksize==B.blocksize)
         error('LINOP:plus:sizes','Chebops must have identical sizes.')
     end
     
     op = A.oparray + B.oparray;
     order = max( A.difforder, B.difforder );
+    isz = ~(~A.iszero+~B.iszero);
+    order(isz) = 0;
     C = linop( A.varmat+B.varmat, op, dom, order );
     C.blocksize = A.blocksize;
+    C.iszero = isz;
     
 else
     error('LINOP:plus:badoperand','Unrecognized operand.')

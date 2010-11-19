@@ -20,8 +20,28 @@ end
 
 if (m > 0) 
   C = linop(A.varmat^m, A.oparray^m, A.fundomain );
-  C.difforder = m*A.difforder;
+  
+  % Find the zeros
+  isz = ~double(~A.iszero)^m;
+  
+  % Get the difforder
+  difforder = A.difforder;
+  for j = 2:m
+      [jj kk] = meshgrid(1:s(1),1:s(2));
+      order = zeros(numel(jj),s(2));
+      for l = 1:size(A,2)
+          order(:,l) = difforder(jj,l)+A.difforder(l,kk)';
+      end
+      order = max(order,[],2);
+      difforder = reshape(order,s(1),s(2));
+  end
+%   difforder = m*A.difforder;
+  difforder(isz) = 0;
+
+ 
+  C.difforder = difforder;
   C.blocksize = s;
+  C.iszero = isz;
 else
   C = blockeye(A.fundomain,s(1));
 end

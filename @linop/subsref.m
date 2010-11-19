@@ -91,6 +91,8 @@ switch s(1).type
         A = A.ID;
       case 'mat'
         A = A.varmat;
+      case 'iszero'
+        A = A.iszero;        
       case {'domain','fundomain'}
         A = A.fundomain;
       otherwise 

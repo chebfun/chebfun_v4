@@ -29,18 +29,18 @@ dom = domaincheck(varargin{:});
 Z = zeros(dom);  
 B = linop([],[],dom,0);
 
+% Get the sizes of each block
+for i = 1:m  
+  s(i,:) = size(varargin{i});
+end
+S = sum(s);
+
 % Build B one row at a time.
 for i = 1:m  
-  % Build the row one column at a time.
-  row = linop([],[],dom,0);
-  for j = 1:i-1
-    row = [row Z];
-  end
-  row = [row varargin{i}];  % content on diagonal
-  for j = i+1:m
-    row = [ row Z ];
-  end
-  B = [B; row];   % insert the row
+  Zl = repmat(Z,s(i,1),sum(s(1:i-1,2)));     % left zeros
+  Zr = repmat(Z,s(i,1),S(2)-sum(s(1:i,2)));  % right zeros
+  row = [ Zl varargin{i} Zr];                % build the row
+  B = [B; row];                              % insert the row
 end
 
 end

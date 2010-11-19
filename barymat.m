@@ -68,7 +68,7 @@ if M >= 500 && N >= 1000         % <-- Experimentally determined.
     c = 1./sum(B,2);             % Normalisation ('denom' in bary-speak).
     B = bsxfun(@times,B,c);
 else    
-% Else us for loops
+% Else use for loops
     B = bsxfun(@minus,y,x');     % Repmat(Y-X')
     for k = 1:N
         B(:,k) = w(k)./B(:,k);   % w(k)/(y(j)-x(k))

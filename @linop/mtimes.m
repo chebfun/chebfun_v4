@@ -40,9 +40,13 @@ switch(class(B))
     if isempty(B), C = []; return, end  % linop*[] = []
     [m n] = size(B);
     if max(m,n) == 1
-      C = copy(A);
-      C.varmat = B*C.varmat;
-      C.oparray = B*C.oparray;
+      if isreal(B) && ~B % B = 0 is special
+          C = repmat(zeros(A.fundomain),A.blocksize(1),A.blocksize(2));
+      else
+          C = copy(A);
+          C.varmat = B*C.varmat;
+          C.oparray = B*C.oparray;
+      end
     elseif n == 1
       error('LINOP:mtimes:numericvector','Chebop-vector multiplication is not well defined.')
     else
@@ -55,9 +59,25 @@ switch(class(B))
     end
     mat = A.varmat * B.varmat;
     op =  A.oparray * B.oparray;
-    order = A.difforder + B.difforder;
+
+    % Find the zeros
+    isz = ~(double(~A.iszero).*double(~B.iszero));
+    
+    % Get the difforder
+    [jj kk] = meshgrid(1:size(A,1),1:size(B,2));
+    order = zeros(numel(jj),size(A,2));
+    for l = 1:size(A,2)
+        order(:,l) = A.difforder(jj,l)+B.difforder(l,kk)';
+    end
+    order = max(order,[],2);
+    order = reshape(order,size(A,1),size(B,2));
+%     order = A.difforder + B.difforder;
+    order(isz) = 0;
+    
     C = linop(mat,op,dom,order);
     C.blocksize = [size(A,1) size(B,2)];
+    C.iszero = isz;
+
 
   case 'chebfun'    % linop * chebfun
     dom = domaincheck(A,B);

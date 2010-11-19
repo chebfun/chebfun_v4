@@ -13,6 +13,8 @@ function isz = iszero(A)
 dimExpand = 10;
 Aexpand = full(feval(A,dimExpand));
 
+if all(A.iszero(:)), isz = A.iszero; return, end
+
 isz = zeros(A.blocksize(1),A.blocksize(2));
 for rowcounter = 1:A.blocksize(1)
     for colcounter = 1:A.blocksize(2)

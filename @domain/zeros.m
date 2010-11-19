@@ -23,6 +23,7 @@ if nargin==1    % return linop
     Z = linop;
   else
     Z = linop( @(n) makesparse(n), @(u) 0*u, d );
+    Z.iszero = 1;
   end
 else            % return chebfun
   if isnumeric(d) % number given first

@@ -36,9 +36,10 @@ op = vertcat( op{:} );
 
 % Nick H, 5/Aug/2010
 % Instead of disabling, we keep track of all difforders
-difford = [];
+difford = []; isz = [];
 for k = 1:numel(varargin)
     difford = [difford ; varargin{k}.difforder];
+    isz = [isz ; varargin{k}.iszero];
 end
 % difford = cellfun( @(A) A.difforder, varargin, 'UniformOutput', 'false').'
 % difford = 0;    % We disable differential order.
@@ -48,5 +49,8 @@ A = linop( V, op, dom, difford );
 % Update the block size.
 bs1 = cellfun( @(A) A.blocksize(1), varargin );
 A.blocksize = [sum(bs1) bs2(1)];
+
+% Update iszero.
+A.iszero = isz;
 
 end
