@@ -167,15 +167,28 @@ end
       [Bmat,c,rowidx] = bdyreplace(A,N,map,ends);
 
       if dorectmat && m == 1% New rectangular matrix method
-        x1 = chebpts(N-A.numbc,ends,1);
+        if any(isinf(ends))
+            % We don't want chebpts to do the scaling in this case. (Done below).
+            x1 = chebpts(N-A.numbc,[-1 1],1);            
+        else
+            x1 = chebpts(N-A.numbc,ends,1);
+        end
+        if ~isempty(map) % Map the 1st-kind points. (x is already mapped).
+            if isstruct(map)
+                x1 = map.for(x1);
+            else
+                x1 = map(x1);
+            end
+        end
         Amat = [barymat(x1,x)*Amat; Bmat];
       else                   % Do things the old way
         Amat(rowidx,:) = Bmat;
       end
+      
       [L,U] = lu(Amat);
       if use_store && N > 5   % store L and U
         % Very crude garbage collection! If over capacity, clear out
-        % everything.d
+        % everything.
         ssize = whos('storage');
         if ssize.bytes > cheboppref('maxstorage')
           storage = struct([]);

@@ -23,6 +23,7 @@ function [M,B,c,rowreplace,P] = feval(A,n,usebc,map,breaks)
 persistent storage
 if isempty(storage), storage = struct([]); end
 use_store = cheboppref('storage');
+use_store = false;
 
 if isa(n,'chebfun')  % Apply to chebfun
   M = A*n;
@@ -69,7 +70,7 @@ end
 breaks = union(breaks,A.fundomain.endsandbreaks);
 
 % We set trivial maps and breaks to empty
-if numel(breaks) == 2, breaks = []; end
+if numel(breaks) == 2 && ~any(isempty(breaks)), breaks = []; end
 if isstruct(map) && strcmp(map(1).name,'linear'), map = []; end
 
 % We don't use storage if there's a nontrivial map 
@@ -82,6 +83,14 @@ if ~isempty(breaks), use_store = 0; end
 % Repeat N if the use has been lazy
 if numel(n) == 1 && ~isempty(breaks)
   n = repmat(n,1,numel(breaks)-1);
+end
+
+% Force maps for unbounded domains
+if isempty(map) && any(isinf(breaks))
+    map = cell(numel(breaks)-1,1);
+    for k = 1:numel(breaks)-1;
+        map{k} = maps(domain(breaks(k:k+1)));
+    end
 end
   
 % %%%%%%%%%% function (i,e., infinite dimensional operator) %%%%%%

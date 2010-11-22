@@ -1,12 +1,9 @@
-function D = diff(d,varargin)
+function D = diff(d,m)
 % DIFF Differentiation operator.
 % D = DIFF(R) returns a chebop representing differentiation for chebfuns
 % defined on the domain R.
 %
 % D = DIFF(R,M) returns the chebop for M-fold differentiation.
-%
-% D = DIFF(R,G) or DIFF(R,M,G) is the mapped differentiation matrix with 
-% the map G.FOR from the map structure G.
 %
 % See also chebop, linop, chebfun/diff.
 %
@@ -17,27 +14,7 @@ function D = diff(d,varargin)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
-% defaults
-m = 1;
-% if all(isfinite(d.ends))
-%     map = maps(fun,{'linear'},d.ends);    % standard linear map
-% else
-%     map = maps(fun,{'unbounded'},d.ends); % default unbounded map
-% end
-map = maps(d);
-
-
-% parse inputs
-if nargin > 1
-    while ~isempty(varargin)
-        if isstruct(varargin{1})
-            map = varargin{1};
-        else
-            m = varargin{1};
-        end
-        varargin(1) = [];
-    end
-end
+if nargin == 1, m = 1; end
 
 if round(m)~=m
     error('CHEBFUN:domain:diff:fracdiff',...
@@ -50,7 +27,7 @@ if isempty(d)
 elseif all(isfinite(d.ends))
     D = linop( @(n) mat(n,m), @(u) diff(u,m), d, m );   
 else
-    D = linop( @(n) mat(n,m), @(u) diff(u), d, 1 );
+    D = linop( @(n) mat(n,1), @(u) diff(u), d, 1 );
     if m > 1, D = mpower(D,m); end
 end
 
@@ -67,10 +44,15 @@ end
         % Inherit the breakpoints from the domain.
         breaks = union(breaks, d.ends);
         if isa(breaks,'domain'), breaks = breaks.ends; end
-        if numel(breaks) == 2
+        % Force a map for an unbounded domain
+        if isempty(map) && any(isinf(breaks))
+            map = maps(domain(breaks)); 
+        end
+        
+        if numel(breaks) == 2 && ~any(isinf(d))
             % Breaks are the same as the domain ends. Set to [] to simplify.
             breaks = [];
-        elseif numel(breaks) > 2
+        elseif ~isempty(breaks)
             numints = numel(breaks)-1;
             if numel(n) == 1, n = repmat(n,1,numints); end
             if numel(n) ~= numints
