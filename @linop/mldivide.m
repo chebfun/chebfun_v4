@@ -139,6 +139,7 @@ end
     N = length(x);
     if N > maxdegree+1
       error('LINOP:mldivide:NoConverge',['Failed to converge with %i points.',maxdegree+1])
+      error('LINOP:mldivide:NoConverge','Failed to converge with %i points.',maxdegree+1)
     elseif N==1
       error('LINOP:mldivide:OnePoint',...
         'Solution requested at a lone point. Check for a bug in the linop definition.')
