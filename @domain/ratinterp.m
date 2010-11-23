@@ -81,10 +81,10 @@ xk = xk(:);
 fk = feval(f,xk);                                         % function values 
 if strcmp(type,'chebyshev') 
     if chebkind == 1                                  
-        D = dct(diag(fk));                                % compute C'(Phi')
-        Z = dct(D(1:n+1,:)');                             % compute C'(C'(Phi'))'
+        D = minidct(diag(fk));                            % compute C'(Phi')
+        Z = minidct(D(1:n+1,:)');                         % compute C'(C'(Phi'))'
         [u,s,v] = svd(Z(m+2:N+1,:));                      % svd of syst w size nx(n+1)
-        qk = idct(v(:,end),N+1);                          % values of q at Cheb pts 
+        qk = iminidct(v(:,end),N+1);                      % values of q at Cheb pts 
         wk = (-1).^(0:N)'.*sin((2*(0:N)+1)*pi/(2*N+2))';  % barycentric weights      
     elseif chebkind == 2  % <- this case can be modified to use FFTs
         xko = chebpts(m+n+1,chebkind);                    % chebpts on interval [-1,1]
@@ -111,3 +111,20 @@ elseif strcmp(type,'arbitrary')
     q = chebfun(@(x) bary(x,qk,xk,wk),[a,b],n+1);         % chebfun of denominator
     rh = @(x) bary(x,fk,xk,qk.*wk);                       % handle to evaluate in C
 end
+if n>1, s = diag(s); end
+
+
+function b = minidct( x )
+n = size(x,1); w = (exp(-i*(0:n-1)*pi/(2*n))/sqrt(2*n)).'; w(1) = w(1) / sqrt(2);
+if mod(n,2) == 1 || ~isreal(x), b = fft( [ x ; x(n:-1:1,:) ] ); b = diag(w) * b(1:n,:);
+else b = fft( [ x(1:2:n,:); x(n:-2:2,:) ] ); b = diag(2*w) * b; end;
+if isreal(x), b = real(b); end;
+
+function x = iminidct( y , n )
+y = [y;zeros(n-size(y,1),1)]; 
+w = (exp(1i*(0:n-1)*pi/(2*n)) * sqrt(2*n)).';
+if mod(n,2) == 1 || ~isreal(y), w(1) = w(1)*sqrt(2); 
+x = ifft([diag(w)*y;zeros(1,size(y,2));-1i*diag(w(2:n))*y(n:-1:2,:)]); 
+x = x(1:n,:); else w(1) = w(1)/sqrt(2); x([1:2:n,n:-2:2],:) = ifft(diag(w)*y); end
+if isreal(y), x = real(x); end
+

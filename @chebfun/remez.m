@@ -24,7 +24,7 @@ if any(get(f,'exps')<0), error('CHEBFUN:remez:inf',...
 spl_ini = chebfunpref('splitting');
 splitting off,
 
-if n < 15, tol = 1e-15; elseif n < 100, tol = 1e-12; elseif n <= 1000, tol = 1e-11; else tol = 2e-10; end
+if n < 15, tol = 1e-14; elseif n < 100, tol = 1e-14; elseif n <= 1000, tol = 1e-11; else tol = 2e-10; end
 maxit = 25; 
 [a,b] = domain(f);
 xk = chebpts(n+2,[a b]);                % initial reference 
@@ -55,7 +55,7 @@ while (delta/normf > tol) && it <=maxit
         errmin = err;
         xkmin = xk;
     end
-    %[num2str(delta/normf) ' ' num2str(h)]       % uncomment to see progress
+    %[num2str(delta/normf,'%5.15f') ' ' num2str(h,'%5.15f')]       % uncomment to see progress
     it = it+1;
 end
 p = pmin;
@@ -85,8 +85,6 @@ for i = 2:length(r)
   elseif sign(er(i)) ~= sign(es(end))        % if sign of error changes and 
       s = [s; r(i)]; es = [es; er(i)];       % pts and vals
   end     
-  %plot(e), hold on, plot(r,er,'.r','markersize',14);   % plot selection of points
-  %plot(s,es,'.k','markersize',16), hold off, pause,
 end
 [norme,idx] = max(abs(es));                  % choose n+2 consecutive pts
 d = max(idx-length(xk)+1,1);                 % that include max of error
