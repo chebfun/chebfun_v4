@@ -254,10 +254,10 @@ end
 
     % Project the RHS
     if syssize == 1
-        f = P*B(y{1},1);
+        f = B(P*y{1},1);
     else
         f = [];
-        for jj = 1:syssize, f = [f ; P{jj}*B(y{1},jj)]; end
+        for jj = 1:syssize, f = [f ; B(P{jj}*y{1},jj)]; end
     end
     % Add the boundary conditions
     f = [f ; c];
