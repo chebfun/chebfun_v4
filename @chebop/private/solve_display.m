@@ -94,7 +94,11 @@ switch(phase)
                 subplot(2,1,1)
                 plot(u,'.-'), title('Current solution')
                 subplot(2,1,2)
-                plot(du,'.-'), title('Current correction step')
+                if numel(du) == 1 % If we have only one function, plot update in red
+                    plot(du,'r.-'), title('Current correction step')
+                else
+                    plot(du,'.-'), title('Current correction step')
+                end
                 if strcmp(plotMode,'pause')
                     pause
                 else
@@ -104,7 +108,11 @@ switch(phase)
                 axes(guihandles{1})
                 plot(u,'.-'), title('Current solution')
                 axes(guihandles{2})
-                plot(du,'.-'), title('Current correction step')
+                if numel(du) == 1 % If we have only one function, plot update in red
+                    plot(du,'r.-'), title('Current correction step')
+                else
+                    plot(du,'.-'), title('Current correction step')
+                end
                 pause(plotMode)
             end
         end
@@ -127,7 +135,16 @@ switch(phase)
                 subplot(2,1,1)
                 plot(u,'.-'), title('Current solution')
                 subplot(2,1,2)
-                plot(du,'.-'), title('Current correction step')
+                if numel(du) == 1 % If we have only one function, plot update in red
+                    plot(du,'r.-'), title('Current correction step')
+                else
+                    plot(du,'.-'), title('Current correction step')
+                end
+                if strcmp(plotMode,'pause')
+                    pause
+                else
+                    pause(plotMode)
+                end
                 if strcmp(plotMode,'pause')
                     pause
                 else
@@ -137,7 +154,16 @@ switch(phase)
                 axes(guihandles{1})
                 plot(u,'.-'), title('Current solution')
                 axes(guihandles{2})
-                plot(du,'.-'), title('Current correction step')
+                if numel(du) == 1 % If we have only one function, plot update in red
+                    plot(du,'r.-'), title('Current correction step')
+                else
+                    plot(du,'.-'), title('Current correction step')
+                end
+                if strcmp(plotMode,'pause')
+                    pause
+                else
+                    pause(plotMode)
+                end
                 pause(plotMode)
             end
         end
