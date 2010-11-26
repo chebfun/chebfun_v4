@@ -36,7 +36,8 @@ function [p,q,rh] = ratinterp(f,d,m,varargin)
 %  This version of RATINTERP lives in @domain.
 %  There is a companion code in @chebfun.
 
-a = d.ends(1); b = d.ends(end);              
+a = d.ends(1); b = d.ends(end);         
+xxk = linspace(a,b,500);
 chebkind = chebfunpref('chebkind');
 if nargin == 3,                              % polynomial interpolation in Chebyshev points 
     p = chebfun(f,[a,b],m+1);                % (uses the Chebfun constructor)
@@ -81,11 +82,21 @@ xk = xk(:);
 fk = feval(f,xk);                                         % function values 
 if strcmp(type,'chebyshev') 
     if chebkind == 1                                  
-        D = minidct(diag(fk));                            % compute C'(Phi')
+        D = minidct(diag(fk(end:-1:1)));                  % compute C'(Phi')
         Z = minidct(D(1:n+1,:)');                         % compute C'(C'(Phi'))'
         [u,s,v] = svd(Z(m+2:N+1,:));                      % svd of syst w size nx(n+1)
-        qk = iminidct(v(:,end),N+1);                      % values of q at Cheb pts 
-        wk = (-1).^(0:N)'.*sin((2*(0:N)+1)*pi/(2*N+2))';  % barycentric weights      
+        beta = v(end:-1:1,end);
+        beta(end) = beta(end)/sqrt(2);                    % coeffs of q
+        beta = beta*sqrt(2/(N+1));        
+        q = chebfun(beta,[a,b],'coeffs');
+        qk = q(xk);                                       % vals of q 
+        pk = qk.*fk;                                      % vals of p
+        alpha = minidct(pk(end:-1:1)); 
+        alpha = alpha(m+1:-1:1);
+        alpha(end) = alpha(end)/sqrt(2);
+        alpha = alpha*sqrt(2/(N+1));
+        p = chebfun(alpha,[a,b],'coeffs');                % chebfun of numerator
+        wk = (-1).^(0:N)'.*sin((2*(0:N)+1)*pi/(2*N+2))';  % barycentric weights
     elseif chebkind == 2  % <- this case can be modified to use FFTs
         xko = chebpts(m+n+1,chebkind);                    % chebpts on interval [-1,1]
         C(:,1) = ones(N+1,1); C(:,2) = xko;               % Vandermonde-type matrix
@@ -95,22 +106,29 @@ if strcmp(type,'chebyshev')
         half = [1/2; ones(N-1,1);1/2];
         Z = C(:,m+2:N+1).' * diag(half.*fk)*C(:,1:n+1);   % modified matrix Z
         [u,s,v] = svd(Z);                                 % svd of syst w size nx(n+1)
-        qk = C(:,1:n+1) * v(:,end);                       % values of q at Cheb pts 
+        beta = v(end:-1:1,end);
+        q = chebfun(beta,[a,b],'coeffs');
+        qk = q(xk);                                       % values of q at Cheb pts 
+        alpha = C.'*(qk.*half.*fk);
+        alpha = alpha(m+1:-1:1); 
+        alpha(end) = alpha(end)/2;
+        alpha = alpha/(N/2);
+        p = chebfun(alpha,[a,b],'coeffs');
         wk = half.*(-1).^((0:N)');                        % barycentric weights        
     end
-    p = chebfun(qk.*fk,[a,b],'chebkind',chebkind);        % chebfun of numerator
-    q = chebfun(qk,[a,b],'chebkind',chebkind);            % chebfun of denominator
-    rh = @(x) bary(x,fk,xk,qk.*wk);                       % function handle of rat interp
 elseif strcmp(type,'arbitrary')
     [C,~] = qr(fliplr(vander(xk)));                       % construct orth matrix
     Z = C(:,m+2:N+1).' * diag(fk) * C(:,1:n+1);           % assemble matrix
     [u,s,v] = svd(Z);                                     % svd of syst w size nx(n+1)
+    beta = v(end:-1:1,end); beta(end) = beta(end)/sqrt(2);
     qk = C(:,1:n+1) * v(:,end);                           % values of q at grid
     wk = bary_weights(xk);                                % barycentric weights
     p = chebfun(@(x) bary(x,qk.*fk,xk,wk),[a,b],m+1);     % chebfun of numerator
     q = chebfun(@(x) bary(x,qk,xk,wk),[a,b],n+1);         % chebfun of denominator
-    rh = @(x) bary(x,fk,xk,qk.*wk);                       % handle to evaluate in C
+    q2 = chebfun(beta,[a,b],'coeffs');    
 end
+rh = @(x) bary(x,fk,xk,qk.*wk);                           % handle to evaluate in C
+
 if n>1, s = diag(s); end
 
 
