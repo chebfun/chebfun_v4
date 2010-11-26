@@ -37,7 +37,6 @@ function [p,q,rh] = ratinterp(f,d,m,varargin)
 %  There is a companion code in @chebfun.
 
 a = d.ends(1); b = d.ends(end);         
-xxk = linspace(a,b,500);
 chebkind = chebfunpref('chebkind');
 if nargin == 3,                              % polynomial interpolation in Chebyshev points 
     p = chebfun(f,[a,b],m+1);                % (uses the Chebfun constructor)
