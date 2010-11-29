@@ -11,6 +11,10 @@ function varargout = subsref(f,index)
 idx = index(1).subs;
 switch index(1).type
     case '.'
+        if numel(f) > 1
+            error('CHEBFUN:SUBSREF:QUASIMATRIX', ...
+                'Subsref does not support ''.'' notation for chebfun quasimatrices.');
+        end
         varargout = { get(f,idx) };
     case '()'
         % --- transpose row chebfuns/quasimatrices -------
