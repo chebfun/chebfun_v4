@@ -128,18 +128,18 @@ if any(smooth)
         if smooth(k)
             % decides which pice is shorter and assume that is the more
             % accurate one
-            %if h.funs(k-1).n < h.funs(k).n 
-            %    h.funs(k).vals(1) = h.funs(k-1).vals(end);
-            %else
-            %    h.funs(k-1).vals(end) = h.funs(k).vals(1);
-            %end
-            % Take the value that is largest
-            if h.funs(k-1).vals(end) > h.funs(k).vals(1)
-                h.funs(k).vals(1) = h.funs(k-1).vals(end);
+            if h.funs(k-1).n < h.funs(k).n 
+               h.funs(k).vals(1) = h.funs(k-1).vals(end);
             else
-                h.funs(k-1).vals(end) = h.funs(k).vals(1);
+               h.funs(k-1).vals(end) = h.funs(k).vals(1);
             end
-            h.imps(1,k) = h.funs(k-1).vals(end);
+            % Take the value that is largest
+%             if h.funs(k-1).vals(end) > h.funs(k).vals(1)
+%                 h.funs(k).vals(1) = h.funs(k-1).vals(end);
+%             else
+%                 h.funs(k-1).vals(end) = h.funs(k).vals(1);
+%             end
+%             h.imps(1,k) = h.funs(k-1).vals(end);
         end
     end  
 end

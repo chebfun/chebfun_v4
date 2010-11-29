@@ -100,7 +100,40 @@ if isreal(f) && isreal(g) && nargin<3
 else
   Fs = sign(abs(f)-abs(g));
 end
-h = ((1-Fs)/2).*f + ((1+Fs)/2).*g ;
+h = ((1-Fs)/2).*f + ((1+Fs)/2).*g;
+
+% make sure jumps are not introduced in endspoints where f and g are
+% smooth.
+if isnumeric(f)
+    [pjump, loc] = ismember(h.ends(1:end), g.ends);
+elseif isnumeric(g)
+    [pjump, loc] = ismember(h.ends(1:end), f.ends);
+else
+    [pjump, loc] = ismember(h.ends(1:end), union(f.ends,g.ends));
+end
+smooth = ~loc; % Location where endpints where introduced.
+% If an endpoint has been introduced, make sure h is continuous there
+if any(smooth)
+    for k = 2:h.nfuns
+        if smooth(k)
+            % decides which pice is shorter and assume that is the more
+            % accurate one
+            if h.funs(k-1).n < h.funs(k).n 
+               h.funs(k).vals(1) = h.funs(k-1).vals(end);
+            else
+               h.funs(k-1).vals(end) = h.funs(k).vals(1);
+            end
+            % Take the value that is smallest
+%             if h.funs(k-1).vals(end) > h.funs(k).vals(1)
+%                 h.funs(k).vals(1) = h.funs(k-1).vals(end);
+%             else
+%                 h.funs(k-1).vals(end) = h.funs(k).vals(1);
+%             end
+%             h.imps(1,k) = h.funs(k-1).vals(end);        
+        end
+    end  
+end
+
 end
 
 function [y,x] = minval(f)
