@@ -1,6 +1,6 @@
 function varargout = remez(f,varargin)
 % Best polynomial or rational approximation.
-
+%
 % REMEZ(F,M,N) computes the best rational approximation of type [M/N] of a
 % chebfun F using the Remez algorithm. The particular case REMEZ(F,N) 
 % computes the best polynomial approximation of degree N .
@@ -16,6 +16,11 @@ function varargout = remez(f,varargin)
 %
 % [P,ERR,XK] = REMEZ(...) and [P,Q,ERR,XK] = REMEZ(...) also returns the 
 % reference grid on which the error equioscillates.
+%
+% [P,ERR,XK,STATUS] = REMEZ(...) and [P,Q,ERR,XK,STATUS] = REMEZ(...) also 
+% returns the structure array STATUS with the fields DELTA, ITER and DIFFX
+% with the obtained tolerance, number of iterations and the maximum
+% correction in the last trial grid respectively.
 %
 % See Pachon and Trefethen, "Barycentric-Remez algorithms for best 
 % polynomial approximation in the chebfun system", BIT Numerical 
@@ -56,20 +61,21 @@ spl_ini = chebfunpref('splitting');
 splitting off,
 if nargin == 2
     N = varargin{1};
-    n = 0; no = 0;
+    n = 0; rational = 0;
 elseif nargin == 3
     m = varargin{1}; n = varargin{2};
-    no = n;
+    rational = 1;
     [m,n] = detectdegeneracy(f,m,n);
     N = m+n;
 end
+if n == 0, qk = 1; q = chebfun(1); qmin = q; end
 % parameters
-iter = 1;
+iter = 0;
 maxit = 25; 
 [a,b] = domain(f);
 sigma = ones(N+2,1); sigma(2:2:end) = -1;  % alternating signs
 normf = norm(f); 
-delta = normf; deltamin = delta;
+delta = normf; deltamin = inf;
 diffx = 1;
 % set tolerances according
 if N < 15, 
@@ -84,17 +90,17 @@ end
 % initial reference
 flag = 0;
 if f.nfuns == 1 && n > 0
-    [p,q] = chebpade(f,m,n);
-    % [p,q] = cf(f,m,n);
-    [xk,err,e,flag] = exchange([],0,2,f,p,q,N+2);
+    %[p,q] = chebpade(f,m,n);
+     [p,q] = cf(f,m,n);
+     [xk,err,e,flag] = exchange([],0,2,f,p,q,N+2);
 end
 if f.nfuns > 1 || n == 0 || flag == 0
     xk = chebpts(N+2,[a,b]);
     % xk = linspace(a,b,N+2);
 end
 xo = xk;
-while (delta/normf > tol) && iter <=maxit && diffx > 0
-    
+while (delta/normf > tol) && iter <maxit && diffx > 0
+    %iter
     fk = feval(f,xk);                             % function values 
     w = bary_weights(xk);                         % compute barycentric weights
     % computatiom of levelled error   
@@ -106,7 +112,7 @@ while (delta/normf > tol) && iter <=maxit && diffx > 0
        ZR=C(:,m+2:N+2).'*diag(sigma)*C(:,1:n+1);  % right rational interp matrix 
        [v,d] = eig(ZL,ZR);                        % solve generalize eig problem
        qk_all = C(:,1:n+1)*v;                     % compute all possible qk 
-       pos = find(abs(sum(sign(qk_all)) == N+2)); % signs' changes of each qk
+       pos =  find(abs(sum(sign(qk_all)))==N+2);  % signs' changes of each qk
        if isempty(pos)||length(pos)>1
          error('Trial interpolant too far from optimal');
        end    
@@ -115,8 +121,6 @@ while (delta/normf > tol) && iter <=maxit && diffx > 0
     else
        % in case of polynomial case, compute directly the levelled error
        h = (w'*fk)/(w'*sigma);                    % levelled reference error  
-       qk = 1;
-       q = chebfun(1); 
     end    
     if h==0, h = 1e-19; end                       % perturb error if necessary         
     pk = (fk - h*sigma).*qk;                      % vals of r x q in reference
@@ -136,24 +140,42 @@ while (delta/normf > tol) && iter <=maxit && diffx > 0
       if n > 0 , qmin = q; end  
       deltamin = delta;
     end
-    iter = iter+1;
+    iter = iter+1;    
     %[num2str(delta/normf,'%5.15f') ' ' num2str(h,'%5.15f')]       % uncomment to see progress
 end
 p = pmin;
 err = errmin;
 xk = xkmin;
-if no > 0 , q = qmin; end
-if no == 0 
+delta = deltamin;
+if delta/normf > tol
+    warning('CHEBFUN:remez:convergence',...
+        ['Remez algorithm did not converge after ',num2str(iter),...
+        ' iterations to the tolerance ',num2str(tol),'.']),
+end
+    
+if rational , q = qmin; end
+if ~rational 
     if nargout >= 1, varargout(1) = {p};   end
     if nargout >= 2, varargout(2) = {err}; end
-    if nargout == 3, varargout(3) = {xk};  end
-elseif no > 0
+    if nargout >= 3, varargout(3) = {xk};  end
+    if nargout == 4, 
+        status.delta = delta/normf;
+        status.iter = iter;
+        status.diffx = diffx;
+        varargout(4) = {status}; end
+elseif rational
     if nargout >= 1, varargout(1) = {p};   end
     if nargout >= 2, varargout(2) = {q}; end
     if nargout >= 3, varargout(3) = {err};  end
-    if nargout == 4, varargout(4) = {xk}; end
+    if nargout >= 4, varargout(4) = {xk}; end
+    if nargout == 5, 
+        status.delta = delta/normf;
+        status.iter = iter;
+        status.diffx = diffx;        
+        varargout(5) = {status}; end
 end
 chebfunpref('splitting',spl_ini), 
+
 
 %-------------------------------------------------------------------------%
     function [xk,norme,e,flag] = exchange(xk, h, method, f, p, q, Npts)  
@@ -227,13 +249,16 @@ chebfunpref('splitting',spl_ini),
     % [m+1/n+1], with m and n even. This strategy is the same as the 
     % one proposed by van Deun and Trefethen for CF approximation in 
     % Chebfun (see chebfun/cf.m).
-    ff = chebfun(f,domain(f),128);                 
-    a = chebpoly(ff); a(end) = 2*a(end);
-    if max(abs(a(end-1:-2:1)))/f.scl < eps, % f is an even function
+    [a,b] = domain(f);
+    if f.nfuns>1 || length(f)>128,
+      f = chebfun(f,[a,b],128);                 
+    end
+    c = chebpoly(f); c(end) = 2*c(end);
+    if max(abs(c(end-1:-2:1)))/f.scl < eps, % f is an even function
         if ~(mod(m,2)||mod(n,2)), m = m + 1;
         elseif mod(m,2) && mod(n,2), n = n - 1;
         end
-    elseif max(abs(a(end:-2:1)))/f.scl < eps, % f is an odd function
+    elseif max(abs(c(end:-2:1)))/f.scl < eps, % f is an odd function
         if mod(m,2) && ~mod(n,2), m = m + 1; 
         elseif ~mod(m,2) && mod(n,2), n = n - 1;
         end

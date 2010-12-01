@@ -1,5 +1,6 @@
 function [p, q, r_handle] = chebpade(F,m,n,type) 
-% CHEBYSHEV-PADE APPROXIMATION
+% Chebyshev-Pade approximation
+%
 % [P,Q,R_HANDLE] = CHEBPADE(F,M,N) constructs R_HANDLE = P/Q, where P and
 %   Q are chebfuns corresponding to the [M/N] Chebyshev-Pade approximation 
 %   of type Clenshaw-Lord, i.e., the rational function has maximum contact
