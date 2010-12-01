@@ -144,7 +144,7 @@ settings = chebopdefaults;
 settings.scale = A.scale;
 
 % Adaptively construct the sum of eigenfunctions.
-if numel(breaks) == 2
+if numel(breaks) == 2 && ~chebfunpref('splitting')
     chebfun( @(x) value(x), dom, settings);
 else
     chebfun( @(x,N,bks) value_sys(x,N,bks), {breaks} , settings);
@@ -153,7 +153,7 @@ end
 
 if nargout < 2
   varargout = { diag(D) };
-elseif numel(breaks) == 2
+elseif numel(breaks) == 2 && ~chebfunpref('splitting')
   V = reshape( V, [N,m,k] );
   Vfun = cell(1,m);
   for j = 1:k
@@ -247,6 +247,10 @@ end
           v{csN(jj(ll))+(1:N(jj(ll)))} = e; 
       end
       return
+    elseif sum(N) < k
+      % Too few points: force refinement
+      v = ones(size(y{1})); v(2:2:end) = -1;  v = {v};
+      return
     end    
 
     [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks);
@@ -272,7 +276,6 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
 breaks = union(breaks,A.fundomain.endsandbreaks);
-% N = 5;
 if (numel(N) == 1 && numel(breaks) > 2)
     N = repmat(N,1,numel(breaks)-1);
 end
@@ -355,6 +358,13 @@ function [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks)
     V = W(:,idx);
 
     D = D(idx,idx);
+
+    if size(V,2) < k
+        % Matrix wasn't big enough
+        v = ones(size(V,1),1); v(2:2:end) = -1;
+        V = [V repmat(v,1,k-size(V,2))];
+    end
+
 end
 
 
