@@ -35,9 +35,15 @@ function fout = rdividecol(f1,f2)
 if (isempty(f1) || isempty(f2)), fout=chebfun; return; end
 
 if isa(f2,'double')
-    if f2 ==  0, error('CHEBFUN:rdivide:DivisionByZero','Division by zero'), end
+    if f2 ==  0, error('CHEBFUN:rdivide:DivisionByZero','Division by zero.'), end
     fout = f1*(1/f2);  
     return
+end
+
+for j = 1:f2.nfuns
+    if ~any(get(f2.funs(j),'vals'))
+        error('CHEBFUN:rdivide:DivisionByZeroChebfun','Division by zero chebfun.');
+    end
 end
     
 r = roots(f2);
