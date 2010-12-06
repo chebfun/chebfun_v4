@@ -69,8 +69,9 @@ end
 % inf corresponding to the sign of the entry in the 2nd row. If the entry
 % in the corresponding 3rd or higher rows is nonzero, we return NaN.
 
+f.imps(1,:)
 % Only one row
-if (size(f.imps,1) == 1 || ~any(any(f.imps(2:end,:)))) && any(f.imps(1,:))
+if (size(f.imps,1) == 1 || ~any(any(f.imps(2:end,:)))) %&& any(f.imps(1,:))
     % RodP and NickH used this to fix the problem
     % when repeated values of x intersect with ends.
     if f.nfuns < 10
