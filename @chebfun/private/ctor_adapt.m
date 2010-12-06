@@ -169,7 +169,8 @@ if ~isfield(pref,'secondcall') && pref.splitting && pref.blowup
     return
 end
 
-imps = jumpvals(funs,newends,newops,pref,scl.v); % Update values at jumps, first row of imps.
+imps = jumpvals(funs,newends,newops,pref,scl.v);   % Update values at jumps, first row of imps.
+imps(1,abs(imps(1,:))<2*eps*scl.v & isinf(newends)) = 0; % Cheat at ends of unbounded domains
 scl.v = max(scl.v,norm(imps(~isinf(imps)),inf));
 f.nfuns = nfuns;
 % update scale and check if simplification is needed.

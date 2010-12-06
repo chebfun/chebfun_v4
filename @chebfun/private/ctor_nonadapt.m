@@ -155,6 +155,7 @@ end
 
 % First row of imps contains function values
 imps = jumpvals(funs,ends,ops,pref,scl.v); 
+imps(1,abs(imps(1,:))<2*eps*scl.v & isinf(ends)) = 0; % Cheat at ends of unbounded domains
 scl.v = max(scl.v,norm(imps(~isinf(imps)),inf));
 
 % update scale field in funs

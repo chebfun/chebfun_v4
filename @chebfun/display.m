@@ -112,9 +112,6 @@ function displaychebfun(f, columnstr)
         else
             exinfo = ' ';
         end
-        if ~any(isnan(endvals))
-            endvals(~logical(abs(endvals))) = 0;
-        end
         
         if mapped
             pars = funs(j).map.par(3:end);
@@ -125,6 +122,13 @@ function displaychebfun(f, columnstr)
         if ~isreal(funs(j).vals)
             fprintf('[%8.2g,%8.2g]   %6i    complex values %s \n', ends(j), ends(j+1), len(j), exinfo);
         else
+            % Tweak the endpoint values some.
+            if ~any(isnan(endvals))
+                endvals(~logical(abs(endvals))) = 0;
+            end
+            % Cheat zeros on unbounded domains
+            endvals(abs(endvals)<2*eps*funs(j).scl.v & isinf(ends(j:j+1))) = 0;
+            
             fprintf('[%8.2g,%8.2g]   %6i %8.2g %8.2g %s \n', ends(j), ends(j+1), len(j), endvals, exinfo);
         end        
     end
