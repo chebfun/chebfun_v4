@@ -5,6 +5,17 @@ function varargout = remez(f,varargin)
 % chebfun F using the Remez algorithm. The particular case REMEZ(F,N) 
 % computes the best polynomial approximation of degree N .
 %
+% REMEZ(...'tol',TOL) uses the value TOL as the termination tolerance on
+% the increase of the levelled error. 
+%
+% REMEZ(...'display','iter') displays output at each iteration.
+%
+% REMEZ(...'maxiter',MAXITER) uses MAXITER as the maximum number of
+% iterations allowed.
+%
+% REMEZ(...'plotfcns','error') plots the error function while the algorithm
+% executes.
+%
 % P = REMEZ(...) returns a chebfun P for the best polynomial
 % approximation.
 %
@@ -59,39 +70,59 @@ if any(get(f,'exps')<0),
 end
 spl_ini = chebfunpref('splitting');
 splitting off,
-if nargin == 2
+if ~mod(nargin,2) % even number of input parameters: polynomial case
     N = varargin{1};
     n = 0; rational = 0;
-elseif nargin == 3
-    m = varargin{1}; n = varargin{2};
-    rational = 1;
-    [m,n] = detectdegeneracy(f,m,n);
-    N = m+n;
+    varargin = varargin(2:end);
+else % odd number of input parameters: rational case
+       m = varargin{1}; n = varargin{2};
+       rational = 1;
+       [m,n] = detectdegeneracy(f,m,n);
+       N = m+n;
+       varargin = varargin(3:end);
 end
-if n == 0, qk = 1; q = chebfun(1); qmin = q; end
 % parameters
 iter = 0;
-maxit = 25; 
+maxit = 20; 
 [a,b] = domain(f);
 sigma = ones(N+2,1); sigma(2:2:end) = -1;  % alternating signs
 normf = norm(f); 
 delta = normf; deltamin = inf;
 diffx = 1;
+disp_iter = 0;
+draw_option = 0;
 % set tolerances according
 if N < 15, 
-    tol = 1e-14; 
-elseif N < 100, 
-    tol = 1e-14; 
+    tol = 1e-15; 
+elseif N <= 100, 
+    tol = 1e-13; 
 elseif N <= 1000, 
-    tol = 1e-11; 
+    tol = 1e-13; 
 elseif N > 1000
     tol = 2e-10;
 end
+% read optional input arguments
+for k = 1:2:length(varargin)
+    if strcmpi('tol',varargin{k})
+        tol = varargin{k+1};
+    elseif strcmpi('display',varargin{k})
+        disp_iter = 1;
+    elseif strcmpi('maxiter',varargin{k})
+        maxit = varargin{k+1};
+    elseif strcmpi('plotfcns',varargin{k})
+        draw_option = 1;
+    else
+        error('CHEBFUN:remez:input_parameters',...
+            'Unrecognized sequence of input parameters.')
+    end        
+end
+
+if n == 0, qk = 1; q = chebfun(1); qmin = q; end
 % initial reference
 flag = 0;
 if f.nfuns == 1 && n > 0
-    %[p,q] = chebpade(f,m,n);
-     [p,q] = cf(f,m,n);
+    [p,q] = chebpade(f,m,n);
+    % [p,q] = cf(f,m,n);
      [xk,err,e,flag] = exchange([],0,2,f,p,q,N+2);
 end
 if f.nfuns > 1 || n == 0 || flag == 0
@@ -99,6 +130,16 @@ if f.nfuns > 1 || n == 0 || flag == 0
     % xk = linspace(a,b,N+2);
 end
 xo = xk;
+
+
+if disp_iter
+    disp(['It.     Max(|Error|)       |ErrorRef|      Delta ErrorRef      Delta Ref'])    
+end
+
+if draw_option
+    xxk = linspace(a,b,300);
+end
+
 while (delta/normf > tol) && iter <maxit && diffx > 0
     %iter
     fk = feval(f,xk);                             % function values 
@@ -128,10 +169,24 @@ while (delta/normf > tol) && iter <maxit && diffx > 0
     if n > 0
      q =chebfun(@(x) bary(x,qk,xk,w),[a,b],N+1);  % chebfun of trial denominator   
     end
-    [xk,err,e] = exchange(xk,h,2,f,p,q,N+2);
-    if err/normf > 1e5                            % if overshoot, recompute with one-
-        [xk,err,e] = exchange(xo,h,1,f,p,q,N+2);  % point exchange
+    if draw_option,
+        plot(xk,0*xk,'or','markersize',12),  hold on,        
     end    
+    
+    [xk,err,e] = exchange(xk,h,2,f,p,q,N+2);
+    %if err/normf > 1e5                            % if overshoot, recompute with one-
+    %    [xk,err,e] = exchange(xo,h,1,f,p,q,N+2);  % point exchange
+    %end    
+        if draw_option
+              
+          plot(xk,0*xk,'*k','markersize',12); 
+          plot(xxk,e(xxk)),   
+          hold off,
+          xlim([a,b])
+          legend('current ref','next ref','error')
+          drawnow,
+          pause,
+         end
     diffx = max(abs([xo-xk]));
     xo = xk;
     delta = err - abs(h);                         % stopping value 
@@ -139,10 +194,17 @@ while (delta/normf > tol) && iter <maxit && diffx > 0
       pmin = p; errmin = err; xkmin = xk;          
       if n > 0 , qmin = q; end  
       deltamin = delta;
+      itermin = iter;
     end
-    iter = iter+1;    
-    %[num2str(delta/normf,'%5.15f') ' ' num2str(h,'%5.15f')]       % uncomment to see progress
+    
+    iter = iter+1; 
+    if disp_iter
+      disp([num2str(iter),'        ',num2str(err,'%5.4e'),'        ',...
+          num2str(abs(h),'%5.4e'),'        ',...
+          num2str(delta/normf,'%5.4e'),'        ',num2str(diffx,'%5.4e')]),
+    end
 end
+itermin;
 p = pmin;
 err = errmin;
 xk = xkmin;
@@ -249,6 +311,7 @@ chebfunpref('splitting',spl_ini),
     % [m+1/n+1], with m and n even. This strategy is the same as the 
     % one proposed by van Deun and Trefethen for CF approximation in 
     % Chebfun (see chebfun/cf.m).
+    %return
     [a,b] = domain(f);
     if f.nfuns>1 || length(f)>128,
       f = chebfun(f,[a,b],128);                 
