@@ -117,7 +117,7 @@ for k = 1:2:length(varargin)
     end        
 end
 
-if n == 0, qk = 1; q = chebfun(1); qmin = q; end
+if n == 0, qk = 1; q = chebfun(1,[a,b]); qmin = q; end
 % initial reference
 flag = 0;
 if f.nfuns == 1 && n > 0
@@ -174,9 +174,9 @@ while (delta/normf > tol) && iter <maxit && diffx > 0
     end    
     
     [xk,err,e] = exchange(xk,h,2,f,p,q,N+2);
-    %if err/normf > 1e5                            % if overshoot, recompute with one-
-    %    [xk,err,e] = exchange(xo,h,1,f,p,q,N+2);  % point exchange
-    %end    
+    if err/normf > 1e5                            % if overshoot, recompute with one-
+        [xk,err,e] = exchange(xo,h,1,f,p,q,N+2);  % point exchange
+    end    
         if draw_option
               
           plot(xk,0*xk,'*k','markersize',12); 
@@ -185,7 +185,7 @@ while (delta/normf > tol) && iter <maxit && diffx > 0
           xlim([a,b])
           legend('current ref','next ref','error')
           drawnow,
-          pause,
+          %pause,
          end
     diffx = max(abs([xo-xk]));
     xo = xk;
