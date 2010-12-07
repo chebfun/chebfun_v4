@@ -4,10 +4,19 @@ function map = maps(fun,varargin)
 %  @fun/private. It will not usually be called directly by the user, 
 %  but rather by its sister function maps.m in the trunk.
 
+if nargin == 1 && isempty(fun)
+    map = struct('for',[],'inv',[],'der',[],'name',[],'par',[],'inherited',[]);
+    return
+end
+
 if length(varargin) == 1 && isa(varargin{1},'domain')
 % We check for the special case where the input is a domain and if so
 % return the default map for that domain.
     d = varargin{1};
+    if isempty(d)
+        map = struct('for',[],'inv',[],'der',[],'name',[],'par',[],'inherited',[]);
+        return
+    end
     d = d.endsandbreaks;
     for k = 1:numel(d)-1
         dk = d(k:k+1);

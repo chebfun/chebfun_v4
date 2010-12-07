@@ -75,6 +75,10 @@ while ~all(hpy)
         jk = indx(l,:); j = jk(1); k = jk(2);
         a = ends{j}(k); b = ends{j}(k+1);
         edge = .5*(a+b);
+        if any(isinf([a b])) && isfield(pref,'map')
+            % Bisection on unbounded domains is a little trickier.
+            edge = pref.map.for(0);
+        end
         ends{j} = [ends{j}(1:k) edge ends{j}(k+1:end)];
         numints = numints+1;
     end
@@ -85,6 +89,7 @@ end
 
 for k = 1:numel(funs)
     if length(funs{k}.ends)>2         
-         funs{k} = merge(funs{k},find(~ismember(ends{k},oldends{k})),pref); % Avoid merging at specified breakpoints
+        % Avoid merging at specified breakpoints
+        funs{k} = merge(funs{k},find(~ismember(ends{k},oldends{k})),pref); 
     end
 end

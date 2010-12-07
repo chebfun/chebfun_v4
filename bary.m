@@ -20,29 +20,27 @@ if any(isnan(gvals))
     return
 end
 
-if n == 1               % The function is a constant
+if n == 1                % The function is a constant
     fx = gvals*ones(size(x));
     return;
 end
 
-% init return value
-fx = zeros(size(x));
-
-if nargin < 4           % Default to Chebyshev weights
+if nargin < 4            % Default to Chebyshev weights
     ek = [.5 ; ones(n-1,1)]; 
     ek(2:2:end) = -1;
     ek(end) = .5*ek(end);
-    % Weights for 1st kind points (at the moment only second kind should be
-    % used)
-    %ek = sin((2*(0:n-1)+1)*pi/(2*n)).';
-    %ek(2:2:end) = -ek(2:2:end);
+%     % Weights for 1st kind points (at the moment only second kind should be used)
+%     ek = sin((2*(0:n-1)+1)*pi/(2*n)).';
+%     ek(2:2:end) = -ek(2:2:end);
 end
-if nargin < 3           % Default to Chebyshev nodes
+if nargin < 3            % Default to Chebyshev nodes
     xk = chebpts(n);
 end
     
 warnstate = warning('off','MATLAB:divideByZero');
+
 if length(x) < length(xk)
+    fx = zeros(size(x)); % init return value
     for i = 1:numel(x)
         xx = ek./(x(i)-xk);
         fx(i) = (xx.'*gvals)/sum(xx);
@@ -56,6 +54,7 @@ else
     end
     fx = num./denom;
 end
+
 warning(warnstate);
 
 % clean-up nans

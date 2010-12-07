@@ -23,7 +23,6 @@ function [M,B,c,rowreplace,P] = feval(A,n,usebc,map,breaks)
 persistent storage
 if isempty(storage), storage = struct([]); end
 use_store = cheboppref('storage');
-use_store = false;
 
 if isa(n,'chebfun')  % Apply to chebfun
   M = A*n;
@@ -87,10 +86,7 @@ end
 
 % Force maps for unbounded domains
 if isempty(map) && any(isinf(breaks))
-    map = cell(numel(breaks)-1,1);
-    for k = 1:numel(breaks)-1;
-        map{k} = maps(domain(breaks(k:k+1)));
-    end
+    map = maps(domain(breaks));
 end
   
 % %%%%%%%%%% function (i,e., infinite dimensional operator) %%%%%%
@@ -148,7 +144,8 @@ else
       if isempty(breaks)     % No breakpoints
           % Project
 %           P = barymatp(n-A.difforder,breaks,n,breaks);
-          P = barymatp12(n-A.difforder,[-1 1],n,[-1 1]);
+%           P = barymatp12(n-A.difforder,[-1 1],n,[-1 1],map,map);
+          P = barymatp12m(n-A.difforder,n,[-1 1],map);
           M = P*M;
           % Compute boundary conditions and apply (if required)
           if usebc == 1
@@ -159,7 +156,9 @@ else
       else                   % Break points
           % Project
 %           P = barymatp(n-A.difforder,breaks,n,breaks);
-          P = barymatp12(n-A.difforder,breaks,n,breaks);
+%           P = barymatp12(n-A.difforder,breaks,n,breaks,map,map);
+
+          P = barymatp12m(n-A.difforder,n,breaks,map);
           M = P*M;
           % Compute boundary conditions and apply (if required)
           if usebc == 1
@@ -182,11 +181,8 @@ else
                   'feval size is not large enough for linop.difforder.');
           end
 %           Pk = barymatp(nk,breaks,n,breaks);
-          if isempty(breaks)
-              Pk = barymatp12(nk,[-1 1],n,[-1 1]);
-          else
-              Pk = barymatp12(nk,breaks,n,breaks);
-          end
+%           Pk = barymatp12(nk,breaks,n,breaks,map,map);
+          Pk = barymatp12m(nk,n,breaks,map);
           ii = ((k-1)*sn+1):k*sn;
           MM = [MM ; Pk*M(ii,:)];
           if nargout == 5, P{k} = Pk; end % Store P
