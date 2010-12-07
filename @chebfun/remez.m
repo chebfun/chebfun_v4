@@ -123,9 +123,9 @@ if n == 0, qk = 1; q = chebfun(1,[a,b]); qmin = q; end
 flag = 0;
 if n > 0 % initial reference from Chebyshev-Pade
     if f.nfuns == 1
-        [p,q] = chebpade(f,m,n);
+        [p,q] = cf(f,m,n);
     else
-        [p,q] = chebpade(f,m,n,10*N);
+        [p,q] = cf(f,m,n,5*N);
     end
     [xk,err,e,flag] = exchange([],0,2,f,p,q,N+2);
 end
@@ -312,7 +312,7 @@ chebfunpref('splitting',spl_ini),
     % even or odd. In either case, the Walsh table is covered with 
     % blocks of size 2x2, e.g. for even function the best rational 
     % approximant is the same for types [m/n], [m+1/n], [m/n+1] and 
-    % [m+1/n+1], with m and n even. This strategy is the same as the 
+    % [m+1/n+1], with m and n even. This strategy is similar to the 
     % one proposed by van Deun and Trefethen for CF approximation in 
     % Chebfun (see chebfun/cf.m).
     %return
@@ -321,16 +321,12 @@ chebfunpref('splitting',spl_ini),
       f = chebfun(f,[a,b],128);                 
     end
     c = chebpoly(f); c(end) = 2*c(end);
-    if max(abs(c(end-1:-2:1)))/f.scl < eps, % f is an even function
-        %if ~(mod(m,2)||mod(n,2)), m = m + 1;
-        %elseif
-        if mod(m,2) && mod(n,2), n = n - 1;
-        end
+    if max(abs(c(end-1:-2:1)))/f.scl < eps, % f is an even function        
+        if mod(m,2) ,m = m - 1; end
+        if mod(n,2), n = n -1; end        
     elseif max(abs(c(end:-2:1)))/f.scl < eps, % f is an odd function
-        %if mod(m,2) && ~mod(n,2), m = m + 1; 
-        %elseif
-        if ~mod(m,2) && mod(n,2), n = n - 1;
-        end
+        if ~mod(m,2), m = m-1; end
+        if ~mod(n,2), n = n - 1; end
     end
         
     % END DETECTDEGENERACY
