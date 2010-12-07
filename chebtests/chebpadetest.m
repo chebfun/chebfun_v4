@@ -7,7 +7,7 @@ tol = chebfunpref('eps');
 
 M = 4;
 N = 4;
-d = [-1, 0, 3];
+d = [-1, 3];
 P = chebfun(chebpolyval([-0.6817    0.0558    2.1122   -1.3813    0.5045]),d);
 Q = chebfun(chebpolyval([0.5246   -0.2679   -0.8573    0.1155    1]),d);
 R = P./Q;

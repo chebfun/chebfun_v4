@@ -20,24 +20,24 @@ function varargout = remez(f,varargin)
 % approximation.
 %
 % [P,Q] = REMEZ(...) returns chebfuns P and Q for best rational
-% approximation.
+% approximation. [P,Q,R_HANDLE] = REMEZ(...) also returns a function handle 
+% R_HANDLE to evaluate the rational function P/Q.
 %
-% [P,ERR] = REMEZ(...) and [P,Q,ERR] = REMEZ(...) also returns the maximum 
-% error ERR.    
+% [P,ERR] = REMEZ(...) and [P,Q,R_HANDLE,ERR] = REMEZ(...) also return the 
+% maximum error ERR.    
 %
-% [P,ERR,XK] = REMEZ(...) and [P,Q,ERR,XK] = REMEZ(...) also returns the 
-% reference grid on which the error equioscillates.
 %
-% [P,ERR,XK,STATUS] = REMEZ(...) and [P,Q,ERR,XK,STATUS] = REMEZ(...) also 
-% returns the structure array STATUS with the fields DELTA, ITER and DIFFX
-% with the obtained tolerance, number of iterations and the maximum
-% correction in the last trial grid respectively.
+% [P,ERR,STATUS] = REMEZ(...) and [P,Q,R_HANDLE,ERR,STATUS] = REMEZ(...) 
+% also return the structure array STATUS with the fields DELTA, ITER, DIFFX
+% and XK with the obtained tolerance, number of performed iterations, 
+% maximum correction in the last trial reference and last trial reference 
+% on which the error equioscillates respectively.
 %
 % See Pachon and Trefethen, "Barycentric-Remez algorithms for best 
 % polynomial approximation in the chebfun system", BIT Numerical 
-% Mathematics 49 (2009),721-741) and Chapter 5 of "Algorithms for 
+% Mathematics 49 (2009),721-741) and Pachon, "Algorithms for 
 % Polynomial and Rational Approximation", D.Phil. Thesis, University of 
-% Oxford, 2010.
+% Oxford, 2010 (Chapter 6).
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -72,6 +72,7 @@ spl_ini = chebfunpref('splitting');
 splitting off,
 if ~mod(nargin,2) % even number of input parameters: polynomial case
     N = varargin{1};
+    m = N;
     n = 0; rational = 0;
     varargin = varargin(2:end);
 else % odd number of input parameters: rational case
@@ -120,14 +121,16 @@ end
 if n == 0, qk = 1; q = chebfun(1,[a,b]); qmin = q; end
 % initial reference
 flag = 0;
-if f.nfuns == 1 && n > 0
-    [p,q] = chebpade(f,m,n);
-    % [p,q] = cf(f,m,n);
-     [xk,err,e,flag] = exchange([],0,2,f,p,q,N+2);
+if n > 0 % initial reference from Chebyshev-Pade
+    if f.nfuns == 1
+        [p,q] = chebpade(f,m,n);
+    else
+        [p,q] = chebpade(f,m,n,10*N);
+    end
+    [xk,err,e,flag] = exchange([],0,2,f,p,q,N+2);
 end
-if f.nfuns > 1 || n == 0 || flag == 0
+if n==0 || flag == 0 
     xk = chebpts(N+2,[a,b]);
-    % xk = linspace(a,b,N+2);
 end
 xo = xk;
 
@@ -165,9 +168,9 @@ while (delta/normf > tol) && iter <maxit && diffx > 0
     end    
     if h==0, h = 1e-19; end                       % perturb error if necessary         
     pk = (fk - h*sigma).*qk;                      % vals of r x q in reference
-    p =chebfun(@(x) bary(x,pk,xk,w),[a,b],N+1);   % chebfun of trial numerator
+    p = chebfun(@(x) bary(x,pk,xk,w),[a,b],m+1);  % chebfun of trial numerator
     if n > 0
-     q =chebfun(@(x) bary(x,qk,xk,w),[a,b],N+1);  % chebfun of trial denominator   
+     q =chebfun(@(x) bary(x,qk,xk,w),[a,b],n+1);  % chebfun of trial denominator   
     end
     if draw_option,
         plot(xk,0*xk,'or','markersize',12),  hold on,        
@@ -219,21 +222,22 @@ if rational , q = qmin; end
 if ~rational 
     if nargout >= 1, varargout(1) = {p};   end
     if nargout >= 2, varargout(2) = {err}; end
-    if nargout >= 3, varargout(3) = {xk};  end
-    if nargout == 4, 
+    if nargout == 3, 
         status.delta = delta/normf;
         status.iter = iter;
         status.diffx = diffx;
+        status.xk =  xk;
         varargout(4) = {status}; end
 elseif rational
     if nargout >= 1, varargout(1) = {p};   end
     if nargout >= 2, varargout(2) = {q}; end
-    if nargout >= 3, varargout(3) = {err};  end
-    if nargout >= 4, varargout(4) = {xk}; end
+    if nargout >= 3, varargout(3) = {@(x) feval(p,x)./feval(q,x)};  end
+    if nargout >= 4, varargout(4) = {err};  end
     if nargout == 5, 
         status.delta = delta/normf;
         status.iter = iter;
-        status.diffx = diffx;        
+        status.diffx = diffx;   
+        status.xk = xk;
         varargout(5) = {status}; end
 end
 chebfunpref('splitting',spl_ini), 
@@ -318,12 +322,14 @@ chebfunpref('splitting',spl_ini),
     end
     c = chebpoly(f); c(end) = 2*c(end);
     if max(abs(c(end-1:-2:1)))/f.scl < eps, % f is an even function
-        if ~(mod(m,2)||mod(n,2)), m = m + 1;
-        elseif mod(m,2) && mod(n,2), n = n - 1;
+        %if ~(mod(m,2)||mod(n,2)), m = m + 1;
+        %elseif
+        if mod(m,2) && mod(n,2), n = n - 1;
         end
     elseif max(abs(c(end:-2:1)))/f.scl < eps, % f is an odd function
-        if mod(m,2) && ~mod(n,2), m = m + 1; 
-        elseif ~mod(m,2) && mod(n,2), n = n - 1;
+        %if mod(m,2) && ~mod(n,2), m = m + 1; 
+        %elseif
+        if ~mod(m,2) && mod(n,2), n = n - 1;
         end
     end
         

@@ -1,15 +1,18 @@
-function [p, q, r_handle] = chebpade(F,m,n,type) 
+function [p, q, r_handle] = chebpade(F,m,n,varargin) 
 % Chebyshev-Pade approximation
 %
 % [P,Q,R_HANDLE] = CHEBPADE(F,M,N) constructs R_HANDLE = P/Q, where P and
-%   Q are chebfuns corresponding to the [M/N] Chebyshev-Pade approximation 
-%   of type Clenshaw-Lord, i.e., the rational function has maximum contact
-%   with the Chebyshev series of the chebfun F. R_HANDLE is a function handle
-%   for the rational function.
-% [P,Q,R_HANDLE] = CHEBPADE(F,M,N,'maehly') constructs R_HANDLE = P/Q, where
-%   P and Q are chebfuns corresponding to the [M/N] Chebyshev-Pade approximation
-%   of type Maehly, which satisfies the linear Pade condition. R_HANDLE is a
-%   function handle for the rational function
+% Q are chebfuns corresponding to the [M/N] Chebyshev-Pade approximation 
+% of type Clenshaw-Lord, i.e., the rational function has maximum contact
+% with the Chebyshev series of the chebfun F. R_HANDLE is a function handle
+% for the rational function. The same functionality is obtained with 
+% CHEBPADE(...,'clenshawlord').
+%
+% CHEBPADE(...,'maehly') Chebyshev-Pade approximation
+%   of type Maehly, which satisfies the linear Pade condition. 
+%
+% CHEBPADE(...,K) uses only the K-th partial sum in Chebyshev expansion 
+% of F.
 %
 % If F is a quasimatrix then so are the outputs P & Q, 
 % and R_HANDLE is a cell array of function handles.
@@ -24,11 +27,36 @@ function [p, q, r_handle] = chebpade(F,m,n,type)
 if nargin == 2, 
     n = 0; 
     type = 'clenshawlord'; 
+    M = -1;
 end
 if nargin == 3, 
     type = 'clenshawlord';
     if ~isnumeric(n)
         n = 0;
+    end
+    M = -1;
+end
+if nargin == 4
+    if isnumeric(varargin{1})
+        M = varargin{1};
+        type = 'clenshawlord';
+    elseif ischar(varargin{1})
+        M = -1;
+        type = varargin{1};
+        if ~(strcmpi(type,'clenshawlord') || strcmpi(type,'maehly'))
+        error('CHEBFUN:remez:input_parameters',...
+            'Unrecognized sequence of input parameters.')
+        end
+    end
+end
+if nargin == 5
+    if isnumeric(varargin{1}) && ischar(varargin{2})
+        M = varargin{1}; type = varargin{2};
+    elseif ischar(varargin{1}) && isnumeric(varargin{2})
+        type = varargin{1}; M = varargin{2};
+    else
+        error('CHEBFUN:remez:input_parameters',...
+            'Unrecognized sequence of input parameters.')
     end
 end
 
@@ -53,9 +81,18 @@ if any(get(F,'exps')), error('CHEBFUN:chebpade:inf',...
         'ChebPade does not currently support functions with nonzero exponents'); end
 
 if  strcmp(type,'clenshawlord')
-    d = domain( F );
     l = max(m,n);                                     % temp degree in case m < n
+    if M >=0
+        F = chebfun(@(x) feval(F,x),F.ends([1 end]),M+1);
+    elseif (F.nfuns>1)
+        error('CHEBFUN:chebpade:multiple_funs',...
+      'For a function with multiple funs, the number of coefficients to be considered should be specified.');
+    end
+        
     c = fliplr( chebpoly(F) )';                       % Chebyshev coeffs
+    if length(F) < m+2*n+1, 
+        c = [c ; eps*randn(m + 2*n+1 - length(F),1)]; % this is more stable than zeros?
+    end    
     c(1) = 2*c(1);
     top = c(abs([m-n+1:m]) + 1);                      % top row of Hankel system
     bot = c([m:m+n-1]      + 1);                      % bottom row of Hankel system
@@ -80,8 +117,8 @@ if  strcmp(type,'clenshawlord')
         qk(k) = u*v';                                % denominator of Cheb-Pade
     end
     pk = pk/qk(1); qk = 2*qk/qk(1); qk(1) = 1;
-    p = chebfun(chebpolyval(fliplr(pk)), d );            % chebfun of numerator
-    q = chebfun(chebpolyval(fliplr(qk)), d );            % chebfun of denominator
+    p = chebfun(chebpolyval(fliplr(pk)), F.ends([1 end]) );            % chebfun of numerator
+    q = chebfun(chebpolyval(fliplr(qk)), F.ends([1 end]) );            % chebfun of denominator
     r_handle = @(x) feval(p,x)./feval(q,x);   
 elseif strcmp(type,'maehly')
     tol = 1e-10; % tolerance for testing singular matrices
@@ -103,7 +140,7 @@ elseif strcmp(type,'maehly')
 
         return
     end
-    d = domain(F.ends(1:2));
+
     a = chebpoly(F,1).';
     a = a(end:-1:1);
     if length(F) < m+2*n+1, 
@@ -147,8 +184,8 @@ elseif strcmp(type,'maehly')
         pk = .5*B*qk(2:n+1)+qk(1)*a(1:m+1);
     end
     % p, q and r_handle
-    p = chebfun(chebpolyval(flipud(pk)),d);
-    q = chebfun(chebpolyval(flipud(qk)),d);
+    p = chebfun(chebpolyval(flipud(pk)),F.ends([1 end]));
+    q = chebfun(chebpolyval(flipud(qk)),F.ends([1 end]));
     r_handle = @(x) feval(p,x)./feval(q,x);
 else 
     error('CHEBFUN:chebpade:type','Unrecognized ChebPade type.');
