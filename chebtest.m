@@ -260,10 +260,7 @@ if nargout > 0, varargout{2} = t; end
 if createreport && any(failed)
     fid = fopen([dirname filesep ,'chebtest_report.txt'],'a');
 
-
-    % LocDisplayMatlabInformation  Display general MATLAB installation
-    % information as a header to the toolbox information section.
-
+    % GET SYSTEM INFORMATION
     % find platform OS
     if ispc
         platform = [system_dependent('getos'),' ',system_dependent('getwinsys')];
@@ -281,16 +278,10 @@ if createreport && any(failed)
     else    
         platform = system_dependent('getos');
     end
-        
     % display platform type
     fprintf(fid,['MATLAB Version ',version,'\n']);
-
-    % display Matlab license number
-    fprintf(fid,['MATLAB License Number: ',license,'\n']);
-
     % display operating system
-    fprintf(fid,['Operating System: ',  platform,'\n'])
-
+    fprintf(fid,['Operating System: ',  platform,'\n']);
     % display first line of Java VM version info
     fprintf(fid,['Java VM Version: ',...
     char(strread(version('-java'),'%s',1,'delimiter','\n'))]);
