@@ -372,7 +372,7 @@ if ~isempty(opt.Mass) || ~all(pdeflag)
         end
     end    
     if isa(opt.Mass,'chebop')
-        if isempty(userM)c
+        if isempty(userM)
             userM = opt.Mass;
         else
             userM = userM*opt.Mass;
