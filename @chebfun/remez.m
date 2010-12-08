@@ -123,9 +123,11 @@ if n == 0, qk = 1; q = chebfun(1,[a,b]); qmin = q; end
 flag = 0;
 if n > 0 % initial reference from Chebyshev-Pade
     if f.nfuns == 1
-        [p,q] = cf(f,m,n);
+        % [p,q] = chebpade(f,m,n);     % <- change initial guess to Chebyshev-Pade
+         [p,q] = cf(f,m,n);             % <- change initial guess to CF
     else
-        [p,q] = cf(f,m,n,5*N);
+        % [p,q] = chebpade(f,m,n,5*N); % <- change initial guess to Chebyshev-Pade
+         [p,q] = cf(f,m,n,5*N);        % <- change initial guess to CF
     end
     [xk,err,e,flag] = exchange([],0,2,f,p,q,N+2);
 end
