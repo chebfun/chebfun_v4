@@ -36,7 +36,7 @@ switch propName
         val = g.exps;
     case 'lval'  % value at left endpoint
         if g.exps(1) < 0  % inf case, need to check sign
-            if g.n > 5
+            if g.n > 5 && isinf(g.map.par(1))
                 val = inf*sign(mean(g.vals(1:2))+g.vals(1));
             else
                 val = inf*sign(g.vals(1));
@@ -56,7 +56,7 @@ switch propName
         end
     case 'rval' % value at right endpoint 
         if g.exps(2) < 0  % inf case, need to check sign
-            if g.n > 5
+            if g.n > 5 && isinf(g.map.par(2))
                 val = inf*sign(mean(g.vals(end-1:end))+g.vals(end));
             else
                 val = inf*sign(g.vals(end));
