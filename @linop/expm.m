@@ -59,7 +59,6 @@ F.blocksize = [m m];
 
 
   function E = expm_mat(n)
-    in = n;
     breaks = []; map = [];
     if iscell(n)
         if numel(n) > 1, map = n{2}; end

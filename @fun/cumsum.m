@@ -488,8 +488,8 @@ if N > oldN+2, cc = cc(1:oldN+2); end
 u = fun(chebpolyval(flipud(cc)),ends);
 
 % Plot for testing
-plot(xf - Cm*M1,'-b'); hold on
-plot((x-ends(1)).*diff(u)-a*u,'--r'); hold off
+% plot(xf - Cm*M1,'-b'); hold on
+% plot((x-ends(1)).*diff(u)-a*u,'--r'); hold off
 
 % Adding in the log term
 tol = chebfunpref('eps');

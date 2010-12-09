@@ -90,6 +90,7 @@ switch(class(B))
 
   case 'chebfun'    % linop * chebfun
     dom = domaincheck(A,B);
+    dom = dom.ends;
     if isinf(size(B,2))
       error('LINOP:mtimes:dimension','Inner dimensions do not agree.')
     end
