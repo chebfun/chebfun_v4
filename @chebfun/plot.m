@@ -182,7 +182,7 @@ if isempty(jvaldata), jvaldata = {[]}; end
 h = ishold;
 
 % getting current axes
-if all(~isinf([bot top])) && infy
+if h && all(~isinf([bot top])) && infy
     try
         yl = get(gca,'ylim');
         bot = min(yl(1),bot);
