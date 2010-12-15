@@ -1,6 +1,15 @@
 function Fx = feval(F,x,varargin)
 % FEVAL   Evaluate a chebfun at one or more points.
 % FEVAL(F,X) evaluates the chebfun F at the point(s) in X.
+% FEVAL(F,X,'LEFT') or FEVAL(F,X,'RIGHT') when the chebfun F has a jump
+% determines whether to return the left or right limit values. For example,
+% if
+%  x = chebfun('x',[-1 1]);
+%  s = sign(x);
+% then
+%  feval(s,0)  % returns 0,
+%  feval(s,0,'left')  % returns -1,
+%  feval(s,0,'right') % returns 1.
 %
 % See also CHEBFUN/SUBSREF.
 %
@@ -15,9 +24,41 @@ function Fx = feval(F,x,varargin)
 if isa(F,'function_handle')
     Fx = F(x,varargin{:});
     return
-end
+end  
 
 if isempty(F), Fx=[]; return, end
+
+% Deal with feval(f,x,'left') and feval(f,x,'right')
+if nargin > 2
+    lr = varargin{1};
+    if ~any(strcmpi(lr,{'left','right'}));
+        if ischar(lr)
+            msg = sprintf('Unknown input argument "%s".',lr);
+            error('CHEBFUN:feval:leftrightchar',msg);
+        else
+            error('CHEBFUN:feval:leftright','Unknown input argument.');
+        end
+    end
+    % We deal with this by reassigning imps to be left/right values.
+    nchebs = numel(F);
+    if strcmpi(lr,'left')
+        for k = 1:nchebs
+            F(k).imps(2:end) = 0*F(k).imps(1,2:end);
+            nfuns = F(k).nfuns;
+            for j = 1:nfuns
+                F(k).imps(1,j+1) = get(F(k).funs(j),'rval');
+            end
+        end
+    else % right
+        for k = 1:nchebs
+            F(k).imps(1:end-1) = 0*F(k).imps(1,1:end-1);
+            nfuns = F(k).nfuns;
+            for j = 1:nfuns
+                F(k).imps(1,j) = get(F(k).funs(j),'lval');
+            end
+        end
+    end
+end
 
 % Deal with quasimatrices.
 nchebs = numel(F);
@@ -34,7 +75,6 @@ if nchebs>1,
 else
     Fx = fevalcolumn(F,x);
 end
-
 
 % Evaluate a single chebfun
 % ------------------------------------------
