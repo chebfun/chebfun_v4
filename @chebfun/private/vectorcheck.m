@@ -16,13 +16,13 @@ end
 
 dbz_state = warning;    % Store warning state
 try
+    
     warning off         % Turn off warnings off
     v = f(.99*x(:));    % Evaluate a vector of (near the) endpoints
     warning(dbz_state); % Restore warnings
-%     if any(size(v) ~= size(x(:)))
     sv = size(v);    sx = size(x(:));
     if ( all(sv>1) || ~any(sv==sx(1) | sv ==sx(2)) )
-        if nargout == 1 && ~isfield(pref,'vectorize')
+        if nargout > 0 && ~isfield(pref,'vectorize')
             warning('CHEBFUN:vectorcheck:shape',...
                     ['Function failed to evaluate on array inputs; ',...
                     'vectorizing the function may speed up its evaluation and avoid ',...
@@ -39,13 +39,13 @@ try
     end
     
 catch %ME
-    
+    last = lasterror;
     try 
         % Perhaps it's a system?
         s = size(f(repmat({.99*x(:)},1,1e4)));
         ends = repmat({x(:).'},1,length(s));
     catch
-        if nargout == 1 && ~isfield(pref,'vectorize')
+        if nargout > 0 && ~isfield(pref,'vectorize')
             warning('CHEBFUN:vectorcheck:vecfail',...
                     ['Function failed to evaluate on array inputs; ',...
                     'vectorizing the function may speed up its evaluation and avoid ',...
@@ -54,7 +54,7 @@ catch %ME
             f = vec(f);
             vectorcheck(f,x,pref);
         else
-            rethrow(lasterror)
+            rethrow(last)
         end
     end
 end
