@@ -48,7 +48,7 @@ V = linop(@matrix,@op,d,-1);
         opt{:},'scale',nrm,'exps',[0 0]);    
     v = chebfun(@(x) sum(h(x)), [d.ends(1) brk d.ends(2)], ...
         'exps',[0 0],'vectorize','scale',nrm);
-    newjac =  anon('@(u) V*diff(z,u)',{'V','z'},{V,z});
+    newjac =  anon('[Jzu nonConstJzu] = diff(z,u); der = V*diff(z,u); nonConst = nonConstJzu | (~V.iszero & ~Jzu.iszero);',{'V','z'},{V,z},1);
     v = jacreset(v,newjac);
   end
 

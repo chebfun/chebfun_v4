@@ -22,7 +22,7 @@ end
 
 if isnumeric(B)   % scalar multiply
 %  op = cellfun( @(op) @(u) B*op(u), A.op, 'uniform',false );
-  fun = @(op) anon('@(u) B*feval(op,u)',{'B','op'},{B,op});
+  fun = @(op) anon('@(u) B*feval(op,u)',{'B','op'},{B,op},2);
   op = cellfun( fun, A.op, 'uniform',false );
   C = oparray(op);
 
@@ -37,7 +37,7 @@ else              % compose
   for i = 1:m
     for j = 1:n
       % Tricky: For nested function, must lock in values of i,j.
-      op{i,j} = anon('@(u) innersum(u,i,j)',{'innersum','i','j'},{@innersum,i,j});
+      op{i,j} = anon('@(u) innersum(u,i,j)',{'innersum','i','j'},{@innersum,i,j},2);
     end
   end
   C = oparray(op);
@@ -46,7 +46,7 @@ end
   function v = innersum(u,i,j)
     v = 0;
     for k = 1:q
-      v = v + feval(A.op{i,k}, feval(B.op{k,j},u) );
+      v = v + feval(A.op{i,k}, feval(B.op{k,j},u));
     end
   end
 

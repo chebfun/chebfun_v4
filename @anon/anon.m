@@ -25,22 +25,24 @@ maxdepth = chebfunpref('addepth');
 persistent dummyAnon
 
 if isempty(dummyAnon)
-    dummyAnon(1).function = [];
-    dummyAnon(1).variablesName = [];
-    dummyAnon(1).workspace = [];
-    dummyAnon(1).depth = maxdepth;
+    dummyAnon.function = [];
+    dummyAnon.variablesName = [];
+    dummyAnon.workspace = [];
+    dummyAnon.type  = 1;
+    dummyAnon.depth = maxdepth;
+
     dummyAnon = class(dummyAnon,'anon');
 end
 if maxdepth % If maxdepth == 0, AD is turned off
     % Begin by checking whether we will be exceeding the maxdepth
-    if nargin > 3
-        newdepth = varargin{4};
+    if nargin > 4
+        newdepth = varargin{5};
     else
         currdepth = 0;
         for vararginCounter = 1:length(varargin{3})
             currVar = varargin{3}{vararginCounter};
             if isa(currVar,'chebfun')
-                varDepth = currVar.jacobian.depth;
+                varDepth = getdepth(currVar);
                 if varDepth > currdepth
                     currdepth = varDepth;
                 end
@@ -55,13 +57,13 @@ if maxdepth % If maxdepth == 0, AD is turned off
         return
     end
     
-    % If not, continue and create the anon properly
-    ADH = struct([]);
-    
-    ADH(1).function = varargin{1};
-    ADH(1).variablesName = varargin{2};
-    ADH(1).workspace = varargin{3};
-    ADH(1).depth = newdepth;
+    % If not, continue and create the anon properly  
+    ADH.function = varargin{1};
+    ADH.variablesName = varargin{2};
+    ADH.workspace = varargin{3};
+    ADH.type  = varargin{4};  % Type of anon. 1 for AD, 2 for regular @(u) anons.
+    ADH.depth = newdepth;
+
     
     % Convert struct to anon object
     ADH = class(ADH,'anon');

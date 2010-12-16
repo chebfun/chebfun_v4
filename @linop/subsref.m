@@ -92,7 +92,7 @@ switch s(1).type
       case 'mat'
         A = A.varmat;
       case 'iszero'
-        A = A.iszero;        
+        A = A.iszero;
       case {'domain','fundomain'}
         A = A.fundomain;
       otherwise 

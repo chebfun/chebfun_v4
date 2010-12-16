@@ -56,6 +56,8 @@ op = vertcat( op{:} );
 
 % Nick H, 5/Aug/2010
 % Instead of disabling, we keep track of all difforders
+% Asgeir B, 21/Nov/2010
+% Do similar things for zero detection
 difford = []; isz = [];
 for k = 1:numel(varargin)
     difford = [difford ; varargin{k}.difforder];

@@ -7,6 +7,6 @@ function Fout = sech(F)
 
 Fout = comp(F, @(x) sech(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('@(u) diag(-diag(tanh(F))*sech(F))*diff(F,u)',{'F'},{F(k)});
+    Fout(k).jacobian = anon('diag1 = diag(-tanh(F).*sech(F)); der2 = diff(F,u); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1);
     Fout(k).ID = newIDnum;
 end

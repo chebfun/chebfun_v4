@@ -1,4 +1,4 @@
-function H = plus(F1,F2)
+function [H nonConst] = plus(F1,F2,nonConst1,nonConst2)
 % +	  Plus.
 % F + G adds chebfuns F and G, or a scalar to a chebfun if either F or G is 
 % a scalar.
@@ -72,7 +72,7 @@ else
     end
     h.scl = scl;
 
-    h.jacobian = anon('@(u) diff(f1,u)+diff(f2,u)',{'f1' 'f2'},{f1 f2});
+    h.jacobian = anon('[der1 nonConst1] = diff(f1,u); [der2 nonConst2] = diff(f2,u); der = der1 + der2; nonConst = nonConst1 | nonConst2;',{'f1' 'f2'},{f1 f2},1);
     h.ID = newIDnum();
     
 end

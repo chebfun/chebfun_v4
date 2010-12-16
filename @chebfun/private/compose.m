@@ -32,7 +32,7 @@ if numel(g) == 1
     for k = 1:numel(f)
         h(k) = composecol(f(k),g);
         % AD information when using compose
-        h(k).jacobian = anon('@(u) diff(f,g)*diff(g,u)',{'f' 'g'},{f(k),g});
+        h(k).jacobian = anon('[Jfg nonConstJfg] = diff(f,g); [Jgu nonConstJgu] = diff(g,u); der = Jfg*Jgu; nonConst = (~Jfg.iszero & ~Jgu.iszero) | (nonConstJgu | nonConstJfg);',{'f' 'g'},{f(k),g},1);
         h(k).ID = newIDnum;
     end
 elseif numel(f) == 1
@@ -45,13 +45,13 @@ elseif numel(f) == 1
     
     for k = 1:numel(g)
         h(k) = composecol(f,g(k));
-        h(k).jacobian = anon('@(u) diff(f,g)*diff(g,u)',{'f' 'g'},{f,g(k)});
+        h(k).jacobian = anon('[Jfg nonConstJfg] = diff(f,g); [Jgu nonConstJgu] = diff(g,u); der = Jfg*Jgu; nonConst = (~Jfg.iszero & ~Jgu.iszero) | (nonConstJgu | nonConstJfg);',{'f' 'g'},{f,g(k)},1);
         h(k).ID = newIDnum;
     end
 elseif size(f) == size(g)
     for k = 1:numel(f)
         h(k) = composecol(f(k),g(k));
-        h(k).jacobian = anon('@(u) diff(f,g)*diff(g,u)',{'f' 'g'},{f(k),g(k)});
+        h(k).jacobian = anon('[Jfg nonConstJfg] = diff(f,g); [Jgu nonConstJgu] = diff(g,u); der = Jfg*Jgu; nonConst = (~Jfg.iszero & ~Jgu.iszero) | (nonConstJgu | nonConstJfg);',{'f' 'g'},{f(k),g(k)},1);
         h(k).ID = newIDnum;
     end
 else

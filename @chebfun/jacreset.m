@@ -20,7 +20,7 @@ if nargin > 1
     error('chebfun:jacreset:NotAnon','New Jacobian must be an ANON object.')
   end
 else
-  newjac = anon('@(u) []','',[]);
+  newjac = anon('[]','',[],1);
 end
 
 fout = fin;

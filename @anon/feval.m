@@ -1,9 +1,15 @@
-function Fx = feval(Fin,anonArgument,varargin)
+function varargout = feval(Fin,u,anonType)
 % FEVAL Evaluates an anon with an input argument, similar to f(u) where f
-% is an anonymous function and u is some argument.
+% is an anonymous function and u is the argument.
 
+if nargin < 3
+    anonType = 2;
+end
 if isempty(Fin.function)
     error('Unable to evaluate AD derivative, maximum AD depth reached. Try increasing chebfunpref(''addepth''). Please contact the chebfun team at chebfun@maths.ox.ac.uk for more information.');
+elseif anonType == 1 && Fin.depth == 1 % Base variable, return []
+    varargout{1} = []; varargout{2} = 0;
+    return;
 end
 % Extract variable names and values
 Fvar = Fin.variablesName;
@@ -12,9 +18,20 @@ Fwork = Fin.workspace;
 % Load these variables into workspace
 loadVariables(Fvar,Fwork)
 
-% Create a normal anonymous function handle that we can then evaluate
-Ffun = eval(Fin.function);
-Fx = feval(Ffun,anonArgument);
+% Need different evaluations depending on the type of the anon. For AD
+% information, we evaluate the string. For other uses of anons, e.g. for
+% oparrays, we create the anonymous function and return it.
+% Evaluate the string in Fin.function. This will return the output
+% variables of the feval function of anons.
+switch anonType
+    case 1
+        eval(Fin.function); 
+        varargout{1} = der; varargout{2} = nonConst;
+    case 2
+        % Create a normal anonymous function handle that we can then evaluate
+        Ffun = eval(Fin.function);
+        varargout{1}= feval(Ffun,u);
+end
 end
 
 function loadVariables(Fvar,Fwork)

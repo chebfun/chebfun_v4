@@ -1,4 +1,4 @@
-function F = diff(F,n,dim)
+function [F nonConst] = diff(F,n,dim)
 %DIFF   Differentiation of a chebfun.
 % DIFF(F) is the derivative of the chebfun F. At discontinuities, DIFF
 % creates a Dirac delta with coefficient equal to the size of the jump.
@@ -30,7 +30,7 @@ end
 
 if isa(n,'chebfun')     
     % AD
-    F = jacobian(F,n);
+    [F nonConst] = jacobian(F,n);
     
 elseif round(n)~=n      
     % Fractional derivatives
@@ -69,7 +69,7 @@ tol = max(chebfunpref('eps')*10, 1e-14) ;
 F = f;
 funs = f.funs;
 ends = get(f,'ends');
-F.jacobian = anon(' @(u) diff(domain(f),n) * diff(f,u)',{'f' 'n'},{f n});
+F.jacobian = anon('der1=diff(domain(f),n); [der2 nonConst] = diff(f,u); der = der1*der2;',{'f' 'n'},{f n},1);
 F.ID = newIDnum;
 
 c = cell(1,f.nfuns);

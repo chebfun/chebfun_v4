@@ -9,7 +9,7 @@ function Fout = abs(F)
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = abscol(F(k));
-    Fout(k).jacobian = anon('@(u) diag(sign(Fout))*diff(Fout,u)',{'Fout'},{Fout(k)});
+    Fout(k).jacobian = anon('diag1 = diag(sign(Fout)); der2 = diff(Fout,u); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout'},{Fout(k)},1);
     Fout(k).ID = newIDnum;
 end
 
@@ -96,8 +96,8 @@ end
 %             Fout(k) = sqrt(conj(newf).*newf);                
 %         end
 %     end
-%     
-%     Fout(k).jacobian = anon('@(u) diag(sign(fout))*diff(fout,u)',{'fout'},{Fout});
+%     % This is really the new type of anon constructor
+%     Fout(k).jacobian = anon('diag1 = diag(sign(Fout)); der2 = diff(Fout,u); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout'},{Fout(k)},1);
 % 	Fout(k).ID = newIDnum;
 %     
 % end

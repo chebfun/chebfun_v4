@@ -72,7 +72,7 @@ newends = ends;
 v = 1./gamma(alpha)*chebfun(@(x) sum(h(x)), newends ,'vectorize','exps',newexps);
 
 % diff data
-v.jacobian = anon(' @(u) diff(domain(f),n) * diff(f,u)',{'f' 'n'},{u alpha});
+v.jacobian = anon('der1=diff(domain(f),n); der2 = diff(f,u); der = der1*der2; nonConst = ~der2.iszero;',{'f' 'n'},{u alpha},1);
 v.ID = newIDnum;
 
 if newexps(1) < 0

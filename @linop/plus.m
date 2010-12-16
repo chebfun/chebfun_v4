@@ -18,7 +18,7 @@ end
 % Scalar expansion using identity.
 if isnumeric(B)
     if numel(B) == 0  % linop + [] = linop
-        C = A; 
+        C = A;
     elseif numel(B)==1
         if B==0, C=A; return
         elseif diff(A.blocksize)~=0
@@ -42,16 +42,16 @@ end
 
 if isa(B,'linop') % linop + linop
     dom = domaincheck(A,B);
-
-    % If one linop happens to be the zero linop, we return the other one 
-    if iszero(A)
+    
+    % If one linop happens to be the zero linop, we return the other one
+    if A.iszero
         C = B;
         return
-    elseif iszero(B)
+    elseif B.iszero
         C = A;
         return
     end
-   
+    
     if ~all(A.blocksize==B.blocksize)
         error('LINOP:plus:sizes','Chebops must have identical sizes.')
     end

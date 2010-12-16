@@ -11,7 +11,7 @@ function C = plus(A,B)
 if isempty(A) || isempty(B)
   C = oparray({});
 else
-  op = cellfun( @(a,b) anon('@(u) feval(a,u)+feval(b,u)',{'a','b'},{a,b}), A.op,B.op,...
+  op = cellfun( @(a,b) anon('@(u) feval(a,u)+feval(b,u)',{'a','b'},{a,b},2), A.op,B.op,...
     'uniform',false );
 %  op = cellfun( @(a,b) @(u) a(u)+b(u), A.op,B.op,'uniform',false );
 

@@ -12,7 +12,7 @@ if isempty(A)
   return
 end
 
-fun = @(a) anon('@(u) -feval(a,u)',{'a'},{a});
+fun = @(a) anon('@(u) -feval(a,u)',{'a'},{a},2);
 op = cellfun( fun, A.op, 'uniform',false );
 C = oparray(op);
 

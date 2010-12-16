@@ -78,7 +78,7 @@ if ~isempty(newbkpts)
 elseif isa(f1,'double')    
     if f1 == 0
 		fout = chebfun(0, f2.ends([1,end])); 
-      	fout.jacobian = anon('@(u) 0*diff(f2,u)',{'f2'},{f2});
+      	fout.jacobian = anon('der = 0*diff(f2,u); nonConst = 0;',{'f2'},{f2},1);
       	fout.ID = newIDnum();
     else   
         exps = get(f2,'exps');
@@ -108,7 +108,7 @@ elseif isa(f1,'double')
         if fout.nfuns == f2.nfuns
             fout.imps = f1./f2.imps;
         end
-        fout.jacobian = anon('@(u) diag(-f1./f2.^2)*diff(f2,u)',{'f1','f2'},{f1 f2});
+        fout.jacobian = anon('diag1 = diag(-f1./f2.^2); der2 = diff(f2,u); der = diag1*der2; nonConst = ~der2.iszero;',{'f1','f2'},{f1 f2},1);
         fout.ID = newIDnum();
     end
 else
@@ -144,7 +144,6 @@ else
         fout.imps = f1.imps./f2.imps;
     end
     
-    fout.jacobian = anon('@(u) diag(1./f2)*diff(f1,u) - diag(f1./f2.^2)*diff(f2,u)',{'f1','f2'},{f1 f2});
+    fout.jacobian = anon('[Jf1u constJf1u] = diff(f1,u);  [Jf2u constJf2u] = diff(f2,u); der = diag(1./f2)*Jf1u - diag(f1./f2.^2)*Jf2u; nonConst = ~Jf2u.iszero | (~Jf1u.iszero & (constJf2u | constJf1u));',{'f1','f2'},{f1 f2},1);
     fout.ID = newIDnum();
 end
-

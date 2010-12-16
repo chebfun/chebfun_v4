@@ -59,7 +59,7 @@ F = linop(@matrix,@op,d);
     opt = {'resampling',false,'splitting',true,'exps',[0 0],'scale',nrmf};
     int = @(x) sum(z.* (chebfun(@(y) k(x,y),d,opt{:})));
     v = chebfun( int, d,'sampletest',false,'resampling',false,'exps',[0 0],'vectorize','scale',nrmf);
-    newjac =  anon('@(u) F*diff(z,u)',{'F','z'},{F,z});
+    newjac =  anon('[Jzu nonConstJzu] = diff(z,u); der = F*diff(z,u); nonConst = nonConstJzu | (~F.iszero & ~Jzu.iszero);',{'F','z'},{F,z},1);
     v = jacreset(v,newjac);
   end
 

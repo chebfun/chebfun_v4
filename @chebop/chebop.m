@@ -59,7 +59,12 @@ end
 N = default_N;
 
 if nargin > 0
-  N.dom = varargin{1};
+  if isnumeric(varargin{1})
+      dom = domain(varargin{1});
+  else
+      dom = varargin{1};
+  end
+  N.dom = dom;
   if nargin > 1
     N = set(N,'op',varargin{2});
     if nargin > 2

@@ -55,16 +55,16 @@ end
 for k = 1:numel(sn)
     switch nargout
         case 3
-            sn(k).jacobian = anon('@(u) diag(cn.*dn)*diff(F,u)',{'cn' 'dn' 'F'},{cn(k) dn(k) u(k)}); 
-            cn(k).jacobian = anon('@(u) diag(-sn.*dn)*diff(F,u)',{'sn' 'dn' 'F'},{sn(k) dn(k) u(k)}); 
-            dn(k).jacobian = anon('@(u) diag(-m*sn.*cn)*diff(F,u)',{'sn' 'cn' 'm' 'F'},{sn(k) cn(k) m u(k)}); 
+            sn(k).jacobian = anon('diag1 = diag(cn.*dn); der2 = diff(F,u); der = diag1*der2; nonConst = ~der2.iszero;',{'cn' 'dn' 'F'},{cn(k) dn(k) u(k)},1); 
+            cn(k).jacobian = anon('diag1 = diag(-sn.*dn); der2 = diff(F,u); der = diag1*der2; nonConst = ~der2.iszero;',{'sn' 'dn' 'F'},{sn(k) dn(k) u(k)},1); 
+            dn(k).jacobian = anon('diag1 = diag(-m*sn.*cn); der2 = diff(F,u); der = diag1*der2; nonConst = ~der2.iszero;',{'sn' 'cn' 'm' 'F'},{sn(k) cn(k) m u(k)},1); 
             sn(k).ID = newIDnum();         cn(k).ID = newIDnum();        dn(k).ID = newIDnum();
     	case 2
-            sn(k).jacobian = anon('@(u) diag(cn.*dnfun(F,v{:}))*diff(F,u)',{'v' 'F' 'cn'},{{m tol} u(k) cn(k)});
-            cn(k).jacobian = anon('@(u) diag(-sn.*dnfun(F,v{:}))*diff(F,u)',{'v' 'F' 'sn'},{{m tol} u(k) sn(k)});
+            sn(k).jacobian = anon('diag1 = diag(cn.*dnfun(F,v{:})); der2 = diff(F,u); der = diag1*der2; nonConst = ~der2.iszero;',{'dnfun' 'v' 'F' 'cn'},{@dnfun {m tol} u(k) cn(k)},1);
+            cn(k).jacobian = anon('diag1 = diag(-sn.*dnfun(F,v{:})); der2 = diff(F,u);der = diag1*der2; nonConst = ~der2.iszero;',{'cnfun' 'v' 'F' 'sn'},{@cnfun {m tol} u(k) sn(k)},1);
             sn(k).ID = newIDnum();         cn(k).ID = newIDnum();
         case 1
-            sn(k).jacobian = anon('@(u) diag(cnfun(F,v{:}).*dnfun(F,v{:}))*diff(F,u)',{'v' 'F'},{{m tol} u(k)});
+            sn(k).jacobian = anon('diag1 = diag(cnfun(F,v{:}).*dnfun(F,v{:})); der2 = diff(F,u);der = diag1*der2; nonConst = ~der2.iszero;',{'cnfun' 'dnfun' 'v' 'F'},{@cnfun @dnfun {m tol} u(k)},1);
             sn(k).ID = newIDnum();
     end
 end
