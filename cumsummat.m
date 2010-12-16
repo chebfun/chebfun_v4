@@ -9,6 +9,16 @@ function Q = cumsummat(N)
 
 N = N-1;
 
+persistent cache    % stores computed values for fast return
+if isempty(cache), cache = {}; end    % first call
+
+if length(cache) >= N && ~isempty(cache{N})
+  Q = cache{N};
+  return
+else
+  cache{N} = [];
+end
+
 % Matrix mapping coeffs -> values.
 T = cp2cdm(N);
 
@@ -25,6 +35,7 @@ B(1,:) = sum( diag(v)*B(2:N+1,:), 1 );
 B(:,1) = 2*B(:,1); 
 
 Q = T*B*Tinv;               
+cache{N} = Q;
 
 end
 
