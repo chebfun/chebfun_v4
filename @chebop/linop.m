@@ -5,6 +5,10 @@ function L = linop(N,u)
 % option of linearizing around a certain function here (similar to diff),
 % the difference is that we check for linearity in this method as well.
 if nargin == 1
+    if isempty(N.dom)
+        error('CHEBFUN:chebop:linop:emptydomain', ...
+            'Cannot linearise a chebop defined on an empty domain.'); 
+    end
     u = chebfun('x',N.dom);
 end
 

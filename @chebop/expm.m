@@ -13,6 +13,8 @@ catch ME
     if strcmp(ME.identifier,'CHEBOP:linop:nonlinear')
         error('CHEBOP:expm',['Chebop appears to be nonlinear. Currently, expm is only' ...
             '\nsupported for linear chebops.']);
+    else
+        rethrow(ME)
     end
 end
 

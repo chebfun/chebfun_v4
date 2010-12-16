@@ -8,9 +8,11 @@ function f = ctor_nonadapt(f,ops,ends,n,pref)
 % Last commit: $Author: nich $: $Rev: 458 $:
 % $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
 
-if length(ends) ~= length(ops)+1
+if isempty(ends)
+    error('CHEBFUN:ctor_nonadapt:emptydomain','Cannot construct chebfun on an empty domain.'); 
+elseif length(ends) ~= length(ops)+1
     error('CHEBFUN:ctor_nonadapt:input_intsfun',['Unrecognized input sequence: Number of intervals '...
-        'do not agree with number of funs'])
+        'do not agree with number of funs.'])
 end
 if length(n) ~= length(ops)
     if length(n) == 1

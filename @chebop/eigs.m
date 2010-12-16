@@ -18,6 +18,8 @@ catch ME
     if strcmp(ME.identifier,'CHEBOP:linop:nonlinear')
         error('CHEBOP:eigs',['Chebop appears to be nonlinear. Currently, eigs is only' ...
             '\nsupported for linear chebops.']);
+    else
+        rethrow(ME)
     end
 end
 
