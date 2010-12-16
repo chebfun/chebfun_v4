@@ -23,8 +23,6 @@ catch ME
     end
 end
 
-nargout
-
 if nargout < 2
     D = eigs(L,varargin{:});
     V = D; % Need to switch order of output variables
