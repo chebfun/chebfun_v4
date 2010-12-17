@@ -3,13 +3,17 @@ function N = chebop(varargin)
 %
 % N = CHEBOP creates an empty instance of the class.
 %
-% N = CHEBOP(D), where D is a domain, defines a chebop that operates on
-% function defined on the domain D.
+% N = CHEBOP(D), where D is a two-vector, defines a chebop that operates on
+% functions defined on the interval D = [D(1) D(end)]. D may also be a
+% vector of length > 2 containing breakpoint information, or a domain object.
+% N = CHEBPOP(D1,D2), where D1 and D2 are scalars, has the same effect as
+% when D = [D1 D2].
+%
 %
 % N = CHEBOP(D,F), where F is an anonymous function or a linop, defines a
 % chebop which when applied to a function u, maps it to F(u).
 %
-% N = CHEBOP(D,F,LBC,RBC), defines a chebop with imposed boundary 
+% N = CHEBOP(D,F,LBC,RBC), defines a chebop with imposed boundary
 % conditions. LBC and/or RBC can either be anonymous functions,
 % numerical values or one of the following strings:
 %
@@ -22,10 +26,10 @@ function N = chebop(varargin)
 %   N = CHEBOP(D,F,2,@(u) diff(u)-3) - Imposes the BCs that u(a) = 2 and
 %   u'(b) = 3 where a and b are the endpoints of the domain D.
 %
-%   N = CHEBOP(D,F,@(u) exp(u),@(u) diff(u)-sin(u)) -2 - Imposes the BCs that
-%   exp(u(a)) = 0 and u'(b) - sin(u(b)) = 2 where a and b are the endpoints
-%   of the domain D.
-% 
+%   N = CHEBOP(D,F,@(u) exp(u),@(u) diff(u)-sin(u)-2) - Imposes the BCs
+%   that exp(u(a)) = 0 and u'(b) - sin(u(b)) = 2 where a and b are the
+%   endpoints of the domain D.
+%
 % Either LBC or RBC can be empty if the operator only has BCs on one side.
 %
 % N = CHEBOP(D,F,LBC,RBC,GUESS) where GUESS is a chebfun, defines a chebop
@@ -58,49 +62,71 @@ if isnumeric(default_N)
 end
 N = default_N;
 
-if nargin > 0
-  if isnumeric(varargin{1})
-      dom = domain(varargin{1});
-  else
-      dom = varargin{1};
-  end
-  N.dom = dom;
-  if nargin > 1
-    N = set(N,'op',varargin{2});
-    if nargin > 2
-      N.lbc = createbc(varargin{3});
-      N.lbcshow = varargin{3};
-      if nargin > 3
-        N.rbc = createbc(varargin{4});
-        N.rbcshow = varargin{4};
-        if nargin > 4
-          % Convert numerical initial guesses to chebfuns
-          if isnumeric(varargin{5})
-            N.guess = chebfun(varargin{5},dom);
-          else
-            N.guess = varargin{5};
-          end
-          if nargin > 5
-              N.dim = varargin{6};
-          end
-        end
-      end
+% Return an empty chebop.
+if isempty(varargin), return, end
+
+% Domain
+if isnumeric(varargin{1})
+    dom = varargin{1};
+    varargin(1) = [];
+    while ~isempty(varargin) && isnumeric(varargin{1})
+        dom = [dom varargin{1}];
+        varargin(1) = [];
     end
-  end
+    N.dom = domain(dom);
+else
+    N.dom = varargin{1};
+    varargin(1) = [];
 end
+
+if isempty(varargin), return, end
+
+% Op
+N = set(N,'op',varargin{1});
+varargin(1) = [];
+if isempty(varargin), return, end
+
+% LBC
+N.lbc = createbc(varargin{1});
+N.lbcshow = varargin{1};
+varargin(1) = [];
+if isempty(varargin), return, end
+
+% RBC
+N.rbc = createbc(varargin{1});
+N.rbcshow = varargin{1};
+varargin(1) = [];
+if isempty(varargin), return, end
+
+% Guess
+if isnumeric(varargin{1})
+    N.guess = chebfun(varargin{1},dom);
+else
+    N.guess = varargin{1};
+end
+varargin(1) = [];
+if isempty(varargin), return, end
+
+% Dim
+N.dim = varargin{1};
+varargin(1) = [];
+if isempty(varargin), return, end
+
+% Error
+error('CHEBOP:numinputs','Too many inoputs to chebop constructor.');
 
 end
 
 function N = Nop_ini()
-N = struct([]);
-N(1).dom =[];
-N(1).op = [];
-N(1).opshow = [];
-N(1).lbc = [];
-N(1).lbcshow = [];
-N(1).rbc = [];
-N(1).rbcshow = [];
-N(1).guess = [];
-N(1).optype = [];
-N(1).dim = [];
+    N = struct([]);
+    N(1).dom =[];
+    N(1).op = [];
+    N(1).opshow = [];
+    N(1).lbc = [];
+    N(1).lbcshow = [];
+    N(1).rbc = [];
+    N(1).rbcshow = [];
+    N(1).guess = [];
+    N(1).optype = [];
+    N(1).dim = [];
 end
