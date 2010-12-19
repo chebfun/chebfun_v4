@@ -1,13 +1,13 @@
 function Fout = exp(F)
 % EXP Exponential of a chebfun.
 %
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 
 
 for k = 1:numel(F)
     if any(F(:,k).imps(1,:) == inf), error('CHEBFUN:exp:inf',...
-        'chebfun cannot handle exponential blowups'); end
+        'Chebfun cannot handle exponential blowups'); end
 end
 
 % Check for blowups (+inf)
@@ -22,7 +22,7 @@ for k = 1:numel(F)
 end
 if pos_blowup
      error('CHEBFUN:exp:inf',...
-        'chebfun cannot handle exponential blowups'); 
+        'Chebfun cannot handle exponential blowups'); 
 end
 
 Fout = comp(F, @(x) exp(x));

@@ -1,13 +1,13 @@
 function Fout = cos(F)
 % COS   Cosine of a chebfun.
 %
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team.
 
 for k = 1:numel(F)
     if any(get(F(:,k),'exps')<0), error('CHEBFUN:cos:inf',...
-        'Cos is not defined for functions which diverge to infinity'); end
+        'COS is not defined for functions which diverge to infinity'); end
 end
 
 Fout = comp(F, @(x) cos(x));

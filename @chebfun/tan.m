@@ -1,13 +1,13 @@
 function Fout = tan(F)
 % TAN   Tangent of a chebfun.
 %
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
 % Copyright 2002-2009 by The Chebfun Team. 
 
 for k = 1:numel(F)
     if any(get(F(:,k),'exps')<0), error('CHEBFUN:tan:inf',...
-        'Tan is not defined for functions which diverge to infinity'); end
+        'TAN is not defined for functions which diverge to infinity'); end
 end
 
 Fout = comp(F, @(x) tan(x));
