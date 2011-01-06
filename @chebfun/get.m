@@ -27,6 +27,11 @@ switch propName
     case 'map'
         if f.nfuns == 1
             val = f.funs(1).map;
+        else
+            val = maps(domain(f.ends));
+            for k = 1:numel(f.ends)-1
+                val(k) = f.funs(k).map;
+            end
         end
     case 'ends'
         val = f.ends;

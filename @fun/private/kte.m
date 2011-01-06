@@ -32,13 +32,13 @@ end
 
 % kte map
 if alpha > 1e-12
-    m.inv = @(x) sin(rescale(x)*asin(alpha))/alpha;
     m.for = @(y) scale(asin(alpha*y)/asin(alpha));
+    m.inv = @(x) sin(rescale(x)*asin(alpha))/alpha;
     m.der = @(y) (scaleder)*alpha./(asin(alpha)*sqrt(1-(alpha*y).^2));
 else
     % linear map case
-    m.for = scale;
     m.inv = rescale;
+    m.for = scale;
     m.der = @(y) scaleder;
 end
 

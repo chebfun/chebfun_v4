@@ -69,7 +69,7 @@ while (nargin > j)
 end
 
 maxdegree = cheboppref('maxdegree');
-maxdegree = 511;
+% maxdegree = 511;
 m = A.blocksize(2);
 if m~=A.blocksize(1)
   error('LINOP:eigs:notsquare','Block size must be square.')
@@ -89,7 +89,7 @@ numints = numel(breaks)-1;
 
 if isempty(sigma)
   % Try to determine where the 'most interesting' eigenvalue is.
-  if numel(breaks) == 2
+  if numel(breaks) == 2    
       [V1,D1] = bc_eig(A,B,33,33,0,map,breaks);
       [V2,D2] = bc_eig(A,B,65,65,0,map,breaks);
   else
@@ -100,12 +100,16 @@ if isempty(sigma)
   dif = repmat(lam1.',length(lam2),1) - repmat(lam2,1,length(lam1));
   delta = min( abs(dif) );   % diffs from 33->65
   bigdel = (delta > 1e-12*norm(lam1,Inf));
+  
+  % HACK: Trim off big changes twice. (fixes mathieu chebtest)
+  lam1b = lam1; lam1b(bigdel) = 0;
+  bigdel = logical((delta > 1e-12*norm(lam1b,Inf)) + bigdel);
+  
   if all(bigdel)
     % All values changed somewhat--choose the one changing the least.
     [tmp,idx] = min(delta);
     sigma = lam1(idx);
-  elseif numel(breaks) == 1 % Smooth
-      'smooth'
+  elseif numel(breaks) == 2 % Smooth
         % Of those that did not change much, take the smallest cheb coeff
         % vector. 
         lam1(bigdel) = [];
@@ -274,7 +278,7 @@ end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
+function [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks)
 breaks = union(breaks,A.fundomain.endsandbreaks);
 if (numel(N) == 1 && numel(breaks) > 2)
     N = repmat(N,1,numel(breaks)-1);
@@ -283,7 +287,7 @@ end
 m = A.blocksize(1);
 % Instantiate A, with row replacements.
 L = feval(A,N,map,breaks);
-[Abdy,c,rowrep] = bdyreplace(A,N,map,breaks);
+[Abdy,c,rowrep] = bdyreplace_old(A,N,map,breaks);
 L(rowrep,:) = Abdy;
 elim = false(N*m,1);
 elim(rowrep) = true;
@@ -303,7 +307,7 @@ else
   %FIXME: Kludge when B is given BCs. We have to assume that these are 
   % given in the same order as they are in A. I can't see any way to check 
   % up on this. 
-  Bbdy = bdyreplace(B,N);
+  Bbdy = bdyreplace_old(B,N);
   nla = length(A.lbc);  nra = length(A.rbc);
   nlb = length(B.lbc);  nrb = length(B.rbc);
   Brows = rowrep( [1:nlb, nla+(1:nrb)] );
@@ -320,6 +324,80 @@ else
   V = W(:,idx);
 end
 D = D(idx,idx);
+
+end
+
+
+function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
+
+% [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks);
+% return
+
+    if ~isempty(B)
+%         [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks);
+%         return
+
+        % Force difforder to be the same, so that projection P is the same.
+        do = max(A.difforder, B.difforder);
+        A.difforder = do; B.difforder = do;
+        
+        % Evaluate A and Bat size N
+        Amat = feval(A,N,'bc',map,breaks);
+        Bmat = feval(B,N,'bc',map,breaks);
+
+        % Square up matrices if # of boundary conditions is not the same.
+        sizediff = size(Amat,1)-size(Bmat,1);
+        Amat = [Amat ; zeros(-sizediff,N)];
+        Bmat = [Bmat ; zeros(sizediff,N)];
+
+        % Compute the generalised eigenvalue problem.
+        [V,D] = eig(full(Amat),full(Bmat));
+        
+        % Infinite eigenvalues are dealt with in 'nearest' below.
+        if sizediff > 0 % We created some infinite eigenvalues. Peel them off. 
+            [lam,idx] = sort( abs(diag(D)),'descend' );
+            idx = idx(1:sizediff);
+            D(:,idx) = [];  D(idx,:) = [];  V(:,idx) = [];
+        end
+        
+        % Find the droids we're looking for.
+        idx = nearest(diag(D),sigma,min(k,N));
+        V = V(:,idx);
+        D = D(idx,idx);
+        
+        return
+        
+    end
+
+    % Evaluate the Matrix with boundary conditions attached
+    [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,breaks);
+    % Compute the (discrete) e-vals and e-vecs using generalised e-val
+    % problem.
+
+    m = A.blocksize(1);
+    if m == 1
+        Pmat = [P ; zeros(numel(c),N)];
+    else
+        Pmat = zeros(sum(N)*m);
+        i1 = 0; i2 = 0;
+        for j = 1:A.blocksize(1)
+            ii1 = i1+(1:size(P{j},1));
+            ii2 = i2+(1:size(P{j},2));
+            Pmat(ii1,ii2) = P{j};
+            i1 = ii1(end); i2 = ii2(end);
+        end   
+    end
+
+    [W,D] = eig(full(Amat),full(Pmat));
+    idx = nearest(diag(D),sigma,min(k,N));
+    V = W(:,idx);
+    D = D(idx,idx);
+
+%     if size(V,2) < k
+%         % Matrix wasn't big enough
+%         v = ones(size(V,1),1); v(2:2:end) = -1;
+%         V = [V repmat(v,1,k-size(V,2))];
+%     end
 end
 
 

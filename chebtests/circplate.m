@@ -18,7 +18,7 @@ u2 = chebfun(solution,d);
 
 % chebpolyplot(u1); hold on
 % chebpolyplot(u2,'--r'); hold off
-pass = norm(u1-u2) < 1e-9*(tol/eps);
+pass = norm(u1-u2) < 2e-9*(tol/eps);
 
 
 function y = solution

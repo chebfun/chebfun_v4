@@ -9,7 +9,7 @@ function C = mldivide(A,B,tolerance)
 % size until the chebfun constructor is satisfied with the convergence.
 % This convergence is in a relative sense for U, which may not be
 % appropriate in some situations (e.g., Newton's method finding a small
-% correction). To set a different scale S for the relative accuracy, use 
+% correction). To set a different scale S for the relative accuracy, use
 % A.scale = S before solving.
 %
 % EXAMPLE
@@ -27,24 +27,11 @@ function C = mldivide(A,B,tolerance)
 % See also linop/and, linop/mtimes.
 % See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2008 by Toby Driscoll.
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+ maxdegree = cheboppref('maxdegree');
 
-% For future performance, store LU factors of realized matrices.
-persistent storage
-if isempty(storage), storage = struct([]); end
-use_store = cheboppref('storage');
-maxdegree = cheboppref('maxdegree');
-
-dorectmat = 1;
-% dorectmat = 0;
-% forceold = 1; % Force the use of the old way in solving systems with m = 1
-forceold = 0; % i.e. same discretisation for each side.
-
-switch(class(B))
+ switch(class(B))
   case 'linop'
-    %TODO: Experimental, undocumented.
+    %TODO : Experimental, undocumented.
     dom = domaincheck(A,B);
     C = linop( A.varmat\B.varmat, [], dom, B.difforder-A.difforder );  
 
@@ -58,187 +45,92 @@ switch(class(B))
   case 'chebfun'
     dom = domaincheck(A,B(:,1));
     m = A.blocksize(2);
-    if (m==1) && (A.numbc~=A.difforder)
+    if A.numbc ~= sum(max(A.difforder,[],2))    
       warning('LINOP:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
     
-    % Grab the default settings
+    % Grab the default settings.
     settings = chebopdefaults;
     if nargin == 3
         settings.eps = tolerance;
     end
 
-    % Deal with maps
-    % TOD) : test this.
-    map = B(:,1).map;
+    % Deal with maps.
+    % TODO : test this.
+    map = mapcheck(get(B(:,1),'map'),get(B(:,1),'ends'),1);
     if ~isempty(map)
-        if     strcmp(map.name,'linear'), map = [];
-        else   settings.map = map; end
+        settings.map = map;
     end   
-    % Take the union of all the ends
+  
+    % Take the union of all the ends.
     ends = dom.endsandbreaks;
     for k = 1:numel(B)
         ends = union(B(:,k).ends,ends);
     end
+    
+    % Can't do this yet. 
+    if ~isempty(map) && numel(map)~=numel(ends)-1
+        warning('CHEBFUN:linop:mldivide:mapbreaks',...
+            'New breakpoint introduced, so map data from RHS is ignored.');
+        map = [];
+    end
 
     V = [];  % Initialise V so that the nested function overwrites it.
     
-    % Call the constructor 
-    if numel(ends) == 2 && ~chebfunpref('splitting')          % Smooth
-        if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
-          C = chebfun( @(x) A.scale(x)+value(x), ends, settings) - A.scale;
-        else
-          settings.scale = A.scale;
-          C = chebfun( @(x) value(x), ends, settings);
-        end
-    else                          % Piecewise
-        if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
-            warning('CHEBFUN:linop:mldivide:sclfun', ...
-                'No support for function scaling for piecewise domains.')
-            if isa(A.scale,'function_handle'), A.scale = 1;
-            else A.scale = norm(A.scale,inf); end
-        end
+    if isa(A.scale,'function_handle')
+        A.scale = chebfun(A.scale,ends);
+    end
+    if isa(A.scale,'chebfun')
+        warning('CHEBFUN:linop:mldivide:sclfun', ...
+            'No support for function scaling for piecewise domains.')
+        C = chebfun( @(x,N,bks) A.scale(x) + value(x,N,bks), ...
+            {ends}, settings) - A.scale;
+    else 
         settings.scale = A.scale;
-        C = chebfun( @(x,N,bks) valuesys(x,N,bks), {ends}, settings);
-        if m == 1, C = C{:}; end
+        C = chebfun( @(x,N,bks) value(x,N,bks), {ends}, settings);
     end
     
     % If there aren't systems, then we're done.
-    if m == 1, return, end
-    
+    if m == 1, C = C{:}; return, end
+
     % V has been overwritten by the nested value function.
-    if numel(ends)==2 % Standard version
-        for j = 1:m
-            c = chebfun( V(:,j), dom, settings);
-            C(:,j) = chebfun( @(x) c(x), dom, settings);
+    % We need to simplify it and store as the output.
+    C = chebfun; % Will contain the output.
+    for j = 1:m  % For each variable, build a chebfun.
+        tmp = chebfun;          % Temporary chebfun for the jth variable.
+        for k = 1:numel(ends)-1 % Loop over each subinterval.
+            funk = fun( V{1}, ends(k:k+1), settings);
+            tmp = [tmp ; set(chebfun,'funs',funk,'ends',ends(k:k+1),...
+                'imps',[funk.vals(1) funk.vals(end)],'trans',0)];
+            V(1) = [];
         end
-    else              % Piecewise version
-        l = 1;
-        C = chebfun;
-        settings.maxdegree = maxdegree;  settings.maxlength = maxdegree;
-        for j = 1:m
-            % For each variable, build a chebfun
-            tmp = chebfun;            
-            % Loop over each interval
-            for k = 1:numel(ends)-1
-                funk = fun( V{l}, ends(k:k+1), settings);
-                tmp = [tmp ; set(chebfun,'funs',funk,'ends',ends(k:k+1),...
-                    'imps',[funk.vals(1) funk.vals(end)],'trans',0)];
-                l = l+1;
-            end
-            C(:,j) = simplify(tmp,settings.eps);
-        end
+        C(:,j) = simplify(tmp,settings.eps); % Simplify and store.
     end
     
   otherwise
     error('LINOP:mldivide:operand','Unrecognized operand.')
-end
-
-  function v = value(x)
-    N = length(x);
-    if N > maxdegree+1
-      error('LINOP:mldivide:NoConverge',['Failed to converge with %i points.',maxdegree+1])
-      error('LINOP:mldivide:NoConverge','Failed to converge with %i points.',maxdegree+1)
-    elseif N==1
-      error('LINOP:mldivide:OnePoint',...
-        'Solution requested at a lone point. Check for a bug in the linop definition.')
-    elseif N <= A.numbc+1 || N < 2
-      % Too few points: force refinement
-      v = ones(N,1); 
-      v(2:2:end) = -1;
-      return
-    end
-    A.difforder = abs(A.difforder);
-    x1 = [];
     
-    if ~isempty(map), use_store = 0; end
-    use_store = 0;
-    
-    % Retrieve or compute LU factors of the matrix.
-    if use_store && N > 5 && length(storage)>=A.ID ...
-        && length(storage(A.ID).L)>=N && ~isempty(storage(A.ID).L{N})
-      L = storage(A.ID).L{N};
-      U = storage(A.ID).U{N};
-      x1 = storage(A.ID).x1{N};
-      c = storage(A.ID).c{N};
-      rowidx = storage(A.ID).rowidx{N};
-    else  % have to compute L and U
-      Amat = feval(A,N,map,ends);
-      [Bmat,c,rowidx] = bdyreplace(A,N,map,ends);
+ end
 
-      if dorectmat && m == 1% New rectangular matrix method
-        if any(isinf(ends))
-            % We don't want chebpts to do the scaling in this case. (Done below).
-            x1 = chebpts(N-A.numbc,[-1 1],1);            
-        else
-            x1 = chebpts(N-A.numbc,ends,1);
-        end
-        if ~isempty(map) % Map the 1st-kind points. (x is already mapped).
-            if isstruct(map)
-                x1 = map.for(x1);
-            else
-                x1 = map(x1);
-            end
-        end
-        Amat = [barymat(x1,x)*Amat; Bmat];
-      else                   % Do things the old way
-        Amat(rowidx,:) = Bmat;
-      end
-      
-      [L,U] = lu(Amat);
-      if use_store && N > 5   % store L and U
-        % Very crude garbage collection! If over capacity, clear out
-        % everything.
-        ssize = whos('storage');
-        if ssize.bytes > cheboppref('maxstorage')
-          storage = struct([]);
-        end
-        storage(A.ID).L{N} = L;
-        storage(A.ID).U{N} = U;
-        storage(A.ID).x1{N} = x1;
-        storage(A.ID).c{N} = c;
-        storage(A.ID).rowidx{N} = rowidx;
-      end        
-    end
-    
-    % Evaluate and modify RHS as needed.
-    if m == 1 && dorectmat
-        f = B(x1,:);
-        f = [f ; c]; 
-    else
-        f = B(x,:);
-        f = f(:);
-        f(rowidx) = c;
-    end
-
-    % Solve.
-    v = U\(L\f);
-
-    V = reshape(v,N,m);
-    v = sum(V,2);
-    v = filter(v,1e-8);
-
-  end
-  
-
- function v = valuesys(y,N,bks)
+ function v = value(y,N,bks)
     % y is a cell array with the points for each function.
     % N is the number of points on each subinterval.
     % bks contains the ends of the subintervals.
 
-    syssize = A.blocksize(1);     % # of eqns in system 
-    N = N{:};   bks = bks{:};     % We allow only the same discretization
-                                  % size and breaks for each system
-    maxdo = max(A.difforder(:));  % the maximum derivative order of the system
+    syssize = A.blocksize(1);     % Number of eqns in system.
+    N = N{:};   bks = bks{:};     % We allow only the same discretization.
+                                  % Size and breaks for each system.
+    maxdo = max(A.difforder(:));  % Maximum derivative order of the system.
                                     
     if sum(N) > maxdegree+1
-      error('LINOP:mldivide:NoConverge',['Failed to converge with ',int2str(maxdegree+1),' points.'])
+      error('LINOP:mldivide:NoConverge',...
+          ['Failed to converge with ',int2str(maxdegree+1),' points.'])
     elseif any(N==1)
       error('LINOP:mldivide:OnePoint',...
         'Solution requested at a lone point. Check for a bug in the linop definition.')
     elseif any(N < maxdo+1)
-      % Too few points: force refinement
+      % Too few points: force refinement.
       jj = find(N < maxdo+1);
       csN = [0 ; cumsum(N)];
       v = y;
@@ -249,7 +141,7 @@ end
       return
     end    
 
-    % Evaluate the Matrix with boundary conditions attached
+    % Evaluate the matrix with boundary conditions attached.
     [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,bks);
 
     % Project the RHS
@@ -259,14 +151,11 @@ end
         f = [];
         for jj = 1:syssize, f = [f ; B(P{jj}*y{1},jj)]; end
     end
-    % Add the boundary conditions
-    f = [f ; c];
-
-    v = Amat\f;                             % Solve the system
-
-    V = mat2cell(v,repmat(N,1,syssize),1);  % Store for output
+    f = [f ; c];                            % Add boundary conditions.
     
-    v = sum(reshape(v,[sum(N),syssize]),2); % Combine equations
+    v = Amat\f;                             % Solve the system.
+    V = mat2cell(v,repmat(N,1,syssize),1);  % Store for output.
+    v = sum(reshape(v,[sum(N),syssize]),2); % Combine equations.
     
     % Filter
     csN = cumsum([0 N]);
@@ -274,8 +163,131 @@ end
         ii = csN(jj) + (1:N(jj));
         v(ii) = filter(v(ii),1e-8);
     end
-    v = {v};
     
-    end
+    v = {v};                                % Output as cell array.
+    
+  end
 
 end
+
+
+
+
+
+%%%%%%%%%%%%%%%%%% JUNK %%%%%%%%%%%%%%%%%%%%
+
+% For future performance, store LU factors of realized matrices.
+% persistent storage
+% if isempty(storage), storage = struct([]); end
+% use_store = cheboppref('storage');
+
+% dorectmat = 1;
+    
+%     % Call the constructor 
+%     if numel(ends) == 2 && ~chebfunpref('splitting') && ~dorectmat
+%     % Smooth and non-systems
+%         if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
+%           C = chebfun( @(x) A.scale(x)+value_old(x), ends, settings) - A.scale;
+%         else
+%           settings.scale = A.scale;
+%           C = chebfun( @(x) value_old(x), ends, settings);
+%         end
+%     else
+%     % Piecewise and/or systems
+%         if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
+%             warning('CHEBFUN:linop:mldivide:sclfun', ...
+%                 'No support for function scaling for piecewise domains.')
+%             if isa(A.scale,'function_handle'), A.scale = 1;
+%             else A.scale = norm(A.scale,inf); end
+%         end
+%         settings.scale = A.scale;
+%         C = chebfun( @(x,N,bks) value(x,N,bks), {ends}, settings);
+%         if m == 1, C = C{:}; end
+%     end
+
+
+%   function v = value_old(x)
+%     N = length(x);
+%     if N > maxdegree+1
+%       error('LINOP:mldivide:NoConverge',['Failed to converge with %i points.',maxdegree+1])
+%     elseif N==1
+%       error('LINOP:mldivide:OnePoint',...
+%         'Solution requested at a lone point. Check for a bug in the linop definition.')
+%     elseif N <= A.numbc+1 || N < 2
+%       % Too few points: force refinement
+%       v = ones(N,1); 
+%       v(2:2:end) = -1;
+%       return
+%     end
+%     A.difforder = abs(A.difforder);
+%     x1 = [];
+%     
+%     % We don't store matrices if there are maps.
+%     if ~isempty(map), use_store = 0; end
+%     
+%     % Retrieve or compute LU factors of the matrix.
+%     if use_store && N > 5 && length(storage)>=A.ID ...
+%         && length(storage(A.ID).L)>=N && ~isempty(storage(A.ID).L{N})
+%       L = storage(A.ID).L{N};
+%       U = storage(A.ID).U{N};
+%       x1 = storage(A.ID).x1{N};
+%       c = storage(A.ID).c{N};
+%       rowidx = storage(A.ID).rowidx{N};
+%     else  % have to compute L and U
+%       Amat = feval(A,N,map,ends);
+%       
+%       if dorectmat && m == 1% New rectangular matrix method
+%         [Bmat,c] = bdyreplace(A,{N},map,{ends}); rowidx = [];
+%         if any(isinf(ends))
+%             % We don't want chebpts to do the scaling in this case. (Done below).
+%             x1 = chebpts(N-A.numbc,[-1 1],1);            
+%         else
+%             x1 = chebpts(N-A.numbc,ends,1);
+%         end
+%         if ~isempty(map) % Map the 1st-kind points. (x is already mapped).
+%             if isstruct(map)
+%                 x1 = map.for(x1);
+%             else
+%                 x1 = map(x1);
+%             end
+%         end
+%         Amat = [barymat(x1,x)*Amat; Bmat];
+%       else                   % Do things the old way
+%         [Bmat,c,rowidx] = bdyreplace_old(A,N,map,ends);
+%         Amat(rowidx,:) = Bmat;
+%       end
+%       
+%       [L,U] = lu(Amat);
+%       if use_store && N > 5   % store L and U
+%         % Very crude garbage collection! If over capacity, clear out
+%         % everything.
+%         ssize = whos('storage');
+%         if ssize.bytes > cheboppref('maxstorage')
+%           storage = struct([]);
+%         end
+%         storage(A.ID).L{N} = L;
+%         storage(A.ID).U{N} = U;
+%         storage(A.ID).x1{N} = x1;
+%         storage(A.ID).c{N} = c;
+%         storage(A.ID).rowidx{N} = rowidx;
+%       end        
+%     end
+%     
+%     % Evaluate and modify RHS as needed.
+%     if m == 1 && dorectmat
+%         f = B(x1,:);
+%         f = [f ; c]; 
+%     else
+%         f = B(x,:);
+%         f = f(:);
+%         f(rowidx) = c;
+%     end
+% 
+%     % Solve.
+%     v = U\(L\f);
+% 
+%     V = reshape(v,N,m);
+%     v = sum(V,2);
+%     v = filter(v,1e-8);
+% 
+%   end

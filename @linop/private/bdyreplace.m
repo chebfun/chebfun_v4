@@ -1,4 +1,4 @@
-function [B,c,rowidx] = bdyreplace(A,n,map,breaks)
+function [B,c,rowidx] = bdyreplace(A,ns,map,breaks)
 % Each boundary condition in A corresponds to a constraint row of the form 
 % B*u=c. This function finds all rows of B and c, and also the indices of
 % rows of A*u=f that should be replaced by them.
@@ -6,30 +6,19 @@ function [B,c,rowidx] = bdyreplace(A,n,map,breaks)
 % Copyright 2008 by Toby Driscoll.
 % See http://www.maths.ox.ac.uk/chebfun.
 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+%  Last commit: $Author: hale $: $Rev: 1160 $:
+%  $Date: 2010-07-21 15:48:29 +0100 (Wed, 21 Jul 2010) $:
 
-if nargin < 3, map = []; end
-if nargin < 4, breaks = []; end
-
-breaks = union(breaks,A.fundomain.endsandbreaks);
-if ~isempty(breaks) && numel(breaks) > 2
-    numints = numel(breaks)-1;
-    if numel(n) == 1, n = repmat(n,1,numints); end
-    if numel(n) ~= numints
-        error('DOMAIN:eye:numints','Vector N does not match domain D.');
-    end
-elseif numel(breaks) == 2;
-    breaks = []; 
-end
-
+n = [ns{:}];
 m = size(A,2);
-B = zeros(A.numbc,sum(n)*m);
+B = zeros(A.numbc,sum(n));
 c = zeros(A.numbc,1);
 rowidx = zeros(1,A.numbc);
 if A.numbc==0, return, end
 
-elimnext = 1:n:m*n;  % in each variable, next row to eliminate
+if nargin < 3, map = []; end
+if nargin < 4, breaks = []; end
+
 q = 1;
 for k = 1:length(A.lbc)
   op = A.lbc(k).op;
@@ -38,27 +27,28 @@ for k = 1:length(A.lbc)
       'Boundary conditions not consistent with system size.')
   end
   if isa(op,'function_handle')
-      T = NaN(1,n*m);
+      T = NaN(1,sum(n));
   else
-      if isa(op,'varmat')
-          T = feval(op,{n,map,breaks});
-      else
-          T = feval(op,n,0,map,breaks);
+      T = [];
+      for l = 1:m
+        if isa(op,'varmat')
+            Tl = feval(op,{ns{l},map,breaks{l}});
+        else
+            Tl = feval(op,ns{l},0,map,breaks{l});
+        end
+        if size(Tl,1)>1, Tl = Tl(1,:); end   % at left end only
+        nsl = ns{l}; snsl = sum(nsl);
+        blockcolindx = (l-1)*snsl+1:l*snsl;
+        Tl = Tl(blockcolindx);
+        T = [T Tl];
       end
-      if size(T,1)>1, T = T(1,:); end   % at left end only
   end
   B(q,:) = T;
   c(q) = A.lbc(k).val;
-  if numel(breaks) < 3
-      nz = any( reshape(T,n,m)~=0 );    % nontrivial variables
-      j = find(full(nz),1,'first');     % eliminate from the first
-      rowidx(q) = elimnext(j);
-      elimnext(j) = elimnext(j)+1;
-  end
   q = q+1;
 end
 
-elimnext = n:n:n*m;  % in each variable, next row to eliminate
+% elimnext = cumsum(n);  % in each variable, next row to eliminate
 for k = 1:length(A.rbc)
   op = A.rbc(k).op;
   if size(op,2)~=m && ~isa(op,'varmat')
@@ -68,22 +58,22 @@ for k = 1:length(A.rbc)
   if isa(op,'function_handle')
       T = NaN(1,n*m);
   else
-      if isa(op,'varmat')
-          T = feval(op,{n,map,breaks});
-      else
-          T = feval(op,n,0,map,breaks);
+      T = [];
+      for l = 1:m
+        if isa(op,'varmat')
+            Tl = feval(op,{ns{l},map,breaks{l}});
+        else
+            Tl = feval(op,ns{l},0,map,breaks{l});
+        end
+        if size(Tl,1)>1, Tl = Tl(sum(ns{l}),:); end   % at right end only
+        nsl = ns{l}; snsl = sum(nsl);
+        blockcolindx = (l-1)*snsl+1:l*snsl;
+        Tl = Tl(blockcolindx);
+        T = [T Tl];
       end
-      if size(T,1)>1, T = T(end,:); end   % at right end only
   end
   B(q,:) = T;
   c(q) = A.rbc(k).val;
-  if numel(breaks) < 3
-      nz = any( reshape(T,n,m)~=0 );    % nontrivial variables 
-      j = find(full(nz),1,'last');      % eliminate from the last
-      rowidx(q) = elimnext(j);
-      elimnext(j) = elimnext(j)-1;
-  end
   q = q+1;
 end
-
 end

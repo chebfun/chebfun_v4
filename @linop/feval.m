@@ -2,8 +2,8 @@ function [M,B,c,rowreplace,P] = feval(A,n,usebc,map,breaks)
 % FEVAL  Apply or realize a linop.
 % FEVAL(A,U) for chebfun U applies A to U; i.e., it returns A*U.
 %
-% M = FEVAL(A,N) for integer N returns the matrix associated with A at 
-% size N.
+% M = FEVAL(A,N) for integer N returns the matrix associated with A at size
+% N.
 %
 % [M,B,C,RR] = FEVAL(A,N,'bc') modifies the matrix according to any
 % boundary conditions that have been set for A. In particular, M(RR,:)=B,
@@ -12,12 +12,9 @@ function [M,B,c,rowreplace,P] = feval(A,n,usebc,map,breaks)
 % FEVAL(A,Inf) returns the functional form of A if it is available.
 %
 % See also linop/subsref.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-% Copyright 2008 by Toby Driscoll.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+%
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% Copyright 2002-2009 by The Chebfun Team.
 
 % For future performance, store realizations.
 persistent storage
@@ -32,30 +29,32 @@ end
 % Parse the inputs.
 if nargin < 5, breaks = []; end
 if nargin < 4, map = []; end
-if nargin > 2 
+if nargin > 2 % Determine input sequence
     if isstruct(usebc) || isa(usebc,'function_handle') || isempty(usebc)    
         if ~isstruct(map)
-            if nargin == 4, breaks = map; end
-            if nargin < 5,  map = usebc;  end
+            if nargin == 4, breaks = map; end % A,n,map,breaks
+            if nargin < 5,  map = usebc;  end % A,n,map
         end
         usebc = 0;
     elseif nargin == 3 && ((isnumeric(usebc) && numel(usebc) > 1) || isa(usebc,'domain'))
+        % A,n,breaks
         breaks = usebc; map = []; usebc = 0;
     else
-        usebc = .5*strcmpi(usebc,'rect') + 1.0*strcmpi(usebc,'bc') + 1.5*strcmpi(usebc,'oldschool');
+        % A,n,usebc,*
+        usebc = .5*strcmpi(usebc,'rect') + 1.0*strcmpi(usebc,'bc') + ...
+            1.5*any(strcmpi(usebc,{'oldschool','rowrep'}));
     end
 else
-    usebc = 0;
+    usebc = 0; % A,n
 end
 if nargin < 5 && ~isempty(map) && (isnumeric(map) || isa(map,'domain'))
-    breaks = map;
-    map = [];
+    breaks = map; map = []; % A,n,usebc,breaks
 end
 
-% usebc = 0 --> No boundary conditions
+% usebc = 0 ('nobc') --> No boundary conditions
 % usebc = 0.5 ('rect') --> Compute the projection, but don't add BCs
 % usebc = 1 ('bc') --> Compute projections and apply boundary conditions
-% usebc = 1.5 ('oldschool') --> Use row replacement rather than rectangular matrices
+% usebc = 1.5 ('rowrep') --> Use row replacement rather than rectangular matrices
 
 % Initialise output variables
 M = []; B = []; c = []; rowreplace = []; P = [];
@@ -79,7 +78,7 @@ if numel(n) > 1, use_store = 0; end
 % Or if we have a non-trivial domain
 if ~isempty(breaks), use_store = 0; end
 
-% Repeat N if the use has been lazy
+% Repeat N if the user has been lazy
 if numel(n) == 1 && ~isempty(breaks)
   n = repmat(n,1,numel(breaks)-1);
 end
@@ -131,9 +130,9 @@ else
       if ~isempty(breaks)
           % We force rectangular matrices in this case.
           warning('CHEBFUN:linop:feval:oldschool', ...
-              'oldschool does not support piecewise linops.');
+              '''rowrep'' does not support piecewise linops.');
       else
-          [B,c,rowreplace] = bdyreplace(A,n,map,breaks);
+          [B,c,rowreplace] = bdyreplace_old(A,n,map,breaks);
           M(rowreplace,:) = B;
           return
       end
@@ -143,27 +142,22 @@ else
   if max(A.blocksize) == 1  % Single equation
       if isempty(breaks)     % No breakpoints
           % Project
-%           P = barymatp(n-A.difforder,breaks,n,breaks);
-%           P = barymatp12(n-A.difforder,[-1 1],n,[-1 1],map,map);
           P = barymatp12m(n-A.difforder,n,[-1 1],map);
           M = P*M;
           % Compute boundary conditions and apply (if required)
           if usebc == 1
-              [B,c] = bdyreplace(A,n,map,breaks);
+              [B,c] = bdyreplace(A,{n},map,{breaks});
               rowreplace = sum(n)-(size(B,1)-1:-1:0);
               M = [M ; B];
           end
       else                   % Break points
           % Project
-%           P = barymatp(n-A.difforder,breaks,n,breaks);
-%           P = barymatp12(n-A.difforder,breaks,n,breaks,map,map);
-
           P = barymatp12m(n-A.difforder,n,breaks,map);
           M = P*M;
           % Compute boundary conditions and apply (if required)
           if usebc == 1
-              [B c1] = bdyreplace_sys(A,{n},map,{breaks});
-              [C c2] = cont_conds_sys(A,{n},map,{breaks});
+              [B c1] = bdyreplace(A,{n},map,{breaks});
+              [C c2] = cont_conds(A,{n},map,{breaks});
               B = [B ; C];  M = [M ; B]; c = [c1 ; c2];
               rowreplace = sum(n)-(size(B,1)-1:-1:0);
           end
@@ -171,7 +165,7 @@ else
   else                     % System of equations
       % Project
       MM = []; sn = sum(n);
-      do = max(A.difforder); % Max difforder for each equation
+      do = max(A.difforder,[],2); % Max difforder for each equation
       sizeM = A.blocksize(1)*sn; 
       nbc = sizeM;
       P = cell(A.blocksize(1),1);
@@ -180,8 +174,6 @@ else
           if any(nk<1), error('CHEBFUN:linop:feval:fevalsize', ...
                   'feval size is not large enough for linop.difforder.');
           end
-%           Pk = barymatp(nk,breaks,n,breaks);
-%           Pk = barymatp12(nk,breaks,n,breaks,map,map);
           Pk = barymatp12m(nk,n,breaks,map);
           ii = ((k-1)*sn+1):k*sn;
           MM = [MM ; Pk*M(ii,:)];
@@ -189,6 +181,7 @@ else
           nbc = nbc - sum(nk);
       end
 
+%       % Construct the full matrix version of P.
 %       Pmat = zeros(sum(n)*A.blocksize(1));
 %       i1 = 0; i2 = 0;
 %       for j = 1:A.blocksize(1)
@@ -203,8 +196,8 @@ else
       if usebc == 1
           breaks = repmat({breaks},1,A.blocksize(2));
           n = repmat({n},1,A.blocksize(2));
-          [B c1] = bdyreplace_sys(A,n,map,breaks);
-          [C c2] = cont_conds_sys(A,n,map,breaks);
+          [B c1] = bdyreplace(A,n,map,breaks);
+          [C c2] = cont_conds(A,n,map,breaks);
           B = [B ; C]; M = [M ; B]; c = [c1 ; c2];
           rowreplace = sizeM-nbc+(1:nbc);          
       end
