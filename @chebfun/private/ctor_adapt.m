@@ -68,12 +68,21 @@ if isfield(pref,'exps')
     end
 end
 
+if isfield(pref,'map') && isstruct(pref.map) && numel(pref.map) > 1
+    map = pref.map;
+else
+    map = [];
+end
+
 ii = 0;
 while ii < length(ops)
     ii = ii + 1;
     op = ops{ii};
     es = ends(ii:ii+1);
     if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
+    if ~isempty(map),        pref.map = map(ii);            end
+
+
     switch class(op)
         case 'double'
             if isfield(pref,'coeffs')
@@ -113,7 +122,7 @@ while ii < length(ops)
                 ii = ii-1; es = []; fs = [];
             else
                 op = str2op(op);
-                op = vectorcheck(op,es,pref);         
+                op = vectorcheck(op,es,pref); 
                 [fs,es,scl] = auto(op,es,scl,pref);
             end
         case 'function_handle'
