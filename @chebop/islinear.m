@@ -2,8 +2,9 @@ function islin = islinear(N)
 % ISLINEAR Checks whether a chebop is linear.
 % ISLINEAR(N) returns 1 if N is a linear operator, 0 otherwise.
 
-% Store the function we let the chebop operate on
-u = chebfun('x',N.dom);
+% Store the function we let the chebop operate on. Using the findguess
+% method ensures that the guess is of the right (quasimatrix) dimension.
+u = findguess(N);
 
 % Boundary conditions part
 ab = N.dom.ends;
@@ -55,7 +56,7 @@ catch ME
     rethrow(ME);
 end
 
-if nonConst
+if any(any(nonConst))
      islin = 0;
      return
 end

@@ -9,7 +9,9 @@ if nargin == 1
         error('CHEBFUN:chebop:linop:emptydomain', ...
             'Cannot linearise a chebop defined on an empty domain.'); 
     end
-    u = chebfun('x',N.dom);
+%   Create a chebfun to let the operator operate on. Using the findguess
+%   method ensures that the guess is of the right (quasimatrix) dimension.
+    u = findguess(N);
 end
 
 % Boundary conditions part
@@ -60,7 +62,7 @@ catch ME
     rethrow(ME);
 end
 
-if nonConst
+if any(any(nonConst))
     error('CHEBOP:linop:nonlinear','Chebop does not appear to be a linear operator.')
 end
 
