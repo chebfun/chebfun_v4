@@ -25,6 +25,8 @@ if nargin==2 && isnumeric(varargin{2})
 end
 
 m = length(varargin);
+if m == 1, B = varargin{1}; return, end      % nothing to do here
+
 dom = domaincheck(varargin{:});
 Z = zeros(dom);  
 B = linop([],[],dom,0);

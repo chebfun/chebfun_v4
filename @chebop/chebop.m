@@ -75,7 +75,8 @@ if isnumeric(varargin{1})
     end
     N.dom = domain(dom);
 else
-    N.dom = varargin{1};
+    dom = varargin{1};
+    N.dom = dom;
     varargin(1) = [];
 end
 

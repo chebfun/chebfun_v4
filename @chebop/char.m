@@ -6,7 +6,7 @@ if isempty(A)
     s = '   (empty chebop)';
 else
     s = '   operating on chebfuns defined on:';
-    s = char(s,['  ' char(A.dom)],' ');
+    s = char(s,['  ' char(A.dom)]);
     
     if ~isempty(A.op)
       s = char(s, '   representing the operator:');
@@ -27,9 +27,9 @@ else
 %         end
 %       end
     end
-    s = char(s,' ');
     
     if ~isempty(A.lbc)
+      s = char(s,' ');
       if iscell(A.lbcshow) && length(A.lbcshow) > 1
         s = char(s, '   left boundary conditions:');
       else
@@ -40,6 +40,7 @@ else
     end
     
     if ~isempty(A.rbc)
+      s = char(s,' ');
       if iscell(A.rbcshow) && length(A.rbcshow) > 1
         s = char(s, '   right boundary conditions:');
       else

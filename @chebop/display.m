@@ -5,15 +5,15 @@ function display(A)
 
 
 loose = ~isequal(get(0,'FormatSpacing'),'compact');
-if loose, disp(' '), end
+if loose, fprintf('\n'), end
 disp([inputname(1) ' = chebop']);
-if loose, disp(' '), end
+if loose, fprintf('\n'), end
 s = char(A);
 if ~loose   
   s( all(isspace(s),2), : ) = [];  % remove blank lines
 end
 disp(s)
-if loose, disp(' '), end
+if loose, fprintf('\n'), end
 
 end
 

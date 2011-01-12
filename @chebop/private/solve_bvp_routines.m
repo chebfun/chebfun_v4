@@ -129,6 +129,28 @@ lambdas = zeros(10,1);
 % Counter that checks whether we are stagnating. If we are doing pure
 % Newton iteration, this counter will remain 0.
 stagCounter = 0;
+
+bc = setupBC();
+% Check to see if N is linear. If it is, we can solve without iterations.
+% If it's not, the linop will return the linearisation about the initial
+% guess (plus the identity?).
+[A isLin] = linop(N,u,1);
+if isLin && 0
+    % N is linear. Sweet!
+    A = A & bc;
+    u = A\(rhs-N.op(0*u));
+    if nargout == 2
+        nrmDeltaRelvec = norm(feval(N,u)-rhs);
+    end
+    if any(strcmpi(pref.display,{'iter','display'}))
+        fprintf('Converged in one iteration. (Chebop is linear).\n');
+    end
+    return
+else
+    A = A - blkdiag(eye(domain(A)),numel(rhs)) & bc;
+%     B = diff(deResFun,u) & bc; A(5)-B(5); % Check...
+end
+
 if dampedOn
     solve_display(pref,guihandles,'initNewton',u);
 else
@@ -138,13 +160,13 @@ end
 while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
     counter = counter + 1;
     
-    bc = setupBC();
+    if counter > 1 % (Has already been done above for counter = 1)
+        bc = setupBC();
+    end
     % If the operator is a chebop, we don't need to linearize. Else, do the
     % linearization using diff. Note that if the operator is a chebop, we
     % need to handle the rhs differently.
     if opType == 1
-        A = diff(deResFun,u) & bc;
-        
         % Using A.scale if we are in the first iteration - Handles linear
         % problems better
         if counter == 1
@@ -154,6 +176,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
             % constructor (so not to use the default tolerance of chebfuns
             % but rather a size related to the tolerance requested).
         else
+            A = diff(deResFun,u) & bc;
             % Linop backslash with the third argument added
             delta = -mldivide(A,deResFun,deltol);
         end

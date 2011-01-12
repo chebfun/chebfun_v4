@@ -1,4 +1,4 @@
-function L = linop(N,u)
+function [L isLin] = linop(N,u,flag)
 %LINOP Converts a chebop N to a linop L if N is a linear operator
 
 % For expm, we need to be able to linearize around u = 0, so we offer the
@@ -14,6 +14,11 @@ if nargin == 1
     u = findguess(N);
 end
 
+if nargin < 3, flag = 0; end
+% The flag prevents an error from being displayed when N is not linear, and 
+% outputs in L the frechet derivative of the nonlinear N about u.
+isLin = 1;
+
 % Boundary conditions part
 ab = N.dom.ends;
 a = ab(1); b = ab(end);
@@ -27,7 +32,13 @@ if ~isempty(N.lbc)
         gu = lbc{j}(u);
         [Dguu nonConst] = diff(gu,u);
         if any(nonConst)
-            error('CHEBOP:linop:nonlinear','Chebop does not appear to be a linear operator.')
+            if ~flag
+                error('CHEBOP:linop:nonlinear','Chebop does not appear to be a linear operator.')
+            else
+                isLin = 0;
+                N.rbc = []; % There's no point checking the N.rbc.
+                break
+            end
         else
             linBC.left(j) = struct('op',Dguu,'val',gu(a,j));
         end
@@ -62,9 +73,15 @@ catch ME
     rethrow(ME);
 end
 
-if any(any(nonConst))
-    error('CHEBOP:linop:nonlinear','Chebop does not appear to be a linear operator.')
+if any(any(nonConst)) || ~isLin
+    if ~flag
+        error('CHEBOP:linop:nonlinear','Chebop does not appear to be a linear operator.')
+    else
+        isLin = 0;
+        L = JNuu; % Output the DE jacobian about u.
+    end
+else
+    % Assign BCs to the linop
+    L = JNuu & linBC;
 end
 
-% Assign BCs to the linop
-L = JNuu & linBC;
