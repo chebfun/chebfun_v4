@@ -97,7 +97,7 @@ end
 f.imps = a*f.imps;
 f.scl = abs(a)*f.scl;
 
-f.jacobian = anon('[tempDer nonConst] = diff(f,u); der = a*tempDer;',{'a' 'f'},{a f},1);
+f.jacobian = anon('[tempDer nonConst] = diff(f,u); der = a*tempDer; nonConst = (a~=0)*nonConst;',{'a' 'f'},{a f},1);
 f.ID = newIDnum;
 end
 

@@ -42,6 +42,7 @@ switch(class(B))
     if max(m,n) == 1
       if isreal(B) && ~B % B = 0 is special
           C = repmat(zeros(A.fundomain),A.blocksize(1),A.blocksize(2));
+          C.iszero = 1+0*C.iszero;
       else
           C = copy(A);
           C.varmat = B*C.varmat;
