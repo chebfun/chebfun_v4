@@ -130,15 +130,13 @@ lambdas = zeros(10,1);
 % Newton iteration, this counter will remain 0.
 stagCounter = 0;
 
-bc = setupBC();
 % Check to see if N is linear. If it is, we can solve without iterations.
 % If it's not, the linop will return the linearisation about the initial
 % guess (plus the identity?).
-[A isLin] = linop(N,u,1);
+[A bc isLin] = linearise(N,u);
 if isLin
     % N is linear. Sweet!
-    A = A & bc;
-    u = A\(rhs-N.op(0*u));
+    u = (A & bc)\(rhs-N.op(0*u));
     if nargout == 2
         nrmDeltaRelvec = norm(feval(N,u)-rhs);
     end
