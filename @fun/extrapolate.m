@@ -2,7 +2,7 @@ function g = extrapolate(g,pref,x)
 % Extrapolate at endpoints if needed using "Fejer's 2nd rule" type of
 % barycentric formula. Also updates the vertical scale of g.
 
-if pref.extrapolate || pref.splitting || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(g.vals)) 
+if pref.extrapolate || pref.splitting || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(g.vals))
     if pref.chebkind == 2
            
         v = g.vals(2:end-1);
@@ -20,23 +20,44 @@ if pref.extrapolate || pref.splitting || any(g.exps) || any(isinf(g.map.par([1 2
         mask = isnan(v) | isinf(v);
         g.scl.v = max(g.scl.v,norm(v(~mask),inf));
         if any(mask)
-            % Force extrapolation at end points
-            mask = [true;mask;true];
-            xgood = x(~mask);
-            if isempty(xgood)
-                error('FUN:extrapolate:nans','Too many nans to handle. Increasing minsamples may help')
+            
+            if ~pref.n % adaptive
+                % Force extrapolation at end points
+                mask = [true;mask;true];
+                xgood = x(~mask);
+                if isempty(xgood)
+                    error('FUN:extrapolate:nans','Too many nans to handle. Increasing minsamples may help')
+                end
+                xnan = x(mask);
+                w = ones(size(xgood));
+                for k=1:length(xnan)
+                    w =  w.*abs(xnan(k)-xgood);
+                end
+                w(2:2:end) = - w(2:2:end);
+                for k =1:length(xnan)
+                    w2 = w./(xnan(k)-xgood);
+                    xnan(k) = sum(w2.*g.vals(~mask))/sum(w2);
+                end
+                g.vals(mask) = xnan;
+                
+            else    % non-adaptive
+                % In non-adaptive mode, we can't assume we've converged, so
+                % we take local interpolants through the 5 nearest neighbours.
+                maskends = isnan(g.vals([1 end])) | isinf(g.vals([1 end]));
+                mask = [maskends(1) ; mask ; maskends(2)];
+                v = [vends(1) ; v ; vends(2)];
+                xbad = x(mask); x(mask) = inf;
+                for k = 1:sum(mask)
+                    [ignored idx] = sort(abs(xbad(k)-x)); % Sort by distance.
+                    [idx idx2] = sort(idx(1:5)); % Everybody needs good neightbours.
+                    w = bary_weights(x(idx)); % Get weights for this stencil.
+                    xbad(k) = bary(xbad(k),v(idx),x(idx),w); % Interpolate.
+                    % Sanity check. If the new point is huge, just assign to neighbour.
+                    if abs(xbad(k)) > 2*g.scl.v, xbad(k) = v(idx(idx2(1))); end
+                end
+                g.vals(mask) = xbad;
             end
-            xnan = x(mask);
-            w = 0*xgood+1;
-            for k=1:length(xnan)
-                w =  w.*abs(xnan(k)-xgood);
-            end
-            w(2:2:end) = - w(2:2:end);
-            for k =1:length(xnan)
-                w2 = w./(xnan(k)-xgood);
-                xnan(k) = sum(w2.*g.vals(~mask))/sum(w2);
-            end
-            g.vals(mask) = xnan;
+            
         else
             % Force extrapolation at endpoints!
             xi = x(2:end-1);
