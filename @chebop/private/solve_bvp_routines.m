@@ -135,7 +135,7 @@ bc = setupBC();
 % If it's not, the linop will return the linearisation about the initial
 % guess (plus the identity?).
 [A isLin] = linop(N,u,1);
-if isLin && 0
+if isLin
     % N is linear. Sweet!
     A = A & bc;
     u = A\(rhs-N.op(0*u));
