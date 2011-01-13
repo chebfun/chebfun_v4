@@ -37,17 +37,19 @@ if ~samemap(g1,g2)
     x1 = g1.map.for(chebpts(g1.n));
     x2 = g2.map.for(chebpts(g2.n));
     g1 = fun(@(x) bary(x,g1.vals,x1).*bary(x,g2.vals,x2),g1.map.par(1:2));
-    
     g1.exps = exps;
     return
 end
 
 % The map is the same, so the length of the product is known.
 temp = prolong(g1,g1.n+g2.n-1); 
+pos = false;
 if isequal(g1,g2)
    vals = temp.vals.^2;          
+   if all(isreal(g1.vals)), pos = true; end
 elseif isequal(conj(g1),g2)
    vals = conj(temp.vals).*temp.vals;
+   pos = true;
 else
    temp2 = prolong(g2,g1.n+g2.n-1); 
    vals = temp.vals.*temp2.vals;
@@ -62,3 +64,9 @@ g1.scl = scl;
 % Simplify:
 g1.vals = vals; g1.n = length(vals); g1.exps = exps;
 g1 = simplify(g1); 
+
+% Funs g1 and g2 are such that their product should be positive. Enforce
+% this on the values. (Simplify could have ruined this property).
+if pos,
+    g1.vals = abs(g1.vals);
+end
