@@ -5,7 +5,7 @@ function Fout = power(F1,F2)
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2002-2009 by The Chebfun Team.
 
 if isa(F1,'chebfun') && isa(F2,'chebfun')
     % chebfun.^chebfun
@@ -19,10 +19,19 @@ if isa(F1,'chebfun') && isa(F2,'chebfun')
 elseif isa(F1,'chebfun')
     % chebfun.^double
     Fout = F1;
-    for k = 1:numel(F1)
-        Fout(k) = powercol(F1(k),F2);
-        Fout(k).jacobian = anon('diag1 = F2*diag(F1.^(F2-1)); der2 = diff(F1,u); der = diag1*der2; nonConst = ~der2.iszero;',{'F1', 'F2'},{F1(k) F2},1);
-        Fout(k).ID = newIDnum();
+    if F2 == 0
+        dom = domain(F1);
+        for k = 1:numel(F1)
+            Fout(k) = chebfun(1,dom);
+            Fout(k).jacobian = anon('der = zeros(dom); nonConst = 0;',{'dom'},{dom},1);
+            Fout(k).ID = newIDnum();
+        end
+    else
+        for k = 1:numel(F1)
+            Fout(k) = powercol(F1(k),F2);
+            Fout(k).jacobian = anon('diag1 = F2*diag(F1.^(F2-1)); der2 = diff(F1,u); der = diag1*der2; nonConst = ~der2.iszero;',{'F1', 'F2'},{F1(k) F2},1);
+            Fout(k).ID = newIDnum();
+        end
     end
 else
     % double.^chebfun
@@ -34,7 +43,7 @@ else
     end
 end
 
-% -----------------------------------------------------    
+% -----------------------------------------------------
 function fout = powercol(f,b)
 
 if (isa(f,'chebfun') && isa(b,'chebfun'))
@@ -45,7 +54,7 @@ if (isa(f,'chebfun') && isa(b,'chebfun'))
     fout.jacobian = anon('[Jfu constJfu] = diff(f,u); [Jbu constJbu] = diff(b,u); der = diag(b.*f.^(b-1))*Jfu + diag(f.^b.*log(f))*Jbu; nonConst = (~Jfu.iszero | ~Jbu.iszero) | (constJbu | constJfu);',{'f' 'b'},{f b},1);
     fout.ID = newIDnum();
 else
-    if isa(f,'chebfun') 
+    if isa(f,'chebfun')
         if b == 0
             % Trivial case
             fout = chebfun(1,[f.ends(1) f.ends(end)]);

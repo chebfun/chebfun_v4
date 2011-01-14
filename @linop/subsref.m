@@ -83,6 +83,8 @@ switch s(1).type
         end
       case 'scale'
         A = A.scale;
+        case 'blocksize'
+        A = A.blocksize;
       case 'numbc'
         A = A.numbc;
       case 'difforder'
