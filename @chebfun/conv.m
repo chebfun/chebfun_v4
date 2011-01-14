@@ -73,7 +73,7 @@ pref = chebfunpref;
 pref.sampletest = false;
 pref.resampling = false;
 pref.splitting = false;
-prof.blowup = false;
+pref.blowup = false;
 
 % Construct funs
 for k =1:length(ends)-1  
@@ -102,8 +102,6 @@ end   % conv()
 
 
 function out = integral(x,a,b,c,d,f,g, pref,scl)
-
-pref.blowup = false; % avoid checking for blowup exponents.
 out = 0.*x;
 for k = 1:length(x)
     A = max(a,x(k)-d); B = min(b,x(k)-c);
