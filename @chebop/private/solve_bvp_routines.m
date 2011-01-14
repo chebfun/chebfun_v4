@@ -1,4 +1,4 @@
-function [u nrmDeltaRelvec] = solve_bvp_routines(N,rhs,options,guihandles)
+function [u nrmDeltaRelvec] = solve_bvp_routines(N,rhs,pref,guihandles)
 % SOLVE_BVP_ROUTINES Private function of the chebop class.
 %
 % This function gets called by nonlinear backslash and solvebvp. It both
@@ -7,18 +7,6 @@ function [u nrmDeltaRelvec] = solve_bvp_routines(N,rhs,options,guihandles)
 
 
 % Damped Newton iteration. More details will follow.
-
-% If no options are passed, obtain the the nonlinop preferences
-switch nargin
-    case 2
-        pref = cheboppref;
-        guihandles = [];
-    case 3
-        pref = options;
-        guihandles = [];
-    case 4
-        pref = options;
-end
 
 restol = pref.restol;
 deltol = pref.deltol;
@@ -136,12 +124,23 @@ stagCounter = 0;
 [A bc isLin] = linearise(N,u);
 if isLin
     % N is linear. Sweet!
-    u = (A & bc)\(rhs-N.op(0*u));
+    A = A & bc;
+    % Do we need to worry about scaling here?
+%     subsasgn(A,struct('type','.','subs','scale'), normu);
+
+    % As we have linearised around the initial guess u, which if is
+    % constructed automatically is designed to satisfy (inhom.) Dirichlet
+    % conditions, we can't find the solution simply by solving for the
+    % linop A with the original rhs. Instead, we calculate a Newton step
+    % from the initial guess, and add that to the guess to obtain our
+    % solution.
+    delta = -A\deResFun;
+    u = u+delta; % Can safely take a full Newton step
     if nargout == 2
         nrmDeltaRelvec = norm(feval(N,u)-rhs);
     end
     if any(strcmpi(pref.display,{'iter','display'}))
-        fprintf('Converged in one iteration. (Chebop is linear).\n');
+        fprintf('Converged in one step. (Chebop is linear).\n');
     end
     return
 else
@@ -241,7 +240,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     
     % If the user has pressed the stop button on the GUI, we stop and
     % return the latest solution
-    if nargin == 4 && strcmpi(get(guihandles{6},'String'),'Solve')
+    if ~isempty(guihandles) && strcmpi(get(guihandles{6},'String'),'Solve')
         nrmDeltaRelvec(counter+1:end) = [];
         solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr)
         return

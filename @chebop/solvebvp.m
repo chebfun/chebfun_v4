@@ -25,5 +25,33 @@ function varargout = solvebvp(N,rhs,varargin)
 
 % Developed by Toby Driscoll and Asgeir Birkisson, 2009.
 
-[varargout{1} varargout{2}] = solve_bvp_routines(N,rhs,varargin{:});
+% Do all parsing of varargin here rather than in solve_bvp_routines
+
+% If no options are passed, obtain the the chebop preferences
+
+% Initialize arguments to be passed on later
+pref = []; guihandles = []; jac = [];
+
+argCounter = 1;
+while argCounter <= nargin-2
+    arg = varargin{argCounter}
+    if isa(arg,'char')
+        if strcmpi(arg,'FJacobian') || strcmpi(arg,'FFrechet')
+            Fjacobian = varargin{2};
+        elseif strcmpi(arg,'guihandles')
+            guihandles = varargin{3};
+        else
+            error('Chebop:solvebvp',['Unknown option ' arg '.']);
+        end
+        argCounter = argCounter + 2;
+    elseif isa(arg,'struct')
+        pref = varargin{argCounter};
+        argCounter = argCounter + 1;
+    end
+end
+
+if isempty(pref)
+    pref = cheboppref;
+end
+[varargout{1} varargout{2}] = solve_bvp_routines(N,rhs,pref,guihandles);%varargin{:});
 

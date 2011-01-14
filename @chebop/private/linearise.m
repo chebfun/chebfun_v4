@@ -42,7 +42,7 @@ if ~isempty(N.lbc)
             [Dgujk nonConst] = diff(guj(:,k),u);
             if any(nonConst),  isLin = 0;   end
             if ~isLin && flag == 1, return, end
-            linBC.left(l) = struct('op',Dgujk,'val',guj(a,k));
+            linBC.left(l) = struct('op',Dgujk,'val',-guj(a,k));
             l = l+1;
         end
     end
@@ -62,7 +62,7 @@ if ~isempty(N.rbc)
             [Dgujk nonConst] = diff(guj(:,k),u);
             if any(nonConst),  isLin = 0;   end
             if ~isLin && flag, return,      end
-            linBC.right(l) = struct('op',Dgujk,'val',guj(b,k));
+            linBC.right(l) = struct('op',Dgujk,'val',-guj(b,k));
             l = l+1;
         end
     end
