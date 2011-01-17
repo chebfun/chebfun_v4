@@ -19,5 +19,5 @@ switch propName
     case 'guess'
         val = N.guess;
     otherwise
-        error('CHEBOP:get:propname',[propName,' is not a valid nonlinop property'])
+        error('CHEBOP:get:propname',[propName,' is not a valid chebop property'])
 end

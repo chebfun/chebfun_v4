@@ -26,6 +26,20 @@ if nargin < 3, flag = 0; end
 isLin = 1;
 linBC = [];
 
+% Check whether we are working with anonymous functions which accept
+% quasimatrices or arguments such as @(u,v). In the former case,
+% no special measurements have to be taken, but in the latter, in
+% order to allow evaluation, we need to create a cell array with
+% entries equal to each column of the quasimatrix representing the
+% current solution.
+numberOfInputVariables = nargin(N.op);
+
+if numberOfInputVariables > 1 % Load a cell
+    uCell = cell(1,numel(u));
+    for quasiCounter = 1:numel(u)
+        uCell{quasiCounter} = u(:,quasiCounter);
+    end
+end
 % Boundary conditions part
 ab = N.dom.ends;
 a = ab(1); b = ab(end);
@@ -46,7 +60,11 @@ else
         end
         l = 1;
         for j = 1:length(lbc)
-            guj = lbc{j}(u);
+            if numberOfInputVariables > 1
+                guj = lbc{j}(uCell{:});
+            else
+                guj = lbc{j}(u);
+            end
             for k = 1:numel(guj);
                 [Dgujk nonConst] = diff(guj(:,k),u);
                 if any(nonConst),  isLin = 0;   end
@@ -66,7 +84,11 @@ else
         end
         l = 1;
         for j = 1:length(rbc)
-            guj = rbc{j}(u);
+            if numberOfInputVariables > 1
+                guj = rbc{j}(uCell{:});
+            else
+                guj = rbc{j}(u);
+            end
             for k = 1:numel(guj);
                 [Dgujk nonConst] = diff(guj(:,k),u);
                 if any(nonConst),  isLin = 0;   end
@@ -82,7 +104,11 @@ end
 
 % Functional part
 try
-    Nu = N.op(u);
+    if numberOfInputVariables > 1
+        Nu = N.op(uCell{:});
+    else
+        Nu = N.op(u);
+    end
     [L nonConst] = diff(Nu,u);
 catch ME
     rethrow(ME);

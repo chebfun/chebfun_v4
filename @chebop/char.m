@@ -1,5 +1,5 @@
 function s = char(A)
-% CHAR  Convert nonlinop to pretty-printed string.
+% CHAR  Convert chebop to pretty-printed string.
 
 
 if isempty(A)

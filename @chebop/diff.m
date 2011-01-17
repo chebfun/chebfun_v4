@@ -21,7 +21,7 @@ function J = diff(N,u)
 %   [d,x] = domain(0,1);
 %   u = 1-x;
 %   lbc = @(u) u-1;  rbc = @(u) u.*diff(u)-1;
-%   N = nonlinop(d,@(u)diff(u,2)-exp(u),lbc,rbc);
+%   N = chebop(d,@(u)diff(u,2)-exp(u),lbc,rbc);
 %   for k = 1:6
 %     r = N(u);  J = diff(N,u);
 %     J.lbc(1) = {J.lbc(1).op, -feval(lbc(u),0)};

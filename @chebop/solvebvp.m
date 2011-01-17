@@ -34,20 +34,17 @@ pref = []; guihandles = []; jac = [];
 
 argCounter = 1;
 while argCounter <= nargin-2
-    arg = varargin{argCounter}
-    if isa(arg,'char')
-        if strcmpi(arg,'FJacobian') || strcmpi(arg,'FFrechet')
-            Fjacobian = varargin{2};
-        elseif strcmpi(arg,'guihandles')
-            guihandles = varargin{3};
-        else
-            error('Chebop:solvebvp',['Unknown option ' arg '.']);
-        end
-        argCounter = argCounter + 2;
-    elseif isa(arg,'struct')
-        pref = varargin{argCounter};
-        argCounter = argCounter + 1;
+    arg = varargin{argCounter};
+    if strcmpi(arg,'FJacobian') || strcmpi(arg,'FFrechet')
+        Fjacobian = varargin{argCounter+1};
+    elseif strcmpi(arg,'options')
+        pref = varargin{argCounter+1};
+    elseif strcmpi(arg,'guihandles')
+        guihandles = varargin{argCounter+1};
+    else
+        error('Chebop:solvebvp',['Unknown option ' arg '.']);
     end
+    argCounter = argCounter + 2;
 end
 
 if isempty(pref)

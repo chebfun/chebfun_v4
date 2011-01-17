@@ -144,7 +144,7 @@ if isLin
     end
     return
 else
-    A = A - blkdiag(eye(domain(A)),numel(rhs)) & bc;
+    A = A - blkdiag(eye(domain(A)),numel(u)) & bc;
 %     B = diff(deResFun,u) & bc; A(5)-B(5); % Check...
 end
 
@@ -174,8 +174,10 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
             % but rather a size related to the tolerance requested).
         else
             A = diff(deResFun,u) & bc;
+            subsasgn(A,struct('type','.','subs','scale'), normu);
             % Linop backslash with the third argument added
-            delta = -mldivide(A,deResFun,deltol);
+            delta = -(A\deResFun);
+%             delta = -mldivide(A,deResFun,deltol);
         end
     else
         A = deFun & bc; % deFun is a chebop

@@ -1,6 +1,6 @@
 function u = pde15s(N, t, varargin)
 %PDE15S for chebops.
-% PDE15S(N, T) solves the PDE u_t = N.op(u,t,x) where N is a nonlinop 
+% PDE15S(N, T) solves the PDE u_t = N.op(u,t,x) where N is a chebop 
 % with the initial condition given by N.guess. See CHEBFUN/PDE15S for 
 % more detailed information.
 %
