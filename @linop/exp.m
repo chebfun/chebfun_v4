@@ -1,5 +1,5 @@
 function E = exp(A)
-% EXP   Exponential of a chebop.
+% EXP   Exponential of a linop.
 % EXP(A) is a synonym for EXPM(A).
 %
 % See also CHEBOP/EXPM.

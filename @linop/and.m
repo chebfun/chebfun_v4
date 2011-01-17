@@ -1,6 +1,6 @@
 function A = and(A,bc)
-% &   Set boundary conditions for a chebop.
-% (A & BC) returns a chebop the same as A but with boundary conditions
+% &   Set boundary conditions for a linop.
+% (A & BC) returns a linop the same as A but with boundary conditions
 % defined by BC. Any previously defined boundary conditions for A 
 % are discarded.
 %
@@ -8,7 +8,7 @@ function A = and(A,bc)
 %
 %   'dirichlet' or {'dirichlet',c} :  set value to zero or to c
 %   'neumann' or {'neumann',c}     :  set derivative to zero or to c
-%   B or {B,c}                     :  B is a chebop defining boundary operator          
+%   B or {B,c}                     :  B is a linop defining boundary operator          
 %   'periodic'                     :  periodicity up to diff. order
 %
 % Alternatively, BC may be a struct with fields 'left' and 'right'. To
@@ -27,13 +27,13 @@ function A = and(A,bc)
 % assignment syntax instead. See CHEBOP/SUBSASGN for more information.
 %
 % One use of & is to apply boundary conditions that were read off of
-% another chebop. For example, A = (A & B.bc)
+% another linop. For example, A = (A & B.bc)
 %
 % Note that A = (A & BC) is a synonym for A.bc = BC. However, the & syntax
 % creates a new object that can be renamed or used inline as an argument to
 % another function.
 %
-% See also chebop/subsref, chebop/subsasgn.
+% See also linop/subsref, linop/subsasgn.
 % See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by Toby Driscoll.

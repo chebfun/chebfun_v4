@@ -1,7 +1,7 @@
 function C = syssolve(A,B,tolerance,ends)
 % \  Solve a linear operator equation.
 % U = A\F solves the linear system A*U=F, where U and F are chebfuns and A
-% is a chebop. If A is a differential operator of order M, a warning will
+% is a linop. If A is a differential operator of order M, a warning will
 % be issued if A does not have M boundary conditions. In general the
 % function may not converge in this situation.
 %
