@@ -36,7 +36,7 @@ end
 % whether we have a chebop, if so, perform subtraction in a different way.
 % The variable numberOfInputVariables is a flag that's used to evaluate
 % functions in the function evalProblemFun.
-if opType == 2  % Operator is a chebop. RHS is treated later
+if opType == 2  % Operator is a linop. RHS is treated later
     deFun = N.op;
     numberOfInputVariables = 1;
 elseif isnumeric(rhs) && all(rhs == 0)
@@ -90,6 +90,7 @@ if isempty(N.guess) % No initial guess given
         u = findguess(N); % Initial quasimatrix guess of linear chebfuns
     end
 else
+    N.guess = 1*N.guess; % This is weird, but for some reason need. AB?
     u = N.guess;
     dom = domain(u);
 end
@@ -122,9 +123,10 @@ stagCounter = 0;
 % If it's not, the linop will return the linearisation about the initial
 % guess (plus the identity?).
 [A bc isLin] = linearise(N,u);
+A = A & bc;
 if isLin
     % N is linear. Sweet!
-    A = A & bc;
+
     % Do we need to worry about scaling here?
 %     subsasgn(A,struct('type','.','subs','scale'), normu);
 
@@ -143,9 +145,6 @@ if isLin
         fprintf('Converged in one step. (Chebop is linear).\n');
     end
     return
-else
-    A = A - blkdiag(eye(domain(A)),numel(u)) & bc;
-%     B = diff(deResFun,u) & bc; A(5)-B(5); % Check...
 end
 
 if dampedOn
