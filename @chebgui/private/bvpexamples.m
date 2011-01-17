@@ -1,5 +1,5 @@
-function [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(exampleNumber,mode)
-if nargin < 2
+function [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(guifile,exampleNumber,mode)
+if nargin < 3
     mode = 'start';
 end
 
@@ -71,12 +71,12 @@ switch exampleNumber
     case 4
         a = '-1';
         b = '1';
-        DE = {'u"-sin(v)','cos(u)+v"'};
+        DE = {'u"-sin(v)';'cos(u)+v"'};
         DErhs = {'0','0'};
         LBC = {'u';'v'''};
-        LBCrhs = {'1','0'};
+        LBCrhs = {'1';'0'};
         RBC = {'u''';'v'};
-        RBCrhs = {'0','0'};
+        RBCrhs = {'0';'0'};
         guess = '';
         tol = '1e-10';
         name = 'Coupled system';
@@ -85,8 +85,8 @@ switch exampleNumber
         b = '2';
         DE = 'u"-x.*sin(u)';
         DErhs = '1';
-        LBC = {'u','u'''};
-        LBCrhs = {'1','0'};
+        LBC = {'u';'u'''};
+        LBCrhs = {'1';'0'};
         RBC = '';
         RBCrhs = '';
         guess = '';

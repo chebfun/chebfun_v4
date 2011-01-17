@@ -1,4 +1,4 @@
-function stackout = parse(lexOutArg)
+function stackout = parse(guifiles,lexOutArg)
 % PARSE - This function parses the output from the lexer.
 %
 % As it is now, it only checks the validity of the syntax. My plan is to
@@ -61,7 +61,7 @@ global NEXT; global NEXTCOUNTER; global LEXOUT;
 if strcmp(NEXT,'NUM') || strcmp(NEXT,'VAR') || strcmp(NEXT,'INDVAR')
     % This means we have hit a terminal type. We therefore push that into
     % the stack.
-    newLeaf = tree({char(LEXOUT(NEXTCOUNTER)), char(NEXT)});
+    newLeaf = struct('center',{{char(LEXOUT(NEXTCOUNTER)), char(NEXT)}});
     push(newLeaf);
     advance();
 elseif strcmp(NEXT,'FUNC1')
@@ -69,7 +69,7 @@ elseif strcmp(NEXT,'FUNC1')
     advance();
     parseFunction1();
     rightArg =  pop();
-    newTree = tree({functionName, 'FUNC1'}, rightArg);
+    newTree = struct('center',{{functionName, 'FUNC1'}},'right', rightArg);
     push(newTree);
 elseif strcmp(NEXT,'FUNC2')
     functionName = char(LEXOUT(NEXTCOUNTER));
@@ -82,11 +82,11 @@ elseif strcmp(NEXT,'FUNC2')
     % a pseudo argument for diff
     if (strcmp(functionName,'diff') || strcmp(functionName,'cumsum')) & ~stackRows
         firstArg = secondArg;
-        secondArg = tree({'1','NUM'});
+        secondArg = struct('center',{{'1','NUM'}});
     else
         firstArg =  pop();
     end
-    newTree = tree(firstArg, {functionName, 'FUNC2'}, secondArg);
+    newTree = struct('left',firstArg,'center', {{functionName, 'FUNC2'}},'right', secondArg);
     push(newTree);
 elseif strcmp(NEXT,'LPAR')
     advance();
@@ -100,12 +100,12 @@ elseif strcmp(NEXT,'LPAR')
 elseif  strcmp(NEXT,'UN-') || strcmp(NEXT,'UN+') || strcmp(NEXT,'OP-') || strcmp(NEXT,'OP+') 
     % If + or - reaches this far, we have an unary operator.
     % ['UN', char(NEXT(3))] determines whether we have UN+ or UN-.
-    newCenterNode = {char(LEXOUT(NEXTCOUNTER)), ['UN', char(NEXT(3))]};
+    newCenterNode = {{char(LEXOUT(NEXTCOUNTER)), ['UN', char(NEXT(3))]}};
     advance();
     parseExp4();
     
     rightArg =  pop();
-    newTree = tree(newCenterNode, rightArg);
+    newTree = struct('center',newCenterNode,'right', rightArg);
     push(newTree);
 else
     reportError('parse:terminal','Unrecognized character in input field')
@@ -151,7 +151,8 @@ if strcmp(NEXT,'OP+')
     parseExp2();
     rightArg = pop();
 
-    push(tree(leftArg, {'+', 'OP+'} ,rightArg));
+    newTree = struct('left',leftArg,'center',{{'+', 'OP+'}},'right',rightArg);
+    push(newTree);
     parseExp1pr();
 elseif(strcmp(NEXT,'OP-'))
     advance();
@@ -159,7 +160,8 @@ elseif(strcmp(NEXT,'OP-'))
     parseExp2();
     rightArg = pop();
 
-    push(tree(leftArg, {'-', 'OP-'} ,rightArg));
+    newTree = struct('left',leftArg,'center',{{'-', 'OP-'}},'right',rightArg);
+    push(newTree);
     parseExp1pr();
 elseif strcmp(NEXT,'COMMA')
     advance();
@@ -180,14 +182,16 @@ if strcmp(NEXT,'OP*')
     advance();          % Advance in the input
     parseExp3();
     rightArg = pop();  % Pop from the stack the right argument 
-    push(tree(leftArg,{'.*', 'OP*'},rightArg));   % Push the (partial) syntax tree
+    newTree = struct('left',leftArg,'center',{{'.*', 'OP*'}},'right',rightArg);
+    push(newTree);
     parseExp2pr();
 elseif(strcmp(NEXT,'OP/'))
     leftArg  = pop();   % Pop from the stack the left argument
     advance();          % Advance in the input
     parseExp3();
     rightArg = pop();  % Pop from the stack the right argument 
-    push(tree(leftArg,{'./','OP/'},rightArg));   % Push the (partial) syntax tree
+    newTree = struct('left',leftArg,'center',{{'./', 'OP/'}},'right',rightArg);
+    push(newTree);
     parseExp2pr();
 else
     % Do nothing
@@ -201,11 +205,13 @@ if strcmp(NEXT,'OP^')
     advance();    
     parseExp4();
     rightArg = pop();
-    push(tree(leftArg,{'.^','OP^'},rightArg));
+    newTree = struct('left',leftArg,'center',{{'.^', 'OP^'}},'right',rightArg);
+    push(newTree);
     parseExp3pr();
 elseif ~isempty(strfind(NEXT,'DER'))
     leftArg  = pop();
-    push(tree({'D',NEXT},leftArg));
+    newTree = struct('center',{{'D',NEXT}},'right',leftArg);
+    push(newTree);
     advance();
     parseExp3pr();
 else
@@ -217,7 +223,8 @@ function parseExp4pr()
 global NEXT;
 if ~isempty(strfind(NEXT,'DER'))
     leftArg  = pop();
-    push(tree({'D',NEXT},leftArg));
+    newTree = struct('center',{{'D',NEXT}},'right',leftArg);
+    push(newTree);
     advance();
     parseExp3pr();
 else

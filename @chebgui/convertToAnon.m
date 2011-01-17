@@ -1,4 +1,4 @@
-function varargout = convertToAnon(str)
+function varargout = convertToAnon(guifile,str)
 % CONVERTTOANON Converts a string on 'natural syntax form' to an anonymous
 % function Matlab can work with.
 
@@ -11,15 +11,15 @@ if verLessThan('matlab','7.5')
 end
 
 % Put the original string through the lexer
-[lexOut varNames indVarNames] = lexer(str);
+[lexOut varNames indVarNames] = lexer(guifile,str);
 % Parse the output from the lexer, looking for syntax errors.
-syntaxTree = parse(lexOut);
+syntaxTree = parse(guifile,lexOut);
 % Obtain the prefix form.
-prefixOut = tree2prefix(syntaxTree);
+prefixOut = tree2prefix(guifile,syntaxTree);
 % Return the derivative on infix form
-infixOut = prefix2infix(prefixOut);
+infixOut = prefix2infix(guifile,prefixOut);
 % Finally, remove unneeded parenthesis
-anFun = parSimp(infixOut);
+anFun = parSimp(guifile,infixOut);
 
 % Convert the cell array varNames into one string
 varString = varNames{1};

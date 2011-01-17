@@ -1,4 +1,4 @@
-function loaddemos(handles,type)
+function loaddemos(guifile,handles,type)
 
 
 set(handles.button_solve,'Enable','On')
@@ -6,19 +6,18 @@ set(handles.button_solve,'String','Solve')
     
 % Obtain the DE of all available examples
 DE = '';
-demoString = 'Demos...';
+demoString = '            Demos...';
 counter = 1;
 
 if strcmp(type,'bvp') % Setup BVPs demos
     while ~strcmp(DE,'0')
-        [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(counter,'demo');
+        [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(guifile,counter,'demo');
         counter = counter+1;
         demoString = [demoString,{name}];
     end
-else
-    type = 'pde';
+else                % Setup PDEs demos
     while ~strcmp(DE,'0')
-        [a b tt DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(counter,'demo');
+        [a b tt DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(guifile,counter,'demo');
         counter = counter+1;
         demoString = [demoString,{name}];
     end

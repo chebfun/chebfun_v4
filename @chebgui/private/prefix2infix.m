@@ -1,4 +1,4 @@
-function infixOut = prefix2infix(prefIn)
+function infixOut = prefix2infix(guifile,prefIn)
 prefixIn = prefIn; prefCounter = 1; %#ok<NASGU> Disable warning message
 infixOut = getInfix();
 

@@ -1,4 +1,4 @@
-function handles = solveGUIPDE(handles)
+function handles = solveGUIPDE(guifile,handles)
 % Create a domain and the linear function on that domain. We use xt for the
 % linear function, later in the code we will be able to determine whether x
 % or t is used for the linear function.
@@ -40,7 +40,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 % try           
     % Convert the input to the an. func. format, get information about the
     % linear function in the problem.
-    [deString indVarName pdeflag allVarNames allVarString] = setupFields(deInput,deRHSInput,'DE');  
+    [deString indVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');  
     handles.varnames = allVarNames;
     
     if ~any(pdeflag)
@@ -73,7 +73,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
     end
     
     if ~isempty(lbcInput{1})
-        [lbcString indVarName] = setupFields(lbcInput,lbcRHSInput,'BC',allVarString);
+        [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC');
         idx = strfind(lbcString, ')');
         if ~isempty(idx)
             
@@ -94,7 +94,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
         LBC = [];
     end
     if ~isempty(rbcInput{1}) 
-        [rbcString indVarName] = setupFields(rbcInput,rbcRHSInput,'BC',allVarString);
+        [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC');
         idx = strfind(rbcString, ')');
         if ~isempty(idx)
             
@@ -131,7 +131,7 @@ else
 end
 
 if tolNum < chebfunpref('eps')
-    warndlg('Tolerance specified is less that current chebfun epsilon','Warning','modal');
+    warndlg('Tolerance specified is less than current chebfun epsilon','Warning','modal');
     uiwait(gcf)
 end
 

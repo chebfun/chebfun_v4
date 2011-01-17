@@ -1,4 +1,4 @@
-function sOut = parSimp(str)
+function sOut = parSimp(guifile,str)
 
 sOut = str;
 

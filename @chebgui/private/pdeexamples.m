@@ -1,5 +1,5 @@
-function [a b t DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(exampleNumber,mode)
-if nargin < 2
+function [a b t DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(guifile,exampleNumber,mode)
+if nargin < 3
     mode = 'start';
 end
 

@@ -1,4 +1,4 @@
-function handles = solveGUIBVP(handles)
+function handles = solveGUIBVP(guifile,handles)
 % SOLVEGUIBVP
 
 % Create a domain and the linear function on that domain. We use xt for the
@@ -6,18 +6,18 @@ function handles = solveGUIBVP(handles)
 % or t is used for the linear function.
 defaultTol = max(cheboppref('restol'),cheboppref('deltol'));
 
-a = str2num(get(handles.dom_left,'String'));
-b = str2num(get(handles.dom_right,'String'));
+a = str2num(guifile.DomLeft);
+b = str2num(guifile.DomRight);
 [d,xt] = domain(a,b);
 
 % Extract information from the GUI fields
-deInput = get(handles.input_DE,'String');
-lbcInput = get(handles.input_LBC,'String');
-rbcInput = get(handles.input_RBC,'String');
-deRHSInput = get(handles.input_DE_RHS,'String');
-lbcRHSInput = get(handles.input_LBC_RHS,'String');
-rbcRHSInput = get(handles.input_RBC_RHS,'String');
-guessInput = get(handles.input_GUESS,'String');
+deInput = guifile.DE;
+lbcInput = guifile.LBC;
+rbcInput = guifile.RBC;
+deRHSInput = guifile.DErhs;
+lbcRHSInput = guifile.LBCrhs;
+rbcRHSInput = guifile.RBCrhs;
+guessInput = guifile.guess;
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -32,7 +32,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString indVarName dummyPDEflag dummyAllVarName allVarString] = setupFields(deInput,deRHSInput,'DE');
+[deString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
 
 % Assign x or t as the linear function on the domain
 eval([indVarName, '=xt;']);
@@ -41,13 +41,13 @@ eval([indVarName, '=xt;']);
 DE  = eval(deString);
 
 if ~isempty(lbcInput{1})
-    lbcString = setupFields(lbcInput,lbcRHSInput,'BC',allVarString);
+    [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC');
     LBC = eval(lbcString);
 else
     LBC = [];
 end
 if ~isempty(rbcInput{1})
-    rbcString = setupFields(rbcInput,rbcRHSInput,'BC',allVarString);
+    [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC');
     RBC = eval(rbcString);
 else
     RBC = [];
@@ -91,7 +91,7 @@ else
 end
 
 if tolNum < chebfunpref('eps')
-    warndlg('Tolerance specified is less that current chebfun epsilon','Warning','modal');
+    warndlg('Tolerance specified is less than current chebfun epsilon','Warning','modal');
     uiwait(gcf)
 end
 
@@ -130,9 +130,8 @@ set(handles.fig_sol,'Visible','On');
 set(handles.fig_norm,'Visible','On');
 
 try
-    [u vec] = solvebvp(N,DE_RHS,options,guihandles);
-catch
-    ME = lasterror;
+    [u vec] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
+catch ME
     rethrow(ME);
 end
 

@@ -1,4 +1,4 @@
-function [out varNames indVarName] = lexer(str)
+function [out varNames indVarName] = lexer(guifile,str)
 % LEXER Lexer for string expression in the chebfun system
 % [OUT VARNAMES INDVARNAME] = LEXER(STR) performs a lexical analysis on the
 % string STR. OUT is a cell array with two columns, the left is a token and
@@ -193,4 +193,27 @@ while ~strcmp(str,'$')
     str(1:expr_end) = '';       %  Throw away from string what we have already scanned
 end
 out = [out; {'', '$'}];
+end
+
+function type = myfindtype(str,prevtype)
+
+if regexp(str, '[0-9]') % Breyta i float  [+-]?(([0-9]+(.[0-9]*)?|.[0-9]+)([eE][+-]?[0-9]+)?)
+    type = 'num';
+% If we want to treat unary operators especially
+elseif (strcmp(prevtype,'operator') || strcmp(prevtype,'unary')) && ~isempty(regexp(str, '[+-]'))
+    type = 'unary';
+elseif regexp(str,'[A-Za-z_]')
+    type = 'char';
+elseif str == '.' % We need to be able to distinguish between doubles and operators
+    type = 'point';
+elseif regexp(str,'\.?[\+\-\*\/\.\^\(\)]')
+    type = 'operator';
+elseif regexp(str,'''')
+    type = 'deriv';
+elseif strcmp(str,',')
+    type = 'comma';
+else
+    type = 'error';
+end
+
 end
