@@ -125,6 +125,15 @@ loadfields(handles.guifile,handles);
 % for the value of the buttons every time)
 handles.problemType = handles.guifile.type;
 
+% Get the system font size
+s = char(com.mathworks.services.FontPrefs.getCodeFont);
+if s(end-2) == '='
+  fs = round(3/4*str2num(s(end-1)));
+else
+  fs = round(3/4*str2num(s(end-2:end-1)));
+end
+set(handles.editfontsize,'FontSize',fs);
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -626,7 +635,7 @@ plot(f,'interval',[-1,.957],'linew',3), hold on
 
 t = - cos(pi*(2:8)'/10) *0.99;  % cheb extrema (tweaked)
 y = 0*t;
-h = text( t, y, num2cell(transpose('chebfun')), ...
+h = text( t, y, num2cell(transpose('chebgui')), ...
     'fontsize',16,'hor','cen','vert','mid') ;
 
 flist = listfonts;
@@ -696,5 +705,28 @@ function ylim2_CreateFcn(hObject, eventdata, handles)
 function ylim2_Callback(hObject, eventdata, handles)
 function input_plotstyle_CreateFcn(hObject, eventdata, handles)
 
-
 function button_solve_KeyPressFcn(hObject, eventdata, handles)
+
+
+function input_DE_ButtonDownFcn(hObject, eventdata, handles)
+chebguiedit('chebguiwindow', handles.figure1,'input_DE');
+function input_LBC_ButtonDownFcn(hObject, eventdata, handles)
+chebguiedit('chebguiwindow', handles.figure1,'input_LBC');
+function input_RBC_ButtonDownFcn(hObject, eventdata, handles)
+chebguiedit('chebguiwindow', handles.figure1,'input_RBC');
+function input_GUESS_ButtonDownFcn(hObject, eventdata, handles)
+chebguiedit('chebguiwindow', handles.figure1,'input_GUESS');
+function input_DE_RHS_ButtonDownFcn(hObject, eventdata, handles)
+chebguiedit('chebguiwindow', handles.figure1,'input_DE_RHS');
+function input_LBC_RHS_ButtonDownFcn(hObject, eventdata, handles)
+chebguiedit('chebguiwindow', handles.figure1,'input_LBC_RHS');
+function input_RBC_RHS_ButtonDownFcn(hObject, eventdata, handles)
+chebguiedit('chebguiwindow', handles.figure1,'input_RBC_RHS');
+
+function editfontsize_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
