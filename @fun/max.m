@@ -26,3 +26,13 @@ ends = g.map.par(1:2);
 r = [ends(1);r;ends(end)];
 [out,idx] = max(feval(g,r));
 idx = r(idx);
+
+% Take the max of the computed max and the function values.
+if ~any(g.exps)
+    [vmax vidx] = max(g.vals);
+    if vmax > out
+        out = vmax;
+        x = get(g,'points');
+        idx = x(vidx);
+    end
+end
