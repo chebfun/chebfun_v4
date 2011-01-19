@@ -117,7 +117,12 @@ handles.hasSolution = 0;
 set(handles.slider_pause,'Value',false)
 
 % Get the GUI object from the input argument
-handles.guifile = varargin{1};
+if ~isempty(varargin)
+    handles.guifile = varargin{1};
+else
+    cgTemp = chebgui('');
+    handles.guifile = loadexample(cgTemp,-1,'bvp');
+end
 loaddemos(handles.guifile,handles,handles.guifile.type)
 loadfields(handles.guifile,handles);
 
@@ -169,7 +174,7 @@ guidata(hObject, handles);
 
 
 function button_solve_Callback(hObject, eventdata, handles)
-handles = solve(handles.guifile,handles);
+handles = solveGUI(handles.guifile,handles);
 guidata(hObject, handles);
 
 function input_LBC_Callback(hObject, eventdata, handles)
@@ -196,6 +201,7 @@ input = str2double(get(hObject,'String'));
 % Checks to see if input is not numeric or empty. If so, default left end
 % of the domain is taken to be -1.
 if isempty(input) || isnan(input)
+    warndlg('Left endpoint of domain unrecognized, default value -1 used.')
     set(hObject,'String','-1')
 end
 
@@ -212,6 +218,7 @@ input = str2double(get(hObject,'String'));
 % Checks to see if input is not numeric or empty. If so, default right end
 % of the domain is taken to be 1.
 if isempty(input) || isnan(input)
+        warndlg('Right endpoint of domain unrecognized, default value 1 used.')
     set(hObject,'String','1')
 end
 
@@ -264,7 +271,7 @@ doc('chebguiwindow')
 
 function button_holdon_Callback(hObject, eventdata, handles)
 set(handles.button_holdoff,'Value',0);
-
+ 
 
 function button_holdoff_Callback(hObject, eventdata, handles)
 set(handles.button_holdon,'Value',0);
@@ -403,18 +410,25 @@ function input_pause_Callback(hObject, eventdata, handles)
 % Update the slider to include the input from the field (i.e. if the user
 % specifies the length of the pause without using the slider).
 
-newVal = str2double(get(hObject,'String'));
+% inputVal is the numerical value of the string in the field.
+% newVal will be a string corresponding to the new, updated value, which
+% we then store in the guifile object.
+inputVal = str2num(get(hObject,'String'));
 maxVal = get(handles.slider_pause,'Max');
 minVal = get(handles.slider_pause,'Min');
-if isnan (newVal) % Not a number input
-    set(hObject,'String',get(handles.slider_pause,'Value'));
-elseif newVal >= minVal && newVal <= maxVal
-    set(handles.slider_pause,'Value',newVal);
+if isempty(inputVal) % Not a number input
+    newVal = get(handles.slider_pause,'Value');
+    set(hObject,'String',newVal);
+elseif inputVal >= minVal && inputVal <= maxVal
+    set(handles.slider_pause,'Value',inputVal);
+    newVal = get(hObject,'String');
 else
-    extremaVal = maxVal*(sign(newVal)+1)/2; % Either 0 or maxVal
+    extremaVal = maxVal*(sign(inputVal)+1)/2; % Either 0 or maxVal
     set(handles.slider_pause,'Value',extremaVal);
     set(hObject,'String',extremaVal);
+    newVal = num2str(extremaVal);
 end
+handles.guifile.pause = newVal;
 guidata(hObject, handles);
 
 
@@ -498,9 +512,6 @@ set(handles.text_norm,'Visible','off')
 set(handles.input_LBC,'Enable','on')
 set(handles.input_RBC,'Enable','on')
 guidata(hObject, handles);
-
-
-
 
 
 % --- Executes on button press in button_pdeploton.
@@ -727,6 +738,3 @@ function editfontsize_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-

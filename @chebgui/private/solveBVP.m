@@ -1,5 +1,5 @@
-function handles = solveGUIBVP(guifile,handles)
-% SOLVEGUIBVP
+function [u vec] = solveBVP(guifile)
+% SOLVEBVP for chebgui objects.
 
 % Create a domain and the linear function on that domain. We use xt for the
 % linear function, later in the code we will be able to determine whether x
@@ -83,11 +83,11 @@ else
     N = chebop(d,DE,LBC,RBC,guess);
 end
 
-tolInput = get(handles.input_tol,'String');
+tolInput = guifile.tol;
 if isempty(tolInput)
     tolNum = defaultTol;
 else
-    tolNum = str2num(tolInput);
+    tolNum = str2double(tolInput);
 end
 
 if tolNum < chebfunpref('eps')
@@ -101,11 +101,9 @@ options = cheboppref;
 options.deltol = tolNum;
 options.restol = tolNum;
 
-% Always display iter. information
-options.display = 'iter';
-
-dampedOnInput = get(handles.damped_on,'Value');
-plottingOnInput = get(handles.plotting_on,'Value');
+% Obtain information about damping and plotting
+dampedOnInput = guifile.damping;
+plottingOnInput = guifile.plotting;
 
 if dampedOnInput
     options.damped = 'on';
@@ -113,56 +111,14 @@ else
     options.damped = 'off';
 end
 
-set(handles.iter_list,'String','');
-set(handles.iter_text,'Visible','On');
-set(handles.iter_list,'Visible','On');
-
 if plottingOnInput
-    options.plotting = str2num(get(handles.input_pause,'String'));
+    if strcmpi(guifile.pause,'pause')
+        options.plotting = guifile.pause;
+    else
+        options.plotting = str2double(guifile.pause);
+    end
 else
     options.plotting = 'off';
 end
 
-guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
-    handles.iter_list,handles.text_norm,handles.button_solve};
-set(handles.text_norm,'Visible','Off');
-set(handles.fig_sol,'Visible','On');
-set(handles.fig_norm,'Visible','On');
-
-try
-    [u vec] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
-catch ME
-    rethrow(ME);
-end
-
-% Store in handles latest chebop, solution, vector of norm of updates etc.
-% (enables exporting later on)
-handles.latestSolution = u;
-handles.latestNorms = vec;
-handles.latestChebop = N;
-handles.latestRHS = DE_RHS;
-handles.latestOptions = options;
-
-% Notify the GUI we have a solution available
-handles.hasSolution = 1;
-
-set(handles.text_norm,'Visible','On');
-
-
-axes(handles.fig_sol)
-plot(u),
-if length(vec) > 1
-    title('Solution at end of iteration')
-else
-    title('Solution');
-end
-axes(handles.fig_norm)
-semilogy(vec,'-*'),title('Norm of updates'), xlabel('Number of iteration')
-if length(vec) > 1
-    XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
-    set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on
-else % Don't display fractions on iteration plots
-    set(gca,'XTick', 1)
-end
-
-end
+[u vec] = solvebvp(N,DE_RHS,'options',options);

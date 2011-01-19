@@ -1,6 +1,8 @@
 function c = chebgui(varargin)
-%CHEBGUI Summary of this function goes here
-%   Detailed explanation goes here
+% CHEBGUI Constructor for chebgui objects. For documentation of the GUI,
+% press Help button in the GUI. 
+%
+% See also chebguiwindow.
 
 % If chebgui is called without any arguments, we load a random example and
 % display it in the GUI window
@@ -17,6 +19,7 @@ else
     c.DE = ''; c.DErhs = ''; c.LBC = ''; c.LBCrhs = ''; c.RBC = '';
     c.RBCrhs = ''; c.timedomain = '';
     c.guess = []; c.tol = [];
+    c.pause = '0.1'; c.damping = '0'; c.plotting = '1';
     
     
     k = 1;
@@ -26,7 +29,14 @@ else
         if isnumeric(value), value = num2str(value); end
         switch lower(type)
             case 'type'
-                c.type = value;
+                if ~strcmpi(value,'bvp') && ~strcmpi(value,'pde') && ~strcmpi(value,'ivp')
+                    error('CHEBGUI:chebgui:type',[value,' is not a valid type of problem.'])
+                elseif strcmpi(value,'ivp')
+                    warning('CHEBGUI:chebgui:type Type of problem changed from IVP to BVP');
+                    c.type = 'bvp';
+                else
+                    c.type = value;
+                end
             case 'domleft'
                 c.DomLeft = value;
             case 'domright'

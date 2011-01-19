@@ -127,7 +127,7 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 if isempty(tolInput)
     tolNum = defaultTol;
 else
-    tolNum = str2num(tolInput);
+    tolNum = str2double(tolInput);
 end
 
 if tolNum < chebfunpref('eps')
