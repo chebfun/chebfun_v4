@@ -1,7 +1,14 @@
 function varargout = waterfall(u,varargin)
-%WATERFALL Waterfall plot for quasimatrices.
+% WATERFALL Waterfall plot for quasimatrices.
 %
-%  WATERFALL(U) or WATERFALL(U,T) where LENGTH(T) = MIN(SIZE(U))
+%  WATERFALL(U), or WATERFALL(U,T) where LENGTH(T) = MIN(SIZE(U)), plots a
+%  "waterall" plot of a quasimatrix. Unlike the standard Matlab waterfall, 
+%  chebfun/waterfall does not fill in the column planes with opaque
+%  whitespace or connect edges to zero. This can be enabled if required via
+%  WATERFALL(U,'fill') or WATERFALL(U,T,'fill').
+%
+%  Additional plotting options can also be passed, for example
+%   WATERFALL(U,T,'linewidth',2).
 %
 %  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -12,7 +19,7 @@ function varargout = waterfall(u,varargin)
 % numpts = chebfunpref('plot_numpts');
 
 numpts = 0; numptsmax = inf; numptsmin = 200;
-simple = 0;
+simple = true;
 
 k = 1;
 while k <= numel(varargin)
@@ -22,6 +29,9 @@ while k <= numel(varargin)
     elseif strcmpi(varargin{k},'simple')
         varargin(k) = [];
         simple = true;
+    elseif strcmpi(varargin{k},'fill')
+        varargin(k) = [];
+        simple = false;        
     else
         k = k+1;
     end

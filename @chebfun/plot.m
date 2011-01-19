@@ -113,10 +113,13 @@ while ~isempty(varargin)
                 'Imaginary parts of complex X and/or Y arguments ignored.');
             f = real(f); g = real(g);
         end
-    else                                                % one chebfun
+    elseif isa(varargin{1},'chebfun')  % one chebfun
         f = [];
         g = varargin{1};
         varargin(1) = [];
+    else % no chebfuns!
+        f = [];
+        g = [];
     end
     
     % other data
@@ -132,7 +135,13 @@ while ~isempty(varargin)
     varargin(1:pos) = [];
     
     % get plot data
-    [lines marks jumps jumpval misc] = plotdata(f,g,[],numpts,interval);
+    if ~isempty(g)
+        [lines marks jumps jumpval misc] = plotdata(f,g,[],numpts,interval);
+    else
+        linedata = [linedata s];  markdata = [markdata s];
+        jumpdata = [jumpdata s];  jvaldata = [jvaldata s];
+        continue
+    end
     
     % limits for inf plots
     if length(misc) == 3
@@ -197,7 +206,6 @@ end
 
 % dummy plot for legends
 hdummy = plot(dummydata{:}); hold on
-
 h1 = plot(linedata{:},'handlevis','off');
 h2 = plot(markdata{:},'linestyle','none','handlevis','off');
 h3 = plot(jumpdata{:},'handlevis','off');
@@ -215,23 +223,26 @@ for k = 1:length(jmarker)
         defjmcol = false; break
     end
 end
-    
+
 for k = 1:length(h1)
     h1color = get(h1(k),'color');
     h1marker = get(h1(k),'marker');
     set(h2(k),'color',h1color);
     set(h2(k),'marker',h1marker);
-    if defjlcol 
+    set(h1(k),'marker','none');
+    if defjlcol && numel(h3) == numel(h1)
         set(h3(k),'color',h1color);
     end
-    if defjmcol 
-        set(h4(k),'color',h1color);
+    if numel(h4) == numel(h1)
+        if defjmcol
+            set(h4(k),'color',h1color);
+        end
+        if strcmp(h1marker,'none') && ~forcejmarks
+            set(h4(k),'marker','none');
+        end
     end
-    if strcmp(h1marker,'none') && ~forcejmarks
-        set(h4(k),'marker','none');
-    end
-    set(h1(k),'marker','none');
 end
+
 
 % if ~h && ~isempty(interval)
 %     set(gca,'xlim',interval)
