@@ -28,6 +28,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     set(handles.button_figsol,'Enable','off');
     set(handles.button_fignorm,'Enable','off');
     set(handles.button_solve,'String','Stop');
+    set(handles.button_solve,'BackgroundColor',[214 80 80]/256);
     
     % Call the private method solveGUIBVP or solveGUIPDE which do all the
     % work
@@ -49,12 +50,14 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     resetComponents(handles);
 else   % In stop mode
     set(handles.button_solve,'String','Solve')
+    set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
 end
 
 
 function resetComponents(handles)
 % Enable buttons, figures, etc. Set button to 'solve' again
 set(handles.button_solve,'String','Solve');
+set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
 set(handles.button_export,'Enable','on');
 set(handles.button_help,'Enable','on');
 set(handles.button_clear,'Enable','on');
