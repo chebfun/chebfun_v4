@@ -89,7 +89,7 @@ for k = length(varargin):-1:1
             interval = varargin{k+1}; 
             varargin(k:k+1) = [];          
         end    
-    elseif isnumeric(vk) && length(vk) == 2
+    elseif isnumeric(vk) && length(vk) == 2 && length(varargin) < 3
         if diff(vk)<0
             error('CHEBFUN:plot:interval','Plotting interval must be positive.');
         end
@@ -168,9 +168,11 @@ while ~isempty(varargin)
         jumpval = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2))};
     end
 
-    markdata = [markdata, marks];
     if ~isempty(lines)
-        linedata = [linedata, lines, s];
+        linedata = [linedata, lines,s];
+    end
+    if ~isempty(marks)
+        markdata = [markdata, marks,s];
     end
     jumpdata = [jumpdata, jumps];
     jvaldata = [jvaldata, jumpval];
@@ -181,7 +183,7 @@ end
 if isempty(markdata), 
     markdata = {[]};
 else
-    markdata = [markdata, s];
+%     markdata = [markdata, s];
 end
 if isempty(dummydata), dummydata = {[]}; end
 if isempty(linedata), linedata = {[]}; end
@@ -224,25 +226,26 @@ for k = 1:length(jmarker)
     end
 end
 
-for k = 1:length(h1)
-    h1color = get(h1(k),'color');
-    h1marker = get(h1(k),'marker');
-    set(h2(k),'color',h1color);
-    set(h2(k),'marker',h1marker);
-    set(h1(k),'marker','none');
-    if defjlcol && numel(h3) == numel(h1)
-        set(h3(k),'color',h1color);
-    end
-    if numel(h4) == numel(h1)
-        if defjmcol
-            set(h4(k),'color',h1color);
+if numel(h2) == numel(h1)  % This should always be the case??
+    for k = 1:length(h1)
+        h1color = get(h1(k),'color');
+        h1marker = get(h1(k),'marker');
+        set(h2(k),'color',h1color);
+        set(h2(k),'marker',h1marker);
+        set(h1(k),'marker','none');
+        if defjlcol && numel(h3) == numel(h1)
+            set(h3(k),'color',h1color);
         end
-        if strcmp(h1marker,'none') && ~forcejmarks
-            set(h4(k),'marker','none');
+        if numel(h4) == numel(h1)
+            if defjmcol
+                set(h4(k),'color',h1color);
+            end
+            if strcmp(h1marker,'none') && ~forcejmarks
+                set(h4(k),'marker','none');
+            end
         end
     end
 end
-
 
 % if ~h && ~isempty(interval)
 %     set(gca,'xlim',interval)
