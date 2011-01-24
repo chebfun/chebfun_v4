@@ -1,4 +1,4 @@
-function [u,normres] = gmres(varargin)
+function varargout = gmres(varargin)
 % GMRES Iterative solution of a linear system.
 % U = GMRES(A,F) solves the system A*U=F for chebfuns U and F and linop A.
 %
@@ -22,7 +22,7 @@ function [u,normres] = gmres(varargin)
 
 A = varargin{1};
 op = @(u) A*u;
-[u,normres] = gmres(op,varargin{2:end});
+[varargout{1:nargout}] = gmres(op,varargin{2:end});
 
 end   
 
