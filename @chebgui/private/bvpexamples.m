@@ -1,4 +1,4 @@
-function [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(guifile,exampleNumber,mode)
+function [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name demotype] = bvpexamples(guifile,exampleNumber,mode)
 if nargin < 3
     mode = 'start';
 end
@@ -14,7 +14,7 @@ if exampleNumber < 0 || exampleNumber > numberOfExamples
     % code that we have extracted information about all examples.
     if strcmp(mode,'demo')
         a = 0; b = 0; DE = '0'; DErhs = '0'; LBC = 0; LBCrhs = 0;
-        RBC = 0; RBCrhs = 0; guess = 0; tol = 0; name = '0';
+        RBC = 0; RBCrhs = 0; guess = 0; tol = 0; name = '0'; demotype = '';
         return
     end
 end
@@ -32,6 +32,7 @@ switch exampleNumber
         guess = '';
         tol = '';
         name = '';
+        demotype = '';
     case 1
         a = '-2';
         b = '2';
@@ -44,6 +45,7 @@ switch exampleNumber
         guess = '';
         tol = '1e-10';
         name = DE;
+        demotype = 'bvp';
     case 2
         a = '1';
         b = '3';
@@ -56,6 +58,7 @@ switch exampleNumber
         guess = '';
         tol = '1e-10';
         name = DE;
+        demotype = 'bvp';
     case 3
         a = '-5';
         b = '5';
@@ -68,6 +71,7 @@ switch exampleNumber
         guess = '';
         tol = '1e-10';
         name = 'Airy equation';
+        demotype = 'bvp';
     case 4
         a = '-1';
         b = '1';
@@ -80,6 +84,7 @@ switch exampleNumber
         guess = '';
         tol = '1e-10';
         name = 'Coupled system';
+        demotype = 'system';
     case 5
         a = '-2';
         b = '2';
@@ -92,4 +97,5 @@ switch exampleNumber
         guess = '';
         tol = '1e-10';
         name = 'IVP';
+        demotype = 'ivp';
 end

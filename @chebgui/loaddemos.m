@@ -1,34 +1,71 @@
 function loaddemos(guifile,handles,type)
 
 
-set(handles.button_solve,'Enable','On')
-set(handles.button_solve,'String','Solve')
-    
 % Obtain the DE of all available examples
 DE = '';
-demoString = 'Demos...';
 counter = 1;
 
+% Set up ODEs and PDEs separately
 if strcmp(type,'bvp') % Setup BVPs demos
-    while ~strcmp(DE,'0')
-        [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = bvpexamples(guifile,counter,'demo');
+    while 1
+        [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name demotype] = bvpexamples(guifile,counter,'demo');
+        if strcmp(DE,'0')
+            break
+        else
+            demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,type,counter);
+            switch demotype
+                case 'bvp'
+                    hDemoitem  =  uimenu('Parent',handles.menu_bvps,...
+                        'Label',name,...
+                        'Separator','off',...
+                        'HandleVisibility','callback', ...
+                        'Callback', demoFun);
+                case 'ivp'
+                    hDemoitem  =  uimenu('Parent',handles.menu_ivps,...
+                        'Label',name,...
+                        'Separator','off',...
+                        'HandleVisibility','callback', ...
+                        'Callback', demoFun);
+                case 'system'
+                    hDemoitem  =  uimenu('Parent',handles.menu_systems,...
+                        'Label',name,...
+                        'Separator','off',...
+                        'HandleVisibility','callback', ...
+                        'Callback', demoFun);
+            end
+        end
         counter = counter+1;
-        demoString = [demoString,{name}];
     end
 else                % Setup PDEs demos
-    while ~strcmp(DE,'0')
-        [a b tt DE DErhs LBC LBCrhs RBC RBCrhs guess tol name] = pdeexamples(guifile,counter,'demo');
+    while 1
+        [a b tt DE DErhs LBC LBCrhs RBC RBCrhs guess tol name demotype] = pdeexamples(guifile,counter,'demo');
+        if strcmp(DE,'0')
+            break
+        else
+            demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,type,counter);
+            switch demotype
+                case 'single'
+                    hDemoitem  =  uimenu('Parent',handles.menu_pdesingle,...
+                        'Label',name,...
+                        'Separator','off',...
+                        'HandleVisibility','callback', ...
+                        'Callback', demoFun);
+                case 'system'
+                    hDemoitem  =  uimenu('Parent',handles.menu_pdesystems,...
+                        'Label',name,...
+                        'Separator','off',...
+                        'HandleVisibility','callback', ...
+                        'Callback', demoFun);
+            end
+        end
         counter = counter+1;
-        demoString = [demoString,{name}];
     end
 end
-demoString(end) = []; % Throw away the last demo since it's the flag 0
 
-set(handles.popupmenu_demos,'String',demoString)
-% 
-% [selection,okPressed] = listdlg('PromptString','Select a demo:',...
-%     'SelectionMode','single',...
-%     'ListString',demoString);
-% if okPressed
-%     loadexample(handles,selection,type);
-% end
+
+function hOpenMenuitemCallback(hObject, eventdata,handles,type,demoNumber)
+% Callback function run when the Open menu item is selected
+handles.guifile = loadexample(handles.guifile,demoNumber,type);
+loadfields(handles.guifile,handles);
+% Update handle structure
+guidata(hObject, handles);

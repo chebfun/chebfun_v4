@@ -1,4 +1,4 @@
-function exportbvp2mfile(pathname,filename,handles)
+function exportbvp2mfile(guifile,pathname,filename,handles)
 
 fullFileName = [pathname,filename];
 fid = fopen(fullFileName,'wt');
@@ -34,7 +34,7 @@ if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
 if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
 if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 
-[deString indVarName] = setupFields(deInput,deRHSInput,'DE');
+[deString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
 
 % Print the BVP
 fprintf(fid,'%% Solving\n%%');
@@ -93,12 +93,12 @@ fprintf(fid,'rhs = %s;\n',deRHSprint);
 
 fprintf(fid,'\n%% Assign boundary conditions to the chebop.\n');
 if ~isempty(lbcInput{1})
-    lbcString = setupFields(lbcInput,lbcRHSInput,'BC');
+    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC');
     fprintf(fid,'N.lbc = %s;\n',lbcString);
 end
 
 if ~isempty(rbcInput{1})
-    rbcString = setupFields(rbcInput,rbcRHSInput,'BC');
+    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC');
     fprintf(fid,'N.rbc = %s;\n',rbcString);
 end
 

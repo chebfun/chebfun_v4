@@ -116,6 +116,7 @@ handles.hasSolution = 0;
 % This will be set to 1 when we want to interupt the computation.
 set(handles.slider_pause,'Value',false)
 
+
 % Get the GUI object from the input argument
 if ~isempty(varargin)
     handles.guifile = varargin{1};
@@ -123,27 +124,45 @@ else
     cgTemp = chebgui('');
     handles.guifile = loadexample(cgTemp,-1,'bvp');
 end
-loaddemos(handles.guifile,handles,handles.guifile.type)
-loadfields(handles.guifile,handles);
-
 % Create a new field that stores the problem type (cleaner than checking
 % for the value of the buttons every time)
 handles.problemType = handles.guifile.type;
 
-% Get the system font size
+
+% Populate the Demos menu
+loaddemos(handles.guifile,handles,'bvp')
+loaddemos(handles.guifile,handles,'pde')
+
+% Disable and enable demo selection based on the type of problem
+if strcmp(handles.problemType,'bvp')
+    set(handles.menu_pdesingle,'Enable','Off')
+    set(handles.menu_pdesystems,'Enable','Off')
+else
+    set(handles.menu_bvps,'Enable','Off')
+    set(handles.menu_ivps,'Enable','Off')
+    set(handles.menu_systems,'Enable','Off')
+end
+
+
+% Load the input fields
+loadfields(handles.guifile,handles);
+
+
+
+% Get the system font size and store in handles
 s = char(com.mathworks.services.FontPrefs.getCodeFont);
 if s(end-2) == '='
   fs = round(3/4*str2num(s(end-1)));
 else
   fs = round(3/4*str2num(s(end-2:end-1)));
 end
-set(handles.editfontsize,'FontSize',fs);
+handles.editfontsize = fs;
 
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes chebguiwindow wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.chebguimainwindow);
 
 % --- Outputs from this function are returned to the command line.
 function varargout = chebguiwindow_OutputFcn(hObject, eventdata, handles)
@@ -162,10 +181,6 @@ function varargout = chebguiwindow_OutputFcn(hObject, eventdata, handles)
 % -------------------------------------------------------------------------
 % ------------- Functions which call chebgui methods ----------------------
 % -------------------------------------------------------------------------
-
-function button_export_Callback(hObject, eventdata, handles) %#ok<*INUSL>
-export(handles.guifile,handles);
-
 
 function button_clear_Callback(hObject, eventdata, handles)
 [newGUI handles] = cleargui(handles.guifile,handles);
@@ -197,7 +212,7 @@ guidata(hObject, handles);
 function dom_left_Callback(hObject, eventdata, handles)
 % Store the contents of input1_editText as a string. if the string
 % is not a number then input will be empty
-input = str2double(get(hObject,'String'));
+input = str2num(get(hObject,'String'));
 % Checks to see if input is not numeric or empty. If so, default left end
 % of the domain is taken to be -1.
 if isempty(input) || isnan(input)
@@ -214,7 +229,7 @@ guidata(hObject, handles);
 
 
 function dom_right_Callback(hObject, eventdata, handles)
-input = str2double(get(hObject,'String'));
+input = str2num(get(hObject,'String'));
 % Checks to see if input is not numeric or empty. If so, default right end
 % of the domain is taken to be 1.
 if isempty(input) || isnan(input)
@@ -265,10 +280,6 @@ handles.guifile.RBCrhs = get(hObject,'String');
 guidata(hObject, handles);
 
 
-function button_help_Callback(hObject, eventdata, handles) %#ok<*INUSD>
-doc('chebguiwindow')
-
-
 function button_holdon_Callback(hObject, eventdata, handles)
 set(handles.button_holdoff,'Value',0);
  
@@ -290,7 +301,7 @@ function timedomain_Callback(hObject, eventdata, handles)
 function button_fignorm_Callback(hObject, eventdata, handles)
 
 % Check the type of the problem
-if get(handles.button_bvp,'Value');
+if get(handles.button_ode,'Value');
     latestNorms = handles.latestNorms;
     
     figure;
@@ -310,34 +321,9 @@ else
     
     if ~iscell(u)
         figure
-        %         subplot(1,2,1);
-        %         plot(u(:,end))
-        %         title('Solution at final time.')
-        %         subplot(1,2,2);
         waterfall(u,tt,'simple','linewidth',2)
-        %         waterfall(u,tt)
         xlabel('x'), ylabel('t'); zlabel(varnames{1});
-    else
-        %         v = chebfun;
-        %         for k = 1:numel(u)
-        %             uk = u{k};
-        %             v(:,k) = uk(:,end);
-        %         end
-        %         plot(v);
-        %         title('Solution at final time.')
-        %         figure
-        
-        %         varnames = get(handles.input_DE_RHS,'string');
-        %         for k = 1:numel(u)
-        %             idx = strfind(varnames{k},'_');
-        %             if ~isempty(idx)
-        %                 varnames{k} = varnames{k}(1:idx(1)-1);
-        %             else
-        %                 varnames{k} = '';
-        %             end
-        %         end
-        %         legend(varnames{:})
-        
+    else      
         figure
         for k = 1:numel(u)
             subplot(1,numel(u),k);
@@ -365,7 +351,7 @@ else
 end
 
 function button_figsol_Callback(hObject, eventdata, handles)
-if get(handles.button_bvp,'Value');
+if get(handles.button_ode,'Value');
     latestSolution = handles.latestSolution;   
     figure
     plot(latestSolution), title('Solution at end of iteration')
@@ -469,14 +455,14 @@ end
 guidata(hObject, handles);
 
 
-% --- Executes when figure1 is resized.
-function figure1_ResizeFcn(hObject, eventdata, handles)
-% hObject    handle to figure1 (see GCBO)
+% --- Executes when chebguimainwindow is resized.
+function chebguimainwindow_ResizeFcn(hObject, eventdata, handles)
+% hObject    handle to chebguimainwindow (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-function button_bvp_Callback(hObject, eventdata, handles)
+function button_ode_Callback(hObject, eventdata, handles)
 handles = switchmode(handles.guifile,handles,'bvp');
 guidata(hObject, handles);
 
@@ -495,13 +481,6 @@ guidata(hObject, handles);
 function popupmenu_demos_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_demos contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from popupmenu_demos
-
-demoNumber = get(hObject,'Value')-1; % Subtract 1 since Demos... is the first item in the list
-
-if demoNumber > 0 % Only update GUI if a demo was indeed selected
-    handles.guifile = loadexample(handles.guifile,demoNumber,handles.problemType);
-    loadfields(handles.guifile,handles);
-end
 
 set(hObject,'Value',1)
 set(handles.button_solve,'Enable','On')
@@ -698,12 +677,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-function popupmenu_demos_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 function input_N_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
@@ -720,21 +693,173 @@ function button_solve_KeyPressFcn(hObject, eventdata, handles)
 
 
 function input_DE_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.figure1,'input_DE');
+chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_DE');
 function input_LBC_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.figure1,'input_LBC');
+chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_LBC');
 function input_RBC_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.figure1,'input_RBC');
+chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_RBC');
 function input_GUESS_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.figure1,'input_GUESS');
+chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_GUESS');
 function input_DE_RHS_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.figure1,'input_DE_RHS');
+chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_DE_RHS');
 function input_LBC_RHS_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.figure1,'input_LBC_RHS');
+chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_LBC_RHS');
 function input_RBC_RHS_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.figure1,'input_RBC_RHS');
+chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_RBC_RHS');
 
 function editfontsize_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+% -------------------------------------------------------------------------
+% ----------------- Callbacks for menu items  ----------------------------
+% -------------------------------------------------------------------------
+
+% --------------------------------------------------------------------
+function menu_file_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_file (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_opengui_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_opengui (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_demos_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_demos (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% hFileMenu      =   uimenu(...       % File menu
+%                         'Parent',handles.chebguimainwindow,...
+%                         'HandleVisibility','callback', ...
+%                         'Label','File');
+% hOpenMenuitem  =   uimenu(...       % Open menu item
+%                         'Parent',hFileMenu,...
+%                         'Label','Open',...
+%                         'HandleVisibility','callback', ...
+%                         'Callback', @hOpenMenuitemCallback);
+% hPrintMenuitem  =  uimenu(...       % Print menu item
+%                         'Parent',hFileMenu,...
+%                         'Label','Print',...
+%                         'HandleVisibility','callback', ...
+%                         'Callback', @hPrintMenuitemCallback);
+% hCloseMenuitem  =  uimenu(...       % Close menu item
+%                         'Parent',hFileMenu,...
+%                         'Label','Close',...
+%                         'Separator','on',...
+%                         'HandleVisibility','callback', ...
+%                         'Callback', @hCloseMenuitemCallback');
+
+% --------------------------------------------------------------------
+function menu_bvps_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_bvps (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_ivps_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_ivps (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_systems_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_systems (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_savegui_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_savegui (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    
+
+
+% --------------------------------------------------------------------
+function menu_help_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_help (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_openhelp_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_openhelp (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+doc('chebguiwindow')
+
+
+% --------------------------------------------------------------------
+function Untitled_9_Callback(hObject, eventdata, handles)
+% hObject    handle to Untitled_9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdesingle_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdesingle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdesystems_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdesystems (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_export_Callback(hObject, eventdata, handles)
+% Offer more options if a solution exists.
+if handles.hasSolution
+    set(handles.menu_exportmatfile,'Enable','on')
+    set(handles.menu_exportworkspace,'Enable','on')
+else
+    set(handles.menu_exportmatfile,'Enable','off')
+    set(handles.menu_exportworkspace,'Enable','off')
+end
+
+% --------------------------------------------------------------------
+function menu_exportmfile_Callback(hObject, eventdata, handles)
+export(handles.guifile,handles,'.m')
+
+
+% --------------------------------------------------------------------
+function menu_exportchebgui_Callback(hObject, eventdata, handles)
+export(handles.guifile,handles,'GUI')
+
+
+% --------------------------------------------------------------------
+function menu_exportworkspace_Callback(hObject, eventdata, handles)
+export(handles.guifile,handles,'Workspace')
+
+
+% --------------------------------------------------------------------
+function menu_exportmatfile_Callback(hObject, eventdata, handles)
+export(handles.guifile,handles,'.mat')
+
+
+% --------------------------------------------------------------------
+function menu_options_Callback(hObject, eventdata, handles)
+
+% --------------------------------------------------------------------
+function menu_close_Callback(hObject, eventdata, handles)
+delete(handles.chebguimainwindow)
+% hObject    handle to menu_close (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+function uipanel13_DeleteFcn(hObject, eventdata, handles)

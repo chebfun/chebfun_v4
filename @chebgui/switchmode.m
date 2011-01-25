@@ -1,7 +1,7 @@
 function handles = switchmode(guiObject, handles,newMode)
 
 if strcmp(newMode,'bvp') % Going into BVP mode
-    set(handles.button_bvp,'Value',1)
+    set(handles.button_ode,'Value',1)
     set(handles.button_pde,'Value',0)
     set(handles.uipanel1,'Visible','on')
     set(handles.panel_updates,'Visible','on')
@@ -29,11 +29,17 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     % Load a new random BVP example and change the demos popup menu
     handles.guifile = loadexample(handles.guifile,-1,'bvp');
     loadfields(handles.guifile,handles)
-    loaddemos(handles.guifile,handles,'bvp')
+    
+    % Disable and enable demo selection based on the type of problem
+    set(handles.menu_pdesingle,'Enable','Off')
+    set(handles.menu_pdesystems,'Enable','Off')
+    set(handles.menu_bvps,'Enable','On')
+    set(handles.menu_ivps,'Enable','On')
+    set(handles.menu_systems,'Enable','On')
     
     handles.problemType = 'bvp';
 else % Going into PDE mode
-    set(handles.button_bvp,'Value',0)
+    set(handles.button_ode,'Value',0)
     set(handles.button_pde,'Value',1)
     set(handles.uipanel1,'Visible','off')
     set(handles.panel_updates,'Visible','off')
@@ -61,7 +67,13 @@ else % Going into PDE mode
     
     handles.guifile = loadexample(handles.guifile,-1,'pde');
     loadfields(handles.guifile,handles)
-    loaddemos(handles.guifile,handles,'pde')
+    
+    % Disable and enable demo selection based on the type of problem
+    set(handles.menu_pdesingle,'Enable','On')
+    set(handles.menu_pdesystems,'Enable','On')
+    set(handles.menu_bvps,'Enable','Off')
+    set(handles.menu_ivps,'Enable','Off')
+    set(handles.menu_systems,'Enable','Off')
     
     handles.problemType = 'pde';
 end

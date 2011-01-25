@@ -61,7 +61,7 @@ end
 DErhsNum = str2num(char(deRHSInput));
 if isempty(DErhsNum)
     % RHS is a string representing a function -- convert to chebfun
-    DE_RHS = chebfun(DErhsInput,d);
+    DE_RHS = chebfun(deRHSInput,d);
 else
     % RHS is a number - Don't need to construct chebfun
     DE_RHS = DErhsNum;
@@ -129,11 +129,7 @@ set(handles.text_norm,'Visible','Off');
 set(handles.fig_sol,'Visible','On');
 set(handles.fig_norm,'Visible','On');
 
-try
-    [u vec] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
-catch ME
-    rethrow(ME);
-end
+[u vec] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
 
 % Store in handles latest chebop, solution, vector of norm of updates etc.
 % (enables exporting later on)
@@ -157,7 +153,7 @@ else
     title('Solution');
 end
 axes(handles.fig_norm)
-semilogy(vec,'-*'),title('Norm of updates'), xlabel('Number of iteration')
+semilogy(vec,'-*'),title('Norm of updates'), xlabel('Iteration number')
 if length(vec) > 1
     XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
     set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on

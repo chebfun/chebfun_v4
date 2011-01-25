@@ -70,7 +70,7 @@ set(handles.edit1, 'String', ...
     get(mainHandles.(varargin{3}), 'String'));
 
 % Get the default font size.
-set(handles.edit1,'FontSize',get(mainHandles.editfontsize,'fontsize'));
+set(handles.edit1,'FontSize',mainHandles.editfontsize);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -98,7 +98,7 @@ mainHandles = guidata(handles.chebguiwindow);
 set(mainHandles.(handles.outputTarget), 'String', ...
     get(handles.edit1, 'String'));
 % Store the used fontsize
-set(mainHandles.editfontsize,'FontSize',get(handles.edit1,'FontSize'));
+mainHandles.editfontsize = get(handles.edit1,'FontSize');
 % Resume and close
 uiresume(handles.figure1);
 delete(handles.figure1)

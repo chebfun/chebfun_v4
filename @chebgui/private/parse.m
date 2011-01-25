@@ -79,10 +79,12 @@ elseif strcmp(NEXT,'FUNC2')
     % Diff can either take one or two argument. Need a fix if user just
     % passed one argument to diff (e.g. diff(u) instead of diff(u,1)). If
     % that's the case, the stack will be empty at this point, so we create
-    % a pseudo argument for diff
-    if (strcmp(functionName,'diff') || strcmp(functionName,'cumsum')) & ~stackRows
+    % a pseudo argument for diff. Similar for Airy.
+    if (strcmp(functionName,'diff') || strcmp(functionName,'cumsum')) && ~stackRows
         firstArg = secondArg;
         secondArg = struct('center',{{'1','NUM'}});
+    elseif strcmp(functionName,'airy') && ~stackRows
+        firstArg = struct('center',{{'0','NUM'}});
     else
         firstArg =  pop();
     end

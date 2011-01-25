@@ -1,23 +1,11 @@
-function export(guifile,handles)
-
-% Offer more possibilities if solution exists
-if handles.hasSolution
-    exportType = questdlg('Would you like to export the problem to:', ...
-        'Export to...', ...
-        'Workspace', '.m file', '.mat file', 'Workspace');
-else
-    exportType = questdlg(['Would you like to export the problem to (more ' ...
-        'possibilities will be available after solving a ' ...
-        'problem):'],'Export to...', ...
-        '.m file','GUI variable','Cancel', '.m file');
-end
-
+function export(guifile,handles,exportType)
 problemType = handles.problemType;
-%% bvp
+% Exorting a BVP
 if strcmp(problemType,'bvp')
     switch exportType
-        case 'GUI variable'
+        case 'GUI'
             assignin('base','cg',handles.guifile);
+            msgbox('Exported a chebgui variable named cg to workspace.','Chebgui export','modal')
         case 'Workspace'
             assignin('base','u',handles.latestSolution);
             assignin('base','normVec',handles.latestNorms);
@@ -25,7 +13,8 @@ if strcmp(problemType,'bvp')
             assignin('base','rhs',handles.latestRHS);
             assignin('base','options',handles.latestOptions);
             assignin('base','cg',handles.guifile);
-        case '.m file'
+            msgbox('Exported chebfun variables named u, normVec, N, rhs, options and cg to workspace.','Chebgui export','modal')
+        case '.m'
             % Obtain information about whether we are solving BVP or PDE
             
             [filename, pathname, filterindex] = uiputfile( ...
@@ -34,15 +23,15 @@ if strcmp(problemType,'bvp')
                 'Save as', [problemType,'.m']);
             
             if filename     % User did not press cancel
-                %             try
-                exportbvp2mfile(pathname,filename,handles)
-                % Open the new file in the editor
-                open([pathname,filename])
-                %             catch
-                %                 error('chebfun:BVPgui','Error in exporting to .m file');
-                %             end
+                try
+                    exportbvp2mfile(guifile,pathname,filename,handles)
+                    % Open the new file in the editor
+                    open([pathname,filename])
+                catch ME
+                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+                end
             end
-        case '.mat file'
+        case '.mat'
             u = handles.latestSolution; %#ok<NASGU>
             normVec= handles.latestNorms;  %#ok<NASGU>
             N= handles.latestChebop;  %#ok<NASGU>
@@ -53,34 +42,34 @@ if strcmp(problemType,'bvp')
             return;
     end
     
-    %% PDE
+    % Exporting a PDE
 else
     switch exportType
+        case 'GUI'
+            assignin('base','cg',handles.guifile);
+            msgbox('Exported a chebgui variable named cg to workspace.','Chebgui export','modal')
         case 'Workspace'
             assignin('base','u',handles.latestSolution);
             assignin('base','t',handles.latestSolutionT);
-        case '.m file'
+            msgbox('Exported variables named u and t to workspace.','Chebgui export','modal')
+        case '.m'
             % Obtain information about whether we are solving BVP or PDE
             
-            % Convert back to the current folder
-            chebpath = pwd;
-            cd(temppath)
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
                 '*.*',  'All Files (*.*)'}, ...
                 'Save as', [problemType,'.m']);
             
-            cd(chebpath)
             if filename     % User did not press cancel
-                %             try
-                exportpde2mfile(pathname,filename,handles)
-                % Open the new file in the editor
-                open([pathname,filename])
-                %             catch
-                %                 error('chebfun:BVPgui','Error in exporting to .m file');
-                %             end
+                try
+                    exportpde2mfile(guifile,pathname,filename,handles)
+                    % Open the new file in the editor
+                    open([pathname,filename])
+                catch
+                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+                end
             end
-        case '.mat file'
+        case '.mat'
             u = handles.latestSolution; %#ok<NASGU>
             t = handles.latestSolutionT;  %#ok<NASGU>
             uisave({'u','t'},'pde');
