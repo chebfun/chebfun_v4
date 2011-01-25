@@ -246,8 +246,9 @@ else
     fprintf('    ');
     for k = 1:sum(abs(failed))
         fun = failfun{k};
-        if javacheck
-            link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>    '];
+        if javacheck         
+            link = ['<a href="matlab: edit ' fullfile(dirname,fun) '">' fun '</a>    '];
+            link = strrep(link,'\','\\');  % maintain fprintf compatability in MSwin
         else
             link = fun;
         end
@@ -258,7 +259,7 @@ end
 if nargout > 0, varargout{2} = t; end
 
 if createreport && any(failed)
-    fid = fopen([dirname filesep ,'chebtest_report.txt'],'a');
+    fid = fopen(fullfile(dirname,'chebtest_report.txt'),'a');
 
     % GET SYSTEM INFORMATION
     % find platform OS
