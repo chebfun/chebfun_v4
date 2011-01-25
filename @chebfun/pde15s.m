@@ -487,6 +487,8 @@ try
             if ~isempty(YLim), ylim(YLim); end
             if ~dohold, hold off, end
             title(sprintf('t = %.3f,  len = %i',tt(nt+1),curlen)), drawnow
+        elseif guiflag
+            drawnow
         end
 
         % Interupt comutation if stop button is pressed in the GUI.
