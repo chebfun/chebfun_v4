@@ -19,6 +19,33 @@ if isempty(guifile.LBC) && isempty(guifile.RBC)
 end
 
 if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
+    
+    % Some basic checking of the inputs.
+    a = str2double(get(handles.dom_left,'String'));
+    b = str2double(get(handles.dom_right,'String'));
+    if b <= a
+        s = sprintf('Error in constructing domain. [%f,%f] is not valid.',a,b);
+        errordlg(s, 'Chebgui error', 'modal');
+        return
+    end
+    if ~get(handles.button_ode,'Value')
+        tt = str2num(get(handles.timedomain,'String'));
+        if isempty(tt)
+            s = sprintf('Error in constructing time interval.');
+            errordlg(s, 'Chebgui error', 'modal');
+        return
+        end
+    end
+    tol = get(handles.input_tol,'string');
+    if ~isempty(tol)
+        tolnum = str2double(tol);
+        if isnan(tolnum) || isinf(tolnum) || isnan(tolnum)
+            s = sprintf('Invalid tolerance, ''%s''.',tol);
+            errordlg(s, 'Chebgui error', 'modal');
+            return
+        end
+    end      
+    
     % Disable buttons, figures, etc. Set button to 'stop'
     set(handles.toggle_useLatest,'Enable','off');
     set(handles.button_clear,'Enable','off');
