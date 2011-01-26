@@ -44,6 +44,8 @@ switch lower(propName)
         cg.damping = vin;
     case 'plotting'
         cg.plotting = vin;
+    case 'guess'
+        cg.guess= vin;        
     otherwise
         error('CHEBGUI:set:propname',[propName,' is not a valid chebgui property'])
 end

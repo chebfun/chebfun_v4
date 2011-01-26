@@ -96,7 +96,7 @@ end
 
 % --- Executes just before chebguiwindow is made visible.
 function chebguiwindow_OpeningFcn(hObject, eventdata, handles, varargin)
-% This function has no output args, see OutputFcn.
+% This function has no output args, see Output(1-x^2)*exp(-30*(x+.5)^2)Fcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -143,11 +143,8 @@ else
     set(handles.menu_systems,'Enable','Off')
 end
 
-
 % Load the input fields
 loadfields(handles.guifile,handles);
-
-
 
 % Get the system font size and store in handles
 s = char(com.mathworks.services.FontPrefs.getCodeFont);
@@ -156,7 +153,7 @@ if s(end-2) == '='
 else
   fs = round(3/4*str2num(s(end-2:end-1)));
 end
-handles.editfontsize = fs;
+set(handles.tempedit,'FontSize',fs);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -252,7 +249,7 @@ guidata(hObject, handles);
 % -------------------------------------------------------------------------
 
 function input_GUESS_Callback(hObject, eventdata, handles)
-handles.guifile = get(hObject,'String');
+handles.guifile.guess = get(hObject,'String');
 guidata(hObject, handles);
 
 
@@ -863,3 +860,10 @@ delete(handles.chebguimainwindow)
 % handles    structure with handles and user data (see GUIDATA)
 
 function uipanel13_DeleteFcn(hObject, eventdata, handles)
+
+
+function tempedit_Callback(hObject, eventdata, handles)
+
+
+% --- Executes during object creation, after setting all properties.
+function tempedit_CreateFcn(hObject, eventdata, handles)

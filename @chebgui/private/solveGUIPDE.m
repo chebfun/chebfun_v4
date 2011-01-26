@@ -12,6 +12,7 @@ cla(handles.fig_norm,'reset')
 
 opts = pdeset;
 defaultTol = opts.Eps;
+defaultLineWidth = 2;
 
 a = str2num(get(handles.dom_left,'String'));
 b = str2num(get(handles.dom_right,'String'));
@@ -182,12 +183,19 @@ ylim2 = get(handles.ylim2,'String');
 if ~isempty(ylim1) && ~isempty(ylim2)
     opts.YLim = [str2num(ylim1) str2num(ylim2)];
 end
-opts.PlotStyle = get(handles.input_plotstyle,'String');    
+opts.PlotStyle = ['linewidth,' num2str(defaultLineWidth)];
+plotstyle = get(handles.input_plotstyle,'String');
+if ~isempty(plotstyle)
+    opts.PlotStyle = [opts.PlotStyle ',' plotstyle] ;
+end
+    
 if get(handles.checkbox_fixN,'Value')
     opts.N = str2num(get(handles.input_N,'String'));
 %     if isempty(opts.N), opts.N = lenu0; end
     if isempty(opts.N), error('CHEBFUN:solveGUIPDE:fixN','N must be given.'); end
 end
+guihandles{7} = allVarNames;
+guihandles{8} = indVarName;
 opts.guihandles = guihandles;
 
 % error
@@ -208,7 +216,8 @@ handles.hasSolution = 1;
 axes(handles.fig_norm)
 if ~iscell(u)
 %     surf(u,t,'facecolor','interp')
-    waterfall(u,t,'simple','linewidth',1)
+    waterfall(u,t,'simple','linewidth',defaultLineWidth)
+    xlabel(indVarName), ylabel('t'), zlabel(allVarNames)
 else
 %     surf(u{1},t,'facecolor','interp')
 %     xlabel('x'), ylabel('t')
@@ -218,12 +227,17 @@ else
 %     v = varnames{1}(1:idx(1)-1);
 %     title(v),zlabel(v)
     
-    
     cols = get(0,'DefaultAxesColorOrder');
     for k = 1:numel(u)
-        waterfall(u{k},t,'simple','linewidth',1,'edgecolor',cols(k,:)), hold on
-        xlabel('x'), ylabel('t')
+        plot(0,NaN,'linewidth',defaultLineWidth,'color',cols(k,:)), hold on
     end
+    legend(allVarNames);
+    for k = 1:numel(u)
+        waterfall(u{k},t,'simple','linewidth',defaultLineWidth,'edgecolor',cols(k,:)), hold on
+        xlabel(indVarName), ylabel('t')
+    end
+    view([322.5 30]), box off, grid on
+    
     hold off
     
     

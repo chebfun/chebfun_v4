@@ -70,7 +70,7 @@ set(handles.edit1, 'String', ...
     get(mainHandles.(varargin{3}), 'String'));
 
 % Get the default font size.
-set(handles.edit1,'FontSize',mainHandles.editfontsize);
+set(handles.edit1,'FontSize',get(mainHandles.tempedit,'FontSize'));
 
 % Update handles structure
 guidata(hObject, handles);
@@ -98,7 +98,7 @@ mainHandles = guidata(handles.chebguiwindow);
 set(mainHandles.(handles.outputTarget), 'String', ...
     get(handles.edit1, 'String'));
 % Store the used fontsize
-mainHandles.editfontsize = get(handles.edit1,'FontSize');
+set(handles.tempedit,'FontSize',get(handles.edit1,'FontSize'));
 % Resume and close
 uiresume(handles.figure1);
 delete(handles.figure1)
@@ -135,4 +135,4 @@ buttonCancel_Callback(hObject, eventdata, handles)
 
 function updateEditFontSize(hObject, eventdata, handles)
 mainHandles = guidata(handles.chebguiwindow);
-set(mainHandles.editfontsize,'fontsize',get(handles.edit1,'FontSize'));
+set(mainHandles.tempedit,'FontSize',get(handles.edit1,'FontSize'));
