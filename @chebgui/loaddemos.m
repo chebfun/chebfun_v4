@@ -8,8 +8,8 @@ counter = 1;
 % Set up ODEs and PDEs separately
 if strcmp(type,'bvp') % Setup BVPs demos
     while 1
-        [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name demotype] = bvpexamples(guifile,counter,'demo');
-        if strcmp(DE,'0')
+        [cg name demotype] = bvpexamples(guifile,counter,'demo');
+        if strcmp(name,'stop')
             break
         else
             demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,type,counter);
@@ -67,5 +67,7 @@ function hOpenMenuitemCallback(hObject, eventdata,handles,type,demoNumber)
 % Callback function run when the Open menu item is selected
 handles.guifile = loadexample(handles.guifile,demoNumber,type);
 loadfields(handles.guifile,handles);
+% Swith the mode of the GUI according to the type of the problem.
+switchmode(handles.guifile,handles,type);
 % Update handle structure
 guidata(hObject, handles);

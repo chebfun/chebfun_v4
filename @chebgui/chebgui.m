@@ -1,6 +1,6 @@
 function c = chebgui(varargin)
 % CHEBGUI Constructor for chebgui objects. For documentation of the GUI,
-% press Help button in the GUI. 
+% press Help button in the GUI.
 %
 % See also chebguiwindow.
 
@@ -56,7 +56,12 @@ else
                 c.RBC = value;
             case 'rbcrhs'
                 c.RBCrhs = value;
-                
+            case 'tol'
+                c.tol = value;
+            case 'damping'
+                c.damping = value;
+            case 'plotting'
+                c.plotting = value;
         end
         k = k + 2;
     end

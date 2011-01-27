@@ -25,7 +25,11 @@ switch lower(propName)
     case 'rbcrhs'
         val = cg.RBCrhs;
     case 'tol'
-        val = cg.tol;      
+        val = cg.tol;
+    case 'damping'
+        val = cg.damping;      
+    case 'plotting'
+        val = cg.plotting;
     otherwise
         error('CHEBOP:get:propname',[propName,' is not a valid chebgui property'])
 end

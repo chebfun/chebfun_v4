@@ -133,15 +133,15 @@ handles.problemType = handles.guifile.type;
 loaddemos(handles.guifile,handles,'bvp')
 loaddemos(handles.guifile,handles,'pde')
 
-% Disable and enable demo selection based on the type of problem
-if strcmp(handles.problemType,'bvp')
-    set(handles.menu_pdesingle,'Enable','Off')
-    set(handles.menu_pdesystems,'Enable','Off')
-else
-    set(handles.menu_bvps,'Enable','Off')
-    set(handles.menu_ivps,'Enable','Off')
-    set(handles.menu_systems,'Enable','Off')
-end
+% % Disable and enable options available based on the type of problem
+% if strcmp(handles.problemType,'bvp')
+%     set(handles.menu_pdesingle,'Enable','Off')
+%     set(handles.menu_pdesystems,'Enable','Off')
+% else
+%     set(handles.menu_bvps,'Enable','Off')
+%     set(handles.menu_ivps,'Enable','Off')
+%     set(handles.menu_systems,'Enable','Off')
+% end
 
 % Load the input fields
 loadfields(handles.guifile,handles);
@@ -466,28 +466,9 @@ guidata(hObject, handles);
 
 % --- Executes on button press in button_pde.
 function button_pde_Callback(hObject, eventdata, handles)
-% hObject    handle to button_pde (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of button_pde
 handles = switchmode(handles.guifile,handles,'pde');
 guidata(hObject, handles);
 
-% --- Executes on selection change in popupmenu_demos.
-function popupmenu_demos_Callback(hObject, eventdata, handles)
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_demos contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu_demos
-
-set(hObject,'Value',1)
-set(handles.button_solve,'Enable','On')
-set(handles.button_solve,'String','Solve')
-set(handles.iter_list,'Visible','off')
-set(handles.iter_text,'Visible','off')
-set(handles.text_norm,'Visible','off')
-set(handles.input_LBC,'Enable','on')
-set(handles.input_RBC,'Enable','on')
-guidata(hObject, handles);
 
 
 % --- Executes on button press in button_pdeploton.
@@ -679,6 +660,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function tempedit_CreateFcn(hObject, eventdata, handles)
 
 function ylim1_CreateFcn(hObject, eventdata, handles)
 function ylim1_Callback(hObject, eventdata, handles)
@@ -688,6 +670,10 @@ function input_plotstyle_CreateFcn(hObject, eventdata, handles)
 
 function button_solve_KeyPressFcn(hObject, eventdata, handles)
 
+
+% -------------------------------------------------------------------------
+% ----------------- Right-clicking functions ------------------------------
+% -------------------------------------------------------------------------
 
 function input_DE_ButtonDownFcn(hObject, eventdata, handles)
 chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_DE');
@@ -732,26 +718,6 @@ function menu_demos_Callback(hObject, eventdata, handles)
 % hObject    handle to menu_demos (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% hFileMenu      =   uimenu(...       % File menu
-%                         'Parent',handles.chebguimainwindow,...
-%                         'HandleVisibility','callback', ...
-%                         'Label','File');
-% hOpenMenuitem  =   uimenu(...       % Open menu item
-%                         'Parent',hFileMenu,...
-%                         'Label','Open',...
-%                         'HandleVisibility','callback', ...
-%                         'Callback', @hOpenMenuitemCallback);
-% hPrintMenuitem  =  uimenu(...       % Print menu item
-%                         'Parent',hFileMenu,...
-%                         'Label','Print',...
-%                         'HandleVisibility','callback', ...
-%                         'Callback', @hPrintMenuitemCallback);
-% hCloseMenuitem  =  uimenu(...       % Close menu item
-%                         'Parent',hFileMenu,...
-%                         'Label','Close',...
-%                         'Separator','on',...
-%                         'HandleVisibility','callback', ...
-%                         'Callback', @hCloseMenuitemCallback');
 
 % --------------------------------------------------------------------
 function menu_bvps_Callback(hObject, eventdata, handles)
@@ -834,30 +800,22 @@ function menu_exportmfile_Callback(hObject, eventdata, handles)
 export(handles.guifile,handles,'.m')
 
 
-% --------------------------------------------------------------------
 function menu_exportchebgui_Callback(hObject, eventdata, handles)
 export(handles.guifile,handles,'GUI')
 
 
-% --------------------------------------------------------------------
 function menu_exportworkspace_Callback(hObject, eventdata, handles)
 export(handles.guifile,handles,'Workspace')
 
 
-% --------------------------------------------------------------------
 function menu_exportmatfile_Callback(hObject, eventdata, handles)
 export(handles.guifile,handles,'.mat')
 
 
-% --------------------------------------------------------------------
 function menu_options_Callback(hObject, eventdata, handles)
 
-% --------------------------------------------------------------------
 function menu_close_Callback(hObject, eventdata, handles)
 delete(handles.chebguimainwindow)
-% hObject    handle to menu_close (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 function uipanel13_DeleteFcn(hObject, eventdata, handles)
 
@@ -866,4 +824,72 @@ function tempedit_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function tempedit_CreateFcn(hObject, eventdata, handles)
+
+
+
+function menu_dampednewton_Callback(hObject, eventdata, handles)
+
+
+function menu_dampednewtonon_Callback(hObject, eventdata, handles)
+handles.guifile.damping = '1';
+set(handles.menu_dampednewtonon,'checked','on');
+set(handles.menu_dampednewtonoff,'checked','off');
+guidata(hObject, handles);
+
+
+function menu_dampednewtonoff_Callback(hObject, eventdata, handles)
+handles.guifile.damping = '0';
+set(handles.menu_dampednewtonon,'checked','off');
+set(handles.menu_dampednewtonoff,'checked','on');
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_odeplotting_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_odeplotting (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Untitled_2_Callback(hObject, eventdata, handles)
+% hObject    handle to Untitled_2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_odeplottingon_Callback(hObject, eventdata, handles)
+handles.guifile.plotting = '0.1'; % Should store value of plotting length
+set(handles.menu_odeplottingon,'checked','on');
+set(handles.menu_odeplottingoff,'checked','off');
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_odeplottingoff_Callback(hObject, eventdata, handles)
+handles.guifile.plotting = 'off'; % Should store value of plotting length
+set(handles.menu_odeplottingon,'checked','off');
+set(handles.menu_odeplottingoff,'checked','on');
+guidata(hObject, handles)
+
+
+% --------------------------------------------------------------------
+function menu_odeplottingpause_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_odeplottingpause (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Untitled_3_Callback(hObject, eventdata, handles)
+% hObject    handle to Untitled_3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Untitled_4_Callback(hObject, eventdata, handles)
+% hObject    handle to Untitled_4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

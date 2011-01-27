@@ -1,4 +1,4 @@
-function [a b DE DErhs LBC LBCrhs RBC RBCrhs guess tol name demotype] = bvpexamples(guifile,exampleNumber,mode)
+function [cg name demotype] = bvpexamples(guifile,exampleNumber,mode)
 if nargin < 3
     mode = 'start';
 end
@@ -13,8 +13,7 @@ if exampleNumber < 0 || exampleNumber > numberOfExamples
     % If we call the function with the Demos button, we want to notify the
     % code that we have extracted information about all examples.
     if strcmp(mode,'demo')
-        a = 0; b = 0; DE = '0'; DErhs = '0'; LBC = 0; LBCrhs = 0;
-        RBC = 0; RBCrhs = 0; guess = 0; tol = 0; name = '0'; demotype = '';
+        name = 'stop'; demotype = ''; cg = chebgui('type','bvp');
         return
     end
 end
@@ -31,8 +30,14 @@ switch exampleNumber
         RBCrhs = '';
         guess = '';
         tol = '';
+        damping = '';
+        plotting = '0.1';
         name = '';
         demotype = '';
+        cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
+            'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
+            'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+            'plotting',plotting,'damping',damping);
     case 1
         a = '-2';
         b = '2';
@@ -44,8 +49,14 @@ switch exampleNumber
         RBCrhs = '0';
         guess = '';
         tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
         name = DE;
         demotype = 'bvp';
+        cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
+            'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
+            'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+            'plotting',plotting,'damping',damping);
     case 2
         a = '1';
         b = '3';
@@ -57,8 +68,14 @@ switch exampleNumber
         RBCrhs = '0';
         guess = '';
         tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
         name = DE;
         demotype = 'bvp';
+        cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
+            'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
+            'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+            'plotting',plotting,'damping',damping);
     case 3
         a = '-5';
         b = '5';
@@ -70,8 +87,14 @@ switch exampleNumber
         RBCrhs = '0';
         guess = '';
         tol = '1e-10';
+        damping = '0';
+        plotting = '0.1';
         name = 'Airy equation';
         demotype = 'bvp';
+        cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
+            'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
+            'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+            'plotting',plotting,'damping',damping);
     case 4
         a = '-1';
         b = '1';
@@ -83,8 +106,14 @@ switch exampleNumber
         RBCrhs = {'0';'0'};
         guess = '';
         tol = '1e-10';
+        damping = '0';
+        plotting = '0.1';
         name = 'Coupled system';
         demotype = 'system';
+        cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
+            'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
+            'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+            'plotting',plotting,'damping',damping);
     case 5
         a = '-2';
         b = '2';
@@ -96,6 +125,12 @@ switch exampleNumber
         RBCrhs = '';
         guess = '';
         tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
         name = 'IVP';
         demotype = 'ivp';
+        cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
+            'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
+            'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+            'plotting',plotting,'damping',damping);
 end

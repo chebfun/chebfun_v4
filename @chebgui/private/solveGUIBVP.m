@@ -104,8 +104,8 @@ options.restol = tolNum;
 % Always display iter. information
 options.display = 'iter';
 
-dampedOnInput = get(handles.damped_on,'Value');
-plottingOnInput = get(handles.plotting_on,'Value');
+dampedOnInput = str2num(guifile.damping);
+plottingOnInput = str2num(guifile.plotting);
 
 if dampedOnInput
     options.damped = 'on';
@@ -117,10 +117,10 @@ set(handles.iter_list,'String','');
 set(handles.iter_text,'Visible','On');
 set(handles.iter_list,'Visible','On');
 
-if plottingOnInput
-    options.plotting = str2num(get(handles.input_pause,'String'));
-else
+if isempty(plottingOnInput)
     options.plotting = 'off';
+else
+    options.plotting = plottingOnInput;
 end
 
 guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...

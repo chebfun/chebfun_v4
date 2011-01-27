@@ -1,11 +1,4 @@
-function loadfields(guifile,handles)  
-
-% if strcmp(type,'bvp')
-%     [a,b,DE,DErhs,LBC,LBCrhs,RBC,RBCrhs,guess,tol] = bvpexamples(exampleNumber);
-% else
-%     [a,b,tt,DE,DErhs,LBC,LBCrhs,RBC,RBCrhs,guess,tol] = pdeexamples(exampleNumber);
-%     set(handles.timedomain,'String',tt);
-% end
+function loadfields(guifile,handles)
 
 % Fill the String fields of the handles
 set(handles.dom_left,'String',guifile.DomLeft);
@@ -22,7 +15,22 @@ set(handles.input_tol,'String',guifile.tol);
 if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);
 end
-% 
+
+% Change the checking of menu options
+if strcmpi(guifile.type,'pde')
+    set(handles.timedomain,'String',guifile.timedomain);
+else
+    if strcmp(guifile.damping,'1')
+        set(handles.menu_dampednewtonon,'Checked','On');
+        set(handles.menu_dampednewtonoff,'Checked','Off');
+    else
+        set(handles.menu_dampednewtonon,'Checked','Off');
+        set(handles.menu_dampednewtonoff,'Checked','On');
+    end
+end
+
+
+%
 % % If input for BCs is a number, anon. func. or dirichlet/neumann,
 % % disable BC rhs input
 % lflag = false;
@@ -40,7 +48,7 @@ end
 %     set(handles.input_LBC_RHS,'Enable','on');
 %     set(handles.text_eq2,'Enable','on');
 % end
-% 
+%
 % rflag = false;
 % if ~iscell(RBC), RBC = {RBC}; end
 % for k = 1:numel(RBC)

@@ -3,7 +3,6 @@ function handles = switchmode(guiObject, handles,newMode)
 if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.button_ode,'Value',1)
     set(handles.button_pde,'Value',0)
-    set(handles.uipanel1,'Visible','on')
     set(handles.panel_updates,'Visible','on')
     set(handles.text_pause1,'Visible','on')
     set(handles.text_pause2,'Visible','on')
@@ -26,22 +25,14 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.text_timedomain,'Visible','off')
     set(handles.timedomain,'Visible','off')
     
-    % Load a new random BVP example and change the demos popup menu
-    handles.guifile = loadexample(handles.guifile,-1,'bvp');
-    loadfields(handles.guifile,handles)
-    
-    % Disable and enable demo selection based on the type of problem
-    set(handles.menu_pdesingle,'Enable','Off')
-    set(handles.menu_pdesystems,'Enable','Off')
-    set(handles.menu_bvps,'Enable','On')
-    set(handles.menu_ivps,'Enable','On')
-    set(handles.menu_systems,'Enable','On')
+%     % Load a new random BVP example and change the demos popup menu
+%     handles.guifile = loadexample(handles.guifile,-1,'bvp');
+%     loadfields(handles.guifile,handles)
     
     handles.problemType = 'bvp';
 else % Going into PDE mode
     set(handles.button_ode,'Value',0)
     set(handles.button_pde,'Value',1)
-    set(handles.uipanel1,'Visible','off')
     set(handles.panel_updates,'Visible','off')
     set(handles.text_pause1,'Visible','off')
     set(handles.text_pause2,'Visible','off')
@@ -65,23 +56,14 @@ else % Going into PDE mode
     % Clear the figures
     initialisefigures(handles)
     
-    handles.guifile = loadexample(handles.guifile,-1,'pde');
-    loadfields(handles.guifile,handles)
-    
-    % Disable and enable demo selection based on the type of problem
-    set(handles.menu_pdesingle,'Enable','On')
-    set(handles.menu_pdesystems,'Enable','On')
-    set(handles.menu_bvps,'Enable','Off')
-    set(handles.menu_ivps,'Enable','Off')
-    set(handles.menu_systems,'Enable','Off')
-    
+%     handles.guifile = loadexample(handles.guifile,-1,'pde');
+%     loadfields(handles.guifile,handles)
+        
     handles.problemType = 'pde';
 end
 
 
 function pdeplotopts(handles,onoff)
-% The function cd-s to the chebfun folder, and returns the path to the
-% folder the user was currently in.
 if onoff == 1
     onoff = 'on';
 elseif onoff == 0
