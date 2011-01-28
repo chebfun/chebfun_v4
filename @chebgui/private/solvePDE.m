@@ -186,7 +186,7 @@ opts.PlotStyle = get(handles.input_plotstyle,'String');
 if get(handles.checkbox_fixN,'Value')
     opts.N = str2num(get(handles.input_N,'String'));
 %     if isempty(opts.N), opts.N = lenu0; end
-    if isempty(opts.N), error('CHEBFUN:solveGUIPDE:fixN','N must be given.'); end
+    if isempty(opts.N), errordlg('N must be given.', 'Chebgui error', 'modal'); end
 end
 opts.guihandles = guihandles;
 

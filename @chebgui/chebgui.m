@@ -56,6 +56,8 @@ else
                 c.RBC = value;
             case 'rbcrhs'
                 c.RBCrhs = value;
+            case 'guess'
+                c.guess = value;
             case 'tol'
                 c.tol = value;
             case 'damping'

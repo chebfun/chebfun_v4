@@ -2,6 +2,7 @@ function [field indVarName pdeflag allVarNames]  = setupFields(guifile,input,rhs
 
 numOfRows = size(input,1);
 pdeflag = false;
+allVarNames = [];
 
 % For BCs, we need to check whether varNames contains anything not found in
 % varNames of the DE. Should we make the varNames of the DE as parameters?
