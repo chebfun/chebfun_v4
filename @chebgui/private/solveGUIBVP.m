@@ -146,14 +146,14 @@ set(handles.text_norm,'Visible','On');
 
 
 axes(handles.fig_sol)
-plot(u),
+plot(u,'Linewidth',2),
 if length(vec) > 1
     title('Solution at end of iteration')
 else
     title('Solution');
 end
 axes(handles.fig_norm)
-semilogy(vec,'-*'),title('Norm of updates'), xlabel('Iteration number')
+semilogy(vec,'-*','Linewidth',2),title('Norm of updates'), xlabel('Iteration number')
 if length(vec) > 1
     XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
     set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on

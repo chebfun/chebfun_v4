@@ -60,17 +60,17 @@ function varargout = chebguiwindow(varargin)
 % % hObject    handle to input_RBC (see GCBO)
 % % eventdata  reserved - to be defined in a future version of MATLAB
 % % handles    empty - handles not created until after all CreateFcns called
-% 
+%
 % % Hint: edit controls usually have a white background on Windows.
 % %       See ISPC and COMPUTER.
-% 
-% 
-% 
+%
+%
+%
 % function input_LBC_Callback(hObject, eventdata, handles)
 % % hObject    handle to input_LBC (see GCBO)
 % % eventdata  reserved - to be defined in a future version of MATLAB
 % % handles    structure with handles and user data (see GUIDATA)
-% 
+%
 % % Hints: get(hObject,'String') returns contents of input_LBC as text
 % %        str2double(get(hObject,'String')) returns contents of input_LBC as a double
 
@@ -107,14 +107,8 @@ handles.output = hObject;
 
 initialisefigures(handles)
 
-% Synchronise slider and edit field for pause in plotting
-set(handles.slider_pause,'Value',str2double(get(handles.input_pause,'String')));
-
 % Variable that determines whether a solution is available
 handles.hasSolution = 0;
-
-% This will be set to 1 when we want to interupt the computation.
-set(handles.slider_pause,'Value',false)
 
 
 % Get the GUI object from the input argument
@@ -128,6 +122,8 @@ end
 % for the value of the buttons every time)
 handles.problemType = handles.guifile.type;
 
+% Store the default length of pausing between plots for BVPs
+handles.ODEpause = '0.5';
 
 % Populate the Demos menu
 loaddemos(handles.guifile,handles,'bvp')
@@ -146,12 +142,15 @@ loaddemos(handles.guifile,handles,'pde')
 % Load the input fields
 loadfields(handles.guifile,handles);
 
+% Make sure the GUI starts in the correct mode
+switchmode(handles.guifile,handles,handles.guifile.type);
+
 % Get the system font size and store in handles
 s = char(com.mathworks.services.FontPrefs.getCodeFont);
 if s(end-2) == '='
-  fs = round(3/4*str2num(s(end-1)));
+    fs = round(3/4*str2num(s(end-1)));
 else
-  fs = round(3/4*str2num(s(end-2:end-1)));
+    fs = round(3/4*str2num(s(end-2:end-1)));
 end
 set(handles.tempedit,'FontSize',fs);
 
@@ -230,7 +229,7 @@ input = str2num(get(hObject,'String'));
 % Checks to see if input is not numeric or empty. If so, default right end
 % of the domain is taken to be 1.
 if isempty(input) || isnan(input)
-        warndlg('Right endpoint of domain unrecognized, default value 1 used.')
+    warndlg('Right endpoint of domain unrecognized, default value 1 used.')
     set(hObject,'String','1')
 end
 
@@ -279,7 +278,7 @@ guidata(hObject, handles);
 
 function button_holdon_Callback(hObject, eventdata, handles)
 set(handles.button_holdoff,'Value',0);
- 
+
 
 function button_holdoff_Callback(hObject, eventdata, handles)
 set(handles.button_holdon,'Value',0);
@@ -320,7 +319,7 @@ else
         figure
         waterfall(u,tt,'simple','linewidth',2)
         xlabel('x'), ylabel('t'); zlabel(varnames{1});
-    else      
+    else
         figure
         for k = 1:numel(u)
             subplot(1,numel(u),k);
@@ -349,7 +348,7 @@ end
 
 function button_figsol_Callback(hObject, eventdata, handles)
 if get(handles.button_ode,'Value');
-    latestSolution = handles.latestSolution;   
+    latestSolution = handles.latestSolution;
     figure
     plot(latestSolution), title('Solution at end of iteration')
 else
@@ -370,73 +369,6 @@ else
         title('Solution at final time.')
     end
 end
-
-% --- Executes on slider movement.
-function slider_pause_Callback(hObject, eventdata, handles)
-
-% Hints: get(hObject,'Value') returns position of slider
-%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-% currVal = str2double(get(handles.input_pause,'String'));
-% set(handles.input_pause,'String',num2str(currVal+0.1))
-set(handles.input_pause,'String',get(hObject,'Value'))
-guidata(hObject, handles);
-
-
-function input_pause_Callback(hObject, eventdata, handles)
-% hObject    handle to input_pause (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of input_pause as text
-%        str2double(get(hObject,'String')) returns contents of input_pause as a double
-
-% Update the slider to include the input from the field (i.e. if the user
-% specifies the length of the pause without using the slider).
-
-% inputVal is the numerical value of the string in the field.
-% newVal will be a string corresponding to the new, updated value, which
-% we then store in the guifile object.
-inputVal = str2num(get(hObject,'String'));
-maxVal = get(handles.slider_pause,'Max');
-minVal = get(handles.slider_pause,'Min');
-if isempty(inputVal) % Not a number input
-    newVal = get(handles.slider_pause,'Value');
-    set(hObject,'String',newVal);
-elseif inputVal >= minVal && inputVal <= maxVal
-    set(handles.slider_pause,'Value',inputVal);
-    newVal = get(hObject,'String');
-else
-    extremaVal = maxVal*(sign(inputVal)+1)/2; % Either 0 or maxVal
-    set(handles.slider_pause,'Value',extremaVal);
-    set(hObject,'String',extremaVal);
-    newVal = num2str(extremaVal);
-end
-handles.guifile.pause = newVal;
-guidata(hObject, handles);
-
-
-% --- Executes when selected object is changed in panel_updates.
-function panel_updates_SelectionChangeFcn(hObject, eventdata, handles)
-% hObject    handle to the selected object in panel_updates
-% eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was selected
-%	NewValue: handle of the currently selected object
-% handles    structure with handles and user data (see GUIDATA)
-
-if eventdata.NewValue < eventdata.OldValue % Changed from on to off
-    set(handles.input_pause,'Enable','off')
-    set(handles.slider_pause,'Enable','off')
-    set(handles.text_pause1,'Enable','off')
-    set(handles.text_pause2,'Enable','off')
-else
-    set(handles.input_pause,'Enable','on')
-    set(handles.slider_pause,'Enable','on')
-    set(handles.text_pause1,'Enable','on')
-    set(handles.text_pause2,'Enable','on')
-end
-
-guidata(hObject, handles);
 
 
 function toggle_useLatest_Callback(hObject, eventdata, handles)
@@ -628,19 +560,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-function input_pause_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-function slider_pause_CreateFcn(hObject, eventdata, handles)
-if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor',[.9 .9 .9]);
-end
-set(hObject,'Value',0.5);
-
-
 function fig_sol_CreateFcn(hObject, eventdata, handles)
 % Hint: place code in OpeningFcn to populate fig_sol
 
@@ -745,7 +664,7 @@ function menu_savegui_Callback(hObject, eventdata, handles)
 % hObject    handle to menu_savegui (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    
+
 
 
 % --------------------------------------------------------------------
@@ -827,40 +746,37 @@ function tempedit_Callback(hObject, eventdata, handles)
 
 
 
-function menu_dampednewton_Callback(hObject, eventdata, handles)
+function menu_odedampednewton_Callback(hObject, eventdata, handles)
 
 
-function menu_dampednewtonon_Callback(hObject, eventdata, handles)
+function menu_odedampednewtonon_Callback(hObject, eventdata, handles)
 handles.guifile.damping = '1';
-set(handles.menu_dampednewtonon,'checked','on');
-set(handles.menu_dampednewtonoff,'checked','off');
+set(handles.menu_odedampednewtonon,'checked','on');
+set(handles.menu_odedampednewtonoff,'checked','off');
 guidata(hObject, handles);
 
 
-function menu_dampednewtonoff_Callback(hObject, eventdata, handles)
+function menu_odedampednewtonoff_Callback(hObject, eventdata, handles)
 handles.guifile.damping = '0';
-set(handles.menu_dampednewtonon,'checked','off');
-set(handles.menu_dampednewtonoff,'checked','on');
+set(handles.menu_odedampednewtonon,'checked','off');
+set(handles.menu_odedampednewtonoff,'checked','on');
 guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
 function menu_odeplotting_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_odeplotting (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
-function Untitled_2_Callback(hObject, eventdata, handles)
-% hObject    handle to Untitled_2 (see GCBO)
+function menu_pdeplotting_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdeplotting (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
 function menu_odeplottingon_Callback(hObject, eventdata, handles)
-handles.guifile.plotting = '0.1'; % Should store value of plotting length
+handles.guifile.plotting = handles.ODEpause; % Obtain length of pause from handles
 set(handles.menu_odeplottingon,'checked','on');
 set(handles.menu_odeplottingoff,'checked','off');
 guidata(hObject, handles);
@@ -876,9 +792,26 @@ guidata(hObject, handles)
 
 % --------------------------------------------------------------------
 function menu_odeplottingpause_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_odeplottingpause (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+options.WindowStyle = 'modal';
+valid = 0;
+while ~valid
+    pauseInput = inputdlg('Length of pause between plots:','Set pause length',...
+        1,{handles.ODEpause},options);
+    if isempty(pause) % User pressed cancel
+        break
+    elseif ~isempty(str2num(pauseInput{1})) % Valid input
+        valid = 1;
+        handles.ODEpause = pauseInput{1};
+        % Update length of pause in the chebgui object if it's not off
+        if ~strcmp(handles.guifile.plotting,'off')
+            handles.guifile.plotting = pauseInput{1}; 
+        end
+    else
+        f = errordlg('Invalid input.', 'Chebgui error', 'modal');
+        uiwait(f); 
+    end
+end
+guidata(hObject, handles)
 
 
 % --------------------------------------------------------------------
@@ -893,3 +826,54 @@ function Untitled_4_Callback(hObject, eventdata, handles)
 % hObject    handle to Untitled_4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdeholdplot_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdeholdplot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdefix_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdefix (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdeplotfield_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdeplotfield (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdeholdploton_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdeholdploton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdeholdplotoff_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdeholdplotoff (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdeplottingon_Callback(hObject, eventdata, handles)
+handles.guifile.plotting = 'on'; % Obtain length of pause from handles
+set(handles.menu_pdeplottingon,'checked','on');
+set(handles.menu_pdeplottingoff,'checked','off');
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_pdeplottingoff_Callback(hObject, eventdata, handles)
+handles.guifile.plotting = 'off'; % Obtain length of pause from handles
+set(handles.menu_pdeplottingon,'checked','off');
+set(handles.menu_pdeplottingoff,'checked','on');
+guidata(hObject, handles);

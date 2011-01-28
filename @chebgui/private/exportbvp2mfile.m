@@ -138,15 +138,10 @@ else
 end
 
 % Option for plotting
-plottingOnInput = get(handles.plotting_on,'Value');
+plottingOnInput = guifile.plotting;
 
 fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
-if plottingOnInput
-    pauseLengthInput = get(handles.input_pause,'String');
-    fprintf(fid,'options.plotting = %s;\n',pauseLengthInput);
-else
-    fprintf(fid,'options.plotting = ''off'';\n');
-end
+fprintf(fid,'options.plotting = %s;\n',plottingOnInput = guifile.plotting;);
 
 
 

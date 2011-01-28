@@ -3,11 +3,6 @@ function handles = switchmode(guiObject, handles,newMode)
 if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.button_ode,'Value',1)
     set(handles.button_pde,'Value',0)
-    set(handles.panel_updates,'Visible','on')
-    set(handles.text_pause1,'Visible','on')
-    set(handles.text_pause2,'Visible','on')
-    set(handles.input_pause,'Visible','on')
-    set(handles.slider_pause,'Visible','on')
     set(handles.toggle_useLatest,'Visible','on')
     % set(handles.iter_list,'Visible','on')
     % set(handles.iter_text,'Visible','on')
@@ -19,25 +14,29 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     
     set(handles.text_initial,'String','Initial guess')
     
+    % Change the list of available options
+    set(handles.menu_odedampednewton,'Enable','On')
+    set(handles.menu_odeplotting,'Enable','On')
+    set(handles.menu_pdeplotting,'Enable','Off')
+    set(handles.menu_pdeholdplot,'Enable','Off')
+    set(handles.menu_pdefix,'Enable','Off')
+    set(handles.menu_pdeplotfield,'Enable','Off')
+    
+    
     % Clear the figures
     initialisefigures(handles)
     
     set(handles.text_timedomain,'Visible','off')
     set(handles.timedomain,'Visible','off')
     
-%     % Load a new random BVP example and change the demos popup menu
-%     handles.guifile = loadexample(handles.guifile,-1,'bvp');
-%     loadfields(handles.guifile,handles)
+    %     % Load a new random BVP example and change the demos popup menu
+    %     handles.guifile = loadexample(handles.guifile,-1,'bvp');
+    %     loadfields(handles.guifile,handles)
     
     handles.problemType = 'bvp';
 else % Going into PDE mode
     set(handles.button_ode,'Value',0)
     set(handles.button_pde,'Value',1)
-    set(handles.panel_updates,'Visible','off')
-    set(handles.text_pause1,'Visible','off')
-    set(handles.text_pause2,'Visible','off')
-    set(handles.input_pause,'Visible','off')
-    set(handles.slider_pause,'Visible','off')
     set(handles.toggle_useLatest,'Visible','off')
     set(handles.iter_list,'Visible','off')
     set(handles.iter_text,'Visible','off')
@@ -53,12 +52,20 @@ else % Going into PDE mode
     set(handles.timedomain,'Visible','on')
     set(handles.timedomain,'Visible','on')
     
+    % Change the list of available options
+    set(handles.menu_odedampednewton,'Enable','Off')
+    set(handles.menu_odeplotting,'Enable','Off')
+    set(handles.menu_pdeplotting,'Enable','On')
+    set(handles.menu_pdeholdplot,'Enable','On')
+    set(handles.menu_pdefix,'Enable','On')
+    set(handles.menu_pdeplotfield,'Enable','On')
+    
     % Clear the figures
     initialisefigures(handles)
     
-%     handles.guifile = loadexample(handles.guifile,-1,'pde');
-%     loadfields(handles.guifile,handles)
-        
+    %     handles.guifile = loadexample(handles.guifile,-1,'pde');
+    %     loadfields(handles.guifile,handles)
+    
     handles.problemType = 'pde';
 end
 
@@ -70,9 +77,6 @@ elseif onoff == 0
     onoff = 'off';
 end
 
-set(handles.plot_text,'visible',onoff);
-set(handles.button_pdeploton,'visible',onoff);
-set(handles.button_pdeplotoff,'visible',onoff);
 set(handles.hold_text,'visible',onoff);
 set(handles.button_holdon,'visible',onoff);
 set(handles.button_holdoff,'visible',onoff);

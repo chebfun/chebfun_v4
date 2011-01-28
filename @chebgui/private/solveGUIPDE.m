@@ -170,11 +170,9 @@ opts.Eps = tolNum;
 if ~all(pdeflag)
     opts.PDEflag = pdeflag;
 end
-if get(handles.button_pdeploton,'Value')
-    opts.Plot = 'on';
-else
-    opts.Plot = 'off';
-end
+
+opts.Plot = handles.guifile.plotting;
+
 if get(handles.button_holdon,'Value');
     opts.HoldPlot = 'on';
 else

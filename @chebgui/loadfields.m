@@ -19,15 +19,32 @@ end
 % Change the checking of menu options
 if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);
+    
+    if ~strcmp(guifile.damping,'off')
+        set(handles.menu_pdeplottingon,'Checked','On');
+        set(handles.menu_pdeplottingoff,'Checked','Off');
+    else
+        set(handles.menu_pdeplottingon,'Checked','Off');
+        set(handles.menu_pdeplottingoff,'Checked','On');
+    end
 else
     if strcmp(guifile.damping,'1')
-        set(handles.menu_dampednewtonon,'Checked','On');
-        set(handles.menu_dampednewtonoff,'Checked','Off');
+        set(handles.menu_odedampednewtonon,'Checked','On');
+        set(handles.menu_odedampednewtonoff,'Checked','Off');
     else
-        set(handles.menu_dampednewtonon,'Checked','Off');
-        set(handles.menu_dampednewtonoff,'Checked','On');
+        set(handles.menu_odedampednewtonon,'Checked','Off');
+        set(handles.menu_odedampednewtonoff,'Checked','On');
+    end
+    
+    if ~strcmp(guifile.damping,'off')
+        set(handles.menu_odeplottingon,'Checked','On');
+        set(handles.menu_odeplottingoff,'Checked','Off');
+    else
+        set(handles.menu_odeplottingon,'Checked','Off');
+        set(handles.menu_odeplottingoff,'Checked','On');
     end
 end
+
 
 
 %

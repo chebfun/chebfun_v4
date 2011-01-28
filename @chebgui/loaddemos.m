@@ -38,13 +38,13 @@ if strcmp(type,'bvp') % Setup BVPs demos
     end
 else                % Setup PDEs demos
     while 1
-        [a b tt DE DErhs LBC LBCrhs RBC RBCrhs guess tol name demotype] = pdeexamples(guifile,counter,'demo');
-        if strcmp(DE,'0')
+        [cg name demotype] = pdeexamples(guifile,counter,'demo');
+        if strcmp(name,'stop')
             break
         else
             demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,type,counter);
             switch demotype
-                case 'single'
+                case 'scalar'
                     hDemoitem  =  uimenu('Parent',handles.menu_pdesingle,...
                         'Label',name,...
                         'Separator','off',...

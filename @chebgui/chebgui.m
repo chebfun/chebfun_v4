@@ -44,6 +44,8 @@ else
             case 'domain'
                 c.DomLeft =   num2str(varargin{k+1}(1));
                 c.DomRight =  num2str(varargin{k+1}(2));
+            case 'timedomain'
+                c.timedomain = value;
             case 'de'
                 c.DE = value;
             case 'derhs'
@@ -64,6 +66,8 @@ else
                 c.damping = value;
             case 'plotting'
                 c.plotting = value;
+            otherwise
+                error('CHEBGUI:propname',[propName,' is not a valid chebgui property.'])
         end
         k = k + 2;
     end

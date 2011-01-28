@@ -1,22 +1,47 @@
 function export(guifile,handles,exportType)
-problemType = handles.problemType;
-% Exorting a BVP
+problemType = guifile.type;
+% Exporting a BVP
 if strcmp(problemType,'bvp')
     switch exportType
         case 'GUI'
-            assignin('base','cg',handles.guifile);
-            msgbox('Exported a chebgui variable named cg to workspace.','Chebgui export','modal')
-        case 'Workspace'
-            assignin('base','u',handles.latestSolution);
-            assignin('base','normVec',handles.latestNorms);
-            assignin('base','N',handles.latestChebop);
-            assignin('base','rhs',handles.latestRHS);
-            assignin('base','options',handles.latestOptions);
-            assignin('base','cg',handles.guifile);
-            msgbox('Exported chebfun variables named u, normVec, N, rhs, options and cg to workspace.','Chebgui export','modal')
-        case '.m'
-            % Obtain information about whether we are solving BVP or PDE
+            prompt = 'Enter the name of the chebgui variable:';
+            name   = 'Export GUI';
+            numlines = 1;
+            defaultanswer='cg';
+            options.Resize='on';
+            options.WindowStyle='modal';
             
+            answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+            
+            if ~isempty(answer)
+                assignin('base',answer,handles.guifile);
+                msgbox(['Exported a chebgui variable named ',answer,' to workspace.'],...
+                    'Chebgui export','modal')
+            end
+        case 'Workspace'
+            prompt = {'Differential operator', 'Right hand side','Solution:',...
+                'Vector with norm of updates', 'Options','Chebgui object'};
+            name   = 'Export to workspace';
+            defaultanswer={'N','rhs','u','normVec','options','cg'};
+            numlines = 1;
+            options.Resize='on';
+            options.WindowStyle='modal';
+            
+            answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+            
+            if ~isempty(answer)
+                assignin('base',answer{1},handles.latestChebop);
+                assignin('base',answer{2},handles.latestRHS);
+                assignin('base',answer{3},handles.latestSolution);
+                assignin('base',answer{4},handles.latestNorms);
+                assignin('base',answer{5},handles.latestOptions);
+                assignin('base',answer{6},handles.guifile);
+                msgbox(['Exported chebfun variables named ' answer{1},', ',...
+                    answer{2},', ',answer{3},', ',answer{4},', ',...
+                    answer{5},', and ' answer{6},' to workspace.'],...
+                    'Chebgui export','modal')
+            end
+        case '.m'            
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
                 '*.*',  'All Files (*.*)'}, ...
@@ -46,15 +71,39 @@ if strcmp(problemType,'bvp')
 else
     switch exportType
         case 'GUI'
-            assignin('base','cg',handles.guifile);
-            msgbox('Exported a chebgui variable named cg to workspace.','Chebgui export','modal')
-        case 'Workspace'
-            assignin('base','u',handles.latestSolution);
-            assignin('base','t',handles.latestSolutionT);
-            msgbox('Exported variables named u and t to workspace.','Chebgui export','modal')
-        case '.m'
-            % Obtain information about whether we are solving BVP or PDE
+            prompt = 'Enter the name of the chebgui variable:';
+            name   = 'Export GUI';
+            numlines = 1;
+            defaultanswer='cg';
+            options.Resize='on';
+            options.WindowStyle='modal';
             
+            answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+            
+            if ~isempty(answer)
+                assignin('base',answer,handles.guifile);
+                msgbox(['Exported a chebgui variable named ',answer,' to workspace.'],...
+                    'Chebgui export','modal')
+            end
+        case 'Workspace'           
+            prompt = {'Solution', 'Timedomain'};
+            name   = 'Export to workspace';
+            defaultanswer={'u','t'};
+            numlines = 1;
+            options.Resize='on';
+            options.WindowStyle='modal';
+            
+            answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+            
+            if ~isempty(answer)
+                assignin('base',answer{1},handles.latestSolution);
+                assignin('base',answer{2},handles.latestSolutionT);
+                msgbox(['Exported chebfun variables named ' answer{1},'and ',...
+                    answer{2}, ' to workspace.'],...
+                    'Chebgui export','modal')
+            end
+            msgbox('Exported variables named u and t to workspace.','Chebgui export','modal')
+        case '.m'           
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
                 '*.*',  'All Files (*.*)'}, ...

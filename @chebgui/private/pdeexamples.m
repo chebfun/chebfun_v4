@@ -1,4 +1,4 @@
-function [a b t DE DErhs LBC LBCrhs RBC RBCrhs guess tol name demotype] = pdeexamples(guifile,exampleNumber,mode)
+function [cg name demotype] = pdeexamples(guifile,exampleNumber,mode)
 if nargin < 3
     mode = 'start';
 end
@@ -13,8 +13,7 @@ if exampleNumber < 0 || exampleNumber > numberOfExamples
     % If we call the function with the Demos button, we want to notify the
     % code that we have extracted information about all examples.
     if strcmp(mode,'demo')
-        a = 0; b = 0; t = 0; DE = '0'; DErhs = '0'; LBC = 0; LBCrhs = 0;
-        RBC = 0; RBCrhs = 0; guess = 0; tol = 0; name = '0'; demotype = '';
+        name = 'stop'; demotype = ''; cg = chebgui('type','bvp');
         return
     end
 end
@@ -32,6 +31,7 @@ switch exampleNumber
         RBCrhs = '';
         guess = '';
         tol = '';
+        plotting = '';
         name = '';
         demotype = '';
     case 1
@@ -46,8 +46,9 @@ switch exampleNumber
         RBCrhs = '';
         guess = 'sin(2*x)';
         tol = '1e-6';
+        plotting = 'on';
         name = DE;
-        demotype = 'single';
+        demotype = 'scalar';
     case 2
         a = '-1';
         b = '1';
@@ -60,8 +61,9 @@ switch exampleNumber
         RBCrhs = '';
         guess = '(1-x.^2).^2.*(1+sin(12*x))/2';
         tol = '1e-6';
+        plotting = 'on';
         name = 'Allen-Cahn (neumann)';
-        demotype = 'single';
+        demotype = 'scalar';
     case 3
         a = '-1';
         b = '1';
@@ -74,8 +76,9 @@ switch exampleNumber
         RBCrhs = '1';
         guess = '0.53*x-.47*sin(1.5*pi*x)';
         tol = '1e-6';
+        plotting = 'on';
         name = 'Allen-Cahn (dirichlet)';
-        demotype = 'single';
+        demotype = 'scalar';
     case 4
         a = '-1';
         b = '1';
@@ -88,8 +91,9 @@ switch exampleNumber
         RBCrhs = '';
         guess = '(1-x.^2).*exp(-30*(x+.5).^2)';
         tol = '1e-6';
+        plotting = 'on';
         name = 'Burgers''';
-        demotype = 'single';
+        demotype = 'scalar';
     case 5
         a = '-1';
         b = '1';
@@ -102,8 +106,9 @@ switch exampleNumber
         RBCrhs = {'1','2'};
         guess = '1 + 0.5*exp(-40*x.^2)';
         tol = '1e-6';
+        plotting = 'on';
         name = 'KS';
-        demotype = 'single';
+        demotype = 'scalar';
     case 6
         a = '-1';
         b = '1';
@@ -116,6 +121,7 @@ switch exampleNumber
         RBCrhs = {'0';'0'};
         guess = {'1';'1'};
         tol = '1e-6';
+        plotting = 'on';
         name = 'System 1';
         demotype = 'system';
     case 7
@@ -130,6 +136,7 @@ switch exampleNumber
         RBCrhs = {'0';'0'};
         guess = {'1';'1'};
         tol = '1e-6';
+        plotting = 'on';
         name = 'System 1 (flipped)';
         demotype = 'system';
     case 8
@@ -146,6 +153,7 @@ switch exampleNumber
         RBCrhs = {'0' ; '0' ; '0'};
         guess = {'1-erf(10*(x+0.7))' ; '1 + erf(10*(x-0.7))' ; '0'};
         tol = '1e-6';
+        plotting = 'on';
         name = 'System 2 (3 eqns)';
         demotype = 'system';
     case 9
@@ -162,6 +170,7 @@ switch exampleNumber
         RBCrhs = {'0' ; '0' ; '0'};
         guess = {'1-erf(10*(x+0.7))' ; '1+erf(10*(x-0.7))' ; '0'};
         tol = '1e-6';
+        plotting = 'on';
         name = 'System 2 (3 eqns alt)';
         demotype = 'system';
     case 10
@@ -176,6 +185,7 @@ switch exampleNumber
         RBCrhs = {'1' ; '1'};
         guess = {'1' ; '1'};
         tol = '1e-6';
+        plotting = 'on';
         name = 'Coupled PDE-BVP';
         demotype = 'system';
     case 11
@@ -190,6 +200,12 @@ switch exampleNumber
         RBCrhs = {''};
         guess = {'(1-x^2)*exp(-30*(x+.5)^2)'};
         tol = '1e-6';
+        plotting = 'on';
         name = 'Integro-Differential Eqn.';
-        demotype = 'single';
+        demotype = 'scalar';
 end
+
+cg = chebgui('type','pde','domleft',a,'domright',b,'timedomain',t,'de',DE,...
+    'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
+    'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+    'plotting',plotting);
