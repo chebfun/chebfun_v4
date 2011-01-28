@@ -104,7 +104,7 @@ uu(1) = uu(1)+eps;
 
 if simple
     ish = ishold;
-    mesh(xx.',tt.',uu.','edgecolor','none'); hold on,
+    mesh(xx.',tt.',uu.','edgecolor','none','facealpha',.75); hold on,
     % Intersperse with NaNs
     xx = repmat(xx,1,4);
     mid = repmat((t(1:end-1)+t(2:end))/2,size(tt,1),1);
@@ -155,9 +155,8 @@ end
 u = reshape(uu,numel(uu),1);
 umin = min(u); umax = max(u);
 if umin - umax == 0
-    zl = get(gca,'zlim')
+    zl = get(gca,'zlim');
     if abs(diff(zl)) < 1e-6
-        umin+1e-2*[-1 1]
         set(gca,'zlim',umin+1e-2*[-1 1]);
     end
 end

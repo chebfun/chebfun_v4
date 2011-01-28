@@ -41,7 +41,7 @@ switch lower(propName)
     case 'tol'
         cg.tol = vin;
     case 'pause'
-        cg.tol = vin;
+        cg.pause = vin;
     case 'damping'
         cg.damping = vin;
     case 'plotting'
