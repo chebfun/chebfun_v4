@@ -13,6 +13,8 @@ deltol = pref.deltol;
 maxIter = pref.maxiter;
 maxStag = pref.maxstagnation;
 dampedOn = strcmpi(pref.damped,'on');
+% plotMode determines whether we want to stop between plotting iterations
+plotMode = lower(pref.plotting);        
 lambda_minCounter = 0;
 
 % Check whether the operator is empty, or whether both BC are empty
@@ -159,7 +161,7 @@ end
 
 while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
     counter = counter + 1;
-    
+        
     if counter > 1 % (Has already been done above for counter = 1)
         bc = setupBC();
     end
@@ -234,6 +236,17 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
 %     contraFactor = 
     lambdas(counter) = lambda;
     
+    if ~strcmp(plotMode,'off')
+        if strcmp(plotMode,'pause')
+            pause
+        elseif counter > 1
+            % Measure how long it is since we plotted last iteration
+            iterationTimeToc = toc(iterationTimeTic);
+            if plotMode - iterationTimeToc > 0
+                pause(plotMode-iterationTimeToc)
+            end
+        end
+    end
     % We want a slightly different output when we do a damped Newton
     % iteration. Also, in damped Newton, we check for stagnation.
     if dampedOn
@@ -251,6 +264,8 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
         return
     end
     
+    % Start a timer from the end of this iteration
+    iterationTimeTic = tic;
 end
 % Clear up norm vector
 nrmDeltaRelvec(counter+1:end) = [];

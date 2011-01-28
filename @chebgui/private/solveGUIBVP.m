@@ -83,7 +83,7 @@ else
     N = chebop(d,DE,LBC,RBC,guess);
 end
 
-tolInput = get(handles.input_tol,'String');
+tolInput = guifile.tol;
 if isempty(tolInput)
     tolNum = defaultTol;
 else

@@ -302,7 +302,7 @@ if get(handles.button_ode,'Value');
     
     figure;
     
-    semilogy(latestNorms,'-*'),title('Norm of updates'), xlabel('Number of iteration')
+    semilogy(latestNorms,'-*','Linewidth',2),title('Norm of updates'), xlabel('Number of iteration')
     if length(latestNorms) > 1
         XTickVec = 1:max(floor(length(latestNorms)/5),1):length(latestNorms);
         set(gca,'XTick', XTickVec), xlim([1 length(latestNorms)]), grid on
@@ -350,7 +350,7 @@ function button_figsol_Callback(hObject, eventdata, handles)
 if get(handles.button_ode,'Value');
     latestSolution = handles.latestSolution;
     figure
-    plot(latestSolution), title('Solution at end of iteration')
+    plot(latestSolution,'Linewidth',2), title('Solution at end of iteration')
 else
     u = handles.latestSolution;
     tt = handles.latestSolutionT;

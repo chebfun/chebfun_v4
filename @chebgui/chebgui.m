@@ -13,13 +13,15 @@ if isempty(varargin)
     % Calling loadexample with second argument -1 gives a random example
     cg = loadexample(cgTemp,-1,'bvp');
     show(cg);
+elseif nargin == 1 && isa(varargin{1},'chebgui')
+    chebguiwindow(varargin{1});
 else
     c.type = '';
     c.DomLeft = ''; c.DomRight = '';
     c.DE = ''; c.DErhs = ''; c.LBC = ''; c.LBCrhs = ''; c.RBC = '';
     c.RBCrhs = ''; c.timedomain = '';
     c.guess = []; c.tol = [];
-    c.pause = '0.1'; c.damping = '0'; c.plotting = '1';
+    c.damping = '0'; c.plotting = '1';
     
     
     k = 1;
@@ -65,6 +67,9 @@ else
             case 'damping'
                 c.damping = value;
             case 'plotting'
+                if isnumeric(value)
+                    value = num2str(value);
+                end
                 c.plotting = value;
             otherwise
                 error('CHEBGUI:propname',[propName,' is not a valid chebgui property.'])

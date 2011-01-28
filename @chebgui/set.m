@@ -40,14 +40,15 @@ switch lower(propName)
         cg.RBCrhs = vin;
     case 'tol'
         cg.tol = vin;
-    case 'pause'
-        cg.pause = vin;
     case 'damping'
         cg.damping = vin;
     case 'plotting'
+        if isnumeric(vin)
+            vin = num2str(vin);
+        end
         cg.plotting = vin;
     case 'guess'
-        cg.guess= vin;        
+        cg.guess= vin;
     otherwise
         error('CHEBGUI:set:propname',[propName,' is not a valid chebgui property'])
 end

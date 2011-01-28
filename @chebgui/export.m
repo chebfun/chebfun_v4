@@ -7,22 +7,20 @@ if strcmp(problemType,'bvp')
             prompt = 'Enter the name of the chebgui variable:';
             name   = 'Export GUI';
             numlines = 1;
-            defaultanswer='cg';
+            defaultanswer='chebg';
             options.Resize='on';
             options.WindowStyle='modal';
             
-            answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+            answer = inputdlg(prompt,name,numlines,{defaultanswer},options);
             
             if ~isempty(answer)
                 assignin('base',answer,handles.guifile);
-                msgbox(['Exported a chebgui variable named ',answer,' to workspace.'],...
-                    'Chebgui export','modal')
             end
         case 'Workspace'
             prompt = {'Differential operator', 'Right hand side','Solution:',...
                 'Vector with norm of updates', 'Options','Chebgui object'};
             name   = 'Export to workspace';
-            defaultanswer={'N','rhs','u','normVec','options','cg'};
+            defaultanswer={'N','rhs','u','normVec','options','chebg'};
             numlines = 1;
             options.Resize='on';
             options.WindowStyle='modal';
@@ -36,10 +34,6 @@ if strcmp(problemType,'bvp')
                 assignin('base',answer{4},handles.latestNorms);
                 assignin('base',answer{5},handles.latestOptions);
                 assignin('base',answer{6},handles.guifile);
-                msgbox(['Exported chebfun variables named ' answer{1},', ',...
-                    answer{2},', ',answer{3},', ',answer{4},', ',...
-                    answer{5},', and ' answer{6},' to workspace.'],...
-                    'Chebgui export','modal')
             end
         case '.m'            
             [filename, pathname, filterindex] = uiputfile( ...

@@ -37,15 +37,9 @@ switch(phase)
             if ~guiMode
                 fig = figure('name','BVP solver convergence');
                 plot(u,'.-'), title('Initial guess of solution')
-                if strcmp(plotMode,'pause')
-                    pause
-                else
-                    pause(plotMode)
-                end
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Initial guess of solution')
-                pause(plotMode)
             end
         end
         
@@ -65,15 +59,9 @@ switch(phase)
             if ~guiMode
                 fig = figure('name','BVP solver convergence');
                 plot(u,'.-'), title('Initial guess of solution')
-                if strcmp(plotMode,'pause')
-                    pause
-                else
-                    pause(plotMode)
-                end
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Initial guess of solution')
-                pause(plotMode)
             end
         end
     case 'iter'
@@ -99,11 +87,6 @@ switch(phase)
                 else
                     plot(du,'.-'), title('Current correction step')
                 end
-                if strcmp(plotMode,'pause')
-                    pause
-                else
-                    pause(plotMode)
-                end
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Current solution')
@@ -113,7 +96,6 @@ switch(phase)
                 else
                     plot(du,'.-'), title('Current correction step')
                 end
-                pause(plotMode)
             end
         end
         drawnow
@@ -140,16 +122,6 @@ switch(phase)
                 else
                     plot(du,'.-'), title('Current correction step')
                 end
-                if strcmp(plotMode,'pause')
-                    pause
-                else
-                    pause(plotMode)
-                end
-                if strcmp(plotMode,'pause')
-                    pause
-                else
-                    pause(plotMode)
-                end
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Current solution')
@@ -159,12 +131,6 @@ switch(phase)
                 else
                     plot(du,'.-'), title('Current correction step')
                 end
-                if strcmp(plotMode,'pause')
-                    pause
-                else
-                    pause(plotMode)
-                end
-                pause(plotMode)
             end
         end
         drawnow

@@ -61,7 +61,7 @@ end
 DErhsNum = str2num(char(deRHSInput));
 if isempty(DErhsNum)
     % RHS is a string representing a function -- convert to chebfun
-    DE_RHS = chebfun(DErhsInput,d);
+    DE_RHS = chebfun(deRHSInput,d);
 else
     % RHS is a number - Don't need to construct chebfun
     DE_RHS = DErhsNum;
@@ -87,7 +87,7 @@ tolInput = guifile.tol;
 if isempty(tolInput)
     tolNum = defaultTol;
 else
-    tolNum = str2double(tolInput);
+    tolNum = str2num(tolInput);
 end
 
 if tolNum < chebfunpref('eps')
