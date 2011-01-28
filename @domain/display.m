@@ -8,8 +8,8 @@ function display(r)
 % Copyright 2002-2009 by The Chebfun Team. 
 
 loose = ~isequal(get(0,'FormatSpacing'),'compact');
-if loose, disp(' '), end
+if loose, fprintf('\n'), end
 disp([inputname(1) ' = domain']);
-if loose, disp(' '), end
-
-fprintf( [char(r) '\n\n'] )
+if loose, fprintf('\n'), end
+fprintf( [char(r) '\n'] )
+if loose, fprintf('\n'), end

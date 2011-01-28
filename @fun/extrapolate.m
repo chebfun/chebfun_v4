@@ -20,8 +20,7 @@ if pref.extrapolate || pref.splitting || any(g.exps) || any(isinf(g.map.par([1 2
         mask = isnan(v) | isinf(v);
         g.scl.v = max(g.scl.v,norm(v(~mask),inf));
         if any(mask)
-            
-            if ~pref.n % adaptive
+            if ~isfield(pref,'n') || ~pref.n % adaptive
                 % Force extrapolation at end points
                 mask = [true;mask;true];
                 xgood = x(~mask);

@@ -12,7 +12,6 @@ function [y t] = odesol(sol)
 
 % Copyright 2009 by the Chebfun Team. See www.maths.ox.ac.uk/chebfun.
 
-
 % Current tolerance used by user
 usertol = chebfunpref('eps'); 
 
@@ -45,9 +44,11 @@ RelTol = max(RelTol(:),AbsTol(:)./scl(:));
 
 y = chebfun;
 for j = 1:ncols
-  y(:,j) = chebfun(@(x) deval(sol,x,j).', [ends(1) ends(end)],'eps', RelTol(j));
+  y(:,j) = chebfun(@(x) deval(sol,x,j).', [ends(1) ends(end)],'eps', RelTol(j), 'vectorcheck',0);
 end
 
-t = chebfun('t',domain(y(:,1)));
+if nargout > 1
+    t = chebfun('t',domain(y(:,1)));
+end
 
 end

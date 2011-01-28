@@ -50,7 +50,6 @@ elseif isnumeric(rhs)
     for rhsCounter = 1:length(rhs)
         rhsQuasimatrix = [rhsQuasimatrix chebfun(rhs(rhsCounter),Ndom)];
     end
-    
     deFunString = func2str(N.op);
     deFunArgs = deFunString(2:min(strfind(deFunString,')')));
     deFun = eval(['@', deFunArgs,' N.op', deFunArgs,'-rhsQuasimatrix']);
@@ -141,9 +140,14 @@ if isLin
     if nargout == 2
         nrmDeltaRelvec = norm(feval(N,u)-rhs);
     end
-    if any(strcmpi(pref.display,{'iter','display'}))
+    if isempty(guihandles) && any(strcmpi(pref.display,{'iter','display'}))
         fprintf('Converged in one step. (Chebop is linear).\n');
+    elseif ~isempty(guihandles)
+        solve_display(pref,guihandles,'init',u);
+        solve_display(pref,guihandles,'iter',u,norm(delta),nrmDeltaRel,nrmDeltaRelvec)
+        solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,0)
     end
+        
     return
 end
 

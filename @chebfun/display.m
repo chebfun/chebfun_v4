@@ -12,11 +12,12 @@ function display(F)
 
 % Copyright 2002-2009 by The Chebfun Team. 
 
-if strcmp(get(0,'FormatSpacing'),'loose')
-    fprintf('\n')
+loose = strcmp(get(0,'FormatSpacing'),'loose');
+if loose
+    fprintf('\n%s = \n\n',inputname(1))
+else
+    fprintf('%s = \n',inputname(1))
 end
-    
-disp([inputname(1) ' = '])
 
 if numel(F)>1
     for k=1:numel(F)
@@ -31,7 +32,7 @@ if numel(F)>1
     
         displaychebfun(F(k),columnstr)
         
-        if k~=numel(F)% && strcmp(get(0,'FormatSpacing'),'loose')
+        if k~=numel(F) && loose
             fprintf('\n')
         end
     end
@@ -48,17 +49,17 @@ else
     
 end
 
-if strcmp(get(0,'FormatSpacing'),'loose')
+if loose
     fprintf('\n')
 end
 
 % -----------------------------------------------------
 
 function displaychebfun(f, columnstr)
-    
+
     % compact version
     if isempty(f)
-         disp('empty chebfun'), disp(' ')
+         fprintf('   empty chebfun\n')
         return
     end
 

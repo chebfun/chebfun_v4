@@ -14,11 +14,15 @@ if isfield(pref,'vectorcheck') && pref.vectorcheck == false
     return              % Skip the check
 end
 
+% Make a sligtly narrower domaini to valuate on. (Endpoints can be tricky).
+y = x;
+if y(1) > 0, y(1) = 1.01*y(1); else y(1) = .99*y(1); end
+if y(end) > 0, y(end) = .99*y(end); else y(end) = 1.01*y(end); end
+
 dbz_state = warning;    % Store warning state
 try
-    
     warning off         % Turn off warnings off
-    v = f(.99*x(:));    % Evaluate a vector of (near the) endpoints
+    v = f(y(:));    % Evaluate a vector of (near the) endpoints
     warning(dbz_state); % Restore warnings
     sv = size(v);    sx = size(x(:));
     if ( all(sv>1) || ~any(sv==sx(1) | sv ==sx(2)) )
@@ -37,12 +41,11 @@ try
     elseif any(size(v) ~= size(x(:)))
         f = @(x) f(x)';
     end
-    
 catch %ME
     last = lasterror;
     try 
         % Perhaps it's a system?
-        s = size(f(repmat({.99*x(:)},1,1e4)));
+        s = size(f(repmat({y(:)},1,1e4)));
         ends = repmat({x(:).'},1,length(s));
     catch
         if nargout > 0 && ~isfield(pref,'vectorize')
@@ -59,7 +62,6 @@ catch %ME
     end
 end
 warning(dbz_state); % Restore warnings
-
 
 end
 
