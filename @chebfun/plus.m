@@ -11,7 +11,7 @@ if (isempty(F1) || isempty(F2)), H=chebfun; return; end
 
 if isa(F1,'double')
     H = F2;
-    if numel(F1) ~= 1 && ~all(size(F1) == size(F2))
+    if numel(F1) ~= 1 && ~all(size(F1) == size(F2) | (isinf(size(F2)) & size(F1)==1))
         error('CHEBFUN:plus:sclsize','Matrix dimensions do not agree.'); 
     end
     if numel(F1) == 1
