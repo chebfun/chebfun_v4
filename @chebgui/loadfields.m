@@ -20,7 +20,7 @@ end
 if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);
     
-    if ~strcmp(guifile.damping,'off')
+    if ~strcmp(guifile.plotting,'off')
         set(handles.menu_pdeplottingon,'Checked','On');
         set(handles.menu_pdeplottingoff,'Checked','Off');
     else
@@ -36,9 +36,10 @@ else
         set(handles.menu_odedampednewtonoff,'Checked','On');
     end
     
-    if ~strcmp(guifile.damping,'off')
+    if ~strcmp(guifile.plotting,'off')
         set(handles.menu_odeplottingon,'Checked','On');
         set(handles.menu_odeplottingoff,'Checked','Off');
+        set(handles.menu_odeplottingpause,'UserData',guifile.plotting);
     else
         set(handles.menu_odeplottingon,'Checked','Off');
         set(handles.menu_odeplottingoff,'Checked','On');

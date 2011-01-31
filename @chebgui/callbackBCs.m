@@ -1,10 +1,17 @@
-function handles = callbackBCs(guifile, handles, newString, type)
+function handles = callbackBCs(guifile, handles, inputString, type)
 
 
 
 % For systems we check a row at a time
 flag = false; flag2 = false;
-if ~iscell(newString), newString = {newString}; end
+if ~iscell(inputString)
+    for stringCounter = 1:size(inputString,1)
+        newString{stringCounter,:} = inputString(stringCounter,:);
+    end
+else
+    newString = inputString;
+end
+
 for k = 1:numel(newString)
     if ~isempty(strfind(newString{k},'@')) || strcmpi(newString{k},'dirichlet') ...
             || strcmpi(newString{k},'neumann') || ~isempty(str2num(newString{k}))

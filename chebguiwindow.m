@@ -116,28 +116,20 @@ if ~isempty(varargin)
     handles.guifile = varargin{1};
 else
     cgTemp = chebgui('');
-    handles.guifile = loadexample(cgTemp,-1,'bvp');
+    handles.guifile = loadexample(cgTemp,3,'bvp'); % Start with Airy as a default
 end
 % Create a new field that stores the problem type (cleaner than checking
 % for the value of the buttons every time)
 handles.problemType = handles.guifile.type;
 
-% Store the default length of pausing between plots for BVPs
-handles.ODEpause = '0.5';
+% Store the default length of pausing between plots for BVPs in the
+% userdata field.
+set(handles.menu_odeplottingpause,'UserData','0.5');
 
 % Populate the Demos menu
 loaddemos(handles.guifile,handles,'bvp')
 loaddemos(handles.guifile,handles,'pde')
 
-% % Disable and enable options available based on the type of problem
-% if strcmp(handles.problemType,'bvp')
-%     set(handles.menu_pdesingle,'Enable','Off')
-%     set(handles.menu_pdesystems,'Enable','Off')
-% else
-%     set(handles.menu_bvps,'Enable','Off')
-%     set(handles.menu_ivps,'Enable','Off')
-%     set(handles.menu_systems,'Enable','Off')
-% end
 
 % Load the input fields
 loadfields(handles.guifile,handles);
@@ -763,18 +755,10 @@ set(handles.menu_odedampednewtonoff,'checked','on');
 guidata(hObject, handles);
 
 
-% --------------------------------------------------------------------
 function menu_odeplotting_Callback(hObject, eventdata, handles)
 
-
-% --------------------------------------------------------------------
 function menu_pdeplotting_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdeplotting (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-
-% --------------------------------------------------------------------
 function menu_odeplottingon_Callback(hObject, eventdata, handles)
 handles.guifile.plotting = handles.ODEpause; % Obtain length of pause from handles
 set(handles.menu_odeplottingon,'checked','on');
@@ -782,7 +766,6 @@ set(handles.menu_odeplottingoff,'checked','off');
 guidata(hObject, handles);
 
 
-% --------------------------------------------------------------------
 function menu_odeplottingoff_Callback(hObject, eventdata, handles)
 handles.guifile.plotting = 'off'; % Should store value of plotting length
 set(handles.menu_odeplottingon,'checked','off');
@@ -790,18 +773,18 @@ set(handles.menu_odeplottingoff,'checked','on');
 guidata(hObject, handles)
 
 
-% --------------------------------------------------------------------
 function menu_odeplottingpause_Callback(hObject, eventdata, handles)
 options.WindowStyle = 'modal';
 valid = 0;
 while ~valid
     pauseInput = inputdlg('Length of pause between plots:','Set pause length',...
-        1,{handles.ODEpause},options);
-    if isempty(pause) % User pressed cancel
+        1,{get(hObject,'UserData')},options);
+    if isempty(pauseInput) % User pressed cancel
         break
     elseif ~isempty(str2num(pauseInput{1})) % Valid input
         valid = 1;
-        handles.ODEpause = pauseInput{1};
+        % Store new value in the UserData of the object
+        set(hObject,'UserData',pauseInput{1});
         % Update length of pause in the chebgui object if it's not off
         if ~strcmp(handles.guifile.plotting,'off')
             handles.guifile.plotting = pauseInput{1}; 

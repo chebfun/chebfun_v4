@@ -30,6 +30,9 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 % match
 
 
+% Find whether the user wants to use the latest solution as a guess
+useLatest = strcmpi(get(handles.input_GUESS,'String'),'Using latest solution');
+
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
 [deString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
@@ -67,14 +70,12 @@ else
     DE_RHS = DErhsNum;
 end
 
-% DE_RHS = 0;
-
-useLatest = strcmpi(guessInput,'Using latest solution');
-if isempty(guessInput)
-    N = chebop(d,DE,LBC,RBC);
-elseif useLatest
+% Create the chebop
+if useLatest
     guess = handles.latestSolution;
     N = chebop(d,DE,LBC,RBC,guess);
+elseif isempty(guessInput)
+    N = chebop(d,DE,LBC,RBC);
 else
     guess = eval(guessInput);
     if isnumeric(guess)
