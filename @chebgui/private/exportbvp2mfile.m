@@ -128,7 +128,7 @@ end
 fprintf(fid,'options.display = ''iter'';\n');
 
 % Option for damping
-dampedOnInput = guifile.damping;
+dampedOnInput = guifile.options.damping;
 
 fprintf(fid,'\n%% Option for damping \n');
 if strcmp(dampedOnInput,'1')
@@ -138,7 +138,7 @@ else
 end
 
 % Option for plotting
-plottingOnInput = guifile.plotting;
+plottingOnInput = guifile.options.plotting;
 
 fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
 fprintf(fid,'options.plotting = %s;\n',plottingOnInput);

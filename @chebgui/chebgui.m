@@ -21,7 +21,7 @@ else
     c.DE = ''; c.DErhs = ''; c.LBC = ''; c.LBCrhs = ''; c.RBC = '';
     c.RBCrhs = ''; c.timedomain = '';
     c.guess = []; c.tol = [];
-    c.damping = '0'; c.plotting = '1';
+    c.options = struct('damping','1','plotting','0.5','grid',1,'pdeholdplot',0);
     
     
     k = 1;
@@ -64,13 +64,16 @@ else
                 c.guess = value;
             case 'tol'
                 c.tol = value;
-            case 'damping'
-                c.damping = value;
-            case 'plotting'
-                if isnumeric(value)
-                    value = num2str(value);
+            case 'options'
+                % Set the fields which correspond to elements specified.
+                % Use fieldnames to obtain a list of the fields in the
+                % struct, then a dynamic field name to obtain the
+                % corresponding value.
+                fNames = fieldnames(value);
+                for optCounter = 1:length(fNames)
+                    optionName = char(fNames(optCounter,:));
+                    c.options.(optionName)  = value.(optionName);
                 end
-                c.plotting = value;
             otherwise
                 error('CHEBGUI:propname',[propName,' is not a valid chebgui property.'])
         end

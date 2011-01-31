@@ -1,4 +1,4 @@
-function val = get(cg, propName)
+function val = get(cg, propName,propName2)
 % GET   Get chebgui properties.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
@@ -26,10 +26,23 @@ switch lower(propName)
         val = cg.RBCrhs;
     case 'tol'
         val = cg.tol;
-    case 'damping'
-        val = cg.damping;      
-    case 'plotting'
-        val = cg.plotting;
+    case 'options'
+        if isempty(propName2)
+            val = cg.options;
+        else
+            switch lower(propName2)
+                case 'damping'
+                    val = cg.options.damping;
+                case 'plotting'
+                    val = cg.options.plotting;
+                case 'grid'
+                    val = cg.options.grid;
+                case 'pdeholdplot'
+                    val = cg.options.pdeholdplot;
+                otherwise
+                    error('CHEBOP:get:options:propname',[propName,' is not a valid chebgui option.'])
+            end
+        end
     otherwise
         error('CHEBOP:get:propname',[propName,' is not a valid chebgui property'])
 end

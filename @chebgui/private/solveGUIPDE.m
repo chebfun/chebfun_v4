@@ -171,9 +171,9 @@ if ~all(pdeflag)
     opts.PDEflag = pdeflag;
 end
 
-opts.Plot = handles.guifile.plotting;
+opts.Plot = handles.guifile.options.plotting;
 
-if get(handles.button_holdon,'Value');
+if guifile.options.pdeholdplot
     opts.HoldPlot = 'on';
 else
     opts.HoldPlot = 'off';

@@ -1,4 +1,4 @@
-function cg = set(cg, propName,vin)
+function cg = set(cg, propName,propName2,vin)
 % GET   Get chebgui properties.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
@@ -40,15 +40,29 @@ switch lower(propName)
         cg.RBCrhs = vin;
     case 'tol'
         cg.tol = vin;
-    case 'damping'
-        cg.damping = vin;
-    case 'plotting'
-        if isnumeric(vin)
-            vin = num2str(vin);
-        end
-        cg.plotting = vin;
     case 'guess'
         cg.guess= vin;
+    case 'options'
+        if isempty(propName2)
+            cg.options = vin;
+        else
+            switch lower(propName2)
+                case 'damping'
+                    cg.options.damping = vin;
+                case 'plotting'
+                    if isnumeric(vin)
+                        vin = num2str(vin);
+                    end
+                    cg.options.plotting = vin;
+                case 'grid'
+                    cg.options.grid = vin;
+                case 'pdeholdplot'
+                    cg.options.pdeholdplot = vin;
+                otherwise
+                    error('CHEBGUI:set:options:propanem',...
+                        [propName2,' is not a valid chebgui option.'])
+            end
+        end
     otherwise
         error('CHEBGUI:set:propname',[propName,' is not a valid chebgui property'])
 end

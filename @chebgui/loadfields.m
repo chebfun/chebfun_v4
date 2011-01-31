@@ -22,15 +22,24 @@ set(handles.menu_tolerance,'UserData',guifile.tol);
 if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);
     
-    if ~strcmp(guifile.plotting,'off')
+    if ~strcmp(guifile.options.plotting,'off')
         set(handles.menu_pdeplottingon,'Checked','On');
         set(handles.menu_pdeplottingoff,'Checked','Off');
     else
         set(handles.menu_pdeplottingon,'Checked','Off');
         set(handles.menu_pdeplottingoff,'Checked','On');
     end
+    
+    if guifile.options.pdeholdplot
+        set(handles.menu_pdeholdploton,'Checked','On');
+        set(handles.menu_pdeholdplotoff,'Checked','Off');
+    else
+        set(handles.menu_pdeholdploton,'Checked','Off');
+        set(handles.menu_pdeholdplotoff,'Checked','On');
+    end    
+    
 else
-    if strcmp(guifile.damping,'1')
+    if strcmp(guifile.options.damping,'1')
         set(handles.menu_odedampednewtonon,'Checked','On');
         set(handles.menu_odedampednewtonoff,'Checked','Off');
     else
@@ -38,10 +47,10 @@ else
         set(handles.menu_odedampednewtonoff,'Checked','On');
     end
     
-    if ~strcmp(guifile.plotting,'off')
+    if ~strcmp(guifile.options.plotting,'off')
         set(handles.menu_odeplottingon,'Checked','On');
         set(handles.menu_odeplottingoff,'Checked','Off');
-        set(handles.menu_odeplottingpause,'UserData',guifile.plotting);
+        set(handles.menu_odeplottingpause,'UserData',guifile.options.plotting);
     else
         set(handles.menu_odeplottingon,'Checked','Off');
         set(handles.menu_odeplottingoff,'Checked','On');

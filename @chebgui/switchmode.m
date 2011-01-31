@@ -20,7 +20,6 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.menu_pdeplotting,'Enable','Off')
     set(handles.menu_pdeholdplot,'Enable','Off')
     set(handles.menu_pdefix,'Enable','Off')
-    set(handles.menu_pdeplotfield,'Enable','Off')
     
     
     % Clear the figures
@@ -58,7 +57,6 @@ else % Going into PDE mode
     set(handles.menu_pdeplotting,'Enable','On')
     set(handles.menu_pdeholdplot,'Enable','On')
     set(handles.menu_pdefix,'Enable','On')
-    set(handles.menu_pdeplotfield,'Enable','On')
     
     % Clear the figures
     initialisefigures(handles)
@@ -77,9 +75,6 @@ elseif onoff == 0
     onoff = 'off';
 end
 
-set(handles.hold_text,'visible',onoff);
-set(handles.button_holdon,'visible',onoff);
-set(handles.button_holdoff,'visible',onoff);
 set(handles.ylim_text,'visible',onoff);
 set(handles.ylim1,'visible',onoff);
 set(handles.text33,'visible',onoff);

@@ -105,8 +105,8 @@ options.restol = tolNum;
 % Always display iter. information
 options.display = 'iter';
 
-dampedOnInput = str2num(guifile.damping);
-plottingOnInput = str2num(guifile.plotting);
+dampedOnInput = str2num(guifile.options.damping);
+plottingOnInput = str2num(guifile.options.plotting);
 
 if dampedOnInput
     options.damped = 'on';
@@ -123,6 +123,8 @@ if isempty(plottingOnInput)
 else
     options.plotting = plottingOnInput;
 end
+
+options.grid = guifile.options.grid;
 
 guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
     handles.iter_list,handles.text_norm,handles.button_solve};
@@ -147,7 +149,10 @@ set(handles.text_norm,'Visible','On');
 
 
 axes(handles.fig_sol)
-plot(u,'Linewidth',2),
+plot(u,'Linewidth',2), 
+if guifile.options.grid
+    grid on
+end
 if length(vec) > 1
     title('Solution at end of iteration')
 else

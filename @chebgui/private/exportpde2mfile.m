@@ -227,7 +227,7 @@ doplot = get(handles.button_pdeploton,'Value');
 if ~doplot
     opts = [opts,',''Plot'',','''off'''];
 else
-    dohold = get(handles.button_holdon,'Value');
+    dohold = guifile.options.pdeholdplot;
     if dohold
         opts = [opts,',''HoldPlot'',','''on'''];
     end

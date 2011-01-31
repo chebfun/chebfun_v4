@@ -102,8 +102,8 @@ options.deltol = tolNum;
 options.restol = tolNum;
 
 % Obtain information about damping and plotting
-dampedOnInput = guifile.damping;
-plottingOnInput = guifile.plotting;
+dampedOnInput = guifile.options.damping;
+plottingOnInput = guifile.options.plotting;
 
 if dampedOnInput
     options.damped = 'on';

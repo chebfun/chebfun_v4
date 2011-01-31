@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 7;
+numberOfExamples = 8;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -139,9 +139,26 @@ switch exampleNumber
         plotting = '0.1';
         name = 'Carrier equation';
         demotype = 'bvp';
+    case 8
+        a = '-100';
+        b = '100';
+        DE = 'u" + (1.2+sign(10-abs(x)))*u';
+        DErhs = '1';
+        LBC = 'u';
+        LBCrhs = '0';
+        RBC = 'u';
+        RBCrhs = '0';
+        guess = '';
+        tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
+        name = 'Discontinuous coefficient';
+        demotype = 'bvp';
 end
+
+options = struct('damping',damping,'plotting',plotting);
 
 cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
     'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
     'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
-    'plotting',plotting,'damping',damping);
+    'options',options);

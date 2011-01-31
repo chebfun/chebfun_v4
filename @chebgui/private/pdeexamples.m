@@ -205,7 +205,9 @@ switch exampleNumber
         demotype = 'scalar';
 end
 
+options = struct('plotting',plotting);
+
 cg = chebgui('type','pde','domleft',a,'domright',b,'timedomain',t,'de',DE,...
     'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
     'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
-    'plotting',plotting);
+    'options',options);

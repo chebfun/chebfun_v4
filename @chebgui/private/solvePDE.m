@@ -172,7 +172,7 @@ if get(handles.button_pdeploton,'Value')
 else
     opts.Plot = 'off';
 end
-if get(handles.button_holdon,'Value');
+if guifile.options.pdeholdplot
     opts.HoldPlot = 'on';
 else
     opts.HoldPlot = 'off';

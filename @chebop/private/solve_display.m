@@ -40,6 +40,7 @@ switch(phase)
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Initial guess of solution')
+                if pref.grid, grid on, end
             end
         end
         
@@ -62,6 +63,7 @@ switch(phase)
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Initial guess of solution')
+                if pref.grid, grid on, end
             end
         end
     case 'iter'
@@ -90,11 +92,14 @@ switch(phase)
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Current solution')
+                if pref.grid, grid on, end
                 axes(guihandles{2})
                 if numel(du) == 1 % If we have only one function, plot update in red
                     plot(du,'r.-'), title('Current correction step')
+                    if pref.grid, grid on, end
                 else
                     plot(du,'.-'), title('Current correction step')
+                    if pref.grid, grid on, end
                 end
             end
         end
@@ -125,11 +130,14 @@ switch(phase)
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Current solution')
+                if pref.grid, grid on, end
                 axes(guihandles{2})
                 if numel(du) == 1 % If we have only one function, plot update in red
                     plot(du,'r.-'), title('Current correction step')
+                    if pref.grid, grid on, end
                 else
                     plot(du,'.-'), title('Current correction step')
+                    if pref.grid, grid on, end
                 end
             end
         end

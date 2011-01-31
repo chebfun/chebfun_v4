@@ -147,6 +147,8 @@ else
 end
 set(handles.tempedit,'FontSize',fs);
 
+% set(handles.check_uselatest,'String',{'Use latest';'solution'}); 
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -759,14 +761,14 @@ function menu_odedampednewton_Callback(hObject, eventdata, handles)
 
 
 function menu_odedampednewtonon_Callback(hObject, eventdata, handles)
-handles.guifile.damping = '1';
+handles.guifile.options.damping = '1';
 set(handles.menu_odedampednewtonon,'checked','on');
 set(handles.menu_odedampednewtonoff,'checked','off');
 guidata(hObject, handles);
 
 
 function menu_odedampednewtonoff_Callback(hObject, eventdata, handles)
-handles.guifile.damping = '0';
+handles.guifile.options.damping = '0';
 set(handles.menu_odedampednewtonon,'checked','off');
 set(handles.menu_odedampednewtonoff,'checked','on');
 guidata(hObject, handles);
@@ -777,14 +779,15 @@ function menu_odeplotting_Callback(hObject, eventdata, handles)
 function menu_pdeplotting_Callback(hObject, eventdata, handles)
 
 function menu_odeplottingon_Callback(hObject, eventdata, handles)
-handles.guifile.plotting = handles.ODEpause; % Obtain length of pause from handles
+% Obtain length of pause from handles
+handles.guifile.options.plotting = get(handles.menu_odeplottingpause,'UserData'); 
 set(handles.menu_odeplottingon,'checked','on');
 set(handles.menu_odeplottingoff,'checked','off');
 guidata(hObject, handles);
 
 
 function menu_odeplottingoff_Callback(hObject, eventdata, handles)
-handles.guifile.plotting = 'off'; % Should store value of plotting length
+handles.guifile.options.plotting = 'off'; % Should store value of plotting length
 set(handles.menu_odeplottingon,'checked','off');
 set(handles.menu_odeplottingoff,'checked','on');
 guidata(hObject, handles)
@@ -803,8 +806,8 @@ while ~valid
         % Store new value in the UserData of the object
         set(hObject,'UserData',pauseInput{1});
         % Update length of pause in the chebgui object if it's not off
-        if ~strcmp(handles.guifile.plotting,'off')
-            handles.guifile.plotting = pauseInput{1}; 
+        if ~strcmp(handles.guifile.options.plotting,'off')
+            handles.guifile.options.plotting = pauseInput{1}; 
         end
     else
         f = errordlg('Invalid input.', 'Chebgui error', 'modal');
@@ -822,8 +825,8 @@ function Untitled_3_Callback(hObject, eventdata, handles)
 
 
 % --------------------------------------------------------------------
-function Untitled_4_Callback(hObject, eventdata, handles)
-% hObject    handle to Untitled_4 (see GCBO)
+function menu_showgrid_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_showgrid (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -851,21 +854,23 @@ function menu_pdeplotfield_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function menu_pdeholdploton_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdeholdploton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+handles.guifile.options.pdeholdplot = 1; % Turn holding off
+set(handles.menu_pdeholdploton,'checked','on');
+set(handles.menu_pdeholdplotoff,'checked','off');
+guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
 function menu_pdeholdplotoff_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdeholdplotoff (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+handles.guifile.options.pdeholdplot = 0; % Turn holding off
+set(handles.menu_pdeholdploton,'checked','off');
+set(handles.menu_pdeholdplotoff,'checked','on');
+guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
 function menu_pdeplottingon_Callback(hObject, eventdata, handles)
-handles.guifile.plotting = 'on'; % Obtain length of pause from handles
+handles.guifile.options.plotting = 'on'; % Obtain length of pause from handles
 set(handles.menu_pdeplottingon,'checked','on');
 set(handles.menu_pdeplottingoff,'checked','off');
 guidata(hObject, handles);
@@ -873,7 +878,7 @@ guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function menu_pdeplottingoff_Callback(hObject, eventdata, handles)
-handles.guifile.plotting = 'off'; % Obtain length of pause from handles
+handles.guifile.options.plotting = 'off'; % Obtain length of pause from handles
 set(handles.menu_pdeplottingon,'checked','off');
 set(handles.menu_pdeplottingoff,'checked','on');
 guidata(hObject, handles);
@@ -899,3 +904,28 @@ while ~valid
     end
 end
 guidata(hObject, handles)
+
+
+% --- Executes on button press in check_uselatest.
+function check_uselatest_Callback(hObject, eventdata, handles)
+% hObject    handle to check_uselatest (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of check_uselatest
+
+
+% --------------------------------------------------------------------
+function menu_showgridon_Callback(hObject, eventdata, handles)
+handles.guifile.options.grid = 1; % Turn grid on
+set(handles.menu_showgridon,'checked','on');
+set(handles.menu_showgridoff,'checked','off');
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_showgridoff_Callback(hObject, eventdata, handles)
+handles.guifile.options.grid = 0; % Turn grid off
+set(handles.menu_showgridon,'checked','off');
+set(handles.menu_showgridoff,'checked','on');
+guidata(hObject, handles);
