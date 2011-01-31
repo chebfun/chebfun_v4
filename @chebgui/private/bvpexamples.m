@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 6;
+numberOfExamples = 7;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -123,7 +123,22 @@ switch exampleNumber
         damping = '1';
         plotting = '0.1';
         name = 'Van der Pol';
-        demotype = 'ivp';    
+        demotype = 'ivp';
+    case 7
+        a = '-1';
+        b = '1';
+        DE = '0.01*u" + 2*(1-x.^2).*u + u.^2';
+        DErhs = '1';
+        LBC = 'u';
+        LBCrhs = '0';
+        RBC = 'u';
+        RBCrhs = '0';
+        guess = '2*(x.^2-1).*(1-2./(1+20*x.^2))';
+        tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
+        name = 'Carrier equation';
+        demotype = 'bvp';
 end
 
 cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
