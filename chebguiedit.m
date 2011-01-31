@@ -22,7 +22,7 @@ function varargout = chebguiedit(varargin)
 
 % Edit the above text to modify the response to help chebguiedit
 
-% Last Modified by GUIDE v2.5 19-Jan-2011 12:21:38
+% Last Modified by GUIDE v2.5 31-Jan-2011 09:40:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;

@@ -46,11 +46,15 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         end
     end      
     
-    % Disable buttons, figures, etc. Set button to 'stop'
+    % Disable buttons, figures, etc.
     set(handles.toggle_useLatest,'Enable','off');
-    set(handles.button_clear,'Enable','off');
     set(handles.button_figsol,'Enable','off');
     set(handles.button_fignorm,'Enable','off');
+    % Pause button
+%     set(handles.button_clear,'Enable','off');
+    set(handles.button_clear,'String','Pause');
+    set(handles.button_clear,'BackgroundColor',[255 255 35]/256);
+    % Stop button
     set(handles.button_solve,'String','Stop');
     set(handles.button_solve,'BackgroundColor',[214 80 80]/256);
     drawnow
@@ -79,6 +83,8 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     end
     resetComponents(handles);
 else   % In stop mode
+    set(handles.button_clear,'String','Clear');
+    set(handles.button_clear,'BackgroundColor',0.701960784313725*[1 1 1]);
     set(handles.button_solve,'String','Solve');
     set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
     drawnow
@@ -89,7 +95,8 @@ function resetComponents(handles)
 % Enable buttons, figures, etc. Set button to 'solve' again
 set(handles.button_solve,'String','Solve');
 set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
-set(handles.button_clear,'Enable','on');
+set(handles.button_clear,'String','Clear');
+set(handles.button_clear,'BackgroundColor',0.701960784313725*[1 1 1]);
 set(handles.toggle_useLatest,'Enable','on');
 set(handles.button_figsol,'Enable','on');
 set(handles.button_fignorm,'Enable','on');

@@ -172,10 +172,17 @@ function varargout = chebguiwindow_OutputFcn(hObject, eventdata, handles)
 % -------------------------------------------------------------------------
 
 function button_clear_Callback(hObject, eventdata, handles)
-[newGUI handles] = cleargui(handles.guifile,handles);
-handles.guifile = newGUI;
-guidata(hObject, handles);
-
+if strcmp(get(handles.button_clear,'String'),'Clear')
+    [newGUI handles] = cleargui(handles.guifile,handles);
+    handles.guifile = newGUI;
+    guidata(hObject, handles);
+elseif strcmp(get(handles.button_clear,'String'),'Pause')
+    set(handles.button_clear,'String','Continue');
+    set(handles.button_clear,'BackgroundColor',[43 129 86]/256);
+else
+    set(handles.button_clear,'String','Pause');
+    set(handles.button_clear,'BackgroundColor',[255 255 35]/256);  
+end
 
 function button_solve_Callback(hObject, eventdata, handles)
 handles = solveGUI(handles.guifile,handles);
@@ -257,6 +264,15 @@ guidata(hObject, handles);
 
 function input_DE_RHS_Callback(hObject, eventdata, handles)
 handles.guifile.DErhs = get(hObject,'String');
+if get(handles.button_ode,'Value') && ~isempty(strfind(handles.guifile.DErhs,'_'))
+    switch2pde = questdlg('You appear to be entering a PDE. Would you like to swtich the PDE mode?', ...
+        'Switch to PDE mode?', 'Yes', 'No','Yes');
+    if strcmp(switch2pde,'Yes')
+        set(handles.button_ode,'Value',0);
+        set(handles.button_ode,'Value',1);
+        button_pde_Callback(hObject, eventdata, handles);
+    end
+end
 guidata(hObject, handles);
 
 function input_LBC_RHS_Callback(hObject, eventdata, handles) %#ok<*DEFNU>

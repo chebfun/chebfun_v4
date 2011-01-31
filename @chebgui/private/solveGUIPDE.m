@@ -196,6 +196,7 @@ if get(handles.checkbox_fixN,'Value')
 end
 guihandles{7} = allVarNames;
 guihandles{8} = indVarName;
+guihandles{9} = handles.button_clear;
 opts.guihandles = guihandles;
 
 % error
