@@ -47,7 +47,8 @@ if strcmp(problemType,'bvp')
                     % Open the new file in the editor
                     open([pathname,filename])
                 catch ME
-                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+                    errordlg('Error in exporting to .m file. Please make sure there are no syntax errors.',...
+                        'Export chebgui','modal');
                 end
             end
         case '.mat'

@@ -16,15 +16,15 @@ fprintf(fid,'%% Automatically created with from chebbvp GUI by user %s\n',userNa
 fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 % Extract information from the GUI fields
-a = get(handles.dom_left,'String');
-b = get(handles.dom_right,'String');
-deInput = get(handles.input_DE,'String');
-lbcInput = get(handles.input_LBC,'String');
-rbcInput = get(handles.input_RBC,'String');
-deRHSInput = get(handles.input_DE_RHS,'String');
-lbcRHSInput = get(handles.input_LBC_RHS,'String');
-rbcRHSInput = get(handles.input_RBC_RHS,'String');
-guessInput = get(handles.input_GUESS,'String');
+a = guifile.DomLeft;
+b = guifile.DomRight;
+deInput = guifile.DE;
+lbcInput = guifile.LBC;
+rbcInput = guifile.RBC;
+deRHSInput = guifile.DErhs;
+lbcRHSInput = guifile.LBCrhs;
+rbcRHSInput = guifile.RBCrhs;
+guessInput = guifile.guess;
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -117,7 +117,7 @@ fprintf(fid,'\n%% Setup preferences for solving the problem \n');
 fprintf(fid,'options = cheboppref;\n');
 
 % Option for tolerance
-tolInput = get(handles.input_tol,'String');
+tolInput = guifile.tol;
 
 if ~isempty(tolInput)
     fprintf(fid,'\n%% Option for tolerance \n');
@@ -128,10 +128,10 @@ end
 fprintf(fid,'options.display = ''iter'';\n');
 
 % Option for damping
-dampedOnInput = get(handles.damped_on,'Value');
+dampedOnInput = guifile.damping;
 
 fprintf(fid,'\n%% Option for damping \n');
-if dampedOnInput
+if strcmp(dampedOnInput,'1')
     fprintf(fid,'options.damped = ''on'';\n');
 else
     fprintf(fid,'options.damped = ''off'';\n');
@@ -141,7 +141,7 @@ end
 plottingOnInput = guifile.plotting;
 
 fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
-fprintf(fid,'options.plotting = %s;\n',plottingOnInput = guifile.plotting;);
+fprintf(fid,'options.plotting = %s;\n',plottingOnInput);
 
 
 

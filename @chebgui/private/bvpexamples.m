@@ -91,7 +91,7 @@ switch exampleNumber
         guess = '';
         tol = '1e-10';
         damping = '0';
-        plotting = '0.1';
+        plotting = '0.4';
         name = 'Coupled system';
         demotype = 'system';
     case 5

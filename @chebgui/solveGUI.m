@@ -36,7 +36,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         return
         end
     end
-    tol = get(handles.input_tol,'string');
+    tol = guifile.tol;
     if ~isempty(tol)
         tolnum = str2double(tol);
         if isnan(tolnum) || isinf(tolnum) || isnan(tolnum)

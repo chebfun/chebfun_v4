@@ -159,6 +159,13 @@ else
     solve_display(pref,guihandles,'init',u);
 end
 
+% Pause to show the initial guess before starting the iteration
+if strcmp(plotMode,'pause')
+    pause
+else
+    pause(plotMode)
+end
+
 while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
     counter = counter + 1;
         

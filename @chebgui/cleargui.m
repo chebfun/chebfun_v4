@@ -12,7 +12,7 @@ set(handles.input_LBC_RHS,'String','');
 set(handles.input_RBC_RHS,'String','');
 set(handles.input_GUESS,'String','');
 set(handles.timedomain,'String','');
-set(handles.input_tol,'String','1e-10'); % The default tolerance
+set(handles.menu_tolerance,'UserData','1e-10'); % The default tolerance
 
 
 % Clear the figures

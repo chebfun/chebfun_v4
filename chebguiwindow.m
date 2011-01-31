@@ -122,9 +122,10 @@ end
 % for the value of the buttons every time)
 handles.problemType = handles.guifile.type;
 
-% Store the default length of pausing between plots for BVPs in the
-% userdata field.
+% Store the default length of pausing between plots for BVPs and the
+% tolerance in the userdata field of relevant menu objects.
 set(handles.menu_odeplottingpause,'UserData','0.5');
+set(handles.menu_tolerance,'UserData','1e-10');
 
 % Populate the Demos menu
 loaddemos(handles.guifile,handles,'bvp')
@@ -860,3 +861,25 @@ handles.guifile.plotting = 'off'; % Obtain length of pause from handles
 set(handles.menu_pdeplottingon,'checked','off');
 set(handles.menu_pdeplottingoff,'checked','on');
 guidata(hObject, handles);
+
+
+function menu_tolerance_Callback(hObject, eventdata, handles)
+options.WindowStyle = 'modal';
+valid = 0;
+while ~valid
+    tolInput = inputdlg('Tolerance for solution:','Set tolerance',...
+        1,{get(hObject,'UserData')},options);
+    if isempty(tolInput) % User pressed cancel
+        break
+    elseif ~isempty(str2num(tolInput{1})) % Valid input
+        valid = 1;
+        % Store new value in the UserData of the object
+        set(hObject,'UserData',tolInput{1});
+        % Update the chebgui object
+        handles.guifile.tol = tolInput{1};
+    else
+        f = errordlg('Invalid input.', 'Chebgui error', 'modal');
+        uiwait(f); 
+    end
+end
+guidata(hObject, handles)

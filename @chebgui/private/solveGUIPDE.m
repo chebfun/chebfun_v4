@@ -25,7 +25,7 @@ deRHSInput = get(handles.input_DE_RHS,'String');
 lbcRHSInput = get(handles.input_LBC_RHS,'String');
 rbcRHSInput = get(handles.input_RBC_RHS,'String');
 guessInput = get(handles.input_GUESS,'String');
-tolInput = get(handles.input_tol,'String');
+tolInput = guifile.tol;
 tt = eval(get(handles.timedomain,'String'));
 
 % Wrap all input strings in a cell (if they're not a cell already)

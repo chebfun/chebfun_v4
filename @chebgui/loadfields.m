@@ -10,11 +10,13 @@ set(handles.input_LBC_RHS,'String',guifile.LBCrhs);
 set(handles.input_RBC,'String',guifile.RBC);
 set(handles.input_RBC_RHS,'String',guifile.RBCrhs);
 set(handles.input_GUESS,'String',guifile.guess);
-set(handles.input_tol,'String',guifile.tol);
 
 if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);
 end
+
+% Store the tolerance in the UserData of the tolerance menu object
+set(handles.menu_tolerance,'UserData',guifile.tol);
 
 % Change the checking of menu options
 if strcmpi(guifile.type,'pde')
