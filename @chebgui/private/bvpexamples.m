@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 5;
+numberOfExamples = 6;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -109,6 +109,21 @@ switch exampleNumber
         plotting = '0.1';
         name = 'IVP';
         demotype = 'ivp';
+    case 6
+        a = '0';
+        b = '15';
+        DE = 'u"-(1-u.^2)*u''+u';
+        DErhs = '0';
+        LBC = {'u';'u'''};
+        LBCrhs = {'2';'0'};
+        RBC = '';
+        RBCrhs = '';
+        guess = '';
+        tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
+        name = 'Van der Pol';
+        demotype = 'ivp';    
 end
 
 cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
