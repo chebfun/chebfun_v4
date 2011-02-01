@@ -1,4 +1,4 @@
-function map = maps(varargin)
+function map = maps(f)
 % CHEBFUN MAPS
 %  Rather than using Chebyshev polynomial interpolants, chebfun can use
 %  non-polynomial bases defined by maps. This is useful in a number of
@@ -18,11 +18,6 @@ function map = maps(varargin)
 %    chebfun(@(x) tanh(100*pi*x/2), 'map', {'slit',1i/100});
 %  (A keen user might want to compare the lengths of these chebfuns with
 %  those not using maps!)
-%
-%  M = MAPS({MAPNAME,MAPPARAMS},INT) returns a map structure for the
-%  built-in map type MAPNAME with parameters MAPPARAMS where INT is 2 by 1
-%  vector containing the images of -1 and 1 under the map. INT may also be
-%  a domain object, and is assumed to be [-1,1] if not given
 %
 %  The LINEAR map is simply a linear scaling and is all the time in chebfun
 %  when working on an interval other than [-1,1]. It does not contain and
@@ -54,9 +49,17 @@ function map = maps(varargin)
 %  SING type maps can be called directly in the constructor via
 %     f = chebfun('(4-x.^2).^.3',[-2 2],'singmap',[.25 .25])
 %
+% M = MAPS({MAPNAME,MAPPARAMS},INT) returns a map structure for the
+%  built-in map type MAPNAME with parameters MAPPARAMS where INT is 2 by 1
+%  vector containing the images of -1 and 1 under the map. INT may also be
+%  a domain object, and is assumed to be [-1,1] if not given.
 % M = MAPS(F) returns a cell structure of the maps used by the chebfun F.
 % M = MAPS(D) returns the default map for the domain D.
 
-% This code is just a wrapper for fun/maps.
-
-map = maps(fun,varargin{:});
+map = {};
+for j = 1:numel(f)
+    for k = 1:f(j).nfuns
+        map{j}{k} = f(j).funs(k).map;
+    end
+end
+    
