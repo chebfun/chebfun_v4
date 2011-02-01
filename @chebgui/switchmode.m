@@ -14,12 +14,15 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     
     set(handles.text_initial,'String','Initial guess')
     
-    % Change the list of available options
+    % Change the list of available options.
+    % Enable ODE options
     set(handles.menu_odedampednewton,'Enable','On')
     set(handles.menu_odeplotting,'Enable','On')
+    % Disable PDE options
     set(handles.menu_pdeplotting,'Enable','Off')
     set(handles.menu_pdeholdplot,'Enable','Off')
     set(handles.menu_pdefix,'Enable','Off')
+    set(handles.menu_fixspacedisc,'Enable','Off')
     
     
     % Clear the figures
@@ -52,11 +55,14 @@ else % Going into PDE mode
     set(handles.timedomain,'Visible','on')
     
     % Change the list of available options
+    % Disable ODE options
     set(handles.menu_odedampednewton,'Enable','Off')
     set(handles.menu_odeplotting,'Enable','Off')
+    % Enable PDE options
     set(handles.menu_pdeplotting,'Enable','On')
     set(handles.menu_pdeholdplot,'Enable','On')
     set(handles.menu_pdefix,'Enable','On')
+    set(handles.menu_fixspacedisc,'Enable','On')
     
     % Clear the figures
     initialisefigures(handles)

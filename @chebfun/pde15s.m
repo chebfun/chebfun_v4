@@ -434,6 +434,8 @@ if doplot
         else
             ylabel(varnames);
         end
+        % Determines whether grid is on
+        if opt.guihandles{10}, grid on, end
     end
     drawnow
 end
@@ -506,6 +508,8 @@ try
                 else
                     ylabel(varnames);
                 end
+                % Determines whether grid is on
+                if opt.guihandles{10}, grid on, end
             end
             title(sprintf('t = %.3f,  len = %i',tt(nt+1),curlen)), drawnow
         elseif guiflag

@@ -53,7 +53,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     % Pause button
 %     set(handles.button_clear,'Enable','off');
     set(handles.button_clear,'String','Pause');
-    set(handles.button_clear,'BackgroundColor',[255 255 35]/256);
+    set(handles.button_clear,'BackgroundColor',[255 179 0]/256);
     % Stop button
     set(handles.button_solve,'String','Stop');
     set(handles.button_solve,'BackgroundColor',[214 80 80]/256);

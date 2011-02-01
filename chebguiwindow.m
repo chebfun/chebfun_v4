@@ -1,10 +1,52 @@
 function varargout = chebguiwindow(varargin)
-%CHEBGUIWINDOW chebfun BVP and PDE GUI for solvebvp and pde15s
-% CHEBGUIWINDOW brings up the chebfun GUI for solving boundary value problems
-% (BVPs) and partial differential equations (PDEs). When the GUI is shown,
-% its field are loaded with a random BVP example from a collection of
-% examples.
-%
+%CHEBGUIWINDOW Chebfun BVP and PDE GUI for solvebvp and pde15s.
+% INTRODUCTION
+% 
+% Chebgui is a graphical user interface to Chebfun's capabilities
+% for solving ODEs and PDEs (ordinary and partial differential
+% equations).  More precisely, it deals with these types of
+% problems:
+% 
+% ODE BVP (boundary-value problem): an ODE or system of ODEs on
+% an interval [a,b] with boundary conditions at both boundaries.
+% 
+% ODE IVP (initial-value problem): an ODE or system of ODEs on an
+% interval [a,b] with boundary conditions at just one boundary.
+% (However, for complicated IVPs like the Lorenz equations, other
+% more specialized methods will be much more effective.)
+% 
+% PDE BVP: a time-dependent problem of the form u_t = N(u,x),
+% where N is a linear or nonlinear differential operator.
+% 
+% For ODEs, Chebgui assumes that the independent variable, which
+% varies over the interval [a,b], is either x or t, and that
+% the dependent variable(s) have name(s) different from x and t.
+% 
+% For PDEs, Chebgui assumes that the space variable, on [a,b],
+% is x, and that the time variable, which ranges over an interval
+% [t1,t2] is t.
+% 
+% Here's a three-sentence sketch of how the solutions are
+% computed.  Both types of ODE problems are solved by Chebfun's
+% automated Chebyshev spectral methods underlying the Chebfun
+% commands <backslash> and SOLVEBVP.  The discretizations
+% involved will be described in a forthcoming paper by Driscoll
+% and Hale, and the Newton and damped Newton iterations used to
+% handle nonlinearity will be described in a forthcoming paper
+% by Birkisson and Driscoll.  The PDE problems are solved by
+% Chebfun's PDE15S method, due to Hale, which is based on spectral
+% discretization in x coupled with Matlab's ODE15S solution in t.
+% 
+% To use Chebgui, the simplest method is to type chebgui at
+% the Matlab prompt.  The GUI will appear with a demo already
+% loaded and ready to run; you can get its solution by pressing
+% the green SOLVE button.  To try other preloaded examples, open
+% the DEMOS menu at the top.  To input your own example on the
+% screen, change the windows in ways which we hope are obvious.
+% Inputs are vectorized, so x*u and x.*u are equivalent, for
+% example.  Derivatives are indicated by single or double primes,
+% so a second derivative is u'' or u".
+% 
 % The GUI allows various types of syntax for describing the differential
 % equation and boundary conditions of problems. The differential equations
 % can either be on anonymous function form, e.g.
@@ -13,7 +55,7 @@ function varargout = chebguiwindow(varargin)
 %
 % or a "natural syntax form", e.g.
 %   u''+x.*sin(u)
-%
+% 
 % Boundary conditions can be on either of these two forms, but furthermore,
 % one can specify homogeneous Dirichlet or Neumann conditions simply by
 % typing 'dirichlet' or 'neumann' in the relevant fields.
@@ -28,17 +70,18 @@ function varargout = chebguiwindow(varargin)
 %
 %   u'+sin(v)
 %   cos(u)+v'
+% 
+% Finally, the most valuable Chebgui capability of all is
+% Export-to-M-file in the FILE -> EXPORT menu.  With this feature,
+% you can turn an ODE or PDE solution from the GUI into an M-file
+% in standard Chebfun syntax.  This is a great starting point
+% for more serious explorations.
 %
-% The GUI offers users functionality to export problems by pressing the
-% export button. This brings up a new dialog from which the user can select
-% to export the problem to an executable .m file, or to export the
-% variables to either a .mat file or directly into the Matlab workspace.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 %
 % See also chebop/solvebvp, chebfun/pde15s
 %
-% Copyright 2002-2010 by The Chebfun Team.
+% Copyright 2002-2011 by The Chebfun Team.
 
 
 % Matlab automatically inserts comments for every callback and create
@@ -362,13 +405,15 @@ if get(handles.button_ode,'Value');
     latestSolution = handles.latestSolution;
     figure
     plot(latestSolution,'Linewidth',2), title('Solution at end of iteration')
+    % Turn on grid
+    if handles.guifile.options.grid, grid on,  end
 else
     u = handles.latestSolution;
     tt = handles.latestSolutionT;
     
     figure
     if ~iscell(u)
-        plot(u(:,end))
+        plot(u(:,end),'Linewidth',2)
         title('Solution at final time.')
     else
         v = chebfun;
@@ -376,9 +421,11 @@ else
             uk = u{k};
             v(:,k) = uk(:,end);
         end
-        plot(v);
+        plot(v,'Linewidth',2);
         title('Solution at final time.')
     end
+    % Turn on grid
+    if handles.guifile.options.grid, grid on,  end
 end
 
 
@@ -929,3 +976,10 @@ handles.guifile.options.grid = 0; % Turn grid off
 set(handles.menu_showgridon,'checked','off');
 set(handles.menu_showgridoff,'checked','on');
 guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_fixspacedisc_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_fixspacedisc (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

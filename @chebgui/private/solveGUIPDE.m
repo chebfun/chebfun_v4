@@ -197,6 +197,7 @@ end
 guihandles{7} = allVarNames;
 guihandles{8} = indVarName;
 guihandles{9} = handles.button_clear;
+guihandles{10} = guifile.options.grid;
 opts.guihandles = guihandles;
 
 % error
