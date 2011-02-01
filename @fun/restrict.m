@@ -64,12 +64,12 @@ elseif (subint(1) > ends(1) && g.exps(1)) || (subint(2) < ends(2) && g.exps(2)) 
 
 else % Linear case with no removed exps is simple
     
+    exps = g.exps;
     map = linear(subint);
     xcheb = chebpts(g.n);
-    g.vals = bary(map.for(xcheb),g.vals,g.map.for(xcheb));
+    g.vals = bary(map.for(xcheb),g.vals,g.map.for(xcheb))./(diff(g.map.par(1:2))./diff(subint))^sum(exps);
     g.map = map;
     g = simplify(g);
-    
-end
 
+end
 

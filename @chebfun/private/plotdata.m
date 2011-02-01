@@ -122,7 +122,6 @@ if isempty(f)
     dg = domain(g);
     if a~=dg(1), gl(1,:) = feval(g,a);   end
     if b~=dg(end), gl(end,:) = feval(g,b);   end
-    
     % deal with marks breakpoints
     for k = 1:numel(g)
         gk = g(:,k);
@@ -159,8 +158,16 @@ if isempty(f)
         end 
         expsk = [expsk ; expskj(2)];
         
+
+        exps = reshape(get(g,'exps')',2*gk.nfuns,1);
+        expsk = [exps(1) ; zeros(gk.nfuns,1)];
+        for j = 1:gk.nfuns-1
+            expsk(j+1) = min(exps(2*j),exps(2*j+1));
+        end
+        expsk(gk.nfuns+1) = exps(end);
+        
         % Auto adjust y limits based upon standard deviation
-        if any(expsk<0)
+        if any(any(get(gk,'exps')<0))
             infy = true;
             val = 0.1; mintrim = 5;
             

@@ -123,15 +123,18 @@ else
 end
 smooth = ~loc; % Location where endpints where introduced.
 % If an endpoint has been introduced, make sure h is continuous there
-if any(smooth)
+if any(smooth) 
     for k = 2:h.nfuns
-        if smooth(k)
+        h.funs(k-1) = extract_roots(h.funs(k-1));
+        if smooth(k) && 0
             % decides which pice is shorter and assume that is the more
             % accurate one
-            if h.funs(k-1).n < h.funs(k).n 
-               h.funs(k).vals(1) = h.funs(k-1).vals(end);
+            rval = get(h.funs(k-1),'rval');
+            lval = get(h.funs(k),'lval');
+            if h.funs(k-1).n < h.funs(k).n && isfinite(rval)
+               h.funs(k).vals(1) = rval;
             else
-               h.funs(k-1).vals(end) = h.funs(k).vals(1);
+               h.funs(k-1).vals(end) = lval;
             end
             % Take the value that is largest
 %             if h.funs(k-1).vals(end) > h.funs(k).vals(1)
@@ -139,7 +142,7 @@ if any(smooth)
 %             else
 %                 h.funs(k-1).vals(end) = h.funs(k).vals(1);
 %             end
-            h.imps(1,k) = h.funs(k-1).vals(end);
+            h.imps(1,k) = get(h.funs(k-1),'rval');
         end
     end  
 end
