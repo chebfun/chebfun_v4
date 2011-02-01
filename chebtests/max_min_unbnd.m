@@ -4,7 +4,7 @@ function pass = max_min_unbnd
 
 tol = 10*chebfunpref('eps');
 
-x = chebfun('x',[-1 2]);
+x = chebfun('x',[-1 0 2]);
 g = 1./x;
 
 fmax = max(g,5);
