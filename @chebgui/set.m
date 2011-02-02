@@ -40,8 +40,8 @@ switch lower(propName)
         cg.RBCrhs = vin;
     case 'tol'
         cg.tol = vin;
-    case 'guess'
-        cg.guess= vin;
+    case 'init'
+        cg.init= vin;
     case 'options'
         if isempty(propName2)
             cg.options = vin;

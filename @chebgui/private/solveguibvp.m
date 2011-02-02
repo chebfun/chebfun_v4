@@ -1,4 +1,4 @@
-function handles = solveGUIBVP(guifile,handles)
+function varargout = solveguibvp(guifile,handles)
 % SOLVEGUIBVP
 
 % Create a domain and the linear function on that domain. We use xt for the
@@ -6,6 +6,12 @@ function handles = solveGUIBVP(guifile,handles)
 % or t is used for the linear function.
 defaultTol = max(cheboppref('restol'),cheboppref('deltol'));
 
+% Handles will be an empty variable if we are solving without using the GUI
+if nargin < 2
+    guiMode = 0;
+else
+    guiMode = 1;
+end
 a = str2num(guifile.DomLeft);
 b = str2num(guifile.DomRight);
 [d,xt] = domain(a,b);
@@ -17,7 +23,7 @@ rbcInput = guifile.RBC;
 deRHSInput = guifile.DErhs;
 lbcRHSInput = guifile.LBCrhs;
 rbcRHSInput = guifile.RBCrhs;
-guessInput = guifile.guess;
+initInput = guifile.init;
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -30,8 +36,11 @@ if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
 % match
 
 
-% Find whether the user wants to use the latest solution as a guess
-useLatest = strcmpi(get(handles.input_GUESS,'String'),'Using latest solution');
+% Find whether the user wants to use the latest solution as a guess. This is
+% only possible when calling from the GUI
+if guiMode
+    useLatest = strcmpi(get(handles.input_GUESS,'String'),'Using latest solution');
+end
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
@@ -71,17 +80,17 @@ else
 end
 
 % Create the chebop
-if useLatest
+if guiMode && useLatest
     guess = handles.latestSolution;
     N = chebop(d,DE,LBC,RBC,guess);
-elseif isempty(guessInput)
-    N = chebop(d,DE,LBC,RBC);
-else
-    guess = eval(guessInput);
+elseif ~isempty(initInput)
+    guess = eval(initInput);
     if isnumeric(guess)
         guess = 0*xt+guess;
     end
     N = chebop(d,DE,LBC,RBC,guess);
+else
+    N = chebop(d,DE,LBC,RBC);
 end
 
 tolInput = guifile.tol;
@@ -105,6 +114,7 @@ options.restol = tolNum;
 % Always display iter. information
 options.display = 'iter';
 
+% Obtain information about damping and plotting
 dampedOnInput = str2num(guifile.options.damping);
 plottingOnInput = str2num(guifile.options.plotting);
 
@@ -114,57 +124,80 @@ else
     options.damped = 'off';
 end
 
-set(handles.iter_list,'String','');
-set(handles.iter_text,'Visible','On');
-set(handles.iter_list,'Visible','On');
-
-if isempty(plottingOnInput)
-    options.plotting = 'off';
+if isempty(plottingOnInput) % If empty, we have either 'off' or 'pause'
+    if strcmpi(guifile.options.plotting,'pause')
+        options.plotting = 'pause';
+    else
+        options.plotting = 'off';
+    end
 else
     options.plotting = plottingOnInput;
 end
 
+% Do we want to show grid?
 options.grid = guifile.options.grid;
 
-guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
-    handles.iter_list,handles.text_norm,handles.button_solve};
-set(handles.text_norm,'Visible','Off');
-set(handles.fig_sol,'Visible','On');
-set(handles.fig_norm,'Visible','On');
 
-[u vec] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
-
-% Store in handles latest chebop, solution, vector of norm of updates etc.
-% (enables exporting later on)
-handles.latestSolution = u;
-handles.latestNorms = vec;
-handles.latestChebop = N;
-handles.latestRHS = DE_RHS;
-handles.latestOptions = options;
-
-% Notify the GUI we have a solution available
-handles.hasSolution = 1;
-
-set(handles.text_norm,'Visible','On');
-
-
-axes(handles.fig_sol)
-plot(u,'Linewidth',2), 
-if guifile.options.grid
-    grid on
+% Various things we only need to think about when in the GUI, changes GUI compenents.
+if guiMode
+    set(handles.iter_list,'String','');
+    set(handles.iter_text,'Visible','On');
+    set(handles.iter_list,'Visible','On');
+    
+    guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
+        handles.iter_list,handles.text_norm,handles.button_solve};
+    set(handles.text_norm,'Visible','Off');
+    set(handles.fig_sol,'Visible','On');
+    set(handles.fig_norm,'Visible','On');
 end
-if length(vec) > 1
-    title('Solution at end of iteration')
+
+% Call solvebvp with different arguments depending on whether we're in GUI
+% or not. If we're not in GUI mode, we can finish here.
+if guiMode
+    [u vec] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
 else
-    title('Solution');
+    [u vec] = solvebvp(N,DE_RHS,'options',options);
+    varargout{1} = u;
+    varargout{2} = vec;
 end
-axes(handles.fig_norm)
-semilogy(vec,'-*','Linewidth',2),title('Norm of updates'), xlabel('Iteration number')
-if length(vec) > 1
-    XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
-    set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on
-else % Don't display fractions on iteration plots
-    set(gca,'XTick', 1)
+
+% Now do some more stuff specific to GUI
+if guiMode
+    % Store in handles latest chebop, solution, vector of norm of updates etc.
+    % (enables exporting later on)
+    handles.latestSolution = u;
+    handles.latestNorms = vec;
+    handles.latestChebop = N;
+    handles.latestRHS = DE_RHS;
+    handles.latestOptions = options;
+    
+    % Notify the GUI we have a solution available
+    handles.hasSolution = 1;
+    
+    set(handles.text_norm,'Visible','On');
+    
+    
+    axes(handles.fig_sol)
+    plot(u,'Linewidth',2),
+    if guifile.options.grid
+        grid on
+    end
+    if length(vec) > 1
+        title('Solution at end of iteration')
+    else
+        title('Solution');
+    end
+    axes(handles.fig_norm)
+    semilogy(vec,'-*','Linewidth',2),title('Norm of updates'), xlabel('Iteration number')
+    if length(vec) > 1
+        XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
+        set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on
+    else % Don't display fractions on iteration plots
+        set(gca,'XTick', 1)
+    end
+    
+    % Return the handles as varargout.
+    varargout{1} = handles;
 end
 
 end

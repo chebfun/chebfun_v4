@@ -293,7 +293,7 @@ guidata(hObject, handles);
 % -------------------------------------------------------------------------
 
 function input_GUESS_Callback(hObject, eventdata, handles)
-handles.guifile.guess = get(hObject,'String');
+handles.guifile.init = get(hObject,'String');
 guidata(hObject, handles);
 
 
@@ -308,8 +308,14 @@ guidata(hObject, handles);
 
 
 function input_DE_RHS_Callback(hObject, eventdata, handles)
-handles.guifile.DErhs = get(hObject,'String');
-if get(handles.button_ode,'Value') && ~isempty(strfind(handles.guifile.DErhs,'_'))
+inputString = get(hObject,'String');
+handles.guifile.DErhs = inputString;
+% Check whether we might be entering into PDE mode.
+% Find whether any line contains _
+underscoreLocations = strfind(cellstr(inputString),'_');
+% Check whether the results are empty using cellfun
+containsUnderscore = ~cellfun(@isempty,underscoreLocations);
+if get(handles.button_ode,'Value') && any(containsUnderscore)
     switch2pde = questdlg('You appear to be entering a PDE. Would you like to swtich the PDE mode?', ...
         'Switch to PDE mode?', 'Yes', 'No','Yes');
     if strcmp(switch2pde,'Yes')
@@ -470,11 +476,6 @@ function button_pdeploton_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of button_pdeploton
 % set(handles.button_pdeplotoff,'Value',0);
 onoff = 'on';
-set(handles.button_pdeplotoff,'Value',0);
-set(handles.button_pdeploton,'Value',1);
-set(handles.hold_text,'Enable',onoff);
-set(handles.button_holdon,'Enable',onoff);
-set(handles.button_holdoff,'Enable',onoff);
 set(handles.ylim_text,'Enable',onoff);
 set(handles.ylim1,'Enable',onoff);
 set(handles.text33,'Enable',onoff);
@@ -485,11 +486,6 @@ set(handles.input_plotstyle,'Enable',onoff);
 
 function button_pdeplotoff_Callback(hObject, eventdata, handles)
 onoff = 'off';
-set(handles.button_pdeploton,'Value',0);
-set(handles.button_pdeplotoff,'Value',1);
-set(handles.hold_text,'Enable',onoff);
-set(handles.button_holdon,'Enable',onoff);
-set(handles.button_holdoff,'Enable',onoff);
 set(handles.ylim_text,'Enable',onoff);
 set(handles.ylim1,'Enable',onoff);
 set(handles.text33,'Enable',onoff);
@@ -981,5 +977,26 @@ guidata(hObject, handles);
 % --------------------------------------------------------------------
 function menu_fixspacedisc_Callback(hObject, eventdata, handles)
 % hObject    handle to menu_fixspacedisc (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_annotateplots_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_annotateplots (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdefixon_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdefixon (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_pdefixoff_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_pdefixoff (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)

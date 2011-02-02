@@ -26,6 +26,8 @@ switch lower(propName)
         val = cg.RBCrhs;
     case 'tol'
         val = cg.tol;
+    case 'init'
+        val = cg.init;
     case 'options'
         if isempty(propName2)
             val = cg.options;

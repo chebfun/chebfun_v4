@@ -21,8 +21,8 @@ end
 if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     
     % Some basic checking of the inputs.
-    a = str2double(get(handles.dom_left,'String'));
-    b = str2double(get(handles.dom_right,'String'));
+    a = str2num(get(handles.dom_left,'String'));
+    b = str2num(get(handles.dom_right,'String'));
     if b <= a
         s = sprintf('Error in constructing domain. [%f,%f] is not valid.',a,b);
         errordlg(s, 'Chebgui error', 'modal');
@@ -38,8 +38,8 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     end
     tol = guifile.tol;
     if ~isempty(tol)
-        tolnum = str2double(tol);
-        if isnan(tolnum) || isinf(tolnum) || isnan(tolnum)
+        tolnum = str2num(tol);
+        if isnan(tolnum) || isinf(tolnum) || isempty(tolnum)
             s = sprintf('Invalid tolerance, ''%s''.',tol);
             errordlg(s, 'Chebgui error', 'modal');
             return
@@ -63,7 +63,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     % work
     try
         if get(handles.button_ode,'Value')
-            handles = solveGUIBVP(guifile,handles);
+            handles = solveguibvp(guifile,handles);
         else
             handles = solveGUIPDE(guifile,handles);
         end

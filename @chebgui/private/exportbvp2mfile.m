@@ -24,7 +24,7 @@ rbcInput = guifile.RBC;
 deRHSInput = guifile.DErhs;
 lbcRHSInput = guifile.LBCrhs;
 rbcRHSInput = guifile.RBCrhs;
-guessInput = guifile.guess;
+initInput = guifile.init;
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -103,13 +103,13 @@ if ~isempty(rbcInput{1})
 end
 
 % Set up for the initial guess of the solution.
-useLatest = strcmpi(guessInput,'Using latest solution');
+useLatest = strcmpi(initInput,'Using latest solution');
 if useLatest
     fprintf(fid,['\n%% Note that it is not possible to use the "Use latest"',...
         'option \n%% when exporting to .m files. \n']);
-elseif ~isempty(guessInput)
+elseif ~isempty(initInput)
     fprintf(fid,'\n%% Assign an initial guess to the chebop.\n');
-    fprintf(fid,'N.guess = %s;\n',vectorize(char(guessInput)));
+    fprintf(fid,'N.guess = %s;\n',vectorize(char(initInput)));
 end
 
 % Set up preferences
@@ -148,7 +148,7 @@ fprintf(fid,'options.plotting = %s;\n',plottingOnInput);
 fprintf(fid,['\n%% Solve the problem using solvebvp (a function which ' ...
     'offers same\n%% functionality as nonlinear backslash but more '...
     'customizeability) \n']);
-fprintf(fid,'[u normVec] = solvebvp(N,rhs,options);\n');
+fprintf(fid,'[u normVec] = solvebvp(N,rhs,''options'',options);\n');
 
 fprintf(fid,'\n%% Create plot of the solution and the norm of the updates\n');
 

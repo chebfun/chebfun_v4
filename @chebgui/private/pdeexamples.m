@@ -29,7 +29,7 @@ switch exampleNumber
         LBCrhs = '';
         RBC = '';
         RBCrhs = '';
-        guess = '';
+        init = '';
         tol = '';
         plotting = '';
         name = '';
@@ -44,7 +44,7 @@ switch exampleNumber
         LBCrhs = '';
         RBC = 'dirichlet';
         RBCrhs = '';
-        guess = 'sin(2*x)';
+        init = 'sin(2*x)';
         tol = '1e-6';
         plotting = 'on';
         name = DE;
@@ -59,7 +59,7 @@ switch exampleNumber
         LBCrhs = '';
         RBC = 'neumann';
         RBCrhs = '';
-        guess = '(1-x.^2).^2.*(1+sin(12*x))/2';
+        init = '(1-x.^2).^2.*(1+sin(12*x))/2';
         tol = '1e-6';
         plotting = 'on';
         name = 'Allen-Cahn (neumann)';
@@ -74,7 +74,7 @@ switch exampleNumber
         LBCrhs = '-1';
         RBC = 'u';
         RBCrhs = '1';
-        guess = '0.53*x-.47*sin(1.5*pi*x)';
+        init = '0.53*x-.47*sin(1.5*pi*x)';
         tol = '1e-6';
         plotting = 'on';
         name = 'Allen-Cahn (dirichlet)';
@@ -89,7 +89,7 @@ switch exampleNumber
         LBCrhs = '';
         RBC = 'dirichlet';
         RBCrhs = '';
-        guess = '(1-x.^2).*exp(-30*(x+.5).^2)';
+        init = '(1-x.^2).*exp(-30*(x+.5).^2)';
         tol = '1e-6';
         plotting = 'on';
         name = 'Burgers''';
@@ -104,7 +104,7 @@ switch exampleNumber
         LBCrhs = {'1','2'};
         RBC = {'u','u'''};
         RBCrhs = {'1','2'};
-        guess = '1 + 0.5*exp(-40*x.^2)';
+        init = '1 + 0.5*exp(-40*x.^2)';
         tol = '1e-6';
         plotting = 'on';
         name = 'KS';
@@ -119,7 +119,7 @@ switch exampleNumber
         LBCrhs = {'0';'0'};
         RBC = {'u''';'v'''};
         RBCrhs = {'0';'0'};
-        guess = {'1';'1'};
+        init = {'1';'1'};
         tol = '1e-6';
         plotting = 'on';
         name = 'System 1';
@@ -134,7 +134,7 @@ switch exampleNumber
         LBCrhs = {'0';'0'};
         RBC = {'u''';'v'''};
         RBCrhs = {'0';'0'};
-        guess = {'1';'1'};
+        init = {'1';'1'};
         tol = '1e-6';
         plotting = 'on';
         name = 'System 1 (flipped)';
@@ -151,7 +151,7 @@ switch exampleNumber
         RBC = {'neumann'};
         %         RBC = {'u'''; 'v''' ; 'w'''};
         RBCrhs = {'0' ; '0' ; '0'};
-        guess = {'1-erf(10*(x+0.7))' ; '1 + erf(10*(x-0.7))' ; '0'};
+        init = {'1-erf(10*(x+0.7))' ; '1 + erf(10*(x-0.7))' ; '0'};
         tol = '1e-6';
         plotting = 'on';
         name = 'System 2 (3 eqns)';
@@ -168,7 +168,7 @@ switch exampleNumber
         %         RBC = {'neumann'};
         RBC = {'u'''; 'v''' ; 'w'''};
         RBCrhs = {'0' ; '0' ; '0'};
-        guess = {'1-erf(10*(x+0.7))' ; '1+erf(10*(x-0.7))' ; '0'};
+        init = {'1-erf(10*(x+0.7))' ; '1+erf(10*(x-0.7))' ; '0'};
         tol = '1e-6';
         plotting = 'on';
         name = 'System 2 (3 eqns alt)';
@@ -183,7 +183,7 @@ switch exampleNumber
         LBCrhs = {'1' ; '1'};
         RBC = {'u'; 'v'};
         RBCrhs = {'1' ; '1'};
-        guess = {'1' ; '1'};
+        init = {'1' ; '1'};
         tol = '1e-6';
         plotting = 'on';
         name = 'Coupled PDE-BVP';
@@ -198,7 +198,7 @@ switch exampleNumber
         LBCrhs = {''};
         RBC = {'dirichlet'};
         RBCrhs = {''};
-        guess = {'(1-x^2)*exp(-30*(x+.5)^2)'};
+        init = {'(1-x^2)*exp(-30*(x+.5)^2)'};
         tol = '1e-6';
         plotting = 'on';
         name = 'Integro-Differential Eqn.';
@@ -213,7 +213,7 @@ switch exampleNumber
         LBCrhs = {'0','0'};
         RBC = {'u'''; 'v'''};
         RBCrhs = {'0','0'};
-        guess = {'0','0'};
+        init = {'0','0'};
         tol = '1e-6';
         plotting = 'on';
         name = 'Wave Equation';
@@ -225,5 +225,5 @@ options = struct('plotting',plotting);
 
 cg = chebgui('type','pde','domleft',a,'domright',b,'timedomain',t,'de',DE,...
     'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
-    'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+    'rbc',RBC,'rbcrhs',RBCrhs,'init',init,'tol',tol,...
     'options',options);

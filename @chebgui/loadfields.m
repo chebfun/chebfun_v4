@@ -9,7 +9,7 @@ set(handles.input_LBC,'String',guifile.LBC);
 set(handles.input_LBC_RHS,'String',guifile.LBCrhs);
 set(handles.input_RBC,'String',guifile.RBC);
 set(handles.input_RBC_RHS,'String',guifile.RBCrhs);
-set(handles.input_GUESS,'String',guifile.guess);
+set(handles.input_GUESS,'String',guifile.init);
 
 if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);

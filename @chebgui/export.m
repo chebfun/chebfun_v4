@@ -14,7 +14,7 @@ if strcmp(problemType,'bvp')
             answer = inputdlg(prompt,name,numlines,{defaultanswer},options);
             
             if ~isempty(answer)
-                assignin('base',answer,handles.guifile);
+                assignin('base',answer{1},handles.guifile);
             end
         case 'Workspace'
             prompt = {'Differential operator', 'Right hand side','Solution:',...
@@ -69,16 +69,14 @@ else
             prompt = 'Enter the name of the chebgui variable:';
             name   = 'Export GUI';
             numlines = 1;
-            defaultanswer='cg';
+            defaultanswer='chebg';
             options.Resize='on';
             options.WindowStyle='modal';
             
-            answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+            answer = inputdlg(prompt,name,numlines,{defaultanswer},options);
             
             if ~isempty(answer)
-                assignin('base',answer,handles.guifile);
-                msgbox(['Exported a chebgui variable named ',answer,' to workspace.'],...
-                    'Chebgui export','modal')
+                assignin('base',answer{1},handles.guifile);
             end
         case 'Workspace'           
             prompt = {'Solution', 'Timedomain'};

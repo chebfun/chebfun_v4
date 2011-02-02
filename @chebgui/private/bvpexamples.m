@@ -28,7 +28,7 @@ switch exampleNumber
         LBCrhs = '';
         RBC = '';
         RBCrhs = '';
-        guess = '';
+        init = '';
         tol = '';
         damping = '';
         plotting = '0.1';
@@ -43,7 +43,7 @@ switch exampleNumber
         LBCrhs = '0';
         RBC = 'u';
         RBCrhs = '0';
-        guess = '';
+        init = '';
         tol = '1e-10';
         damping = '1';
         plotting = '0.1';
@@ -58,7 +58,7 @@ switch exampleNumber
         LBCrhs = '2';
         RBC = 'u';
         RBCrhs = '0';
-        guess = '';
+        init = '';
         tol = '1e-10';
         damping = '1';
         plotting = '0.1';
@@ -73,7 +73,7 @@ switch exampleNumber
         LBCrhs = '0';
         RBC = 'u';
         RBCrhs = '0';
-        guess = '';
+        init = '';
         tol = '1e-10';
         damping = '0';
         plotting = '0.1';
@@ -88,7 +88,7 @@ switch exampleNumber
         LBCrhs = {'1';'0'};
         RBC = {'u''';'v'};
         RBCrhs = {'0';'0'};
-        guess = '';
+        init = '';
         tol = '1e-10';
         damping = '0';
         plotting = '0.4';
@@ -103,7 +103,7 @@ switch exampleNumber
         LBCrhs = {'1';'0'};
         RBC = '';
         RBCrhs = '';
-        guess = '';
+        init = '';
         tol = '1e-10';
         damping = '1';
         plotting = '0.1';
@@ -118,7 +118,7 @@ switch exampleNumber
         LBCrhs = {'2';'0'};
         RBC = '';
         RBCrhs = '';
-        guess = '';
+        init = '';
         tol = '1e-10';
         damping = '1';
         plotting = '0.1';
@@ -133,7 +133,7 @@ switch exampleNumber
         LBCrhs = '0';
         RBC = 'u';
         RBCrhs = '0';
-        guess = '2*(x.^2-1).*(1-2./(1+20*x.^2))';
+        init = '2*(x.^2-1).*(1-2./(1+20*x.^2))';
         tol = '1e-10';
         damping = '1';
         plotting = '0.1';
@@ -148,7 +148,7 @@ switch exampleNumber
         LBCrhs = '0';
         RBC = 'u';
         RBCrhs = '0';
-        guess = '';
+        init = '';
         tol = '1e-10';
         damping = '1';
         plotting = '0.1';
@@ -160,5 +160,5 @@ options = struct('damping',damping,'plotting',plotting);
 
 cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
     'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
-    'rbc',RBC,'rbcrhs',RBCrhs,'guess',guess,'tol',tol,...
+    'rbc',RBC,'rbcrhs',RBCrhs,'init',init,'tol',tol,...
     'options',options);

@@ -20,7 +20,7 @@ else
     c.DomLeft = ''; c.DomRight = '';
     c.DE = ''; c.DErhs = ''; c.LBC = ''; c.LBCrhs = ''; c.RBC = '';
     c.RBCrhs = ''; c.timedomain = '';
-    c.guess = []; c.tol = [];
+    c.init = []; c.tol = [];
     c.options = struct('damping','1','plotting','0.5','grid',1,'pdeholdplot',0);
     
     
@@ -60,8 +60,8 @@ else
                 c.RBC = value;
             case 'rbcrhs'
                 c.RBCrhs = value;
-            case 'guess'
-                c.guess = value;
+            case 'init'
+                c.init = value;
             case 'tol'
                 c.tol = value;
             case 'options'
