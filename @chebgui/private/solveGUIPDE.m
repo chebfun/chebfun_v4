@@ -142,7 +142,15 @@ end
 if periodic
     bc = 'periodic';
 else
-    bc = struct( 'left', LBC, 'right', RBC);
+    if any(strcmpi(LBC,{'dirichlet','neumann'})) 
+        LBC = {LBC,str2num(lbcRHSInput{1})};
+    end
+    if any(strcmpi(RBC,{'dirichlet','neumann'})) 
+        RBC = {RBC,str2num(rbcRHSInput{1})};
+    end
+    bc = [];
+    bc.left = LBC;
+    bc.right = RBC;
 end
 
 % Set up the initial condition
