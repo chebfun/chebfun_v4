@@ -217,7 +217,7 @@ function varargout = chebguiwindow_OutputFcn(hObject, eventdata, handles)
 % -------------------------------------------------------------------------
 
 function button_clear_Callback(hObject, eventdata, handles)
-if strcmp(get(handles.button_clear,'String'),'Clear')
+if strcmp(get(handles.button_clear,'String'),'Clear all')
     [newGUI handles] = cleargui(handles.guifile,handles);
     handles.guifile = newGUI;
     guidata(hObject, handles);

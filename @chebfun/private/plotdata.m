@@ -159,7 +159,7 @@ if isempty(f)
         expsk = [expsk ; expskj(2)];
         
 
-        exps = reshape(get(g,'exps')',2*gk.nfuns,1);
+        exps = reshape(get(gk,'exps')',2*gk.nfuns,1);
         expsk = [exps(1) ; zeros(gk.nfuns,1)];
         for j = 1:gk.nfuns-1
             expsk(j+1) = min(exps(2*j),exps(2*j+1));
