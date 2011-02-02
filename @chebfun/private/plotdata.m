@@ -50,9 +50,9 @@ elseif any(isinf(g(1).ends([1 end])))
     if all(isinf(g(1).ends([1 end])))
         dom = domain(-unbndd_def,unbndd_def);
     elseif isinf(g(1).ends(end))
-        dom = domain(g(1).ends(1),g(1).ends(1)+unbndd_def);
+        dom = domain(g(1).ends(1),g(1).ends(1)+2*unbndd_def);
     elseif isinf(g(1).ends(1))
-        dom = domain(-unbndd_def+g(1).ends(end),g(1).ends(end));
+        dom = domain(-2*unbndd_def+g(1).ends(end),g(1).ends(end));
     end     
 end
 % Don't exclude anything
