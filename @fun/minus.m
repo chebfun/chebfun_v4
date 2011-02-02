@@ -136,8 +136,9 @@ if round(exps1-exps2) == exps1-exps2
             g2.map = linear([-1,1]);
         end
 
-        g1 = g1.*fun(@(x) c1*(x-a).^((a1==exps1(1))*a12).*(b-x).^((b1==exps1(2))*b12),g1.map,pref,scl) - ...
-            g2.*fun(@(x) c2*(x-a).^((a1==exps2(1))*a12).*(b-x).^((b1==exps2(2))*b12),g2.map,pref,scl);
+        tmpscl = scl; tmpscl.v = 1;
+        g1 = g1.*fun(@(x) c1*(x-a).^((a1==exps1(1))*a12).*(b-x).^((b1==exps1(2))*b12),g1.map,pref,tmpscl) - ...
+            g2.*fun(@(x) c2*(x-a).^((a1==exps2(1))*a12).*(b-x).^((b1==exps2(2))*b12),g2.map,pref,tmpscl);
         g1.exps = [a2 b2];
 
         g1.scl = scl; 
