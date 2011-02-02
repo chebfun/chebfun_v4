@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 11;
+numberOfExamples = 12;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -67,7 +67,7 @@ switch exampleNumber
     case 3
         a = '-1';
         b = '1';
-        t = 'linspace(0,5,50)';
+        t = '0:.1:5';
         DE = 'u.*(1-u.^2) + 5e-4*u"';
         DErhs = 'u_t';
         LBC = 'u';
@@ -97,7 +97,7 @@ switch exampleNumber
     case 5
         a = '-1';
         b = '1';
-        t = 'linspace(0,2,200)';
+        t = '0:.01:2';
         DE = 'u.*u''-u"-0.006*u""';
         DErhs = 'u_t';
         LBC = {'u','u'''};
@@ -203,6 +203,22 @@ switch exampleNumber
         plotting = 'on';
         name = 'Integro-Differential Eqn.';
         demotype = 'scalar';
+    case 12
+        a = '0';
+        b = '10';
+        t = '0:.1:10';
+        DE = {'v','u"+exp(-100*x.^2)*sin(pi*t)'};
+        DErhs = {'u_t','v_t'};
+        LBC = {'u'''; 'v'''};
+        LBCrhs = {'0','0'};
+        RBC = {'u'''; 'v'''};
+        RBCrhs = {'0','0'};
+        guess = {'0','0'};
+        tol = '1e-6';
+        plotting = 'on';
+        name = 'Wave Equation';
+        demotype = 'system';
+        
 end
 
 options = struct('plotting',plotting);
