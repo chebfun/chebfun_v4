@@ -81,8 +81,6 @@ while ii < length(ops)
     es = ends(ii:ii+1);
     if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
     if ~isempty(map),        pref.map = map(ii);            end
-
-
     switch class(op)
         case 'double'
             if isfield(pref,'coeffs')
@@ -96,7 +94,6 @@ while ii < length(ops)
                     op = c(end:-1:1);
                 end
                 op = chebpolyval(op,pref.chebkind);
-
             end
             if ~isfield(pref,'map')
                 fs = fun(op,es,pref);
@@ -206,7 +203,8 @@ function op = str2op(op)
 % This is here as it's a clean function with no other variables hanging around in the scope.
 depvar = symvar(op); 
 if numel(depvar) ~= 1, 
-    error('CHEBFUN:ctor_adapt:depvars','Incorrect number of dependent variables in string input.'); 
+    error('CHEBFUN:ctor_adapt:indepvars', ...
+        'Incorrect number of independent variables in string input.'); 
 end
 op = eval(['@(' depvar{:} ')' op]);
  

@@ -69,7 +69,9 @@ scl.v = 0; scl.h = hs;
 
 % NOTE: Don't use an i variable, as this can  mess 
 % up function construction from string inputs.
-for ii = 1:length(ops)
+ii = 0;
+while ii < length(ops)
+    ii = ii + 1;
     op = ops{ii};
     es = ends(ii:ii+1);
     switch class(op)
@@ -92,9 +94,11 @@ for ii = 1:length(ops)
             end
             funs = [funs g];
         case 'char'
-            if ~isempty(str2num(op))
-                error('CHEBFUN:ctor_nonadapt:input_strvals',['A chebfun cannot be constructed from a string with '...
-                    'numerical values.'])
+            sop = str2num(op);
+            if ~isempty(sop)
+                ops{ii} = sop;
+                ii = ii-1; es = []; fs = [];
+                continue
             end
             a = ends(ii); b = ends(ii+1);
             op = str2op(op);
@@ -127,16 +131,10 @@ for ii = 1:length(ops)
             end
             funs = [funs g];
         case 'double'
-            pref.n = n;
-            if numel(n) > 1, pref.n = n(ii); end
-            if numel(op) == 1
-                % This is a bit dirty. We fool it into using an adaptive call.
-                g = ctor_adapt(f,{@(x) 0*x+op},es,pref); g = g.funs(1);
-                funs = [funs g];
-            else
-                warning('CHEBFUN:ctor_nonadapt:vecpts',['Generating fun from a numerical vector. '...
-                    'Associated number of Chebyshev points is not used.']);
-            end
+            warning('CHEBFUN:ctor_nonadapt:vecpts',['Generating fun from a numerical vector. '...
+                'Associated number of Chebyshev points is not used.']);
+            g = ctor_adapt(f,{op},es,pref); g = g.funs(1);
+            funs = [funs g];           
         case 'fun'
             if numel(op) > 1
                 error('CHEBFUN:ctor_nonadapt:vecfuns',['A vector of funs cannot be used to construct '...
@@ -174,6 +172,7 @@ function op = str2op(op)
 % This is here as it's a clean function with no other variables hanging around in the scope.
 depvar = symvar(op); 
 if numel(depvar) ~= 1, 
-    error('CHEBFUN:ctor_nonadapt:depvars','Incorrect number of dependent variables in string input.'); 
+    error('CHEBFUN:ctor_nonadapt:indepvars', ...
+        'Incorrect number of independent variables in string input.'); 
 end
 op = eval(['@(' depvar{:} ')' op]);
