@@ -14,16 +14,16 @@ fprintf(fid,'%% Automatically created from chebgui by user %s\n',userName);
 fprintf(fid,'%% %s, %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 % Extract information from the GUI fields
-a = get(handles.dom_left,'String');
-b = get(handles.dom_right,'String');
-deInput = get(handles.input_DE,'String');
-lbcInput = get(handles.input_LBC,'String');
-rbcInput = get(handles.input_RBC,'String');
-deRHSInput = get(handles.input_DE_RHS,'String');
-lbcRHSInput = get(handles.input_LBC_RHS,'String');
-rbcRHSInput = get(handles.input_RBC_RHS,'String');
-guessInput = get(handles.input_GUESS,'String');
-tt = get(handles.timedomain,'String');
+a = guifile.DomLeft;
+b = guifile.DomRight;
+deInput = guifile.DE;
+lbcInput = guifile.LBC;
+rbcInput = guifile.RBC;
+deRHSInput = guifile.DErhs;
+lbcRHSInput = guifile.LBCrhs;
+rbcRHSInput = guifile.RBCrhs;
+initInput = guifile.init;
+tt = guifile.timedomain;
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -154,12 +154,12 @@ if periodic
 end
 
 % Set up the initial condition
-if iscell(guessInput) && numel(guessInput) > 1
+if iscell(initInput) && numel(initInput) > 1
     fprintf(fid,'\n%% Create a chebfun of the initial conditions.\n');
 else
     fprintf(fid,'\n%% Create a chebfun of the initial condition.\n');
 end
-if ischar(guessInput)
+if ischar(initInput)
     % Get the strings of the dependant variable.
     idx = strfind(deString,')');
     tmp = deString(3:idx(1)-10);
@@ -170,11 +170,11 @@ if ischar(guessInput)
         s = tmp(1:idx(1)-1);
     end 
     sol = s; sol0 = [sol '0'];
-    findx = strfind(guessInput,'x');
+    findx = strfind(initInput,'x');
     if isempty(findx)
-        fprintf(fid,'%s = chebfun(%s,d);\n',sol0,guessInput);
+        fprintf(fid,'%s = chebfun(%s,d);\n',sol0,initInput);
     else
-        fprintf(fid,'%s = %s;\n',sol0,vectorize(guessInput));
+        fprintf(fid,'%s = %s;\n',sol0,vectorize(initInput));
     end        
 else
     % Get the strings of the dependant variables.
@@ -195,17 +195,17 @@ else
     
     % If the initial guesses are all constants, we need to wrap them in a
     % chebfun call.
-    for k = 1:numel(guessInput)
-        findx = strfind(guessInput{k},'x');
+    for k = 1:numel(initInput)
+        findx = strfind(initInput{k},'x');
         if ~isempty(findx), break, end
     end
     % Print the conditions.
     catstr = [];
-    for k = 1:numel(guessInput)
+    for k = 1:numel(initInput)
         if ~isempty(findx)
-            fprintf(fid,'%s = %s;\n',s{k},vectorize(guessInput{k}));
+            fprintf(fid,'%s = %s;\n',s{k},vectorize(initInput{k}));
         else
-            fprintf(fid,'%s = chebfun(%s,d);\n',s{k},guessInput{k});
+            fprintf(fid,'%s = chebfun(%s,d);\n',s{k},initInput{k});
         end
         catstr = [catstr ', ' s{k}];
     end
@@ -223,8 +223,8 @@ if ~all(pdeflag)
 end
 
 % Options for plotting
-doplot = get(handles.button_pdeploton,'Value');
-if ~doplot
+doplot = guifile.options.plotting;
+if strcmpi(doplot,'off')
     opts = [opts,',''Plot'',','''off'''];
 else
     dohold = guifile.options.pdeholdplot;
