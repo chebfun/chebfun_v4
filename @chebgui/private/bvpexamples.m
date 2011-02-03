@@ -37,11 +37,11 @@ switch exampleNumber
     case 1
         a = '-2';
         b = '2';
-        DE = 'u"+x.*sin(u)';
-        DErhs = '1';
-        LBC = 'u';
+        DE = 'u"+x.*sin(u) = 1';
+        DErhs = '0';
+        LBC = 'u = 0';
         LBCrhs = '0';
-        RBC = 'u';
+        RBC = 'u = 0';
         RBCrhs = '0';
         init = '';
         tol = '1e-10';
@@ -52,11 +52,11 @@ switch exampleNumber
     case 2
         a = '1';
         b = '3';
-        DE = 'u"+cos(sin(u))';
-        DErhs = '-1';
-        LBC = 'u''';
-        LBCrhs = '2';
-        RBC = 'u';
+        DE = 'u"+cos(sin(u)) = -1';
+        DErhs = '0';
+        LBC = 'u'' = 2';
+        LBCrhs = '0';
+        RBC = 'u = 0';
         RBCrhs = '0';
         init = '';
         tol = '1e-10';
@@ -67,11 +67,11 @@ switch exampleNumber
     case 3
         a = '-5';
         b = '5';
-        DE = '0.01*u''''-x.*u';
-        DErhs = '1';
-        LBC = 'u';
+        DE = '0.01*u''''-x.*u = 1';
+        DErhs = '0';
+        LBC = 'u = 0';
         LBCrhs = '0';
-        RBC = 'u';
+        RBC = 'u = 0';
         RBCrhs = '0';
         init = '';
         tol = '1e-10';
@@ -82,11 +82,11 @@ switch exampleNumber
     case 4
         a = '-1';
         b = '1';
-        DE = {'u"-sin(v)';'cos(u)+v"'};
+        DE = {'u"-sin(v) = 0';'cos(u)+v" = 0'};
         DErhs = {'0','0'};
-        LBC = {'u';'v'''};
-        LBCrhs = {'1';'0'};
-        RBC = {'u''';'v'};
+        LBC = {'u = 1';'v'' = 0'};
+        LBCrhs = {'0';'0'};
+        RBC = {'u'' = 0';'v = 0'};
         RBCrhs = {'0';'0'};
         init = '';
         tol = '1e-10';
@@ -97,10 +97,10 @@ switch exampleNumber
     case 5
         a = '-2';
         b = '2';
-        DE = 'u"-x.*sin(u)';
-        DErhs = '1';
-        LBC = {'u';'u'''};
-        LBCrhs = {'1';'0'};
+        DE = 'u"-x.*sin(u) = 1';
+        DErhs = '0';
+        LBC = {'u = 1';'u'' = 0'};
+        LBCrhs = {'0';'0'};
         RBC = '';
         RBCrhs = '';
         init = '';
@@ -112,10 +112,10 @@ switch exampleNumber
     case 6
         a = '0';
         b = '15';
-        DE = 'u"-(1-u.^2)*u''+u';
+        DE = 'u"-(1-u.^2)*u''+u = 0';
         DErhs = '0';
-        LBC = {'u';'u'''};
-        LBCrhs = {'2';'0'};
+        LBC = {'u = 2';'u'' = 0'};
+        LBCrhs = {'0';'0'};
         RBC = '';
         RBCrhs = '';
         init = '';
@@ -127,11 +127,11 @@ switch exampleNumber
     case 7
         a = '-1';
         b = '1';
-        DE = '0.01*u" + 2*(1-x.^2).*u + u.^2';
-        DErhs = '1';
-        LBC = 'u';
+        DE = '0.01*u" + 2*(1-x.^2).*u + u.^2 = 1';
+        DErhs = '0';
+        LBC = 'u = 0';
         LBCrhs = '0';
-        RBC = 'u';
+        RBC = 'u = 0';
         RBCrhs = '0';
         init = '2*(x.^2-1).*(1-2./(1+20*x.^2))';
         tol = '1e-10';
@@ -142,11 +142,11 @@ switch exampleNumber
     case 8
         a = '-100';
         b = '100';
-        DE = 'u" + (1.2+sign(10-abs(x)))*u';
-        DErhs = '1';
-        LBC = 'u';
+        DE = 'u" + (1.2+sign(10-abs(x)))*u = 1';
+        DErhs = '0';
+        LBC = 'u = 0';
         LBCrhs = '0';
-        RBC = 'u';
+        RBC = 'u = 0';
         RBCrhs = '0';
         init = '';
         tol = '1e-10';

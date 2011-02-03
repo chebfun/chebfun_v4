@@ -4,6 +4,9 @@ numOfRows = size(input,1);
 pdeflag = false;
 allVarNames = [];
 
+% Subtract what is to the rhs of equals signs in the input.
+input = subtractRhs(input);
+
 % For BCs, we need to check whether varNames contains anything not found in
 % varNames of the DE. Should we make the varNames of the DE as parameters?
 % Setja DE varNames sem parametra? Also check for indVarName in deRHS.
@@ -124,6 +127,31 @@ if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
         [field indVarName] = convertToAnon(guifile,input);
     else % Three output arguments -- Multiple rows
         [field indVarName varNames] = convertToAnon(guifile,input);
+    end
+end
+end
+
+function data = subtractRhs(data)
+data = strtrim(data);
+for k = 1:numel(data)
+    idx = strfind(data{k},'=');
+    if numel(idx)>1
+        error('too many = signs');
+    elseif ~isempty(idx)
+        rhs = strtrim(data{k}(idx+1:end));
+        data{k} = strtrim(data{k}(1:idx-1));
+        numrhs = str2num(rhs);
+        if ~isempty(numrhs)
+            if numrhs == 0
+                % if zero, do nothing
+            elseif numrhs > 0
+                data{k} = [data{k} '-' rhs];
+            else
+                data{k} = [data{k} '+' rhs];
+            end
+        else
+            data{k} = [data{k} '-(' rhs ')'];
+        end
     end
 end
 end
