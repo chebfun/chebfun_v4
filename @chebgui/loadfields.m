@@ -36,6 +36,14 @@ if strcmpi(guifile.type,'pde')
     else
         set(handles.menu_pdeholdploton,'Checked','Off');
         set(handles.menu_pdeholdplotoff,'Checked','On');
+    end  
+    
+    if ~isempty(guifile.options.fixYaxisLower)
+        set(handles.menu_pdefixon,'Checked','On');
+        set(handles.menu_pdefixoff,'Checked','Off');
+    else
+        set(handles.menu_pdefixon,'Checked','Off');
+        set(handles.menu_pdefixoff,'Checked','On');
     end    
     
 else

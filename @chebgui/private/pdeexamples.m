@@ -17,6 +17,8 @@ if exampleNumber < 0 || exampleNumber > numberOfExamples
         return
     end
 end
+fixYaxisLower = '';
+fixYaxisUpper = '';
 
 switch exampleNumber
     case 0
@@ -47,12 +49,14 @@ switch exampleNumber
         init = 'sin(2*x)';
         tol = '1e-6';
         plotting = 'on';
+        fixYaxisLower = '-1';
+        fixYaxisUpper = '1';
         name = DE;
         demotype = 'scalar';
     case 2
         a = '-1';
         b = '1';
-        t = 'linspace(0,5,50)';
+        t = '0:0.1:5';
         DE = 'u.*(1-u.^2) + 5e-4*u"';
         DErhs = 'u_t';
         LBC = 'neumann';
@@ -63,6 +67,8 @@ switch exampleNumber
         tol = '1e-6';
         plotting = 'on';
         name = 'Allen-Cahn (neumann)';
+        fixYaxisLower = '0';
+        fixYaxisUpper = '1';
         demotype = 'scalar';
     case 3
         a = '-1';
@@ -77,6 +83,8 @@ switch exampleNumber
         init = '0.53*x-.47*sin(1.5*pi*x)';
         tol = '1e-6';
         plotting = 'on';
+        fixYaxisLower = '-1';
+        fixYaxisUpper = '1';
         name = 'Allen-Cahn (dirichlet)';
         demotype = 'scalar';
     case 4
@@ -93,6 +101,8 @@ switch exampleNumber
         tol = '1e-6';
         plotting = 'on';
         name = 'Burgers''';
+        fixYaxisLower = '0';
+        fixYaxisUpper = '0.8';
         demotype = 'scalar';
     case 5
         a = '-1';
@@ -107,6 +117,8 @@ switch exampleNumber
         init = '1 + 0.5*exp(-40*x.^2)';
         tol = '1e-6';
         plotting = 'on';
+        fixYaxisLower = '-30';
+        fixYaxisUpper = '30';
         name = 'KS';
         demotype = 'scalar';
     case 6
@@ -122,6 +134,8 @@ switch exampleNumber
         init = {'1';'1'};
         tol = '1e-6';
         plotting = 'on';
+                fixYaxisLower = '0.4';
+        fixYaxisUpper = '1.6';
         name = 'System 1';
         demotype = 'system';
     case 7
@@ -137,6 +151,8 @@ switch exampleNumber
         init = {'1';'1'};
         tol = '1e-6';
         plotting = 'on';
+                        fixYaxisLower = '0.4';
+        fixYaxisUpper = '1.6';
         name = 'System 1 (flipped)';
         demotype = 'system';
     case 8
@@ -154,6 +170,8 @@ switch exampleNumber
         init = {'1-erf(10*(x+0.7))' ; '1 + erf(10*(x-0.7))' ; '0'};
         tol = '1e-6';
         plotting = 'on';
+                                fixYaxisLower = '0';
+        fixYaxisUpper = '2';
         name = 'System 2 (3 eqns)';
         demotype = 'system';
     case 9
@@ -171,6 +189,8 @@ switch exampleNumber
         init = {'1-erf(10*(x+0.7))' ; '1+erf(10*(x-0.7))' ; '0'};
         tol = '1e-6';
         plotting = 'on';
+                                        fixYaxisLower = '0';
+        fixYaxisUpper = '2';
         name = 'System 2 (3 eqns alt)';
         demotype = 'system';
     case 10
@@ -186,6 +206,8 @@ switch exampleNumber
         init = {'1' ; '1'};
         tol = '1e-6';
         plotting = 'on';
+                                                fixYaxisLower = '0.6';
+        fixYaxisUpper = '1';
         name = 'Coupled PDE-BVP';
         demotype = 'system';
     case 11
@@ -202,6 +224,8 @@ switch exampleNumber
         tol = '1e-6';
         plotting = 'on';
         name = 'Integro-Differential Eqn.';
+                                                fixYaxisLower = '0';
+        fixYaxisUpper = '1.4';
         demotype = 'scalar';
     case 12
         a = '0';
@@ -216,12 +240,15 @@ switch exampleNumber
         init = {'0','0'};
         tol = '1e-6';
         plotting = 'on';
+        fixYaxisLower = '-0.1';
+        fixYaxisUpper = '0.1';
         name = 'Wave Equation';
         demotype = 'system';
         
 end
 
-options = struct('plotting',plotting);
+options = struct('plotting',plotting,'fixYaxisLower',fixYaxisLower,...
+    'fixYaxisUpper',fixYaxisUpper);
 
 cg = chebgui('type','pde','domleft',a,'domright',b,'timedomain',t,'de',DE,...
     'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
