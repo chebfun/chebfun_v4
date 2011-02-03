@@ -98,7 +98,7 @@ mainHandles = guidata(handles.chebguiwindow);
 set(mainHandles.(handles.outputTarget), 'String', ...
     get(handles.edit1, 'String'));
 % Store the used fontsize
-set(handles.tempedit,'FontSize',get(handles.edit1,'FontSize'));
+updateEditFontSize(hObject, eventdata, handles)
 % Resume and close
 uiresume(handles.figure1);
 delete(handles.figure1)
