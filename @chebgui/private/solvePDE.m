@@ -177,8 +177,8 @@ if guifile.options.pdeholdplot
 else
     opts.HoldPlot = 'off';
 end
-ylim1 = get(handles.ylim1,'String');
-ylim2 = get(handles.ylim2,'String');
+ylim1 = guifile.options.fixYaxisLower;
+ylim2 = guifile.options.fixYaxisUpper;
 if ~isempty(ylim1) && ~isempty(ylim2)
     opts.YLim = [str2num(ylim1) str2num(ylim2)];
 end

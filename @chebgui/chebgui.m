@@ -21,7 +21,8 @@ else
     c.DE = ''; c.DErhs = ''; c.LBC = ''; c.LBCrhs = ''; c.RBC = '';
     c.RBCrhs = ''; c.timedomain = '';
     c.init = []; c.tol = [];
-    c.options = struct('damping','1','plotting','0.5','grid',1,'pdeholdplot',0);
+    c.options = struct('damping','1','plotting','0.5','grid',1,...
+        'pdeholdplot',0,'fixYaxisLower','','fixYaxisUpper','');
     
     
     k = 1;

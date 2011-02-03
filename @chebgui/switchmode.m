@@ -81,10 +81,6 @@ elseif onoff == 0
     onoff = 'off';
 end
 
-set(handles.ylim_text,'visible',onoff);
-set(handles.ylim1,'visible',onoff);
-set(handles.text33,'visible',onoff);
-set(handles.ylim2,'visible',onoff);
 set(handles.plotstyle_text,'visible',onoff);
 set(handles.input_plotstyle,'visible',onoff);
 set(handles.FixN_text,'visible',onoff);

@@ -58,6 +58,10 @@ switch lower(propName)
                     cg.options.grid = vin;
                 case 'pdeholdplot'
                     cg.options.pdeholdplot = vin;
+                case 'fixyaxislower'
+                    cg.options.fixYaxisLower = vin;
+                case 'fixyaxisupper'
+                    cg.options.fixYaxisUpper = vin;
                 otherwise
                     error('CHEBGUI:set:options:propanem',...
                         [propName2,' is not a valid chebgui option.'])

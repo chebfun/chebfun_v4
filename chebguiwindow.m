@@ -170,6 +170,10 @@ handles.problemType = handles.guifile.type;
 set(handles.menu_odeplottingpause,'UserData','0.5');
 set(handles.menu_tolerance,'UserData','1e-10');
 
+% Create UserData for the Fix-Y-axis options (so that we can display
+% something if it gets called without selecting a demo).
+set(handles.menu_pdefixon,'UserData',{''});
+
 % Populate the Demos menu
 loaddemos(handles.guifile,handles,'bvp')
 loaddemos(handles.guifile,handles,'pde')
@@ -990,13 +994,40 @@ function menu_annotateplots_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function menu_pdefixon_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdefixon (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+options.WindowStyle = 'modal';
+valid = 0;
+defaultAnswer = {handles.guifile.options.fixYaxisLower,...
+    handles.guifile.options.fixYaxisUpper};
+while ~valid
+    fixInput = inputdlg({'Lower y-limit:','Upper y-limit:'},'Fix y-axis',...
+        1,defaultAnswer,options);
+    if isempty(fixInput) % User pressed cancel
+        break
+    elseif ~isempty(str2num(fixInput{1})) &&  ~isempty(str2num(fixInput{2})) % Valid input
+        valid = 1;
+        % Store new value in the UserData of the object
+        set(hObject,'UserData',fixInput);
+        % Update the chebgui object
+        handles.guifile.options.fixYaxisLower = fixInput{1};
+        handles.guifile.options.fixYaxisUpper = fixInput{2};
+    else
+        f = errordlg('Invalid input.', 'Chebgui error', 'modal');
+        uiwait(f); 
+    end
+end
 
+% Change checking
+set(handles.menu_pdefixon,'checked','on');
+set(handles.menu_pdefixoff,'checked','off');
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function menu_pdefixoff_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdefixoff (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+% Clear out fix information
+handles.guifile.options.fixYaxisLower = '';
+handles.guifile.options.fixYaxisUpper = '';
+
+% Change checking
+set(handles.menu_pdefixon,'checked','off');
+set(handles.menu_pdefixoff,'checked','on');
+guidata(hObject, handles);
