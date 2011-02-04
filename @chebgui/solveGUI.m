@@ -21,15 +21,15 @@ end
 if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     
     % Some basic checking of the inputs.
-    a = str2num(get(handles.dom_left,'String'));
-    b = str2num(get(handles.dom_right,'String'));
+    a = str2num(guifile.DomLeft);
+    b = str2num(guifile.DomRight);
     if b <= a
         s = sprintf('Error in constructing domain. [%f,%f] is not valid.',a,b);
         errordlg(s, 'Chebgui error', 'modal');
         return
     end
-    if ~get(handles.button_ode,'Value')
-        tt = str2num(get(handles.timedomain,'String'));
+    if strcmpi(guifile.type,'pde');
+        tt = str2num(guifile.timedomain);
         if isempty(tt)
             s = sprintf('Error in constructing time interval.');
             errordlg(s, 'Chebgui error', 'modal');
@@ -69,7 +69,8 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         end
     catch ME
         MEID = ME.identifier;
-        if ~isempty(strfind(MEID,'parse:')) || ~isempty(strfind(MEID,'LINOP:'))
+        errordlg(ME.message, 'Chebgui error', 'modal');
+        if ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:'))
             errordlg(ME.message, 'Chebgui error', 'modal');
         elseif strcmp(MEID,'CHEBOP:solve:findguess:DivisionByZeroChebfun')
             errordlg(['Error in constructing initial guess. The the zero '...

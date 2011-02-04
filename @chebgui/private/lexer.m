@@ -1,4 +1,4 @@
-function [out varNames indVarName] = lexer(guifile,str)
+function [out varNames pdeVarNames indVarName] = lexer(guifile,str)
 % LEXER Lexer for string expression in the chebfun system
 % [OUT VARNAMES INDVARNAME] = LEXER(STR) performs a lexical analysis on the
 % string STR. OUT is a cell array with two columns, the left is a token and
@@ -53,6 +53,9 @@ str = vectorize(str);
 
 % Obtain the name of possible variables
 varNames = symvar(str);
+
+% Create a cell for potential pdeVarNames
+pdeVarNames = {};
 
 % x and t are reserved for independent variables
 xLoc = strcmp('x',varNames); varNames(xLoc) = [];
@@ -162,7 +165,16 @@ while ~strcmp(str,'$')
             % Check if we are getting the variable we are interested in
             % differentiating w.r.t.
             elseif any(strcmp(nextstring,varNames))
-                out = [out; {nextstring, 'VAR'}];   
+                % Need to treat variables which have a time derivative
+                % attached on them separately.
+                if isempty(strfind(nextstring,'_'))
+                    out = [out; {nextstring, 'VAR'}];
+                else
+                    out = [out; {nextstring, 'PDEVAR'}];
+                    % Remove from the varNames array, store in pdeVarNames instead
+                    pdeVarLoc = strcmp(nextstring,varNames); varNames(pdeVarLoc) = [];
+                    pdeVarNames = [pdeVarNames;nextstring];
+                end
             % Check if this string is one of the function defined in
             % strfun1 (functions with one argument)
             elseif strmatch(nextstring,strfun1,'exact')

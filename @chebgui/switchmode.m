@@ -81,8 +81,6 @@ elseif onoff == 0
     onoff = 'off';
 end
 
-set(handles.plotstyle_text,'visible',onoff);
-set(handles.input_plotstyle,'visible',onoff);
 set(handles.FixN_text,'visible',onoff);
 set(handles.checkbox_fixN,'visible',onoff);
 set(handles.N_text,'visible',onoff);

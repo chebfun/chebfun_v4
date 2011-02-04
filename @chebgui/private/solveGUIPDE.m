@@ -21,7 +21,7 @@ b = str2num(get(handles.dom_right,'String'));
 deInput = get(handles.input_DE,'String');
 lbcInput = get(handles.input_LBC,'String');
 rbcInput = get(handles.input_RBC,'String');
-deRHSInput = 'u_t';
+deRHSInput = '';
 guessInput = get(handles.input_GUESS,'String');
 tolInput = guifile.tol;
 tt = eval(get(handles.timedomain,'String'));
@@ -39,7 +39,7 @@ rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 % try           
     % Convert the input to the an. func. format, get information about the
     % linear function in the problem.
-    [deString indVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');  
+    [deString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');  
     handles.varnames = allVarNames;
     
     if ~any(pdeflag)
@@ -74,7 +74,7 @@ rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
     end
     
     if ~isempty(lbcInput{1})
-        [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC');
+        [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
         idx = strfind(lbcString, ')');
         if ~isempty(idx)
             
@@ -95,7 +95,7 @@ rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
         LBC = [];
     end
     if ~isempty(rbcInput{1}) 
-        [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC');
+        [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
         idx = strfind(rbcString, ')');
         if ~isempty(idx)
             
@@ -202,7 +202,7 @@ opts.guihandles = guihandles;
 
 % error
 % try
-    [t u] = pde15s(DE,tt,u0,bc,opts);
+[t u] = pde15s(DE,tt,u0,bc,opts);
 % catch ME
 %     errordlg('Error in solution process.', 'chebopbvp error', 'modal');
 %     return
@@ -236,4 +236,5 @@ else
     hold off
     
 end
+
 

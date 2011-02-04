@@ -39,7 +39,7 @@ end
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
 
 % Assign x or t as the linear function on the domain
 eval([indVarName, '=xt;']);
@@ -48,13 +48,13 @@ eval([indVarName, '=xt;']);
 DE  = eval(deString);
 
 if ~isempty(lbcInput{1})
-    [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC');
+    [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
     LBC = eval(lbcString);
 else
     LBC = [];
 end
 if ~isempty(rbcInput{1})
-    [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC');
+    [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
     RBC = eval(rbcString);
 else
     RBC = [];
@@ -79,7 +79,7 @@ if guiMode && useLatest
     guess = handles.latestSolution;
     N = chebop(d,DE,LBC,RBC,guess);
 elseif ~isempty(initInput)
-    guess = eval(initInput);
+    guess = eval(vectorize(initInput));
     if isnumeric(guess)
         guess = 0*xt+guess;
     end

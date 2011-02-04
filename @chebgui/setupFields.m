@@ -1,4 +1,4 @@
-function [field indVarName pdeflag allVarNames]  = setupFields(guifile,input,rhs,type)
+function [field allVarString indVarName pdeVarNames pdeflag allVarNames]  = setupFields(guifile,input,rhs,type,allVarString)
 
 numOfRows = size(input,1);
 pdeflag = false;
@@ -15,51 +15,68 @@ input = subtractRhs(input);
 % a '_' is located in rhs.
 
 % [field indVarName]  = setupLine(input,rhs,type)
-
+pdeVarName = '';
 if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
-    [field indVarName] = setupLine(guifile,input{1},rhs{1},type);
-    if ~isempty(rhs)
-        idx = strfind(rhs{1}, '_');
-        if ~isempty(idx), % it's not a PDE (or we can't do this type yet!)
-            pdeflag = true;
-            allVarNames = {rhs{1}(1:idx-1)};
+    [anFun indVarName allVarNames pdeVarNames] = setupLine(guifile,input{1},rhs{1},type);
+%     idx = strfind(rhs{1}, '_');
+    % Check whether we have too many variables (this is a singl
+    if ~isempty(pdeVarNames), % it's not a PDE (or we can't do this type yet!)
+        pdeflag = true;
+        % Check whether we have a match of variable names, i.e. we want u
+        % and u_t, not u and v_t:
+        if length(allVarNames) >1 || length(pdeVarNames) > 1
+            error('Chebgui:setupFields:NumberOfVariables',...
+                'Too many variables.');
         end
+        underScoreLocation = strfind(pdeVarNames{1},'_');
+        if ~strcmp(allVarNames{1},pdeVarNames{1}(1:underScoreLocation-1))
+            error('Chebgui:setupFields:VariableNames',...
+                'Inconsistent variable names.');
+        end
+%         allVarNames = {rhs{1}(1:idx-1)};
     end
-else
+    
+    % Only need to convert the cell to a string for DE -- information has
+    % been passed for BCs
+    if strcmp(type,'DE')
+        allVarString = allVarNames{1};
+    end
+    
+    % Only need to add variables in front of what will be anonymous
+    % functions, not 'dirichlet','neumann',etc... This can only happen in
+    % BCs, and in that case, allVarNames will be empty
+    if ~isempty(allVarNames)
+        field = ['@(', allVarString ')' anFun,''];
+    else
+        field = anFun;
+    end
+else % Have a system, go through each row
     % Keep track of every variable encountered in the problem
     allVarNames = {};
+    allPdeVarNames = {};
     if numel(rhs) == 1, rhs = repmat(rhs,numOfRows,1); end
     for k = 1:numOfRows
-        [anFun{k} indVarName varNames] = setupLine(guifile,input{k},rhs{k},type);
+        [anFun{k} indVarName varNames pdeVarNames] = setupLine(guifile,input{k},rhs{k},type);
         allVarNames = [allVarNames;varNames];
-    end
-    allVarNames = unique(allVarNames); % Remove duplicate variable names
-    
-    if ~isempty(rhs)
-    % For PDEs we need to reorder so that the order of the time derivatives
-    % matches the order of the inout arguments.
-        indx = (1:numOfRows)';
-        pdeflag = ones(1,numOfRows);
-        for k = 1:numOfRows
-            rhsk = rhs{k};
-            idxk = strfind(rhsk, '_');
-            if isempty(idxk), % it's not a PDE (or we can't do this type yet!)
-                indx = 1:numOfRows;
-                pdeflag(k) = false;
-                dvark = '';
-            else
-                dvark = rhsk(1:idxk(1)-1);
-            end
-            if strcmp(type,'DE')
-                for j = 1:numOfRows
-                    if strcmp(dvark,allVarNames{j})
-                        indx(j) = k;
-                        indx(k) = j;
-                        break
-                    end
-                end
-            end
+        if length(pdeVarNames) > 1 % Only allow one time derivative in each line
+            error('Chebgui:setupField:TooManyTimeDerivatives',...
+                'Only one time derivative per line allowed')
         end
+        allPdeVarNames = [allPdeVarNames;pdeVarNames];
+    end
+    % Remove duplicate variable names
+    allVarNames = unique(allVarNames); 
+    [allPdeVarNames I J] = unique(allPdeVarNames);
+    
+    if ~isempty(allPdeVarNames)
+    % For PDEs we need to reorder so that the order of the time derivatives
+    % matches the order of the input arguments. For this, we use the
+    % indices returned from the unique method above. !!! Temporarily
+    % experimental.
+    indx = I;
+    pdeflag = ones(1,numOfRows);
+    else
+        indx = (1:numOfRows)';
     end
     
     % Construct the function
@@ -69,18 +86,20 @@ else
     end
     allAnFun(end) = []; % Remove the last comma
     
-    % Construct the handle part
-    allVarString = allVarNames{1};
-    for varCounter = 2:length(allVarNames)
-        allVarString = [allVarString,',',allVarNames{varCounter}];
+    % Construct the handle part. For the DE field, we need to collect all
+    % the variable names in one string. If we are working with BCs, we have
+    % already passed that string in (as the parameter allVarString).
+    if strcmp(type,'DE')
+        allVarString = allVarNames{1};
+        for varCounter = 2:length(allVarNames)
+            allVarString = [allVarString,',',allVarNames{varCounter}];
+        end
     end
     
     field = ['@(', allVarString ')[' allAnFun,']'];
 end
 
-end
-
-function [field indVarName varNames]  = setupLine(guifile,input,rhs,type)
+function [field indVarName varNames pdeVarNames]  = setupLine(guifile,input,rhs,type)
 convertBCtoAnon  = 0;
 
 % Create the variables x and t (corresponding to the linear function on the
@@ -114,10 +133,14 @@ elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
     if ~isempty(bcNum)
         field = input;
         indVarName = []; % Don't need to worry about lin. func. in this case
+        varNames = [];
+        pdeVarNames = [];
     elseif strcmpi(input,'dirichlet') || strcmpi(input,'neumann') || strcmpi(input,'periodic')
         % Add extra 's to allow evaluation of the string
         field = ['''',input,''''];
         indVarName = []; % Don't need to worry about lin. func. in this case
+        varNames = [];
+        pdeVarNames = [];
     else
         if ~isempty(rhsNum) && rhsNum % If rhs = 0, don't make a subtraction
             input = [input ,'-(',rhs,')'];
@@ -127,12 +150,11 @@ elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
 end
 
 if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
-    if nargout == 2
-        [field indVarName] = convertToAnon(guifile,input);
-    else % Three output arguments -- Multiple rows
-        [field indVarName varNames] = convertToAnon(guifile,input);
-    end
-end
+%     if nargout == 2
+%         [field indVarName] = convertToAnon(guifile,input);
+%     else % Three output arguments -- Multiple rows
+        [field indVarName varNames pdeVarNames] = convertToAnon(guifile,input);
+%     end
 end
 
 function data = subtractRhs(data)
@@ -144,22 +166,11 @@ for k = 1:numel(data)
     elseif ~isempty(idx)
         rhs = strtrim(data{k}(idx+1:end));
         data{k} = strtrim(data{k}(1:idx-1));
-        if ~isempty(strfind(rhs,'_')), rhs = '0'; 
-        elseif ~isempty(strfind(data{k},'_'))
-            data{k} = rhs; rhs = '0';
-        end
         numrhs = str2num(rhs);
-        if ~isempty(numrhs)
-            if numrhs == 0
-                % if zero, do nothing
-            elseif numrhs > 0
-                data{k} = [data{k} '-' rhs];
-            else
-                data{k} = [data{k} '+' rhs];
-            end
-        else
+        if ~isempty(numrhs) && numrhs == 0
+            % Do nothing
+        else % If not zero, subtract the rhs from the lhs
             data{k} = [data{k} '-(' rhs ')'];
         end
     end
-end
 end
