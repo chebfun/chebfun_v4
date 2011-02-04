@@ -1,18 +1,16 @@
-function sOut = parSimp(guifile,str)
-
-sOut = str;
-return
-
-% Store length of the string
-strLen = length(str);
+function str = parSimp(guifile,str)
+% PARSIMP  Remove unnecessary parentheses from string inputs.
+%  parSimp does some basic parsing of the input STR to attempt to remove
+%  unnecessary parenthesis and consecutive +/- pairs.
 
 % Find all locations of ( and )
 leftParLoc = strfind(str,'(');
 rightParLoc = strfind(str,')');
-plusMinVec =  (str == '+') + (str == '-');
+minusVec = str == '-';
+plusVec = str == '+';
 timDivVec  =  2*((str == '*') + (str == '/'));
 powerVec = 3*(str == '^');
-allOpVec = plusMinVec + timDivVec + powerVec;
+allOpVec = plusVec + minusVec + timDivVec + powerVec;
 allOpVec(allOpVec == 0) = inf;
 
 allOpLoc = regexp(str,'[\+\-\*\/\^]');
@@ -26,10 +24,9 @@ end
 % Store number of parenthesis
 numOfPars = length(leftParLoc);
 
-% Pair them together
+% % Pair them together
 pairs = zeros(numOfPars,2);
 parCounter = 1;
-
 leftStack = [];
 for strIndex = 1:length(str)
     if str(strIndex) == '(' % Push to the stack
@@ -44,9 +41,9 @@ for strIndex = 1:length(str)
         parCounter = parCounter + 1;
     end
 end
-
 leftPars = pairs(:,1);
 rightPars = pairs(:,2);
+
 for pIndex = 1:numOfPars
     pLeft = leftPars(pIndex);
     pRight = rightPars(pIndex);
@@ -62,10 +59,17 @@ for pIndex = 1:numOfPars
         % Do nothing
     elseif (isempty(nextLeftOp) || minOpInside >= allOpVec(nextLeftOp)) && ... 
         (isempty(nextRightOp) || minOpInside >= allOpVec(nextRightOp))
+    
+        if minOpInside == 1 && ~isempty(nextLeftOp) && allOpVec(nextLeftOp) == 1 ...
+                && strcmp(str(pLeft-1),'-')
+            if ~(sum(isfinite(allOpVec(pLeft:pRight))) && any(strcmp(str(pLeft+1),{'-','+'})))
+                continue
+            end
+        end
         
         % Remove parenthesis pair
-        sOut(pLeft) = [];
-        sOut(pRight-1) = [];
+        str(pLeft) = [];
+        str(pRight-1) = [];
         
         % Need to update indices and operators
         allOpVec(pLeft) = [];
@@ -74,5 +78,25 @@ for pIndex = 1:numOfPars
         rightPars = rightPars - (rightPars > pLeft) - (rightPars > pRight);        
         allOpLoc = allOpLoc - (allOpLoc > pLeft) - (allOpLoc > pRight);
         allCharNumLoc = allCharNumLoc - (allCharNumLoc > pLeft) - (allCharNumLoc > pRight);
+        
+        % remove consecutive +/- pairs
+        dOV = diff(allOpVec);
+        dOV(isnan(dOV)) = inf;
+        pm = find(~dOV,1);
+        if ~isempty(pm)
+            if str(pm) == str(pm+1)
+                str(pm) = '+';
+            else
+                str(pm) = '-';
+            end
+            str(pm+1) = [];
+            % Need to update indices and operators
+            allOpVec(pm+1) = [];
+            leftPars(leftPars > pm) = leftPars(leftPars > pm)-1;
+            rightPars(rightPars > pm) = rightPars(rightPars > pm)-1;
+            allOpLoc(allOpLoc > pm) = allOpLoc(allOpLoc > pm)-1;
+            allCharNumLoc(allCharNumLoc > pm) = allCharNumLoc(allCharNumLoc > pm)-1;
+        end
+            
     end
 end

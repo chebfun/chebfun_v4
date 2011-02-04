@@ -34,7 +34,7 @@ switch exampleNumber
     case 1
         a = '-2';
         b = '2';
-        DE = 'u"+x*sin(u) = 1';
+        DE = 'u" + x*sin(u) = 1';
         LBC = 'u = 0';
         RBC = 'u = 0';
         init = '';
@@ -46,7 +46,7 @@ switch exampleNumber
     case 2
         a = '1';
         b = '3';
-        DE = 'u"+cos(sin(u)) = -1';
+        DE = 'u" + cos(sin(u)) = -1';
         LBC = 'u'' = 2';
         RBC = 'u = 0';
         init = '';
@@ -58,7 +58,7 @@ switch exampleNumber
     case 3
         a = '-5';
         b = '5';
-        DE = '0.01*u''''-x*u = 1';
+        DE = '0.01*u'''' - x*u = 1';
         LBC = 'u = 0';
         RBC = 'u = 0';
         init = '';
@@ -70,7 +70,7 @@ switch exampleNumber
     case 4
         a = '-1';
         b = '1';
-        DE = {'u"-sin(v) = 0';'cos(u)+v" = 0'};
+        DE = {'u" - sin(v) = 0';'cos(u) + v" = 0'};
         LBC = {'u = 1';'v'' = 0'};
         RBC = {'u'' = 0';'v = 0'};
         init = '';
@@ -82,7 +82,7 @@ switch exampleNumber
     case 5
         a = '-2';
         b = '2';
-        DE = 'u"-x*sin(u) = 1';
+        DE = 'u" - x*sin(u) = 1';
         LBC = {'u = 1';'u'' = 0'};
         RBC = '';
         init = '';
@@ -94,7 +94,7 @@ switch exampleNumber
     case 6
         a = '0';
         b = '15';
-        DE = 'u"-(1-u^2)*u''+u = 0';
+        DE = 'u" - (1-u^2)*u'' + u = 0';
         DErhs = '0';
         LBC = {'u = 2';'u'' = 0'};;
         RBC = '';
