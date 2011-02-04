@@ -44,7 +44,14 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
             errordlg(s, 'Chebgui error', 'modal');
             return
         end
-    end      
+    end   
+    if get(handles.button_eig,'Value')
+        newString = handles.guifile.sigma;
+        if ~isempty(newString) && isempty(str2num(newString)) && ~any(strcmpi(newString,{'LR','SR','LM','SM'}))
+            errordlg('Invalid sigma. Allowable values are ''LR'',''SR'',''LM'',''SM'' (no quotes) or a numerical value', ...
+            'Chebgui error', 'modal');
+        end
+    end
     
     % Disable buttons, figures, etc.
     set(handles.toggle_useLatest,'Enable','off');
@@ -64,8 +71,10 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     try
         if get(handles.button_ode,'Value')
             handles = solveguibvp(guifile,handles);
-        else
+        elseif get(handles.button_pde,'Value')
             handles = solveGUIPDE(guifile,handles);
+        else
+            handles = solveguieig(guifile,handles);            
         end
     catch ME
         MEID = ME.identifier;

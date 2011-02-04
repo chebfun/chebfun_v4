@@ -1,6 +1,5 @@
 function loaddemos(guifile,handles,type)
 
-
 % Obtain the DE of all available examples
 DE = '';
 counter = 1;
@@ -36,7 +35,7 @@ if strcmp(type,'bvp') % Setup BVPs demos
         end
         counter = counter+1;
     end
-else                % Setup PDEs demos
+elseif strcmp(type,'pde')                % Setup PDEs demos
     while 1
         [cg name demotype] = pdedemos(guifile,counter,'demo');
         if strcmp(name,'stop')
@@ -56,6 +55,30 @@ else                % Setup PDEs demos
                         'Separator','off',...
                         'HandleVisibility','callback', ...
                         'Callback', demoFun);
+            end
+        end
+        counter = counter+1;
+    end
+else % eig demos
+    while 1
+        [cg name demotype] = eigdemos(guifile,counter,'demo');
+        if strcmp(name,'stop')
+            break
+        else
+            demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,type,counter);
+            switch demotype
+                case 'scalar'
+                    hDemoitem  =  uimenu('Parent',handles.menu_eigs,...
+                        'Label',name,...
+                        'Separator','off',...
+                        'HandleVisibility','callback', ...
+                        'Callback', demoFun);
+                case 'system'
+                    hDemoitem  =  uimenu('Parent',handles.menu_eigs,...
+                        'Label',name,...
+                        'Separator','off',...
+                        'HandleVisibility','callback', ...
+                        'Callback', demoFun);                    
             end
         end
         counter = counter+1;

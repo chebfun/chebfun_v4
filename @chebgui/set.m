@@ -28,20 +28,16 @@ switch lower(propName)
         cg.timedomain = vin;
     case 'de'
         cg.DE = vin;
-    case 'derhs'
-        cg.DErhs = vin;
     case 'lbc'
         cg.LBC = vin;
-    case 'lbcrhs'
-        cg.LBCrhs = vin;
     case 'rbc'
         cg.RBC = vin;
-    case 'rbcrhs'
-        cg.RBCrhs = vin;
     case 'tol'
         cg.tol = vin;
     case 'init'
         cg.init= vin;
+    case 'sigma'
+        cg.sigma= vin;        
     case 'options'
         if isempty(propName2)
             cg.options = vin;

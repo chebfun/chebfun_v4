@@ -1,0 +1,67 @@
+function [cg name demotype] = eigdeoms(guifile,exampleNumber,mode)
+if nargin < 3
+    mode = 'start';
+end
+
+numberOfExamples = 2;
+
+% If called with a 0, open with an empty gui. If called with a number less
+% than 0, bigger than the number of available examples, or no argument,
+% start with a random example.
+if exampleNumber < 0 || exampleNumber > numberOfExamples
+    exampleNumber = ceil(numberOfExamples*rand(1));
+    % If we call the function with the Demos button, we want to notify the
+    % code that we have extracted information about all examples.
+    if strcmp(mode,'demo')
+        name = 'stop'; demotype = ''; cg = chebgui('type','bvp');
+        return
+    end
+end
+
+switch exampleNumber
+    case 0
+        a = '';
+        b = '';
+        DE = '';
+        LBC = '';
+        RBC = '';
+        init = '';
+        tol = '';
+        damping = '';
+        plotting = '0.1';
+        name = '';
+        demotype = '';
+    case 1
+        a = '-2';
+        b = '2';
+        DE = 'u" + u''';
+        LBC = 'u = 0';
+        RBC = 'u = 0';
+        init = '';
+        tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
+        sigma = '';
+        name = DE;
+        demotype = 'scalar';
+    case 2
+        a = '-2';
+        b = '2';
+        DE = {'u" + u*x+v';'v"+sin(x)*u'};
+        LBC = {'u = 0';'v = 0'};
+        RBC = {'u = 0';'v = 0'};
+        init = '';
+        tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
+        sigma = '';
+        name = 'system1';
+        demotype = 'system';        
+
+end
+
+options = struct('damping',damping,'plotting',plotting);
+
+cg = chebgui('type','eig','domleft',a,'domright',b,'de',DE,...
+    'lbc',LBC,'rbc',RBC,'init',init,'sigma',sigma,'tol',tol,...
+    'options',options);

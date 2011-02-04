@@ -1,5 +1,4 @@
 function [field allVarString indVarName pdeVarNames pdeflag allVarNames]  = setupFields(guifile,input,rhs,type,allVarString)
-
 numOfRows = size(input,1);
 pdeflag = false;
 allVarNames = [];

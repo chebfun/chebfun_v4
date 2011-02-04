@@ -177,6 +177,7 @@ set(handles.menu_pdefixon,'UserData',{''});
 % Populate the Demos menu
 loaddemos(handles.guifile,handles,'bvp')
 loaddemos(handles.guifile,handles,'pde')
+loaddemos(handles.guifile,handles,'eig')
 
 
 % Load the input fields
@@ -364,7 +365,7 @@ if get(handles.button_ode,'Value');
     else % Don't display fractions on iteration plots
         set(gca,'XTick', 1)
     end
-else
+elseif get(handles.button_pde,'Value');
     u = handles.latestSolution;
     % latestNorms = handles.latestNorms;
     tt = handles.latestSolutionT;
@@ -399,6 +400,26 @@ else
         end
         xlabel('x'), ylabel('t'), grid on
     end
+else % eigs
+    D = handles.latestSolution;
+    V = handles.latestSolutionT;
+        
+    figure
+    if ~iscell(V)
+        plot(real(V),'linewidth',2);
+    %     if guifile.options.grid
+    %         grid on
+    %     end
+        title('Real part of eigenmodes');
+    else
+        MS = repmat({'','o','x','s','+','*'},1,ceil(numel(V)/6));
+        LS = repmat({'-','--',':','-.'},1,ceil(numel(V)/4));
+        for k = 1:numel(V)
+            plot(real(V{k}),'linewidth',2,'linestyle',LS{k}); hold on
+        end
+        hold off
+    end
+    
 end
 
 function button_figsol_Callback(hObject, eventdata, handles)
@@ -408,7 +429,7 @@ if get(handles.button_ode,'Value');
     plot(latestSolution,'Linewidth',2), title('Solution at end of iteration')
     % Turn on grid
     if handles.guifile.options.grid, grid on,  end
-else
+elseif get(handles.button_pde,'Value');
     u = handles.latestSolution;
     tt = handles.latestSolutionT;
     
@@ -427,6 +448,19 @@ else
     end
     % Turn on grid
     if handles.guifile.options.grid, grid on,  end
+else
+    D = handles.latestSolution;
+    C = get(0,'DefaultAxesColorOrder');
+    C = repmat(C,ceil(size(D)/size(C,1)),1);
+    figure
+    for k = 1:size(D)
+        plot(real(D(k)),imag(D(k)),'.','markersize',25,'color',C(k,:)); hold on
+    end
+    hold off
+%     if guifile.options.grid
+%         grid on
+%     end
+    title('Eigenvalues'); xlabel('real'); ylabel('imag');
 end
 
 
@@ -454,13 +488,15 @@ function button_ode_Callback(hObject, eventdata, handles)
 handles = switchmode(handles.guifile,handles,'bvp');
 guidata(hObject, handles);
 
-
 % --- Executes on button press in button_pde.
 function button_pde_Callback(hObject, eventdata, handles)
 handles = switchmode(handles.guifile,handles,'pde');
 guidata(hObject, handles);
 
-
+% --- Executes on button press in button_pde.
+function button_eig_Callback(hObject, eventdata, handles)
+handles = switchmode(handles.guifile,handles,'eig');
+guidata(hObject, handles);
 
 % --- Executes on button press in button_pdeploton.
 function button_pdeploton_Callback(hObject, eventdata, handles)
@@ -997,3 +1033,35 @@ handles.guifile.options.fixYaxisUpper = '';
 set(handles.menu_pdefixon,'checked','off');
 set(handles.menu_pdefixoff,'checked','on');
 guidata(hObject, handles);
+
+
+
+function sigma_Callback(hObject, eventdata, handles)
+newString = get(hObject,'String');
+if ~isempty(newString) && isempty(str2num(newString)) && ~any(strcmpi(newString,{'LR','SR','LM','SM'}))
+    errordlg('Invalid sigma. Allowable values are ''LR'',''SR'',''LM'',''SM'' (no quotes) or a numerical value', ...
+        'Chebgui error', 'modal');
+end
+handles.guifile.sigma = newString;
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function sigma_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sigma (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --------------------------------------------------------------------
+function menu_eigs_Callback(hObject, eventdata, handles)
+
+% --- Executes on button press in button_export.
+function button_export_Callback(hObject, eventdata, handles)
+export(handles.guifile,handles,'.m');

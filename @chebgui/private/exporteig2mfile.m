@@ -9,7 +9,7 @@ else
     userName = getenv('USER');
 end
 
-fprintf(fid,'%% %s - Executable .m file for solving a boundary value problem.\n',filename);
+fprintf(fid,'%% %s - Executable .m file for solving an eigenvalue problem.\n',filename);
 fprintf(fid,'%% Automatically created with from chebbvp GUI by user %s\n',userName);
 fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
@@ -19,7 +19,6 @@ b = guifile.DomRight;
 deInput = guifile.DE;
 lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
-initInput = guifile.init;
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -30,7 +29,7 @@ deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
-[deString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
 
 % Print the BVP
 fprintf(fid,'%% Solving\n%%');
@@ -87,77 +86,69 @@ fprintf(fid,'rhs = %s;\n',deRHSprint);
 % Make assignments for left and right BCs.
 fprintf(fid,'\n%% Assign boundary conditions to the chebop.\n');
 if ~isempty(lbcInput{1})
-    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC');
+    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
     fprintf(fid,'N.lbc = %s;\n',lbcString);
 end
 if ~isempty(rbcInput{1})
-    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC');
+    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
     fprintf(fid,'N.rbc = %s;\n',rbcString);
 end
 
-% Set up for the initial guess of the solution.
-useLatest = strcmpi(initInput,'Using latest solution');
-if useLatest
-    fprintf(fid,['\n%% Note that it is not possible to use the "Use latest"',...
-        'option \n%% when exporting to .m files. \n']);
-elseif ~isempty(initInput)
-    fprintf(fid,'\n%% Assign an initial guess to the chebop.\n');
-    fprintf(fid,'N.guess = %s;\n',vectorize(char(initInput)));
-end
 
-% Set up preferences
-fprintf(fid,'\n%% Setup preferences for solving the problem \n');
-fprintf(fid,'options = cheboppref;\n');
-
+% % Set up preferences
+% fprintf(fid,'\n%% Setup preferences for solving the problem \n');
+% fprintf(fid,'options = cheboppref;\n');
 % Option for tolerance
-tolInput = guifile.tol;
+% tolInput = guifile.tol;
 
-if ~isempty(tolInput)
-    fprintf(fid,'\n%% Option for tolerance \n');
-    fprintf(fid,'options.deltol = %s;\n',tolInput);
-    fprintf(fid,'options.restol = %s;\n',tolInput);
-end
+fprintf(fid,'\n%% Number of eigenvalue and eigenmodes to compute.\n');
+fprintf(fid,'k = 6;\n');
 
-fprintf(fid,'options.display = ''iter'';\n');
-
-% Option for damping
-dampedOnInput = guifile.options.damping;
-
-fprintf(fid,'\n%% Option for damping \n');
-if strcmp(dampedOnInput,'1')
-    fprintf(fid,'options.damped = ''on'';\n');
+fprintf(fid,'\n%% Solve the eigenvalue problem.\n');
+if ~isempty(guifile.sigma)
+    fprintf(fid,'[V D] = eigs(N,k,%s);\n',guifile.sigma);
 else
-    fprintf(fid,'options.damped = ''off'';\n');
+    fprintf(fid,'[V D] = eigs(N,k);\n');
 end
 
-% Option for plotting
-plottingOnInput = guifile.options.plotting;
+fprintf(fid,'\n%% Plot the eigenvalues.\n');
+fprintf(fid,'D = diag(D);\n');
+fprintf(fid,'figure\n');
+fprintf(fid,'plot(real(D),imag(D),''.'',''markersize'',25)\n');
+fprintf(fid,'title(''Eigenvalues''); xlabel(''real''); ylabel(''imag'');\n');
 
-fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
-fprintf(fid,'options.plotting = %s;\n',plottingOnInput);
+if ischar(allVarString) || numel(allVarString) == 1
+    fprintf(fid,'\n%% Plot the eigenmodes.\n');
+    fprintf(fid,'figure\n');
+    fprintf(fid,'plot(real(V),''linewidth'',2);\n');
+    fprintf(fid,'title(''Eigenmodes''); xlabel(''%s''); ylabel(''%s'');\n',indVarName,allVarString);
+end    
 
-
-
-fprintf(fid,['\n%% Solve the problem using solvebvp (a function which ' ...
-    'offers same\n%% functionality as nonlinear backslash but more '...
-    'customizeability) \n']);
-fprintf(fid,'[u normVec] = solvebvp(N,rhs,''options'',options);\n');
-
-fprintf(fid,'\n%% Create plot of the solution and the norm of the updates\n');
-
-
-
-
-fprintf(fid,'figure\nplot(u),title(''Solution at the end of iteration'')\n');
-fprintf(fid,'figure\nsemilogy(normVec,''-*''),title(''Norm of updates'')\n');
-fprintf(fid,'xlabel(''Number of iteration'')\n');
-fprintf(fid,...
-    ['if length(normVec) > 1\n' ...
-        '\tXTickVec = 1:max(floor(length(normVec)/5),1):length(normVec);\n'...
-        '\tset(gca,''XTick'', XTickVec), xlim([1 length(normVec)]), grid on\n'...
-    'else\n'...
-    '   \tset(gca,''XTick'', 1)\n'...
-    'end\n']);
+% fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
+% fprintf(fid,'options.plotting = %s;\n',plottingOnInput);
+% 
+% 
+% 
+% fprintf(fid,['\n%% Solve the problem using solvebvp (a function which ' ...
+%     'offers same\n%% functionality as nonlinear backslash but more '...
+%     'customizeability) \n']);
+% fprintf(fid,'[u normVec] = solvebvp(N,rhs,''options'',options);\n');
+% 
+% fprintf(fid,'\n%% Create plot of the solution and the norm of the updates\n');
+% 
+% 
+% 
+% 
+% fprintf(fid,'figure\nplot(u),title(''Solution at the end of iteration'')\n');
+% fprintf(fid,'figure\nsemilogy(normVec,''-*''),title(''Norm of updates'')\n');
+% fprintf(fid,'xlabel(''Number of iteration'')\n');
+% fprintf(fid,...
+%     ['if length(normVec) > 1\n' ...
+%         '\tXTickVec = 1:max(floor(length(normVec)/5),1):length(normVec);\n'...
+%         '\tset(gca,''XTick'', XTickVec), xlim([1 length(normVec)]), grid on\n'...
+%     'else\n'...
+%     '   \tset(gca,''XTick'', 1)\n'...
+%     'end\n']);
 
 fclose(fid);
 end

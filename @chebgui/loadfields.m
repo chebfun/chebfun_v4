@@ -43,7 +43,7 @@ if strcmpi(guifile.type,'pde')
         set(handles.menu_pdefixoff,'Checked','On');
     end    
     
-else
+elseif strcmpi(guifile.type,'bvp')
     if strcmp(guifile.options.damping,'1')
         set(handles.menu_odedampednewtonon,'Checked','On');
         set(handles.menu_odedampednewtonoff,'Checked','Off');

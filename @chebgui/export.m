@@ -63,7 +63,7 @@ if strcmp(problemType,'bvp')
     end
     
     % Exporting a PDE
-else
+elseif strcmp(problemType,'pde')
     switch exportType
         case 'GUI'
             prompt = 'Enter the name of the chebgui variable:';
@@ -91,11 +91,12 @@ else
             if ~isempty(answer)
                 assignin('base',answer{1},handles.latestSolution);
                 assignin('base',answer{2},handles.latestSolutionT);
-                msgbox(['Exported chebfun variables named ' answer{1},'and ',...
-                    answer{2}, ' to workspace.'],...
-                    'Chebgui export','modal')
+%                 msgbox(['Exported chebfun variables named ' answer{1},' and ',...
+%                     answer{2}, ' to workspace.'],...
+%                     'Chebgui export','modal')
+            else
+%                 msgbox('Exported variables named u and t to workspace.','Chebgui export','modal')
             end
-            msgbox('Exported variables named u and t to workspace.','Chebgui export','modal')
         case '.m'           
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
@@ -118,7 +119,63 @@ else
         case 'Cancel'
             return;
     end
-end
+else
+    switch exportType
+        case 'GUI'
+            prompt = 'Enter the name of the chebgui variable:';
+            name   = 'Export GUI';
+            numlines = 1;
+            defaultanswer='chebg';
+            options.Resize='on';
+            options.WindowStyle='modal';
+            
+            answer = inputdlg(prompt,name,numlines,{defaultanswer},options);
+            
+            if ~isempty(answer)
+                assignin('base',answer{1},handles.guifile);
+            end
+        case 'Workspace'           
+            prompt = {'Eigenvalues', 'Eigenmodes'};
+            name   = 'Export to workspace';
+            defaultanswer={'D','V'};
+            numlines = 1;
+            options.Resize='on';
+            options.WindowStyle='modal';
+            
+            answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+            
+            if ~isempty(answer)
+                assignin('base',answer{1},diag(handles.latestSolution));
+                assignin('base',answer{2},handles.latestSolutionT);
+%                 msgbox(['Exported chebfun variables named ' answer{1},'and ',...
+%                     answer{2}, ' to workspace.'],...
+%                     'Chebgui export','modal')
+            else
+%                 msgbox('Exported variables named D and V to workspace.','Chebgui export','modal')
+            end
+        case '.m'           
+            [filename, pathname, filterindex] = uiputfile( ...
+                {'*.m','M-files (*.m)'; ...
+                '*.*',  'All Files (*.*)'}, ...
+                'Save as', 'bvpeig.m');
+            
+            if filename     % User did not press cancel
+                try
+                    exporteig2mfile(guifile,pathname,filename,handles)
+                    % Open the new file in the editor
+                    open([pathname,filename])
+                catch
+                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+                end
+            end
+        case '.mat'
+            D = diag(handles.latestSolution); %#ok<NASGU>
+            V = handles.latestSolutionT;  %#ok<NASGU>
+            uisave({'D','V'},'bvpeig');
+        case 'Cancel'
+            return;
+    end
+    
 
 
 end

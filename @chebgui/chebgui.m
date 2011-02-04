@@ -19,7 +19,7 @@ else
     c.type = '';
     c.DomLeft = ''; c.DomRight = '';
     c.DE = ''; c.LBC = ''; c.RBC = '';
-    c.timedomain = '';
+    c.timedomain = ''; c.sigma = '';
     c.init = []; c.tol = [];
     c.options = struct('damping','1','plotting','0.5','grid',1,...
         'pdeholdplot',0,'fixYaxisLower','','fixYaxisUpper','');
@@ -32,7 +32,7 @@ else
         if isnumeric(value), value = num2str(value); end
         switch lower(type)
             case 'type'
-                if ~strcmpi(value,'bvp') && ~strcmpi(value,'pde') && ~strcmpi(value,'ivp')
+                if ~strcmpi(value,'bvp') && ~strcmpi(value,'pde') && ~strcmpi(value,'ivp') && ~strcmpi(value,'eig')
                     error('CHEBGUI:chebgui:type',[value,' is not a valid type of problem.'])
                 elseif strcmpi(value,'ivp')
                     warning('CHEBGUI:chebgui:type Type of problem changed from IVP to BVP');
@@ -57,6 +57,8 @@ else
                 c.RBC = value;
             case 'init'
                 c.init = value;
+            case 'sigma'
+                c.sigma = value;                
             case 'tol'
                 c.tol = value;
             case 'options'

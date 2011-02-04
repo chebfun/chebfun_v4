@@ -100,3 +100,6 @@ for pIndex = 1:numOfPars
             
     end
 end
+
+% Remove leading + signs
+if strcmp(str(1),'+'), str(1) = []; end
