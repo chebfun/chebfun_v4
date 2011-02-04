@@ -311,33 +311,24 @@ handles.guifile.tol = get(hObject,'String');
 guidata(hObject, handles);
 
 
-function input_DE_RHS_Callback(hObject, eventdata, handles)
-inputString = get(hObject,'String');
-handles.guifile.DErhs = inputString;
-% Check whether we might be entering into PDE mode.
-% Find whether any line contains _
-underscoreLocations = strfind(cellstr(inputString),'_');
-% Check whether the results are empty using cellfun
-containsUnderscore = ~cellfun(@isempty,underscoreLocations);
-if get(handles.button_ode,'Value') && any(containsUnderscore)
-    switch2pde = questdlg('You appear to be entering a PDE. Would you like to swtich the PDE mode?', ...
-        'Switch to PDE mode?', 'Yes', 'No','Yes');
-    if strcmp(switch2pde,'Yes')
-        set(handles.button_ode,'Value',0);
-        set(handles.button_ode,'Value',1);
-        button_pde_Callback(hObject, eventdata, handles);
-    end
-end
-guidata(hObject, handles);
-
-function input_LBC_RHS_Callback(hObject, eventdata, handles) %#ok<*DEFNU>
-handles.guifile.LBCrhs = get(hObject,'String');
-guidata(hObject, handles);
-
-
-function input_RBC_RHS_Callback(hObject, eventdata, handles)
-handles.guifile.RBCrhs = get(hObject,'String');
-guidata(hObject, handles);
+% function input_DE_RHS_Callback(hObject, eventdata, handles)
+% inputString = get(hObject,'String');
+% handles.guifile.DErhs = inputString;
+% % Check whether we might be entering into PDE mode.
+% % Find whether any line contains _
+% underscoreLocations = strfind(cellstr(inputString),'_');
+% % Check whether the results are empty using cellfun
+% containsUnderscore = ~cellfun(@isempty,underscoreLocations);
+% if get(handles.button_ode,'Value') && any(containsUnderscore)
+%     switch2pde = questdlg('You appear to be entering a PDE. Would you like to swtich the PDE mode?', ...
+%         'Switch to PDE mode?', 'Yes', 'No','Yes');
+%     if strcmp(switch2pde,'Yes')
+%         set(handles.button_ode,'Value',0);
+%         set(handles.button_ode,'Value',1);
+%         button_pde_Callback(hObject, eventdata, handles);
+%     end
+% end
+% guidata(hObject, handles);
 
 
 function button_holdon_Callback(hObject, eventdata, handles)
@@ -554,13 +545,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-function input_DE_RHS_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 function input_RBC_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
@@ -606,18 +590,6 @@ if ~isempty(k), set(h,'fontname',flist{k(1)}), end
 axis([-1.02 .98 -2 2]), axis off
 
 
-function input_RBC_RHS_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-function input_LBC_RHS_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 function fig_sol_CreateFcn(hObject, eventdata, handles)
 % Hint: place code in OpeningFcn to populate fig_sol
 
@@ -660,12 +632,6 @@ function input_RBC_ButtonDownFcn(hObject, eventdata, handles)
 chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_RBC');
 function input_GUESS_ButtonDownFcn(hObject, eventdata, handles)
 chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_GUESS');
-function input_DE_RHS_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_DE_RHS');
-function input_LBC_RHS_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_LBC_RHS');
-function input_RBC_RHS_ButtonDownFcn(hObject, eventdata, handles)
-chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_RBC_RHS');
 
 function editfontsize_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))

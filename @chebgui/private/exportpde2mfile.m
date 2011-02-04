@@ -19,19 +19,20 @@ b = guifile.DomRight;
 deInput = guifile.DE;
 lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
-deRHSInput = guifile.DErhs;
-lbcRHSInput = guifile.LBCrhs;
-rbcRHSInput = guifile.RBCrhs;
+deRHSInput = 'u_t';
 initInput = guifile.init;
 tt = guifile.timedomain;
+
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
 if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
 if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
-if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
-if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
+
+% deRHSInput = cellstr(repmat('0',numel(deInput),1));
+lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
+rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
 % [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
 [deString indVarName pdeflag] = setupFields(guifile,deInput,deRHSInput,'DE');
@@ -65,7 +66,7 @@ deString = [deString(1:idx(1)-1), ',t,x,diff',sops{:},deString(idx(1):end)];
 % Print the PDE
 fprintf(fid,'%% Solving\n%%');
 for k = 1:numel(deInput)
-    fprintf(fid,'   %s = %s,\t',deInput{k},deRHSInput{k});
+    fprintf(fid,'   %s,\t',deInput{k});
 end
 fprintf(fid,'\n');
 tmpt = eval(tt); 
@@ -74,11 +75,7 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     fprintf(fid,',\n%% subject to\n%%');
     if ~isempty(lbcInput{1})
         for k = 1:numel(lbcInput)
-            if isempty(lbcRHSInput{k})
-                fprintf(fid,'   %s ',lbcInput{k});
-            else
-                fprintf(fid,'   %s = %s,\t',lbcInput{k},lbcRHSInput{k});
-            end
+            fprintf(fid,'   %s ',lbcInput{k});
         end
         fprintf(fid,'at %s = % s\n',indVarName,a);
     end
@@ -87,11 +84,7 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     end
     if ~isempty(rbcInput{1})
         for k = 1:numel(rbcInput)
-            if isempty(rbcRHSInput{k})
-                fprintf(fid,'   %s ',rbcInput{k});
-            else
-                fprintf(fid,'   %s = %s,\t',rbcInput{k},rbcRHSInput{k});
-            end
+            fprintf(fid,'   %s ',rbcInput{k});
         end
         fprintf(fid,'at %s = % s\n',indVarName,b);
     end

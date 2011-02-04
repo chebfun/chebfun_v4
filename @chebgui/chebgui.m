@@ -18,8 +18,8 @@ elseif nargin == 1 && isa(varargin{1},'chebgui')
 else
     c.type = '';
     c.DomLeft = ''; c.DomRight = '';
-    c.DE = ''; c.DErhs = ''; c.LBC = ''; c.LBCrhs = ''; c.RBC = '';
-    c.RBCrhs = ''; c.timedomain = '';
+    c.DE = ''; c.LBC = ''; c.RBC = '';
+    c.timedomain = '';
     c.init = []; c.tol = [];
     c.options = struct('damping','1','plotting','0.5','grid',1,...
         'pdeholdplot',0,'fixYaxisLower','','fixYaxisUpper','');
@@ -51,16 +51,10 @@ else
                 c.timedomain = value;
             case 'de'
                 c.DE = value;
-            case 'derhs'
-                c.DErhs = value;
             case 'lbc'
                 c.LBC = value;
-            case 'lbcrhs'
-                c.LBCrhs = value;
             case 'rbc'
                 c.RBC = value;
-            case 'rbcrhs'
-                c.RBCrhs = value;
             case 'init'
                 c.init = value;
             case 'tol'

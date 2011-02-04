@@ -7,9 +7,6 @@ set(handles.timedomain,'String','');
 set(handles.input_DE,'String','');
 set(handles.input_LBC,'String','');
 set(handles.input_RBC,'String','');
-set(handles.input_DE_RHS,'String','');
-set(handles.input_LBC_RHS,'String','');
-set(handles.input_RBC_RHS,'String','');
 set(handles.input_GUESS,'String','');
 set(handles.timedomain,'String','');
 set(handles.menu_tolerance,'UserData','1e-10'); % The default tolerance
@@ -32,9 +29,7 @@ set(handles.button_solve,'String','Solve');
 
 % Enable RHS of BCs again
 set(handles.input_LBC,'Enable','on');
-set(handles.input_LBC_RHS,'Enable','on');
 set(handles.input_RBC,'Enable','on');
-set(handles.input_RBC_RHS,'Enable','on');
 
 % We don't have a solution available anymore
 handles.hasSolution = 0;

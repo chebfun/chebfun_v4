@@ -23,11 +23,8 @@ switch exampleNumber
         a = '';
         b = '';
         DE = '';
-        DErhs = '';
         LBC = '';
-        LBCrhs = '';
         RBC = '';
-        RBCrhs = '';
         init = '';
         tol = '';
         damping = '';
@@ -37,12 +34,9 @@ switch exampleNumber
     case 1
         a = '-2';
         b = '2';
-        DE = 'u"+x.*sin(u) = 1';
-        DErhs = '0';
+        DE = 'u"+x*sin(u) = 1';
         LBC = 'u = 0';
-        LBCrhs = '0';
         RBC = 'u = 0';
-        RBCrhs = '0';
         init = '';
         tol = '1e-10';
         damping = '1';
@@ -53,11 +47,8 @@ switch exampleNumber
         a = '1';
         b = '3';
         DE = 'u"+cos(sin(u)) = -1';
-        DErhs = '0';
         LBC = 'u'' = 2';
-        LBCrhs = '0';
         RBC = 'u = 0';
-        RBCrhs = '0';
         init = '';
         tol = '1e-10';
         damping = '1';
@@ -67,12 +58,9 @@ switch exampleNumber
     case 3
         a = '-5';
         b = '5';
-        DE = '0.01*u''''-x.*u = 1';
-        DErhs = '0';
+        DE = '0.01*u''''-x*u = 1';
         LBC = 'u = 0';
-        LBCrhs = '0';
         RBC = 'u = 0';
-        RBCrhs = '0';
         init = '';
         tol = '1e-10';
         damping = '0';
@@ -83,11 +71,8 @@ switch exampleNumber
         a = '-1';
         b = '1';
         DE = {'u"-sin(v) = 0';'cos(u)+v" = 0'};
-        DErhs = {'0','0'};
         LBC = {'u = 1';'v'' = 0'};
-        LBCrhs = {'0';'0'};
         RBC = {'u'' = 0';'v = 0'};
-        RBCrhs = {'0';'0'};
         init = '';
         tol = '1e-10';
         damping = '0';
@@ -97,12 +82,9 @@ switch exampleNumber
     case 5
         a = '-2';
         b = '2';
-        DE = 'u"-x.*sin(u) = 1';
-        DErhs = '0';
+        DE = 'u"-x*sin(u) = 1';
         LBC = {'u = 1';'u'' = 0'};
-        LBCrhs = {'0';'0'};
         RBC = '';
-        RBCrhs = '';
         init = '';
         tol = '1e-10';
         damping = '1';
@@ -112,12 +94,10 @@ switch exampleNumber
     case 6
         a = '0';
         b = '15';
-        DE = 'u"-(1-u.^2)*u''+u = 0';
+        DE = 'u"-(1-u^2)*u''+u = 0';
         DErhs = '0';
-        LBC = {'u = 2';'u'' = 0'};
-        LBCrhs = {'0';'0'};
+        LBC = {'u = 2';'u'' = 0'};;
         RBC = '';
-        RBCrhs = '';
         init = '';
         tol = '1e-10';
         damping = '1';
@@ -127,13 +107,10 @@ switch exampleNumber
     case 7
         a = '-1';
         b = '1';
-        DE = '0.01*u" + 2*(1-x.^2).*u + u.^2 = 1';
-        DErhs = '0';
+        DE = '0.01*u" + 2*(1-x^2)*u + u^2 = 1';
         LBC = 'u = 0';
-        LBCrhs = '0';
         RBC = 'u = 0';
-        RBCrhs = '0';
-        init = '2*(x.^2-1).*(1-2./(1+20*x.^2))';
+        init = '2*(x^2-1).*(1-2/(1+20*x^2))';
         tol = '1e-10';
         damping = '1';
         plotting = '0.1';
@@ -143,11 +120,8 @@ switch exampleNumber
         a = '-100';
         b = '100';
         DE = 'u" + (1.2+sign(10-abs(x)))*u = 1';
-        DErhs = '0';
         LBC = 'u = 0';
-        LBCrhs = '0';
         RBC = 'u = 0';
-        RBCrhs = '0';
         init = '';
         tol = '1e-10';
         damping = '1';
@@ -159,6 +133,5 @@ end
 options = struct('damping',damping,'plotting',plotting);
 
 cg = chebgui('type','bvp','domleft',a,'domright',b,'de',DE,...
-    'derhs',DErhs,'lbc',LBC,'lbcrhs',LBCrhs, ...
-    'rbc',RBC,'rbcrhs',RBCrhs,'init',init,'tol',tol,...
+    'lbc',LBC,'rbc',RBC,'init',init,'tol',tol,...
     'options',options);

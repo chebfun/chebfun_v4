@@ -4,11 +4,8 @@ function loadfields(guifile,handles)
 set(handles.dom_left,'String',guifile.DomLeft);
 set(handles.dom_right,'String',guifile.DomRight);
 set(handles.input_DE,'String',guifile.DE);
-set(handles.input_DE_RHS,'String',guifile.DErhs);
 set(handles.input_LBC,'String',guifile.LBC);
-set(handles.input_LBC_RHS,'String',guifile.LBCrhs);
 set(handles.input_RBC,'String',guifile.RBC);
-set(handles.input_RBC_RHS,'String',guifile.RBCrhs);
 set(handles.input_GUESS,'String',guifile.init);
 
 if strcmpi(guifile.type,'pde')

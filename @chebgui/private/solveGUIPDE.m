@@ -21,9 +21,7 @@ b = str2num(get(handles.dom_right,'String'));
 deInput = get(handles.input_DE,'String');
 lbcInput = get(handles.input_LBC,'String');
 rbcInput = get(handles.input_RBC,'String');
-deRHSInput = get(handles.input_DE_RHS,'String');
-lbcRHSInput = get(handles.input_LBC_RHS,'String');
-rbcRHSInput = get(handles.input_RBC_RHS,'String');
+deRHSInput = 'u_t';
 guessInput = get(handles.input_GUESS,'String');
 tolInput = guifile.tol;
 tt = eval(get(handles.timedomain,'String'));
@@ -33,10 +31,10 @@ if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
 if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
 if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
-if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
-if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
-% !!! Should do a error check to see whether lhs and rhs number of line
-% match
+
+% deRHSInput = cellstr(repmat('0',numel(deInput),1));
+lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
+rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
 % try           
     % Convert the input to the an. func. format, get information about the
@@ -142,12 +140,6 @@ end
 if periodic
     bc = 'periodic';
 else
-    if any(strcmpi(LBC,{'dirichlet','neumann'})) 
-        LBC = {LBC,str2num(lbcRHSInput{1})};
-    end
-    if any(strcmpi(RBC,{'dirichlet','neumann'})) 
-        RBC = {RBC,str2num(rbcRHSInput{1})};
-    end
     bc = [];
     bc.left = LBC;
     bc.right = RBC;
@@ -229,13 +221,6 @@ if ~iscell(u)
     waterfall(u,t,'simple','linewidth',defaultLineWidth)
     xlabel(indVarName), ylabel('t'), zlabel(allVarNames)
 else
-%     surf(u{1},t,'facecolor','interp')
-%     xlabel('x'), ylabel('t')
-%     varnames = get(handles.input_DE_RHS,'string');
-%     idx = strfind(varnames{1},'_');
-%     varnames{k} = varnames{1}(1:idx(1)-1);
-%     v = varnames{1}(1:idx(1)-1);
-%     title(v),zlabel(v)
     
     cols = get(0,'DefaultAxesColorOrder');
     for k = 1:numel(u)
@@ -249,11 +234,6 @@ else
     view([322.5 30]), box off, grid on
     
     hold off
-    
-    
-    
-    
-    
     
 end
 

@@ -103,13 +103,13 @@ else
                 'Save as', [problemType,'.m']);
             
             if filename     % User did not press cancel
-                try
+%                 try
                     exportpde2mfile(guifile,pathname,filename,handles)
                     % Open the new file in the editor
                     open([pathname,filename])
-                catch
-                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
-                end
+%                 catch
+%                     error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+%                 end
             end
         case '.mat'
             u = handles.latestSolution; %#ok<NASGU>

@@ -18,10 +18,12 @@ input = subtractRhs(input);
 
 if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
     [field indVarName] = setupLine(guifile,input{1},rhs{1},type);
-    idx = strfind(rhs{1}, '_');
-    if ~isempty(idx), % it's not a PDE (or we can't do this type yet!)
-        pdeflag = true;
-        allVarNames = {rhs{1}(1:idx-1)};
+    if ~isempty(rhs)
+        idx = strfind(rhs{1}, '_');
+        if ~isempty(idx), % it's not a PDE (or we can't do this type yet!)
+            pdeflag = true;
+            allVarNames = {rhs{1}(1:idx-1)};
+        end
     end
 else
     % Keep track of every variable encountered in the problem
@@ -33,26 +35,28 @@ else
     end
     allVarNames = unique(allVarNames); % Remove duplicate variable names
     
+    if ~isempty(rhs)
     % For PDEs we need to reorder so that the order of the time derivatives
     % matches the order of the inout arguments.
-    indx = (1:numOfRows)';
-    pdeflag = ones(1,numOfRows);
-    for k = 1:numOfRows
-        rhsk = rhs{k};
-        idxk = strfind(rhsk, '_');
-        if isempty(idxk), % it's not a PDE (or we can't do this type yet!)
-            indx = 1:numOfRows;
-            pdeflag(k) = false;
-            dvark = '';
-        else
-            dvark = rhsk(1:idxk(1)-1);
-        end
-        if strcmp(type,'DE')
-            for j = 1:numOfRows
-                if strcmp(dvark,allVarNames{j})
-                    indx(j) = k;
-                    indx(k) = j;
-                    break
+        indx = (1:numOfRows)';
+        pdeflag = ones(1,numOfRows);
+        for k = 1:numOfRows
+            rhsk = rhs{k};
+            idxk = strfind(rhsk, '_');
+            if isempty(idxk), % it's not a PDE (or we can't do this type yet!)
+                indx = 1:numOfRows;
+                pdeflag(k) = false;
+                dvark = '';
+            else
+                dvark = rhsk(1:idxk(1)-1);
+            end
+            if strcmp(type,'DE')
+                for j = 1:numOfRows
+                    if strcmp(dvark,allVarNames{j})
+                        indx(j) = k;
+                        indx(k) = j;
+                        break
+                    end
                 end
             end
         end
@@ -139,6 +143,7 @@ for k = 1:numel(data)
         error('too many = signs');
     elseif ~isempty(idx)
         rhs = strtrim(data{k}(idx+1:end));
+        if ~isempty(strfind(rhs,'_')), rhs = '0'; end
         data{k} = strtrim(data{k}(1:idx-1));
         numrhs = str2num(rhs);
         if ~isempty(numrhs)

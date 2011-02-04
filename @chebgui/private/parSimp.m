@@ -1,6 +1,7 @@
 function sOut = parSimp(guifile,str)
 
 sOut = str;
+return
 
 % Store length of the string
 strLen = length(str);

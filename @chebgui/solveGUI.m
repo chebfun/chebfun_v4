@@ -7,7 +7,7 @@ if isempty(guifile.DomLeft) || isempty(guifile.DomRight)
     resetComponents(handles);
     return
 end
-if isempty(guifile.DE) || isempty(guifile.DErhs)
+if isempty(guifile.DE)
     errordlg('The differential equation and its right-hand side can not be empty.', 'Chebgui error', 'modal');
     resetComponents(handles);
     return

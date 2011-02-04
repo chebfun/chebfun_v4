@@ -20,21 +20,16 @@ b = str2num(guifile.DomRight);
 deInput = guifile.DE;
 lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
-deRHSInput = guifile.DErhs;
-lbcRHSInput = guifile.LBCrhs;
-rbcRHSInput = guifile.RBCrhs;
 initInput = guifile.init;
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
 if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
-if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
-if isa(lbcRHSInput,'char'), lbcRHSInput = cellstr(lbcRHSInput); end
-if isa(rbcRHSInput,'char'), rbcRHSInput = cellstr(rbcRHSInput); end
-% !!! Should do a error check to see whether lhs and rhs number of line
-% match
 
+deRHSInput = cellstr(repmat('0',numel(deInput),1));
+lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
+rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
 % Find whether the user wants to use the latest solution as a guess. This is
 % only possible when calling from the GUI
