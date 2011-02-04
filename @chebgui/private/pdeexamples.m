@@ -37,7 +37,7 @@ switch exampleNumber
         a = '-3*pi/4';
         b = 'pi';
         t = '0:.05:2';
-        DE = '0.1*u"+u''=u_t';
+        DE = 'u_t=0.1*u"+u''';
         LBC = 'neumann';
         RBC = 'dirichlet';
         init = 'sin(2*x)';
@@ -51,7 +51,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:0.1:5';
-        DE = 'u*(1-u^2) + 5e-4*u" = u_t';
+        DE = 'u_t = u*(1-u^2) + 5e-4*u"';
         LBC = 'neumann';
         RBC = 'neumann';
         init = '(1-x.^2).^2.*(1+sin(12*x))/2';
@@ -65,7 +65,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.1:5';
-        DE = 'u*(1-u^2) + 5e-4*u" = u_t';
+        DE = 'u_t = u*(1-u^2) + 5e-4*u"';
         LBC = 'u = -1';
         RBC = 'u = 1';
         init = '0.53*x-.47*sin(1.5*pi*x)';
@@ -79,7 +79,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.1:4';
-        DE = '-(u^2)''+.01*u"=u_t';
+        DE = 'u_t=-(u^2)''+.01*u"';
         LBC = 'dirichlet';
         RBC = 'dirichlet';
         init = '(1-x.^2).*exp(-30*(x+.5).^2)';
@@ -93,7 +93,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.01:2';
-        DE = 'u*u''-u"-0.006*u""=u_t';
+        DE = 'u_t=u*u''-u"-0.006*u""';
         LBC = {'u = 1','u'' = 2'};
         RBC = {'u = 1','u'' = 2'};
         init = '1 + 0.5*exp(-40*x.^2)';
@@ -107,7 +107,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.05:2';
-        DE = {'-u + (x + 1)*v + 0.1*u" = u_t'; 'u - (x + 1)*v + 0.2*v" = v_t'};
+        DE = {'u_t = -u + (x + 1)*v + 0.1*u"'; 'v_t = u - (x + 1)*v + 0.2*v"'};
         LBC = {'u'' = 0';'v'' = 0'};
         RBC = {'u'' = 0';'v'' = 0'};
         init = {'1';'1'};
@@ -121,7 +121,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.05:2';
-        DE = {'u - (x + 1)*v + 0.2*v" = v_t' ; '-u + (x + 1)*v + 0.1*u" = u_t'};
+        DE = {'v_t = u - (x + 1)*v + 0.2*v"' ; 'u_t = -u + (x + 1)*v + 0.1*u"'};
         LBC = {'u'' = 0';'v'' = 0'};
         RBC = {'u'' = 0';'v'' = 0'};
         init = {'1';'1'};
@@ -135,7 +135,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.1:2';
-        DE = {'0.1*u"-100*u*v=u_t' ; '0.2*v"-100*u*v=v_t' ; '0.001*w"+200*u*v=w_t'};
+        DE = {'u_t=0.1*u"-100*u*v' ; 'v_t=.2*v"-100*u*v' ; 'w_t=0.001*w"+200*u*v'};
         LBC = {'neumann'};
         %         LBC = {'u'''; 'v''' ; 'w'''};
         RBC = {'neumann'};
@@ -151,7 +151,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.1:2';
-        DE = {'0.1*u"-100*u*v=u_t' ; '0.2*v"-100*u*v=v_t' ; '0.001*w"+200*u*v=w_t'};
+        DE = {'u_t=0.1*u"-100*u*v' ; 'v_t=0.2*v"-100*u*v' ; 'w_t=0.001*w"+200*u*v'};
         %         LBC = {'neumann'};
         LBC = {'u'''; 'v''' ; 'w'''};
         %         RBC = {'neumann'};
@@ -167,7 +167,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.1:2';
-        DE = {'u"-v=u_t' ; 'v"-u=0'};
+        DE = {'u_t=u"-v' ; 'v"-u=0'};
         LBC = {'u = 1'; 'v = 1'};
         RBC = {'u = 1'; 'v = 1'};
         init = {'1' ; '1'};
@@ -181,7 +181,7 @@ switch exampleNumber
         a = '-1';
         b = '1';
         t = '0:.1:4';
-        DE = {'.02*u"+cumsum(u)*sum(u)=u_t'};
+        DE = {'u_t=.02*u"+cumsum(u)*sum(u)'};
         LBC = {'dirichlet'};
         RBC = {'dirichlet'};
         init = {'(1-x^2)*exp(-30*(x+.5)^2)'};
@@ -195,7 +195,7 @@ switch exampleNumber
         a = '0';
         b = '10';
         t = '0:.1:10';
-        DE = {'v=u_t','u"+exp(-100*x^2)*sin(pi*t)=v_t'};
+        DE = {'u_t=v','v_tu"+exp(-100*x^2)*sin(pi*t)'};
         LBC = {'u'' = 0'; 'v'' = 0'};
         RBC = {'u'' = 0'; 'v'' = 0'};
         init = {'0','0'};

@@ -143,8 +143,11 @@ for k = 1:numel(data)
         error('too many = signs');
     elseif ~isempty(idx)
         rhs = strtrim(data{k}(idx+1:end));
-        if ~isempty(strfind(rhs,'_')), rhs = '0'; end
         data{k} = strtrim(data{k}(1:idx-1));
+        if ~isempty(strfind(rhs,'_')), rhs = '0'; 
+        elseif ~isempty(strfind(data{k},'_'))
+            data{k} = rhs; rhs = '0';
+        end
         numrhs = str2num(rhs);
         if ~isempty(numrhs)
             if numrhs == 0
