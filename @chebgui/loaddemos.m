@@ -8,7 +8,7 @@ counter = 1;
 % Set up ODEs and PDEs separately
 if strcmp(type,'bvp') % Setup BVPs demos
     while 1
-        [cg name demotype] = bvpexamples(guifile,counter,'demo');
+        [cg name demotype] = bvpdemos(guifile,counter,'demo');
         if strcmp(name,'stop')
             break
         else
@@ -38,7 +38,7 @@ if strcmp(type,'bvp') % Setup BVPs demos
     end
 else                % Setup PDEs demos
     while 1
-        [cg name demotype] = pdeexamples(guifile,counter,'demo');
+        [cg name demotype] = pdedemos(guifile,counter,'demo');
         if strcmp(name,'stop')
             break
         else

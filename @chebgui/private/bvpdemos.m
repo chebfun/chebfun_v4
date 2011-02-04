@@ -1,4 +1,4 @@
-function [cg name demotype] = bvpexamples(guifile,exampleNumber,mode)
+function [cg name demotype] = bvpdemos(guifile,exampleNumber,mode)
 if nargin < 3
     mode = 'start';
 end

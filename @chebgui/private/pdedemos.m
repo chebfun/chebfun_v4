@@ -1,4 +1,4 @@
-function [cg name demotype] = pdeexamples(guifile,exampleNumber,mode)
+function [cg name demotype] = pdedemos(guifile,exampleNumber,mode)
 if nargin < 3
     mode = 'start';
 end
