@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 2;
+numberOfExamples = 3;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -20,33 +20,36 @@ end
 
 switch exampleNumber
     case 0
-        a = '';
-        b = '';
+        a = ''; b = '';
         DE = '';
-        LBC = '';
-        RBC = '';
-        init = '';
-        tol = '';
+        LBC = ''; RBC = '';
+        init = ''; tol = '';
         damping = '';
         plotting = '0.1';
         name = '';
         demotype = '';
     case 1
-        a = '-2';
-        b = '2';
+        a = '-2'; b = '2';
         DE = 'u" + u''';
-        LBC = 'u = 0';
-        RBC = 'u = 0';
-        init = '';
-        tol = '1e-10';
+        LBC = 'u = 0'; RBC = 'u = 0';
+        init = ''; tol = '1e-10';
         damping = '1';
         plotting = '0.1';
         sigma = '';
-        name = DE;
+        name = 'Advection-diffusion';
         demotype = 'scalar';
     case 2
-        a = '-2';
-        b = '2';
+        a = '-10'; b = '10';
+        DE = '-u'''' + x^2*u';
+        LBC = 'u = 0'; RBC = 'u = 0';
+        init = ''; tol = '1e-10';
+        damping = '1';
+        plotting = '0.1';
+        sigma = '';
+        name = 'Harmonic oscillator';
+        demotype = 'scalar';
+    case 3
+        a = '-2'; b = '2';
         DE = {'u" + u*x+v';'v"+sin(x)*u'};
         LBC = {'u = 0';'v = 0'};
         RBC = {'u = 0';'v = 0'};
@@ -55,7 +58,7 @@ switch exampleNumber
         damping = '1';
         plotting = '0.1';
         sigma = '';
-        name = 'system1';
+        name = 'System';
         demotype = 'system';        
 
 end
