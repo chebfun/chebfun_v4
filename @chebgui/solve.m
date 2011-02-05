@@ -4,6 +4,8 @@ function varargout = solve(guifile,handles)
 
 if strcmpi(guifile.type,'bvp')
     [varargout{1} varargout{2}] = solveguibvp(guifile);
-else
+elseif strcmpi(guifile.type,'pde')
     [varargout{1} varargout{2}] = solvePDE(guifile);
+else
+    [varargout{1} varargout{2}] = solveguieig(guifile);
 end
