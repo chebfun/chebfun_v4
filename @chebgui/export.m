@@ -1,5 +1,10 @@
 function export(guifile,handles,exportType)
 problemType = guifile.type;
+% handles and exportType are empty if user calls export from command window,
+% always export to .m file in that case.
+if nargin == 1
+    exportType = '.m';
+end
 % Exporting a BVP
 if strcmp(problemType,'bvp')
     switch exportType
@@ -43,7 +48,7 @@ if strcmp(problemType,'bvp')
             
             if filename     % User did not press cancel
                 try
-                    exportbvp2mfile(guifile,pathname,filename,handles)
+                    exportbvp2mfile(guifile,pathname,filename)
                     % Open the new file in the editor
                     open([pathname,filename])
                 catch ME
@@ -105,7 +110,7 @@ elseif strcmp(problemType,'pde')
             
             if filename     % User did not press cancel
 %                 try
-                    exportpde2mfile(guifile,pathname,filename,handles)
+                    exportpde2mfile(guifile,pathname,filename)
                     % Open the new file in the editor
                     open([pathname,filename])
 %                 catch

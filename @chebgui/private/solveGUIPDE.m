@@ -184,10 +184,10 @@ if ~isempty(ylim1) && ~isempty(ylim2)
     opts.YLim = [str2num(ylim1) str2num(ylim2)];
 end
 opts.PlotStyle = ['linewidth,' num2str(defaultLineWidth)];
-plotstyle = get(handles.input_plotstyle,'String');
-if ~isempty(plotstyle)
-    opts.PlotStyle = [opts.PlotStyle ',' plotstyle] ;
-end
+% plotstyle = get(handles.input_plotstyle,'String');
+% if ~isempty(plotstyle)
+%     opts.PlotStyle = [opts.PlotStyle ',' plotstyle] ;
+% end
     
 if get(handles.checkbox_fixN,'Value')
     opts.N = str2num(get(handles.input_N,'String'));

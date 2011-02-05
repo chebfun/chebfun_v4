@@ -1,4 +1,4 @@
-function exportbvp2mfile(guifile,pathname,filename,handles)
+function exportbvp2mfile(guifile,pathname,filename)
 
 fullFileName = [pathname,filename];
 fid = fopen(fullFileName,'wt');
@@ -30,7 +30,7 @@ deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
-[deString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
 
 % Print the BVP
 fprintf(fid,'%% Solving\n%%');
@@ -87,11 +87,11 @@ fprintf(fid,'rhs = %s;\n',deRHSprint);
 % Make assignments for left and right BCs.
 fprintf(fid,'\n%% Assign boundary conditions to the chebop.\n');
 if ~isempty(lbcInput{1})
-    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC');
+    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString );
     fprintf(fid,'N.lbc = %s;\n',lbcString);
 end
 if ~isempty(rbcInput{1})
-    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC');
+    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString );
     fprintf(fid,'N.rbc = %s;\n',rbcString);
 end
 
@@ -133,8 +133,13 @@ end
 % Option for plotting
 plottingOnInput = guifile.options.plotting;
 
-fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
-fprintf(fid,'options.plotting = %s;\n',plottingOnInput);
+if ~strcmp(plottingOnInput,'off')
+    fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
+    fprintf(fid,'options.plotting = %s;\n',plottingOnInput);
+else
+    fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
+    fprintf(fid,'options.plotting = ''off'';\n');
+end
 
 
 

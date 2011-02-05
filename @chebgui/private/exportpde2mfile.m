@@ -1,4 +1,4 @@
-function exportpde2mfile(guifile,pathname,filename,handles)
+function exportpde2mfile(guifile,pathname,filename)
 
 fullFileName = [pathname,filename];
 fid = fopen(fullFileName,'wt');
@@ -35,7 +35,7 @@ lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
 % [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
-[deString indVarName pdeflag] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
 if ~any(pdeflag)
     error('CHEBFUN:chebpde:notapde',['Input does not appear to be a PDE, ', ...
         'or at least is not a supported type.']);
@@ -107,7 +107,7 @@ fprintf(fid,'pdefun = %s;\n',deString);
 % Make assignments for left and right BCs.
 fprintf(fid,'\n%% Assign boundary conditions.\n');
 if ~isempty(lbcInput{1})
-    [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC');
+    [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
     idx = strfind(lbcString, ')');
     if ~isempty(idx)
         % Support for sum and cumsum
@@ -125,7 +125,7 @@ if ~isempty(lbcInput{1})
 end
 
 if ~isempty(rbcInput{1})
-    [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC');
+    [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
     idx = strfind(rbcString, ')');
     if ~isempty(idx)
         % Support for sum and cumsum
@@ -229,18 +229,18 @@ else
     if ~isempty(ylim1) && ~isempty(ylim2)
         opts = [opts,',''Ylim'',[',ylim1,',',ylim2,']'];
     end
-    plotstyle = get(handles.input_plotstyle,'String');
-    if ~isempty(plotstyle)
-        opts = [opts,',''PlotStyle'',''',plotstyle,''''];
-    end
+%     plotstyle = get(handles.input_plotstyle,'String');
+%     if ~isempty(plotstyle)
+%         opts = [opts,',''PlotStyle'',''',plotstyle,''''];
+%     end
 end
 
 % Options for fixed N
-if get(handles.checkbox_fixN,'Value')
-    N = get(handles.input_N,'String');
-    if isempty(N), error('CHEBFUN:exportpde2mfile:N','N must be given.'); end
-    opts = [opts,',''N'',',N];
-end        
+% if get(handles.checkbox_fixN,'Value')
+%     N = get(handles.input_N,'String');
+%     if isempty(N), error('CHEBFUN:exportpde2mfile:N','N must be given.'); end
+%     opts = [opts,',''N'',',N];
+% end        
 
 % Set up preferences
 fprintf(fid,'\n%% Setup preferences for solving the problem.\n');

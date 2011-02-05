@@ -128,10 +128,10 @@ elseif onoff == 0
     onoff = 'off';
 end
 
-set(handles.FixN_text,'visible',onoff);
-set(handles.checkbox_fixN,'visible',onoff);
-set(handles.N_text,'visible',onoff);
-set(handles.input_N,'visible',onoff);
+% set(handles.FixN_text,'visible',onoff);
+% set(handles.checkbox_fixN,'visible',onoff);
+% set(handles.N_text,'visible',onoff);
+% set(handles.input_N,'visible',onoff);
 
 
 function initialisefigures(handles)
