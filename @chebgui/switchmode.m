@@ -1,4 +1,10 @@
-function handles = switchmode(guiObject, handles,newMode)
+function handles = switchmode(guiObject, handles,newMode,callMode)
+
+% Only use callMode when calling from loaddemos - for demos with an initial
+% guess / condition, we don't want to clear the figures.
+if nargin == 3
+    callMode = 'notDemo';
+end
 
 if strcmp(newMode,'bvp') % Going into BVP mode
     handles.guifile.type = 'bvp';
@@ -32,7 +38,7 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.menu_fixspacedisc,'Enable','Off')
     
     % Clear the figures
-    initialisefigures(handles)
+    initialisefigures(handles,callMode)
     
     %     % Load a new random BVP example and change the demos popup menu
     %     handles.guifile = loadexample(handles.guifile,-1,'bvp');
@@ -72,11 +78,11 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.menu_fixspacedisc,'Enable','On')
     
     % Clear the figures
-    initialisefigures(handles)
+    initialisefigures(handles,callMode)
     
     %     handles.guifile = loadexample(handles.guifile,-1,'pde');
     %     loadfields(handles.guifile,handles)
-       
+    
 else % Going into EIG mode
     handles.guifile.type = 'eig';
     
@@ -110,14 +116,14 @@ else % Going into EIG mode
     
     
     % Clear the figures
-    initialisefigures(handles)
-
+    initialisefigures(handles,callMode)
+    
     
     %     % Load a new random BVP example and change the demos popup menu
     %     handles.guifile = loadexample(handles.guifile,-1,'bvp');
     %     loadfields(handles.guifile,handles)
     
-
+    
 end
 
 
@@ -134,8 +140,11 @@ end
 % set(handles.input_N,'visible',onoff);
 
 
-function initialisefigures(handles)
-cla(handles.fig_sol,'reset');
-title('Solutions'), axis off
+function initialisefigures(handles,callMode)
+if ~strcmpi(callMode,'demo')
+    cla(handles.fig_sol,'reset');
+    axes(handles.fig_sol);
+    title('Solutions'), % axis off
+end
 cla(handles.fig_norm,'reset');
 title('Updates')

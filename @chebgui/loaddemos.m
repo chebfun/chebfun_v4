@@ -89,8 +89,9 @@ end
 function hOpenMenuitemCallback(hObject, eventdata,handles,type,demoNumber)
 % Callback function run when the Open menu item is selected
 handles.guifile = loadexample(handles.guifile,demoNumber,type);
-loadfields(handles.guifile,handles);
+initSuccess = loadfields(handles.guifile,handles);
+if initSuccess, switchModeCM = 'demo'; else switchModeCM = 'notdemo'; end 
 % Swith the mode of the GUI according to the type of the problem.
-switchmode(handles.guifile,handles,type);
+switchmode(handles.guifile,handles,type,switchModeCM);
 % Update handle structure
 guidata(hObject, handles);

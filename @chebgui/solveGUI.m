@@ -78,6 +78,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         end
     catch ME
         MEID = ME.identifier;
+        rethrow(ME)
         errordlg(ME.message, 'Chebgui error', 'modal');
         if ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:'))
             errordlg(ME.message, 'Chebgui error', 'modal');

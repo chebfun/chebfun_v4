@@ -60,7 +60,7 @@ switch exampleNumber
         t = '0:.025:1.6';
         DE = 'u_t = -.003*u'''''''' + (u^3-u)''''';
         LBC = {'u = -1','u''=0'}; RBC = {'u = -1','u''=0'};
-        init = 'cos(x) - exp(-3*x^2)'
+        init = 'cos(x) - exp(-3*x^2)';
         tol = '1e-6';
         plotting = 'on';
         fixYaxisLower = '-1'; fixYaxisUpper = '1.2';

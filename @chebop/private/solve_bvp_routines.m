@@ -14,7 +14,7 @@ maxIter = pref.maxiter;
 maxStag = pref.maxstagnation;
 dampedOn = strcmpi(pref.damped,'on');
 % plotMode determines whether we want to stop between plotting iterations
-plotMode = lower(pref.plotting);        
+plotMode = lower(pref.plotting);
 lambda_minCounter = 0;
 
 % Check whether the operator is empty, or whether both BC are empty
@@ -127,10 +127,10 @@ stagCounter = 0;
 A = A & bc;
 if isLin
     % N is linear. Sweet!
-
+    
     % Do we need to worry about scaling here?
-%     subsasgn(A,struct('type','.','subs','scale'), normu);
-
+    %     subsasgn(A,struct('type','.','subs','scale'), normu);
+    
     % As we have linearised around the initial guess u, which if is
     % constructed automatically is designed to satisfy (inhom.) Dirichlet
     % conditions, we can't find the solution simply by solving for the
@@ -149,7 +149,7 @@ if isLin
         solve_display(pref,guihandles,'iter',u,norm(delta),nrmDeltaRel,nrmDeltaRelvec)
         solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,0)
     end
-        
+    
     return
 end
 
@@ -168,7 +168,7 @@ end
 
 while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
     counter = counter + 1;
-        
+    
     if counter > 1 % (Has already been done above for counter = 1)
         bc = setupBC();
     end
@@ -189,7 +189,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
             subsasgn(A,struct('type','.','subs','scale'), normu);
             % Linop backslash with the third argument added
             delta = -(A\deResFun);
-%             delta = -mldivide(A,deResFun,deltol);
+            %             delta = -mldivide(A,deResFun,deltol);
         end
     else
         A = deFun & bc; % deFun is a chebop
@@ -221,9 +221,9 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     
     % Reset the currentGuessCell variable
     currentGuessCell = [];
-        
+    
     [deResFun, lbcResFun, rbcResFun] = evalResFuns;
-
+    
     normu = norm(u,'fro');
     nrmDeltaRel = nrmDeltaAbs/normu;
     normr = solNorm/normu;
@@ -240,7 +240,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     nrmDeltaAbsVec(counter) = nrmDeltaAbs;
     nrmDeltaRelvec(counter) = nrmDeltaRel;
     normrvec(counter) = nnormr/normu;
-%     contraFactor = 
+    %     contraFactor =
     lambdas(counter) = lambda;
     
     if ~strcmp(plotMode,'off')
@@ -337,7 +337,7 @@ end
         % have periodic BCs (i.e. we check for example whether u(0) = u(1),
         % u'(0) = u'(1) etc.).
         if strcmpi(bcFunLeft,'periodic')
-            %             diffOrderA = struct(A).difforder;
+            diffOrderA = struct(A).difforder;
             for orderCounter = 0:diffOrderA - 1
                 sn(2) = sn(2) + norm(feval(diff(u,orderCounter),b)-feval(diff(u,orderCounter),a))^2;
             end
@@ -371,11 +371,11 @@ end
         % The objective function we want to minimize.
         
         % This objective function does not take into account BCs.
-%         g = @(a) 0.5*norm(A\deFun(u+a*delta),'fro').^2;
+        %         g = @(a) 0.5*norm(A\deFun(u+a*delta),'fro').^2;
         
         % Objective function with BCs - Using the functions.
-%         g = @(a) 0.5*(norm(A\evalProblemFun('DE',u+a*delta),'fro').^2 +bcResidual(u+a*delta));
- 
+        %         g = @(a) 0.5*(norm(A\evalProblemFun('DE',u+a*delta),'fro').^2 +bcResidual(u+a*delta));
+        
         % Objective function without BCs - Using the functions.
         g = @(a) 0.5*(norm(A\evalProblemFun('DE',u+a*delta),'fro')).^2;
         
@@ -459,7 +459,13 @@ end
                     fOut = deFun(currentGuess);
                 case 'LBC'
                     if ~iscell(bcFunLeft)
-                        fOut = bcFunLeft(currentGuess);
+                        % We know how to linearize periodic BCs, so we
+                        % don't care about how the function evaluates.
+                        if strcmpi(bcFunLeft,'periodic')
+                            fOut = chebfun(0,dom);
+                        else
+                            fOut = bcFunLeft(currentGuess);
+                        end
                     else
                         fOut = chebfun;
                         for funCounter = 1:length(bcFunLeft)
@@ -468,7 +474,11 @@ end
                     end
                 case 'RBC'
                     if ~iscell(bcFunRight)
-                        fOut = bcFunRight(currentGuess);
+                        if strcmpi(bcFunRight,'periodic')
+                            fOut = chebfun(0,dom);
+                        else
+                            fOut = bcFunRight(currentGuess);
+                        end
                     else
                         fOut = chebfun;
                         for funCounter = 1:length(bcFunRight)
@@ -489,9 +499,17 @@ end
                 case 'DE'
                     fOut = deFun(currentGuessCell{:});
                 case 'LBC'
-                    fOut = bcFunLeft(currentGuessCell{:});
+                    if strcmpi(bcFunRight,'periodic')
+                        fOut = chebfun(0,dom);
+                    else
+                        fOut = bcFunLeft(currentGuessCell{:});
+                    end
                 case 'RBC'
-                    fOut = bcFunRight(currentGuessCell{:});
+                    if strcmpi(bcFunLeft,'periodic')
+                        fOut = chebfun(0,dom);
+                    else
+                        fOut = bcFunRight(currentGuessCell{:});
+                    end
             end
         end
     end

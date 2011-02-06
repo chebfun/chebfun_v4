@@ -1,4 +1,4 @@
-function loadfields(guifile,handles)
+function initSuccess = loadfields(guifile,handles)
 
 % Fill the String fields of the handles
 set(handles.dom_left,'String',guifile.DomLeft);
@@ -41,7 +41,8 @@ if strcmpi(guifile.type,'pde')
     else
         set(handles.menu_pdefixon,'Checked','Off');
         set(handles.menu_pdefixoff,'Checked','On');
-    end    
+    end
+    
     
 elseif strcmpi(guifile.type,'bvp')
     if strcmp(guifile.options.damping,'1')
@@ -62,7 +63,61 @@ elseif strcmpi(guifile.type,'bvp')
     end
 end
 
+% Make sure that we enable the BCs fields again when we load a new demo
+set(handles.input_LBC,'Enable','on');
+set(handles.input_RBC,'Enable','on');
 
+% Try to plot the initial guess/condition if one exist in the chebgui
+% object. If an error is returned, we keep calm and carry on.
+if ~isempty(guifile.init)
+    try
+        initString = guifile.init;
+        % Obtain the name of the independend variable from the init field.
+        % Need to do concatination if it's a cellstring
+        if iscellstr(initString)
+            allString = [];
+            for initCounter = 1:length(initString)
+                allString = [allString,',',initString{initCounter}];
+            end
+        else % Else wrap in a cell for later use
+            allString = initString;
+            initString = cellstr(initString);
+        end
+        % Now obtain the name of the variables
+        indVar = symvar(allString);
+        
+        % Create a domain and a temporary independent variable
+        [dom,xTemp] = domain(str2num(guifile.DomLeft),str2num(guifile.DomRight));
+        % Only support one independent variable for initial
+        % guesses/condition.
+        if length(indVar) > 1
+            return
+        elseif length(indVar) == 0 % Only constants passed
+            % Do nothing
+        else
+            % Assign the independent variable its correct name
+            eval(sprintf('%s = xTemp;',indVar{1}))
+        end
+        
+        initChebfun = chebfun;
+        % Put the initString in a cell
+        if ~iscell(initString), initString = cellstr(initString); end
+        for initCounter = 1:length(initString)
+            initChebfun = [initChebfun, ...
+                eval('chebfun(vectorize(initString{initCounter}),dom);')];
+        end
+        axes(handles.fig_sol);
+        plot(initChebfun,'LineWidth',2)
+        if guifile.options.grid, grid on, end
+        
+        initSuccess = 1;
+    catch ME
+        % Do nothing
+        initSuccess = 0;
+    end
+else
+    initSuccess = 0;
+end
 
 %
 % % If input for BCs is a number, anon. func. or dirichlet/neumann,
