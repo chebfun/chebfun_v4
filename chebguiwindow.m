@@ -401,24 +401,9 @@ elseif get(handles.button_pde,'Value');
         xlabel('x'), ylabel('t'), grid on
     end
 else % eigs
-    D = handles.latestSolution;
-    V = handles.latestSolutionT;
-        
-    figure
-    if ~iscell(V)
-        plot(real(V),'linewidth',2);
-    %     if guifile.options.grid
-    %         grid on
-    %     end
-        title('Real part of eigenmodes');
-    else
-        MS = repmat({'','o','x','s','+','*'},1,ceil(numel(V)/6));
-        LS = repmat({'-','--',':','-.'},1,ceil(numel(V)/4));
-        for k = 1:numel(V)
-            plot(real(V{k}),'linewidth',2,'linestyle',LS{k}); hold on
-        end
-        hold off
-    end
+    
+    figure, h1 = gca;
+    ploteigenmodes(handles.guifile,handles,[],h1);
     
 end
 
@@ -449,18 +434,8 @@ elseif get(handles.button_pde,'Value');
     % Turn on grid
     if handles.guifile.options.grid, grid on,  end
 else
-    D = handles.latestSolution;
-    C = get(0,'DefaultAxesColorOrder');
-    C = repmat(C,ceil(size(D)/size(C,1)),1);
-    figure
-    for k = 1:size(D)
-        plot(real(D(k)),imag(D(k)),'.','markersize',25,'color',C(k,:)); hold on
-    end
-    hold off
-%     if guifile.options.grid
-%         grid on
-%     end
-    title('Eigenvalues'); xlabel('real'); ylabel('imag');
+    figure, h1 = gca;
+    ploteigenmodes(handles.guifile,handles,h1,[]);
 end
 
 
@@ -1065,3 +1040,25 @@ function menu_eigs_Callback(hObject, eventdata, handles)
 % --- Executes on button press in button_export.
 function button_export_Callback(hObject, eventdata, handles)
 export(handles.guifile,handles,'.m');
+
+
+% --- Executes on button press in button_realplot.
+function button_realplot_Callback(hObject, eventdata, handles)
+set(handles.button_realplot,'Value',1)
+set(handles.button_imagplot,'Value',0)
+set(handles.button_envelope,'Value',0)
+ploteigenmodes(handles.guifile,handles)
+    
+% --- Executes on button press in button_imagplot.
+function button_imagplot_Callback(hObject, eventdata, handles)
+set(handles.button_realplot,'Value',0)
+set(handles.button_imagplot,'Value',1)
+set(handles.button_envelope,'Value',0)
+ploteigenmodes(handles.guifile,handles)
+
+% --- Executes on button press in button_envelope.
+function button_envelope_Callback(hObject, eventdata, handles)
+set(handles.button_realplot,'Value',0)
+set(handles.button_imagplot,'Value',0)
+set(handles.button_envelope,'Value',1)
+ploteigenmodes(handles.guifile,handles)
