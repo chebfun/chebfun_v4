@@ -1,4 +1,4 @@
-function c = chebgui(varargin)
+function varargout = chebgui(varargin)
 % CHEBGUI Constructor for chebgui objects. For documentation of the GUI,
 % press Help button in the GUI.
 %
@@ -16,6 +16,22 @@ if isempty(varargin)
 elseif nargin == 1 && isa(varargin{1},'chebgui')
     chebguiwindow(varargin{1});
 else
+    
+    v1 = varargin{1};
+    if numel(varargin) == 1 && ischar(v1)
+        if ~exist(v1,'file')
+            error('CHEBFUN:chebgui:missingfile','Unable to find file: %s',v1);
+        end
+        cgTemp = chebgui('type','bvp');
+        c = loaddemos(cgTemp,v1);
+        if nargout == 0
+            chebguiwindow(c);
+        else
+            c = varargout{1};
+        end
+        return
+    end
+    
     c.type = '';
     c.DomLeft = ''; c.DomRight = '';
     c.DE = ''; c.LBC = ''; c.RBC = '';
@@ -23,7 +39,6 @@ else
     c.init = []; c.tol = [];
     c.options = struct('damping','1','plotting','0.5','grid',1,...
         'pdeholdplot',0,'fixYaxisLower','','fixYaxisUpper','','fixN','');
-    
     
     k = 1;
     while k < nargin
@@ -81,6 +96,6 @@ else
         c.tol = '1e-10'; % Default tolerance
     end
     
-    c = class(c,'chebgui');
+    varargout{1} = class(c,'chebgui');
 end
 

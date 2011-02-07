@@ -1,6 +1,6 @@
 function handles = switchmode(guiObject, handles,newMode,callMode)
 
-% Only use callMode when calling from loaddemos - for demos with an initial
+% Only use callMode when calling from loaddemo_menu - for demos with an initial
 % guess / condition, we don't want to clear the figures.
 if nargin == 3
     callMode = 'notDemo';

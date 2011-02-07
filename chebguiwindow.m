@@ -175,10 +175,9 @@ set(handles.menu_tolerance,'UserData','1e-10');
 set(handles.menu_pdefixon,'UserData',{''});
 
 % Populate the Demos menu
-loaddemos(handles.guifile,handles,'bvp')
-loaddemos(handles.guifile,handles,'pde')
-loaddemos(handles.guifile,handles,'eig')
-
+loaddemo_menu(handles.guifile,handles,'bvp');
+loaddemo_menu(handles.guifile,handles,'pde');
+loaddemo_menu(handles.guifile,handles,'eig');
 
 % Load the input fields
 loadfields(handles.guifile,handles);
@@ -662,10 +661,65 @@ function menu_file_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function menu_opengui_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_opengui (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+[filename pathname filterindex] = uigetfile('*.guifile','Pick a file');
+if ~filterindex, return, end
+chebgui(fullfile(pathname,filename));
 
+% --------------------------------------------------------------------
+function menu_savegui_Callback(hObject, eventdata, handles)
+[filename pathname filterindex] = uiputfile('*.guifile','Pick a file');
+if ~filterindex, return, end
+
+% name = input('What would you like to name this GUI file? ');
+name = '';
+
+if get(handles.button_ode,'value')
+    demotype = 'bvp';
+elseif get(handles.button_pde,'value')
+    demotype = 'pde';
+else
+    demotype = 'eig';
+end
+a = get(handles.dom_left,'string');
+b = get(handles.dom_right,'string');
+t = get(handles.timedomain,'string');
+DE = get(handles.input_DE,'string');
+LBC = get(handles.input_LBC,'string');
+RBC = get(handles.input_RBC,'string');
+init = get(handles.input_GUESS,'string');
+tol = '';
+damping = '';
+plotting = '';
+
+if iscell(DE), DE = mycell2str(DE); else DE = ['' DE '']; end
+if iscell(LBC), LBC = mycell2str(LBC); else LBC = ['' LBC '']; end
+if iscell(RBC), RBC = mycell2str(RBC); else RBC = ['' RBC '']; end
+if iscell(init), init = mycell2str(init); else init = ['' init '']; end
+
+s = sprintf(['name = ''%s'';\n', ...
+            'demotype = ''%s'';\n', ...
+            'a = ''%s'';\n', ... 
+            'b = ''%s'';\n', ...
+            't = ''%s'';\n', ...
+            'DE = %s;\n', ...
+            'LBC = %s;\n', ...
+            'RBC = %s;\n', ...
+            'init = %s;\n', ...
+            'tol = ''%s'';\n', ...
+            'damping = ''%s'';\n', ...
+            'plotting = ''%s'';'], ...
+    name, demotype, a, b, t, DE, LBC, RBC, init, tol, damping, plotting);
+fid = fopen(fullfile(pathname,filename),'w+');
+fprintf(fid,s);
+fclose(fid);
+
+function out = mycell2str(in)
+out = '{';
+for k = 1:numel(in)
+    if k > 1,  out = [out ' ; ']; end
+    out = [out '''' strrep(in{k},'''','''''') ''''];
+end
+out = [out '}'];
 
 % --------------------------------------------------------------------
 function menu_demos_Callback(hObject, eventdata, handles)
@@ -694,11 +748,8 @@ function menu_systems_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --------------------------------------------------------------------
-function menu_savegui_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_savegui (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
+
 
 
 

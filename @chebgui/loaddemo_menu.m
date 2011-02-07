@@ -1,4 +1,4 @@
-function loaddemos(guifile,handles,type)
+function loaddemo_menu(guifile,handles,type)
 
 % Obtain the DE of all available examples
 DE = '';
