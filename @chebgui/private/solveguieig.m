@@ -41,7 +41,7 @@ end
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString allVarString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
 
 % Assign x or t as the linear function on the domain
 eval([indVarName, '=xt;']);
@@ -152,36 +152,9 @@ if guiMode
     handles.latestOptions = options;
     % Notify the GUI we have a solution available
     handles.hasSolution = 1;
-
-    C = get(0,'DefaultAxesColorOrder');
-    C = repmat(C,ceil(size(D)/size(C,1)),1);
+    handles.varnames = allVarNames;
     
-    axes(handles.fig_sol)
-    for k = 1:size(D)
-        plot(real(D(k)),imag(D(k)),'.','markersize',25,'color',C(k,:)); hold on
-    end
-    hold off
-    if guifile.options.grid
-        grid on
-    end
-    title('Eigenvalues');
-    
-    % TODO: Deal with plotting quasimatrix eigenmodes from systems
-    
-    axes(handles.fig_norm)
-    if ~iscell(V)
-        plot(real(V),'linewidth',2);
-        if guifile.options.grid
-            grid on
-        end
-        title('Real part of eigenmodes');
-    else
-        LS = repmat({'-','--',':','-.'},1,ceil(numel(V)/4));
-        for k = 1:numel(V)
-            plot(real(V{k}),'linewidth',2,'linestyle',LS{k}); hold on
-        end
-        hold off
-    end
+    ploteigenmodes(handles.guifile,handles,handles.fig_sol,handles.fig_norm);
     
     % Return the handles as varargout.
     varargout{1} = handles;

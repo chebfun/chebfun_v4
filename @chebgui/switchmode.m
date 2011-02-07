@@ -25,6 +25,10 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.text_sigma,'Visible','off')
     set(handles.sigma,'Visible','off')
     
+    set(handles.button_realplot,'Visible','off')
+    set(handles.button_imagplot,'Visible','off')
+    set(handles.button_envelope,'Visible','off')
+    
     pdeplotopts(handles,0)
     
     % Change the list of available options.
@@ -67,6 +71,10 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.text_sigma,'Visible','off')
     set(handles.sigma,'Visible','off')
     
+    set(handles.button_realplot,'Visible','off')
+    set(handles.button_imagplot,'Visible','off')
+    set(handles.button_envelope,'Visible','off')
+    
     % Change the list of available options
     % Disable ODE menu options
     set(handles.menu_odedampednewton,'Enable','Off')
@@ -101,6 +109,12 @@ else % Going into EIG mode
     set(handles.timedomain,'Visible','off')
     set(handles.text_sigma,'Visible','on')
     set(handles.sigma,'Visible','on')
+    
+    set(handles.button_realplot,'Visible','on')
+    set(handles.button_realplot,'Value',1)
+    set(handles.button_imagplot,'Visible','on')
+    set(handles.button_imagplot,'Value',0)
+    set(handles.button_envelope,'Visible','off')
     
     pdeplotopts(handles,0)
     
