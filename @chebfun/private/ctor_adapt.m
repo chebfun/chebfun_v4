@@ -33,18 +33,6 @@ scl.v = 0; scl.h = hs;
 newends = ends(1);
 newops = {};
 
-if isa(ops,'chebfun')
-    if numel(ops) > 1
-        error('CHEBFUN:ctor_adapt:onechebfun','Only one chebfun is allowed for this call.');
-    end
-    if ops.ends(1) <= ends(1) && ops.ends(end) >= ends(end)
-        f = restrict(f,[ends(1) ends(end)]);
-    else
-        error('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain.')
-    end
-    return
-end
-
 % Sort out whatever exponents have been passed.
 if isfield(pref,'exps') 
     exps = pref.exps;
@@ -132,11 +120,15 @@ while ii < length(ops)
             end
             [fs,es,scl] = auto(op,es,scl,pref);
         case 'chebfun'
+            if numel(op) > 1
+                error('CHEBFUN:ctor_adapt:onechebfun','Cannot construct from quasimatrices in this way.');
+            end
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)
                  warning('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain')
             end
             if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
-            if ~isfield(pref,'trunc')
+            if ~isfield(pref,'trunc') && isempty(map)
+                op = restrict(op,es);
                 fs = op.funs; es = op.ends; scl.v = max(op.scl,scl.v);
             else
                 [fs,es,scl] = auto(@(x) feval(op,x),es,scl,pref);
