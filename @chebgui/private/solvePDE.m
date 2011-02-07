@@ -182,12 +182,12 @@ ylim2 = guifile.options.fixYaxisUpper;
 if ~isempty(ylim1) && ~isempty(ylim2)
     opts.YLim = [str2num(ylim1) str2num(ylim2)];
 end
-% opts.PlotStyle = get(handles.input_plotstyle,'String');    
-if get(handles.checkbox_fixN,'Value')
-    opts.N = str2num(get(handles.input_N,'String'));
-%     if isempty(opts.N), opts.N = lenu0; end
-    if isempty(opts.N), errordlg('N must be given.', 'Chebgui error', 'modal'); end
-end
+% opts.PlotStyle = get(handles.input_plotstyle,'String');
+
+% Options for fixed N
+if ~isempty(guifile.options.fixN)
+    opts.N = str2num(guifile.options.fixN);
+end  
 opts.guihandles = guihandles;
 
 % error

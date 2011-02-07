@@ -42,7 +42,14 @@ if strcmpi(guifile.type,'pde')
         set(handles.menu_pdefixon,'Checked','Off');
         set(handles.menu_pdefixoff,'Checked','On');
     end
-    
+
+    if ~isempty(guifile.options.fixN)
+        set(handles.menu_fixNon,'Checked','On');
+        set(handles.menu_fixNoff,'Checked','Off');
+    else
+        set(handles.menu_fixNon,'Checked','Off');
+        set(handles.menu_fixNoff,'Checked','On');
+    end
     
 elseif strcmpi(guifile.type,'bvp')
     if strcmp(guifile.options.damping,'1')

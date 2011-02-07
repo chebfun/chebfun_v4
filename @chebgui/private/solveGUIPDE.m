@@ -188,12 +188,12 @@ opts.PlotStyle = ['linewidth,' num2str(defaultLineWidth)];
 % if ~isempty(plotstyle)
 %     opts.PlotStyle = [opts.PlotStyle ',' plotstyle] ;
 % end
-    
-if get(handles.checkbox_fixN,'Value')
-    opts.N = str2num(get(handles.input_N,'String'));
-%     if isempty(opts.N), opts.N = lenu0; end
-    if isempty(opts.N), errordlg('N must be given.', 'Chebgui error', 'modal'); return, end
-end
+
+% Options for fixed N
+if ~isempty(guifile.options.fixN)
+    opts.N = str2num(guifile.options.fixN);
+end    
+
 guihandles{7} = allVarNames;
 guihandles{8} = indVarName;
 guihandles{9} = handles.button_clear;

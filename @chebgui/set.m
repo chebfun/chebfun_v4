@@ -54,7 +54,7 @@ switch lower(propName)
                     cg.options.grid = vin;
                 case 'pdeholdplot'
                     cg.options.pdeholdplot = vin;
-                case 'fixN'
+                case 'fixn'
                     cg.options.fixN = vin;
                 case 'fixyaxislower'
                     cg.options.fixYaxisLower = vin;

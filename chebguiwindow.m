@@ -956,8 +956,8 @@ guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
-function menu_fixspacedisc_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_fixspacedisc (see GCBO)
+function menu_fixN_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_fixN (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -1062,3 +1062,40 @@ set(handles.button_realplot,'Value',0)
 set(handles.button_imagplot,'Value',0)
 set(handles.button_envelope,'Value',1)
 ploteigenmodes(handles.guifile,handles)
+
+
+% --------------------------------------------------------------------
+function menu_fixNon_Callback(hObject, eventdata, handles)
+options.WindowStyle = 'modal';
+valid = 0;
+defaultAnswer = {handles.guifile.options.fixN};
+while ~valid
+    fixInput = inputdlg({'Number of gridpoints:'},'Fix space discretisation',...
+        1,defaultAnswer,options);
+    if isempty(fixInput) % User pressed cancel
+        break
+    elseif ~mod(str2num(fixInput{1}),1) % Only allow integers 
+        valid = 1;
+        % Store new value in the UserData of the object
+        set(hObject,'UserData',fixInput);
+        % Update the chebgui object
+        handles.guifile.options.fixN = fixInput{1};
+    else
+        f = errordlg('Invalid input.', 'Chebgui error', 'modal');
+        uiwait(f); 
+    end
+end
+
+% Change checking
+set(handles.menu_fixNon,'checked','on');
+set(handles.menu_fixNoff,'checked','off');
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_fixNoff_Callback(hObject, eventdata, handles)
+handles.guifile.options.fixN = '';
+% Change checking
+set(handles.menu_fixNon,'checked','off');
+set(handles.menu_fixNoff,'checked','on');
+guidata(hObject, handles);

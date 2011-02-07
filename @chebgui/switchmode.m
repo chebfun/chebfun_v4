@@ -148,10 +148,6 @@ elseif onoff == 0
     onoff = 'off';
 end
 
-% set(handles.checkbox_fixN,'visible',onoff);
-% set(handles.N_text,'visible',onoff);
-% set(handles.input_N,'visible',onoff);
-
 
 function initialisefigures(handles,callMode)
 if ~strcmpi(callMode,'demo')

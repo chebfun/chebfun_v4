@@ -236,11 +236,10 @@ else
 end
 
 % Options for fixed N
-% if get(handles.checkbox_fixN,'Value')
-%     N = get(handles.input_N,'String');
-%     if isempty(N), error('CHEBFUN:exportpde2mfile:N','N must be given.'); end
-%     opts = [opts,',''N'',',N];
-% end        
+if ~isempty(guifile.options.fixN)
+    N = str2num(guifile.options.fixN);
+    opts = [opts,',''N'',',N];
+end        
 
 % Set up preferences
 fprintf(fid,'\n%% Setup preferences for solving the problem.\n');
