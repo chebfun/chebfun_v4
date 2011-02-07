@@ -108,6 +108,11 @@ if ~isempty(guifile.init)
         end
         axes(handles.fig_sol);
         plot(initChebfun,'LineWidth',2)
+        
+        if ~isempty(guifile.options.fixYaxisLower) % Fix y-axis
+            ylim([str2num(guifile.options.fixYaxisLower),...
+                str2num(guifile.options.fixYaxisUpper)]);
+        end
         if guifile.options.grid, grid on, end
         
         initSuccess = 1;

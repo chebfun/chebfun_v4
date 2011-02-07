@@ -39,7 +39,7 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.menu_pdeplotting,'Enable','Off')
     set(handles.menu_pdeholdplot,'Enable','Off')
     set(handles.menu_pdefix,'Enable','Off')
-    set(handles.menu_fixspacedisc,'Enable','Off')
+    set(handles.menu_fixN,'Enable','Off')
     
     % Clear the figures
     initialisefigures(handles,callMode)
@@ -83,7 +83,7 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.menu_pdeplotting,'Enable','On')
     set(handles.menu_pdeholdplot,'Enable','On')
     set(handles.menu_pdefix,'Enable','On')
-    set(handles.menu_fixspacedisc,'Enable','On')
+    set(handles.menu_fixN,'Enable','On')
     
     % Clear the figures
     initialisefigures(handles,callMode)
@@ -126,7 +126,7 @@ else % Going into EIG mode
     set(handles.menu_pdeplotting,'Enable','Off')
     set(handles.menu_pdeholdplot,'Enable','Off')
     set(handles.menu_pdefix,'Enable','Off')
-    set(handles.menu_fixspacedisc,'Enable','Off')
+    set(handles.menu_fixN,'Enable','Off')
     
     
     % Clear the figures
@@ -148,7 +148,6 @@ elseif onoff == 0
     onoff = 'off';
 end
 
-% set(handles.FixN_text,'visible',onoff);
 % set(handles.checkbox_fixN,'visible',onoff);
 % set(handles.N_text,'visible',onoff);
 % set(handles.input_N,'visible',onoff);

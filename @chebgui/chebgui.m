@@ -22,7 +22,7 @@ else
     c.timedomain = ''; c.sigma = '';
     c.init = []; c.tol = [];
     c.options = struct('damping','1','plotting','0.5','grid',1,...
-        'pdeholdplot',0,'fixYaxisLower','','fixYaxisUpper','');
+        'pdeholdplot',0,'fixYaxisLower','','fixYaxisUpper','','fixN','');
     
     
     k = 1;

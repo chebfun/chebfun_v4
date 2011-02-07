@@ -630,7 +630,7 @@ function input_plotstyle_CreateFcn(hObject, eventdata, handles)
 
 function button_solve_KeyPressFcn(hObject, eventdata, handles)
 
-
+function button_solve_ButtonDownFcn(hObject, eventdata, handles)
 % -------------------------------------------------------------------------
 % ----------------- Right-clicking functions ------------------------------
 % -------------------------------------------------------------------------

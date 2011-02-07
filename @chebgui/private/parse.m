@@ -94,9 +94,9 @@ elseif strcmp(NEXT,'FUNC2') % Functions which take two arguments
     % a pseudo argument for diff. Similar for Airy.
     if (strcmp(functionName,'diff') || strcmp(functionName,'cumsum')) && ~stackRows
         firstArg = secondArg;
-        secondArg = struct('center',{{'1','NUM'}});
+        secondArg = struct('center',{{'1','NUM'}},'pdeflag',0);
     elseif strcmp(functionName,'airy') && ~stackRows
-        firstArg = struct('center',{{'0','NUM'}});
+        firstArg = struct('center',{{'0','NUM'}},'pdeflag',0);
     else
         firstArg =  pop();
     end
