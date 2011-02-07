@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 14;
+numberOfExamples = 16;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -29,7 +29,7 @@ switch exampleNumber
         demotype = '';
     case 1
         a = '0'; b = '1';
-        DE = '0.02*u'''' + u'' = 0';
+        DE = '0.02*u'''' + u'' + u = 0';
         LBC = 'u = 0'; RBC = 'u = 1';
         init = ''; tol = '1e-10';
         damping = '0'; plotting = '0.1';
@@ -87,6 +87,15 @@ switch exampleNumber
         name = 'Carrier equation';
         demotype = 'bvp';
     case 8
+        a = '-1'; b = '1';
+        DE = '0.01*u" + 2*(1-x^2)*u + u^2 = 1';
+        LBC = 'u = 0'; RBC = 'u = 0';
+        init = '2*x*(x^2-1).*(1-2/(1+20*x^2))';
+        tol = '1e-10';
+        damping = '1'; plotting = '0.1';
+        name = 'Carrier equation (another solution)';
+        demotype = 'bvp';
+    case 9
         a = '-100'; b = '100';
         DE = 'u" + (1.2+sign(10-abs(x)))*u = 1';
         LBC = 'u = 0'; RBC = 'u = 0';
@@ -94,7 +103,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Discontinuous coefficient wave equation';
         demotype = 'bvp';
-    case 9
+    case 10 
         a = '-4'; b = '4';
         DE = 'u" + u - u^2 = 0';
         LBC = 'u = 1'; RBC = 'u = 0';
@@ -102,7 +111,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Fisher-KPP equation';
         demotype = 'bvp';
-    case 10
+    case 11
         a = '-1'; b = '1';
         DE= 'u" + .87*exp(u) = 0';
         LBC = 'u = 0'; RBC = 'u = 0';
@@ -110,7 +119,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Frank-Kamenetskii blowup equation';
         demotype = 'bvp';
-    case 11
+    case 12
         a = '-1'; b = '1';
         DE = '.0001*u'''' + x*(x^2-0.5)*u'' + 3*(x^2-0.5)*u = 0';
         LBC = 'u = -2'; RBC = 'u = 4';
@@ -118,7 +127,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Interior layers linear equation';
         demotype = 'bvp';
-    case 12
+    case 13
         a = '0'; b = '10';
         DE = 'u'''' = - sin(u)';
         LBC = 'u = 2'; RBC = 'u = 2';
@@ -126,15 +135,23 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Nonlinear pendulum';
         demotype = 'bvp';
-    case 13
+    case 14
         a = '0'; b = '10';
         DE = 'u'''' = - sin(u)';
         LBC = 'u = 2'; RBC = 'u = 2';
-        init = '2 + sin(0.5*pi*x/10)'; tol = '1e-10';
+        init = '2 + sin(pi*x/10)'; tol = '1e-10';
         damping = '1'; plotting = '0.1';
-        name = 'Nonlinear pendulum (a different solution)';
+        name = 'Nonlinear pendulum (another solution)';
         demotype = 'bvp';
-    case 14
+    case 15
+        a = '-1'; b = '1';
+        DE = '0.05*u" + (u'')^2 = 1';
+        LBC = 'u = 0.8'; RBC = 'u = 1.2';
+        init = ''; tol = '1e-8';
+        damping = '1'; plotting = '0.03';
+        name = 'Sawtooth problem';
+        demotype = 'bvp';
+    case 16
         a = '0'; b = '1';
         DE = 'u" = 8*sinh(8*u)';
         LBC = 'u = 0'; RBC = 'u = 1';

@@ -42,7 +42,7 @@ switch exampleNumber
         tol = '1e-6';
         plotting = 'on';
         fixYaxisLower = '-1'; fixYaxisUpper = '1';
-        name = DE;
+        name = 'Advection-diffusion equation';
         demotype = 'scalar';
     case 2
         a = '-3'; b = '3';
@@ -56,6 +56,17 @@ switch exampleNumber
         fixYaxisLower = '-1'; fixYaxisUpper = '1';
         demotype = 'scalar';
     case 3
+        a = '-1'; b = '1';
+        t = '0:.04:5';
+        DE = 'u_t = -(u^2)'' + .02*u"';
+        LBC = 'dirichlet'; RBC = 'dirichlet';
+        init = '(1-x.^2).*exp(-30*(x+.5).^2)';
+        tol = '1e-4';
+        plotting = 'on';
+        name = 'Burgers equation';
+        fixYaxisLower = '0'; fixYaxisUpper = '0.8';
+        demotype = 'scalar';
+    case 4
         a = '-3'; b = '3';
         t = '0:.025:1.6';
         DE = 'u_t = -.003*u'''''''' + (u^3-u)''''';
@@ -66,29 +77,30 @@ switch exampleNumber
         fixYaxisLower = '-1'; fixYaxisUpper = '1.2';
         name = 'Cahn-Hilliard equation';
         demotype = 'scalar';
-    case 4
-        a = '-1'; b = '1';
-        t = '0:.1:4';
-        DE = 'u_t = -(u^2)'' + .01*u"';
-        LBC = 'dirichlet'; RBC = 'dirichlet';
-        init = '(1-x.^2).*exp(-30*(x+.5).^2)';
-        tol = '1e-6';
-        plotting = 'on';
-        name = 'Burgers equation';
-        fixYaxisLower = '0'; fixYaxisUpper = '0.8';
-        demotype = 'scalar';
     case 5
         a = '-4'; b = '4';
-        t = '0:.01:1';
+        t = '0:.01:1.5';
         DE = 'u_t = 0.1*u''''';
         LBC = 'dirichlet'; RBC = 'dirichlet';
-        init = 'sin(pi*x/4) + sin(pi*3*x/4) + sin(pi*5*x/4)';
+        init = 'sin(pi*x/4) + sin(pi*3*x/4) + sin(pi*12*x/4)';
         tol = '1e-6';
         plotting = 'on';
         fixYaxisLower = '-3'; fixYaxisUpper = '3';
         name = 'Heat equation';
         demotype = 'scalar';
     case 6
+        a = '-1'; b = '1';
+        t = '0:.1:4';
+        DE = {'u_t = .02*u" + cumsum(u)*sum(u)'};
+        LBC = {'dirichlet'};
+        RBC = {'dirichlet'};
+        init = {'(1-x^2)*exp(-30*(x+.5)^2)'};
+        tol = '1e-6';
+        plotting = 'on';
+        name = 'Integro-differential equation';
+        fixYaxisLower = '0'; fixYaxisUpper = '1.4';
+        demotype = 'scalar';
+    case 7
         a = '-1'; b = '1';
         t = '0:.01:2';
         DE = 'u_t = u*u'' - u" - 0.006*u""';
@@ -99,7 +111,7 @@ switch exampleNumber
         fixYaxisLower = '-30'; fixYaxisUpper = '30';
         name = 'Kuramoto-Sivashinsky equation';
         demotype = 'scalar';
-    case 7
+    case 8
         a = '-1'; b = '1';
         t = '0:.05:2';
         DE = {'u_t = -u + (x + 1)*v + 0.1*u"'; 'v_t = u - (x + 1)*v + 0.2*v"'};
@@ -110,7 +122,7 @@ switch exampleNumber
         fixYaxisLower = '0.4'; fixYaxisUpper = '1.6';
         name = 'System 1';
         demotype = 'system';
-    case 8
+    case 9
         a = '-1'; b = '1';
         t = '0:.05:2';
         DE = {'v_t = u - (x + 1)*v + 0.2*v"' ; 'u_t = -u + (x + 1)*v + 0.1*u"'};
@@ -121,7 +133,7 @@ switch exampleNumber
         fixYaxisLower = '0.4'; fixYaxisUpper = '1.6';
         name = 'System 1 (flipped)';
         demotype = 'system';
-    case 9
+    case 10
         a = '-1'; b = '1';
         t = '0:.1:2';
         DE = {'u_t = 0.1*u" - 100*u*v' ; 'v_t = .2*v" - 100*u*v' ; 'w_t = 0.001*w" + 200*u*v'};
@@ -135,7 +147,7 @@ switch exampleNumber
         fixYaxisLower = '0'; fixYaxisUpper = '2';
         name = 'System 2 (3 eqns)';
         demotype = 'system';
-    case 10
+    case 11
         a = '-1'; b = '1';
         t = '0:.1:2';
         DE = {'u_t = 0.1*u" - 100*u*v' ; 'v_t = 0.2*v" - 100*u*v' ; 'w_t = 0.001*w" + 200*u*v'};
@@ -149,7 +161,7 @@ switch exampleNumber
         fixYaxisLower = '0'; fixYaxisUpper = '2';
         name = 'System 2 (3 eqns alt)';
         demotype = 'system';
-    case 11
+    case 12
         a = '-1'; b = '1';
         t = '0:.1:2';
         DE = {'u_t = u" - v' ; 'v" - u = 0'};
@@ -161,18 +173,6 @@ switch exampleNumber
         fixYaxisLower = '0.6'; fixYaxisUpper = '1';
         name = 'Coupled PDE-BVP';
         demotype = 'system';
-    case 12
-        a = '-1'; b = '1';
-        t = '0:.1:4';
-        DE = {'u_t = .02*u" + cumsum(u)*sum(u)'};
-        LBC = {'dirichlet'};
-        RBC = {'dirichlet'};
-        init = {'(1-x^2)*exp(-30*(x+.5)^2)'};
-        tol = '1e-6';
-        plotting = 'on';
-        name = 'Integro-Differential Eqn.';
-        fixYaxisLower = '0'; fixYaxisUpper = '1.4';
-        demotype = 'scalar';
     case 13
         a = '0'; b = '10';
         t = '0:.1:10';
@@ -183,7 +183,7 @@ switch exampleNumber
         tol = '1e-6';
         plotting = 'on';
         fixYaxisLower = '-0.1'; fixYaxisUpper = '0.1';
-        name = 'Wave Equation';
+        name = 'Wave equation';
         demotype = 'system';    
 end
 
