@@ -30,9 +30,11 @@ infixOut = prefix2infix(guifile,prefixOut);
 if strcmp(guifile.type,'pde') && ~isempty(pdeVarNames)
     timeDerivLocation = strfind(infixOut,pdeVarNames{1});
     if pdeSign == -1
-        infixOut(timeDerivLocation:timeDerivLocation+length(pdeVarNames{1})-1) = [];
+%         infixOut(timeDerivLocation:timeDerivLocation+length(pdeVarNames{1})-1) = [];
+        infixOut = strrep(infixOut,pdeVarNames{1},'0');
     else
-        infixOut(timeDerivLocation:timeDerivLocation+length(pdeVarNames{1})-1) = [];
+%         infixOut(timeDerivLocation:timeDerivLocation+length(pdeVarNames{1})-1) = [];
+        infixOut = strrep(infixOut,pdeVarNames{1},'0');
         infixOut = ['-(',infixOut,')']; % Need to a a - in front of the whole string
     end
 end

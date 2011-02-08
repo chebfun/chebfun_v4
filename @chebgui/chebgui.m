@@ -87,7 +87,7 @@ else
                     c.options.(optionName)  = value.(optionName);
                 end
             otherwise
-                error('CHEBGUI:propname',[propName,' is not a valid chebgui property.'])
+                error('CHEBGUI:propname',[type,' is not a valid chebgui property.'])
         end
         k = k + 2;
     end

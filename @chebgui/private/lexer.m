@@ -93,6 +93,14 @@ while ~strcmp(str,'$')
                 nextnum(end) = []; % Throw away the .
                 expr_end = e(1) - 1; % Lower the number of which we clear the string before
             end
+            
+            % If we encounter xi or xj, where x is a number (i.e. we have
+            % 1i, 1.32i etc), we need to combine them into one token,
+            % rather than lexing 1 as a number and i as a variable.         
+            if strcmp(nextChar,'i') || strcmp(nextChar,'j')
+                nextnum = [nextnum,nextChar];
+                expr_end = e(1) + 1; % Increase the number of chars. we throw away
+            end
             out = [out; {nextnum, 'NUM'}];
         case 'unary'
             expr_end = 1;

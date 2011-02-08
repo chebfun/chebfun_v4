@@ -48,7 +48,7 @@ switch lower(propName)
                 case 'fixyaxisupper'
                     val = cg.options.fixYaxisUpper;
                 otherwise
-                    error('CHEBOP:get:options:propname',[propName,' is not a valid chebgui option.'])
+                    error('CHEBOP:get:options:propname',[propName2,' is not a valid chebgui option.'])
             end
         end
     otherwise
