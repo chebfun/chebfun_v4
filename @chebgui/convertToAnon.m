@@ -39,8 +39,8 @@ if strcmp(guifile.type,'pde') && ~isempty(pdeVarNames)
     end
 end
 % Finally, remove unneeded parenthesis -- Temporarily disabled
-anFun = parSimp(guifile,infixOut);
-% anFun = infixOut;
+% anFun = parSimp(guifile,infixOut);
+anFun = infixOut;
 
 % Convert the cell array varNames into one string
 varString = varNames{1};

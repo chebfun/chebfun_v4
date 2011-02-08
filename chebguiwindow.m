@@ -587,7 +587,7 @@ plot(f,'interval',[-1,.957],'linew',3), hold on
 
 t = - cos(pi*(2:8)'/10) *0.99;  % cheb extrema (tweaked)
 y = 0*t;
-h = text( t, y, num2cell(transpose('chebgui')), ...
+h = text( t, y, num2cell(transpose('chebfun')), ...
     'fontsize',16,'hor','cen','vert','mid') ;
 
 flist = listfonts;
