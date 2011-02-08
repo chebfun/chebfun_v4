@@ -3,6 +3,8 @@ function str = parSimp(guifile,str)
 %  parSimp does some basic parsing of the input STR to attempt to remove
 %  unnecessary parenthesis and consecutive +/- pairs.
 
+strlen = length(str);
+
 % Find all locations of ( and )
 leftParLoc = strfind(str,'(');
 rightParLoc = strfind(str,')');
@@ -60,12 +62,23 @@ for pIndex = 1:numOfPars
     elseif (isempty(nextLeftOp) || minOpInside >= allOpVec(nextLeftOp)) && ... 
         (isempty(nextRightOp) || minOpInside >= allOpVec(nextRightOp))
     
-        if minOpInside == 1 && ~isempty(nextLeftOp) && allOpVec(nextLeftOp) == 1 ...
-                && strcmp(str(pLeft-1),'-')
-            if ~(sum(isfinite(allOpVec(pLeft:pRight))) && any(strcmp(str(pLeft+1),{'-','+'})))
+%         if minOpInside == 1 && ~isempty(nextLeftOp) && allOpVec(nextLeftOp) == 1 ...
+%                 && strcmp(str(pLeft-1),'-')
+            tmp = zeros(1,length(str));
+            tmp(pLeft+1:pRight-1) = 1;
+            idx = find(leftPars > pLeft & rightPars < pRight);
+            for k = 1:numel(idx)
+                tmp([leftPars(idx):rightPars(idx)]) = 0;
+            end
+            [pLeft pRight];
+            tmp = logical(tmp);
+            isfinite(allOpVec.*tmp) & allOpVec.*tmp > 0;
+                
+            if sum(isfinite(allOpVec(tmp)))~=1 || ~any(strcmp(str(pLeft+1),{'-','+'}))
+                str
                 continue
             end
-        end
+%         end
         
         % Remove parenthesis pair
         str(pLeft) = [];
@@ -97,9 +110,30 @@ for pIndex = 1:numOfPars
             allOpLoc(allOpLoc > pm) = allOpLoc(allOpLoc > pm)-1;
             allCharNumLoc(allCharNumLoc > pm) = allCharNumLoc(allCharNumLoc > pm)-1;
         end
+        
+        % remove +0, -0, 0+, 0-
+        zs = strfind(str,'0');
+        for k = 1:numel(zs)
+            zsk = zs(k);
+            if any(zsk-1 == leftPars)
+                if allOpVec(zsk+1)
+                    str(zsk) = [];
+                    % Need to update indices and operators
+                    allOpVec(zsk) = [];
+                    leftPars(leftPars > zsk) = leftPars(leftPars > zsk)-1;
+                    rightPars(rightPars > zsk) = rightPars(rightPars > zsk)-1;
+                    allOpLoc(allOpLoc > zsk) = allOpLoc(allOpLoc > zsk)-1;
+                    allCharNumLoc(allCharNumLoc > zsk) = allCharNumLoc(allCharNumLoc > zsk)-1;
+                end
+            end
+        end
+        
             
     end
 end
 
 % Remove leading + signs
 if strcmp(str(1),'+'), str(1) = []; end
+if length(str) < strlen
+    str = parSimp(guifile,str);
+end

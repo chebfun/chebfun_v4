@@ -15,15 +15,12 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     
     % set(handles.iter_list,'Visible','on')
     % set(handles.iter_text,'Visible','on')
-    % set(handles.text_norm,'Visible','on')
     set(handles.input_GUESS,'visible','On')
-    set(handles.text_initial,'String','Initial guess')
+    set(handles.text_initial,'Strin','Initial guess')
     set(handles.toggle_useLatest,'Visible','on')
     
     set(handles.text_timedomain,'Visible','off')
     set(handles.timedomain,'Visible','off')
-    set(handles.text_sigma,'Visible','off')
-    set(handles.sigma,'Visible','off')
     
     set(handles.button_realplot,'Visible','off')
     set(handles.button_imagplot,'Visible','off')
@@ -40,6 +37,9 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.menu_pdeholdplot,'Enable','Off')
     set(handles.menu_pdefix,'Enable','Off')
     set(handles.menu_fixN,'Enable','Off')
+    % Disable EIG menuoptions
+    set(handles.menu_sigma,'Enable','Off')
+    set(handles.menu_eigno,'Enable','Off')
     
     % Clear the figures
     initialisefigures(handles,callMode)
@@ -57,7 +57,6 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.toggle_useLatest,'Visible','off')
     set(handles.iter_list,'Visible','off')
     set(handles.iter_text,'Visible','off')
-    set(handles.text_norm,'Visible','off')
     set(handles.text_initial,'String','Initial condition')
     
     pdeplotopts(handles,1)
@@ -68,8 +67,6 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     
     set(handles.text_timedomain,'Visible','on')
     set(handles.timedomain,'Visible','on')
-    set(handles.text_sigma,'Visible','off')
-    set(handles.sigma,'Visible','off')
     
     set(handles.button_realplot,'Visible','off')
     set(handles.button_imagplot,'Visible','off')
@@ -84,6 +81,9 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.menu_pdeholdplot,'Enable','On')
     set(handles.menu_pdefix,'Enable','On')
     set(handles.menu_fixN,'Enable','On')
+    % Disable EIG menuoptions
+    set(handles.menu_sigma,'Enable','Off')
+    set(handles.menu_eigno,'Enable','Off')
     
     % Clear the figures
     initialisefigures(handles,callMode)
@@ -101,14 +101,11 @@ else % Going into EIG mode
     set(handles.toggle_useLatest,'Visible','off')
     % set(handles.iter_list,'Visible','on')
     % set(handles.iter_text,'Visible','on')
-    % set(handles.text_norm,'Visible','on')
     set(handles.text_initial,'String','')
     set(handles.input_GUESS,'visible','Off')
     
     set(handles.text_timedomain,'Visible','off')
     set(handles.timedomain,'Visible','off')
-    set(handles.text_sigma,'Visible','on')
-    set(handles.sigma,'Visible','on')
     
     set(handles.button_realplot,'Visible','on')
     set(handles.button_realplot,'Value',1)
@@ -127,6 +124,9 @@ else % Going into EIG mode
     set(handles.menu_pdeholdplot,'Enable','Off')
     set(handles.menu_pdefix,'Enable','Off')
     set(handles.menu_fixN,'Enable','Off')
+    % Enable EIG menuoptions
+    set(handles.menu_sigma,'Enable','On')
+    set(handles.menu_eigno,'Enable','On')
     
     
     % Clear the figures

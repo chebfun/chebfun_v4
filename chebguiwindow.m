@@ -1150,3 +1150,51 @@ handles.guifile.options.fixN = '';
 set(handles.menu_fixNon,'checked','off');
 set(handles.menu_fixNoff,'checked','on');
 guidata(hObject, handles);
+
+% --------------------------------------------------------------------
+function menu_sigma_Callback(hObject, eventdata, handles)
+options.WindowStyle = 'modal';
+valid = 0;
+defaultAnswer = {handles.guifile.sigma};
+while ~valid
+    in = inputdlg({'Set sigma, e.g., ''LR'',''SR'',''LM'', ''SM'', etc'},'Set sigma',...
+        1,defaultAnswer,options);
+    if isempty(in) % User pressed cancel
+        break
+    elseif ~any(strcmpi(in{1},{'LR','SR','LM', 'SM'})) && isempty(str2num(in{1}))
+        in = in{1};
+        valid = 1;
+        % Store new value in the UserData of the object
+        set(hObject,'UserData',in);
+        % Update the chebgui object
+        handles.guifile.sigma = in;
+    else
+        f = errordlg('Invalid input.', 'Chebgui error', 'modal');
+        uiwait(f); 
+    end
+end
+guidata(hObject, handles);
+
+% --------------------------------------------------------------------
+function menu_eigno_Callback(hObject, eventdata, handles)
+options.WindowStyle = 'modal';
+valid = 0;
+defaultAnswer = {handles.guifile.options.numeigs};
+while ~valid
+    in = inputdlg({'Number of eigenvalues to find?'},'Number of eigenvalues?',...
+        1,defaultAnswer,options);
+    if isempty(in) % User pressed cancel
+        break
+    elseif ~mod(str2num(in{1}),1) % Only allow integers
+        in = in{1};
+        valid = 1;
+        % Store new value in the UserData of the object
+        set(hObject,'UserData',in);
+        % Update the chebgui object
+        handles.guifile.options.numeigs = in;
+    else
+        f = errordlg('Invalid input.', 'Chebgui error', 'modal');
+        uiwait(f); 
+    end
+end
+guidata(hObject, handles);

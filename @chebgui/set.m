@@ -60,6 +60,8 @@ switch lower(propName)
                     cg.options.fixYaxisLower = vin;
                 case 'fixyaxisupper'
                     cg.options.fixYaxisUpper = vin;
+                case 'numeigs'
+                    cg.options.numeigs = vin;
                 otherwise
                     error('CHEBGUI:set:options:propanem',...
                         [propName2,' is not a valid chebgui option.'])

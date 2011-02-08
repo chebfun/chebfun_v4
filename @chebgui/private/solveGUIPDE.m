@@ -4,7 +4,7 @@ function handles = solveGUIPDE(guifile,handles)
 % or t is used for the linear function.
 
 guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
-    handles.iter_list,handles.text_norm,handles.button_solve};
+    handles.iter_list,[],handles.button_solve};
 set(handles.fig_sol,'Visible','On');
 set(handles.fig_norm,'Visible','On');
 cla(handles.fig_sol,'reset')

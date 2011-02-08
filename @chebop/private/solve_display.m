@@ -153,12 +153,16 @@ switch(phase)
                 end
                 fprintf('Final residual norm: %.2e (interior) and %.2e (boundary conditions). \n\n',nrmres)
             else
+                currString = get(guihandles{4},'String');
                 if itercount == 1
-                    finalString = sprintf('%i iteration.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
+%                     finalString = sprintf('%i iteration.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
+                    finalString2 = sprintf('Final residual norm: %.2e (interior)',nrmres);
+                    finalString3 = sprintf('and %.2e (boundary conditions).',nrmres);
                 else
-                    finalString = sprintf('%i iterations.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
+                    finalString2 = sprintf('Final residual norm: %.2e (interior)',nrmres(1));
+                    finalString3 = sprintf('and %.2e (boundary conditions).',nrmres(2));
                 end
-                set(guihandles{5},'String',finalString);
+                set(guihandles{4},'String',{currString,finalString2, finalString3});
             end
         end
         

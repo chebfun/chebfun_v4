@@ -140,8 +140,7 @@ if guiMode
     set(handles.iter_list,'Visible','On');
     
     guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
-        handles.iter_list,handles.text_norm,handles.button_solve};
-    set(handles.text_norm,'Visible','Off');
+        handles.iter_list,[],handles.button_solve};
     set(handles.fig_sol,'Visible','On');
     set(handles.fig_norm,'Visible','On');
 end
@@ -168,9 +167,6 @@ if guiMode
     
     % Notify the GUI we have a solution available
     handles.hasSolution = 1;
-    
-    set(handles.text_norm,'Visible','On');
-    
     
     axes(handles.fig_sol)
     plot(u,'Linewidth',2),

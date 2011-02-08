@@ -20,9 +20,16 @@ b = str2num(guifile.DomRight);
 deInput = guifile.DE;
 lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
-sigma = guifile.sigma;
-numSigma = str2num(sigma); if ~isempty(numSigma), sigma = numSigma; end
+sigma = [];
+if ~isempty(guifile.sigma)
+    numSigma = str2num(sigma); 
+    if ~isempty(numSigma), sigma = numSigma;
+    else sigma = guifile.sigma; end
+end
 K = 6;
+if isfield(guifile.options,'numeigs') && ~isempty(guifile.options.numeigs)
+    K = str2double(guifile.options.numeigs);
+end
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -106,8 +113,7 @@ if guiMode
 %     set(handles.iter_list,'String','');
 %     set(handles.iter_text,'Visible','On');
 %     set(handles.iter_list,'Visible','On');
-    
-    set(handles.text_norm,'Visible','Off');
+
     set(handles.fig_sol,'Visible','On');
     set(handles.fig_norm,'Visible','On');
 end
