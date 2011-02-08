@@ -691,10 +691,10 @@ tol = '';
 damping = '';
 plotting = '';
 
-if iscell(DE), DE = mycell2str(DE); else DE = ['' DE '']; end
-if iscell(LBC), LBC = mycell2str(LBC); else LBC = ['' LBC '']; end
-if iscell(RBC), RBC = mycell2str(RBC); else RBC = ['' RBC '']; end
-if iscell(init), init = mycell2str(init); else init = ['' init '']; end
+DE = mycell2str(DE);
+LBC = mycell2str(LBC);
+RBC = mycell2str(RBC);
+init = mycell2str(init);
 
 s = sprintf(['name = ''%s'';\n', ...
             'demotype = ''%s'';\n', ...
@@ -714,12 +714,20 @@ fprintf(fid,s);
 fclose(fid);
 
 function out = mycell2str(in)
-out = '{';
+isc = iscell(in);
+if ~isc
+    in = {in};
+    out = '';
+else
+    out = '{';
+end
 for k = 1:numel(in)
     if k > 1,  out = [out ' ; ']; end
     out = [out '''' strrep(in{k},'''','''''') ''''];
 end
-out = [out '}'];
+if isc
+    out = [out '}'];
+end
 
 % --------------------------------------------------------------------
 function menu_demos_Callback(hObject, eventdata, handles)

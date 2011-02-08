@@ -143,6 +143,14 @@ switch(phase)
         end
         drawnow
     case 'final'
+                
+        if strcmp(plotMode,'on')
+            if ~guiMode
+                figure(fig), clf
+                plot(u), title('Solution at end of iteration')
+            end
+        end
+        
         if strcmp(mode,'iter') || strcmp(mode,'final')
             if ~guiMode
                 fprintf('\n');
@@ -154,22 +162,21 @@ switch(phase)
                 fprintf('Final residual norm: %.2e (interior) and %.2e (boundary conditions). \n\n',nrmres)
             else
                 currString = get(guihandles{4},'String');
-                if itercount == 1
+                if numel(nrmres) == 1
+                    finalString2 = sprintf('Linear equation detected. Convereged in one step.',nrmres);
+                    finalString3 = '';
+                    set(guihandles{4},'String',{finalString2});
+                    return
+                elseif itercount == 1
 %                     finalString = sprintf('%i iteration.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
-                    finalString2 = sprintf('Final residual norm: %.2e (interior)',nrmres);
-                    finalString3 = sprintf('and %.2e (boundary conditions).',nrmres);
+                    finalString2 = sprintf('Final residual norm: %.2e (interior)',nrmres(1));
+                    finalString3 = sprintf('and %.2e (boundary conditions).',nrmres(2));
                 else
                     finalString2 = sprintf('Final residual norm: %.2e (interior)',nrmres(1));
                     finalString3 = sprintf('and %.2e (boundary conditions).',nrmres(2));
                 end
-                set(guihandles{4},'String',{currString,finalString2, finalString3});
-            end
-        end
-        
-        if strcmp(plotMode,'on')
-            if ~guiMode
-                figure(fig), clf
-                plot(u), title('Solution at end of iteration')
+                set(guihandles{4},'String',{currString,finalString2,finalString3});
+                set(guihandles{4},'Value',get(guihandles{4},'Value')+2);
             end
         end
         

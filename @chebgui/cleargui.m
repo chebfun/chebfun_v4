@@ -19,7 +19,7 @@ initialisefigures(handles)
 set(handles.iter_list,'String','');
 set(handles.iter_text,'Visible','Off');
 set(handles.iter_list,'Visible','Off');
-set(handles.text_norm,'Visible','Off');
+% set(handles.text_norm,'Visible','Off');
 
 % Disable export figures
 set(handles.button_figsol,'Enable','off');
