@@ -16,13 +16,9 @@ function varargout = eigs(A,varargin)
 % EIGS(A,K,SIGMA) and EIGS(A,B,K,SIGMA) find K eigenvalues. If SIGMA is a
 % scalar, the eigenvalues found are the ones closest to SIGMA. Other
 % possibilities are 'LR' and 'SR' for the eigenvalues of largest and
-% smallest real part, and 'LM' (or Inf) for largest magnitude. SIGMA must
-% be chosen appropriately for the given operator; for example, 'LM' for an
-% unbounded operator will fail to converge!
-%
-% EIGS(A,MAP), where MAP is a map structure (such as returned by the call
-% maps('kte',.99) ), returns the eigenvalues of the linop D under the map
-% MAP.
+% smallest real part, and 'LM' (or Inf) and 'SM' for largest and smallest
+% magnitude. SIGMA must be chosen appropriately for the given operator; for
+% example, 'LM' for an unbounded operator will fail to converge!
 %
 % Despite the syntax, this version of EIGS does not use iterative methods
 % as in the built-in EIGS for sparse matrices. Instead, it uses the
@@ -38,7 +34,7 @@ function varargout = eigs(A,varargin)
 %   format long, sqrt(-diag(D))  % integers, to 14 digits
 %
 % See also EIGS, EIG.
-% See http://www.maths.ox.ac.uk/chebfun.
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 % Copyright 2008 by Toby Driscoll.
 
@@ -69,7 +65,7 @@ while (nargin > j)
 end
 
 maxdegree = cheboppref('maxdegree');
-% maxdegree = 511;
+maxdegree = min(256,maxdegree);
 m = A.blocksize(2);
 if m~=A.blocksize(1)
   error('LINOP:eigs:notsquare','Block size must be square.')
@@ -139,6 +135,8 @@ if isempty(sigma)
         sigma = lam1(idx);
   end
 end
+
+if strcmpi(sigma,'SM'), sigma = 0; end
 
 % These assignments cause the nested function value() to overwrite them.
 V = [];  D = [];  Nout = [];
@@ -316,6 +314,7 @@ else
   elim(Brows) = false;
   M(elim,:) = 0;
   [W,D] = eig(full(L),full(M));
+  
   % We created some infinite eigenvalues. Peel them off. 
   [lam,idx] = sort( abs(diag(D)),'descend' );
   idx = idx(1:sum(elim));
@@ -350,7 +349,7 @@ function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
         Amat = [Amat ; zeros(-sizediff,N)];
         Bmat = [Bmat ; zeros(sizediff,N)];
 
-        % Compute the generalised eigenvalue problem.
+        % Compute the generalised eigenvalue problem.       
         [V,D] = eig(full(Amat),full(Bmat));
         
         % Infinite eigenvalues are dealt with in 'nearest' below.
@@ -359,12 +358,12 @@ function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
             idx = idx(1:sizediff);
             D(:,idx) = [];  D(idx,:) = [];  V(:,idx) = [];
         end
-        
+
         % Find the droids we're looking for.
         idx = nearest(diag(D),sigma,min(k,N));
         V = V(:,idx);
         D = D(idx,idx);
-        
+
         return
         
     end
