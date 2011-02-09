@@ -29,7 +29,7 @@ while normdu>1e-10*(tol/eps) && niter < 11
   normdu = norm(du);
 end
 
-pass = abs( feval(diff(u,2),0) - 0.927680043004878) < 1e8*tol;
+pass = abs( feval(diff(u,2),0) - 0.927680043004878) < 2e8*tol;
 
 
 
