@@ -116,12 +116,25 @@ else
 end
         
 % Determine which figure to plot to (for CHEBGUI)
+% and set default display values for variables.
 YLim = opt.YLim;
-if isfield(opt,'guihandles') 
-    axes(opt.guihandles{1});
-    guiflag = true;
+if isfield(opt,'guihandles')
+    if ~isempty(opt.guihandles{1});
+        axes(opt.guihandles{1});
+        guiflag = true;
+    else
+        guiflag = false;
+    end
+    varnames = opt.guihandles{7};
+    xLabel = opt.guihandles{8}{1};
+    tlabel = opt.guihandles{8}{2};
+    gridon = opt.guihandles{10};
 else
     guiflag = false; 
+    varnames = 'u';
+    xLabel = 'x';
+    tlabel = 't';
+    gridon = 0;
 end
 
 % Parse plotting options
@@ -426,17 +439,15 @@ if doplot
     plot(u0,plotopts{:});
     if dohold, ish = ishold; hold on, end
     if ~isempty(YLim), ylim(YLim);    end
-    if guiflag
-        varnames = opt.guihandles{7};
-        xlabel(opt.guihandles{8});
-        if numel(varnames) > 1
-            legend(varnames);
-        else
-            ylabel(varnames);
-        end
-        % Determines whether grid is on
-        if opt.guihandles{10}, grid on, end
+    % Axis labels
+    xlabel(xLabel);
+    if numel(varnames) > 1
+        legend(varnames);
+    else
+        ylabel(varnames);
     end
+    % Determines whether grid is on
+    if gridon, grid on, end
     drawnow
 end
 
@@ -500,53 +511,53 @@ try
             plot(ucur,plotopts{:});
             if ~isempty(YLim), ylim(YLim); end
             if ~dohold, hold off, end
-            if guiflag
-                varnames = opt.guihandles{7};
-                xlabel(opt.guihandles{8});
-                if numel(varnames) > 1
-                    legend(varnames);
-                else
-                    ylabel(varnames);
-                end
-                % Determines whether grid is on
-                if opt.guihandles{10}, grid on, end
+            % Axis labels
+            xlabel(xLabel);
+            if numel(varnames) > 1
+                legend(varnames);
+            else
+                ylabel(varnames);
             end
-            title(sprintf('t = %.3f,  len = %i',tt(nt+1),curlen)), drawnow
+            % Determines whether grid is on
+            if gridon, grid on, end
+            title(sprintf('%s = %.3f,  len = %i',tlabel,tt(nt+1),curlen)), drawnow
         elseif guiflag
             drawnow
         end
 
-        % Interupt comutation if stop or pause  button is pressed in the GUI.
-        if isfield(opt,'guihandles') && strcmp(get(opt.guihandles{6},'String'),'Solve')
-            tt = tt(1:nt+1);
-            if syssize == 1,  
-                uu = uu(:,1:nt+1);
-            else
-                for k = 1:syssize
-                    uu{k} = uu{k}(:,1:nt+1);
+        if guiflag
+            % Interupt comutation if stop or pause  button is pressed in the GUI.
+            if strcmp(get(opt.guihandles{6},'String'),'Solve')
+                tt = tt(1:nt+1);
+                if syssize == 1,  
+                    uu = uu(:,1:nt+1);
+                else
+                    for k = 1:syssize
+                        uu{k} = uu{k}(:,1:nt+1);
+                    end
                 end
+                break
+            elseif strcmp(get(opt.guihandles{9},'String'),'Continue')
+                defaultlinewidth = 2;
+                axes(opt.guihandles{2})
+                if ~iscell(uu)
+                    waterfall(uu(:,1:nt+1),tt(1:nt+1),'simple','linewidth',defaultlinewidth)
+                    xlabel(xLabel), ylabel(tlabel), zlabel(varnames)
+                else
+                    cols = get(0,'DefaultAxesColorOrder');
+                    for k = 1:numel(uu)
+                        plot(0,NaN,'linewidth',defaultlinewidth,'color',cols(k,:)), hold on
+                    end
+                    legend(opt.guihandles{7});
+                    for k = 1:numel(uu)
+                        waterfall(uu{k},tt(1:nt+1),'simple','linewidth',defaultlinewidth,'edgecolor',cols(k,:)), hold on
+                        xlabel(xLabel), ylabel(tlabel)
+                    end
+                    view([322.5 30]), box off, grid on, hold off
+                end
+                axes(opt.guihandles{1})
+                waitfor(opt.guihandles{9}, 'String');
             end
-            break
-        elseif isfield(opt,'guihandles') && strcmp(get(opt.guihandles{9},'String'),'Continue')
-            defaultlinewidth = 2;
-            axes(opt.guihandles{2})
-            if ~iscell(uu)
-                waterfall(uu(:,1:nt+1),tt(1:nt+1),'simple','linewidth',defaultlinewidth)
-                xlabel(opt.guihandles{8}), ylabel('t'), zlabel(opt.guihandles{7})
-            else
-                cols = get(0,'DefaultAxesColorOrder');
-                for k = 1:numel(uu)
-                    plot(0,NaN,'linewidth',defaultlinewidth,'color',cols(k,:)), hold on
-                end
-                legend(opt.guihandles{7});
-                for k = 1:numel(uu)
-                    waterfall(uu{k},tt(1:nt+1),'simple','linewidth',defaultlinewidth,'edgecolor',cols(k,:)), hold on
-                    xlabel(opt.guihandles{8}), ylabel('t')
-                end
-                view([322.5 30]), box off, grid on, hold off
-            end
-            axes(opt.guihandles{1})
-            waitfor(opt.guihandles{9}, 'String');
         end
     end
 

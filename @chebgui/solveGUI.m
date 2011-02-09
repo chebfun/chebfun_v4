@@ -66,13 +66,12 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     set(handles.button_solve,'BackgroundColor',[214 80 80]/256);
     drawnow
     
-    % Call the private method solveGUIBVP or solveGUIPDE which do all the
-    % work
+    % Call the private method solveguibvp, pde, or eig which do the work
     try
         if get(handles.button_ode,'Value')
             handles = solveguibvp(guifile,handles);
         elseif get(handles.button_pde,'Value')
-            handles = solveGUIPDE(guifile,handles);
+            handles = solveguipde(guifile,handles);
         else
             handles = solveguieig(guifile,handles);            
         end
