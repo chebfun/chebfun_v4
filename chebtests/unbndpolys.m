@@ -7,7 +7,7 @@ function pass = unbndpolys
 
 % Otions
 N = 8;
-tol = 1e-9;
+tol = 2e-9;
 
 % Laguerre Polynomials
 x = linspace(0,10,1000);

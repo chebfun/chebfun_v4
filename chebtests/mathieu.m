@@ -5,6 +5,8 @@ function pass = mathieu
 %
 %   u'' = (2q cos(2x) + lambda)*u
 
+tol = 3e-9*chebfunpref('eps')/eps;
+
 q = 25;
 d = domain(-pi,pi);
 c = chebfun('cos(2*x)',d);
@@ -21,4 +23,4 @@ exactA25 = [ -40.256779546566787276, -21.314899690665726935, -3.5221647271582959
 146.20769064280234639, 170.87371080831606219, 197.61116494244372124 ]';
 
 err = norm( -lam(1:2:end) - exactA25, Inf);
-pass = err < 3e-10*chebfunpref('eps')/eps;
+pass = err < tol;

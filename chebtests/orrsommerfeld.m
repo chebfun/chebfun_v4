@@ -1,5 +1,12 @@
 function pass = orrsommerfeld
 
+pass = 0;
+
+return
+
+% pass = 0;
+% return
+
 % Eigenvalues of the Orr-Sommerfeld operator
 
 tol = chebfunpref('eps');
@@ -15,7 +22,16 @@ B = D^2-I;
 A.lbc(1) = I;  A.lbc(2) = D;
 A.rbc(1) = I;  A.rbc(2) = D;
 
-lam = eigs(A,B,10,'LR');
+AA = A; BB = B;
+
+x = chebfun('x',d);
+A = chebop(d); B = A;
+A.op = @(u) (diff(u,4)-2*diff(u,2)+u)/R - 2i*u - 1i*diag(1-x.^2)*(diff(u,2)-u);
+B.op = @(u) diff(u,2) - u;
+A.lbc = @(u) [u , diff(u)];
+A.rbc = @(u) [u , diff(u)];
+
+lam = eigs(A,B,4,'LR');
 
 correct = [
      -7.819078104994955e-005-2.615676705860811e-001i
@@ -30,5 +46,6 @@ correct = [
     -1.564823130376978e-001-8.413737949305676e-001i
 ];
 
-pass = norm( lam-correct, Inf) < 1e-7*(tol/eps);
+err = norm( lam-correct, Inf)
+pass = err < 1e-7*(tol/eps);
 

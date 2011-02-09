@@ -46,7 +46,7 @@ function varargout = chebtest(dirname)
 
 persistent userpref
 
-if nargin == 1 && strcmpi(dirname,'restore')
+if nargin == 1 && ischar(dirname) && strcmpi(dirname,'restore')
     if isempty(userpref)
 %         disp('First execution of chebtests (or information has been cleared), preferences unchanged.')
         return
@@ -63,7 +63,7 @@ end
 pref = chebfunpref;
 tol = pref.eps;
 createreport = true;
-avgtimes = true; % If turning off, remember to remove line from help comments.
+avgtimes = false; % If turning off, remember to remove line from help comments.
 
 if verLessThan('matlab','7.4')
     matlabver = ver('matlab');
@@ -79,6 +79,23 @@ if nargin < 1
     % Attempt to find "chebtests" directory.
     dirname = fullfile(chbfundir,'chebtests');
 end
+
+% Deal with levelX input
+if ischar(dirname)
+    if ~isempty(str2num(dirname))
+        dirname = str2num(dirname);
+    elseif strncmpi(dirname,'level',5)
+        dirname = fullfile(chbfundir,'chebtests',lower(dirname));
+    end
+end
+if isnumeric(dirname)
+    if numel(dirname) == 1
+        dirname = fullfile(chbfundir,'chebtests',['level',num2str(dirname)]);
+    else
+        error('CHEBFUN:chebtest:numdirs','Can only chebtest all test directories at once, or one at a time.');
+    end
+end
+
 if ~exist(dirname,'dir')
   msg = ['The name "' dirname '" does not appear to be a directory on the path.'];
   error('CHEBFUN:chebtest:nodir',msg)
@@ -131,7 +148,7 @@ failed = zeros(length(mfiles),1);  % Pass/fail
 t = failed;                        % Vector to store times
 
 % Clear the report file (and check we can open file)
-[fid message] = fopen(fullfile(dirname, filesep,'chebtest_report.txt'),'w+');
+[fid message] = fopen(fullfile(chbfundir,'chebtests','chebtest_report.txt'),'w+');
 if fid < 0
     warning('CHEBFUB:chebtest:fopenfail', ...
         ['Cannot create chebtest report: ', message]);
@@ -143,7 +160,7 @@ end
 
 % For looking at average time performance.
 if avgtimes
-    avgfile = fullfile(dirname, filesep ,'chebtest_avgs.txt');
+    avgfile = fullfile(chbfundir,'chebtests','chebtest_avgs.txt');
     if ~exist(avgfile,'file')
         fclose(fopen(avgfile,'w+'));
     end
@@ -242,13 +259,19 @@ chebfunpref(pref);
 cheboppref(userpref.oppref);
 
 % Final output
+ts = sum(t); tm = ts/60;
+if avgN == 0
+    fprintf('Total time: %1.1f seconds = %1.1f minutes \n',ts,tm)
+else
+    fprintf('Total time: %1.1f seconds (Lifetime Avg: %1.1f seconds)\n',ts,avgTot)
+end
+
 if all(~failed)
-  fprintf('\nAll tests passed!\n\n')
+  fprintf('\nAll tests passed!')
   failfun = {};
 else
   fprintf('\n%i failed and %i crashed\n',sum(failed>0),sum(failed<0))
   failfun = mfiles(failed~=0);
-  
   if createreport
       fun = 'chebtest_report.txt';
       if javacheck
@@ -260,13 +283,6 @@ else
       msg = strrep(msg,'\','\\');  % escape \ for fprintf
       numchar = fprintf(msg); fprintf('\n')
   end
-  fprintf('\n')
-end
-ts = sum(t); tm = ts/60;
-if avgN == 0
-    fprintf('Total time: %1.1f seconds = %1.1f minutes \n',ts,tm)
-else
-    fprintf('Total time: %1.1f seconds (Lifetime Avg: %1.1f seconds)\n',ts,avgTot)
 end
 
 % Update average times (if enabled and no failures)
@@ -329,5 +345,3 @@ if createreport && any(failed)
 
     fclose(fid);
 end
-
-
