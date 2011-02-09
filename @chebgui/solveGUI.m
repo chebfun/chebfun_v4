@@ -57,13 +57,15 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     set(handles.toggle_useLatest,'Enable','off');
     set(handles.button_figsol,'Enable','off');
     set(handles.button_fignorm,'Enable','off');
-    % Pause button
-%     set(handles.button_clear,'Enable','off');
-    set(handles.button_clear,'String','Pause');
-    set(handles.button_clear,'BackgroundColor',[255 179 0]/256);
-    % Stop button
-    set(handles.button_solve,'String','Stop');
-    set(handles.button_solve,'BackgroundColor',[214 80 80]/256);
+    if ~get(handles.button_eig,'Value') % STOP and PAUSE don't work in EIGS mode.
+        % Pause button
+    %     set(handles.button_clear,'Enable','off');
+        set(handles.button_clear,'String','Pause');
+        set(handles.button_clear,'BackgroundColor',[255 179 0]/256);
+        % Stop button
+        set(handles.button_solve,'String','Stop');
+        set(handles.button_solve,'BackgroundColor',[214 80 80]/256);
+    end
     drawnow
     
     % Call the private method solveguibvp, pde, or eig which do the work
