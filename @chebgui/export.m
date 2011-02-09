@@ -33,11 +33,11 @@ if strcmp(problemType,'bvp')
             answer = inputdlg(prompt,name,numlines,defaultanswer,options);
             
             if ~isempty(answer)
-                assignin('base',answer{1},handles.latestChebop);
-                assignin('base',answer{2},handles.latestRHS);
-                assignin('base',answer{3},handles.latestSolution);
-                assignin('base',answer{4},handles.latestNorms);
-                assignin('base',answer{5},handles.latestOptions);
+                assignin('base',answer{1},handles.latest.chebop);
+                assignin('base',answer{2},handles.latest.RHS);
+                assignin('base',answer{3},handles.latest.solution);
+                assignin('base',answer{4},handles.latest.norms);
+                assignin('base',answer{5},handles.latest.options);
                 assignin('base',answer{6},handles.guifile);
             end
         case '.m'            
@@ -57,11 +57,11 @@ if strcmp(problemType,'bvp')
                 end
             end
         case '.mat'
-            u = handles.latestSolution; %#ok<NASGU>
-            normVec= handles.latestNorms;  %#ok<NASGU>
-            N= handles.latestChebop;  %#ok<NASGU>
-            rhs= handles.latestRHS;  %#ok<NASGU>
-            options = handles.latestOptions;  %#ok<NASGU>
+            u = handles.latest.solution; %#ok<NASGU>
+            normVec= handles.latest.norms;  %#ok<NASGU>
+            N= handles.latest.chebop;  %#ok<NASGU>
+            rhs= handles.latest.RHS;  %#ok<NASGU>
+            options = handles.latest.options;  %#ok<NASGU>
             uisave({'u','normVec','N','rhs','options'},'bvp');
         case 'Cancel'
             return;
@@ -94,8 +94,8 @@ elseif strcmp(problemType,'pde')
             answer = inputdlg(prompt,name,numlines,defaultanswer,options);
             
             if ~isempty(answer)
-                assignin('base',answer{1},handles.latestSolution);
-                assignin('base',answer{2},handles.latestSolutionT);
+                assignin('base',answer{1},handles.latest.solution);
+                assignin('base',answer{2},handles.latest.solutionT);
 %                 msgbox(['Exported chebfun variables named ' answer{1},' and ',...
 %                     answer{2}, ' to workspace.'],...
 %                     'Chebgui export','modal')
@@ -118,8 +118,8 @@ elseif strcmp(problemType,'pde')
 %                 end
             end
         case '.mat'
-            u = handles.latestSolution; %#ok<NASGU>
-            t = handles.latestSolutionT;  %#ok<NASGU>
+            u = handles.latest.solution; %#ok<NASGU>
+            t = handles.latest.solutionT;  %#ok<NASGU>
             uisave({'u','t'},'pde');
         case 'Cancel'
             return;
@@ -150,8 +150,8 @@ else
             answer = inputdlg(prompt,name,numlines,defaultanswer,options);
             
             if ~isempty(answer)
-                assignin('base',answer{1},diag(handles.latestSolution));
-                assignin('base',answer{2},handles.latestSolutionT);
+                assignin('base',answer{1},diag(handles.latest.solution));
+                assignin('base',answer{2},handles.latest.solutionT);
 %                 msgbox(['Exported chebfun variables named ' answer{1},'and ',...
 %                     answer{2}, ' to workspace.'],...
 %                     'Chebgui export','modal')
@@ -174,8 +174,8 @@ else
                 end
             end
         case '.mat'
-            D = diag(handles.latestSolution); %#ok<NASGU>
-            V = handles.latestSolutionT;  %#ok<NASGU>
+            D = diag(handles.latest.solution); %#ok<NASGU>
+            V = handles.latest.solutionT;  %#ok<NASGU>
             uisave({'D','V'},'bvpeig');
         case 'Cancel'
             return;

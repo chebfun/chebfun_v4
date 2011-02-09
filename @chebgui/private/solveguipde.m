@@ -231,8 +231,8 @@ end
 
 % Store in handles latest chebop, solution, vector of norm of updates etc.
 % (enables exporting later on)
-handles.latestSolution = u;
-handles.latestSolutionT = t;
+handles.latest.solution = u;
+handles.latest.solutionT = t;
 % Notify the GUI we have a solution available
 handles.hasSolution = 1;
 

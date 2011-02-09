@@ -18,7 +18,7 @@ elseif nargin == 1 && isa(varargin{1},'chebgui')
 else
     
     v1 = varargin{1};
-    if numel(varargin) == 1 && ischar(v1)
+    if numel(varargin) == 1 && ischar(v1) && ~strcmp(v1,'dummy')
         if ~exist(v1,'file')
             error('CHEBFUN:chebgui:missingfile','Unable to find file: %s',v1);
         end

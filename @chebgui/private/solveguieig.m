@@ -151,11 +151,10 @@ end
 if guiMode
     % Store in handles latest chebop, solution, vector of norm of updates etc.
     % (enables exporting later on)
-    handles.latestSolution = D;
-    handles.latestSolutionT = V;
-    handles.latestChebop = N;
-%     handles.latestRHS = DE_RHS;
-    handles.latestOptions = options;
+    handles.latest.solution = D;
+    handles.latest.solutionT = V;
+    handles.latest.chebop = N;
+    handles.latest.options = options;
     % Notify the GUI we have a solution available
     handles.hasSolution = 1;
     handles.varnames = allVarNames;

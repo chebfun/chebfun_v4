@@ -76,7 +76,7 @@ end
 
 % Create the chebop
 if guiMode && useLatest
-    guess = handles.latestSolution;
+    guess = handles.latest.solution;
     N = chebop(d,DE,LBC,RBC,guess);
 elseif ~isempty(initInput)
     guess = eval(vectorize(initInput));
@@ -159,12 +159,12 @@ end
 if guiMode
     % Store in handles latest chebop, solution, vector of norm of updates etc.
     % (enables exporting later on)
-    handles.latestSolution = u;
-    handles.latestNorms = vec;
-    handles.latestChebop = N;
-    handles.latestRHS = DE_RHS;
-    handles.latestOptions = options;
-    
+    handles.latest.solution = u;
+    handles.latest.norms = vec;
+    handles.latest.chebop = N;
+    handles.latest.RHS = DE_RHS;
+    handles.latest.options = options;
+    handles.latest.type = 'bvp';
     % Notify the GUI we have a solution available
     handles.hasSolution = 1;
     

@@ -153,17 +153,19 @@ initialisefigures(handles)
 % Variable that determines whether a solution is available
 handles.hasSolution = 0;
 
+% Variable which stores imported variables from workspace
+handles.importedVar = struct;
 
 % Get the GUI object from the input argument
 if ~isempty(varargin)
     handles.guifile = varargin{1};
 else
-    cgTemp = chebgui('');
+    cgTemp = chebgui('dummy');
     handles.guifile = loadexample(cgTemp,3,'bvp'); % Start with Airy as a default
 end
-% Create a new field that stores the problem type (cleaner than checking
-% for the value of the buttons every time)
-handles.problemType = handles.guifile.type;
+% Create a new structure which contains information about the latest
+% solution obtained
+handles.latest = struct;
 
 % Store the default length of pausing between plots for BVPs and the
 % tolerance in the userdata field of relevant menu objects.
@@ -353,7 +355,7 @@ function button_fignorm_Callback(hObject, eventdata, handles)
 
 % Check the type of the problem
 if get(handles.button_ode,'Value');
-    latestNorms = handles.latestNorms;
+    latestNorms = handles.latest.norms;
     
     figure;
     
@@ -365,9 +367,9 @@ if get(handles.button_ode,'Value');
         set(gca,'XTick', 1)
     end
 elseif get(handles.button_pde,'Value');
-    u = handles.latestSolution;
+    u = handles.latest.solution;
     % latestNorms = handles.latestNorms;
-    tt = handles.latestSolutionT;
+    tt = handles.latest.solutionT;
     varnames = handles.varnames;
     
     if ~iscell(u)
@@ -408,14 +410,14 @@ end
 
 function button_figsol_Callback(hObject, eventdata, handles)
 if get(handles.button_ode,'Value');
-    latestSolution = handles.latestSolution;
+    latestSolution = handles.latest.solution;
     figure
     plot(latestSolution,'Linewidth',2), title('Solution at end of iteration')
     % Turn on grid
     if handles.guifile.options.grid, grid on,  end
 elseif get(handles.button_pde,'Value');
-    u = handles.latestSolution;
-    tt = handles.latestSolutionT;
+    u = handles.latest.solution;
+    tt = handles.latest.solutionT;
     
     figure
     if ~iscell(u)
@@ -432,6 +434,12 @@ elseif get(handles.button_pde,'Value');
     end
     % Turn on grid
     if handles.guifile.options.grid, grid on,  end
+    
+    % Turn on fixed y-limits
+    if ~isempty(handles.guifile.options.fixYaxisLower)
+        ylim([str2num(handles.guifile.options.fixYaxisLower) ...
+            str2num(handles.guifile.options.fixYaxisUpper)]);
+    end
 else
     figure, h1 = gca;
     ploteigenmodes(handles.guifile,handles,h1,[]);
@@ -731,70 +739,35 @@ end
 
 % --------------------------------------------------------------------
 function menu_demos_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_demos (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% --------------------------------------------------------------------
+
 function menu_bvps_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_bvps (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
-% --------------------------------------------------------------------
 function menu_ivps_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_ivps (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
-% --------------------------------------------------------------------
 function menu_systems_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_systems (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
-
-
-
-
-
-% --------------------------------------------------------------------
 function menu_help_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_help (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
-% --------------------------------------------------------------------
 function menu_openhelp_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_openhelp (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
 doc('chebguiwindow')
 
 
 % --------------------------------------------------------------------
 function Untitled_9_Callback(hObject, eventdata, handles)
-% hObject    handle to Untitled_9 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
 function menu_pdesingle_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdesingle (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
 function menu_pdesystems_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdesystems (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
@@ -836,7 +809,6 @@ function uipanel13_DeleteFcn(hObject, eventdata, handles)
 function tempedit_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 
 
 
@@ -909,30 +881,17 @@ function Untitled_3_Callback(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function menu_showgrid_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_showgrid (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
 function menu_pdeholdplot_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdeholdplot (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 
 % --------------------------------------------------------------------
 function menu_pdefix_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdefix (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
 function menu_pdeplotfield_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_pdeplotfield (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
@@ -1204,5 +1163,24 @@ while ~valid
         f = errordlg('Invalid input.', 'Chebgui error', 'modal');
         uiwait(f); 
     end
+end
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_import_Callback(hObject, eventdata, handles)
+% Obtain a 'whos' list from the base workspace
+variables =  evalin('base','whos');
+baseVarNames = {variables.name};
+% Create a list dialog
+[selection,OK] = listdlg('PromptString','Select variable(s) to import:',...
+    'ListString',baseVarNames,'Name','Import variables to GUI',...
+    'OKString','Import','ListSize',[160 200]);
+if ~OK, return, end % User pressed cancel
+
+% Store all the selected variables in the handles
+for selCounter = 1:length(selection)
+    handles.importedVar.(baseVarNames{selection(selCounter)}) = ...
+        evalin('base',baseVarNames{selection(selCounter)});
 end
 guidata(hObject, handles);
