@@ -20,9 +20,29 @@ function varargout = chebtest(dirname)
 % be used to reset these values. CHEBTEST RESTORE also resets the 'avg'
 % times also returned by chebtest.
 %
+% Chebtest looks first for subdirectories labeled 'level*' and executes
+% the tests therein in alphabetical order. The tests should be assigned
+% to different levels according to the following scheme:
+%
+%   level0: Tests of the basic chebfun routines such as artihmetic
+%           operators, constructors, preferences, etc...
+%   level1: Tests for more complex operations of a single chebfun, e.g.
+%           norm, max, roots, diff, sum, etc...
+%   level2: Tests involving systems of chebfuns.
+%   level3: Tests involving linear chebops.
+%   level4: Tests involving non-linear chebops.
+%
+% In an ideal world, each test would only use functions and operations
+% that are tested in the same or lower levels. The tests in these
+% folders should also only test specific features and methods of the
+% Chebfun system.
+%
+% Tests residing directly in the chebtests directory will be executed
+% only after the 'level*' tests.
+%
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2002-2011 by The Chebfun Team. 
 
 persistent userpref
 
@@ -64,17 +84,50 @@ if ~exist(dirname,'dir')
   error('CHEBFUN:chebtest:nodir',msg)
 end
 
-% Get the names of the tests
-dirlist = dir( fullfile(dirname,'*.m') );
-mfile = {dirlist.name};
-namelen = 0; % Find the length of the names (for pretty display later).
-for k = 1:numel(mfile)
-    namelen = max(namelen,length(mfile{k}));
-end
-fprintf('\nTesting %i functions:\n\n',length(mfile))
+% Turn off warnings for the test
+warnstate = warning;
+warning off
 
+% Store user preferences for warning and chebfunpref
+userpref.warnstate = warnstate;
+userpref.path = path;
+userpref.pref = pref;
+userpref.oppref = cheboppref;
+userpref.dirname = dirname;
+
+% Add chebtests directory to the path
+addpath(dirname)
+
+% loop over the level directories (first)
+subdirlist = dir( fullfile(dirname,'level*') );
+subdirnames = { subdirlist.name };
+mfiles = {};
+for i=1:length(subdirnames)
+
+    % is this really a directory?
+    if ~subdirlist(i).isdir, continue; end;
+    
+    % add it to the path
+    addpath( [ dirname filesep subdirnames{i} ] );
+
+    % Get the names of the tests for this level
+    dirlist = dir( fullfile([ dirname filesep subdirnames{i} ],'*.m') );
+    mfiles = { mfiles{:} , dirlist.name };
+    
+end;
+
+% Get the names of any un-sorted tests
+dirlist = dir( fullfile(dirname,'*.m') );
+mfiles = { mfiles{:} , dirlist.name };
+
+% Find the length of the names (for pretty display later).
+namelen = 0;
+for k = 1:numel(mfiles)
+    namelen = max(namelen,length(mfiles{k}));
+end;
+    
 % Initialise some storage
-failed = zeros(length(mfile),1);   % Pass/fail
+failed = zeros(length(mfiles),1);  % Pass/fail
 t = failed;                        % Vector to store times
 
 % Clear the report file (and check we can open file)
@@ -108,19 +161,6 @@ else
     avgN = 0; avgt = 0*t;
 end
 
-% Turn off warnings for the test
-warnstate = warning;
-warning off
-
-% Store user preferences for warning and chebfunpref
-userpref.warnstate = warnstate;
-userpref.path = path;
-userpref.pref = pref;
-userpref.oppref = cheboppref;
-userpref.dirname = dirname;
-% Add chebtests directory to the path
-addpath(dirname)
-
 % If java is not enabled, don't display html links.
 javacheck = true;
 if ~usejava('jvm') || ~usejava('desktop')
@@ -128,9 +168,9 @@ if ~usejava('jvm') || ~usejava('desktop')
 end
 
 % loop through the tests
-for j = 1:length(mfile)
+for j = 1:length(mfiles)
   % Print the test name
-  fun = mfile{j}(1:end-2);
+  fun = mfiles{j}(1:end-2);
   if javacheck
       link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
   else
@@ -207,7 +247,7 @@ if all(~failed)
   failfun = {};
 else
   fprintf('\n%i failed and %i crashed\n',sum(failed>0),sum(failed<0))
-  failfun = mfile(failed~=0);
+  failfun = mfiles(failed~=0);
   
   if createreport
       fun = 'chebtest_report.txt';
@@ -252,7 +292,7 @@ else
         else
             link = fun;
         end
-        fprintf(link)
+        fprintf([ link '    ' ])
     end
     fprintf('\n');
 end
@@ -290,4 +330,4 @@ if createreport && any(failed)
     fclose(fid);
 end
 
-end
+
