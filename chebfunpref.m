@@ -115,7 +115,7 @@ if nargin == 1
         varargout{1} = prefs.(varargin{1});
         return
     catch
-        % Move on to longer precess.
+        % Move on to longer process.
     end  
     
 % Return preference structure if no input is provided.    
