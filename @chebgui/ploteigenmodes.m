@@ -8,8 +8,8 @@ if ~handles.hasSolution
     return
 end
 
-D = handles.latestSolution;
-V = handles.latestSolutionT;
+D = handles.latest.solution;
+V = handles.latest.solutionT;
 
 C = get(0,'DefaultAxesColorOrder');
 C = repmat(C,ceil(size(D)/size(C,1)),1);
