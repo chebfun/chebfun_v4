@@ -1,7 +1,11 @@
 function pass = ivp_ty_test
+% This test solves the Van der Pol ODEs in 
+% Chebfun using the ode15s and ode45. It checks the solution 
+% with Matlab's inbuilt ode15s and ode45 solvers
+
 
 % Rodrigo Platte Jan 2009, modified by Asgeir Birkisson
-% This routine tests IVP solver: ode45, ode113, ode15s
+
 
 % Test ode15s Using default tolerances (RelTol = 1e-3)
 [t,y] = ode15s(@vdp1,domain(0,20),[2;0]); % chebfun solution

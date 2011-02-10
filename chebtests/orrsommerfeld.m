@@ -1,5 +1,5 @@
 function pass = orrsommerfeld
-
+% This test always fails!
 pass = 0;
 
 return

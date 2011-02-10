@@ -1,7 +1,8 @@
 function pass = matrixnorms
-
+% This test constructs a matrix with chebfuns as columns and computes
+% norms. It checks the computed matrix norms are correct.
 % Nick Trefethen  31 May 2008
-% This matrix should have all norms equal to 1
+
 
 x = chebfun(1,[0 1]);
 A = [0*x 0*x 0*x x 0*x];

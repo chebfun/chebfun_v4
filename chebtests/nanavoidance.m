@@ -1,6 +1,7 @@
-function pass = NaNavoidance
+function pass = nanavoidance
 
-% Tests avoiding NaNs by extrapolation
+% This test check that NaNs are avoided on point evaluations 
+% by extrapolation
 % Nick Hale, Nov 2009
 
 tol = chebfunpref('eps');

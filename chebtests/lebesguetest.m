@@ -1,4 +1,6 @@
 function pass = lebesguetest
+% This tests computes the Lebesgue function and Lebesgue constant 
+% for Chebyshev, Legendre and equispaced points. 
 
 tol = chebfunpref('eps');
 [L,C] = lebesgue(chebpts(3));

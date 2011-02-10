@@ -1,5 +1,6 @@
 function pass = orthosincos
-
+% This test constructs a system of chebfuns and checks they have been
+% constructed correctly by checking an orthogonality condition.
 % TAD
 
 S = []; C = [];

@@ -1,4 +1,7 @@
 function pass = maxtest
+% This test checks max when the difference between the functions 
+% have multiple roots. It also checks that max can be called 
+% with different syntax.
 
 % Rodrigo Platte
 % This used to crash because of double roots in sign.m

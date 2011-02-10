@@ -1,5 +1,5 @@
 function pass = max_min_unbnd
-% Test max and min of unbounded functions.
+% Tests max and min of unbounded functions.
 % Nick Hale, Feb 2011
 
 tol = 10*chebfunpref('eps');

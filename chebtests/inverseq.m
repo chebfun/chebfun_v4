@@ -1,4 +1,5 @@
 function pass = inverseq
+% This test checks roots and the vectorise preference
 
 tol = 100*chebfunpref('eps');
 

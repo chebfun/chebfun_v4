@@ -1,5 +1,6 @@
 function pass = pw_linop
-% Testing a piecewise-linop example
+% This test constructs a piecewise-linear chebop and checks 
+% the accuracy of the solution for the ODEs:
 % u'' + |x+.5|*u = |x| + |x-.5| + 2*sgn(x),
 % u(-1) = 3, u(1) = 0.
 

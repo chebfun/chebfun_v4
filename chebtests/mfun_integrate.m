@@ -1,6 +1,7 @@
 function pass = mfun_integrate
 
-% perform a series of mfun integrations
+% This test computes the integrals of blow-up functions 
+% and checks for accuracy.
 % Mark Richardson
 
 tol = 500*chebfunpref('eps');

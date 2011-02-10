@@ -1,7 +1,7 @@
 function pass = ivptestcomplex
 
 % Nick Trefethen March 2009
-% This routine testss ode45, ode113, ode15s on a complex ode to
+% This routine tests ode45, ode113, ode15s on a complex ode to
 % make sure we get the signs right
 
 f = @(x,u) 1i*u;
@@ -15,6 +15,3 @@ pass(2) = abs(y(1)-exp(1i)) < 2e-2;
 
 y = ode15s(f,d,1);
 pass(3) = abs(y(1)-exp(1i)) < 2e-2;
-
-
-

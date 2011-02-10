@@ -1,9 +1,9 @@
 function pass = mathieu
 
-% Periodic Mathieu functions
-% Finds eigenvalues and the periodic eigenfunctions for
+% This test computes periodic Mathieu functions and eigenvalues for the
+% linear chebop
 %
-%   u'' = (2q cos(2x) + lambda)*u
+% u'' = (2q cos(2x) + lambda)*u
 
 tol = 3e-9*chebfunpref('eps')/eps;
 

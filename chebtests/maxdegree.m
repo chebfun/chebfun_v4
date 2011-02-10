@@ -1,5 +1,5 @@
 function pass = maxdegree
-% Probes if the maxdegree is working in resampling on and off modes.
+% Tests if the maxdegree is working in resampling on and off modes.
 
 pref = chebfunpref; %pref.resmapling = true; 
 pref.maxdegree = 100;

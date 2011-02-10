@@ -1,4 +1,5 @@
 function pass = legptstest
+% This tests checks legpts and the accuracy of the method GW and FAST
 
 % Nick Hale  22/04/2009
 tol = chebfunpref('eps');

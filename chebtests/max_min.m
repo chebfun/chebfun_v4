@@ -1,6 +1,6 @@
 function pass = max_min
 
-% Tests max and min functions
+% Tests max and min of functions.
 % Rodrigo Platte, May 2009
 
 tol = chebfunpref('eps');

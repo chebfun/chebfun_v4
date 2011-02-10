@@ -1,7 +1,7 @@
 function pass = outerprod
-
+% This test checks that the outer product of a system of chebfuns is
+% working correctly.
 % Toby Driscoll
-% Outer product testing
 
 tol = chebfunpref('eps');
 

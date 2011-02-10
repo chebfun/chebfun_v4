@@ -1,7 +1,7 @@
 function pass = pointevals
-
+% This test checks that point evaluations are working.
 % LNT 20 May 2008
-% This code makes sure point evaluations are working
+
 
 splitting on
 

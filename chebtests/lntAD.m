@@ -1,6 +1,7 @@
 function pass = lntAD
-% lntAD.m - some AD tests
-%           Nick Trefethen, 5 November 2009
+% This test checks that Automatic Differentiation is working.
+
+% Nick Trefethen, 5 November 2009
 
 [d,x] = domain([1 3]);
 one = chebfun(1,d);

@@ -1,4 +1,6 @@
 function pass = operarith
+% This test is checking basic arithmetric operations of linear and non-linear
+% chebops. 
 
 d = domain(-1,4);
 Q = cumsum(d);

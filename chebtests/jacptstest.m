@@ -1,4 +1,7 @@
 function pass = jacptstest
+% This test computes Legrendre points with Gauss quadrature weights. It
+% checks the accuracy by comparing quadrature results.  It also checks that
+% sum on a function which blows-up. 
 
 tol = chebfunpref('eps');
 

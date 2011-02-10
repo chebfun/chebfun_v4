@@ -1,7 +1,7 @@
-function pass = plus_qm
-
+function pass = plusquasimatrix
+% This test checks that quasimatrices of different sizes cannot be added.
 % Rodrigo Platte Jun 2009
-% make sure plus requires quasimatrices of same sizes
+
 
  f = chebfun('x');
  pass = false;

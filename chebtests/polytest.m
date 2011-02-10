@@ -1,5 +1,6 @@
 function pass = polytest
-% Tests the function poly. Rodp, Feb 2009.
+% This test check that poly and ployval are working correctly. 
+% Rodrigo Platte Feb 2009
 
 c = rand(1,5);
 f = chebfun(@(x) polyval(c,x), [-2 10],5);

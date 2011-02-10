@@ -1,6 +1,7 @@
 function pass = polyfittest
+% This test checks that the polyfit commmandis working correctly.
 % Rodrigo Platte Jan 2009
-% Tests the polyfit commmand
+
 
 tol = chebfunpref('eps');
 

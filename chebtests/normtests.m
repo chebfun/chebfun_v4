@@ -1,6 +1,8 @@
 function pass = normtests
-
+% This test checks that norm of a chebfun is working correctly 
+% on abs related functions.
 % Nick Trefethen  22 March 2009
+
 tol = 100*chebfunpref('eps');
 x = chebfun('x');
 absx = abs(x);

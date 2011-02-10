@@ -1,5 +1,6 @@
 function pass = pw_fredvolt
-% Test the construction of piecewise fred and volt matrices
+% This test checks the construction of the piecewise fred and volt
+% matrices. It also checks that map with mapping kte is working. 
 
 pass = true(1,4);
 tol = 1e3*chebfunpref('eps');

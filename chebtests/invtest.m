@@ -1,4 +1,6 @@
 function pass = invtest
+% This test constructs two chebfuns and uses inv to invert them.  It checks
+% that the inverse calculated is accurate.
 
 % Nick Hale  07/06/2009
 tol = chebfunpref('eps');

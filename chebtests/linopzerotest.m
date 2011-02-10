@@ -1,5 +1,5 @@
 function pass = linopzerotest
-% Checks whether iszero information for linops is being passed and worked
+% Checks whether iszero information for linear chebops is being passed and worked
 % with properly.
 
 % AB, 21/11/2010

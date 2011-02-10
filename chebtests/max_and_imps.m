@@ -1,7 +1,7 @@
 function pass = max_and_imps
-
-% Tests if max (or min) introduces small jumps when computing the maximum
-% of two smooth functions. Rodrigo Platte, May 2009.
+% Tests if max introduces small jumps when computing the maximum
+% of two smooth functions. 
+% Rodrigo Platte, May 2009.
 
 x = chebfun('x',[0 10]);
 f = sin(x) + sin(x.^2);

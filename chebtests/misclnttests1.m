@@ -1,8 +1,6 @@
-
 function pass = misclnttests1
-
+% This tests the chebfun constructor with different syntax, sum and norm.
 % LNT 24 May 2008
-% This code fools around in various ways
 
 pass(1) = (sum(chebfun(1,2,3,4,5,0:5))==15);
 pass(2) = (sum(chebfun(1,1,2i,-2,-1i,-1i,0:6))==0);

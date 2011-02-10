@@ -1,7 +1,9 @@
 function pass = ivptest
+% This test solves the Van der Pol ODEs in Chebfun with ode113. It checks
+% the solution against Matlab's inbuilt ode113 solver.
+
 
 % Rodrigo Platte Jan 2009
-% This routine tests IVP solver: ode45, ode113, ode15s
 
 % Test ode113 Using default tolerances (RelTol = 1e-3)
 y = ode113(@vdp1,domain(0,20),[2;0]); % chebfun solution
