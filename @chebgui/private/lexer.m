@@ -190,7 +190,11 @@ while ~strcmp(str,'$')
             % Check if this string is one of the function defined in
             % strfun2 (functions with two arguments)
             elseif strmatch(nextstring,strfun2,'exact')
-                out = [out; {nextstring, 'FUNC2'}];    
+                out = [out; {nextstring, 'FUNC2'}];
+            % Treat l, lam and lambda specially for e-value problems
+            elseif strcmp(guifile.type,'eig') && (strcmp(nextstring,'l') || ...
+                strcmp(nextstring,'lam') || strcmp(nextstring,'lambda'))
+                out = [out; {nextstring, 'LAMBDA'}];
             % If not a function nor the variable we are interested in
             % differentiating with respect to, we treat this variable just
             % as number (this enables us e.g. to be able to differentiate w.r.t.
@@ -198,11 +202,10 @@ while ~strcmp(str,'$')
             else    
                 out = [out; {nextstring, 'INDVAR'}];
             end
-            % Finna function eda breytuheiti
         case 'comma'
             out = [out; {char1,'COMMA'}];
         case 'error'
-            disp('error');
+            disp('Chebgui:Lexer:UnknownType','Unrecognized type of lexer input.');
             % Throw error
     end
     

@@ -39,6 +39,6 @@ newGUI = chebgui('type',guifile.type);
 
 function initialisefigures(handles)
 cla(handles.fig_sol,'reset');
-title('Solutions'), axis off
+title('Solutions'), box on
 cla(handles.fig_norm,'reset');
-title('Updates')
+title('Updates'), box on

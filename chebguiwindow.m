@@ -569,9 +569,9 @@ function iter_list_Callback(hObject, eventdata, handles)
 
 function initialisefigures(handles)
 cla(handles.fig_sol,'reset');
-title('Solutions'), axis off
+title('Solutions'), box on
 cla(handles.fig_norm,'reset');
-title('Updates')
+title('Updates'), box on
 
 % -------------------------------------------------------------------------
 % ----------------- All CreateFcn are stored here -------------------------
@@ -999,6 +999,8 @@ function menu_showgridon_Callback(hObject, eventdata, handles)
 handles.guifile.options.grid = 1; % Turn grid on
 set(handles.menu_showgridon,'checked','on');
 set(handles.menu_showgridoff,'checked','off');
+axes(handles.fig_sol);  grid on
+axes(handles.fig_norm); grid on
 guidata(hObject, handles);
 
 
@@ -1007,21 +1009,15 @@ function menu_showgridoff_Callback(hObject, eventdata, handles)
 handles.guifile.options.grid = 0; % Turn grid off
 set(handles.menu_showgridon,'checked','off');
 set(handles.menu_showgridoff,'checked','on');
+axes(handles.fig_sol); grid off
+axes(handles.fig_norm);  grid off
 guidata(hObject, handles);
 
 
-% --------------------------------------------------------------------
 function menu_fixN_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_fixN (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
-% --------------------------------------------------------------------
 function menu_annotateplots_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_annotateplots (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
