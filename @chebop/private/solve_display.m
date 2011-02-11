@@ -163,7 +163,7 @@ switch(phase)
             else
                 currString = get(guihandles{4},'String');
                 if numel(nrmres) == 1
-                    finalString2 = sprintf('Linear equation detected. Convereged in one step.',nrmres);
+                    finalString2 = sprintf('Linear equation detected. Converged in one step.',nrmres);
                     finalString3 = '';
                     set(guihandles{4},'String',{finalString2});
                     return
