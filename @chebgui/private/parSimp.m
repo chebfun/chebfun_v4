@@ -90,10 +90,10 @@ for pIndex = 1:numOfPars
             % Deal with the case of minus (switch interior pluses and minuses
 %             continue % uncomment if we don't want to simplify -(a+b) = -a-b
             interiorPM = interiorOpVec == 1;
+            interiorPM(pLeft+1) = 0;
             m = str=='-' & interiorPM;
             p = str=='+' & interiorPM;
             str(m) = '+'; str(p) = '-';
-            str(pLeft-1) = '+';
         end
         
         % Remove parenthesis pairs
