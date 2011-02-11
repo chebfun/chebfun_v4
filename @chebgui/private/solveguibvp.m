@@ -78,6 +78,9 @@ end
 if guiMode && useLatest
     guess = handles.latest.solution;
     N = chebop(d,DE,LBC,RBC,guess);
+elseif ~isempty(handles.init)
+    guess = handles.init;
+    N = chebop(d,DE,LBC,RBC,guess);
 elseif ~isempty(initInput)
     guess = eval(vectorize(initInput));
     if isnumeric(guess)

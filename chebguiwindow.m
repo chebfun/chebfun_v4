@@ -153,8 +153,12 @@ initialisefigures(handles)
 % Variable that determines whether a solution is available
 handles.hasSolution = 0;
 
+% Variable which stores the initial guess/condition
+handles.init = [];
+
 % Variable which stores imported variables from workspace
 handles.importedVar = struct;
+
 
 % Get the GUI object from the input argument
 if ~isempty(varargin)
@@ -176,11 +180,14 @@ set(handles.menu_tolerance,'UserData','1e-10');
 % something if it gets called without selecting a demo).
 set(handles.menu_pdefixon,'UserData',{''});
 
-% Populate the Demos menu
-loaddemo_menu(handles.guifile,handles,'bvp');
-loaddemo_menu(handles.guifile,handles,'pde');
-loaddemo_menu(handles.guifile,handles,'eig');
-
+% Populate the Demos menu, but only once (i.e. if user calls chebgui again,
+% don't reload the examples).
+if ~isfield(handles,'demosLoaded')
+    loaddemo_menu(handles.guifile,handles,'bvp');
+    loaddemo_menu(handles.guifile,handles,'pde');
+    loaddemo_menu(handles.guifile,handles,'eig');
+    handles.demosLoaded = 1;
+end
 % Load the input fields
 loadfields(handles.guifile,handles);
 
@@ -230,9 +237,15 @@ if strcmp(get(handles.button_clear,'String'),'Clear all')
 elseif strcmp(get(handles.button_clear,'String'),'Pause')
     set(handles.button_clear,'String','Continue');
     set(handles.button_clear,'BackgroundColor',[43 129 86]/256);
+    % Re-enable figure buttons
+    set(handles.button_figsol,'Enable','on');
+    set(handles.button_fignorm,'Enable','on');
 else
+    % Disable figure buttons
+    set(handles.button_figsol,'Enable','off');
+    set(handles.button_fignorm,'Enable','off');
     set(handles.button_clear,'String','Pause');
-    set(handles.button_clear,'BackgroundColor',[255 255 35]/256);  
+    set(handles.button_clear,'BackgroundColor',[255 179 0]/256);  
 end
 
 function button_solve_Callback(hObject, eventdata, handles)
@@ -299,8 +312,32 @@ guidata(hObject, handles);
 % -------------------------------------------------------------------------
 
 function input_GUESS_Callback(hObject, eventdata, handles)
-handles.guifile.init = get(hObject,'String');
+newString = get(hObject,'String');
+
+handles.guifile.init = newString;
+if isempty(newString)
+    handles.init = '';
+    axis(handles.fig_sol);
+    cla(handles.fig_sol,'reset');
+    return
+end
+
+loadVariables(handles.importedVar)
+
+xtTemp = chebfun('x',[str2num(handles.guifile.DomLeft) ...
+    str2num(handles.guifile.DomRight)]);
+% handles.init
+if ~exist('x','var'), x = xtTemp; end
+if ~exist('t','var'), t = xtTemp; end
+% Do something clever with multilines
+handles.init = eval(get(hObject,'String'));
+axis(handles.fig_sol);
+plot(handles.init)
 guidata(hObject, handles);
+
+function loadVariables(importedVar)
+fNames = fieldnames(importedVar);
+for i=1:length(fNames), assignin('caller',fNames{i},importedVar.(fNames{i})), end
 
 
 function input_DE_Callback(hObject, eventdata, handles)
@@ -1041,12 +1078,6 @@ guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function sigma_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to sigma (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
