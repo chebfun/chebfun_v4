@@ -88,11 +88,12 @@ for pIndex = 1:numOfPars
         
         if minOpInside == 1 && ~isempty(nextOpLeft) && strcmp(str(pLeft-1),'-')
             % Deal with the case of minus (switch interior pluses and minuses
-            %             continue % uncomment if we don't want to simplify -(a+b) = -a-b
+%             continue % uncomment if we don't want to simplify -(a+b) = -a-b
             interiorPM = interiorOpVec == 1;
             m = str=='-' & interiorPM;
             p = str=='+' & interiorPM;
             str(m) = '+'; str(p) = '-';
+            str(pLeft-1) = '+';
         end
         
         % Remove parenthesis pairs
