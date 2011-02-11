@@ -47,14 +47,33 @@ if guiMode
 end
 
 % Convert the input to the an. func. format, get information about the
-% linear function in the problem.
-[deString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+% linear function in the problem. Need to split the string around = before
+% setupFields in this case, as we need to construct two linear operators.
+lhs =''; rhs = '';
+for k = 1:numel(deInput)
+    idx = strfind(deInput{k},'=');
+    if numel(idx)>1
+        error('too many = signs');
+    elseif ~isempty(idx)
+        lhs{k} = [lhs;strtrim(deInput{k}(1:idx-1))];
+        rhs{k} = strtrim(deInput{k}(idx+1:end));
+    else
+        lhs{k} = deInput{k};
+    end
+end
+[lhsString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,lhs,deRHSInput,'DE');
+if ~isempty(rhs)
+    [rhsString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,rhs,deRHSInput,'DE');
+else % Need to create a backup string for our function to be able to carry on
+   rhsString = ['@(',allVarString,') [',allVarString,']']; 
+end
 
 % Assign x or t as the linear function on the domain
 eval([indVarName, '=xt;']);
 
-% Convert the string to proper anon. function using eval
-DE  = eval(deString);
+% Convert the strings to proper anon. function using eval
+LHS  = eval(lhsString);
+RHS  = eval(rhsString);
 
 if ~isempty(lbcInput{1})
     [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
@@ -83,13 +102,15 @@ else
     DE_RHS = DErhsNum;
 end
 
-% Create the chebop
-N = chebop(d,DE,LBC,RBC);
-% Try to linearise it
+% Create the chebops, one for LHS, one for RHS
+N_LHS = chebop(d,LHS,LBC,RBC);
+N_RHS = chebop(d,RHS,LBC,RBC);
+% Try to linearise them
 try
-    N = linop(N);
-catch
-    error('CHEBFUN:Parse:linear','Operator is not linear.');
+    A = linop(N_LHS);
+    B = linop(N_RHS);
+catch ME
+    rethrow(ME);
 end
 
 tolInput = guifile.tol;
@@ -121,9 +142,9 @@ end
 % Compute the eigenvalues
 
 if isempty(sigma)
-    [V D] = eigs(N,K);
+    [V D] = eigs(A,B,K);
 else
-    [V D] = eigs(N,K,sigma);
+    [V D] = eigs(A,B,K,sigma);
 end
 
 [D idx] = sort(diag(D));
@@ -153,7 +174,7 @@ if guiMode
     % (enables exporting later on)
     handles.latest.solution = D;
     handles.latest.solutionT = V;
-    handles.latest.chebop = N;
+    handles.latest.chebop = A;
     handles.latest.options = options;
     % Notify the GUI we have a solution available
     handles.hasSolution = 1;

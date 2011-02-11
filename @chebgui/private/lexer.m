@@ -1,4 +1,4 @@
-function [out varNames pdeVarNames indVarName] = lexer(guifile,str)
+function [out varNames pdeVarNames eigVarNames indVarName] = lexer(guifile,str)
 % LEXER Lexer for string expression in the chebfun system
 % [OUT VARNAMES INDVARNAME] = LEXER(STR) performs a lexical analysis on the
 % string STR. OUT is a cell array with two columns, the left is a token and
@@ -54,8 +54,9 @@ str = vectorize(str);
 % Obtain the name of possible variables
 varNames = symvar(str);
 
-% Create a cell for potential pdeVarNames
+% Create a cell for potential pdeVarNames and lambdaVariables
 pdeVarNames = {};
+eigVarNames = {};
 
 % x and t are reserved for independent variables
 xLoc = strcmp('x',varNames); varNames(xLoc) = [];
@@ -169,7 +170,17 @@ while ~strcmp(str,'$')
             % First check if we are getting pi (which should obviously be
             % treated as a number
             if strcmp(nextstring,'pi')
-                out = [out; {nextstring, 'NUM'}];       
+                out = [out; {nextstring, 'NUM'}];
+            % Treat l, lam and lambda specially for e-value problems
+            elseif strcmp(guifile.type,'eig') && (strcmp(nextstring,'l') || ...
+                strcmp(nextstring,'lam') || strcmp(nextstring,'lambda'))
+                out = [out; {nextstring, 'LAMBDA'}];
+                % Remove the lambda from the list of variables.
+                lamMatch = cellfun(@strcmp,varNames,...
+                    cellstr(repmat(nextstring,length(varNames),1)));
+                lamLoc = find(lamMatch);
+                varNames(lamLoc) = [];
+                eigVarNames = [eigVarNames;nextstring];
             % Check if we are getting the variable we are interested in
             % differentiating w.r.t.
             elseif any(strcmp(nextstring,varNames))
@@ -191,10 +202,6 @@ while ~strcmp(str,'$')
             % strfun2 (functions with two arguments)
             elseif strmatch(nextstring,strfun2,'exact')
                 out = [out; {nextstring, 'FUNC2'}];
-            % Treat l, lam and lambda specially for e-value problems
-            elseif strcmp(guifile.type,'eig') && (strcmp(nextstring,'l') || ...
-                strcmp(nextstring,'lam') || strcmp(nextstring,'lambda'))
-                out = [out; {nextstring, 'LAMBDA'}];
             % If not a function nor the variable we are interested in
             % differentiating with respect to, we treat this variable just
             % as number (this enables us e.g. to be able to differentiate w.r.t.
@@ -205,7 +212,7 @@ while ~strcmp(str,'$')
         case 'comma'
             out = [out; {char1,'COMMA'}];
         case 'error'
-            disp('Chebgui:Lexer:UnknownType','Unrecognized type of lexer input.');
+            error('Chebgui:Lexer:UnknownType','Unrecognized type of lexer input.');
             % Throw error
     end
     

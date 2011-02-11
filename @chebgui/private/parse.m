@@ -24,7 +24,7 @@ function success = parseSst
 global NEXT;
 % Our expression can only start with certain labels, make sure we are
 % starting with one of them.
-if ~isempty(strmatch(NEXT,char('NUM','VAR','INDVAR','PDEVAR',...
+if ~isempty(strmatch(NEXT,char('NUM','VAR','INDVAR','PDEVAR','LAMBDA',...
         'FUNC1','FUNC2','UN-','UN+','LPAR')))
     parseExp1();
     success = match('$');
@@ -64,7 +64,7 @@ global NEXT; global NEXTCOUNTER; global LEXOUT; global PDESIGN;
 % we push that into the stack. We need to treat variables with _ in the
 % names separately, as we only allow certain operators around the time
 % derivative.
-if strcmp(NEXT,'NUM') || strcmp(NEXT,'VAR') || strcmp(NEXT,'INDVAR')
+if strcmp(NEXT,'NUM') || strcmp(NEXT,'VAR') || strcmp(NEXT,'INDVAR') || strcmp(NEXT,'LAMBDA')
     newLeaf = struct('center',{{char(LEXOUT(NEXTCOUNTER)), char(NEXT)}},'pdeflag',0);
     push(newLeaf);
     advance();

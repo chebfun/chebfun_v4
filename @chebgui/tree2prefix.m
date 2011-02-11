@@ -24,7 +24,7 @@ switch nextType
         prefixOut = [{'-', 'UN-'}; tree2prefix(guifiles,syntaxTree.right)];
     % If we get a number or a variable we simply return that. Those types
     % are leafs so the don't have any childs
-    case {'NUM', 'VAR', 'INDVAR','PDEVAR'}
+    case {'NUM', 'VAR', 'INDVAR','PDEVAR','LAMBDA'}
         prefixOut = {nextSymbol, nextType};
     % A function only has one argument which is to the right
     case 'FUNC1'

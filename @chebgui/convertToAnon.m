@@ -11,7 +11,7 @@ if verLessThan('matlab','7.5')
 end
 
 % Put the original string through the lexer
-[lexOut varNames pdeVarNames indVarNames] = lexer(guifile,str);
+[lexOut varNames pdeVarNames eigVarNames indVarNames] = lexer(guifile,str);
 
 % Check whether we have something like u" = u_t+v_t which we don't allow
 if length(pdeVarNames) > 1
@@ -28,15 +28,17 @@ infixOut = prefix2infix(guifile,prefixOut);
 
 % If we're in PDE mode, we need to get rid of the u_t term
 if strcmp(guifile.type,'pde') && ~isempty(pdeVarNames)
-    timeDerivLocation = strfind(infixOut,pdeVarNames{1});
-    if pdeSign == -1
-%         infixOut(timeDerivLocation:timeDerivLocation+length(pdeVarNames{1})-1) = [];
+    if pdeSign == -1 % pdeSign tells us whether we need to flip the signs
         infixOut = strrep(infixOut,pdeVarNames{1},'0');
     else
-%         infixOut(timeDerivLocation:timeDerivLocation+length(pdeVarNames{1})-1) = [];
         infixOut = strrep(infixOut,pdeVarNames{1},'0');
         infixOut = ['-(',infixOut,')']; % Need to a a - in front of the whole string
     end
+end
+
+% If we're in EIG mode, we want to replace lambda by 1
+if strcmp(guifile.type,'eig') && ~isempty(eigVarNames)
+    infixOut = strrep(infixOut,eigVarNames{1},'1');
 end
 anFun = infixOut;
 % Finally, remove unneeded parenthesis

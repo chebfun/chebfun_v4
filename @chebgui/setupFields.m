@@ -1,11 +1,13 @@
 function [field allVarString indVarName pdeVarNames pdeflag allVarNames]  = setupFields(guifile,input,rhs,type,allVarString)
-numOfRows = size(input,1);
+numOfRows = max(size(input));%numel(input,1);
 pdeflag = false;
 allVarNames = [];
 
-% Subtract what is to the rhs of equals signs in the input.
-input = subtractRhs(input);
-
+% Subtract what is to the rhs of equals signs in the input. Don't need to
+% do this for the DE field of eig. problems
+if ~(strcmp(guifile.type,'eig') && strcmp(type,'DE')) 
+    input = subtractRhs(input);
+end
 % For BCs, we need to check whether varNames contains anything not found in
 % varNames of the DE. Should we make the varNames of the DE as parameters?
 % Setja DE varNames sem parametra? Also check for indVarName in deRHS.
