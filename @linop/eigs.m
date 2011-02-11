@@ -346,8 +346,8 @@ function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
 
         % Square up matrices if # of boundary conditions is not the same.
         sizediff = size(Amat,1)-size(Bmat,1);
-        Amat = [Amat ; zeros(-sizediff,N*A.blocksize(2))];
-        Bmat = [Bmat ; zeros(sizediff,N*B.blocksize(2))];
+        Amat = [Amat ; zeros(-sizediff,size(Amat,2))];
+        Bmat = [Bmat ; zeros(sizediff,size(Amat,2))];
 
         % Compute the generalised eigenvalue problem.       
         [V,D] = eig(full(Amat),full(Bmat));
