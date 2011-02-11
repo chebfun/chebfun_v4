@@ -1060,17 +1060,7 @@ set(handles.menu_pdefixon,'checked','off');
 set(handles.menu_pdefixoff,'checked','on');
 guidata(hObject, handles);
 
-
-
 function sigma_Callback(hObject, eventdata, handles)
-newString = get(hObject,'String');
-if ~isempty(newString) && isempty(str2num(newString)) && ~any(strcmpi(newString,{'LR','SR','LM','SM'}))
-    errordlg('Invalid sigma. Allowable values are ''LR'',''SR'',''LM'',''SM'' (no quotes) or a numerical value', ...
-        'Chebgui error', 'modal');
-end
-handles.guifile.sigma = newString;
-guidata(hObject, handles);
-
 
 % --- Executes during object creation, after setting all properties.
 function sigma_CreateFcn(hObject, eventdata, handles)
@@ -1155,7 +1145,7 @@ while ~valid
         1,defaultAnswer,options);
     if isempty(in) % User pressed cancel
         break
-    elseif ~any(strcmpi(in{1},{'LR','SR','LM', 'SM'})) && isempty(str2num(in{1}))
+    elseif any(strcmpi(in{1},{'LR','SR','LM', 'SM'})) || ~isempty(str2num(in{1}))
         in = in{1};
         valid = 1;
         % Store new value in the UserData of the object

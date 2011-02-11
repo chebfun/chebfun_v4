@@ -25,6 +25,12 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.button_imagplot,'Visible','off')
     set(handles.button_envelope,'Visible','off')
     
+    set(handles.iter_list,'Visible','off')
+    set(handles.iter_list,'String','')
+    set(handles.iter_list,'Value',0)
+    set(handles.iter_text,'Visible','off')
+    set(handles.iter_text,'String','')
+    
     pdeplotopts(handles,0)
     
     % Change the list of available options.
@@ -113,6 +119,12 @@ else % Going into EIG mode
     set(handles.button_imagplot,'Visible','on')
     set(handles.button_imagplot,'Value',0)
     set(handles.button_envelope,'Visible','off')
+    
+    set(handles.iter_list,'Visible','off')
+    set(handles.iter_list,'String','')
+    set(handles.iter_list,'Value',0)
+    set(handles.iter_text,'Visible','off')
+    set(handles.iter_text,'String','')
     
     pdeplotopts(handles,0)
     

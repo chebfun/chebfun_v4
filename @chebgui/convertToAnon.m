@@ -42,7 +42,7 @@ if strcmp(guifile.type,'eig') && ~isempty(eigVarNames)
 end
 anFun = infixOut;
 % Finally, remove unneeded parenthesis
-anFun = parSimp(guifile,anFun);
+% anFun = parSimp(guifile,anFun); % Temporarily disabled
 
 % Convert the cell array varNames into one string
 varString = varNames{1};

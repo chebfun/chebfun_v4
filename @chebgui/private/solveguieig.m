@@ -22,9 +22,9 @@ lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
 sigma = [];
 if ~isempty(guifile.sigma)
+    sigma = guifile.sigma;
     numSigma = str2num(sigma); 
-    if ~isempty(numSigma), sigma = numSigma;
-    else sigma = guifile.sigma; end
+    if ~isempty(numSigma), sigma = numSigma; end
 end
 K = 6;
 if isfield(guifile.options,'numeigs') && ~isempty(guifile.options.numeigs)
@@ -104,7 +104,7 @@ end
 
 % Create the chebops, one for LHS, one for RHS
 N_LHS = chebop(d,LHS,LBC,RBC);
-N_RHS = chebop(d,RHS,LBC,RBC);
+N_RHS = chebop(d,RHS);
 % Try to linearise them
 try
     A = linop(N_LHS);
@@ -181,6 +181,14 @@ if guiMode
     handles.varnames = allVarNames;
     
     ploteigenmodes(handles.guifile,handles,handles.fig_sol,handles.fig_norm);
+    
+    set(handles.iter_text,'Visible','on');
+    set(handles.iter_text,'String','Eigenvalues');
+    set(handles.iter_list,'Visible','on');
+    % Display eigenvalues to level of tolerance
+    s = num2str(ceil(-log10(defaultTol)));
+    set(handles.iter_list,'String',num2str(D,['%' s '.' s 'f']));
+    set(handles.iter_list,'Value',numel(D));
     
     % Return the handles as varargout.
     varargout{1} = handles;
