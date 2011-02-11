@@ -24,47 +24,36 @@ switch exampleNumber
         DE = '';
         LBC = ''; RBC = '';
         init = ''; tol = '';
-        damping = '';
-        plotting = '0.1';
         name = '';
         demotype = '';
     case 1
         a = '-2'; b = '2';
-        DE = 'u" + u''';
+        DE = 'u" + u'' = lambda*u';
         LBC = 'u = 0'; RBC = 'u = 0';
         init = ''; tol = '1e-10';
-        damping = '1';
-        plotting = '0.1';
         sigma = '';
         name = 'Advection-diffusion';
         demotype = 'scalar';
     case 2
         a = '-10'; b = '10';
-        DE = '-u'''' + x^2*u';
+        DE = '-u'''' + x^2*u  = lambda*u';
         LBC = 'u = 0'; RBC = 'u = 0';
         init = ''; tol = '1e-10';
-        damping = '1';
-        plotting = '0.1';
         sigma = '';
         name = 'Harmonic oscillator';
         demotype = 'scalar';
     case 3
         a = '-2'; b = '2';
-        DE = {'u" + u*x+v';'v"+sin(x)*u'};
+        DE = {'u" + u*x+v = lambda*u';'v"+sin(x)*u = lambda*v'};
         LBC = {'u = 0';'v = 0'};
         RBC = {'u = 0';'v = 0'};
         init = '';
         tol = '1e-10';
-        damping = '1';
-        plotting = '0.1';
         sigma = '';
         name = 'System';
         demotype = 'system';        
 
 end
 
-options = struct('damping',damping,'plotting',plotting);
-
 cg = chebgui('type','eig','domleft',a,'domright',b,'de',DE,...
-    'lbc',LBC,'rbc',RBC,'init',init,'sigma',sigma,'tol',tol,...
-    'options',options);
+    'lbc',LBC,'rbc',RBC,'init',init,'sigma',sigma,'tol',tol);

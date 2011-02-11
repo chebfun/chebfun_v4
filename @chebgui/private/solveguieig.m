@@ -55,7 +55,7 @@ for k = 1:numel(deInput)
     if numel(idx)>1
         error('too many = signs');
     elseif ~isempty(idx)
-        lhs{k} = [lhs;strtrim(deInput{k}(1:idx-1))];
+        lhs{k} = strtrim(deInput{k}(1:idx-1));
         rhs{k} = strtrim(deInput{k}(idx+1:end));
     else
         lhs{k} = deInput{k};
