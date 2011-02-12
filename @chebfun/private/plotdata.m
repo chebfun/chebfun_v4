@@ -126,7 +126,6 @@ if isempty(f)
     for k = 1:numel(g)
         gk = g(:,k);
         endsk = get(gk,'ends');
-        endsmask = endsk(endsk<a | endsk > b);
 
         % With markfuns we need to adjust the vals when getting marks
         fmk = []; gmk = []; expsk = [];
@@ -246,10 +245,11 @@ if isempty(f)
         end
         
         % breakpoints
-        for j = 2:length(endsk)-1
+        for j = 2:length(endsk)
             if endsk(j) >= a && endsk(j) <= b
-                [TL loc] = ismember(endsk(j),ends);
-                if TL && ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
+                TL = ismember(endsk(j),ends);
+%                 [TL loc] = ismember(endsk(j),ends);
+                if TL %&& ~any(isinf(gl(indx2(3*(loc-1)+(1:3)+1),k)))
                     % values on either side of jump
     %                 jmpvls = [ gk.funs(j-1).vals(end); NaN ; gk.funs(j).vals(1) ];
     %                 jmpvls = [  gk.funs(j-1).vals(end)*diff(endsk(j-1:j)).^sum(gk.funs(j-1).exps)
