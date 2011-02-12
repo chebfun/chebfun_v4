@@ -172,6 +172,7 @@ end
 if guiMode
     % Store in handles latest chebop, solution, vector of norm of updates etc.
     % (enables exporting later on)
+    handles.latest.type = 'eig';
     handles.latest.solution = D;
     handles.latest.solutionT = V;
     handles.latest.chebop = A;
@@ -180,7 +181,7 @@ if guiMode
     handles.hasSolution = 1;
     handles.varnames = allVarNames;
     
-    ploteigenmodes(handles.guifile,handles,handles.fig_sol,handles.fig_norm);
+    ploteigenmodes(handles.guifile,handles,0,handles.fig_sol,handles.fig_norm);
     
     set(handles.iter_text,'Visible','on');
     set(handles.iter_text,'String','Eigenvalues');
@@ -188,7 +189,7 @@ if guiMode
     % Display eigenvalues to level of tolerance
     s = num2str(ceil(-log10(defaultTol)));
     set(handles.iter_list,'String',num2str(D,['%' s '.' s 'f']));
-    set(handles.iter_list,'Value',numel(D));
+    set(handles.iter_list,'Value',1:numel(D));
     
     % Return the handles as varargout.
     varargout{1} = handles;

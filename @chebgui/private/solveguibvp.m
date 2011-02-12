@@ -162,6 +162,7 @@ end
 if guiMode
     % Store in handles latest chebop, solution, vector of norm of updates etc.
     % (enables exporting later on)
+    handles.latest.type = 'bvp';
     handles.latest.solution = u;
     handles.latest.norms = vec;
     handles.latest.chebop = N;

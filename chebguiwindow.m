@@ -441,7 +441,7 @@ elseif get(handles.button_pde,'Value');
 else % eigs
     
     figure, h1 = gca;
-    ploteigenmodes(handles.guifile,handles,[],h1);
+    ploteigenmodes(handles.guifile,handles,0,[],h1);
     
 end
 
@@ -479,7 +479,7 @@ elseif get(handles.button_pde,'Value');
     end
 else
     figure, h1 = gca;
-    ploteigenmodes(handles.guifile,handles,h1,[]);
+    ploteigenmodes(handles.guifile,handles,0,h1,[]);
 end
 
 
@@ -562,7 +562,17 @@ function iter_list_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns iter_list contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from iter_list
 
+% Selecting from the list only does something when we are in e-value mode
+% Display corresponding e-funcs when clicking on e-value.
 
+% set(handles.fig_sol,'XLimMode','Manual');
+
+if strcmp(handles.latest.type,'eig')
+    selection = get(hObject,'Value');
+    ploteigenmodes(handles.guifile,handles,selection);
+end
+
+% xlim(handles.fig_norm,xlim_norm); ylim(handles.fig_norm,ylim_norm);
 % -------------------------------------------------------------------------
 % ---------------------- Other subfunctions -------------------------------
 % -------------------------------------------------------------------------
@@ -1082,21 +1092,24 @@ function button_realplot_Callback(hObject, eventdata, handles)
 set(handles.button_realplot,'Value',1)
 set(handles.button_imagplot,'Value',0)
 set(handles.button_envelope,'Value',0)
-ploteigenmodes(handles.guifile,handles)
+selection = get(handles.iter_list,'Value');
+ploteigenmodes(handles.guifile,handles,selection)
     
 % --- Executes on button press in button_imagplot.
 function button_imagplot_Callback(hObject, eventdata, handles)
 set(handles.button_realplot,'Value',0)
 set(handles.button_imagplot,'Value',1)
 set(handles.button_envelope,'Value',0)
-ploteigenmodes(handles.guifile,handles)
+selection = get(handles.iter_list,'Value');
+ploteigenmodes(handles.guifile,handles,selection)
 
 % --- Executes on button press in button_envelope.
 function button_envelope_Callback(hObject, eventdata, handles)
 set(handles.button_realplot,'Value',0)
 set(handles.button_imagplot,'Value',0)
 set(handles.button_envelope,'Value',1)
-ploteigenmodes(handles.guifile,handles)
+selection = get(handles.iter_list,'Value');
+ploteigenmodes(handles.guifile,handles,selection)
 
 
 % --------------------------------------------------------------------
