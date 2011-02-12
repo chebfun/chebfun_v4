@@ -49,7 +49,7 @@ if ~isempty(h1)
     hold off
     if guifile.options.grid, grid on, end
     title('Eigenvalues'); xlabel('real'); ylabel('imag');
-    if selection
+    if any(selection) && nargin < 4
         xlim(h1,xlim_sol); ylim(h1,ylim_sol);
     end
 end
@@ -59,7 +59,9 @@ if isempty(h2), return, end
 isc = iscell(V);
 nV = numel(V);
 
-if get(handles.button_realplot,'Value')
+realplot = get(handles.button_realplot,'Value');
+W = V;
+if realplot
     if ~isc
         V = real(V);
     else
@@ -68,7 +70,7 @@ if get(handles.button_realplot,'Value')
         end
     end
     s = 'Real part of eigenmodes';
-elseif get(handles.button_imagplot,'Value')
+else
     if ~isc
         V = imag(V);
     else
@@ -77,44 +79,68 @@ elseif get(handles.button_imagplot,'Value')
         end
     end
     s = 'Imaginary part of eigenmodes';
-else
-    V = V.*conj(V);
-    s = 'Absolute value of eigenmodes';
+% else
+%     V = V.*conj(V);
+%     s = 'Absolute value of eigenmodes';
 end
 
 axes(h2)
 % set(h2,'NextPlot','add')
 set(h2,'ColorOrder',C)
-if selection
+if any(selection) && nargin < 4
     xlim_norm = xlim(h2); ylim_norm = ylim(h2);
 end
 if ~isc
-    for k = 1:numel(V)
-        plot(V(:,k),'linewidth',2,'color',C(k,:)); hold on
+    if nV == 1
+        xx = union(linspace(V.ends(1),V.ends(end),chebfunpref('plot_numpts')),V.ends);
+        WW = abs(W(xx));
+        plot(V(:,1),'-',xx,WW,'--',xx,-WW,'--','linewidth',2,'color',C(1,:));
+        if realplot
+            legend('Real part','Envelope')
+        else
+            legend('Imaginary part','Envelope')
+        end
+    else
+        for k = 1:numel(V)
+            plot(V(:,k),'linewidth',2,'color',C(k,:)); hold on
+        end
+        hold off
     end
-    hold off
     if guifile.options.grid, grid on, end
     ylabel(handles.varnames);
 else
     LS = repmat({'-','--',':','-.'},1,ceil(numel(V)/4));
     ylab = [];
-    for cCounter = 1:nV
-        % If we are plotting selected e-funs, we need to pick out the
-        % colors
-        if selection
-            for sCounter = 1:length(selection)
-                plot(real(V{cCounter}(:,sCounter)),'linewidth',2,...
-                    'linestyle',LS{cCounter},'Color',C(sCounter,:)); hold on
-            end
-        else
-            plot(real(V{cCounter}),'linewidth',2,'linestyle',LS{cCounter}); hold on
+    if numel(V{1}) == 1
+        V1 = V{1};
+        xx = union(linspace(V1.ends(1),V1.ends(end),chebfunpref('plot_numpts')),V1.ends);
+        for cCounter = 1:nV
+            WW = abs(W{cCounter}(xx));
+            plot(real(V{cCounter}),'-',xx,WW,'k',xx,-WW,'k','linewidth',2,'linestyle',LS{cCounter}); hold on
         end
-        ylab = [ylab handles.varnames{cCounter} ', ' ];
+        if realplot
+            legend('Real part','Envelope')
+        else
+            legend('Imaginary part','Envelope')
+        end
+    else
+        for cCounter = 1:nV
+            % If we are plotting selected e-funs, we need to pick out the colors
+            if any(selection)
+                for sCounter = 1:length(selection)
+                    plot(real(V{cCounter}(:,sCounter)),'linewidth',2,...
+                        'linestyle',LS{cCounter},'Color',C(sCounter,:)); hold on
+                end
+            else
+                plot(real(V{cCounter}),'linewidth',2,'linestyle',LS{cCounter}); hold on
+            end
+            ylab = [ylab handles.varnames{cCounter} ', ' ];
+        end
     end
     hold off
     ylabel(ylab(1:end-2));
 end
-if selection
+if any(selection) && nargin < 4
     xlim(h2,xlim_norm); ylim(h2,ylim_norm);
 end
 set(h2,'NextPlot','replace')

@@ -441,7 +441,11 @@ elseif get(handles.button_pde,'Value');
 else % eigs
     
     figure, h1 = gca;
-    ploteigenmodes(handles.guifile,handles,0,[],h1);
+    
+    if strcmp(handles.latest.type,'eig')
+        selection = get(handles.iter_list,'Value');
+        ploteigenmodes(handles.guifile,handles,selection,[],h1);
+    end
     
 end
 
@@ -479,7 +483,10 @@ elseif get(handles.button_pde,'Value');
     end
 else
     figure, h1 = gca;
-    ploteigenmodes(handles.guifile,handles,0,h1,[]);
+    if strcmp(handles.latest.type,'eig')
+        selection = get(handles.iter_list,'Value');
+        ploteigenmodes(handles.guifile,handles,selection,h1,[]);
+    end
 end
 
 
@@ -568,7 +575,7 @@ function iter_list_Callback(hObject, eventdata, handles)
 % set(handles.fig_sol,'XLimMode','Manual');
 
 if strcmp(handles.latest.type,'eig')
-    selection = get(hObject,'Value');
+    selection = get(handles.iter_list,'Value');
     ploteigenmodes(handles.guifile,handles,selection);
 end
 
