@@ -91,7 +91,7 @@ if any(selection) && nargin < 4
     xlim_norm = xlim(h2); ylim_norm = ylim(h2);
 end
 if ~isc
-    if nV == 1
+    if nV == 1 && ~isreal(W) && ~isreal(1i*W)
         xx = union(linspace(V.ends(1),V.ends(end),chebfunpref('plot_numpts')),V.ends);
         WW = abs(W(xx));
         plot(V(:,1),'-',xx,WW,'--',xx,-WW,'--','linewidth',2,'color',C(1,:));
@@ -111,7 +111,7 @@ if ~isc
 else
     LS = repmat({'-','--',':','-.'},1,ceil(numel(V)/4));
     ylab = [];
-    if numel(V{1}) == 1
+    if numel(V{1}) == 1 && ~isreal(W{1}) && ~isreal(1i*W{1})
         V1 = V{1};
         xx = union(linspace(V1.ends(1),V1.ends(end),chebfunpref('plot_numpts')),V1.ends);
         for cCounter = 1:nV
