@@ -68,6 +68,13 @@ if sum(tLoc)
 else
     indVarName = 'x';
 end
+% Replace with lines below to return empty indVarName if no variable appear
+% in the problem.
+% elseif sum(xLoc)
+%     indVarName = 'x';
+% else
+%     indVarName = ''; % No independent variable detected.
+% end
 
 str(end+1) = '$';   % Add $ to the end of the string to mark its end
 % In order to spot unary operators we need to store the type of the

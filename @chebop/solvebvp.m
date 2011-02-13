@@ -50,5 +50,5 @@ end
 if isempty(pref)
     pref = cheboppref;
 end
-[varargout{1} varargout{2}] = solve_bvp_routines(N,rhs,pref,guihandles);%varargin{:});
+[varargout{1} varargout{2} varargout{3}] = solve_bvp_routines(N,rhs,pref,guihandles);%varargin{:});
 

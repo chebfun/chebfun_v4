@@ -18,7 +18,7 @@ if nargin == 1 || isempty(u)
     end
     %   Create a chebfun to let the operator operate on. Using the findguess
     %   method ensures that the guess is of the right (quasimatrix) dimension.
-    u = findguess(N);
+    u = findguess(N,0); % Second argument 0 denotes we won't try to fit to BCs.
 end
 
 % Initialise
@@ -34,7 +34,7 @@ linBC = [];
 % current solution.
 numberOfInputVariables = nargin(N.op);
 
-if numberOfInputVariables > 1 % Load a cell
+if numberOfInputVariables > 1 % Load a cell, with the linear function x as the first entry
     uCell = cell(1,numel(u));
     for quasiCounter = 1:numel(u)
         uCell{quasiCounter} = u(:,quasiCounter);
@@ -43,6 +43,7 @@ end
 % Boundary conditions part
 ab = N.dom.ends;
 a = ab(1); b = ab(end);
+xDom = chebfun('x',N.dom);
 
 % Check whether we have a mismatch between periodic BCs
 if xor(strcmpi(N.lbc,'periodic'),strcmpi(N.rbc,'periodic'))
@@ -105,7 +106,10 @@ end
 % Functional part
 try
     if numberOfInputVariables > 1
-        Nu = N.op(uCell{:});
+        % If we have more than one variables, we know that the first one
+        % must be the linear function on the domain.
+        uTemp = [{xDom} uCell];
+        Nu = N.op(uTemp{:});
     else
         Nu = N.op(u);
     end

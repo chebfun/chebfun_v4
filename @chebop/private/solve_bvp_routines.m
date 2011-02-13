@@ -1,4 +1,4 @@
-function [u nrmDeltaRelvec] = solve_bvp_routines(N,rhs,pref,guihandles)
+function [u nrmDeltaRelvec isLin] = solve_bvp_routines(N,rhs,pref,guihandles)
 % SOLVE_BVP_ROUTINES Private function of the chebop class.
 %
 % This function gets called by nonlinear backslash and solvebvp. It both
@@ -34,6 +34,26 @@ else
     opType = 2;
 end
 
+% Construct initial guess if missing
+if isempty(N.guess) % No initial guess given
+    if isempty(N.dom)
+        error('CHEBOP:solve_bvp_routines:noGuess','Neither domain nor initial guess is given.')
+    else
+        dom = N.dom;
+        u = findguess(N); % Initial quasimatrix guess of linear chebfuns
+    end
+else
+    N.guess = 1*N.guess; % This is weird, but for some reason need. AB?
+    u = N.guess;
+    dom = domain(u);
+end
+
+ab = dom.ends;
+a = ab(1);  b = ab(end);
+
+% Create the linear function on the domain
+xDom = chebfun('x',dom);
+
 % If RHS of the \ is 0, keep the original DE. If not, update it. Also check
 % whether we have a chebop, if so, perform subtraction in a different way.
 % The variable numberOfInputVariables is a flag that's used to evaluate
@@ -47,10 +67,9 @@ elseif isnumeric(rhs) && all(rhs == 0)
 elseif isnumeric(rhs)
     % If we have nonzeros on the RHSs, we need to convert the rhs from
     % vector to quasimatrix to allow subtraction and addition of columns
-    Ndom = N.dom;
     rhsQuasimatrix = chebfun;
     for rhsCounter = 1:length(rhs)
-        rhsQuasimatrix = [rhsQuasimatrix chebfun(rhs(rhsCounter),Ndom)];
+        rhsQuasimatrix = [rhsQuasimatrix chebfun(rhs(rhsCounter),dom)];
     end
     deFunString = func2str(N.op);
     deFunArgs = deFunString(2:min(strfind(deFunString,')')));
@@ -81,23 +100,6 @@ end
 % iteration.
 leftEmpty = isempty(bcFunLeft);
 rightEmpty = isempty(bcFunRight);
-
-% Construct initial guess if missing
-if isempty(N.guess) % No initial guess given
-    if isempty(N.dom)
-        error('CHEBOP:solve_bvp_routines:noGuess','Neither domain nor initial guess is given.')
-    else
-        dom = N.dom;
-        u = findguess(N); % Initial quasimatrix guess of linear chebfuns
-    end
-else
-    N.guess = 1*N.guess; % This is weird, but for some reason need. AB?
-    u = N.guess;
-    dom = domain(u);
-end
-
-ab = dom.ends;
-a = ab(1);  b = ab(end);
 
 % Wrap the DE and BCs in a cell
 % if ~iscell(deFun), deFun = {deFun}; end
@@ -140,7 +142,15 @@ if isLin
     delta = -A\deResFun;
     u = u+delta; % Can safely take a full Newton step
     if nargout == 2
-        nrmDeltaRelvec = norm(feval(N,u)-rhs);
+        if numberOfInputVariables == 1
+            nrmDeltaRelvec = norm(feval(N,u)-rhs);
+        else
+            uCell = cell(1,numel(u));
+            for quasiCounter = 1:numel(u)
+                uCell{quasiCounter} = u(:,quasiCounter);
+            end
+            nrmDeltaRelvec = norm(deFun(xDom,currentGuessCell{:})-rhs);
+        end
     end
     if isempty(guihandles) && any(strcmpi(pref.display,{'iter','display'}))
         fprintf('Converged in one step. (Chebop is linear).\n');
@@ -497,7 +507,7 @@ end
             
             switch type
                 case 'DE'
-                    fOut = deFun(currentGuessCell{:});
+                    fOut = deFun(xDom,currentGuessCell{:});
                 case 'LBC'
                     if strcmpi(bcFunRight,'periodic')
                         fOut = chebfun(0,dom);

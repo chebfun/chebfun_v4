@@ -42,12 +42,18 @@ if numOfRows == 1 % Not a system, can call convert2anon with two output argument
     if strcmp(type,'DE')
         allVarString = allVarNames{1};
     end
+   
     
-    % Only need to add variables in front of what will be anonymous
-    % functions, not 'dirichlet','neumann',etc... This can only happen in
-    % BCs, and in that case, allVarNames will be empty
-    if ~isempty(allVarNames)
-        field = ['@(', allVarString ')' anFun,''];
+    % Create the string which will become the anonymous function.
+    % Put x (or t) as the first argument of the anonymous function if we
+    % have a BVP.
+    if strcmp(guifile.type,'bvp') && strcmp(type,'DE')
+        field = ['@(',indVarName,',', allVarString ') ' anFun];
+    % Otherwise, add variables in front of what will be anonymous
+    % functions. This is not needed for 'dirichlet','neumann',etc... This
+    % can only happen in BCs, and in that case, allVarNames will be empty
+    elseif ~isempty(allVarNames)
+        field = ['@(', allVarString ') ' anFun,''];
     else
         field = anFun;
     end
@@ -96,8 +102,14 @@ else % Have a system, go through each row
             allVarString = [allVarString,',',allVarNames{varCounter}];
         end
     end
-    
-    field = ['@(', allVarString ')[' allAnFun,']'];
+    % If we are solving a BVP, we now need x as the first argument as well.
+    % However, we don't want that variable in allVarString as we use that
+    % information when setting up BCs.
+    if strcmp(guifile.type,'bvp') && strcmp(type,'DE')
+        field = ['@(',indVarName,',', allVarString ') [' allAnFun,']'];
+    else
+        field = ['@(', allVarString ') [' allAnFun,']'];
+    end
 end
 
 function [field indVarName varNames pdeVarNames]  = setupLine(guifile,input,rhs,type)

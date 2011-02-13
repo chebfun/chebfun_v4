@@ -41,9 +41,11 @@ end
 % linear function in the problem.
 [deString allVarString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
 
-% Assign x or t as the linear function on the domain
-eval([indVarName, '=xt;']);
-
+% Assign x or t as the linear function on the domain if indVarName is not
+% empty
+if ~isempty(indVarName)
+    eval([indVarName, '=xt;']);
+end
 % Convert the string to proper anon. function using eval
 DE  = eval(deString);
 

@@ -1,4 +1,4 @@
-function guess = findguess(N)
+function guess = findguess(N,fitBC)
 % FINDGUESS Constructs initial guess for the solution of BVPs
 %
 % FINDGUESS starts with a quasimatrix with one column (the zero chebfun),
@@ -6,30 +6,36 @@ function guess = findguess(N)
 % it's able to apply the operator to the quasimatrix (which means that the
 % quasimatrix is then of the correct size).
 
+% If we don't pass the parameter fitBC, we assume that we want to try to
+% fit to BCs. The opposite is true when we try to linearise a chebop.
+if nargin == 1, fitBC = 1; end
+
 guess = [];
 dom = N.dom;
+xDom = chebfun('x',dom);
 Ndim = N.dim;
 success = 0;
 counter = 0;
 
 
-% If N.op takes multiple arguments (i.e. on the form @(u,v)), we know how
-% many columns we'll be needing in the quasimatrix.
+% If N.op takes multiple arguments (i.e. on the form @(x,u,v)), we know how
+% many columns we'll be needing in the quasimatrix. We also know that the
+% linear function x will be the first argument.
 NopArgin = nargin(N.op);
 
 if NopArgin > 1
     success = 1;
-       
-    for quasiCounter = 1:NopArgin
+    
+    for quasiCounter = 2:NopArgin
         cheb0 = chebfun(0,dom);
         guess = [guess cheb0];
     end
-
+    
 end
 
 if NopArgin == 1 && ~isempty(Ndim)
     success = 1;
-       
+    
     for quasiCounter = 1:Ndim
         cheb0 = chebfun(0,dom);
         guess = [guess cheb0];
@@ -50,7 +56,8 @@ while ~success && counter < 10
         if NopArgin == 1
             feval(N.op,guess);
         else
-            feval(N.op,guess{:});
+            guessTemp = [xDom guess];
+            feval(N.op,guessTemp{:});
         end
         success = 1;
         counter = counter+1;
@@ -59,10 +66,10 @@ while ~success && counter < 10
             counter = counter + 1;
         elseif strcmp(ME.identifier,'CHEBFUN:rdivide:DivisionByZeroChebfun')
             error('CHEBOP:solve:findguess:DivisionByZeroChebfun', ...
-            ['Error in constructing initial guess. The the zero function ', ...
-             'on the domain is not a permitted initial guess as it causes ', ...
-             'division by zero. Please assign an initial guess using the ', ...
-             'N.guess field.']);
+                ['Error in constructing initial guess. The the zero function ', ...
+                'on the domain is not a permitted initial guess as it causes ', ...
+                'division by zero. Please assign an initial guess using the ', ...
+                'N.guess field.']);
         else
             error('CHEBOP:solve:findguess:ZeroFunctionNotPermitted', ...
                 ['Error in constructing initial guess. The zero function ', ...
@@ -78,22 +85,22 @@ if counter == 10
         'initial guess using N.guess.']);
 end
 
-
-% Once we have found the correct dimensions of the initial guess, try to
-% find a linear function that fulfills (potentially) the Dirichlet BC
-% imposed.
-% Check whether a boundary happens to have no BC attached
-
-% Extract BC functions
-bcFunLeft = N.lbc;
-bcFunRight = N.rbc;
-
-if counter == 1 && ~any(strcmpi(bcFunLeft,'periodic')) && ~any(strcmpi(bcFunRight,'periodic'))
-    guess = tryInterpGuess();
-elseif xor(strcmpi(bcFunLeft,'periodic'),strcmpi(bcFunRight,'periodic'))
-    error('CHEBOP:mldivide:findguess: BC is periodic at one end but not at the other.');
+if fitBC
+    % Once we have found the correct dimensions of the initial guess, try to
+    % find a linear function that fulfills (potentially) the Dirichlet BC
+    % imposed.
+    % Check whether a boundary happens to have no BC attached
+    
+    % Extract BC functions
+    bcFunLeft = N.lbc;
+    bcFunRight = N.rbc;
+    
+    if counter == 1 && ~any(strcmpi(bcFunLeft,'periodic')) && ~any(strcmpi(bcFunRight,'periodic'))
+        guess = tryInterpGuess();
+    elseif xor(strcmpi(bcFunLeft,'periodic'),strcmpi(bcFunRight,'periodic'))
+        error('CHEBOP:mldivide:findguess: BC is periodic at one end but not at the other.');
+    end
 end
-
     function intGuess = tryInterpGuess()
         % For some type of problems (nonperiodic problems where the
         % solution is a single chebfun rather then quasimatrix) we can try
@@ -102,11 +109,6 @@ end
         
         leftEmpty = isempty(bcFunLeft);
         rightEmpty = isempty(bcFunRight);
-        
-        %         if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
-        %         if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
-        
-        
         
         % Store information about the endpoints of the domain
         ab = dom.ends;
@@ -128,10 +130,6 @@ end
         else
             v = bcFunLeft(guessCell{:});
             leftVals = v(a,:);
-            %             for j = 1:length(bcFunLeft)
-            %                 v = feval(bcFunLeft{j},guess);
-            %                 leftVals(j) = v(a);
-            %             end
         end
         
         if rightEmpty
@@ -139,10 +137,6 @@ end
         else
             v = bcFunRight(guessCell{:});
             rightVals = v(b,:);
-            %             for j = 1:length(bcFunRight)
-            %                 v = feval(bcFunRight{j},(guess));
-            %                 rightVals(j) = v(b);
-            %             end
         end
         % If we just have one column in our guess, perform a linear interpolation
         leftY = leftVals(min(find(leftVals ~= 0)));
