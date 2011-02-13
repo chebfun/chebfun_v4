@@ -1229,3 +1229,24 @@ function menu_eigssystem_Callback(hObject, eventdata, handles)
 % hObject    handle to menu_eigssystem (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on key press with focus on chebguimainwindow and none of its controls.
+function chebguimainwindow_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to chebguimainwindow (see GCBO)
+% eventdata  structure with the following fields (see FIGURE)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+edata = eventdata;
+if ~isempty(edata.Modifier) && strcmp(edata.Modifier{1},'control')
+    switch edata.Key
+        case 'return'
+            button_solve_Callback(hObject, eventdata, handles);
+        case 'e'
+            button_export_Callback(hObject, eventdata, handles);
+    end
+    
+end
+% PressedKeyNo = double(get(gcbo,'CurrentCharacter'))

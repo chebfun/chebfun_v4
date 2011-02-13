@@ -23,23 +23,31 @@ end
 % pdesign
 % Obtain the prefix form.
 prefixOut = tree2prefix(guifile,syntaxTree);
-% Return the derivative on infix form
-infixOut = prefix2infix(guifile,prefixOut);
 
-% If we're in PDE mode, we need to get rid of the u_t term
+% If we're in PDE mode, we need to get rid of the u_t term. Replace them by
+% a zero.
 if strcmp(guifile.type,'pde') && ~isempty(pdeVarNames)
-    if pdeSign == -1 % pdeSign tells us whether we need to flip the signs
-        infixOut = strrep(infixOut,pdeVarNames{1},'0');
-    else
-        infixOut = strrep(infixOut,pdeVarNames{1},'0');
-        infixOut = ['-(',infixOut,')']; % Need to a a - in front of the whole string
+    pdevarLoc = find(ismember(prefixOut(:,2), 'PDEVAR')==1);
+    prefixOut(pdevarLoc,1) = cellstr(repmat('0',length(pdevarLoc),1));
+    prefixOut(pdevarLoc,2) = cellstr(repmat('NUM',length(pdevarLoc),1));
+    
+    % pdeSign tells us whether we need to flip the signs. Add a unitary -
+    % at the beginning of the expression
+    if pdeSign == 1 
+        prefixOut = [{'-', 'UN-'}; prefixOut];
     end
 end
 
 % If we're in EIG mode, we want to replace lambda by 1
 if strcmp(guifile.type,'eig') && ~isempty(eigVarNames)
-    infixOut = strrep(infixOut,eigVarNames{1},'1');
+    eigvarLoc = find(ismember(prefixOut(:,2), 'LAMBDA')==1);
+    prefixOut(eigvarLoc,1) = cellstr(repmat('1',length(eigvarLoc),1));
+    prefixOut(eigvarLoc,2) = cellstr(repmat('NUM',length(eigvarLoc),1));
 end
+
+% Return the derivative on infix form
+infixOut = prefix2infix(guifile,prefixOut);
+
 anFun = infixOut;
 % Finally, remove unneeded parenthesis. Temporarily disabled
 % anFun = parSimp(guifile,anFun);

@@ -11,13 +11,41 @@ if ~isempty(strmatch('OP',next))
     % We now return different outputs depending on which operator we have.
     switch next
         case 'OP+'
-            infixOut = ['(', exp1, '+', exp2, ')'];
+            if strcmp(exp1,'0') && strcmp(exp2,'0')
+                infixOut = '';
+            elseif  strcmp(exp1,'0')
+                infixOut = exp2;
+            elseif strcmp(exp2,'0')
+                infixOut = exp1;
+            else
+                infixOut = ['(', exp1, '+', exp2, ')'];
+            end
         case 'OP-'
-            infixOut = ['(', exp1, '-', exp2, ')'];
+            if strcmp(exp1,'0') && strcmp(exp2,'0')
+                infixOut = '';
+            elseif  strcmp(exp1,'0')
+                infixOut = ['-',exp2];
+            elseif strcmp(exp2,'0')
+                infixOut = exp1;
+            else
+                infixOut = ['(', exp1, '-', exp2, ')'];
+            end
         case 'OP*'
-            infixOut = [exp1, '.*', exp2];
+            if strcmp(exp1,'1') && strcmp(exp2,'1')
+                infixOut = '1';
+            elseif  strcmp(exp1,'1')
+                infixOut = exp2;
+            elseif strcmp(exp2,'1')
+                infixOut = exp1;
+            else
+                infixOut = [exp1, '.*', exp2];
+            end
         case 'OP/'
-            infixOut = [exp1, './', exp2];
+            if strcmp(exp2,'1')
+                infixOut = exp1;
+            else
+                infixOut = [exp1, './', exp2];
+            end
         case 'OP^'
             infixOut = [exp1, '.^(', exp2 ,')'];
     end
@@ -49,7 +77,12 @@ elseif ~isempty(strmatch('UN',next))
      nextUnary = char(prefixIn(prefCounter,1));
      prefCounter = prefCounter + 1;
      unaryArg = getInfix();
-     infixOut = [nextUnary, unaryArg];
+     % Only care about unary -
+     if strcmp(nextUnary,'-')
+         infixOut = [nextUnary, unaryArg];
+     else
+         infixOut = unaryArg;
+     end
 else
     infixOut = char(prefixIn(prefCounter,1));
     prefCounter = prefCounter + 1;
