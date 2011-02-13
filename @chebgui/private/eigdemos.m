@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 3;
+numberOfExamples = 4;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -27,7 +27,7 @@ switch exampleNumber
         name = '';
         demotype = '';
     case 1
-        a = '-2'; b = '2';
+        a = '0'; b = '10';
         DE = 'u" + u'' = lambda*u';
         LBC = 'u = 0'; RBC = 'u = 0';
         init = ''; tol = '1e-10';
@@ -35,14 +35,30 @@ switch exampleNumber
         name = 'Advection-diffusion';
         demotype = 'scalar';
     case 2
-        a = '-10'; b = '10';
+        a = '-8'; b = '8';
+        DE = '-u'''' + 1i*x^2*u  = lambda*u';
+        LBC = 'u = 0'; RBC = 'u = 0';
+        init = ''; tol = '1e-10';
+        sigma = '';
+        name = 'Davies complex harmonic oscillator';
+        demotype = 'scalar';
+    case 3
+        a = '-8'; b = '8';
         DE = '-u'''' + x^2*u  = lambda*u';
         LBC = 'u = 0'; RBC = 'u = 0';
         init = ''; tol = '1e-10';
         sigma = '';
         name = 'Harmonic oscillator';
         demotype = 'scalar';
-    case 3
+    case 4
+        a = '-pi'; b = 'pi';
+        DE = '-u'''' + 5*cos(2*x)*u  = lambda*u';
+        LBC = 'periodic'; RBC = 'periodic';
+        init = ''; tol = '1e-10';
+        sigma = '';
+        name = 'Mathieu equation';
+        demotype = 'scalar';
+    case 5
         a = '-2'; b = '2';
         DE = {'u" + u*x+v = lambda*u';'v"+sin(x)*u = lambda*v'};
         LBC = {'u = 0';'v = 0'};
@@ -52,7 +68,6 @@ switch exampleNumber
         sigma = '';
         name = 'System';
         demotype = 'system';        
-
 end
 
 cg = chebgui('type','eig','domleft',a,'domright',b,'de',DE,...

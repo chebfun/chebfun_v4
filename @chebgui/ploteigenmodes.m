@@ -95,7 +95,7 @@ if ~isc
         xx = union(linspace(V.ends(1),V.ends(end),chebfunpref('plot_numpts')),V.ends);
         WW = abs(W(xx));
         plot(V(:,1),'-','linewidth',2,'color',C(1,:)); hold on
-        plot(xx,WW,'--',xx,-WW,'--','linewidth',1,'color','k'); hold off
+        plot(xx,WW,'-',xx,-WW,'-','linewidth',1,'color','k'); hold off
 %         if realplot
 %             legend('Real part','Envelope')
 %         else
