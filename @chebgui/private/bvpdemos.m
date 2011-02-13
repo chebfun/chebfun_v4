@@ -121,7 +121,7 @@ switch exampleNumber
         demotype = 'bvp';
     case 12
         a = '-1'; b = '1';
-        DE = '.0001*u'''' + x*(x^2-0.5)*u'' + 3*(x^2-0.5)*u = 0';
+        DE = '.0005*u'''' + x*(x^2-0.5)*u'' + 3*(x^2-0.5)*u = 0';
         LBC = 'u = -2'; RBC = 'u = 4';
         init = ''; tol = '1e-10';
         damping = '1'; plotting = '0.1';

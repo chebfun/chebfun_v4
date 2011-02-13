@@ -48,7 +48,8 @@ switch exampleNumber
         a = '-3'; b = '3';
         t = '0:0.2:10';
         DE = 'u_t = .01*u'''' + u - u^3';
-        LBC = 'u=-1'; RBC = 'u=-1';
+        LBC = 'periodic';
+        RBC = 'periodic';
         init = '-1+2*(exp(-35*(x+2)^2)+exp(-11*x^2)+exp(-7*(x-2)^2))';
         tol = '1e-6';
         plotting = 'on';
