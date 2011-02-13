@@ -81,7 +81,8 @@ for pIndex = 1:numOfPars
         mask(leftParsLoc(idx(k)):rightParsLoc(idx(k))) = false;
     end
     mask = isfinite(opVec.*mask) & opVec.*mask > 0;
-    interiorOpVec = opVec.*mask; interiorOpVec(interiorOpVec==0) = inf;
+    interiorOpVec = opVec.*mask; 
+    interiorOpVec(interiorOpVec==0 | isnan(interiorOpVec)) = inf;
     minOpInside = min(interiorOpVec(pLeft:pRight));
     
     % If not, we perform a check to see whether we can remove them.
@@ -101,7 +102,7 @@ for pIndex = 1:numOfPars
         % Remove parenthesis pairs
         str(pLeft) = [];
         str(pRight-1) = [];
-        
+
         % Update indices and operators
         opVec(pLeft) = []; opVec(pRight-1) = [];
         leftParsLoc = updateLoc(leftParsLoc,pLeft,pRight);
@@ -109,7 +110,7 @@ for pIndex = 1:numOfPars
         opLoc = updateLoc(opLoc,pLeft,pRight);
         charLoc = updateLoc(charLoc,pLeft,pRight);
     end
-    
+        
     % Remove leading + signs
     if strcmp(str(1),'+')
         str(1) = []; 
@@ -163,5 +164,5 @@ end
 end
 
 function out = updateLoc(in,pLeft,pRight)
-out = in - (in > pLeft) - (in > pRight);
+out = in - (in >= pLeft) - (in >= pRight);
 end
