@@ -1088,7 +1088,7 @@ end
 
 
 % --------------------------------------------------------------------
-function menu_eigs_Callback(hObject, eventdata, handles)
+function menu_eigsscalar_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in button_export.
 function button_export_Callback(hObject, eventdata, handles)
@@ -1222,3 +1222,10 @@ for selCounter = 1:length(selection)
         evalin('base',baseVarNames{selection(selCounter)});
 end
 guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_eigssystem_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_eigssystem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

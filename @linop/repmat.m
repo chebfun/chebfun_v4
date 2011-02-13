@@ -3,6 +3,15 @@ function B = repmat(A,m,n)
 
 % See http://www.maths.ox.ac.uk/chebfun.
 
+if nargin == 2
+   if isscalar(m)
+       n = m;
+   else
+       n = m(2);
+       m = m(1);
+   end
+end
+
 if any([m,n] == 0), B = []; return, end
 
 B = A;

@@ -139,14 +139,28 @@ if guiMode
     set(handles.fig_norm,'Visible','On');
 end
 
-% Compute the eigenvalues
+% Variable which determines whether it's a generalized problem
+generalized = 1;
 
-if isempty(sigma)
-    [V D] = eigs(A,B,K);
+% Compute the eigenvalues. Check whether we are working with generalized
+% problems or not by comparing B with the identity operator on the domain.
+I = eye(B.domain);
+I = blkdiag(I,B.blocksize(1));
+if ~norm(B(10)-I(10)), generalized = 0; end
+
+if generalized
+    if isempty(sigma)
+        [V D] = eigs(A,B,K);
+    else
+        [V D] = eigs(A,B,K,sigma);
+    end
 else
-    [V D] = eigs(A,B,K,sigma);
+    if isempty(sigma)
+        [V D] = eigs(A,K);
+    else
+        [V D] = eigs(A,K,sigma);
+    end
 end
-
 [D idx] = sort(diag(D));
 
 if iscell(V)
