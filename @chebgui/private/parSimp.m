@@ -78,7 +78,7 @@ for pIndex = 1:numOfPars
     mask(pLeft+1:pRight-1) = true;
     idx = find(leftParsLoc > pLeft & rightParsLoc < pRight);
     for k = 1:numel(idx)
-        mask(leftParsLoc(idx):rightParsLoc(idx)) = false;
+        mask(leftParsLoc(idx(k)):rightParsLoc(idx(k))) = false;
     end
     mask = isfinite(opVec.*mask) & opVec.*mask > 0;
     interiorOpVec = opVec.*mask; interiorOpVec(interiorOpVec==0) = inf;
