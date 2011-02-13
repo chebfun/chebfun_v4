@@ -49,8 +49,8 @@ end
 infixOut = prefix2infix(guifile,prefixOut);
 
 anFun = infixOut;
-% Finally, remove unneeded parenthesis. Temporarily disabled
-% anFun = parSimp(guifile,anFun);
+% Finally, remove unneeded parenthesis.
+anFun = parSimp(guifile,anFun);
 
 % Convert the cell array varNames into one string
 varString = varNames{1};
