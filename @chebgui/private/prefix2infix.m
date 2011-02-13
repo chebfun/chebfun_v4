@@ -19,7 +19,7 @@ if ~isempty(strmatch('OP',next))
         case 'OP/'
             infixOut = [exp1, './', exp2];
         case 'OP^'
-            infixOut = [exp1, '.^', exp2];
+            infixOut = [exp1, '.^(', exp2 ,')'];
     end
 elseif strcmp(next,'FUNC1')
     nextFun = char(prefixIn(prefCounter,1));
