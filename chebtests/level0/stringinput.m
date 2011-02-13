@@ -1,4 +1,9 @@
 function pass = stringinput
+
+% Makes sure that the Chebfun constructor accepts
+% a string input with a single variable correctly, while refusing
+% to accept a string input with multiple variables.
+% (A Level 0 chebtest)
 % Nick Hale
 
 f = chebfun(@sin);

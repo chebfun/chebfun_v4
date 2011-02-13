@@ -1,5 +1,7 @@
 function pass = sqrt_test
-% test sqrt using exps
+% Tests representations of the square root
+% function using singularities declared by 'exps'
+% (A Level 1 chebtest)
 %
 % Nick Hale, December 2009
 

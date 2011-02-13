@@ -1,7 +1,9 @@
 function pass = sumtest
 
-% Tests integrals over unbounded domains!
+% Tests various integrals over unbounded domains.
 % Rodrigo Platte, May 2009
+
+% (A Level 1 chebtest)
 
 tol = chebfunpref('eps');
 mappref('adaptinf',1,'parinf',[1 0])

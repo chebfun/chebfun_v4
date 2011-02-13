@@ -1,5 +1,6 @@
 function pass = std_test
 % Check that std of a complex chebfun gives the correct real result.
+% (A Level 0 chebtest)
 % Nick Hale, May 2010
 
 tol = chebfunpref('eps');

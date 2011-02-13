@@ -1,5 +1,9 @@
 function pass = vectornorms
 
+% Sets up a chebfun with two pieces and
+% checks various of its norms.
+% (A Level 0 chebtest)
+
 % Nick Trefethen  27 October 2008
 
 f = chebfun(1,2,0:4:8);
