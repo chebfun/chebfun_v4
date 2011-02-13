@@ -46,8 +46,8 @@ if numOfRows == 1 % Not a system, can call convert2anon with two output argument
     
     % Create the string which will become the anonymous function.
     % Put x (or t) as the first argument of the anonymous function if we
-    % have a BVP.
-    if strcmp(guifile.type,'bvp') && strcmp(type,'DE')
+    % have a BVP or EIG.
+    if ~strcmp(guifile.type,'pde') && strcmp(type,'DE')
         field = ['@(',indVarName,',', allVarString ') ' anFun];
     % Otherwise, add variables in front of what will be anonymous
     % functions. This is not needed for 'dirichlet','neumann',etc... This
@@ -102,10 +102,10 @@ else % Have a system, go through each row
             allVarString = [allVarString,',',allVarNames{varCounter}];
         end
     end
-    % If we are solving a BVP, we now need x as the first argument as well.
-    % However, we don't want that variable in allVarString as we use that
-    % information when setting up BCs.
-    if strcmp(guifile.type,'bvp') && strcmp(type,'DE')
+    % If we are solving a BVP or EIG, we now need x as the first argument
+    % as well. However, we don't want that variable in allVarString as we
+    % use that information when setting up BCs.
+    if ~strcmp(guifile.type,'pde') && strcmp(type,'DE')
         field = ['@(',indVarName,',', allVarString ') [' allAnFun,']'];
     else
         field = ['@(', allVarString ') [' allAnFun,']'];

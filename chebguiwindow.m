@@ -914,10 +914,11 @@ while ~valid
         valid = 1;
         % Store new value in the UserData of the object
         set(hObject,'UserData',pauseInput{1});
-        % Update length of pause in the chebgui object if it's not off
-        if ~strcmp(handles.guifile.options.plotting,'off')
-            handles.guifile.options.plotting = pauseInput{1}; 
-        end
+        % Update length of pause in the chebgui object
+        handles.guifile.options.plotting = pauseInput{1};
+        % Change the marking of the options
+        set(handles.menu_odeplottingon,'checked','on');
+        set(handles.menu_odeplottingoff,'checked','off');
     else
         f = errordlg('Invalid input.', 'Chebgui error', 'modal');
         uiwait(f); 
