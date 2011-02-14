@@ -65,6 +65,8 @@ for pIndex = 1:numOfPars
     pRight = rightParsLoc(pIndex);
     nextOpLeft = max(opLoc(opLoc < pLeft));
     nextOpRight = min(opLoc(opLoc > pRight));
+    if nextOpLeft == 0, nextOpLeft = []; end
+    if nextOpRight == 0, nextOpRight = []; end
     
     if any(charLoc == pLeft-1)
         % If the character in str next to the left of the left parenthesis is a
