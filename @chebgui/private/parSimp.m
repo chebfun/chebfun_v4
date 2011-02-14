@@ -4,13 +4,13 @@ function str = parSimp(guifile,str)
 %  unnecessary parenthesis and consecutive +/- pairs.
 
 if length(str) < 2, return, end
-str
+
 oldlength = 0;
 while length(str) ~= oldlength
     oldlength = length(str);
     str = parSimpMain(str);
 end
-str
+
 end
 
 function str = parSimpMain(str)
@@ -72,11 +72,6 @@ for pIndex = 1:numOfPars
         % which we cannot remove the () pair.
         continue
     end
-    
-    str
-    leftParsLoc
-    rightParsLoc
-    
     
     % Just mask the interior of these parentheses
     mask = zeros(1,length(str));
