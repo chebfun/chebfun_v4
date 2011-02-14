@@ -10,6 +10,8 @@ if ~isempty(strmatch('OP',next))
     exp2 = getInfix();
     % We now return different outputs depending on which operator we have.
     switch next
+        case 'OP='
+            infixOut = [exp1, '=', exp2];
         case 'OP+'
             if strcmp(exp1,'0') && strcmp(exp2,'0')
                 infixOut = '';

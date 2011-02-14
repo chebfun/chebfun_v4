@@ -5,7 +5,7 @@ allVarNames = [];
 
 % Subtract what is to the rhs of equals signs in the input. Don't need to
 % do this for the DE field of eig. problems
-if ~(strcmp(guifile.type,'eig') && strcmp(type,'DE')) 
+if ~(strcmp(guifile.type,'eig') && strcmp(type,'DE')) && ~strcmp(guifile.type,'bvp')
     input = subtractRhs(input);
 end
 % For BCs, we need to check whether varNames contains anything not found in

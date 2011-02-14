@@ -26,7 +26,7 @@ global NEXT;
 % starting with one of them.
 if ~isempty(strmatch(NEXT,char('NUM','VAR','INDVAR','PDEVAR','LAMBDA',...
         'FUNC1','FUNC2','UN-','UN+','LPAR')))
-    parseExp1();
+    parseExp0();
     success = match('$');
     
     if ~success
@@ -36,6 +36,11 @@ else
     success = 0;
     reportError('Parse:start','Input field started with unaccepted symbol.');
 end
+end
+
+function parseExp0()
+parseExp1();
+parseExp0pr();
 end
 
 function parseExp1()
@@ -57,6 +62,7 @@ function parseExp4()
 parseExp5();
 parseExp4pr();
 end
+
 
 function parseExp5()
 global NEXT; global NEXTCOUNTER; global LEXOUT; global PDESIGN;
@@ -206,7 +212,7 @@ elseif strcmp(NEXT,'COMMA')
     advance();
     parseExp1();
 	% Do nothing
-elseif strcmp(NEXT,'RPAR') || strcmp(NEXT,'$')
+elseif strcmp(NEXT,'RPAR') || strcmp(NEXT,'$') || strcmp(NEXT,'OP=')
 	% Do nothing
 else % If we don't have ) or the end symbol now something has gone wrong.
     reportError('Parse:end','Syntax error in input fields.')
@@ -291,6 +297,25 @@ if ~isempty(strfind(NEXT,'DER'))
     parseExp3pr();
 else
     % Do nothing
+end
+end
+
+function parseExp0pr()
+global NEXT; global  pStack; global PDESIGN;
+if strcmp(NEXT,'OP=')
+    leftArg  = pop();
+    advance();
+    parseExp1();
+    rightArg = pop();
+    
+    pdeflag = leftArg.pdeflag || rightArg.pdeflag;
+    
+    newTree = struct('left',leftArg,'center',{{'=', 'OP='}},...
+        'right',rightArg,'pdeflag',pdeflag);
+    push(newTree);
+    parseExp4pr();
+else
+	% Do nothing
 end
 end
 

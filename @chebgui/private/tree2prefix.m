@@ -13,9 +13,9 @@ nextSymbol = char(nextCenter(1));
 
 % Make a switch on nextType and determine the action
 switch nextType
-    % The operators +-*/^ take in two arguments, one to the left and one to
+    % The operators +-*/^= take in two arguments, one to the left and one to
     % the right.
-    case {'OP+','OP-','OP*','OP/','OP^'}
+    case {'OP+','OP-','OP*','OP/','OP^','OP='}
         prefixOut = [{nextSymbol, nextType}; tree2prefix(guifiles,syntaxTree.left); tree2prefix(guifiles,syntaxTree.right)];
     % Unary operators only have one argument which is stored to the right
     case 'UN+'

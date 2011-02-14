@@ -151,6 +151,8 @@ while ~strcmp(str,'$')
             % those operators here.
             expr_end = 1;
             switch char1
+                case '='
+                    out = [out; {char1, 'OP='}];
                 case '+'
                     out = [out; {char1, 'OP+'}];
                 case '-'
@@ -243,7 +245,7 @@ elseif regexp(str,'[A-Za-z_]')
     type = 'char';
 elseif str == '.' % We need to be able to distinguish between doubles and operators
     type = 'point';
-elseif regexp(str,'\.?[\+\-\*\/\.\^\(\)]')
+elseif regexp(str,'\.?[\=\+\-\*\/\.\^\(\)]')
     type = 'operator';
 elseif regexp(str,'''')
     type = 'deriv';
