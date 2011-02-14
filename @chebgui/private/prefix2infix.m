@@ -123,6 +123,16 @@ while newlen ~= len
 
 end
 
+% We often end up with an expression on the form +(...). Prevent that from
+% happening.
+% if infixOut(1) == '+'
+%     % Find all locations of ( and )
+%     leftParLoc = strfind(infixOut,'(')
+%     rightParLoc = strfind(infixOut,')')
+%     if ~isempty(leftParLoc)
+%         locDifference = rightParLoc - leftParLoc
+%     end
+% end
 
 prefixIn = []; prefCounter = []; % Clear global variables
 

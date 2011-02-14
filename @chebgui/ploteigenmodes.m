@@ -52,6 +52,7 @@ if ~isempty(h1)
     if any(selection) && nargin < 4
         xlim(h1,xlim_sol); ylim(h1,ylim_sol);
     end
+    axis equal
 end
 
 if isempty(h2), return, end
