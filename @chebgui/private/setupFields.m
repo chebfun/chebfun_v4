@@ -5,9 +5,11 @@ allVarNames = [];
 
 % Subtract what is to the rhs of equals signs in the input. Don't need to
 % do this for the DE field of eig. problems
-if ~(strcmp(guifile.type,'eig') && strcmp(type,'DE')) && ~strcmp(guifile.type,'bvp')
-    input = subtractRhs(input);
-end
+% if ~(strcmp(guifile.type,'eig') && strcmp(type,'DE')) && ~strcmp(guifile.type,'bvp') ...
+%          && ~strcmp(guifile.type,'pde')
+%     input = subtractRhs(input);
+% end
+
 % For BCs, we need to check whether varNames contains anything not found in
 % varNames of the DE. Should we make the varNames of the DE as parameters?
 % Setja DE varNames sem parametra? Also check for indVarName in deRHS.
@@ -47,7 +49,14 @@ if numOfRows == 1 % Not a system, can call convert2anon with two output argument
     % Create the string which will become the anonymous function.
     % Put x (or t) as the first argument of the anonymous function if we
     % have a BVP or EIG.
-    if ~strcmp(guifile.type,'pde') && strcmp(type,'DE')
+    
+    % !!! Check for a cell, make field a cell if we are in eigMode and
+    % anFun is a cell.
+    if strcmp(guifile.type,'eig') && iscell(anFun)
+        field1 = ['@(',indVarName,',', allVarString ') ' anFun{1}];
+        field2 = ['@(',indVarName,',', allVarString ') ' anFun{2}];
+        field = {field1;field2};
+    elseif ~strcmp(guifile.type,'pde') && strcmp(type,'DE')
         field = ['@(',indVarName,',', allVarString ') ' anFun];
     % Otherwise, add variables in front of what will be anonymous
     % functions. This is not needed for 'dirichlet','neumann',etc... This
@@ -86,13 +95,6 @@ else % Have a system, go through each row
         indx = (1:numOfRows)';
     end
     
-    % Construct the function
-    allAnFun = [];
-    for k = 1:numOfRows
-        allAnFun = [allAnFun, anFun{indx(k)},  ','];
-    end
-    allAnFun(end) = []; % Remove the last comma
-    
     % Construct the handle part. For the DE field, we need to collect all
     % the variable names in one string. If we are working with BCs, we have
     % already passed that string in (as the parameter allVarString).
@@ -102,14 +104,41 @@ else % Have a system, go through each row
             allVarString = [allVarString,',',allVarNames{varCounter}];
         end
     end
+    
     % If we are solving a BVP or EIG, we now need x as the first argument
     % as well. However, we don't want that variable in allVarString as we
-    % use that information when setting up BCs.
+    % use that information when setting up BCs. Create the string that goes
+    % at the start of the final string.
     if ~strcmp(guifile.type,'pde') && strcmp(type,'DE')
-        field = ['@(',indVarName,',', allVarString ') [' allAnFun,']'];
+        fieldStart = ['@(',indVarName,',', allVarString ') '];%[' allAnFun,']'];
     else
-        field = ['@(', allVarString ') [' allAnFun,']'];
+        fieldStart = ['@(', allVarString ') '];% [' allAnFun,']'];
     end
+        
+    % Construct the function. Need to treat eig. problems separately as
+    % there we can have nontrivial LHS and RHS at the same time.
+    allAnFun = [];
+    if strcmp(guifile.type,'eig') && iscell(anFun{1})
+        allAnFun1 = []; allAnFun2 = [];
+        for k = 1:numOfRows
+            allAnFun1 = [allAnFun1, anFun{indx(k)}{1},  ','];
+            allAnFun2 = [allAnFun2, anFun{indx(k)}{2},  ','];
+        end
+        allAnFun1(end) = []; allAnFun2(end) = []; % Remove the last comma
+        
+        % Set up LHS and RHS fields
+        field1 = [fieldStart,'[',allAnFun1,']'];
+        field2 = [fieldStart,'[',allAnFun2,']'];
+        field = {field1;field2};
+    else
+        for k = 1:numOfRows
+            allAnFun = [allAnFun, anFun{indx(k)},  ','];
+        end
+        allAnFun(end) = []; % Remove the last comma
+        
+        field = [fieldStart,'[' allAnFun,']'];
+    end
+    
 end
 
 function [field indVarName varNames pdeVarNames]  = setupLine(guifile,input,rhs,type)

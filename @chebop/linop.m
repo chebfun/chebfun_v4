@@ -13,7 +13,7 @@ if nargin == 1
     end
 %   Create a chebfun to let the operator operate on. Using the findguess
 %   method ensures that the guess is of the right (quasimatrix) dimension.
-    u = findguess(N);
+    u = findguess(N,0);
 end
 
 [L bc isLin] = linearise(N,u,1);

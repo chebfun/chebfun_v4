@@ -39,6 +39,8 @@ if ~isempty(strmatch('OP',next))
                 infixOut = exp2;
             elseif strcmp(exp2,'1')
                 infixOut = exp1;
+            elseif strcmp(exp1,'0') || strcmp(exp2,'0')
+                infixOut = '0';
             else
                 infixOut = [exp1, '.*', exp2];
             end

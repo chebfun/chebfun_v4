@@ -12,8 +12,8 @@ end
 
 switch lower(propName)
     case 'type'
-        if ~strcmpi(vin,'bvp') && ~strcmpi(vin,'pde')
-            error('CHEBGUI:set:type',[propName,' is not a valid type of problem.'])
+        if ~strcmpi(vin,'bvp') && ~strcmpi(vin,'ivp') && ~strcmpi(vin,'pde') && ~strcmpi(vin,'eig')
+            error('CHEBGUI:set:type',[vin,' is not a valid type of problem.'])
         elseif strcmpi(vin,'ivp')
             warning('CHEBGUI:set:type Type of problem changed from IVP to BVP');
             cg.type = 'bvp';

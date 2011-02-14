@@ -49,25 +49,36 @@ end
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem. Need to split the string around = before
 % setupFields in this case, as we need to construct two linear operators.
-lhs =''; rhs = '';
-for k = 1:numel(deInput)
-    idx = strfind(deInput{k},'=');
-    if numel(idx)>1
-        error('too many = signs');
-    elseif ~isempty(idx)
-        lhs{k} = strtrim(deInput{k}(1:idx-1));
-        rhs{k} = strtrim(deInput{k}(idx+1:end));
-    else
-        lhs{k} = deInput{k};
-    end
-end
-[lhsString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,lhs,deRHSInput,'DE');
-if ~isempty(rhs)
-    [rhsString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,rhs,deRHSInput,'DE');
-else % Need to create a backup string for our function to be able to carry on
-   rhsString = ['@(',allVarString,') [',allVarString,']']; 
-end
+% lhs =''; rhs = '';
+% for k = 1:numel(deInput)
+%     idx = strfind(deInput{k},'=');
+%     if numel(idx)>1
+%         error('too many = signs');
+%     elseif ~isempty(idx)
+%         lhs{k} = strtrim(deInput{k}(1:idx-1));
+%         rhs{k} = strtrim(deInput{k}(idx+1:end));
+%     else
+%         lhs{k} = deInput{k};
+%     end
+% end
+% [lhsString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,lhs,deRHSInput,'DE');
+% if ~isempty(rhs)
+%     [rhsString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,rhs,deRHSInput,'DE');
+% else % Need to create a backup string for our function to be able to carry on
+%    rhsString = ['@(',allVarString,') [',allVarString,']']; 
+% end
 
+[allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+
+% If allStrings return a cell, we have both a LHS and a RHS string. Else,
+% we only have a LHS string, so we need to create the LHS linop manually.
+if iscell(allStrings)
+    lhsString = allStrings{1};
+    rhsString = allStrings{2};
+else
+    lhsString = allStrings;
+    rhsString = '';
+end
 % Assign x or t as the linear function on the domain
 eval([indVarName, '=xt;']);
 
@@ -102,15 +113,24 @@ else
     DE_RHS = DErhsNum;
 end
 
-% Create the chebops, one for LHS, one for RHS
+% Variable which determines whether it's a generalized problem. If
+% rhsString is empty, we can be sure it's not a generalized problem.
+generalized = 0;
+
+% Create the chebops, and try to linearise them.
+% We will always have a string for the LHS, if the one for RHS is empty, we
+% know we have a non-generalised problem.
 N_LHS = chebop(d,LHS,LBC,RBC);
-N_RHS = chebop(d,RHS);
-% Try to linearise them
-try
-    A = linop(N_LHS);
+A = linop(N_LHS);
+if ~isempty(rhsString)
+    N_RHS = chebop(d,RHS);
     B = linop(N_RHS);
-catch ME
-    rethrow(ME);
+    
+    % Check whether we are working with generalized
+    % problems or not by comparing B with the identity operator on the domain.
+    I = eye(B.domain);
+    I = blkdiag(I,B.blocksize(1));
+    if norm(B(10)-I(10)), generalized = 1; end
 end
 
 tolInput = guifile.tol;
@@ -139,15 +159,7 @@ if guiMode
     set(handles.fig_norm,'Visible','On');
 end
 
-% Variable which determines whether it's a generalized problem
-generalized = 1;
-
-% Compute the eigenvalues. Check whether we are working with generalized
-% problems or not by comparing B with the identity operator on the domain.
-I = eye(B.domain);
-I = blkdiag(I,B.blocksize(1));
-if ~norm(B(10)-I(10)), generalized = 0; end
-
+% Compute the eigenvalues.
 if generalized
     if isempty(sigma)
         [V D] = eigs(A,B,K);

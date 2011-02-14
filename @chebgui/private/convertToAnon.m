@@ -29,30 +29,38 @@ if strcmp(guifile.type,'bvp')
     syntaxTree = splitTree_bvp(guifile,syntaxTree);
     % Obtain the prefix form.
     prefixOut = tree2prefix(guifile,syntaxTree);
-else
+elseif strcmp(guifile.type,'pde')
+    % Convert a potential at the top of the tree = to a -.
+    syntaxTree = splitTree_pde(guifile,syntaxTree);
     % Obtain the prefix form.
     prefixOut = tree2prefix(guifile,syntaxTree);
     
-    
-    % If we're in PDE mode, we need to get rid of the u_t term. Replace them by
-    % a zero.
-    if strcmp(guifile.type,'pde') && ~isempty(pdeVarNames)
-        pdevarLoc = find(ismember(prefixOut(:,2), 'PDEVAR')==1);
-        prefixOut(pdevarLoc,1) = cellstr(repmat('0',length(pdevarLoc),1));
-        prefixOut(pdevarLoc,2) = cellstr(repmat('NUM',length(pdevarLoc),1));
-        
-        % pdeSign tells us whether we need to flip the signs. Add a unitary -
-        % at the beginning of the expression
-        if pdeSign == 1
-            prefixOut = [{'-', 'UN-'}; prefixOut];
-        end
+    % pdeSign tells us whether we need to flip the signs. Add a unitary -
+    % at the beginning of the expression
+    if pdeSign == 1
+        prefixOut = [{'-', 'UN-'}; prefixOut];
     end
-    
-    % If we're in EIG mode, we want to replace lambda by 1
-    if strcmp(guifile.type,'eig') && ~isempty(eigVarNames)
-        eigvarLoc = find(ismember(prefixOut(:,2), 'LAMBDA')==1);
-        prefixOut(eigvarLoc,1) = cellstr(repmat('1',length(eigvarLoc),1));
-        prefixOut(eigvarLoc,2) = cellstr(repmat('NUM',length(eigvarLoc),1));
+elseif strcmp(guifile.type,'eig')
+    infixOutLambda = '';
+    % Convert a potential at the top of the tree = to a -.
+    [syntaxTree lambdaTree] = splitTree_eig(guifile,syntaxTree);
+    % Obtain the prefix form.
+    prefixOut = tree2prefix(guifile,syntaxTree);
+    % Change it to infix form
+    infixOut = prefix2infix(guifile,prefixOut);
+    % If lambdaTree is not empty, we convert that tree to prefix-form as
+    % well
+    if ~isempty(lambdaTree)
+        prefixOutLambda = tree2prefix(guifile,lambdaTree);
+        
+        % If we're in EIG mode, we want to replace lambda by 1
+        if ~isempty(eigVarNames)
+            eigvarLoc = find(ismember(prefixOutLambda(:,2), 'LAMBDA')==1);
+            prefixOutLambda(eigvarLoc,1) = cellstr(repmat('1',length(eigvarLoc),1));
+            prefixOutLambda(eigvarLoc,2) = cellstr(repmat('NUM',length(eigvarLoc),1));
+        end
+        % Change it to infix form
+        infixOutLambda = prefix2infix(guifile,prefixOutLambda);
     end
 end
 % Return the derivative on infix form
@@ -68,6 +76,14 @@ for varCounter = 2:length(varNames)
     varString = [varString,',',varNames{varCounter}];
 end
 anFunComplete = ['@(', varString ') ' anFun];
+
+% Also return the lambda part if we are in EIG mode
+if strcmp(guifile.type,'eig') && ~isempty(infixOutLambda)
+    anFunLambda = parSimp(guifile,infixOutLambda);
+    anFunLambdaComplete = ['@(', varString ') ' anFunLambda];
+    anFunComplete = {anFunComplete;anFunLambdaComplete};
+    anFun = {anFun; anFunLambda};
+end
 
 switch nargout
     case 1

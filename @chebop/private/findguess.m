@@ -104,8 +104,11 @@ end
     function intGuess = tryInterpGuess()
         % For some type of problems (nonperiodic problems where the
         % solution is a single chebfun rather then quasimatrix) we can try
-        % to construct an initial guess such that it fullfills
-        % (potentially) non-homogenous Dirichlet BCs.
+        % to construct an initial guess such that it satisfies
+        % (potentially) non-homogenous Dirichlet BCs. If we are working
+        % with quasimatrices, we do not try to construct a guess. !!!Should
+        % use AD information see what BCs depends on what variables.
+        intGuess = guess; % Default returned chebfun
         
         leftEmpty = isempty(bcFunLeft);
         rightEmpty = isempty(bcFunRight);
@@ -128,6 +131,7 @@ end
         if leftEmpty
             leftVals = 0;
         else
+            if nargin(bcFunLeft) > 1, return, end
             v = bcFunLeft(guessCell{:});
             leftVals = v(a,:);
         end
@@ -135,6 +139,7 @@ end
         if rightEmpty
             rightVals = 0;
         else
+            if nargin(bcFunRight) > 1, return, end
             v = bcFunRight(guessCell{:});
             rightVals = v(b,:);
         end
