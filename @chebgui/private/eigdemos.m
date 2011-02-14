@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 5;
+numberOfExamples = 7;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -43,22 +43,38 @@ switch exampleNumber
         name = 'Davies complex harmonic oscillator';
         demotype = 'scalar';
     case 3
+        a = '-pi'; b = 'pi';
+        DE = '-u'' = lambda*u';
+        LBC = 'periodic'; RBC = 'periodic';
+        init = ''; tol = '1e-10';
+        sigma = '';
+        name = 'Derivative operator on periodic domain';
+        demotype = 'scalar';
+    case 4
+        a = '-5'; b = '5';
+        DE = '-.1*u'''' + 4*(sign(x+1)-sign(x-1))*u = lambda*u';
+        LBC = 'u = 0'; RBC = 'u = 0';
+        init = ''; tol = '1e-12';
+        sigma = '';
+        name = 'Double well Schrodinger';
+        demotype = 'scalar';
+    case 5
         a = '-8'; b = '8';
-        DE = '-u'''' + x^2*u  = lambda*u';
+        DE = '-u'''' + x^2*u = lambda*u';
         LBC = 'u = 0'; RBC = 'u = 0';
         init = ''; tol = '1e-10';
         sigma = '';
         name = 'Harmonic oscillator';
         demotype = 'scalar';
-    case 4
+    case 6
         a = '-pi'; b = 'pi';
-        DE = '-u'''' + 5*cos(2*x)*u  = lambda*u';
+        DE = '-u'''' + 5*cos(2*x)*u = lambda*u';
         LBC = 'periodic'; RBC = 'periodic';
         init = ''; tol = '1e-10';
         sigma = '';
         name = 'Mathieu equation';
         demotype = 'scalar';
-    case 5
+    case 7
         a = '-2'; b = '2';
         DE = {'u" + u*x+v = lambda*u';'v"+sin(x)*u = lambda*v'};
         LBC = {'u = 0';'v = 0'};
