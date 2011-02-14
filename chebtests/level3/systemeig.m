@@ -1,6 +1,7 @@
 function pass = systemeig
 
 % Eigenvalue test, inspired by Maxwell's equation
+% (A level 3 Chebtest)
 
 d = domain(0,pi);
 D = diff(d); I = eye(d); Z = zeros(d);

@@ -1,7 +1,8 @@
 function pass = systemexpm
 
 % Exponential test, inspired by Maxwell's equation
-% TAD
+% (A Level 3 Chebtest)
+% Toby Driscoll
 
 d = domain(-1,1);
 dt = 0.6;

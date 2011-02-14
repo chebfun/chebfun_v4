@@ -1,7 +1,8 @@
 function pass = scaleinvariance
 
-% LNT 20 May 2008
 % This code makes sure a few things are scale-invariant.
+% (A Level 1 chebtest)
+% Nick Trefethen 20 May 2008
 
 d = [1 2];
 scale = 2^300;

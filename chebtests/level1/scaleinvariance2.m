@@ -1,9 +1,10 @@
 function pass = scaleinvariance2
 
-% Rodrigo Platte
 % Modification of scaleinvariance.m
 % This code makes sure a few things are scale-invariant when the interval
 % is split (tests endpoints).
+% Rodrigo Platte
+% (A Level 1 chebtest)
 
 splitting on
 

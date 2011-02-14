@@ -1,5 +1,6 @@
 % Test a few things involving sum applied to
 % functions with infinities.   LNT & NH 4 Dec. 2009.
+% (A Level 1 chebtest)
 
 function pass = suminftest
 

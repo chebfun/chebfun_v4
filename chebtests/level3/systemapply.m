@@ -3,7 +3,8 @@ function pass = systemapply
 tol = chebfunpref('eps');
 
 % Test 2x2 systems applied to functions.
-% TAD
+% (A Level 3 chebtest.)
+% Toby Driscoll
 
 d=domain(-pi,pi);
 D=diff(d);

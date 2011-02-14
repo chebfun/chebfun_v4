@@ -1,6 +1,7 @@
 function pass = scale
 
 % Tests for scale invariance. 
+% (A Level 1 Chebtest)
 % Rodrigo Platte, May 2009.
 
 tol = chebfunpref('eps');

@@ -1,7 +1,8 @@
 function pass = systemsolve2
 
 % Test solution of a 2x2 system
-% TAD
+% (A Level 3 Chebtest)
+% Toby Driscoll
 
 d=domain(-1,1);
 D=diff(d);

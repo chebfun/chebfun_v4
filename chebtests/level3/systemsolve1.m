@@ -1,7 +1,8 @@
 function pass = systemsolve1
 
 % Test 2x2 system (sin/cos)
-% TAD
+% Toby Driscoll
+% (A Level 3 Chebtest)
 tol = chebfunpref('eps');
 
 d = domain(-pi,pi);
