@@ -43,14 +43,13 @@ if ~isempty(lambdaTreeLeft)
     % the lambdaTree.
     elseif strcmp(treeCenter{2},'OP=') 
         lambdaSign = -1*lambdaSign;
-        signNew = lambdaSign;
         lambdaTree = lambdaTreeLeft;
     else
         lambdaTree = lambdaTreeLeft;
     end
 end
 if ~isempty(lambdaTreeRight)
-    if strcmp(treeCenter,'OP*')
+    if strcmp(treeCenter{2},'OP*')
         lambdaTree = treeIn;
     % If we have a binary -, and lambda is on the right, we need to switch
     % signs on the lambdaTree. Add a unary minus at the top of the tree.

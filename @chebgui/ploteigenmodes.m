@@ -97,15 +97,12 @@ if ~isc
         WW = abs(W(xx));
         plot(V(:,1),'-','linewidth',2,'color',C(1,:)); hold on
         plot(xx,WW,'-',xx,-WW,'-','linewidth',1,'color','k'); hold off
-%         if realplot
-%             legend('Real part','Envelope')
-%         else
-%             legend('Imaginary part','Envelope')
-%         end
+        xLims = V(:,1).domain;
     else
         for k = 1:numel(V)
             plot(V(:,k),'linewidth',2,'color',C(k,:)); hold on
         end
+        xLims = V(:,k).domain;
         hold off
     end
     if guifile.options.grid, grid on, end
@@ -121,12 +118,8 @@ else
             plot(real(V{cCounter}),'-','linewidth',2,'linestyle',LS{cCounter}); hold on
             plot(xx,WW,'k',xx,-WW,'k','linestyle',LS{cCounter});
         end
+        xLims = V{cCounter}.domain;
         hold off
-%         if realplot
-%             legend('Real part','Envelope')
-%         else
-%             legend('Imaginary part','Envelope')
-%         end
     else
         for cCounter = 1:nV
             % If we are plotting selected e-funs, we need to pick out the colors
@@ -135,8 +128,10 @@ else
                     plot(real(V{cCounter}(:,sCounter)),'linewidth',2,...
                         'linestyle',LS{cCounter},'Color',C(sCounter,:)); hold on
                 end
+                xLims = V{cCounter}(:,sCounter).domain;
             else
                 plot(real(V{cCounter}),'linewidth',2,'linestyle',LS{cCounter}); hold on
+                xLims = V{cCounter}(:,1).domain;
             end
             ylab = [ylab handles.varnames{cCounter} ', ' ];
         end
@@ -145,10 +140,14 @@ else
     ylabel(ylab(1:end-2));
 end
 if any(selection) && nargin < 4
-    xlim(h2,xlim_norm); ylim(h2,ylim_norm);
+    xlim(xlim_norm);
+else
+    xlim(xLims);
 end
 set(h2,'NextPlot','replace')
 xlabel('x')
+
+% Set the xlim according to the domain of the function
 title(s);
 
 
