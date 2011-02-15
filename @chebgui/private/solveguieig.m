@@ -120,11 +120,31 @@ generalized = 1;
 % We will always have a string for the LHS, if the one for RHS is empty, we
 % know we have a non-generalised problem.
 N_LHS = chebop(d,LHS,LBC,RBC);
-A = linop(N_LHS);
+try
+    A = linop(N_LHS);
+catch
+    if guiMode
+        errordlg('Operator is not linear.', 'Chebgui error', 'modal');
+    else
+        rethrow(lasterr)
+    end
+    varargout{1} = handles;
+    return
+end
 if ~isempty(rhsString)
     RHS  = eval(rhsString);
     N_RHS = chebop(d,RHS);
-    B = linop(N_RHS);
+    try
+        B = linop(N_RHS);
+    catch
+        if guiMode
+            errordlg('Operator is not linear.', 'Chebgui error', 'modal');
+        else
+            rethrow(lasterr)
+        end
+        varargout{1} = handles;
+        return
+    end
     
     % Check whether we are working with generalized
     % problems or not by comparing B with the identity operator on the domain.

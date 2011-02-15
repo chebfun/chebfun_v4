@@ -1148,52 +1148,52 @@ guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function menu_sigma_Callback(hObject, eventdata, handles)
-options.WindowStyle = 'modal';
-valid = 0;
-defaultAnswer = {handles.guifile.sigma};
-while ~valid
-    in = inputdlg({'Set sigma, e.g., ''LR'',''SR'',''LM'', ''SM'', etc'},'Set sigma',...
-        1,defaultAnswer,options);
-    if isempty(in) % User pressed cancel
-        break
-    elseif any(strcmpi(in{1},{'LR','SR','LM', 'SM'})) || ~isempty(str2num(in{1}))
-        in = in{1};
-        valid = 1;
-        % Store new value in the UserData of the object
-        set(hObject,'UserData',in);
-        % Update the chebgui object
-        handles.guifile.sigma = in;
-    else
-        f = errordlg('Invalid input.', 'Chebgui error', 'modal');
-        uiwait(f); 
-    end
-end
-guidata(hObject, handles);
+% options.WindowStyle = 'modal';
+% valid = 0;
+% defaultAnswer = {handles.guifile.sigma};
+% while ~valid
+%     in = inputdlg({'Set sigma, e.g., ''LR'',''SR'',''LM'', ''SM'', etc'},'Set sigma',...
+%         1,defaultAnswer,options);
+%     if isempty(in) % User pressed cancel
+%         break
+%     elseif any(strcmpi(in{1},{'LR','SR','LM', 'SM'})) || ~isempty(str2num(in{1}))
+%         in = in{1};
+%         valid = 1;
+%         % Store new value in the UserData of the object
+%         set(hObject,'UserData',in);
+%         % Update the chebgui object
+%         handles.guifile.sigma = in;
+%     else
+%         f = errordlg('Invalid input.', 'Chebgui error', 'modal');
+%         uiwait(f); 
+%     end
+% end
+% guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function menu_eigno_Callback(hObject, eventdata, handles)
-options.WindowStyle = 'modal';
-valid = 0;
-defaultAnswer = {handles.guifile.options.numeigs};
-if isempty(defaultAnswer{:}), defaultAnswer = {'6'}; end % As defined in linop/eigs
-while ~valid
-    in = inputdlg({'Number of eigenvalues to find?'},'Number of eigenvalues?',...
-        1,defaultAnswer,options);
-    if isempty(in) % User pressed cancel
-        break
-    elseif ~mod(str2num(in{1}),1) % Only allow integers
-        in = in{1};
-        valid = 1;
-        % Store new value in the UserData of the object
-        set(hObject,'UserData',in);
-        % Update the chebgui object
-        handles.guifile.options.numeigs = in;
-    else
-        f = errordlg('Invalid input.', 'Chebgui error', 'modal');
-        uiwait(f); 
-    end
-end
-guidata(hObject, handles);
+% options.WindowStyle = 'modal';
+% valid = 0;
+% defaultAnswer = {handles.guifile.options.numeigs};
+% if isempty(defaultAnswer{:}), defaultAnswer = {'6'}; end % As defined in linop/eigs
+% while ~valid
+%     in = inputdlg({'Number of eigenvalues to find?'},'Number of eigenvalues?',...
+%         1,defaultAnswer,options);
+%     if isempty(in) % User pressed cancel
+%         break
+%     elseif ~mod(str2num(in{1}),1) % Only allow integers
+%         in = in{1};
+%         valid = 1;
+%         % Store new value in the UserData of the object
+%         set(hObject,'UserData',in);
+%         % Update the chebgui object
+%         handles.guifile.options.numeigs = in;
+%     else
+%         f = errordlg('Invalid input.', 'Chebgui error', 'modal');
+%         uiwait(f); 
+%     end
+% end
+% guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
@@ -1241,3 +1241,54 @@ if ~isempty(edata.Modifier) && strcmp(edata.Modifier{1},'control')
     
 end
 % PressedKeyNo = double(get(gcbo,'CurrentCharacter'))
+
+
+
+function edit_eigN_Callback(hObject, eventdata, handles)
+in = get(handles.edit_eigN,'String');
+if ~isempty(in) && isempty(str2num(in))
+    errordlg('Invalid input. Number of eigenvalues must be an integer.', 'Chebgui error', 'modal');
+    set(handles.edit_eigN,'String',handles.guifile.options.numeigs);
+else
+    handles.guifile.options.numeigs = in;
+end
+guidata(hObject, handles);
+
+function edit_eigN_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function edit_sigma_Callback(hObject, eventdata, handles)
+in = get(handles.edit_sigma,'String');
+if any(strcmpi(in,{'largest','largest magnitude'})), in = 'lm';
+elseif any(strcmpi(in,{'smallest','smallest magnitude'})), in = 'sm';
+elseif strcmpi(in,'largest real'), in = 'lr'; 
+elseif strcmpi(in,'smallest real'), in = 'sr'; 
+elseif strcmpi(in,'smoothest'), in = '';
+end
+if ~isempty(in) && ~any(strcmpi(in,{'LR','SR','LM', 'SM'})) && isempty(str2num(in))
+    errordlg('Invalid input. Allowed values are: LM, SM, LR, SR.', 'Chebgui error', 'modal');
+    set(handles.edit_sigma,'String',handles.guifile.sigma);
+else
+    handles.guifile.sigma = in;
+end
+guidata(hObject, handles);
+
+function edit_sigma_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function edit37_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+function edit37_Callback(hObject, eventdata, handles)
+in = get(handles.edit_eigN,'String');
+if ~isempty(in) && isempty(str2num(in))
+    errordlg('Invalid input.', 'Chebgui error', 'modal');
+else
+    handles.guifile.options.numeigs = in;
+end
+guidata(hObject, handles);

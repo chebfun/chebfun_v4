@@ -18,6 +18,8 @@ if exampleNumber < 0 || exampleNumber > numberOfExamples
     end
 end
 
+numeigs = '';
+
 switch exampleNumber
     case 0
         a = ''; b = '';
@@ -93,5 +95,7 @@ switch exampleNumber
         demotype = 'system';
 end
 
+options.numeigs = numeigs;
+
 cg = chebgui('type','eig','domleft',a,'domright',b,'de',DE,...
-    'lbc',LBC,'rbc',RBC,'sigma',sigma,'tol',tol);
+    'lbc',LBC,'rbc',RBC,'sigma',sigma,'tol',tol,'options',options);

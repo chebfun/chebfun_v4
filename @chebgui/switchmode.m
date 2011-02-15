@@ -1,4 +1,4 @@
-function handles = switchmode(guiObject, handles,newMode,callMode)
+function handles = switchmode(guiObject,handles,newMode,callMode)
 
 % Only use callMode when calling from loaddemo_menu - for demos with an initial
 % guess / condition, we don't want to clear the figures.
@@ -31,6 +31,8 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.iter_text,'Visible','off')
     set(handles.iter_text,'String','')
     
+    set(handles.panel_eigopts,'Visible','Off')
+    
     pdeplotopts(handles,0)
     
     % Change the list of available options.
@@ -42,9 +44,6 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.menu_pdeholdplot,'Enable','Off')
     set(handles.menu_pdefix,'Enable','Off')
     set(handles.menu_fixN,'Enable','Off')
-    % Disable EIG menuoptions
-    set(handles.menu_sigma,'Enable','Off')
-    set(handles.menu_eigno,'Enable','Off')
     
     % Clear the figures
     initialisefigures(handles,callMode)
@@ -78,6 +77,8 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.button_imagplot,'Visible','off')
     set(handles.button_envelope,'Visible','off')
     
+    set(handles.panel_eigopts,'Visible','Off')
+    
     % Change the list of available options
     % Disable ODE menu options
     set(handles.menu_odedampednewton,'Enable','Off')
@@ -87,9 +88,6 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.menu_pdeholdplot,'Enable','On')
     set(handles.menu_pdefix,'Enable','On')
     set(handles.menu_fixN,'Enable','On')
-    % Disable EIG menuoptions
-    set(handles.menu_sigma,'Enable','Off')
-    set(handles.menu_eigno,'Enable','Off')
     
     % Clear the figures
     initialisefigures(handles,callMode)
@@ -120,6 +118,18 @@ else % Going into EIG mode
     set(handles.button_imagplot,'Value',0)
     set(handles.button_envelope,'Visible','off')
     
+    set(handles.panel_eigopts,'Visible','On')
+    if ~isempty(handles.guifile.sigma)
+        set(handles.edit_sigma,'String',handles.guifile.sigma);
+    else
+        set(handles.edit_sigma,'String','smoothest')
+    end
+    if isfield(handles.guifile.options,'numeigs') && ~isempty(handles.guifile.options.numeigs)
+        set(handles.edit_eigN,'String',handles.guifile.options.numeigs);
+    else
+        set(handles.edit_eigN,'String',6);
+    end
+    
     set(handles.iter_list,'Visible','off')
     set(handles.iter_list,'String','')
     set(handles.iter_list,'Value',0)
@@ -137,9 +147,6 @@ else % Going into EIG mode
     set(handles.menu_pdeholdplot,'Enable','Off')
     set(handles.menu_pdefix,'Enable','Off')
     set(handles.menu_fixN,'Enable','Off')
-    % Enable EIG menuoptions
-    set(handles.menu_sigma,'Enable','On')
-    set(handles.menu_eigno,'Enable','On')
     
     
     % Clear the figures

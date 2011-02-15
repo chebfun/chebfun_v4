@@ -10,7 +10,15 @@ set(handles.input_GUESS,'String',guifile.init);
 
 if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);
+elseif strcmpi(guifile.type,'eig')
+    sigma = guifile.sigma;
+    if isempty(sigma), sigma = 'smoothest'; end
+    set(handles.edit_sigma,'String',sigma);
+    numeigs = guifile.options.numeigs;
+    if isempty(numeigs), numeigs = 6; end
+    set(handles.edit_sigma,'String',sigma);
 end
+
 
 % Store the tolerance in the UserData of the tolerance menu object
 set(handles.menu_tolerance,'UserData',guifile.tol);

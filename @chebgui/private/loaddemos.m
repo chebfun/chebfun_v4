@@ -14,6 +14,7 @@ tol = '';
 damping = '';
 plotting = '';
 sigma = '';
+numeigs = '';
 
 % Import from the given file and evaluate to fill the workspace
 fid = fopen(guifilepath);
@@ -25,7 +26,7 @@ end
 fclose(fid);
 
 % Create the options structure
-options = struct('damping',damping,'plotting',plotting);
+options = struct('damping',damping,'plotting',plotting,'numeigs',numeigs);
 
 % Build the chebguifile
 cg = chebgui('type',demotype,'domleft',a,'domright',b,'timedomain',t,'de',DE,...
