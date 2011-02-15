@@ -84,7 +84,6 @@ eval([indVarName, '=xt;']);
 
 % Convert the strings to proper anon. function using eval
 LHS  = eval(lhsString);
-RHS  = eval(rhsString);
 
 if ~isempty(lbcInput{1})
     [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
@@ -123,6 +122,7 @@ generalized = 0;
 N_LHS = chebop(d,LHS,LBC,RBC);
 A = linop(N_LHS);
 if ~isempty(rhsString)
+    RHS  = eval(rhsString);
     N_RHS = chebop(d,RHS);
     B = linop(N_RHS);
     

@@ -43,7 +43,7 @@ elseif strcmp(guifile.type,'pde')
 elseif strcmp(guifile.type,'eig')
     infixOutLambda = '';
     % Convert a potential at the top of the tree = to a -.
-    [syntaxTree lambdaTree] = splitTree_eig(guifile,syntaxTree);
+    [syntaxTree lambdaTree lambdaSign] = splitTree_eig(guifile,syntaxTree);
     % Obtain the prefix form.
     prefixOut = tree2prefix(guifile,syntaxTree);
     % Change it to infix form
@@ -52,6 +52,12 @@ elseif strcmp(guifile.type,'eig')
     % well
     if ~isempty(lambdaTree)
         prefixOutLambda = tree2prefix(guifile,lambdaTree);
+        
+        % If the lambda part is on the LHS, we need to add a - in front of
+        % the prefix expression.
+        if lambdaSign == -1
+            prefixOutLambda = [{'-', 'UN-'}; prefixOutLambda];
+        end
         
         % If we're in EIG mode, we want to replace lambda by 1
         if ~isempty(eigVarNames)

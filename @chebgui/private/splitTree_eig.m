@@ -1,8 +1,8 @@
-function [newTree lambdaTree] = splitTree_eig(guifile,treeIn)
+function [newTree lambdaTree lambdaSign] = splitTree_eig(guifile,treeIn)
 
 % Begin by finding the subtree which contains lambda
 
-[newTree lambdaTree] = findLambda(treeIn);
+[newTree lambdaTree lambdaSign] = findLambda(treeIn,1);
 
 % If the top-center entry is a =, we need to convert that into a -.
 % Otherwise, do nothing.
@@ -13,22 +13,21 @@ end
 
 end
 
-function [newTree lambdaTree] = findLambda(treeIn)
+function [newTree lambdaTree lambdaSign] = findLambda(treeIn,lambdaSign)
 
 newTree = treeIn;
 leftEmpty = 1; rightEmpty = 1;
 lambdaTree = []; lambdaTreeLeft = []; lambdaTreeRight = [];
-
 treeCenter = treeIn.center;
 
 if isfield(treeIn,'left')
-    [newLeft lambdaTreeLeft] = findLambda(treeIn.left);
+    [newLeft lambdaTreeLeft lambdaSign] = findLambda(treeIn.left,lambdaSign);
     newTree.left = newLeft;
     leftEmpty = 0;
 end
 
 if isfield(treeIn,'right')
-    [newRight lambdaTreeRight] = findLambda(treeIn.right);
+    [newRight lambdaTreeRight lambdaSign] = findLambda(treeIn.right,lambdaSign);
     newTree.right = newRight;
     rightEmpty = 0;
 end
@@ -40,6 +39,11 @@ end
 if ~isempty(lambdaTreeLeft)
     if strcmp(treeCenter{2},'OP*')
         lambdaTree = treeIn;
+    % If we have a =, and lambda is on the left, we need to switch signs on
+    % the lambdaTree.
+    elseif strcmp(treeCenter{2},'OP=') 
+        lambdaSign = -1*lambdaSign;
+        lambdaTree = lambdaTreeLeft;
     else
         lambdaTree = lambdaTreeLeft;
     end
@@ -47,6 +51,11 @@ end
 if ~isempty(lambdaTreeRight)
     if strcmp(treeCenter,'OP*')
         lambdaTree = treeIn;
+    % If we have a -, and lambda is on the right, we need to switch signs on
+    % the lambdaTree.
+    elseif strcmp(treeCenter{2},'OP-') || strcmp(treeCenter{2},'UN-')
+        lambdaSign = -1*lambdaSign;
+        lambdaTree = lambdaTreeRight;
     else
         lambdaTree = lambdaTreeRight;
     end
