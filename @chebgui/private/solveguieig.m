@@ -215,7 +215,7 @@ if guiMode
     set(handles.iter_text,'String','Eigenvalues');
     set(handles.iter_list,'Visible','on');
     % Display eigenvalues to level of tolerance
-    s = num2str(ceil(-log10(defaultTol)));
+    s = num2str(ceil(-log10(tolNum)));
     set(handles.iter_list,'String',num2str(D,['%' s '.' s 'f']));
     set(handles.iter_list,'Value',1:numel(D));
     
