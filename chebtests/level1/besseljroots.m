@@ -1,4 +1,6 @@
 function pass = besseljroots
+% Checks if the roots of the BesselJ function on [0,100] are recovered
+% correctly.
 
 % TAD
 

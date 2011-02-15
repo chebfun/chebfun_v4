@@ -1,4 +1,6 @@
 function pass = bcchange
+% Check if changing the boundary conditions of a chebop that has already
+% been evaluated works.
 
 tol = chebfunpref('eps');
 
@@ -11,7 +13,7 @@ f = chebfun( 'exp(sin(x))',d );
 u = A\f;
 
 pass(1) = ( abs(u(d(1))+1)<1e-12*(tol/eps));
-pass(2) = ( abs(feval(diff(u),d(2)))<1e-11*(tol/eps) );
+pass(2) = ( abs(feval(diff(u),d(2)))<2e-11*(tol/eps) );
 
 A.lbc(1) = {eye(d),2};
 A.lbc(2) = {D,0};

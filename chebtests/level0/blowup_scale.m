@@ -1,6 +1,6 @@
-function pass = blowupscl
-
-% Tests scale invariance for functions with blowups
+function pass = blowup_scale
+% Tests scale invariance for functions with blowups (integer exponents
+% at the endpoints).
 % Rodrigo Platte Nov 2009
 
 s = 2^20;

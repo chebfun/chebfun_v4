@@ -1,6 +1,7 @@
 function pass = breakpoints
-
+% Check if splitting works, with or without breakpoints.
 % Rodrigo Platte
+
 splitting on
 
 f=chebfun(@(x) ceil(x-.1), [0 1 2]);

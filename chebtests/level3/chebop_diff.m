@@ -1,4 +1,6 @@
-function pass = applydiffop
+function pass = chebop_diff
+% Checks if the differentiation chebop is equivalent to differentiating
+% a chebfun.
 
 d = domain(-3,-1.5);
 D = diff(d);

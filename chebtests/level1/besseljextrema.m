@@ -1,4 +1,7 @@
 function pass = besseljextrema
+% Check if the extrema of the BesselJ function on [0,100] are recovered
+% correctly. Takes into account that some of the extrema may be below
+% tolerance and thus will not be found.
 
 % TAD
 

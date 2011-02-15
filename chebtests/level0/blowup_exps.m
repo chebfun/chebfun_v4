@@ -1,7 +1,9 @@
-function pass = build
-
-% build a series of mfuns and check of the exponents are correct
+function pass = blowup_exps
+% Build a series of chebfuns with different non-integer exponents and check
+% if these are recovered correctly.
+%
 % Mark Richardson
+
 pass = [];
 for j = 0:0.75:5
 
