@@ -1175,6 +1175,7 @@ function menu_eigno_Callback(hObject, eventdata, handles)
 options.WindowStyle = 'modal';
 valid = 0;
 defaultAnswer = {handles.guifile.options.numeigs};
+if isempty(defaultAnswer{:}), defaultAnswer = {'6'}; end % As defined in linop/eigs
 while ~valid
     in = inputdlg({'Number of eigenvalues to find?'},'Number of eigenvalues?',...
         1,defaultAnswer,options);
