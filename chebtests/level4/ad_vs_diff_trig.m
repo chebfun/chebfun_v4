@@ -1,6 +1,8 @@
-function pass = ad_vs_diff_1
+function pass = ad_vs_diff_trig
 % A test that compares derivatives obtained via AD to derivatives obtained
 % with the normal diff of the chebfun system.
+% More specifically, it tests whether the trigonometric and hyperbolic 
+% functions are differentiated correctly.
 
 [d,x] = domain(0.1,0.9);
 cheb1 = chebfun(1,d);

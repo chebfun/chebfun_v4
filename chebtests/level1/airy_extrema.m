@@ -1,5 +1,6 @@
 function pass = airy_extrema
-
+% Verifies that the extrema of the airy function on [-15,0] are found
+% correctly.
 % Rodrigo Platte
 
 f = chebfun('exp(real(airy(x)))',[-15,0]);

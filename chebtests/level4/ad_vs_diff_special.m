@@ -1,6 +1,8 @@
-function pass = ad_vs_diff_2
+function pass = ad_vs_diff_special
 % A test that compares derivatives obtained via AD to derivatives obtained
 % with the normal diff of the chebfun system.
+% More specifically, tests special functions such as bessel, airy, ellipj,
+% erf*, logarithmic/exponential and powers.
 
 [d,x] = domain(0.1,0.9);
 cheb1 = chebfun(1,d);

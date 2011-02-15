@@ -1,4 +1,5 @@
-function pass = applycumsumop
+function pass = chebop_cumsum
+% Check if the indefinite integral chebop works.
 
 d = domain(4,5.6);
 Q = cumsum(d);

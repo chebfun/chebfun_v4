@@ -1,6 +1,8 @@
 function pass = aliasing
-
-% Tests for aliasing. Rodrigo Platte, May 2009.
+% Tests for aliasing: Check if the constructor accurately re-constructs the
+% 50th Chebyshev polynomial and a highly oscillating funciton.
+%
+% Rodrigo Platte, May 2009.
 
 p1 = chebfun(@(x) cos(50*acos(x)), 'sampletest', 1);
 p2 = chebpoly(50,[-1,1]);

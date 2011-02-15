@@ -1,5 +1,5 @@
 function pass = ad_systems
-% A test that checks whether AD works currectly for multiple variables
+% Checks whether AD works correctly for multiple variables
 
 x = chebfun('x',[0 2]);
 
