@@ -10,7 +10,7 @@ else
 end
 
 fprintf(fid,'%% %s - Executable .m file for solving a PDE.\n',filename);
-fprintf(fid,'%% Automatically created from chebgui by user %s\n',userName);
+fprintf(fid,'%% Automatically created from chebfun/chebgui by user %s\n',userName);
 fprintf(fid,'%% %s, %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 % Extract information from the GUI fields

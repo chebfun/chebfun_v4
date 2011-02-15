@@ -134,6 +134,7 @@ end
 if ~isempty(rhsString)
     RHS  = eval(rhsString);
     N_RHS = chebop(d,RHS);
+
     try
         B = linop(N_RHS);
     catch

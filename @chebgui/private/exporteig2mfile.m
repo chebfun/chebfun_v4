@@ -1,24 +1,15 @@
 function exportbvp2mfile(guifile,pathname,filename,handles)
 
-fullFileName = [pathname,filename];
-fid = fopen(fullFileName,'wt');
-
-if ispc
-    userName = getenv('UserName');
-else
-    userName = getenv('USER');
-end
-
-fprintf(fid,'%% %s - Executable .m file for solving an eigenvalue problem.\n',filename);
-fprintf(fid,'%% Automatically created with from chebbvp GUI by user %s\n',userName);
-fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
-
 % Extract information from the GUI fields
 a = guifile.DomLeft;
 b = guifile.DomRight;
 deInput = guifile.DE;
 lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
+% Sigmas and num eigs
+sigma = guifile.sigma;
+K = guifile.options.numeigs;
+if isempty(K), K = '6'; end
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -29,18 +20,134 @@ deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
-[deString allVarString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
+[allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+% If allStrings return a cell, we have both a LHS and a RHS string. Else,
+% we only have a LHS string, so we need to create the LHS linop manually.
+if iscell(allStrings)
+    lhsString = allStrings{1};
+    rhsString = allStrings{2};
+else
+    lhsString = allStrings;
+    rhsString = '';
+end
+% Assign x or t as the linear function on the domain
+[d,xt] = domain(str2num(a),str2num(b));
+eval([indVarName, '=xt;']);
 
-% Print the BVP
+% Convert the strings to proper anon. function using eval
+LHS  = eval(lhsString);
+
+if ~isempty(lbcInput{1})
+    [lbcString indVarNameL] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
+    LBC = eval(lbcString);
+else
+    LBC = [];
+end
+if ~isempty(rbcInput{1})
+    [rbcString indVarNameR] = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
+    RBC = eval(rbcString);
+else
+    RBC = [];
+end
+
+if isempty(lbcInput) && isempty(rbcInput)
+    error('chebfun:bvpgui','No boundary conditions specified');
+end
+
+DErhsNum = str2num(char(deRHSInput));
+if isempty(DErhsNum)
+    % RHS is a string representing a function -- convert to chebfun
+    DE_RHS = chebfun(deRHSInput,d);
+else
+    % RHS is a number - Don't need to construct chebfun
+    DE_RHS = DErhsNum;
+end
+
+% Variable which determines whether it's a generalized problem. If
+% rhsString is empty, we can be sure it's not a generalized problem.
+generalized = 1;
+
+% Create the chebops, and try to linearise them.
+% We will always have a string for the LHS, if the one for RHS is empty, we
+% know we have a non-generalised problem.
+N_LHS = chebop(d,LHS,LBC,RBC);
+try
+    A = linop(N_LHS);
+catch
+    if guiMode
+        errordlg('Operator is not linear.', 'Chebgui error', 'modal');
+    else
+        rethrow(lasterr)
+    end
+    varargout{1} = handles;
+    return
+end
+% Check for a generalised problem
+if ~isempty(rhsString)
+    RHS  = eval(rhsString);
+    N_RHS = chebop(d,RHS);
+    try
+        B = linop(N_RHS);
+    catch
+        if guiMode
+            errordlg('Operator is not linear.', 'Chebgui error', 'modal');
+        else
+            rethrow(lasterr)
+        end
+        varargout{1} = handles;
+        return
+    end
+    
+    % Check whether we are working with generalized
+    % problems or not by comparing B with the identity operator on the domain.
+    I = eye(B.domain);
+    Iblock = blkdiag(I,B.blocksize(1));
+    
+    opDifference = B(10)-Iblock(10);
+    opSum = B(10)+Iblock(10);
+    if isempty(nonzeros(opDifference)), generalized = 0; end
+    if isempty(nonzeros(opSum)), generalized = 0; A = -A; end
+else
+    generalized = 0;
+end
+
+% Find the eigenvalue name
+mask = strcmp(deInput{1},{'lambda','lam','l'});
+if mask(1), lname = 'lambda'; 
+elseif mask(2), lname = 'lam'; 
+elseif mask(3), lname = 'l'; 
+else lname = 'lambda'; end
+
+% Print to the file
+fullFileName = [pathname,filename];
+fid = fopen(fullFileName,'wt');
+
+if ispc
+    userName = getenv('UserName');
+else
+    userName = getenv('USER');
+end
+
+fprintf(fid,'%% %s - Executable .m file for solving an eigenvalue problem.\n',filename);
+fprintf(fid,'%% Automatically created with from chebfun/chebgui by user %s\n',userName);
+fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
+
 fprintf(fid,'%% Solving\n%%');
 for k = 1:numel(deInput)
-    fprintf(fid,'   %s\t',deInput{k});
+    fprintf(fid,'   %s',deInput{k});
+end
+if numel(deInput) == 1 && ~any(deInput{1}=='=')
+    fprintf(fid,' = %s*%s',lname,allVarString);
 end
 fprintf(fid,'\n');
 fprintf(fid,'%% for %s in [%s,%s]',indVarName,a,b);
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     fprintf(fid,',\n%% subject to\n%%');
     if  ~isempty(lbcInput{1})
+        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann','periodic'}))
+            % Sort out when just function values are passed as bcs.
+            lbcInput{1} = sprintf('%s = %s',allVarString,lbcInput{1});
+        end
         for k = 1:numel(lbcInput)
             fprintf(fid,'   %s,\t',lbcInput{k});
         end
@@ -50,6 +157,10 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
         fprintf(fid,'%% and\n%%',indVarName,a);
     end
     if ~isempty(rbcInput{1})
+        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann','periodic'}))
+            % Sort out when just function values are passed as bcs.
+            rbcInput{1} = sprintf('%s = %s',allVarString,rbcInput{1});
+        end
         for k = 1:numel(rbcInput)
             fprintf(fid,'   %s,\t',rbcInput{k});
         end
@@ -60,31 +171,23 @@ else
     fprintf(fid,'.\n');
 end
 
-fprintf(fid,['%% Create a domain, the linear function on the domain and' ...
-    ' a chebop \n%% that operates on functions on the domain.\n']);
-fprintf(fid,'[d,%s,N] = domain(%s,%s);\n',indVarName,a,b);
-
-fprintf(fid,'\n%% Make an assignment to the differential eq. of the chebop.\n');
-fprintf(fid,'N.op = %s;\n',deString);
-
-% Setup for the rhs
-fprintf(fid,'\n%% Set up the rhs of the differential equation\n');
-
-% If we have a coupled system, we need create a array of the inputs
-if size(deRHSInput,1) > 1
-    deRHSprint = ['['];
-    for deRHScounter = 1:size(deRHSInput,1)
-        deRHSprint = [deRHSprint char(deRHSInput{deRHScounter}) ','];
-    end
-    deRHSprint(end) = []; % Remove the last comma
-    deRHSprint = [deRHSprint,']'];
+if ~generalized
+    fprintf(fid,'%% Define the domain we''re working on.\n');
+    fprintf(fid,'dom = [%s,%s];\n',a,b);
+    fprintf(fid,['\n%% Assign the equation to a chebop N such that' ...
+        ' N(u) = %s*u.\n'],lname);
+    fprintf(fid,'N = chebop(%s,d);\n',lhsString);
 else
-    deRHSprint = char(deRHSInput);
+    fprintf(fid,'%% Define the domain we''re working on.\n');
+    fprintf(fid,'dom = [%s,%s];\n',a,b);
+    fprintf(fid,['\n%% Assign the equation to two chebops N and B such that' ...
+        ' N(u) = %s*B(u).\n'],lname);
+    fprintf(fid,'N = chebop(%s,d);\n',lhsString);
+    fprintf(fid,'B = chebop(%s,d);\n',rhsString);
 end
-fprintf(fid,'rhs = %s;\n',deRHSprint);
 
 % Make assignments for left and right BCs.
-fprintf(fid,'\n%% Assign boundary conditions to the chebop.\n');
+fprintf(fid,'\n%% Assign boundary conditions to N.\n');
 if ~isempty(lbcInput{1})
     lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
     fprintf(fid,'N.lbc = %s;\n',lbcString);
@@ -94,61 +197,35 @@ if ~isempty(rbcInput{1})
     fprintf(fid,'N.rbc = %s;\n',rbcString);
 end
 
-
-% % Set up preferences
-% fprintf(fid,'\n%% Setup preferences for solving the problem \n');
-% fprintf(fid,'options = cheboppref;\n');
-% Option for tolerance
-% tolInput = guifile.tol;
-
 fprintf(fid,'\n%% Number of eigenvalue and eigenmodes to compute.\n');
-fprintf(fid,'k = 6;\n');
+fprintf(fid,'k = %s;\n',K);
 
 fprintf(fid,'\n%% Solve the eigenvalue problem.\n');
-if ~isempty(guifile.sigma)
-    fprintf(fid,'[V D] = eigs(N,k,%s);\n',guifile.sigma);
+if ~generalized
+    if ~isempty(sigma)
+        fprintf(fid,'[V D] = eigs(N,k,%s);\n',sigma);
+    else
+        fprintf(fid,'[V D] = eigs(N,k);\n');
+    end
 else
-    fprintf(fid,'[V D] = eigs(N,k);\n');
+    if ~isempty(sigma)
+            fprintf(fid,'[V D] = eigs(N,B,k,%s);\n',sigma);
+        else
+            fprintf(fid,'[V D] = eigs(N,B,k);\n');
+    end
 end
-
 fprintf(fid,'\n%% Plot the eigenvalues.\n');
 fprintf(fid,'D = diag(D);\n');
 fprintf(fid,'figure\n');
 fprintf(fid,'plot(real(D),imag(D),''.'',''markersize'',25)\n');
 fprintf(fid,'title(''Eigenvalues''); xlabel(''real''); ylabel(''imag'');\n');
 
-if ischar(allVarString) || numel(allVarString) == 1
+if ischar(allVarNames) || numel(allVarNames) == 1
     fprintf(fid,'\n%% Plot the eigenmodes.\n');
     fprintf(fid,'figure\n');
     fprintf(fid,'plot(real(V),''linewidth'',2);\n');
     fprintf(fid,'title(''Eigenmodes''); xlabel(''%s''); ylabel(''%s'');\n',indVarName,allVarString);
-end    
-
-% fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
-% fprintf(fid,'options.plotting = %s;\n',plottingOnInput);
-% 
-% 
-% 
-% fprintf(fid,['\n%% Solve the problem using solvebvp (a function which ' ...
-%     'offers same\n%% functionality as nonlinear backslash but more '...
-%     'customizeability) \n']);
-% fprintf(fid,'[u normVec] = solvebvp(N,rhs,''options'',options);\n');
-% 
-% fprintf(fid,'\n%% Create plot of the solution and the norm of the updates\n');
-% 
-% 
-% 
-% 
-% fprintf(fid,'figure\nplot(u),title(''Solution at the end of iteration'')\n');
-% fprintf(fid,'figure\nsemilogy(normVec,''-*''),title(''Norm of updates'')\n');
-% fprintf(fid,'xlabel(''Number of iteration'')\n');
-% fprintf(fid,...
-%     ['if length(normVec) > 1\n' ...
-%         '\tXTickVec = 1:max(floor(length(normVec)/5),1):length(normVec);\n'...
-%         '\tset(gca,''XTick'', XTickVec), xlim([1 length(normVec)]), grid on\n'...
-%     'else\n'...
-%     '   \tset(gca,''XTick'', 1)\n'...
-%     'end\n']);
+end
 
 fclose(fid);
 end

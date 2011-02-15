@@ -47,10 +47,6 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     end   
     if get(handles.button_eig,'Value')
         newString = handles.guifile.sigma;
-        if ~isempty(newString) && isempty(str2num(newString)) && ~any(strcmpi(newString,{'LR','SR','LM','SM'}))
-            errordlg('Invalid sigma. Allowable values are ''LR'',''SR'',''LM'',''SM'' (no quotes) or a numerical value', ...
-            'Chebgui error', 'modal');
-        end
     end
     
     % Disable buttons, figures, etc.

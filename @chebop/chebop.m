@@ -65,6 +65,13 @@ N = default_N;
 % Return an empty chebop.
 if isempty(varargin), return, end
 
+% Flip the first two arguments to allow chebop(dom,op) or chebop(op,dom)
+if numel(varargin) > 1 && isa(varargin{1},'function_handle')
+    tmp = varargin{1};
+    varargin{1} = varargin{2};
+    varargin{2} = tmp;
+end
+
 % Domain
 if isnumeric(varargin{1})
     dom = varargin{1};
@@ -80,7 +87,7 @@ else
     varargin(1) = [];
 end
 
-if isempty(varargin), return, end
+if isempty(varargin), return, end  
 
 % Op
 N = set(N,'op',varargin{1});
