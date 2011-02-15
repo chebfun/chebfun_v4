@@ -1,8 +1,8 @@
-function newTree = splitTree_pde(guifile,treeIn)
+function [newTree pdeSign] = splitTree_pde(guifile,treeIn)
 
 % Begin by replacing the subtree which contains the pde_variable with a 0
 
-[newTree pdeTree] = findPDE(treeIn);
+[newTree pdeTree pdeSign] = findPDE(treeIn,1);
 
 % If the top-center entry is a =, we need to convert that into a -.
 % Otherwise, do nothing.
@@ -13,26 +13,53 @@ end
 
 end
 
-function [newTree pdeTree] = findPDE(treeIn)
+function [newTree pdeTree pdeSign] = findPDE(treeIn, pdeSign)
 
 newTree = treeIn;
-leftEmpty = 1; rightEmpty = 1; pdeTree = '';
-% pdeTreeLeft = []; pdeTreeRight = [];
-
+leftEmpty = 1; rightEmpty = 1;
+pdeTree = []; pdeTreeLeft = []; pdeTreeRight = [];
 treeCenter = treeIn.center;
 
 if isfield(treeIn,'left')
-    [newLeft pdeTreeLeft] = findPDE(treeIn.left);
-%     pdeTreeLeft
+    [newLeft pdeTreeLeft pdeSign] = findPDE(treeIn.left,pdeSign);
     newTree.left = newLeft;
     leftEmpty = 0;
 end
 
 if isfield(treeIn,'right')
-    [newRight pdeTreeRight] = findPDE(treeIn.right);
-%     pdeTreeRight
+    [newRight pdeTreeRight pdeSign] = findPDE(treeIn.right, pdeSign);
     newTree.right = newRight;
     rightEmpty = 0;
+end
+
+
+% Return a new pdeTree. If the operator in the center of treeIn is a *,
+% we want to return the whole treeIn (e.g. when we see 1*u_t). If not,
+% we return the latest pdeTree (e.g. when we see u_t+1).
+if ~isempty(pdeTreeLeft)
+    if strcmp(treeCenter{2},'OP*')
+        pdeTree = treeIn;
+    else
+        pdeTree = pdeTreeLeft;
+    end
+end
+if ~isempty(pdeTreeRight)
+    if strcmp(treeCenter,'OP*')
+        pdeTree = treeIn;
+    % If we have a =, and u_t is on the right, we need to switch signs on
+    % the pdeTree.
+    elseif strcmp(treeCenter{2},'OP=')
+        disp('PDE on right')
+        pdeSign = -1*pdeSign;
+        pdeTree = pdeTreeRight;    
+    % If we have a -, and we have u_t on the right we need to switch signs
+    % on the pdeTree.
+    elseif strcmp(treeCenter{2},'OP-') || strcmp(treeCenter{2},'UN-')
+        pdeSign = -1*pdeSign;
+        pdeTree = pdeTreeRight;
+    else
+        pdeTree = pdeTreeRight;
+    end
 end
 
 

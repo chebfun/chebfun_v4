@@ -129,8 +129,10 @@ if ~isempty(rhsString)
     % Check whether we are working with generalized
     % problems or not by comparing B with the identity operator on the domain.
     I = eye(B.domain);
-    I = blkdiag(I,B.blocksize(1));
-    if norm(B(10)-I(10)), generalized = 1; end
+    Iblock = blkdiag(I,B.blocksize(1));
+    
+    opDifference = B(10)-Iblock(10);
+    if ~isempty(opDifference), generalized = 1; end
 end
 
 tolInput = guifile.tol;

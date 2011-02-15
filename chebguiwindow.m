@@ -370,19 +370,9 @@ guidata(hObject, handles);
 % guidata(hObject, handles);
 
 
-function button_holdon_Callback(hObject, eventdata, handles)
-set(handles.button_holdoff,'Value',0);
-
-
-function button_holdoff_Callback(hObject, eventdata, handles)
-set(handles.button_holdon,'Value',0);
-
-
-function input_N_Callback(hObject, eventdata, handles)
-
-
 function timedomain_Callback(hObject, eventdata, handles)
-
+handles.guifile.timedomain = get(hObject,'String');
+guidata(hObject, handles);
 
 % -------------------------------------------------------------------------
 % -------------------- Unsorted functions  --------------------------------

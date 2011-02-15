@@ -19,8 +19,7 @@ if length(pdeVarNames) > 1
         'Only one time derivative per line is allowed');
 end
 % Parse the output from the lexer, looking for syntax errors.
-[syntaxTree pdeSign] = parse(guifile,lexOut);
-
+syntaxTree = parse(guifile,lexOut);
 % pdesign
 
 
@@ -31,10 +30,9 @@ if strcmp(guifile.type,'bvp')
     prefixOut = tree2prefix(guifile,syntaxTree);
 elseif strcmp(guifile.type,'pde')
     % Convert a potential at the top of the tree = to a -.
-    syntaxTree = splitTree_pde(guifile,syntaxTree);
+    [syntaxTree pdeSign] = splitTree_pde(guifile,syntaxTree);
     % Obtain the prefix form.
     prefixOut = tree2prefix(guifile,syntaxTree);
-    
     % pdeSign tells us whether we need to flip the signs. Add a unitary -
     % at the beginning of the expression
     if pdeSign == 1
@@ -66,15 +64,16 @@ elseif strcmp(guifile.type,'eig')
             prefixOutLambda(eigvarLoc,2) = cellstr(repmat('NUM',length(eigvarLoc),1));
         end
         % Change it to infix form
+        prefixOut;
+        prefixOutLambda;
         infixOutLambda = prefix2infix(guifile,prefixOutLambda);
     end
 end
 % Return the derivative on infix form
 infixOut = prefix2infix(guifile,prefixOut);
 
-anFun = infixOut;
 % Finally, remove unneeded parenthesis.
-anFun = parSimp(guifile,anFun);
+anFun = parSimp(guifile,infixOut);
 
 % Convert the cell array varNames into one string
 varString = varNames{1};

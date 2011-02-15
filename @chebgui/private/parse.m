@@ -1,16 +1,15 @@
-function [stackout PDESIGN] = parse(guifiles,lexOutArg)
+function stackout = parse(guifiles,lexOutArg)
 % PARSE - This function parses the output from the lexer.
 %
 % As it is now, it only checks the validity of the syntax. My plan is to
 % modify the code so it returns a syntax tree.
 
 % Initialize all global variables
-global NEXT; global NEXTCOUNTER; global LEXOUT; global pStack; global PDESIGN;
+global NEXT; global NEXTCOUNTER; global LEXOUT; global pStack;
 pStack = [];
 NEXTCOUNTER = 1;
 LEXOUT = lexOutArg;
 NEXT = char(LEXOUT(NEXTCOUNTER,2));
-PDESIGN = 1;
 success = parseSst;
 
 % Return the one tree that is left on the stack
@@ -65,7 +64,7 @@ end
 
 
 function parseExp5()
-global NEXT; global NEXTCOUNTER; global LEXOUT; global PDESIGN;
+global NEXT; global NEXTCOUNTER; global LEXOUT;
 % We begin by checking whether we have hit a terminal case. In that case,
 % we push that into the stack. We need to treat variables with _ in the
 % names separately, as we only allow certain operators around the time
@@ -125,21 +124,13 @@ elseif  strcmp(NEXT,'UN-') || strcmp(NEXT,'UN+') || strcmp(NEXT,'OP-') || strcmp
     % If + or - reaches this far, we have an unary operator.
     % ['UN', char(NEXT(3))] determines whether we have UN+ or UN-.
     newCenterNode = {{char(LEXOUT(NEXTCOUNTER)), ['UN', char(NEXT(3))]}};
-    if strcmp(NEXT,'UN-')
-        swapSign = 1;
-    else
-        swapSign = 0;
-    end
     advance();
     parseExp4();
     
     rightArg =  pop();
     
     pdeflag = rightArg.pdeflag;
-    % Swap the leading sign of the PDE part
-    if pdeflag && swapSign;
-        PDESIGN = -1*PDESIGN;
-    end
+
     newTree = struct('center',newCenterNode,'right', rightArg,...
         'pdeflag',pdeflag);
     push(newTree);
@@ -179,7 +170,7 @@ end
 end
 
 function parseExp1pr()
-global NEXT; global  pStack; global PDESIGN;
+global NEXT; global  pStack;
 if strcmp(NEXT,'OP+')
 
     advance();
@@ -200,10 +191,6 @@ elseif(strcmp(NEXT,'OP-'))
     rightArg = pop();
 
     pdeflag = leftArg.pdeflag || rightArg.pdeflag;
-    % Swap the leading sign of the PDE part
-    if rightArg.pdeflag
-        PDESIGN = -1*PDESIGN;
-    end
     newTree = struct('left',leftArg,'center',{{'-', 'OP-'}},...
         'right',rightArg,'pdeflag',pdeflag);
     push(newTree);
@@ -301,7 +288,7 @@ end
 end
 
 function parseExp0pr()
-global NEXT; global  pStack; global PDESIGN;
+global NEXT; global  pStack;
 if strcmp(NEXT,'OP=')
     leftArg  = pop();
     advance();

@@ -43,6 +43,7 @@ if ~isempty(lambdaTreeLeft)
     % the lambdaTree.
     elseif strcmp(treeCenter{2},'OP=') 
         lambdaSign = -1*lambdaSign;
+        signNew = lambdaSign;
         lambdaTree = lambdaTreeLeft;
     else
         lambdaTree = lambdaTreeLeft;
@@ -55,6 +56,7 @@ if ~isempty(lambdaTreeRight)
     % the lambdaTree.
     elseif strcmp(treeCenter{2},'OP-') || strcmp(treeCenter{2},'UN-')
         lambdaSign = -1*lambdaSign;
+        signNew = lambdaSign;
         lambdaTree = lambdaTreeRight;
     else
         lambdaTree = lambdaTreeRight;
