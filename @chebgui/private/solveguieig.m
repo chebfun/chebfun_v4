@@ -114,7 +114,7 @@ end
 
 % Variable which determines whether it's a generalized problem. If
 % rhsString is empty, we can be sure it's not a generalized problem.
-generalized = 0;
+generalized = 1;
 
 % Create the chebops, and try to linearise them.
 % We will always have a string for the LHS, if the one for RHS is empty, we
@@ -132,7 +132,11 @@ if ~isempty(rhsString)
     Iblock = blkdiag(I,B.blocksize(1));
     
     opDifference = B(10)-Iblock(10);
-    if ~isempty(opDifference), generalized = 1; end
+    opSum = B(10)+Iblock(10);
+    if isempty(nonzeros(opDifference)), generalized = 0; end
+    if isempty(nonzeros(opSum)), generalized = 0; A = -A; end
+else
+    generalized = 0;
 end
 
 tolInput = guifile.tol;

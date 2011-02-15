@@ -52,12 +52,10 @@ end
 if ~isempty(lambdaTreeRight)
     if strcmp(treeCenter,'OP*')
         lambdaTree = treeIn;
-    % If we have a -, and lambda is on the right, we need to switch signs on
-    % the lambdaTree.
-    elseif strcmp(treeCenter{2},'OP-') || strcmp(treeCenter{2},'UN-')
-        lambdaSign = -1*lambdaSign;
-        signNew = lambdaSign;
-        lambdaTree = lambdaTreeRight;
+    % If we have a binary -, and lambda is on the right, we need to switch
+    % signs on the lambdaTree. Add a unary minus at the top of the tree.
+    elseif strcmp(treeCenter{2},'OP-')
+        lambdaTree= struct('center',{{'-','UN-'}},'right', lambdaTreeRight);
     else
         lambdaTree = lambdaTreeRight;
     end

@@ -39,13 +39,12 @@ elseif strcmp(guifile.type,'pde')
         prefixOut = [{'-', 'UN-'}; prefixOut];
     end
 elseif strcmp(guifile.type,'eig')
-    infixOutLambda = '';
+    anFunLambda = '';
     % Convert a potential at the top of the tree = to a -.
     [syntaxTree lambdaTree lambdaSign] = splitTree_eig(guifile,syntaxTree);
     % Obtain the prefix form.
     prefixOut = tree2prefix(guifile,syntaxTree);
-    % Change it to infix form
-    infixOut = prefix2infix(guifile,prefixOut);
+    
     % If lambdaTree is not empty, we convert that tree to prefix-form as
     % well
     if ~isempty(lambdaTree)
@@ -63,10 +62,9 @@ elseif strcmp(guifile.type,'eig')
             prefixOutLambda(eigvarLoc,1) = cellstr(repmat('1',length(eigvarLoc),1));
             prefixOutLambda(eigvarLoc,2) = cellstr(repmat('NUM',length(eigvarLoc),1));
         end
-        % Change it to infix form
-        prefixOut;
-        prefixOutLambda;
+        % Change it to infix form and remove uneccessary parenthesis.
         infixOutLambda = prefix2infix(guifile,prefixOutLambda);
+        anFunLambda = parSimp(guifile,infixOutLambda);
     end
 end
 % Return the derivative on infix form
@@ -83,8 +81,7 @@ end
 anFunComplete = ['@(', varString ') ' anFun];
 
 % Also return the lambda part if we are in EIG mode
-if strcmp(guifile.type,'eig') && ~isempty(infixOutLambda)
-    anFunLambda = parSimp(guifile,infixOutLambda);
+if strcmp(guifile.type,'eig') && ~isempty(anFunLambda)
     anFunLambdaComplete = ['@(', varString ') ' anFunLambda];
     anFunComplete = {anFunComplete;anFunLambdaComplete};
     anFun = {anFun; anFunLambda};
