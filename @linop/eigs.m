@@ -30,7 +30,7 @@ function varargout = eigs(A,varargin)
 %
 %   d = domain(0,pi);
 %   A = diff(d,2) & 'dirichlet';
-%   [V,D]=eigs(A,10);
+%   [V,D] = eigs(A,10);
 %   format long, sqrt(-diag(D))  % integers, to 14 digits
 %
 % See also EIGS, EIG.
@@ -97,14 +97,14 @@ if isempty(sigma)
   delta = min( abs(dif) );   % diffs from 33->65
   bigdel = (delta > 1e-12*norm(lam1,Inf));
   
-  % HACK: Trim off big changes twice. (fixes mathieu chebtest)
+  % Trim off things that are still changing a lot (relative to new size).
   lam1b = lam1; lam1b(bigdel) = 0;
-  bigdel = logical((delta > 1e-12*norm(lam1b,Inf)) + bigdel);
+  bigdel = logical((delta > 1e-3*norm(lam1b,Inf)) + bigdel);
   
   if all(bigdel)
-    % All values changed somewhat--choose the one changing the least.
-    [tmp,idx] = min(delta);
-    sigma = lam1(idx);
+        % All values changed somewhat--choose the one changing the least.
+        [tmp,idx] = min(delta);
+        sigma = lam1(idx);
   elseif numel(breaks) == 2 % Smooth
         % Of those that did not change much, take the smallest cheb coeff
         % vector. 
@@ -329,10 +329,7 @@ end
 
 function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
 
-% [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks);
-% return
-
-    if ~isempty(B)
+    if ~isempty(B) % Generalised
 %         [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks);
 %         return
 
@@ -347,56 +344,64 @@ function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
         % Square up matrices if # of boundary conditions is not the same.
         sizediff = size(Amat,1)-size(Bmat,1);
         Amat = [Amat ; zeros(-sizediff,size(Amat,2))];
-        Bmat = [Bmat ; zeros(sizediff,size(Amat,2))];
+        Bmat = [Bmat ; zeros(sizediff,size(Bmat,2))];
 
         % Compute the generalised eigenvalue problem.       
         [V,D] = eig(full(Amat),full(Bmat));
         
-        % Infinite eigenvalues are dealt with in 'nearest' below.
-        if sizediff > 0 % We created some infinite eigenvalues. Peel them off. 
-            [lam,idx] = sort( abs(diag(D)),'descend' );
-            idx = idx(1:sizediff);
-            D(:,idx) = [];  D(idx,:) = [];  V(:,idx) = [];
-        end
+%         % Infinite eigenvalues are dealt with in 'nearest' below.
+%         if sizediff > 0 % We created some infinite eigenvalues. Peel them off. 
+%             [lam,idx] = sort( abs(diag(D)),'descend' );
+%             idx = idx(1:sizediff);
+%             D(:,idx) = [];  D(idx,:) = [];  V(:,idx) = [];
+%         end
 
         % Find the droids we're looking for.
         idx = nearest(diag(D),sigma,min(k,N));
         V = V(:,idx);
         D = D(idx,idx);
 
-        return
+    else % not generalised
+
+        % Evaluate the Matrix with boundary conditions attached
+        [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,breaks);
+        % Compute the (discrete) e-vals and e-vecs generalised e-val problem.
+
+        m = A.blocksize(1);
+        if m == 1
+            Pmat = [P ; zeros(numel(c),N)];
+        else
+            Pmat = zeros(sum(N)*m);
+            i1 = 0; i2 = 0;
+            for j = 1:A.blocksize(1)
+                ii1 = i1+(1:size(P{j},1));
+                ii2 = i2+(1:size(P{j},2));
+                Pmat(ii1,ii2) = P{j};
+                i1 = ii1(end); i2 = ii2(end);
+            end   
+        end
+
+        [V,D] = eig(full(Amat),full(Pmat));
+        
+        % Compute generalised e-val problem.
+        [V,D] = eig(full(Amat),full(Pmat));
+
+        % Find the droids we're looking for.
+        idx = nearest(diag(D),sigma,min(k,N));
+        V = V(:,idx);
+        D = D(idx,idx);
         
     end
-
-    % Evaluate the Matrix with boundary conditions attached
-    [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,breaks);
-    % Compute the (discrete) e-vals and e-vecs using generalised e-val
-    % problem.
-
-    m = A.blocksize(1);
-    if m == 1
-        Pmat = [P ; zeros(numel(c),N)];
-    else
-        Pmat = zeros(sum(N)*m);
-        i1 = 0; i2 = 0;
-        for j = 1:A.blocksize(1)
-            ii1 = i1+(1:size(P{j},1));
-            ii2 = i2+(1:size(P{j},2));
-            Pmat(ii1,ii2) = P{j};
-            i1 = ii1(end); i2 = ii2(end);
-        end   
-    end
-
-    [W,D] = eig(full(Amat),full(Pmat));
-    idx = nearest(diag(D),sigma,min(k,N));
-    V = W(:,idx);
-    D = D(idx,idx);
-
+    
+            
 %     if size(V,2) < k
 %         % Matrix wasn't big enough
 %         v = ones(size(V,1),1); v(2:2:end) = -1;
 %         V = [V repmat(v,1,k-size(V,2))];
+%         D = NaN(size(V,1),1);
 %     end
+
+
 end
 
 
@@ -405,36 +410,63 @@ function [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks)
     % y is a cell array with the points for each function.
     % N{j}(k) contains the # of pts for equation j on interval k.
     % bks{j}(k:k+1) is the ends of the interval j for equation k.
-    
+       
     m = A.blocksize(1);
     numints = numel(bks)-1;
     if numel(N) == 1, N = repmat(N,1,numints); end
 
-    if ~isempty(B), error('No support for generalised pw eval problems.'); end  
+    if ~isempty(B) % Generalised
+%         [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks);
+%         return
 
-    % Evaluate the Matrix with boundary conditions attached
-    [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,bks);
-    % Compute the (discrete) e-vals and e-vecs using generalised e-val
-    % problem.
-    
-    if m == 1
-        Pmat = [P ; zeros(numel(c),sum(N)*m)];
-    else
-        Pmat = zeros(sum(N)*m);
-        i1 = 0; i2 = 0;
-        for j = 1:A.blocksize(1)
-            ii1 = i1+(1:size(P{j},1));
-            ii2 = i2+(1:size(P{j},2));
-            Pmat(ii1,ii2) = P{j};
-            i1 = ii1(end); i2 = ii2(end);
-        end   
+        % Force difforder to be the same, so that projection P is the same.
+        do = max(A.difforder, B.difforder);
+        A.difforder = do; B.difforder = do;
+        
+        % Evaluate A and Bat size N
+        Amat = feval(A,N,'bc',map,bks);
+        Bmat = feval(B,N,'bc',map,bks);
+
+        % Square up matrices if # of boundary conditions is not the same.
+        sizediff = size(Amat,1)-size(Bmat,1);
+        Amat = [Amat ; zeros(-sizediff,size(Amat,2))];
+        Bmat = [Bmat ; zeros(sizediff,size(Bmat,2))];
+
+        % Compute the generalised eigenvalue problem.       
+        [V,D] = eig(full(Amat),full(Bmat));
+        
+        % Find the droids we're looking for.
+        idx = nearest(diag(D),sigma,min(k,N));
+        V = V(:,idx);
+        D = D(idx,idx);
+
+    else % Not generalised
+
+        % Evaluate the Matrix with boundary conditions attached
+        [Amat,ignored,ignored,ignored,P] = feval(A,N,'bc',map,bks);
+        
+        if m == 1
+            Pmat = [P ; zeros(numel(c),sum(N)*m)];
+        else
+            Pmat = zeros(sum(N)*m);
+            i1 = 0; i2 = 0;
+            for j = 1:A.blocksize(1)
+                ii1 = i1+(1:size(P{j},1));
+                ii2 = i2+(1:size(P{j},2));
+                Pmat(ii1,ii2) = P{j};
+                i1 = ii1(end); i2 = ii2(end);
+            end   
+        end
+
+        % Compute generalised e-val problem.
+        [V,D] = eig(full(Amat),full(Pmat));
+
+        % Find the droids we're looking for.
+        idx = nearest(diag(D),sigma,min(k,N));
+        V = V(:,idx);
+        D = D(idx,idx);
+        
     end
-
-    [W,D] = eig(full(Amat),full(Pmat));
-    idx = nearest(diag(D),sigma,k);
-    V = W(:,idx);
-
-    D = D(idx,idx);
 
     if size(V,2) < k
         % Matrix wasn't big enough
