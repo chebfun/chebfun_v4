@@ -1,13 +1,7 @@
 function pass = orrsommerfeld
-% This test always fails!
-pass = 0;
-
-return
-
-% pass = 0;
-% return
-
-% Eigenvalues of the Orr-Sommerfeld operator
+% Orr-Sommerfeld eigenvalues for plane Poiseuille flow (just barely
+% eigenvalue stable). Tests a fourth-order generalized eigenvalue problem,
+% and the 'lr' argument of EIGS. 
 
 tol = chebfunpref('eps');
 
@@ -31,7 +25,7 @@ B.op = @(u) diff(u,2) - u;
 A.lbc = @(u) [u , diff(u)];
 A.rbc = @(u) [u , diff(u)];
 
-lam = eigs(A,B,4,'LR');
+lam = eigs(A,B,10,'LR');
 
 correct = [
      -7.819078104994955e-005-2.615676705860811e-001i
@@ -46,6 +40,6 @@ correct = [
     -1.564823130376978e-001-8.413737949305676e-001i
 ];
 
-err = norm( lam-correct, Inf)
+err = norm( lam-correct, Inf);
 pass = err < 1e-7*(tol/eps);
 

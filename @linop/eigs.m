@@ -102,9 +102,9 @@ if isempty(sigma)
   bigdel = logical((delta > 1e-3*norm(lam1b,Inf)) + bigdel);
   
   if all(bigdel)
-        % All values changed somewhat--choose the one changing the least.
-        [tmp,idx] = min(delta);
-        sigma = lam1(idx);
+    % All values changed somewhat--choose the one changing the least.
+    [tmp,idx] = min(delta);
+    sigma = lam1(idx);
   elseif numel(breaks) == 2 % Smooth
         % Of those that did not change much, take the smallest cheb coeff
         % vector. 
@@ -221,7 +221,7 @@ end
       v(2:2:end) = -1;
     else
       [V,D] = bc_eig(A,B,N,k,sigma,map,breaks);
-      v = sum( sum( reshape(V,[N,m,k]),2), 3);
+      v = sum( sum( reshape(V,[N,m,size(V,2)]),2), 3);
       v = filter(v,1e-8);
     end
   end
@@ -257,7 +257,7 @@ end
 
     [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks);
     
-    v = sum(reshape(V,[sum(N),k,m]),3);  % Combine equations
+    v = sum(reshape(V,[sum(N),size(V,2),m]),3);  % Combine equations
     v = sum(v,2);                        % Combine nodes
 
     % Filter
@@ -295,7 +295,7 @@ if isempty(B)
   R = -L(elim,elim)\L(elim,~elim);  % maps interior to removed values
   L = L(~elim,~elim) + L(~elim,elim)*R;
   [W,D] = eig(full(L));
-  idx = nearest(diag(D),sigma,min(k,N));
+  idx = nearest(diag(D),W,sigma,min(k,N));
   V = zeros(N*m,length(idx));
   V(~elim,:) = W(:,idx);
   V(elim,:) = R*V(~elim,:);
@@ -319,7 +319,7 @@ else
   [lam,idx] = sort( abs(diag(D)),'descend' );
   idx = idx(1:sum(elim));
   D(:,idx) = [];  D(idx,:) = [];  W(:,idx) = [];
-  idx = nearest(diag(D),sigma,min(k,N));
+  idx = nearest(diag(D),W,sigma,min(k,N));
   V = W(:,idx);
 end
 D = D(idx,idx);
@@ -330,8 +330,8 @@ end
 function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
 
     if ~isempty(B) % Generalised
-%         [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks);
-%         return
+% [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks);
+% return
 
         % Force difforder to be the same, so that projection P is the same.
         do = max(A.difforder, B.difforder);
@@ -357,37 +357,35 @@ function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
 %         end
 
         % Find the droids we're looking for.
-        idx = nearest(diag(D),sigma,min(k,N));
+        idx = nearest(diag(D),V,sigma,min(k,N));
         V = V(:,idx);
         D = D(idx,idx);
 
     else % not generalised
 
-        % Evaluate the Matrix with boundary conditions attached
-        [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,breaks);
+    % Evaluate the Matrix with boundary conditions attached
+    [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,breaks);
         % Compute the (discrete) e-vals and e-vecs generalised e-val problem.
 
-        m = A.blocksize(1);
-        if m == 1
-            Pmat = [P ; zeros(numel(c),N)];
-        else
-            Pmat = zeros(sum(N)*m);
-            i1 = 0; i2 = 0;
-            for j = 1:A.blocksize(1)
-                ii1 = i1+(1:size(P{j},1));
-                ii2 = i2+(1:size(P{j},2));
-                Pmat(ii1,ii2) = P{j};
-                i1 = ii1(end); i2 = ii2(end);
-            end   
-        end
+    m = A.blocksize(1);
+    if m == 1
+        Pmat = [P ; zeros(numel(c),N)];
+    else
+        Pmat = zeros(sum(N)*m);
+        i1 = 0; i2 = 0;
+        for j = 1:A.blocksize(1)
+            ii1 = i1+(1:size(P{j},1));
+            ii2 = i2+(1:size(P{j},2));
+            Pmat(ii1,ii2) = P{j};
+            i1 = ii1(end); i2 = ii2(end);
+        end   
+    end
 
-        [V,D] = eig(full(Amat),full(Pmat));
-        
         % Compute generalised e-val problem.
         [V,D] = eig(full(Amat),full(Pmat));
 
         % Find the droids we're looking for.
-        idx = nearest(diag(D),sigma,min(k,N));
+        idx = nearest(diag(D),V,sigma,min(k,N));
         V = V(:,idx);
         D = D(idx,idx);
         
@@ -410,7 +408,7 @@ function [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks)
     % y is a cell array with the points for each function.
     % N{j}(k) contains the # of pts for equation j on interval k.
     % bks{j}(k:k+1) is the ends of the interval j for equation k.
-       
+    
     m = A.blocksize(1);
     numints = numel(bks)-1;
     if numel(N) == 1, N = repmat(N,1,numints); end
@@ -436,33 +434,33 @@ function [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks)
         [V,D] = eig(full(Amat),full(Bmat));
         
         % Find the droids we're looking for.
-        idx = nearest(diag(D),sigma,min(k,N));
+        idx = nearest(diag(D),V,sigma,min(k,N));
         V = V(:,idx);
         D = D(idx,idx);
 
     else % Not generalised
 
-        % Evaluate the Matrix with boundary conditions attached
+    % Evaluate the Matrix with boundary conditions attached
         [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,bks);
-        
-        if m == 1
-            Pmat = [P ; zeros(numel(c),sum(N)*m)];
-        else
-            Pmat = zeros(sum(N)*m);
-            i1 = 0; i2 = 0;
-            for j = 1:A.blocksize(1)
-                ii1 = i1+(1:size(P{j},1));
-                ii2 = i2+(1:size(P{j},2));
-                Pmat(ii1,ii2) = P{j};
-                i1 = ii1(end); i2 = ii2(end);
-            end   
-        end
+    
+    if m == 1
+        Pmat = [P ; zeros(numel(c),sum(N)*m)];
+    else
+        Pmat = zeros(sum(N)*m);
+        i1 = 0; i2 = 0;
+        for j = 1:A.blocksize(1)
+            ii1 = i1+(1:size(P{j},1));
+            ii2 = i2+(1:size(P{j},2));
+            Pmat(ii1,ii2) = P{j};
+            i1 = ii1(end); i2 = ii2(end);
+        end   
+    end
 
         % Compute generalised e-val problem.
         [V,D] = eig(full(Amat),full(Pmat));
 
         % Find the droids we're looking for.
-        idx = nearest(diag(D),sigma,min(k,N));
+        idx = nearest(diag(D),V,sigma,min(k,N));
         V = V(:,idx);
         D = D(idx,idx);
         
@@ -479,7 +477,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Returns index vector that sorts eigenvalues by the given criterion.
-function idx = nearest(lam,sigma,k)
+function idx = nearest(lam,V,sigma,k)
 
 if isnumeric(sigma)
   if isinf(sigma) 
@@ -504,8 +502,31 @@ end
 % RHS matrix of the generalized eigenproblem.
 idx( ~isfinite(lam(idx)) ) = [];
 
-% Return the first k, if more are available.
-idx = idx( 1:min(k,length(idx)) );  
+% Propose to keep these modes.
+keeper = false(size(idx));
+keeper(1:min(k,length(idx))) = true;
+
+% Screen out spurious modes. These are dominated by high frequency for all
+% values of N. (Known to arise for some formulations in generalized
+% eigenproblems, specifically Orr-Sommerfeld.)
+%FIXME: This will have to be modified to work with piecewise functions.
+queue = find(keeper);
+while ~isempty(queue)
+  j = queue(1);  
+  vc = chebpoly( chebfun(V(:,idx(j))), 1 );
+  n = length(vc); 
+  if norm( vc(1:ceil(n/10)) ) > 0.5*norm(vc)
+    keeper(j) = false;
+    if queue(end) < length(idx)
+      m = queue(end)+1;
+      keeper(m) = true;  queue = [queue(:); m];
+    end
+  end
+  queue(1) = [];
+end
+
+% Return the keepers.
+idx = idx( keeper );  
 
 end
 

@@ -16,4 +16,4 @@ pass(2) = abs(ans - 1.985446580874100) < tol;
 % pass(3) = ~(ans-318);
 
 [d,x] = domain([-20,20]); L = diff(d,2)-diag(x)&'dirichlet';% plot(L\1)
-pass(3) = abs(feval(L\1,-5) - 1.981471116055969) < 20*tol;
+pass(3) = abs(feval(L\1,-5) - 1.981471116055969) < 50*tol;
