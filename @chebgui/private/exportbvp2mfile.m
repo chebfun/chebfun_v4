@@ -61,6 +61,9 @@ else
     fprintf(fid,'.\n');
 end
 
+fprintf(fid,'%% Create the linear chebfun on the specified domain.\n');
+fprintf(fid,'%s = chebfun(''x'',[%s %s]);\n',indVarName,a,b);
+
 fprintf(fid,['%% Create a chebop on the specified domain.\n']);
 fprintf(fid,'N = chebop(%s,%s);\n',a,b);
 
