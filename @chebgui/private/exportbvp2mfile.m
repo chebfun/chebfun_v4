@@ -30,7 +30,7 @@ deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
-[deString allVarString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarName ignored ignored allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
 
 % Support for periodic boundary conditions
 if (~isempty(lbcInput{1}) && strcmpi(lbcInput{1},'periodic')) || ...
@@ -49,7 +49,7 @@ fprintf(fid,'%% for %s in [%s,%s]',indVarName,a,b);
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     fprintf(fid,', subject to\n%%');
     if  ~isempty(lbcInput{1})
-        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann','periodic'}))
+        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann'}))
             % Sort out when just function values are passed as bcs.
             lbcInput{1} = sprintf('%s = %s',allVarString,lbcInput{1});
         end
@@ -64,7 +64,7 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
         fprintf(fid,'%% and\n%%',indVarName,a);
     end
     if ~isempty(rbcInput{1})
-        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann','periodic'}))
+        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann'}))
             % Sort out when just function values are passed as bcs.
             rbcInput{1} = sprintf('%s = %s',allVarString,rbcInput{1});
         end
@@ -82,17 +82,20 @@ else
     fprintf(fid,'.\n');
 end
 
-fprintf(fid,'%% Create the linear chebfun on the specified domain.\n');
-fprintf(fid,'%s = chebfun(''x'',[%s %s]);\n',indVarName,a,b);
+% fprintf(fid,'%% Create the linear chebfun on the specified domain.\n');
+% fprintf(fid,['%% Create a chebop on the specified domain.\n']);
+% fprintf(fid,'N = chebop(%s,%s);\n',a,b);
+% fprintf(fid,'\n%% Make an assignment to the differential eq. of the chebop.\n');
+% fprintf(fid,'N.op = %s;\n',deString);
 
-fprintf(fid,['%% Create a chebop on the specified domain.\n']);
-fprintf(fid,'N = chebop(%s,%s);\n',a,b);
+fprintf(fid,'%% Define the domain.\n');
+fprintf(fid,'dom = [%s, %s];\n',a,b);
 
-fprintf(fid,'\n%% Make an assignment to the differential eq. of the chebop.\n');
-fprintf(fid,'N.op = %s;\n',deString);
+fprintf(fid,'\n%% Assign the differential equation to a chebop on that domain.\n');
+fprintf(fid,'N = chebop(%s,dom);\n',deString);
 
 % Setup for the rhs
-fprintf(fid,'\n%% Set up the rhs of the differential equation\n');
+fprintf(fid,'\n%% Set up the rhs of the differential equation so that N(%s) = rhs.\n',allVarString);
 
 % If we have a coupled system, we need create a array of the inputs
 if size(deRHSInput,1) > 1
@@ -127,8 +130,11 @@ if useLatest
     fprintf(fid,['\n%% Note that it is not possible to use the "Use latest"',...
         'option \n%% when exporting to .m files. \n']);
 elseif ~isempty(initInput)
-    fprintf(fid,'\n%% Assign an initial guess to the chebop.\n');
-    fprintf(fid,'N.guess = %s;\n',vectorize(char(initInput)));
+    fprintf(fid,'\n%% Construct a linear chebfun on the domain,\n');
+    fprintf(fid,'%s = chebfun(@(%s) %s, dom);\n',indVarName,indVarName,indVarName);
+    fprintf(fid,'%% and ssign an initial guess to the chebop.\n');
+%     fprintf(fid,'N.init = %s;\n',vectorize(char(initInput)));
+    fprintf(fid,'N.init = %s;\n',vectorize(char(initInput)));
 end
 
 % Set up preferences
@@ -169,26 +175,26 @@ end
 
 
 
-fprintf(fid,['\n%% Solve the problem using solvebvp (a function which ' ...
-    'offers same\n%% functionality as nonlinear backslash but more '...
-    'customizeability).\n']);
-fprintf(fid,'[u normVec isLinear] = solvebvp(N,rhs,''options'',options);\n');
+fprintf(fid,['\n%% Solve the problem using solvebvp (a routine which ' ...
+    'offers the same\n%% functionality as nonlinear backslash, but with more '...
+    'customizability).\n']);
+% fprintf(fid,'[u normVec] = solvebvp(N,rhs,''options'',options);\n');
+fprintf(fid,'u = solvebvp(N,rhs,''options'',options);\n');
 
 fprintf(fid,'\n%% Create plot of the solution and the norm of the updates.\n');
 
 
-
-
-fprintf(fid,'figure\nplot(u,''LineWidth'',2),title(''Solution at the end of iteration'')\n');
-fprintf(fid,'if ~isLinear\n\tfigure\n\tsemilogy(normVec,''-*''),title(''Norm of updates'')\n');
-fprintf(fid,'\txlabel(''Number of iteration'')\n');
-fprintf(fid,...
-    ['\tif length(normVec) > 1\n' ...
-        '\t\tXTickVec = 1:max(floor(length(normVec)/5),1):length(normVec);\n'...
-        '\t\tset(gca,''XTick'', XTickVec), xlim([1 length(normVec)]), grid on\n'...
-    '\telse\n'...
-    '   \t\tset(gca,''XTick'', 1)\n'...
-    '\tend\nend\n']);
-
+fprintf(fid,['figure\nplot(u,''LineWidth'',2)\ntitle(''Final solution''), ',...
+    'xlabel(''%s'')'],indVarName);
+if numel(allVarNames) == 1
+    fprintf(fid,', ylabel(''%s'')',allVarNames{:});
+else
+    leg = '';
+    for k = 1:numel(allVarNames)-1
+        leg = [leg '''' allVarNames{k} '''' ','];
+    end
+    leg = [leg '''' allVarNames{k+1} ''''];
+    fprintf(fid,', legend(%s)\n',leg);
+end
 fclose(fid);
 end

@@ -18,7 +18,7 @@ allVarNames = [];
 % a '_' is located in rhs.
 
 % [field indVarName]  = setupLine(input,rhs,type)
-pdeVarName = '';
+pdeVarNames = '';
 if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
     [anFun indVarName allVarNames pdeVarNames] = setupLine(guifile,input{1},rhs{1},type);
 %     idx = strfind(rhs{1}, '_');
@@ -44,7 +44,6 @@ if numOfRows == 1 % Not a system, can call convert2anon with two output argument
     if strcmp(type,'DE')
         allVarString = allVarNames{1};
     end
-   
     
     % Create the string which will become the anonymous function.
     % Put x (or t) as the first argument of the anonymous function if we

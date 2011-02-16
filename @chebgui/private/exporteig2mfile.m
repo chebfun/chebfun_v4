@@ -152,7 +152,7 @@ fprintf(fid,'%% for %s in [%s,%s]',indVarName,a,b);
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     fprintf(fid,', subject to\n%%');
     if  ~isempty(lbcInput{1})
-        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann','periodic'}))
+        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann'}))
             % Sort out when just function values are passed as bcs.
             lbcInput{1} = sprintf('%s = %s',allVarString,lbcInput{1});
         end
@@ -167,7 +167,7 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
         fprintf(fid,'%% and\n%%',indVarName,a);
     end
     if ~isempty(rbcInput{1})
-        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann','periodic'}))
+        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann'}))
             % Sort out when just function values are passed as bcs.
             rbcInput{1} = sprintf('%s = %s',allVarString,rbcInput{1});
         end
@@ -190,14 +190,14 @@ if ~generalized
     fprintf(fid,'dom = [%s,%s];\n',a,b);
     fprintf(fid,['\n%% Assign the equation to a chebop N such that' ...
         ' N(u) = %s*u.\n'],lname);
-    fprintf(fid,'N = chebop(%s,d);\n',lhsString);
+    fprintf(fid,'N = chebop(%s,dom);\n',lhsString);
 else
     fprintf(fid,'%% Define the domain we''re working on.\n');
     fprintf(fid,'dom = [%s,%s];\n',a,b);
     fprintf(fid,['\n%% Assign the equation to two chebops N and B such that' ...
         ' N(u) = %s*B(u).\n'],lname);
-    fprintf(fid,'N = chebop(%s,d);\n',lhsString);
-    fprintf(fid,'B = chebop(%s,d);\n',rhsString);
+    fprintf(fid,'N = chebop(%s,dom);\n',lhsString);
+    fprintf(fid,'B = chebop(%s,dom);\n',rhsString);
 end
 
 % Make assignments for left and right BCs.

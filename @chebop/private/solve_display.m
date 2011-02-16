@@ -143,13 +143,51 @@ switch(phase)
         end
         drawnow
     case 'final'
-                
+        
         if strcmp(plotMode,'on')
             if ~guiMode
                 figure(fig), clf
-                plot(u), title('Solution at end of iteration')
+                plot(u), title('Final Solution')
             end
-        end
+        elseif ~strcmp(plotMode,'off')
+            if ~guiMode
+                figure(fig)
+                subplot(2,1,1)
+                plot(u,'.-'), title('Final solution')
+                subplot(2,1,2)
+                if numel(du) == 1 % If we have only one function, plot update in red
+                    plot(du,'r.-'), title('Final correction step')
+                else
+                    plot(du,'.-'), title('Final correction step')
+                end
+                if strcmp(mode,'iter')
+                    figure
+                    nargin
+                    normVec = lambda;
+                    semilogy(normVec,'-*'),title('Norm of updates')
+                    xlabel('Iteration number')
+                    if length(normVec) > 1
+                        XTickVec = 1:max(floor(length(normVec)/5),1):length(normVec);
+                        set(gca,'XTick', XTickVec), xlim([1 length(normVec)]), grid on
+                    else
+                        set(gca,'XTick', 1)
+                    end
+                end
+                
+            else
+                axes(guihandles{1})
+                plot(u,'.-'), title('Final solution')
+                if pref.grid, grid on, end
+                axes(guihandles{2})
+                if numel(du) == 1 % If we have only one function, plot update in red
+                    plot(du,'r.-'), title('Final correction step')
+                    if pref.grid, grid on, end
+                else
+                    plot(du,'.-'), title('Final correction step')
+                    if pref.grid, grid on, end
+                end
+            end
+        end 
         
         if strcmp(mode,'iter') || strcmp(mode,'final')
             if ~guiMode

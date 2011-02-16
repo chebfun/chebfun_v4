@@ -23,6 +23,9 @@ deRHSInput = 'u_t';
 initInput = guifile.init;
 tt = guifile.timedomain;
 
+xName = 'x';
+tName = 't';
+
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
@@ -69,11 +72,11 @@ for k = 1:numel(deInput)
     fprintf(fid,'%%   %s,\n',deInput{k});
 end
 tmpt = eval(tt); 
-fprintf(fid,'%% for %s in [%s,%s] and t in [%s,%s]',indVarName,a,b,num2str(tmpt(1)),num2str(tmpt(end)));
+fprintf(fid,'%% for %s in [%s,%s] and %s in [%s,%s]',xName,a,b,tName,num2str(tmpt(1)),num2str(tmpt(end)));
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     fprintf(fid,', subject to\n%%');
     if ~isempty(lbcInput{1})
-        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann','periodic'}))
+        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann'}))
             % Sort out when just function values are passed as bcs.
             lbcInput{1} = sprintf('%s = %s',allVarString,lbcInput{1});
         end      
@@ -82,13 +85,13 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
             fprintf(fid,'%s',lbcInput{k});
             if k~=numel(lbcInput) && numel(lbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,' at %s = % s\n',indVarName,a);
+        fprintf(fid,' at %s = % s\n',xName,a);
     end
     if  ~isempty(lbcInput{1}) && ~isempty(rbcInput{1})
-        fprintf(fid,'%% and\n%%',indVarName,a);
+        fprintf(fid,'%% and\n%%',xName,a);
     end
     if ~isempty(rbcInput{1})
-        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann','periodic'}))
+        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann'}))
             % Sort out when just function values are passed as bcs.
             rbcInput{1} = sprintf('%s = %s',allVarString,rbcInput{1});
         end
@@ -97,7 +100,7 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
             fprintf(fid,'%s',rbcInput{k});
             if k~=numel(rbcInput) && numel(rbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,' at %s = % s\n',indVarName,b);
+        fprintf(fid,' at %s = % s\n',xName,b);
     end
     fprintf(fid,'\n');
 elseif periodic
@@ -106,11 +109,15 @@ else
     fprintf(fid,'.\n');
 end
 
-fprintf(fid, '%% Create a domain and the linear function on it.\n');
-fprintf(fid,'[d,%s] = domain(%s,%s);\n',indVarName,a,b);
+% fprintf(fid, '%% Create a domain and the linear function on it.\n');
+% fprintf(fid,'[d,%s] = domain(%s,%s);\n',indVarName,a,b);
+% fprintf(fid,['\n%% Construct a discretisation of the time domain to solve on.\n']);
+% fprintf(fid,'t = %s;\n',tt);
 
-fprintf(fid,['\n%% Construct a discretisation of the time domain to solve on.\n']);
-fprintf(fid,'t = %s;\n',tt);
+fprintf(fid, '%% Create an interval of the space domain,\n');
+fprintf(fid,'dom = [%s,%s];\n',a,b);
+fprintf(fid,'%% and a discretisation of the time domain.\n');
+fprintf(fid,'%s = %s;\n',tName,tt);
 
 fprintf(fid,'\n%% Make the rhs of the PDE.\n');
 fprintf(fid,'pdefun = %s;\n',deString);
@@ -118,7 +125,7 @@ fprintf(fid,'pdefun = %s;\n',deString);
 % Make assignments for left and right BCs.
 fprintf(fid,'\n%% Assign boundary conditions.\n');
 if ~isempty(lbcInput{1})
-    [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
+    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
     idx = strfind(lbcString, ')');
     if ~isempty(idx)
         % Support for sum and cumsum
@@ -136,7 +143,7 @@ if ~isempty(lbcInput{1})
 end
 
 if ~isempty(rbcInput{1})
-    [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
+    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
     idx = strfind(rbcString, ')');
     if ~isempty(idx)
         % Support for sum and cumsum
@@ -158,10 +165,12 @@ if periodic
 end
 
 % Set up the initial condition
+fprintf(fid,'\n%% Construct a linear chebfun on the domain,\n');
+fprintf(fid,'%s = chebfun(@(%s) %s, dom);\n',xName,xName,xName);
 if iscell(initInput) && numel(initInput) > 1
-    fprintf(fid,'\n%% Create a chebfun of the initial conditions.\n');
+    fprintf(fid,'%% and of the initial conditions.\n');
 else
-    fprintf(fid,'\n%% Create a chebfun of the initial condition.\n');
+    fprintf(fid,'%% and of the initial condition.\n');
 end
 if ischar(initInput)
     % Get the strings of the dependant variable.
@@ -174,9 +183,9 @@ if ischar(initInput)
         s = tmp(1:idx(1)-1);
     end 
     sol = s; sol0 = [sol '0'];
-    findx = strfind(initInput,'x');
+    findx = strfind(initInput,xName);
     if isempty(findx)
-        fprintf(fid,'%s = chebfun(%s,d);\n',sol0,initInput);
+        fprintf(fid,'%s = chebfun(%s,dom);\n',sol0,initInput);
     else
         fprintf(fid,'%s = %s;\n',sol0,vectorize(initInput));
     end        
@@ -286,7 +295,7 @@ else
     M = numel(deInput);
     for k = 1:numel(deInput)
         fprintf(fid,'subplot(1,%d,%d)\n',M,k);
-        fprintf(fid,'waterfall(%s,t,''simple'',''linewidth'',2)\n',s{k});
+        fprintf(fid,'waterfall(%s,t,''linewidth'',2)\n',s{k});
         fprintf(fid,'xlabel(''x''), ylabel(''t''), title(''%s'')\n',s{k});
     end
 end

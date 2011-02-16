@@ -277,7 +277,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     % return the latest solution
     if ~isempty(guihandles) && strcmpi(get(guihandles{6},'String'),'Solve')
         nrmDeltaRelvec(counter+1:end) = [];
-        solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr)
+        solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
         return
     end
     
@@ -286,7 +286,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
 end
 % Clear up norm vector
 nrmDeltaRelvec(counter+1:end) = [];
-solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr)
+solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
 
 % Issue a warning message if stagnated. Should this in output argument
 % (i.e. flag)?
