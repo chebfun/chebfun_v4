@@ -443,7 +443,7 @@ function [V,D] = bc_eig_sys(A,B,N,k,sigma,map,bks)
     else % Not generalised
 
         % Evaluate the Matrix with boundary conditions attached
-        [Amat,ignored,ignored,ignored,P] = feval(A,N,'bc',map,bks);
+        [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,bks);
         
         if m == 1
             Pmat = [P ; zeros(numel(c),sum(N)*m)];
