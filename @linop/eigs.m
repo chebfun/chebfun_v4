@@ -267,10 +267,6 @@ end
       v(ii) = filter(v(ii),1e-8);
     end
     v = {v};  
-    
-%     tmp = chebfun(v{:});
-%     chebpolyplot(tmp)
-%     pause
 
     % Store these to be used by the wrapper function
     Nout = N;
@@ -387,7 +383,6 @@ function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
         D = D(idx,idx);
         
     end
-    
             
 %     if size(V,2) < k
 %         % Matrix wasn't big enough
@@ -395,7 +390,6 @@ function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
 %         V = [V repmat(v,1,k-size(V,2))];
 %         D = NaN(size(V,1),1);
 %     end
-
 
 end
 
