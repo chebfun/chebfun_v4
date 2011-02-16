@@ -111,6 +111,14 @@ else
     generalized = 0;
 end
 
+% Support for periodic boundary conditions
+if (~isempty(lbcInput{1}) && strcmpi(lbcInput{1},'periodic')) || ...
+        (~isempty(rbcInput{1}) && strcmpi(rbcInput{1},'periodic'))
+    lbcInput{1} = []; rbcInput{1} = []; periodic = true;
+else
+    periodic = false;
+end
+
 % Find the eigenvalue name
 mask = strcmp(deInput{1},{'lambda','lam','l'});
 if mask(1), lname = 'lambda'; 
@@ -128,30 +136,32 @@ else
     userName = getenv('USER');
 end
 
-fprintf(fid,'%% %s - Executable .m file for solving an eigenvalue problem.\n',filename);
-fprintf(fid,'%% Automatically created with from chebfun/chebgui by user %s\n',userName);
+fprintf(fid,'%% %s - An executable M-file file for solving an eigenvalue problem.\n',filename);
+fprintf(fid,'%% Automatically created from chebfun/chebgui by user %s\n',userName);
 fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
-fprintf(fid,'%% Solving\n%%');
-for k = 1:numel(deInput)
-    fprintf(fid,'   %s',deInput{k});
-end
+fprintf(fid,'%% Solving\n');
 if numel(deInput) == 1 && ~any(deInput{1}=='=')
-    fprintf(fid,' = %s*%s',lname,allVarString);
+    fprintf(fid,'%%   %s = %s*%s\n',deInput{1},lname,allVarString);
+else
+    for k = 1:numel(deInput)
+        fprintf(fid,'%%   %s,\n',deInput{k});
+    end
 end
-fprintf(fid,'\n');
 fprintf(fid,'%% for %s in [%s,%s]',indVarName,a,b);
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
-    fprintf(fid,',\n%% subject to\n%%');
+    fprintf(fid,', subject to\n%%');
     if  ~isempty(lbcInput{1})
         if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann','periodic'}))
             % Sort out when just function values are passed as bcs.
             lbcInput{1} = sprintf('%s = %s',allVarString,lbcInput{1});
         end
+        fprintf(fid,'   ');
         for k = 1:numel(lbcInput)
-            fprintf(fid,'   %s,\t',lbcInput{k});
+            fprintf(fid,'%s',lbcInput{k});
+            if k~=numel(lbcInput) && numel(lbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,'at %s = % s\n',indVarName,a);
+        fprintf(fid,' at %s = % s\n',indVarName,a);
     end
     if  ~isempty(lbcInput{1}) && ~isempty(rbcInput{1})
         fprintf(fid,'%% and\n%%',indVarName,a);
@@ -161,12 +171,16 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
             % Sort out when just function values are passed as bcs.
             rbcInput{1} = sprintf('%s = %s',allVarString,rbcInput{1});
         end
+        fprintf(fid,'   ');
         for k = 1:numel(rbcInput)
-            fprintf(fid,'   %s,\t',rbcInput{k});
+            fprintf(fid,'%s',rbcInput{k});
+            if k~=numel(rbcInput) && numel(rbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,'at %s = % s\n',indVarName,b);
+        fprintf(fid,' at %s = % s\n',indVarName,b);
     end
     fprintf(fid,'\n');
+elseif periodic
+    fprintf(fid,', subject to periodic boundary conditions.\n\n');
 else
     fprintf(fid,'.\n');
 end
@@ -195,6 +209,9 @@ end
 if ~isempty(rbcInput{1})
     rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
     fprintf(fid,'N.rbc = %s;\n',rbcString);
+end
+if periodic
+    fprintf(fid,'N.bc = ''periodic'';\n');
 end
 
 fprintf(fid,'\n%% Number of eigenvalue and eigenmodes to compute.\n');

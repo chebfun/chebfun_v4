@@ -9,8 +9,8 @@ else
     userName = getenv('USER');
 end
 
-fprintf(fid,'%% %s - Executable .m file for solving a boundary value problem.\n',filename);
-fprintf(fid,'%% Automatically created with from chebbvp GUI by user %s\n',userName);
+fprintf(fid,'%% %s - an executable M-file file for solving a boundary value problem.\n',filename);
+fprintf(fid,'%% Automatically created from chebfun/chebgui by user %s\n',userName);
 fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 % Extract information from the GUI fields
@@ -32,31 +32,52 @@ rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
 [deString allVarString indVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
 
-% Print the BVP
-fprintf(fid,'%% Solving\n%%');
-for k = 1:numel(deInput)
-    fprintf(fid,'   %s\t',deInput{k});
+% Support for periodic boundary conditions
+if (~isempty(lbcInput{1}) && strcmpi(lbcInput{1},'periodic')) || ...
+        (~isempty(rbcInput{1}) && strcmpi(rbcInput{1},'periodic'))
+    lbcInput{1} = []; rbcInput{1} = []; periodic = true;
+else
+    periodic = false;
 end
-fprintf(fid,'\n');
+
+% Print the BVP
+fprintf(fid,'%% Solving\n');
+for k = 1:numel(deInput)
+    fprintf(fid,'%%   %s,\n',deInput{k});
+end
 fprintf(fid,'%% for %s in [%s,%s]',indVarName,a,b);
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
-    fprintf(fid,',\n%% subject to\n%%');
+    fprintf(fid,', subject to\n%%');
     if  ~isempty(lbcInput{1})
-        for k = 1:numel(lbcInput)
-            fprintf(fid,'   %s,\t',lbcInput{k});
+        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann','periodic'}))
+            % Sort out when just function values are passed as bcs.
+            lbcInput{1} = sprintf('%s = %s',allVarString,lbcInput{1});
         end
-        fprintf(fid,'at %s = % s\n',indVarName,a);
+        fprintf(fid,'   ');
+        for k = 1:numel(lbcInput)
+            fprintf(fid,'%s',lbcInput{k});
+            if k~=numel(lbcInput) && numel(lbcInput)>1, fprintf(fid,', '); end
+        end
+        fprintf(fid,' at %s = % s\n',indVarName,a);
     end
     if  ~isempty(lbcInput{1}) && ~isempty(rbcInput{1})
         fprintf(fid,'%% and\n%%',indVarName,a);
     end
     if ~isempty(rbcInput{1})
-        for k = 1:numel(rbcInput)
-            fprintf(fid,'   %s,\t',rbcInput{k});
+        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann','periodic'}))
+            % Sort out when just function values are passed as bcs.
+            rbcInput{1} = sprintf('%s = %s',allVarString,rbcInput{1});
         end
-        fprintf(fid,'at %s = % s\n',indVarName,b);
+        fprintf(fid,'   ');
+        for k = 1:numel(rbcInput)
+            fprintf(fid,'%s',rbcInput{k});
+            if k~=numel(rbcInput) && numel(rbcInput)>1, fprintf(fid,', '); end
+        end
+        fprintf(fid,' at %s = % s\n',indVarName,b);
     end
     fprintf(fid,'\n');
+elseif periodic
+    fprintf(fid,', subject to periodic boundary conditions.\n\n');
 else
     fprintf(fid,'.\n');
 end
@@ -96,6 +117,9 @@ if ~isempty(rbcInput{1})
     rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString );
     fprintf(fid,'N.rbc = %s;\n',rbcString);
 end
+if periodic
+    fprintf(fid,'N.bc = ''periodic'';\n');
+end
 
 % Set up for the initial guess of the solution.
 useLatest = strcmpi(initInput,'Using latest solution');
@@ -108,14 +132,14 @@ elseif ~isempty(initInput)
 end
 
 % Set up preferences
-fprintf(fid,'\n%% Setup preferences for solving the problem \n');
+fprintf(fid,'\n%% Setup preferences for solving the problem.\n');
 fprintf(fid,'options = cheboppref;\n');
 
 % Option for tolerance
 tolInput = guifile.tol;
 
 if ~isempty(tolInput)
-    fprintf(fid,'\n%% Option for tolerance \n');
+    fprintf(fid,'\n%% Option for tolerance.\n');
     fprintf(fid,'options.deltol = %s;\n',tolInput);
     fprintf(fid,'options.restol = %s;\n',tolInput);
 end
@@ -125,7 +149,7 @@ fprintf(fid,'options.display = ''iter'';\n');
 % Option for damping
 dampedOnInput = guifile.options.damping;
 
-fprintf(fid,'\n%% Option for damping \n');
+fprintf(fid,'\n%% Option for damping.\n');
 if strcmp(dampedOnInput,'1')
     fprintf(fid,'options.damped = ''on'';\n');
 else
@@ -136,10 +160,10 @@ end
 plottingOnInput = guifile.options.plotting;
 
 if ~strcmp(plottingOnInput,'off')
-    fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
+    fprintf(fid,'\n%% Option for determining how long each Newton step is shown.\n');
     fprintf(fid,'options.plotting = %s;\n',plottingOnInput);
 else
-    fprintf(fid,'\n%% Option for determining how long each Newton step is shown\n');
+    fprintf(fid,'\n%% Option for determining how long each Newton step is shown.\n');
     fprintf(fid,'options.plotting = ''off'';\n');
 end
 
@@ -147,10 +171,10 @@ end
 
 fprintf(fid,['\n%% Solve the problem using solvebvp (a function which ' ...
     'offers same\n%% functionality as nonlinear backslash but more '...
-    'customizeability) \n']);
+    'customizeability).\n']);
 fprintf(fid,'[u normVec isLinear] = solvebvp(N,rhs,''options'',options);\n');
 
-fprintf(fid,'\n%% Create plot of the solution and the norm of the updates\n');
+fprintf(fid,'\n%% Create plot of the solution and the norm of the updates.\n');
 
 
 
