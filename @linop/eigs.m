@@ -15,10 +15,12 @@ function varargout = eigs(A,varargin)
 %
 % EIGS(A,K,SIGMA) and EIGS(A,B,K,SIGMA) find K eigenvalues. If SIGMA is a
 % scalar, the eigenvalues found are the ones closest to SIGMA. Other
-% possibilities are 'LR' and 'SR' for the eigenvalues of largest and
-% smallest real part, and 'LM' (or Inf) and 'SM' for largest and smallest
-% magnitude. SIGMA must be chosen appropriately for the given operator; for
-% example, 'LM' for an unbounded operator will fail to converge!
+% selection possibilities for SIGMA are:
+%    'LM' (or Inf) and 'SM' for largest and smallest magnitude
+%    'LR' and 'SR' for largest and smallest real part
+%    'LI' and 'SI' for largest and smallest imaginary part
+% SIGMA must be chosen appropriately for the given operator. For
+% example, 'LM' for an unbounded operator will fail to converge.
 %
 % Despite the syntax, this version of EIGS does not use iterative methods
 % as in the built-in EIGS for sparse matrices. Instead, it uses the
@@ -484,8 +486,13 @@ else
       [junk,idx] = sort(real(lam),'descend');
     case 'SR'
       [junk,idx] = sort(real(lam));
+    case 'LI'
+      [junk,idx] = sort(imag(lam),'descend');
+    case 'SI'
+      [junk,idx] = sort(imag(lam));
     case 'LM'
       [junk,idx] = sort(abs(lam),'descend');
+    % case 'SM' already converted to sigma=0
     otherwise
       error('CHEBFUN:linop:eigs:sigma', 'Unidentified input ''sigma''.');
   end
