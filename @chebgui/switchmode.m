@@ -121,13 +121,16 @@ else % Going into EIG mode
     set(handles.panel_eigopts,'Visible','On')
     if ~isempty(handles.guifile.sigma)
         switch handles.guifile.sigma
-            case 'lm', set(handles.popupmenu_sigma,'Value',1);
-            case 'sm', set(handles.popupmenu_sigma,'Value',2);
-            case 'lr', set(handles.popupmenu_sigma,'Value',3);
-            case 'sr', set(handles.popupmenu_sigma,'Value',4);
+            case '',   set(handles.popupmenu_sigma,'Value',1);
+            case 'lm', set(handles.popupmenu_sigma,'Value',2);
+            case 'sm', set(handles.popupmenu_sigma,'Value',3);
+            case 'lr', set(handles.popupmenu_sigma,'Value',4);
+            case 'sr', set(handles.popupmenu_sigma,'Value',5);
+            case 'li', set(handles.popupmenu_sigma,'Value',6);
+            case 'si', set(handles.popupmenu_sigma,'Value',7);
         end
     else
-        set(handles.popupmenu_sigma,'Value',2)
+        set(handles.popupmenu_sigma,'Value',1)
     end
     if isfield(handles.guifile.options,'numeigs') && ~isempty(handles.guifile.options.numeigs)
         set(handles.edit_eigN,'String',handles.guifile.options.numeigs);

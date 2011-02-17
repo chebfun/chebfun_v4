@@ -12,12 +12,14 @@ if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);
 elseif strcmpi(guifile.type,'eig')
     sigma = guifile.sigma;
-    if isempty(sigma), sigma = 'sm'; end
     switch sigma
-        case 'lm', set(handles.popupmenu_sigma,'Value',1);
-        case 'sm', set(handles.popupmenu_sigma,'Value',2);
-        case 'lr', set(handles.popupmenu_sigma,'Value',3);
-        case 'sr', set(handles.popupmenu_sigma,'Value',4);
+        case '',   set(handles.popupmenu_sigma,'Value',1);
+        case 'lm', set(handles.popupmenu_sigma,'Value',2);
+        case 'sm', set(handles.popupmenu_sigma,'Value',3);
+        case 'lr', set(handles.popupmenu_sigma,'Value',4);
+        case 'sr', set(handles.popupmenu_sigma,'Value',5);
+        case 'li', set(handles.popupmenu_sigma,'Value',6);
+        case 'si', set(handles.popupmenu_sigma,'Value',7);
     end
     numeigs = guifile.options.numeigs;
     if isempty(numeigs), numeigs = 6; end

@@ -1281,13 +1281,19 @@ function popupmenu_sigma_Callback(hObject, eventdata, handles)
 selected = get(hObject,'Value');
 switch selected
     case 1
-        handles.guifile.sigma = 'lm';
+        handles.guifile.sigma = '';
     case 2
-        handles.guifile.sigma = 'sm';
+        handles.guifile.sigma = 'lm';
     case 3
-        handles.guifile.sigma = 'lr';
+        handles.guifile.sigma = 'sm';
     case 4
+        handles.guifile.sigma = 'lr';
+    case 5
         handles.guifile.sigma = 'sr';
+    case 6
+        handles.guifile.sigma = 'li';
+    case 7
+        handles.guifile.sigma = 'si';
 end
 guidata(hObject, handles);
 
