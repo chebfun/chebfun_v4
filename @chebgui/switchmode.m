@@ -106,7 +106,7 @@ else % Going into EIG mode
     set(handles.text_DEs,'String','Differential operator')
     % set(handles.iter_list,'Visible','on')
     % set(handles.iter_text,'Visible','on')
-    set(handles.text_initial,'String','')
+    set(handles.text_initial,'String','Look for')
     set(handles.input_GUESS,'visible','Off')
     
     set(handles.text_timedomain,'Visible','off')
@@ -120,9 +120,14 @@ else % Going into EIG mode
     
     set(handles.panel_eigopts,'Visible','On')
     if ~isempty(handles.guifile.sigma)
-        set(handles.edit_sigma,'String',handles.guifile.sigma);
+        switch handles.guifile.sigma
+            case 'lm', set(handles.popupmenu_sigma,'Value',1);
+            case 'sm', set(handles.popupmenu_sigma,'Value',2);
+            case 'lr', set(handles.popupmenu_sigma,'Value',3);
+            case 'sr', set(handles.popupmenu_sigma,'Value',4);
+        end
     else
-        set(handles.edit_sigma,'String','smoothest')
+        set(handles.popupmenu_sigma,'Value',2)
     end
     if isfield(handles.guifile.options,'numeigs') && ~isempty(handles.guifile.options.numeigs)
         set(handles.edit_eigN,'String',handles.guifile.options.numeigs);

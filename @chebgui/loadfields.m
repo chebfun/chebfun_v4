@@ -12,11 +12,15 @@ if strcmpi(guifile.type,'pde')
     set(handles.timedomain,'String',guifile.timedomain);
 elseif strcmpi(guifile.type,'eig')
     sigma = guifile.sigma;
-    if isempty(sigma), sigma = 'smoothest'; end
-    set(handles.edit_sigma,'String',sigma);
+    if isempty(sigma), sigma = 'sm'; end
+    switch sigma
+        case 'lm', set(handles.popupmenu_sigma,'Value',1);
+        case 'sm', set(handles.popupmenu_sigma,'Value',2);
+        case 'lr', set(handles.popupmenu_sigma,'Value',3);
+        case 'sr', set(handles.popupmenu_sigma,'Value',4);
+    end
     numeigs = guifile.options.numeigs;
     if isempty(numeigs), numeigs = 6; end
-    set(handles.edit_sigma,'String',sigma);
 end
 
 

@@ -153,7 +153,7 @@ end
 % Call solvebvp with different arguments depending on whether we're in GUI
 % or not. If we're not in GUI mode, we can finish here.
 if guiMode
-    [u vec] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
+    [u vec isLinear] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
 else
     [u vec] = solvebvp(N,DE_RHS,'options',options);
     varargout{1} = u;
@@ -179,18 +179,22 @@ if guiMode
     if guifile.options.grid
         grid on
     end
-    if length(vec) > 1
+    if ~isLinear
         title('Solution at end of iteration')
     else
         title('Solution');
     end
-    axes(handles.fig_norm)
-    semilogy(vec,'-*','Linewidth',2),title('Norm of updates'), xlabel('Iteration number')
-    if length(vec) > 1
-        XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
-        set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on
-    else % Don't display fractions on iteration plots
-        set(gca,'XTick', 1)
+    if ~isLinear
+        axes(handles.fig_norm)
+        semilogy(vec,'-*','Linewidth',2),title('Norm of updates'), xlabel('Iteration number')
+        if length(vec) > 1
+            XTickVec = 1:max(floor(length(vec)/5),1):length(vec);
+            set(gca,'XTick', XTickVec), xlim([1 length(vec)]), grid on
+        else % Don't display fractions on iteration plots
+            set(gca,'XTick', 1)
+        end
+    else
+        cla(handles.fig_norm,'reset')
     end
     
     % Return the handles as varargout.

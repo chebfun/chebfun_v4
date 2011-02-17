@@ -1261,26 +1261,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function edit_sigma_Callback(hObject, eventdata, handles)
-in = get(handles.edit_sigma,'String');
-if any(strcmpi(in,{'largest','largest magnitude'})), in = 'lm';
-elseif any(strcmpi(in,{'smallest','smallest magnitude'})), in = 'sm';
-elseif strcmpi(in,'largest real'), in = 'lr'; 
-elseif strcmpi(in,'smallest real'), in = 'sr'; 
-elseif strcmpi(in,'smoothest'), in = '';
-end
-if ~isempty(in) && ~any(strcmpi(in,{'LR','SR','LM', 'SM'})) && isempty(str2num(in))
-    errordlg('Invalid input. Allowed values are: LM, SM, LR, SR.', 'Chebgui error', 'modal');
-    set(handles.edit_sigma,'String',handles.guifile.sigma);
-else
-    handles.guifile.sigma = in;
-end
-guidata(hObject, handles);
-
-function edit_sigma_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 function edit37_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -1294,3 +1274,45 @@ else
     handles.guifile.options.numeigs = in;
 end
 guidata(hObject, handles);
+
+
+% --- Executes on selection change in popupmenu_sigma.
+function popupmenu_sigma_Callback(hObject, eventdata, handles)
+selected = get(hObject,'Value');
+switch selected
+    case 1
+        handles.guifile.sigma = 'lm';
+    case 2
+        handles.guifile.sigma = 'sm';
+    case 3
+        handles.guifile.sigma = 'lr';
+    case 4
+        handles.guifile.sigma = 'sr';
+end
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu_sigma_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_sigma (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --------------------------------------------------------------------
+function menu_annotateon_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_annotateon (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function menu_annotateoff_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_annotateoff (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
