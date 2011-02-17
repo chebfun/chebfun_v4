@@ -27,7 +27,7 @@ else
         if nargout == 0
             chebguiwindow(c);
         else
-            c = varargout{1};
+            varargout{1} =c;
         end
         return
     end

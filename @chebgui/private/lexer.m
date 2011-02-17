@@ -61,10 +61,13 @@ eigVarNames = {};
 % x and t are reserved for independent variables
 xLoc = strcmp('x',varNames); varNames(xLoc) = [];
 tLoc = strcmp('t',varNames); varNames(tLoc) = [];
+rLoc = strcmp('r',varNames); varNames(rLoc) = [];
 
 % Return the name of the independent variable. Use x if none is found
 if sum(tLoc)
     indVarName = 't';
+elseif sum(rLoc)
+    indVarName = 'r';
 else
     indVarName = 'x';
 end

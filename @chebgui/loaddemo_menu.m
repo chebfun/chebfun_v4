@@ -85,6 +85,8 @@ else % eig demos
     end
 end
 
+set(handles.menu_demos,'UserData',1); % Notify that we have loaded demos
+
 
 function hOpenMenuitemCallback(hObject, eventdata,handles,type,demoNumber)
 % Callback function run when the Open menu item is selected

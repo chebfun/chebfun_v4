@@ -317,7 +317,7 @@ newString = get(hObject,'String');
 handles.guifile.init = newString;
 if isempty(newString)
     handles.init = '';
-    axis(handles.fig_sol);
+    axes(handles.fig_sol);
     cla(handles.fig_sol,'reset');
     return
 end
@@ -330,8 +330,8 @@ xtTemp = chebfun('x',[str2num(handles.guifile.DomLeft) ...
 if ~exist('x','var'), x = xtTemp; end
 if ~exist('t','var'), t = xtTemp; end
 % Do something clever with multilines
-handles.init = eval(get(hObject,'String'));
-axis(handles.fig_sol);
+handles.init = eval(vectorize(get(hObject,'String')));
+axes(handles.fig_sol);
 plot(handles.init)
 guidata(hObject, handles);
 
@@ -715,7 +715,9 @@ function menu_file_Callback(hObject, eventdata, handles)
 function menu_opengui_Callback(hObject, eventdata, handles)
 [filename pathname filterindex] = uigetfile('*.guifile','Pick a file');
 if ~filterindex, return, end
-chebgui(fullfile(pathname,filename));
+cgTemp = chebgui(fullfile(pathname,filename));
+loadfields(cgTemp,handles);
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function menu_savegui_Callback(hObject, eventdata, handles)
