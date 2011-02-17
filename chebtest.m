@@ -189,7 +189,7 @@ for j = 1:length(mfiles)
   % Print the test name
   fun = mfiles{j}(1:end-2);
   if javacheck
-      link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
+      link = ['<a href="matlab: edit ' which(fun) '">' fun '</a>'];
   else
       link = fun;
   end
