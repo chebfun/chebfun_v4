@@ -1,5 +1,5 @@
-function pass = chebopeigs
-% Test for chebop eigs method.
+function pass = chebop_eigs
+% Test the chebop eigs method.
 % Asgeir Birkisson, December 2010
 
 %% With linops

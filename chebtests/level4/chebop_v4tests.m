@@ -1,8 +1,8 @@
-% Test a few things concerning the new chebopbs (i.e.
+function pass = chebop_v4tests
+% Test a few things concerning the version 4 chebops (i.e.
 % with nonlinear as well as linear capabilities.)
 %     LNT & TAD 4 Dec. 2009.
 
-function pass = cheboptests
 
 tol = 1e4*chebfunpref('eps');
 

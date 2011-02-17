@@ -1,7 +1,8 @@
-function pass = bvptest
-
+function pass = bvp45ctest
+% This routine tests the chebfun wrappers for the BVP solvers
+% bvp4c and bvp5c.
+%
 % Rodrigo Platte Jan 2009
-% This routine tests BVP solvers bvp4c and bvp5c
 
 [d,x] = domain(0,4);
 y0 = [ x.^0, 0 ];

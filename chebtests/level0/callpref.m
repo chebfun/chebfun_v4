@@ -1,6 +1,6 @@
 function pass = callpref
-
-% Tests for changes in preference in a chebfun call. 
+% Check if options passed to the constructor are handled correctly.
+%
 % Rodrigo Platte, May 2009
 
 f = chebfun(@(x) sign(x-0.5), [-2 3], 'splitting', 1, 'minsamples', 5);

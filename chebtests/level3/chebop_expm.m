@@ -1,5 +1,5 @@
-function pass = chebopexpm
-% Test for chebop expm method.
+function pass = chebop_expm
+% Test the chebop expm method.
 % Asgeir Birkisson, December 2010
 
 %% With linops

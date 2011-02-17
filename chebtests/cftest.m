@@ -1,7 +1,8 @@
+function pass = cftest
 % Test CF approximation in various ways.
+%
 % Nick Trefethen & Joris Van Deun, 4 December 2009
 
-function pass = cftest
 f = chebfun('exp(x)');
 [p,q,r,lam] = cf(f,2);
 pass(1) = (abs(lam-0.045017)<1e-4);

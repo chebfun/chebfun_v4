@@ -1,5 +1,8 @@
-function pass = cheboplinop
-% Test for chebop linop method.
+function pass = chebop_linop
+% Test the chebop linop method.
+% Basically test that the direct construction with diff and diag is equivalent
+% to constructing a chebop through an anonymous function.
+%
 % Asgeir Birkisson, December 2010
 
 % Create a linop, u -> u''+x*u, u'(0) = u'(2) = 0

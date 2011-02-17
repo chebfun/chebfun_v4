@@ -1,5 +1,5 @@
 function pass = circplate
-% Deflection of a circular plate
+% Use a linear chebop to compute the deflection of a circular plate.
 
 tol = chebfunpref('eps');
 

@@ -1,5 +1,5 @@
 function pass = chebdomain
-% tests for calls of the chebfun constructor using the domain class.
+% Tests the chebfun constructor using the domain class.
 % R. Platte 12 Sept 2008
 
 d = domain(0,30);

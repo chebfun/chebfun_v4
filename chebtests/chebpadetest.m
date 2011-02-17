@@ -1,5 +1,6 @@
 function pass = chebpadetest
-
+% Test the chebpade function against some examples.
+%
 % Ricardo Pachon 02/09/2009
 
 tol = chebfunpref('eps');

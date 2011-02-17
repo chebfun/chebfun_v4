@@ -1,9 +1,10 @@
-function pass = bvpsimplifytest
-
+function pass = chebop_simplify
 % This test has a purpose: to make sure that the
 % nonlinop backslash process succeeds in simplifying
 % a solution which is a parabola to a chebfun with
-% length 3.   Nick T. & Asgeir B., 4 December 2009.
+% length 3.
+%
+% Nick T. & Asgeir B., 4 December 2009.
 
 %%
 [d,x,N] = domain(-1,1);

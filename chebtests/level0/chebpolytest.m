@@ -1,8 +1,7 @@
 function pass = chebpolytest
-
+% Tests chebpoly with integer and chebfun arguments.
+%
 % Nick Trefethen  29 December 2008
-
-% Tests of the form chebfun = chebpoly(integer):
 
 tol = chebfunpref('eps');
 
@@ -29,6 +28,4 @@ pass(4) = (norm(a(1:3)-exacta)<1e-14*(tol/eps));
 f = chebpoly(5) + .25*chebpoly(4);
 exactf = [1 .25 0 0 0 0];
 pass(5) = norm(exactf - chebpoly(f)) < 1e-15*(tol/eps);
-
-%pass = pass1 && pass2 && pass3 && pass4 && pass5;
 
