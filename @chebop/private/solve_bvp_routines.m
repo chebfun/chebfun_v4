@@ -35,7 +35,7 @@ else
 end
 
 % Construct initial guess if missing
-if isempty(N.guess) % No initial guess given
+if isempty(N.init) % No initial guess given
     if isempty(N.dom)
         error('CHEBOP:solve_bvp_routines:noGuess','Neither domain nor initial guess is given.')
     else
@@ -43,8 +43,8 @@ if isempty(N.guess) % No initial guess given
         u = findguess(N); % Initial quasimatrix guess of linear chebfuns
     end
 else
-    N.guess = 1*N.guess; % This is weird, but for some reason need. AB?
-    u = N.guess;
+    N.init = 1*N.init; % This is weird, but for some reason need. AB?
+    u = N.init;
     dom = domain(u);
 end
 

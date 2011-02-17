@@ -48,9 +48,9 @@ while length(propertyArgIn) >= 2,
         case {'guess','init'}
             % Convert constant initial guesses to chebfuns
             if isnumeric(val)
-                N.guess = chebfun(val,N.dom);
+                N.init = chebfun(val,N.dom);
             else
-                N.guess = val;
+                N.init = val;
             end
         case 'dim'
             % Sets the dimension of the quasimatrices N operates on

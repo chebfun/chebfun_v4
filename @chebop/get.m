@@ -17,7 +17,7 @@ switch propName
     case 'rbc'
         val = N.rbc;
     case {'guess','init'}
-        val = N.guess;
+        val = N.init;
     otherwise
         error('CHEBOP:get:propname',[propName,' is not a valid chebop property'])
 end

@@ -108,9 +108,9 @@ if isempty(varargin), return, end
 
 % Guess
 if isnumeric(varargin{1})
-    N.guess = chebfun(varargin{1},dom);
+    N.init = chebfun(varargin{1},dom);
 else
-    N.guess = varargin{1};
+    N.init = varargin{1};
 end
 varargin(1) = [];
 if isempty(varargin), return, end
@@ -134,7 +134,7 @@ function N = Nop_ini()
     N(1).lbcshow = [];
     N(1).rbc = [];
     N(1).rbcshow = [];
-    N(1).guess = [];
+    N(1).init = [];
     N(1).optype = [];
     N(1).dim = [];
 end
