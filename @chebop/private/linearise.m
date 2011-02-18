@@ -1,4 +1,4 @@
-function [L linBC isLin] = linearise(N,u,flag)
+function [L linBC isLin affine] = linearise(N,u,flag)
 %LINEARISE   Linearise a chebop.
 % [L linBC isLin] = LINEARISE(N,u) Linearises the chebop N about the
 % chebfun u.
@@ -25,6 +25,7 @@ end
 if nargin < 3, flag = 0; end
 isLin = 1;
 linBC = [];
+affine = [];
 
 % Check whether we are working with anonymous functions which accept
 % quasimatrices or arguments such as @(u,v). In the former case,
@@ -117,4 +118,15 @@ try
 catch ME
     rethrow(ME);
 end
-if any(any(nonConst)),  isLin = 0;   end
+if any(any(nonConst)),  
+    isLin = 0;   
+else
+    if nargout > 3 % Find the affine part
+        if numberOfInputVariables == 1
+            affine = N.op(0*x);
+        else
+            uZero = repmat({0*xDom},1,numberOfInputVariables-1);
+            affine = N.op(xDom,uZero{:});
+        end
+    end
+end

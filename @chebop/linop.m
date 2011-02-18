@@ -1,5 +1,10 @@
-function L = linop(N,u)
-%LINOP Converts a chebop N to a linop L if N is a linear operator
+function [L f] = linop(N,u)
+%LINOP Converts a chebop to a linop
+% L = LINOP(N) converts a chebop N to a linop L if N is a linear operator.
+% If N is not linear, then an error message is returned.
+%
+% [L F] = LINOP(N) returns also the affine part F of the linear chebop N
+% such that if, say, N.op = @(x,u), then L*u + F(x) = N.op(x,u).
 
 % This is simply a wrapper for @chebop/private/linearise.m
 
@@ -16,7 +21,12 @@ if nargin == 1
     u = findguess(N,0);
 end
 
-[L bc isLin] = linearise(N,u,1);
+if nargout == 1
+    [L bc isLin] = linearise(N,u,1);
+else
+    % Compute the affine part.
+    [L bc isLin f] = linearise(N,u,1);
+end
 
 if isLin
     L = L&bc;
