@@ -319,6 +319,7 @@ if isempty(newString)
     handles.init = '';
     axes(handles.fig_sol);
     cla(handles.fig_sol,'reset');
+    guidata(hObject, handles);
     return
 end
 
@@ -333,11 +334,14 @@ if ~exist('t','var'), t = xtTemp; end
 str = cellstr(get(hObject,'String'));
 init = [];
 for k = 1:numel(str)
-    init = [init eval(vectorize(str{k}))];
+    strk = deblank(vectorize(str{k}));
+    if ~isempty(strk)
+        init = [init eval(strk)];
+    end
 end
 handles.init = init;
 axes(handles.fig_sol);
-plot(handles.init)
+plot(handles.init,'linewidth',2)
 guidata(hObject, handles);
 
 function loadVariables(importedVar)
