@@ -218,7 +218,7 @@ else
         if ~isempty(findx)
             fprintf(fid,'%s = %s;\n',s{k},vectorize(initInput{k}));
         else
-            fprintf(fid,'%s = chebfun(%s,d);\n',s{k},initInput{k});
+            fprintf(fid,'%s = chebfun(%s,dom);\n',s{k},initInput{k});
         end
         catstr = [catstr ', ' s{k}];
     end

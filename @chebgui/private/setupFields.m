@@ -1,24 +1,15 @@
 function [field allVarString indVarName pdeVarNames pdeflag allVarNames]  = setupFields(guifile,input,rhs,type,allVarString)
 numOfRows = max(size(input));%numel(input,1);
-pdeflag = false;
+pdeflag = zeros(1,numOfRows); % Binary flag for PDE detection.
 allVarNames = [];
-
-% Subtract what is to the rhs of equals signs in the input. Don't need to
-% do this for the DE field of eig. problems
-% if ~(strcmp(guifile.type,'eig') && strcmp(type,'DE')) && ~strcmp(guifile.type,'bvp') ...
-%          && ~strcmp(guifile.type,'pde')
-%     input = subtractRhs(input);
-% end
+pdeVarNames = '';
 
 % For BCs, we need to check whether varNames contains anything not found in
 % varNames of the DE. Should we make the varNames of the DE as parameters?
 % Setja DE varNames sem parametra? Also check for indVarName in deRHS.
 
-% PDEFLAG is a binary output which is true or false depending on whether
-% a '_' is located in rhs.
-
 % [field indVarName]  = setupLine(input,rhs,type)
-pdeVarNames = '';
+
 if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
     [anFun indVarName allVarNames pdeVarNames] = setupLine(guifile,input{1},rhs{1},type);
 %     idx = strfind(rhs{1}, '_');
@@ -77,19 +68,27 @@ else % Have a system, go through each row
             error('Chebgui:setupField:TooManyTimeDerivatives',...
                 'Only one time derivative per line allowed')
         end
+        if isempty(pdeVarNames)
+            pdeVarNames = '|';
+        else
+            pdeflag(k) = 1;
+        end
         allPdeVarNames = [allPdeVarNames;pdeVarNames];
     end
     % Remove duplicate variable names
     allVarNames = unique(allVarNames); 
     [allPdeVarNames I J] = unique(allPdeVarNames);
+    emptyPdeVarNames = strcmp(allPdeVarNames,'|');
+    allPdeVarNames(emptyPdeVarNames) = [];
+    pdeVarNames = allPdeVarNames;
     
-    if ~isempty(allPdeVarNames)
-    % For PDEs we need to reorder so that the order of the time derivatives
-    % matches the order of the input arguments. For this, we use the
-    % indices returned from the unique method above. !!! Temporarily
-    % experimental.
-    indx = I;
-    pdeflag = ones(1,numOfRows);
+    if ~isempty(allPdeVarNames) && ~all(emptyPdeVarNames)
+        % For PDEs we need to reorder so that the order of the time derivatives
+        % matches the order of the input arguments. For this, we use the
+        % indices returned from the unique method above. !!! Temporarily
+        % experimental.
+        indx = I;
+        pdeflag = pdeflag(I);
     else
         indx = (1:numOfRows)';
     end

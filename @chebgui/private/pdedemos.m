@@ -113,9 +113,9 @@ switch exampleNumber
         DE = {'u_t = u" - v' ; 'v" - u = 0'};
         LBC = {'u = 1'; 'v = 1'};
         RBC = {'u = 1'; 'v = 1'};
-        init = {'1' ; '1'};
+        init = {'1' ; '1-.5*cos(.5*pi*x)'};
         tol = '1e-6'; plotting = 'on';
-        fixYaxisLower = '0.6'; fixYaxisUpper = '1';
+        fixYaxisLower = '0.5'; fixYaxisUpper = '1';
         name = 'Coupled PDE-BVP';
         demotype = 'system';
     case 10

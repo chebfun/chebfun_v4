@@ -330,7 +330,12 @@ xtTemp = chebfun('x',[str2num(handles.guifile.DomLeft) ...
 if ~exist('x','var'), x = xtTemp; end
 if ~exist('t','var'), t = xtTemp; end
 % Do something clever with multilines
-handles.init = eval(vectorize(get(hObject,'String')));
+str = cellstr(get(hObject,'String'));
+init = [];
+for k = 1:numel(str)
+    init = [init eval(vectorize(str{k}))];
+end
+handles.init = init;
 axes(handles.fig_sol);
 plot(handles.init)
 guidata(hObject, handles);
