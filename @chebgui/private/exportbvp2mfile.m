@@ -132,9 +132,19 @@ if useLatest
 elseif ~isempty(initInput)
     fprintf(fid,'\n%% Construct a linear chebfun on the domain,\n');
     fprintf(fid,'%s = chebfun(@(%s) %s, dom);\n',indVarName,indVarName,indVarName);
-    fprintf(fid,'%% and ssign an initial guess to the chebop.\n');
+    fprintf(fid,'%% and assign an initial guess to the chebop.\n');
 %     fprintf(fid,'N.init = %s;\n',vectorize(char(initInput)));
-    fprintf(fid,'N.init = %s;\n',vectorize(char(initInput)));
+    initInput = cellstr(initInput);
+    if numel(initInput) == 1
+        fprintf(fid,'N.init = %s;\n',vectorize(char(initInput{1})));
+    else
+        ws = '         ';
+        fprintf(fid,'N.init = [%s, ...\n',vectorize(char(initInput{1})));
+        for k = 2:numel(initInput)-1
+            fprintf(fid,'%s %s, ...\n',ws,vectorize(char(initInput{k})));
+        end
+        fprintf(fid,'%s %s];\n',ws,vectorize(char(initInput{end})),ws)
+    end
 end
 
 % Set up preferences

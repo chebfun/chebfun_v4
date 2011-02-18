@@ -32,11 +32,11 @@ function N = chebop(varargin)
 %
 % Either LBC or RBC can be empty if the operator only has BCs on one side.
 %
-% N = CHEBOP(D,F,LBC,RBC,GUESS) where GUESS is a chebfun, defines a chebop
+% N = CHEBOP(D,F,LBC,RBC,INIT) where INIT is a chebfun, defines a chebop
 % with associated initial guess when nonlinear boundary value problems
 % involved with the chebop is solved.
 %
-% N = CHEBOP(D,F,LBC,RBC,GUESS,DIM) where DIM is an integer, defines a
+% N = CHEBOP(D,F,LBC,RBC,INIT,DIM) where DIM is an integer, defines a
 % chebop which operates on quasimatrices of dimension Inf x Dim.
 %
 % Chebops can also be created using the syntax
