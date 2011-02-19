@@ -314,7 +314,7 @@ guidata(hObject, handles);
 function input_GUESS_Callback(hObject, eventdata, handles)
 newString = get(hObject,'String');
 
-handles.guifile.init = newString;
+handles.guifile.init = cellstr(newString);
 if isempty(newString)
     handles.init = '';
     axes(handles.fig_sol);
@@ -334,7 +334,17 @@ if ~exist('t','var'), t = xtTemp; end
 str = cellstr(get(hObject,'String'));
 init = [];
 for k = 1:numel(str)
-    strk = deblank(vectorize(str{k}));
+    strk = str{k};
+    equalSigns = find(strk=='=');
+    if numel(equalSigns) > 1
+        error('Too many equals signs');
+    elseif numel(equalSigns) == 1
+        strk = strk(equalSigns+1:end);
+    elseif numel(str) > 1
+        error('Must be of form "u = %s"',strk)
+    end
+        
+    strk = deblank(vectorize(strk));
     if ~isempty(strk)
         init = [init eval(strk)];
     end
@@ -380,7 +390,21 @@ guidata(hObject, handles);
 
 
 function timedomain_Callback(hObject, eventdata, handles)
-handles.guifile.timedomain = get(hObject,'String');
+str = get(hObject,'String');
+if iscell(str), str = str{:}; end
+num = str2num(str);
+options.WindowStyle = 'modal';
+while ~isempty(str) && numel(num) < 3;
+    h = (num(2)-num(1))/20;
+    def = sprintf('%s:%s:%s',num2str(num(1),'%0.0f'),num2str(h,'%0.2g'),num2str(num(2),'%0.0f'));
+    str = inputdlg('Time domain should be a vector of length >2 at which times solution is returned','Set time domain',...
+        1,{def},options);
+    if isempty(str), str = ''; break, end
+    str = str{:};
+    num = str2num(str);
+end
+set(handles.timedomain,'String',str);   
+handles.guifile.timedomain = str;
 guidata(hObject, handles);
 
 % -------------------------------------------------------------------------
@@ -392,9 +416,7 @@ function button_fignorm_Callback(hObject, eventdata, handles)
 % Check the type of the problem
 if get(handles.button_ode,'Value');
     latestNorms = handles.latest.norms;
-    
     figure;
-    
     semilogy(latestNorms,'-*','Linewidth',2),title('Norm of updates'), xlabel('Number of iteration')
     if length(latestNorms) > 1
         XTickVec = 1:max(floor(length(latestNorms)/5),1):length(latestNorms);

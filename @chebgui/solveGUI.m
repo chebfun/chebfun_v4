@@ -35,6 +35,11 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
             errordlg(s, 'Chebgui error', 'modal');
         return
         end
+        if isempty(guifile.init)
+            s = sprintf('Initial condition is empty.');
+            errordlg(s, 'Chebgui error', 'modal');
+        return
+        end
     end
     tol = guifile.tol;
     if ~isempty(tol)

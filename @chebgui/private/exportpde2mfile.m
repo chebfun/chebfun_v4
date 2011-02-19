@@ -172,7 +172,7 @@ if iscell(initInput) && numel(initInput) > 1
 else
     fprintf(fid,'%% and of the initial condition.\n');
 end
-if ischar(initInput)
+if numel(deInput)==1 && ~ischar(deInput)
     % Get the strings of the dependant variable.
     idx = strfind(deString,')');
     tmp = deString(3:idx(1)-10);
@@ -223,7 +223,11 @@ else
         catstr = [catstr ', ' s{k}];
     end
     sol0 = 'sol0'; sol = 'sol';
-    fprintf(fid,'%s = [%s];\n',sol0,catstr(3:end));
+    fprintf(fid,'%s = [%s];',sol0,catstr(3:end));
+    if isempty(catstr(3:end)),
+        fprintf(fid,'\t%% An initial condition is required!');
+    end
+    fprintf(fid,'\n');
 end
 
 % Option for tolerance
