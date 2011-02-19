@@ -175,7 +175,7 @@ if guiMode
     handles.hasSolution = 1;
     
     axes(handles.fig_sol)
-    plot(u,'Linewidth',2),
+    plot(u,'Linewidth',2), xlim([u.domain(1) u.domain(2)])
     if guifile.options.grid
         grid on
     end
