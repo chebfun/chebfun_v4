@@ -2,7 +2,7 @@
 % Lloyd N. Trefethen, October 2009, revised February 2011
 
 %% 3.1 roots
-% Chebfuns come with a global rootfinding capability -- the
+% Chebfun comes with a global rootfinding capability -- the
 % ability to find all the zeros of a function in its region
 % of definition.  For example, here is a polynomial with two
 % roots in [-1,1]:

@@ -458,7 +458,7 @@ toc
 %
 % [Glaser, Liu & Rokhlin 2007]
 % A. Glaser, X. Liu and V. Rokhlin, "A fast algorithm for the
-% calculation fo the roots of special functions", SIAM Journal on
+% calculation of the roots of special functions", SIAM Journal on
 % Scientific Computing 29 (2007), 1420-1438.
 %
 % [Golub & Welsch 1969]

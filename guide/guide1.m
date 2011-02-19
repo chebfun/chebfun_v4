@@ -1,4 +1,4 @@
-%% CHEBFUN GUIDE 1: GETTING STARTED WITH CHEBFUNat
+%% CHEBFUN GUIDE 1: GETTING STARTED WITH CHEBFUN
 % Lloyd N. Trefethen, October 2009, revised February 2011
 
 %% 1.1  What is a chebfun?
@@ -56,8 +56,8 @@
 % Alex Townsend, and Joris Van Deun.
 
 %%
-% This Guide is based on Chebfun Version 3, released
-% in December 2009.  Chebfun is available at
+% This Guide is based on Chebfun Version 4, released
+% in 2010.  Chebfun is available at
 % http://www.maths.ox.ac.uk/chebfun/.
 
 %% 1.2  Constructing simple chebfuns
@@ -164,6 +164,8 @@
 % a chebfun.  For a list of many of them you can type "methods":
   methods chebfun
 %%
+% (Futher commands can be unearthed with methods linop,
+% methods chebop, and methods domain.)
 % To find out what a command does, you can use "help".
 
   help chebfun/chebpoly
@@ -324,7 +326,7 @@
 % see Chapter 8.
 
 %% 1.5  Infinite intervals and infinite function values
-% A major change from Version 2 to Version 3 is the generalization of
+% A major change from Chebfun Version 2 to Version 3 was the generalization of
 % chebfuns to allow certain functions on infinite intervals or which
 % diverge to infinity: the credit for these innovations belongs to
 % Nick Hale, Rodrigo Platte, and Mark Richardson.
