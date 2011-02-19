@@ -465,7 +465,7 @@ plot(f-pinterp,'b')
 % maximum error, it is a worse approximation for almost all x.
 
 %%
-% The Chebfun code "remez" can compute certain rational best approximants
+% Chebfun "remez" command can compute certain rational best approximants
 % too, though it is somewhat fragile.
 % If your function is smooth, a possibly more robust approach to computing
 % best approximations is Caratheodory-Fejer approximation, implemented
@@ -703,4 +703,4 @@ roots(q,'complex')
 %
 % [Van Deun & Trefethen 2011] J. Van Deun and L. N. Trefethen,
 % A robust implementation of the Caratheodory-Fejer method, BIT Numerical
-% Mathematics, to appear.
+% Mathematics, submitted.

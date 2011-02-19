@@ -244,27 +244,46 @@ end
 %% 7.7 Algorithms and accuracy
 
 %% 
-% Whether one applies \ to solve a linear equation, eigs to find
-% eigenmodes, or * with an operator exponential, the underlying process is
-% similar. The chebfun construction of the solution requests function
-% values at finite numbers of points n = 9, 17, 33,... until the desired
-% function or eigenfunctions are deemed to have been fully resolved after
-% inspection of their Chebyshev coefficients.
+% We'll say a word, but just a word, about how Chebfun carries
+% out these computations.  The methods involved are Chebyshev
+% spectral methods on adaptive grids.  The general ideas are
+% presented in [Trefethen 2000], but Chebfun actually uses variations
+% of these to be described in [Driscoll & Hale 2011] involving a
+% novel mix of Chebyshev grids of the first and second kinds.
 
 %%
-% For each n, the spectral collocation matrix corresponding to the operator
-% is realized. Boundary conditions are used to modify the matrix (and the
-% right-hand side for \) so that they become implicit in the linear algebra
-% of the n-dimensional system, and the corresponding finite-dimensional
-% solution is found using the built-in \, eig, or expm functions.
+% The basic idea is that linear differential (or integral)
+% operators are disretized by spectral differentiation 
+% (or integration) matrices.  Such a matrix applies the desired
+% operator to polynomials via interpolation at Chebyshev points,
+% with certain rows of the matrix modified to impose
+% boundary conditions.
+% When a differential equation is solved in Chebshev, the problem
+% is solved on a sequence of grids until convergence is achieved
+% in the usual Chebfun sense defined by decay of Chebyshev
+% expansion coefficients.  Much more than just this is really
+% going on, however, including the decomposition of intervals
+% into subintervals to handle coefficients that are only
+% piecewise smooth.
 
 %%
-% The discretization length of the chebfun solution is thus chosen
+% One matter you might not guess was challenging is the
+% determination of whether or not an operator is linear!  In Chebfun
+% the operator is defined by an anonymous function, but if it is
+% linear, special things should be possible such as application of
+% EIGS and EXPM and solution of differential equations in a single
+% step without iteration.  Chebfun contains special devices to
+% determine whether a chebop is linear so that these commands can
+% be regulated properly.  
+
+%%
+% As mentioned, the discretization length of a Chebfun solution
+% is chosen
 % automatically according to the instrinsic resolution requirements.
-% However, since the linear algebra problems used to produce solution
-% values at finite dimension cannot in general be expected to have
-% condition numbers close to 1, we cannot expect the resulting solutions to
-% be accurate to full machine precision. Typically one loses just a few
+% However, the linear algebra problems used in this methods are
+% notoriously ill-conditioned.  Thus the final accuracy in solving
+% differential equations in Chebfun is rarely close to machine precision.
+% Typically one loses just a few
 % digits for second-order differential problems, but six or more digits for
 % fourth-order problems.
 
@@ -276,16 +295,18 @@ end
 % 
 % .001u'' - u^3 = 0,  u(-1)=1, u(1)=-1
 % 
-% can be solved by Newton iteration as follows.
-[d,x] = domain(-1,1); 
-D2 = .001*diff(d,2); 
+% could be solved by Newton iteration as follows.
+L = chebop(-1,1);
+L.op = @(u) .001*diff(u,2);
+J = chebop(-1,1);
+x = chebfun('x'); 
 u = -x;  nrmdu = Inf;
 while nrmdu > 1e-10
-  r = D2*u - u.^3;
-  J = D2 - diag(3*u.^2) & 'dirichlet';
-  J.scale = norm(u);
-  delta = -(J\r);
-  u = u+delta;  nrmdu = norm(delta)
+  r = L*u - u.^3;
+  J.op = @(du) .001*diff(du,2) - 3*u.^2.*du;
+  J.bc = 0;
+  du = -(J\r);
+  u = u+du;  nrmdu = norm(du)
 end
 clf, plot(u)
 
@@ -296,16 +317,20 @@ clf, plot(u)
 % defining the ODE.  In Section 10.4 we shall see that this process can be
 % automated by use of Chebfun's "nonlinear backslash" capability, which in
 % turn utilizes a built-in chebfun Automatic Differentiation (AD) feature.
+% In fact, all you need to type is
+N = chebop(-1,1);
+N.op = @(u) .001*diff(u,2) - u.^3;
+N.lbc = 1; N.rbc = -1;
+v = N\0;
+
+%%
+% The result is the same to many digits of accuracy:
+norm(u-v)
+
+%%
 % In Section 10.2 we shall see that it is also possible to solve such
 % problems with the chebfun overloads of the Matlab boundary-value problem
 % solvers bvp4c and bvp5c.
-
-%%
-% The line "J.scale=norm(u)" in the code above tells the constructor for
-% the \ solution that delta needs to be found accurately only relative to
-% the size of u, not relative to its own size. As u approaches the correct
-% value, the norm of delta gets small and therefore delta does not require
-% much intrinsic resolution in order to make the proper correction to u.
 
 %% 7.9 Systems of equations and block operators
 % Chebops support some functionality for systems of equations. Here is an
