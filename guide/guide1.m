@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 1: GETTING STARTED WITH CHEBFUN
-% Lloyd N. Trefethen, October 2009
+% Lloyd N. Trefethen, October 2009, updated February 2011
 
 %% 1.1  What is a chebfun?
 % A chebfun is a function of one variable defined on an interval [a,b]. The
@@ -10,26 +10,26 @@
 % chebfun.
 
 %%
-% The aim of the Chebfun system is to "feel symbolic but run at the speed
+% The aim of Chebfun is to "feel symbolic but run at the speed
 % of numerics". More precisely our vision is to achieve for functions what
 % floating-point arithmetic achieves for numbers: rapid computation in
 % which each successive operation is carried out exactly apart from a
 % rounding error that is very small in relative terms [Trefethen 2007].
 
 %%
-% We usually refer to the system and the open-source project of its
-% development as 'Chebfun' with a capital C, whereas 'chebfun' with a
+% Chebfun with a capital C is the name of the software package, and of the
+% associated open-source project.   Chebfun with a
 % lower-case c is the name for an object in the system, i.e., a function
 % defined on an interval.
 
 %%
-% The implementation of chebfuns is based on the mathematical fact that
+% The implementation of Chebfun is based on the mathematical fact that
 % smooth functions can be represented very efficiently by polynomial
 % interpolation in Chebyshev points, or equivalently, thanks to the Fast
 % Fourier Transform, by expansions in Chebyshev polynomials.  For a simple
 % function, 20 or 30 points often suffice, but the process is stable and
 % effective even for functions complicated enough to require 1000 or
-% 1,000,000 points.  The chebfun system makes use of adaptive procedures
+% 1,000,000 points.  Chebfun makes use of adaptive procedures
 % that aim to find the right number of points automatically so as to
 % represent each function to roughly machine precision (about 15 digits of
 % relative accuracy).
@@ -39,25 +39,23 @@
 % established by results scattered throughout the 20th century.  A key
 % early figure, for example, was Bernstein in the 1910s. Nevertheless it is
 % hard to find the relevant material collected in one place.  A new
-% reference on this subject will be the chebfun-based book [Trefethen
-% 2010].
+% reference on this subject will be the Chebfun-based book [Trefethen
+% 2011].
 
 %%
 % Chebfun was originally created by Zachary Battles and Nick Trefethen at
 % Oxford during 2002-2005 [Battles & Trefethen 2004].  Battles left the
-% project in 2005, and meanwhile four new members have been added to the
+% project in 2005, and four new members were added to the
 % team: Ricardo Pachon (from 2006), Rodrigo Platte (from 2007), and Toby
 % Driscoll and Nick Hale (from 2008). Beginning in 2009, Asgeir Birkisson
-% and Mark Richardson have also become involved.  In addition to these
-% people we have been helped by many users as well as students and
-% colleagues at Oxford and elsewhere, including Phil Assheton, Folkmar
-% Bornemann, Pedro Gonnet, Sheehan Olver, Simon Scheuring, and Joris Van
-% Deun.
+% and Mark Richardson also became involved.  Other contributors include
+% Phil Assheton, Folkmar
+% Bornemann, Pedro Gonnet, Sheehan Olver, Simon Scheuring, Alex Townsend,
+% and Joris Van Deun.
 
 %%
-% This Guide is based on Chebfun Version 3, released in December 2009.
-% Chebfun is available from the website http://www.maths.ox.ac.uk/chebfun/
-% and also from the MathWorks File Exchange.
+% This Guide is based on Chebfun Version 4, released in February 2011.
+% Chebfun is available from the website http://www.maths.ox.ac.uk/chebfun/.
 
 %% 1.2  Constructing simple chebfuns
 % The "chebfun" command constructs a chebfun from a specification such as a
@@ -102,6 +100,7 @@
 % millions [Higham 2004].
 %%
 % What is the integral of f from -1 to 1?  Here it is:
+  format long
   sum(f)
 %%
 % This number was computed by integrating the polynomial (Clenshaw-Curtis
@@ -152,15 +151,17 @@
 
 %% 1.3  Operations on chebfuns
 % There are more than 150 commands that can be applied to a chebfun.  For a
-% list of most of them you can type "methods":
+% list of many of them you can type "methods":
   methods chebfun
 %%
+% (Other commands will be uneathed by methods domain, methods linop, or
+% methods chebop.)
 % To find out what a command does, you can use "help".
 
   help chebfun/chebpoly
 
 %%
-% Most of the commands in the list exist in ordinary Matlab; some
+% Most of the commands in the list above exist in ordinary Matlab; some
 % exceptions are "domain", "restrict", "chebpoly", "define", and "remez".
 % We have already seen "length" and "sum" in action.  In fact we have
 % already seen "subsref" too, since that is the Matlab command for (among
@@ -390,6 +391,5 @@ sum(h)
 % [Trefethen 2007] L. N. Trefethen, "Computing numerically with functions
 % instead of numbers", Mathematics in Computer Science 1 (2007), 9-19.
 %
-% [Trefethen 2010] L. N. Trefethen, Approximation Theory and Approximation
-% Practice: A 21st-Century Treatment in the Form of 32 Executable Chebfun
-% M-Files, book in preparation.
+% [Trefethen 2011] L. N. Trefethen, Approximation Theory and Approximation
+% Practice, book in preparation.

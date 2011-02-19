@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 7: SOLVING LINEAR DIFFERENTIAL EQUATIONS WITH CHEBOPS
-% Tobin A. Driscoll, November 2009
+% Tobin A. Driscoll, November 2009, updated February 2011
 
 %% 7.1  Overview of differential equations and chebfun
 % The chebfun system has powerful capabilities for solving ordinary

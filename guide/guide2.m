@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 2: INTEGRATION AND DIFFERENTIATION
-% Lloyd N. Trefethen, November 2009
+% Lloyd N. Trefethen, November 2009, updated February 2011
 
 %% 2.1 sum
 % We have seen that the "sum" command returns the definite integral of a
@@ -50,7 +50,7 @@
   tic, I = quadgk(F,0,1,'abstol',tol,'reltol',tol); t = toc;
     fprintf('QUADGK:  I = %17.15f  time = %6.4f secs\n',I,t)
 %%
-% The timing for chebfuns comes out in the same range:
+% The timing for Chebfun comes out very well:
   tic, I = sum(chebfun(F,[0,1])); t = toc;
     fprintf('CHEBFUN:  I = %17.15f  time = %6.4f secs\n',I,t)
 
@@ -74,7 +74,7 @@
     fprintf('CHEBFUN:  I = %17.15f  time = %5.3f secs\n',I,t)
 
 %%
-% This last example highlights the piecewise-smooth aspect of chebfun
+% This last example highlights the piecewise-smooth aspect of Chebfun
 % integration.  Here is another example of a piecewise smooth problem.
   x = chebfun('x');
   f = sech(3*sin(10*x));
@@ -134,7 +134,7 @@
   sum(f)
 
 %%
-% TChebfun is not a specialized item of quadrature software; it is a
+% Chebfun is not a specialized item of quadrature software; it is a
 % general system for manipulating functions in which quadrature is just one
 % of many capabilities. Nevertheless Chebfun compares reasonably well as a
 % quadrature engine against specialized software.  This was the conclusion
@@ -285,7 +285,7 @@
 % The first segment of f' is linear, since f is quadratic here. Then comes
 % a segment with f' = 0, since f is constant. And the end of this second
 % segment appears a delta function of amplitude 1, corresponding to the
-% jump of f by 1.  (Currently delta functions are not shown on chebfun
+% jump of f by 1.  (Currently delta functions are not shown on Chebfun
 % plots.)  The third segment has constant value f' = -1. Finally another
 % delta function, this time with amplitude 1/3, takes us to the final
 % segment.
