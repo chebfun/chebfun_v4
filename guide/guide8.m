@@ -1,5 +1,5 @@
 %% CHEBFUN GUIDE 8: CHEBFUN PREFERENCES
-% Lloyd N. Trefethen, November 2009
+% Lloyd N. Trefethen, November 2009, revised February 2011
 
 %% 8.1  Introduction
 % Like any software system, the chebfun system is based on certain design
