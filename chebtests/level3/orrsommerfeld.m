@@ -5,23 +5,11 @@ function pass = orrsommerfeld
 
 tol = chebfunpref('eps');
 
-d = domain(-1,1);
 R = 5772;
-D = diff(d);  I = eye(d);
-x = chebfun('x',d);
-
-A = (D^4-2*D^2+I)/R - 2i*I - 1i*diag(1-x.^2)*(D^2-I);
-B = D^2-I;
-
-A.lbc(1) = I;  A.lbc(2) = D;
-A.rbc(1) = I;  A.rbc(2) = D;
-
-AA = A; BB = B;
-
-x = chebfun('x',d);
-A = chebop(d); B = A;
-A.op = @(u) (diff(u,4)-2*diff(u,2)+u)/R - 2i*u - 1i*diag(1-x.^2)*(diff(u,2)-u);
-B.op = @(u) diff(u,2) - u;
+A = chebop(-1,1);
+A.op = @(x,u) (diff(u,4)-2*diff(u,2)+u)/R - 2i*u - 1i*diag(1-x.^2)*(diff(u,2)-u);
+B = chebop(-1,1);
+B.op = @(x,u) diff(u,2) - u;
 A.lbc = @(u) [u , diff(u)];
 A.rbc = @(u) [u , diff(u)];
 

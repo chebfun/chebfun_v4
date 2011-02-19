@@ -3,7 +3,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 8;
+numberOfExamples = 9;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -85,6 +85,14 @@ switch exampleNumber
         name = 'Mathieu equation';
         demotype = 'scalar';
     case 8
+        a = '-1'; b = '1';
+        DE = '-u'''''''' + 5*cos(2*x)*u = lambda*u';
+        LBC = 'periodic'; RBC = 'periodic';
+        tol = '1e-10';
+        sigma = '';
+        name = 'Orr-Sommerfeld operator';
+        demotype = 'scalar';
+    case 9
         a = '-2'; b = '2';
         DE = {'u" + u*x+v = lambda*u';'v"+sin(x)*u = lambda*v'};
         LBC = {'u = 0';'v = 0'};

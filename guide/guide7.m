@@ -193,23 +193,23 @@ subplot(1,2,1), plot(V(:,1:2:5)), title('elliptic cosines')
 subplot(1,2,2), plot(V(:,2:2:6)), title('elliptic sines')
 
 %%
-% eigs can also solve generalized eigenproblems. Here is an example of
+% Eigs can also solve generalized eigenproblems. Here is an example of
 % modes from the Orr-Sommerfeld equation of hydrodynamic linear stability
-% analysis at parameters very close to the onset of instability. This is a
-% fourth-order problem, requiring two conditions at each boundary.
-%[d,x] = domain(-1,1); 
-%D = diff(d);  I = eye(d);
-
-%R = 5772;
-%A = (D^4-2*D^2+I)/R - 2i - 1i*diag(1-x.^2)*(D^2-I);
-%B = D^2-I;
-
-%A.lbc(1) = I;  A.lbc(2) = D;
-%A.rbc(1) = I;  A.rbc(2) = D;
-
-%lam = eigs(A,B,40,'lr');
-%clf, plot(lam,'r.'), grid on, axis equal
-%max(real(lam))
+% analysis at Reynolds number very close to the onset of
+% eigenvalue instability [Schmid & Henningson 2001]. This is a
+% fourth-order generalized eigenvalue
+% problem, requiring two conditions at each boundary.
+Re = 5772;           
+B = chebop(-1,1);
+B.op = @(x,u) diff(u,2) - u;
+A = chebop(-1,1);
+A.op = @(x,u) (1/Re)*(diff(u,4)-2*diff(u,2)+u) -...
+       1i*(2*u+(1-x.^2).*(diff(u,2)-u));
+A.lbc = @(u) [u diff(u)];
+A.rbc = @(u) [u diff(u)];
+lam = eigs(A,B,40,'LR');
+clf, plot(lam,'r.'), grid on, axis equal
+max(real(lam))
 
 %% 7.6 Exponential of a linear operator -- EXPM
 % Another means of creating a chebop is intimately tied to the solution of
@@ -342,5 +342,8 @@ subplot(1,3,3), plot( expm(1.8*A & A.bc)*f )
 %
 % [Fornberg 1996] B. Fornberg, A Practical Guide to Pseudospectral Methods,
 % Cambridge University Press, 1996.
+%
+% [Schmid & Henningson 2001] P. J. Schmid and D. S. Henningson,
+% Stability and Transition in Shear Flows, Springer, 2001.
 %
 % [Trefethen 2000] L. N. Trefethen, Spectral Methods in MATLAB, SIAM, 2000.

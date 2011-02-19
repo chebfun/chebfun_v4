@@ -8,9 +8,8 @@ function pass = mathieu
 tol = 3e-9*chebfunpref('eps')/eps;
 
 q = 25;
-d = domain(-pi,pi);
-c = chebfun('cos(2*x)',d);
-A = diff(d,2) - 2*q*diag(c);
+A = chebop(-pi,pi);
+A.op = @(x,u) diff(u,2) - 2*q*cos(2*x).*u;
 A.bc = 'periodic';
 
 lam = eigs(A,30);
