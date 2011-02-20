@@ -1,12 +1,12 @@
 function varargout = solvebvp(N,rhs,varargin)
 % SOLVEBVP is the general chebop command for solving linear or nonlinear
 % ODE BVPs (boundary-value problems).  At the moment, it offers no features
-% beyond what can be obtained through the "nonlinear backslash" command.
+% beyond what can be obtained through the "backslash" command.
 % Later, it will have more options (in analogy to the relationship between
 % \ and LINSOLVE in standard Matlab).
 %
 % Example:
-% [d,x,N] = domain(-1,1);
+% N = chebop(-1,1);
 % N.op = @(u) diff(u,2) + sin(u);
 % N.lbc = 0;
 % N.rbc = 1;

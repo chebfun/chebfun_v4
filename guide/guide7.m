@@ -1,4 +1,4 @@
-%% CHEBFUN GUIDE 7: SOLVING LINEAR DIFFERENTIAL EQUATIONS WITH CHEBOPS
+%% CHEBFUN GUIDE 7: LINEAR DIFFERENTIAL OPERATORS AND EQUATIONS
 % Tobin A. Driscoll, November 2009, revised February 2011
 
 %% 7.1  Overview of differential equations in Chebfun
@@ -18,7 +18,7 @@
 % is implemented in the Chebfun code pde15s, described in Chapter 11.
 
 %%
-% Let's set the clock running, and measure at the end how
+% Let's set the clock running, so we can measure at the end how
 % long it took to produce this chapter.
 tic
 
@@ -27,7 +27,7 @@ tic
 % chebfuns. This chapter focusses on the linear case, though from
 % a user's point of view linear and nonlinear problems are quite similar.
 % One thing that makes linear operators special is that EIGS and EXPM
-% can be applied to them, as we shall describe.
+% can be applied to them, as we shall describe in Sections 7.5 and 7.6.
 
 %%
 % Like chebfuns, chebops are built on the premise of appoximation by
@@ -39,7 +39,7 @@ tic
 
 %%
 % The linear part of the chebop package was first conceived at Oxford
-% University by Bornemann, Driscoll, and Trefethen
+% by Bornemann, Driscoll, and Trefethen
 % [Driscoll, Bornemann & Trefethen 2008], and the implementation is due
 % to Driscoll, Hale, and Birkisson.  Much of the functionality of linear
 % chebops is actually implemented in a class called linop, but users
@@ -61,9 +61,11 @@ norm(L(u),inf)
 
 %%
 % Both the notations L*u and L(u) are allowed, with the same meaning.
-% (Mathematicians
-% generally prefer L*u if L is linear and L(u) if it is nonlinear.)
 min(L*u)
+
+%%
+% Mathematicians
+% generally prefer L*u if L is linear and L(u) if it is nonlinear.
 
 %%
 % A chebop can also have left and/or right boundary conditions.  For a
@@ -109,6 +111,9 @@ L = chebop(@(u) diff(u)+diff(u,2),[-1,1])
 % Or we could include boundary conditions:
 L = chebop(@(u) diff(u)+diff(u,2),[-1,1],@(u) 0,@(u) diff(u))
 
+%%
+% Here are the fields of a chebop:
+struct(L)
 
 %% 7.4 Solving differential and integral equations
 % In Matlab, if A is a square matrix and b is a vector, then the command
@@ -119,9 +124,9 @@ L = chebop(@(u) diff(u)+diff(u,2),[-1,1],@(u) 0,@(u) diff(u))
 
 %%
 % For example, suppose we want to solve the differential
-% equation u"+x^3*u = 1 on the interval [-5,5] with Dirichlet boundary 
+% equation u"+x^3*u = 1 on the interval [-3,3] with Dirichlet boundary 
 % conditions.  Here is a Chebfun solution:
-L = chebop(-5,5);
+L = chebop(-3,3);
 L.op = @(x,u) diff(u,2) + x.^3.*u;
 L.lbc = 0; L.rbc = 0;
 u = L\1; plot(u)
@@ -134,7 +139,8 @@ u = L\1;
 hold on, plot(u,'r')
 
 %%
-% An equivalent to backslash is the SOLVEBVP command:
+% An equivalent to backslash is the SOLVEBVP command, and one can
+% get help with help solvebvp.
 v = solvebvp(L,1);
 norm(u-v)
 
@@ -161,7 +167,7 @@ L = chebop(@(u) diff(u,2)+10000*u,[-1,1]) & 0
 
 %%
 % Thus it is possible to set up and solve a differential equation
-% and plot the solution in a single line of Chebfun:
+% and plot the solution with a single line of Chebfun:
 plot((chebop(@(x,u) diff(u,2)+50*(1.2+sin(x)).*u,[-20,20]) & 0)\1)
 
 %%
@@ -172,7 +178,7 @@ plot((chebop(@(x,u) diff(u,2)+50*(1.2+sin(x)).*u,[-20,20]) & 0)\1)
 % +1 for negative x to -1 for positive x:
 L = chebop(-60,60);
 L.op = @(x,u) diff(u,2) - sign(x).*u;
-L.lbc = 1; L.rbc = 1
+L.lbc = 1; L.rbc = 0;
 u = L\0;
 plot(u)
 
@@ -192,7 +198,8 @@ diag(D)
 clf, plot(V(:,1:4))
 
 %%
-% By default, eigs tries to find the six eigenvalues that are "most readily
+% By default, eigs tries to find the six eigenvalues whose
+% eigenmodes are "most readily
 % converged to", which approximately means the smoothest ones.
 % You can change the number sought and tell eigs where to
 % look for them. Note, however, that you can easily confuse eigs if you ask
@@ -200,24 +207,24 @@ clf, plot(V(:,1:4))
 % differential operator.
 
 %%
-% Here are eigenvalues of the Mathieu equation, and the corresponding
-% eigenfunctions, known as elliptic
-% sines and cosines. Note the imposition of periodic boundary conditions.
+% Here we compute 10 eigenvalues of the Mathieu equation and plot
+% the 9th and 10th corresponding eigenfunctions, known as an elliptic
+% cosine and sine. Note the imposition of periodic boundary conditions.
 q = 10;
 A = chebop(-pi,pi);
 A.op = @(x,u) diff(u,2) - 2*q*cos(2*x).*u;
 A.bc = 'periodic';
-[V,D] = eigs(A,30,'LR');    % eigenvalues with largest real part
-subplot(1,2,1), plot(V(:,1:2:5)), title('elliptic cosines')
-subplot(1,2,2), plot(V(:,2:2:6)), title('elliptic sines')
+[V,D] = eigs(A,16,'LR');    % eigenvalues with largest real part
+subplot(1,2,1), plot(V(:,9)), title('elliptic cosine')
+subplot(1,2,2), plot(V(:,10)), title('elliptic sine')
 
 %%
 % Eigs can also solve generalized eigenproblems, that is,
 % problems of the form A*u = lambda*B*u.  For these one must
-% specify two chebops A and B, with the boundary conditions
+% specify two linear chebops A and B, with the boundary conditions
 % all attached to A.  Here is an example of
-% modes from the Orr-Sommerfeld equation of hydrodynamic linear stability
-% analysis at a Reynolds number very close to the critical value
+% eigenvalues of the Orr-Sommerfeld equation of hydrodynamic linear stability
+% theory at a Reynolds number very close to the critical value
 % for eigenvalue instability [Schmid & Henningson 2001]. This is a
 % fourth-order generalized eigenvalue
 % problem, requiring two conditions at each boundary.
@@ -225,21 +232,22 @@ Re = 5772;
 B = chebop(-1,1);
 B.op = @(x,u) diff(u,2) - u;
 A = chebop(-1,1);
-A.op = @(x,u) (1/Re)*(diff(u,4)-2*diff(u,2)+u) -...
-       1i*(2*u+(1-x.^2).*(diff(u,2)-u));
+A.op = @(x,u) (1/Re)*(diff(u,4)-2*diff(u,2)+u) - 1i*(2*u+(1-x.^2).*(diff(u,2)-u));
 A.lbc = @(u) [u diff(u)];
 A.rbc = @(u) [u diff(u)];
 lam = eigs(A,B,60,'LR');
 clf, plot(lam,'r.'), grid on, axis equal
 spectral_abscissa = max(real(lam))
 
-%% 7.6 Exponential of a linear operator -- EXPM
-% Another means of creating a chebop is intimately tied to the solution of
-% time-dependent PDEs: the exponential of a linear operator (i.e., the
-% semigroup generated by the operator).  In Matlab,EXPM computes
+%%
+% In Matlab,EXPM computes
 % the exponential of a matrix, and this command has been
-% overloaded in Chebfun.  For example, we might advance the
-% solution of the heat equation as follows.
+% overloaded in Chebfun to compute the exponential of
+% a linear operator.  If L is a linear operator and 
+% E(t) = expm(t*L), then the partial differential equation
+% u_t = Lu has solution u(t) = E(t)*u(0).  Thus
+% by taking L to be the 2nd derivative operator, for
+% example, we can use expm to solve the heat equation u_t = u_xx.:
 A = chebop(@(u) diff(u,2),[-1,1]);  
 f = chebfun('exp(-20*(x+0.3).^2)');
 clf, plot(f,'r'), hold on, c = [0.8 0 0];
@@ -251,7 +259,7 @@ end
 %%
 % Here is a more fanciful analogous computation with a complex initial
 % function obtained from the "scribble" command introduced in Chapter 5.
-% (As it happens expm does not map non-smooth data with the usual Chebfun
+% (As it happens expm does not map discontinuous data with the usual Chebfun
 % accuracy, so warning messages are generated.)
 
 f = scribble('BLUR'); clf
@@ -271,7 +279,8 @@ end
 % We'll say a word, but just a word, about how Chebfun carries
 % out these computations.  The methods involved are Chebyshev
 % spectral methods on adaptive grids.  The general ideas are
-% presented in [Trefethen 2000], but Chebfun actually uses modifications
+% presented in [Trefethen 2000] and [Driscoll, Bornemann & Trefethen 2008],
+% but Chebfun actually uses modifications
 % of these methods to be described in [Driscoll & Hale 2011] involving a
 % novel mix of Chebyshev grids of the first and second kinds.
 
@@ -283,8 +292,8 @@ end
 % with certain rows of the matrix modified to impose
 % boundary conditions.
 % When a differential equation is solved in Chebshev, the problem
-% is solved on a sequence of grids until convergence is achieved
-% in the usual Chebfun sense defined by decay of Chebyshev
+% is solved on a sequence of grids of size 9, 17, 33, ... until convergence
+% is achieved in the usual Chebfun sense defined by decay of Chebyshev
 % expansion coefficients.  Much more than just this is really
 % going on, however, including the decomposition of intervals
 % into subintervals to handle coefficients that are only
@@ -298,7 +307,7 @@ end
 % EIGS and EXPM and solution of differential equations in a single
 % step without iteration.  Chebfun contains special devices to
 % determine whether a chebop is linear so that these effects can
-% be achieved.
+% be realized.
 
 %%
 % As mentioned, the discretization length of a Chebfun solution
@@ -307,9 +316,9 @@ end
 % However, the matrices that arise in Chebyshev spectral methods
 % are notoriously ill-conditioned.  Thus the final accuracy in solving
 % differential equations in Chebfun is rarely close to machine precision.
-% Typically one loses just a few
-% digits for second-order differential problems, but six or more digits for
-% fourth-order problems.
+% Typically one loses one or two
+% digits for second-order differential equations and five or six
+% for fourth-order problems.
 
 %% 7.8 Nonlinear equations by Newton iteration
 % As mentioned at the beginning of this chapter, nonlinear differential equations are
@@ -336,12 +345,14 @@ clf, plot(u)
 
 %%
 % Note the beautifully fast convergence, as one expects with Newton's
-% method. The chebop J is a Jacobian (=Frechet derivative) operator, which
+% method. The chebop J defined in the WHILE loop
+% is a Jacobian (=Frechet derivative) operator, which
 % we have constructed explicitly by differentiating the nonlinear operator
 % defining the ODE.  In Section 10.4 we shall see that this whole
 % Newton iteration can be
-% automated by use of Chebfun's "nonlinear backslash" capability, which in
-% turn utilizes a built-in chebfun Automatic Differentiation (AD) feature.
+% automated by use of Chebfun's "nonlinear backslash" capability, which
+% utilizes a Chebfun Automatic Differentiation (AD) feature to construct
+% the Frechet derivative automatically.
 % In fact, all you need to type is
 N = chebop(-1,1);
 N.op = @(u) .001*diff(u,2) - u.^3;
