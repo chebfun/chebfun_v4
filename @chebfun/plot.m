@@ -54,21 +54,27 @@ function varargout = plot(varargin)
 % If plotting quasimatrices or more that one F,G pair these properties
 % (as with JumpLine and JumpMarker) are applied globally.
 %
+% PLOT(AX,...) plots into the axes with handle AX.
+%
 % H = PLOT(F, ...) returns a column vector of handles to line objects in
 % the plot. H(:,1) contains the handles for the 'curves' (i.e. the function),
 % H(:,2) contains handles for the 'marks', (i.e. the values at Chebyshev 
 % points), H(:,3) for the jump lines, H(:,4) for the jump vals, and H(:,5) 
 % contains the handle for a dummy plot used to supply correct legends.
 %
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-
-%  Copyright 2002-2009 by The Chebfun Team.
-%  Last commit: $Author: nich $: $Rev: 458 $:
-%  $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
+% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
 numpts = chebfunpref('plot_numpts');
 
-% get jumpline style and jumpval markers
+% Plot to a given axes
+if ishandle(varargin{1})
+    ax = varargin{1};
+    varargin(1) = [];
+else
+    ax = gca;
+end
+
+% Get jumpline style and jumpval markers
 jlinestyle = ':'; jmarker = 'x'; forcejmarks = false; 
 infy = false; interval = [];
 for k = length(varargin):-1:1
@@ -205,6 +211,9 @@ end
 if isempty(jlinestyle) || (ischar(jlinestyle) && strcmpi(jlinestyle,'none'))
     jumpdata = {NaN, NaN};
 end
+
+% Plot to axes ax
+axes(ax)
 
 % dummy plot for legends
 hdummy = plot(dummydata{:}); hold on

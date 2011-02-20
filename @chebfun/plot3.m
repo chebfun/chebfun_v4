@@ -1,20 +1,24 @@
 function varargout = plot3(varargin)
 % PLOT3 Plot a chebfun in 3-D space
-%    PLOT3(x,y,z), where x,y,z are three chebfuns, plots a curve in 3-space
-%    where z=f(x,y).
+%   PLOT3(x,y,z), where x,y,z are three chebfuns, plots a curve in 3-space
+%   where z=f(x,y).
 %
 %   PLOT3(X,Y,Z), where X, Y and Z are three chebfun quasimatrices, plots
 %   several curves obtained from the columns (or rows) of X, Y, and Z. 
 %
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-
-%   Copyright 2002-2009 by The Chebfun Team. 
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+%   See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
 %   This code is a modification of the code in chebfun/plot.
 
 numpts = chebfunpref('plot_numpts');
+
+% Plot to a given axes
+if ishandle(varargin{1})
+    ax = varargin{1};
+    varargin(1) = [];
+else
+    ax = gca;
+end
 
 % get jumpline style and jumpval markers
 jlinestyle = ':'; jmarker = 'x'; forcejmarks = false;
@@ -113,6 +117,9 @@ h = ishold;
 if isempty(jlinestyle) || strcmpi(jlinestyle,'none')
     jumpdata = {NaN, NaN, NaN};
 end
+
+% Plot to axes ax
+axes(ax)
     
 % dummy plot for legends
 hdummy = plot3(dummydata{:}); hold on
