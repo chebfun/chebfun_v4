@@ -40,7 +40,8 @@ switch(phase)
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Initial guess of solution')
-                xlim(guihandles{7}),legend(guihandles{8})
+                xlim(guihandles{7}),
+                if length(guihandles{8})> 1, legend(guihandles{8}),end
                 if pref.grid, grid on, end
             end
         end
@@ -64,7 +65,8 @@ switch(phase)
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Initial guess of solution')
-                xlim(guihandles{7}),legend(guihandles{8})
+                xlim(guihandles{7})
+                if length(guihandles{8})> 1, legend(guihandles{8}),end
                 if pref.grid, grid on, end
             end
         end
@@ -93,7 +95,8 @@ switch(phase)
                 end
             else
                 axes(guihandles{1})
-                plot(u,'.-'), title('Current solution'), xlim(guihandles{7}),legend(guihandles{8})
+                plot(u,'.-'), title('Current solution'), xlim(guihandles{7})
+                if length(guihandles{8})> 1, legend(guihandles{8}),end
                 if pref.grid, grid on, end
                 axes(guihandles{2})
                 if numel(du) == 1 % If we have only one function, plot update in red
@@ -132,7 +135,8 @@ switch(phase)
                 end
             else
                 axes(guihandles{1})
-                plot(u,'.-'), title('Current solution'), xlim(guihandles{7}),legend(guihandles{8})
+                plot(u,'.-'), title('Current solution'), xlim(guihandles{7})
+                if length(guihandles{8})> 1, legend(guihandles{8}),end
                 if pref.grid, grid on, end
                 axes(guihandles{2})
                 if numel(du) == 1 % If we have only one function, plot update in red
@@ -180,7 +184,8 @@ switch(phase)
                 
             else
                 axes(guihandles{1})
-                plot(u,'.-'), title('Final solution'), xlim(guihandles{7}),legend(guihandles{8})
+                plot(u,'.-'), title('Final solution'), xlim(guihandles{7})
+                if length(guihandles{8})> 1, legend(guihandles{8}),end
                 if pref.grid, grid on, end
                 axes(guihandles{2})
                 if numel(du) == 1 % If we have only one function, plot update in red

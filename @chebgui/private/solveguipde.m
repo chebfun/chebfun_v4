@@ -169,7 +169,8 @@ if iscellstr(initInput)
     
     u0 = chebfun; lenu0 = 0;
     for k = 1:length(inits)
-        init_k = vectorize(inits{order(k)});
+        initLoc = find(order == k);
+        init_k = vectorize(inits{initLoc});
         u0k = chebfun(init_k,[a b]);
         u0k = simplify(u0k,tol);
         u0(:,k) =  u0k;

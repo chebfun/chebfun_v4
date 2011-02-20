@@ -98,7 +98,8 @@ if ~isempty(initInput) && isempty(guess)
         
         guess = chebfun;
         for guessCounter = 1:length(guesses)
-            tempGuess = eval(vectorize(guesses{order(guessCounter)}));
+            guessLoc = find(order == guessCounter);
+            tempGuess = eval(vectorize(guesses{guessLoc}));
             if isnumeric(tempGuess)
                 tempGuess = 0*xt+tempGuess;
             end
@@ -211,7 +212,8 @@ if guiMode
     handles.hasSolution = 1;
     
     axes(handles.fig_sol) 
-    plot(u,'Linewidth',2), xlim(xLimit),legend(allVarName)
+    plot(u,'Linewidth',2), xlim(xLimit),
+    if length(allVarName) > 1, legend(allVarName), end
     if guifile.options.grid
         grid on
     end
