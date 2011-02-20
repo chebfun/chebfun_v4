@@ -89,12 +89,12 @@ switch exampleNumber
         demotype = 'ivp';
     case 8
         a = '0'; b = '8';
-        DE = 'u'' = sign(sin(x^2))';
+        DE = 'u'' = sign(sin(x^2)) - u/2';
         DErhs = '0';
         LBC = 'u = 0'; RBC = '';
         init = ''; tol = '1e-10';
         damping = '1'; plotting = '0.1';
-        name = 'Sawtooth IVP';
+        name = 'Linear Sawtooth IVP';
         demotype = 'ivp';
     case 9
         a = '0'; b = '15';
@@ -109,7 +109,7 @@ switch exampleNumber
         a = '-1'; b = '1';
         DE = '0.01*u" + 2*(1-x^2)*u + u^2 = 1';
         LBC = 'u = 0'; RBC = 'u = 0';
-        init = '2*(x^2-1).*(1-2/(1+20*x^2))';
+        init = 'u = 2*(x^2-1).*(1-2/(1+20*x^2))';
         tol = '1e-10';
         damping = '1'; plotting = '0.1';
         name = 'Carrier equation';
@@ -118,7 +118,7 @@ switch exampleNumber
         a = '-1'; b = '1';
         DE = '0.01*u" + 2*(1-x^2)*u + u^2 = 1';
         LBC = 'u = 0'; RBC = 'u = 0';
-        init = '2*x*(x^2-1).*(1-2/(1+20*x^2))';
+        init = 'u = 2*x*(x^2-1).*(1-2/(1+20*x^2))';
         tol = '1e-10';
         damping = '1'; plotting = '0.1';
         name = 'Carrier equation (another solution)';
@@ -175,7 +175,7 @@ switch exampleNumber
         a = '0'; b = '10';
         DE = 'u'''' = - sin(u)';
         LBC = 'u = 2'; RBC = 'u = 2';
-        init = '2*cos(2*pi*x/10)'; tol = '1e-10';
+        init = 'u = 2*cos(2*pi*x/10)'; tol = '1e-10';
         damping = '1'; plotting = '0.1';
         name = 'Nonlinear pendulum';
         demotype = 'bvp';
@@ -183,7 +183,7 @@ switch exampleNumber
         a = '0'; b = '10';
         DE = 'u'''' = - sin(u)';
         LBC = 'u = 2'; RBC = 'u = 2';
-        init = '2 + sin(pi*x/10)'; tol = '1e-10';
+        init = 'u = 2 + sin(pi*x/10)'; tol = '1e-10';
         damping = '1'; plotting = '0.1';
         name = 'Nonlinear pendulum (another solution)';
         demotype = 'bvp';
