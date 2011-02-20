@@ -40,6 +40,7 @@ switch(phase)
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Initial guess of solution')
+                xlim(guihandles{7}),legend(guihandles{8})
                 if pref.grid, grid on, end
             end
         end
@@ -63,6 +64,7 @@ switch(phase)
             else
                 axes(guihandles{1})
                 plot(u,'.-'), title('Initial guess of solution')
+                xlim(guihandles{7}),legend(guihandles{8})
                 if pref.grid, grid on, end
             end
         end
@@ -91,7 +93,7 @@ switch(phase)
                 end
             else
                 axes(guihandles{1})
-                plot(u,'.-'), title('Current solution')
+                plot(u,'.-'), title('Current solution'), xlim(guihandles{7}),legend(guihandles{8})
                 if pref.grid, grid on, end
                 axes(guihandles{2})
                 if numel(du) == 1 % If we have only one function, plot update in red
@@ -101,6 +103,7 @@ switch(phase)
                     plot(du,'.-'), title('Current correction step')
                     if pref.grid, grid on, end
                 end
+                xlim(guihandles{7})
             end
         end
         drawnow
@@ -129,7 +132,7 @@ switch(phase)
                 end
             else
                 axes(guihandles{1})
-                plot(u,'.-'), title('Current solution')
+                plot(u,'.-'), title('Current solution'), xlim(guihandles{7}),legend(guihandles{8})
                 if pref.grid, grid on, end
                 axes(guihandles{2})
                 if numel(du) == 1 % If we have only one function, plot update in red
@@ -139,6 +142,7 @@ switch(phase)
                     plot(du,'.-'), title('Current correction step')
                     if pref.grid, grid on, end
                 end
+                xlim(guihandles{7})
             end
         end
         drawnow
@@ -176,7 +180,7 @@ switch(phase)
                 
             else
                 axes(guihandles{1})
-                plot(u,'.-'), title('Final solution')
+                plot(u,'.-'), title('Final solution'), xlim(guihandles{7}),legend(guihandles{8})
                 if pref.grid, grid on, end
                 axes(guihandles{2})
                 if numel(du) == 1 % If we have only one function, plot update in red
@@ -186,6 +190,7 @@ switch(phase)
                     plot(du,'.-'), title('Final correction step')
                     if pref.grid, grid on, end
                 end
+                xlim(guihandles{7})
             end
         end 
         
