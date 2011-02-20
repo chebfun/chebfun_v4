@@ -12,7 +12,7 @@ function ADH = anon(varargin)
 %   F  = @(u) u*sin(x)
 %
 % The anon class is a support class for working with automatic
-% differentiation in the chebfun system and is therefore lightly
+% differentiation in Chebfun and is therefore lightly
 % documented. It is intented to be used in the overloaded functions in the
 % @chebfun directory.
 %

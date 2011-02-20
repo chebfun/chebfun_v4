@@ -1,6 +1,6 @@
-function pass = rest
+function pass = unboundednorms
 % Tests norm for unbounded domains and subtraction of chebfuns.  
-% By Sheehan Olver, Nov 2009.
+% Sheehan Olver, November 2009.
 
 tol = 100*chebfunpref('eps');
 

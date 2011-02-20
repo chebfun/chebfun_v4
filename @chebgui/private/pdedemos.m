@@ -47,7 +47,7 @@ switch exampleNumber
         DE = 'u_t = .01*u'''' + u - u^3';
         LBC = 'periodic';
         RBC = 'periodic';
-        init = '-1+2*(exp(-35*(x+2)^2)+exp(-11*x^2)+exp(-7*(x-2)^2))';
+        init = 'u = -1+2*(exp(-35*(x+2)^2)+exp(-11*x^2)+exp(-7*(x-2)^2))';
         tol = '1e-6'; plotting = 'on';
         name = 'Allen-Cahn equation';
         fixYaxisLower = '-1'; fixYaxisUpper = '1';
@@ -56,7 +56,7 @@ switch exampleNumber
         a = '-1'; b = '1'; t = '0:.04:5';
         DE = 'u_t = -(u^2)'' + .02*u"';
         LBC = 'dirichlet'; RBC = 'dirichlet';
-        init = '(1-x.^2).*exp(-30*(x+.5).^2)';
+        init = 'u = (1-x.^2).*exp(-30*(x+.5).^2)';
         tol = '1e-4'; plotting = 'on';
         name = 'Burgers equation';
         fixYaxisLower = '0'; fixYaxisUpper = '0.8';
@@ -65,7 +65,7 @@ switch exampleNumber
         a = '-3'; b = '3'; t = '0:.025:1.6';
         DE = 'u_t = -.003*u'''''''' + (u^3-u)''''';
         LBC = {'u = -1','u''=0'}; RBC = {'u = -1','u''=0'};
-        init = 'cos(x) - exp(-3*x^2)';
+        init = 'u = cos(x) - exp(-3*x^2)';
         tol = '1e-6'; plotting = 'on';
         fixYaxisLower = '-1'; fixYaxisUpper = '1.2';
         name = 'Cahn-Hilliard equation';
@@ -74,7 +74,7 @@ switch exampleNumber
         a = '-4'; b = '4'; t = '0:.01:1.5';
         DE = 'u_t = 0.1*u''''';
         LBC = 'dirichlet'; RBC = 'dirichlet';
-        init = 'sin(pi*x/4) + sin(pi*3*x/4) + sin(pi*12*x/4)';
+        init = 'u = sin(pi*x/4) + sin(pi*3*x/4) + sin(pi*12*x/4)';
         tol = '1e-6'; plotting = 'on';
         fixYaxisLower = '-3'; fixYaxisUpper = '3';
         name = 'Heat equation';
@@ -84,7 +84,7 @@ switch exampleNumber
         DE = {'u_t = .02*u" + cumsum(u)*sum(u)'};
         LBC = {'dirichlet'};
         RBC = {'dirichlet'};
-        init = {'(1-x^2)*exp(-30*(x+.5)^2)'};
+        init = 'u = (1-x^2)*exp(-30*(x+.5)^2)';
         tol = '1e-6'; plotting = 'on';
         name = 'Integro-differential equation';
         fixYaxisLower = '0'; fixYaxisUpper = '1.4';
@@ -93,7 +93,7 @@ switch exampleNumber
         a = '-1'; b = '1'; t = '0:.01:2';
         DE = 'u_t = u*u'' - u" - 0.006*u""';
         LBC = {'u = 1','u'' = 2'}; RBC = {'u = 1','u'' = 2'};
-        init = '1 + 0.5*exp(-40*x.^2)';
+        init = 'u = 1 + 0.5*exp(-40*x.^2)';
         tol = '1e-4'; plotting = 'on';
         fixYaxisLower = '-30'; fixYaxisUpper = '30';
         name = 'Kuramoto-Sivashinsky equation';

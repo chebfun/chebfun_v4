@@ -1,8 +1,8 @@
 function pass = restrictscl
 
-% RodP Jan 09
 % This function tests the retrict function (problem related to a bug report
 % by Justin Kao of MIT.
+% Rodrigo Platte, January 2009
 
 tol = chebfunpref('eps');
 

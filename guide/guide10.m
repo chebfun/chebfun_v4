@@ -1,4 +1,4 @@
-%% CHEBFUN GUIDE 10: NONLINEAR ODES AND AUTOMATIC DIFFERENTIATION
+%% CHEBFUN GUIDE 10: NONLINEAR ODES AND CHEBGUI
 % Lloyd N. Trefethen, November 2009, revised February 2011
 
 %%
@@ -14,7 +14,8 @@
 %   Both kinds of problems via chebops:  nonlinear backslash ( = SOLVEBVP)
 %
 % In this chapter we outline the use of these methods; for fuller details,
-% see the "help" documentation.  The last of the methods listed,
+% see the "help" documentation and especially the online
+% Chebfun Examples.  The last of the methods listed,
 % nonlinear backslash or SOLVEBVP, represents a
 % "pure Chebfun" approach in which Newton's method is applied on chebfuns,
 % with the necessary derivative operators calculated by Chebfun's built-in
@@ -53,8 +54,7 @@ plot(u,LW,lw)
 %%
 % The first argument to ODE45 defines the equation, the second defines the
 % domain for the independent variable, and the third provides the initial
-% condition.  The second argument takes the form of a chebfun domain as
-% described in Chapter 7, and it is the presence of this object that
+% condition.  It is the presence of the domain object that
 % directs Matlab to use the chebfun overload of ODE45 rather than the
 % Matlab original.
 
@@ -157,7 +157,7 @@ v0 = [0*one 0*one];
 v = bvp5c(ode,bc,v0);
 u = v(:,1); plot(u,LW,lw)
 
-%% 10.3 Automatic Differentiation
+%% 10.3 Automatic differentiation
 % The options described in the last two sections rely on standard numerical
 % discretizations, whose results are then converted to Chebfun form.  It is
 % natural, however, to want to be able to try solving ODEs fully within the
@@ -196,8 +196,8 @@ w = u + diff(v);
 dvdu = diff(v,u);
 
 %%
-% The result dvdu is a linop, Chebfuns internal representation of a linear
-% operator as mentioned in Chapter 7.
+% The result dvdu is a linop, Chebfun's internal representation of a linear
+% operator as briefly mentioned in Chapter 7.
 % For example, dvdu*x is 3x^4 times x, or 3x^5:
 plot(dvdu*x,LW,lw)
 
@@ -257,11 +257,11 @@ u = L\0; plot(u,'m',LW,lw)
 % achieved.
 
 %%
-% The object L we have created is a nonlinear chebop, with these fields:
+% The object L we have created is a chebop, with these fields:
 struct(L)
 
 %%
-% Notice that one of the fields is init, which may hold an
+% Notice that one of the fields is called init, which may hold an
 % initial guess for an iteration if one is specified.  If a 
 % guess is not specified, then a zero or linear function is used
 % depending on the boundary conditions.
@@ -273,11 +273,11 @@ struct(L)
 % then solved by chebops.
 
 %%
-% Let us reconsider some of the examples of the last two sections.  First
+% Let us reconsider some of the examples of the last three sections.  First
 % in Section 10.1 we had the nonlinear IVP u' = u^2, u(0)=0.95.  This can be
 % solved in chebop formulation like this:
 N = chebop(0,1);
-N.op = @(u) diff(u)-u.^2;  
+N.op = @(x,u) diff(u)-u.^2;  
 N.lbc = 0.95;
 u = N\0;                 
 plot(u,'m',LW,lw)
@@ -288,7 +288,7 @@ plot(u,'m',LW,lw)
 % conditions at the left, which can be imposed by making N.lbc a function
 % returning an array.
 N = chebop(0,10*pi);
-N.op = @(u) diff(u,2)+u;
+N.op = @(x,u) diff(u,2)+u;
 N.lbc = @(u) [u-1, diff(u)];
 u = N\0;
 plot(u,'m',diff(u),'c',LW,lw)
@@ -312,7 +312,7 @@ u = N\1; plot(u,'m',LW,lw)
 % correct too; the Carrier problem has many solutions.
 % If we multiply this solution by sin(x) and take the result as a new
 % initial guess, we converge to another new solution:
-N.guess = u.*sin(x);
+N.init= u.*sin(x);
 [u,nrmdu] = N\1; plot(u,'m',LW,lw)
 
 %%
@@ -349,10 +349,10 @@ cheboppref('display','none')
 % Chebfun includes a GUI (Graphical User Interface) for solving
 % all kinds of ODE, time-dependent PDE, and eigenvalue problems interactively.
 % We will not describe it here but encourange the reader to type chebgui
-% and give it a try.  We sure to note the "Demo" menu, which contains
+% and give it a try.  Be sure to note the "Demo" menu, which contains
 % dozens of preloaded examples, both scalars and systems.
 % Perhaps most important of all is the
-% "Expore to m-file" button, which produces a Chebfun m-file corresponding
+% "Export to m-file" button, which produces a Chebfun m-file corresponding
 % to whatever problem is loaded into the GUI.  This feature enables one
 % to get going quickly and interactively, then switch to a Chebfun program
 % to adjust the fine points.

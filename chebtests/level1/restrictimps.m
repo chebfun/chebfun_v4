@@ -1,6 +1,6 @@
 function pass = restrictimps
 % Test handling of the imps matrix by restrict
-% RodP 18/12/2008
+% Rodrigo Platte, December 2008
 
 splitting on
 

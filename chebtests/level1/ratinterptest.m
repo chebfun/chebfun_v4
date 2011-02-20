@@ -1,6 +1,7 @@
 function pass = ratinterptest
 
 % Check a few basics with ratinterp
+% A Level 1 Chebtest.
 
 [d,x] = domain(1,3);
 f = abs(exp(x)-5);
