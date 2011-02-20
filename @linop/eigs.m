@@ -67,7 +67,6 @@ while (nargin > j)
 end
 
 maxdegree = cheboppref('maxdegree');
-maxdegree = min(256,maxdegree);
 m = A.blocksize(2);
 if m~=A.blocksize(1)
   error('LINOP:eigs:notsquare','Block size must be square.')
