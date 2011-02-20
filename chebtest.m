@@ -99,11 +99,9 @@ if ~exist(dirname,'dir')
   error('CHEBFUN:chebtest:nodir',msg)
 end
 
-% Turn off warnings for the test
-warnstate = warning;
-warning off
 
 % Store user preferences for warning and chebfunpref
+warnstate = warning;
 userpref.warnstate = warnstate;
 userpref.path = path;
 userpref.pref = pref;
@@ -123,10 +121,10 @@ for i=1:length(subdirnames)
     if ~subdirlist(i).isdir, continue; end;
     
     % add it to the path
-    addpath( [ dirname filesep subdirnames{i} ] );
+    addpath( fullfile(dirname,subdirnames{i}) );
 
     % Get the names of the tests for this level
-    dirlist = dir( fullfile([ dirname filesep subdirnames{i} ],'*.m') );
+    dirlist = dir(fullfile(dirname,subdirnames{i},'*.m'));
     mfiles = { mfiles{:} , dirlist.name };
     
 end;
@@ -134,6 +132,11 @@ end;
 % Get the names of any un-sorted tests
 dirlist = dir( fullfile(dirname,'*.m') );
 mfiles = { mfiles{:} , dirlist.name };
+
+um = unique(mfiles,'first');
+if numel(um) < numel(mfiles)
+    warning('CHEBFUN:chebtest:unique','Nonunique chebtest names detected.');
+end
 
 % Find the length of the names (for pretty display later).
 namelen = 0;
@@ -182,12 +185,25 @@ if ~usejava('jvm') || ~usejava('desktop')
     javacheck = false;
 end
 
+prevdir = [];
+
+% Turn off warnings for the test
+warning off
+
 % loop through the tests
 for j = 1:length(mfiles)
-  % Print the test name
   fun = mfiles{j}(1:end-2);
+  % Print the test directory (if new)
+  whichfun = which(fun);
+  fparts = fileparts(whichfun);
+  curdir = fparts(find(fparts==filesep,1,'last')+1:end);
+  if ~strcmp(curdir,prevdir)
+      prevdir = curdir;
+      fprintf('%s tests\n',curdir);
+  end
+  % Print the test name
   if javacheck
-      link = ['<a href="matlab: edit ' which(fun) '">' fun '</a>'];
+      link = ['<a href="matlab: edit ' whichfun '">' fun '</a>'];
   else
       link = fun;
   end
@@ -210,7 +226,7 @@ for j = 1:length(mfiles)
       
       % Create an error report entry for a failure
       if createreport
-        fid = fopen([dirname filesep ,'chebtest_report.txt'],'a');
+        fid = fopen(fullfile(dirname,'chebtest_report.txt'),'a');
         fprintf(fid,[fun '  (failed) \n']);
         fprintf(fid,['pass: ''' int2str(pass) '''\n\n']);
         fclose(fid);
@@ -236,7 +252,7 @@ for j = 1:length(mfiles)
    
     % Create an error report entry for a crash
     if createreport
-        fid = fopen([dirname filesep ,'chebtest_report.txt'],'a');
+        fid = fopen(fullfile(dirname,'chebtest_report.txt'),'a');
         fprintf(fid,[fun '  (crashed) \n']);
         fprintf(fid,['identifier: ''' msg.identifier '''\n']);
         fprintf(fid,['message: ''' msg.message '''\n']);
@@ -273,9 +289,9 @@ else
   if createreport
       fun = 'chebtest_report.txt';
       if javacheck
-          link = ['<a href="matlab: edit ' dirname filesep fun '">' fun '</a>'];
+          link = ['<a href="matlab: edit ' fullfile(dirname,fun) '">' fun '</a>'];
       else
-          link = fullfile(dirname,filesep,fun);
+          link = fullfile(dirname,fun);
       end
       msg = [' Error report available here: ' link '. ' ];
       msg = strrep(msg,'\','\\');  % escape \ for fprintf
