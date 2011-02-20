@@ -364,6 +364,15 @@ L.rbc = @(u,v) u;
 [V,D] = eigs(L,7);
 eigenvalues = diag(D)
 
+%%
+% The output variable V is a cell array containing the 
+% 7 u eigenfunctions and 7 v eigenfunctions: V{1} is a quasimatrix
+% of the former, and V{2} is a quasimatrix of the latter.  Thus
+% we can plot V{1} to see the u eigenfunctions.  As it happens,
+% they are imaginary (apart from rounding errors), so we divide
+% them by 1i and take the real part before plotting:
+eigenfunctions = real(V{1}/1i);
+plot(eigenfunctions)
 
 %% 7.9 Nonlinear equations by Newton iteration
 % As mentioned at the beginning of this chapter, nonlinear differential equations are
