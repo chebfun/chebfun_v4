@@ -1,7 +1,6 @@
 function pass = guide2tests
 % Perform various tests from chapter 2 of the Chebfun Guide.
 % LNT 25 May 2008
-
   splitting on
 
   f = chebfun('log(1+tan(x))',[0 pi/4]);
@@ -25,23 +24,22 @@ function pass = guide2tests
   err4 = I-Iexact; 
   pass(4) = err4<chebfunpref('eps')*1e3;
 
-  x = chebfun('x');
-  f = sech(3*sin(10*x));
-  g = sin(9*x); h = min(f,g);
-  I = sum(h); Iexact = -0.38155644885025;
-  err5 = I-Iexact; 
-  pass(5) = err5<chebfunpref('eps')*10;
+% Commented out to save time
+
+% x = chebfun('x');
+% f = sech(3*sin(10*x));
+% g = sin(9*x); h = min(f,g);
+% I = sum(h); Iexact = -0.38155644885025;
+% err5 = I-Iexact; 
+% pass(5) = err5<chebfunpref('eps')*10;
 
 % splitting off
 % x = chebfun('x',[0 1]);
 % f = sech(10*(x-0.2)).^2 + sech(100*(x-0.4)).^4 + sech(1000*(x-0.6)).^6;
 % I = sum(f); Iexact = 0.210802735500549;
 % err6 = I-Iexact; pass6 = err6<chebfunpref('eps')*10;
-pass(6) = 1; %commented out to save time
 
 % splitting on
 % f = sech(10*(x-0.2)).^2 + sech(100*(x-0.4)).^4 + sech(1000*(x-0.6)).^6;
 % I = sum(f);
 % err7 = I-Iexact; pass7 = err7<1e2*chebfunpref('eps');
-pass(7) = 1; %commented out to save time
-
