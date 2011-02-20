@@ -1,6 +1,7 @@
 function pass = subspacetest
 % test the subspace function (angle between subspaces). Also calls vander.m
 % Rodrigo Platte, October 2008.
+% (A Level 2 Chebtest)
 
 pass = true;
 [d,theta] = domain(0,2*pi);

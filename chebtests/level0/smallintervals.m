@@ -1,6 +1,7 @@
 function pass = smallintervals
-% Operations on small intervals
+% Tests of operations on small intervals
 % Rodrigo Platte, July 2008.
+% (A Level 0 Chebtest)
 
 splitting on
 

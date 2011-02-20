@@ -3,7 +3,8 @@ function pass = unbndpolys
 % intervals by lagpoly and hermpoly, and the values returned by lagpts and
 % hermpts.
 %
-% Nick Hale April 2010
+% Nick Hale, April 2010
+% (A Level 1 Chebtest)
 
 % Otions
 N = 8;
