@@ -20,7 +20,23 @@ function C = mtimes(A,B)
 if isa(A,'chebfun')
     error('CHEBOP:mtimes:invalid','Operation is undefined.');
 elseif isa(B,'chebfun')
-    C = feval(A.op,B);
+    % Evaluate the chebfun differently depending on whether it's operator
+    % is a linop or an anonymous function
+    if strcmp(class(A.op),'linop')
+        C = feval(A.op,B);
+    else
+        Anargin = nargin(A.op);
+        if numel(B) == Anargin
+            C = feval(A.op,B);
+        elseif numel(B) == Anargin - 1
+            % Create the linear function on the domain of A to use as the
+            % first argument
+            xDom = chebfun('x',A.dom);
+            C = feval(A.op,xDom,B);
+        else
+             error('CHEBOP:mtimes:nargin','Incorrect number of input arguments.')
+        end
+    end
 elseif isnumeric(A) || isnumeric(B)
     % Switch argument to make sure A is numeric
     if isnumeric(B)
