@@ -44,7 +44,12 @@ elseif isnumeric(A) || isnumeric(B)
     end
     
     C = B;  % change this if ID's are put in chebops!
-    C.op = @(u) A*C.op(u);
+    
+    funString = func2str(C.op);
+    firstRightParLoc = min(strfind(funString,')'));
+    funArgs = funString(2:firstRightParLoc);
+    C.op = eval(['@',funArgs,'A*C.op',funArgs]);
+
     C.opshow = cellfun(@(s) [num2str(A),' * (',s,')'],B.opshow,'uniform',false);
 elseif isa(A,'chebop') && isa(B,'chebop')
     if ~(A.dom == B.dom)

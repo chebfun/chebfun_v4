@@ -5,20 +5,23 @@ function Narg = feval(Nin,argument,varargin)
 
 % Need to do a trick if the operator is a cell
 if ~isa(Nin.op,'cell')
+    if strcmp(class(Nin.op),'linop')
+        Narg = feval(Nin.op,argument,varargin);
+        return
+    end
     numberOfInputVariables = nargin(Nin.op);
     
     % Need to load a cell if the number of input arguments is greater than
     % 1:
-    if numberOfInputVariables == 1
-        Narg = Nin.op(argument);
+    if numberOfInputVariables == numel(argument)
+        Narg = feval(Nin.op,argument);
+    elseif numel(argument) == numberOfInputVariables - 1
+        % Create the linear function on the domain of Nin to use as the
+        % first argument
+        xDom = chebfun('x',Nin.dom);
+        Narg = feval(Nin.op,xDom,argument);
     else
-        % Load the cell variable from the quasimatrix
-        argumentCell = cell(1,numel(argument));
-        for quasiCounter = 1:numel(argument)
-            argumentCell{quasiCounter} = argument(:,quasiCounter);
-        end
-        
-        Narg = Nin.op(argumentCell{:});
+        error('CHEBOP:feval:nargin','Incorrect number of input arguments.')
     end
 else
     [m,n] = size(Nin.op);
