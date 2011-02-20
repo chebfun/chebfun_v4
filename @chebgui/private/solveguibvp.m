@@ -105,10 +105,11 @@ if ~isempty(initInput) && isempty(guess)
             guess = [guess, tempGuess];
         end
     else
-        guess = eval(vectorize(initInput));
-        if isnumeric(guess)
-            guess = 0*xt+guess;
-        end
+        guessInput = vectorize(initInput);
+        equalSign = find(guessInput=='=');
+        if isempty(equalSign), equalSign = 0; end
+        guessInput = guessInput(equalSign+1:end);
+        guess =  chebfun(guessInput,[a b]);
     end
 end
 
