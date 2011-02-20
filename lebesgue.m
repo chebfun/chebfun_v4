@@ -30,7 +30,7 @@ function [L,Lconst] = lebesgue(x,varargin)
 
 %  Copyright 2009 by The Chebfun Team. 
 %
-%  This version of LEBESGUE lives in the chebfun trunk directory.
+%  This version of LEBESGUE lives in the Chebfun trunk directory.
 %  There is a companion code in @domain.
 %
 %  Nick Trefethen,  22/07/2009

@@ -8,7 +8,7 @@ function H = hermpoly(n,type)
 % (with weight exp(-x.^2/2)), which gives rise to monic polynomials.
 %
 % Note, this is currently just a toy to play with the construction of
-% Hermite polynomials using a combination of chebfun's barycentric,
+% Hermite polynomials using a combination of Chebfun's barycentric,
 % mapping, and 'blowup' technologies. See chebfun/chebtests/unbndpolys.m
 % for some testing.
 %

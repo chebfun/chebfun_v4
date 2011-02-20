@@ -1,7 +1,7 @@
 function resampling(on_off)
 %RESAMPLING   CHEBFUN resample option
 %
-%   RESAMPLING ON forces the chebfun constructor to sample a function at all 
+%   RESAMPLING ON forces the Chebfun constructor to sample a function at all 
 %   Chebyshev points as it adapts the number of nodes needed for an accurate
 %   representation.  This option is recommended when working with chebops
 %   or if the values of the function depend on the number of points.

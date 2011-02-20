@@ -1,5 +1,5 @@
 function varargout = chebtest(dirname)
-%CHEBTEST Probe chebfun system against standard test files.
+%CHEBTEST Probe Chebfun against standard test files.
 % CHEBTEST DIRNAME runs each M-file in the directory DIRNAME. Each M-file
 % should be a function that takes no inputs and returns a logical scalar 
 % value. If this value is true, the function is deemed to have 'passed'. 
@@ -24,23 +24,21 @@ function varargout = chebtest(dirname)
 % the tests therein in alphabetical order. The tests should be assigned
 % to different levels according to the following scheme:
 %
-%   level0: Tests of the basic chebfun routines such as artihmetic
+%   level0: Tests of the basic Chebfun routines such as arithmetic
 %           operators, constructors, preferences, etc...
 %   level1: Tests for more complex operations of a single chebfun, e.g.
 %           norm, max, roots, diff, sum, etc...
-%   level2: Tests involving systems of chebfuns.
+%   level2: Tests involving systems of chebfuns (quasimatrices).
 %   level3: Tests involving linear chebops.
 %   level4: Tests involving non-linear chebops.
 %
 % In an ideal world, each test would only use functions and operations
-% that are tested in the same or lower levels. The tests in these
-% folders should also only test specific features and methods of the
-% Chebfun system.
+% that are tested in the same or lower levels.
 %
 % Tests residing directly in the chebtests directory will be executed
 % only after the 'level*' tests.
 %
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
 % Copyright 2002-2011 by The Chebfun Team. 
 

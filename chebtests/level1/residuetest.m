@@ -1,4 +1,4 @@
-% Test residue.
+% Tests the Chebfun residue command.
 % Joris Van Deun, 7 December 2009
 function pass = residuetest
 

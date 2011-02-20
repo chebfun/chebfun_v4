@@ -2,15 +2,15 @@
 % Lloyd N. Trefethen, November 2009, revised February 2011
 
 %%
-% This chapter presents some relatively new features of
-% Chebfun that are a good deal less robust than what is
+% This chapter presents some features of
+% Chebfun that are less robust than what is
 % described in the first eight chapters.  With classic bounded
 % chebfuns on a bounded interval [a,b], you can do amazingly
 % complicated things often without encountering any difficulties.
 % Now we are going to let the intervals and the functions
 % diverge to infinity -- but please
-% lower your expectations!  Partly because the software is new
-% and experimental, and partly for good mathematical reasons,
+% lower your expectations!  Partly because the software is relatively new,
+% and partly for good mathematical reasons,
 % one cannot expect the same reliability with these features.
 
 %% 9.1 Infinite intervals
@@ -84,8 +84,8 @@ plot(sinc,'m','interval',[-10 10])
 % [-1,1].  Let's take a look at what is going on in the case
 % of the function g just constructed.  We'll do this by digging inside
 % Chebfun a bit -- with a warning that the details
-% of these inner workings are not fixed, but may differ
-% from one Chebfun version to the next.
+% of these inner workings are not fixed, but may change
+% in future releases.
 
 %%
 % First we look at the different fields that make up a chebfun:
@@ -273,10 +273,7 @@ f.funs.exps
 % The treatment of blowups in Chebfun
 % was initiated by Mark Richardson in an MSc thesis at
 % Oxford [Richardson 2009], then further developed by
-% Richardson in collaboration with Rodrigo Platte and
-% Nick Hale.  This is very much a work in 
-% progress and we hope to make it more reliable in future
-% releases.
+% Richardson in collaboration with Rodrigo Platte and Nick Hale.  
 
 %% 9.4 Another approach to singularities
 % We have just seen how certain algebraic singularities can be
@@ -288,11 +285,12 @@ d = domain(0,2);
 f = chebfun(ff,d,'exps',[.5 0])
 
 %%
-% It is easy to run into trouble with such calculations, however:
+% It is easy to run into trouble with such calculations, however, for
+% example if we define
 gg = @(x) 1+sqrt(x.*exp(x));
-g = chebfun(gg,d,'exps',[.5 0])
 
 %%
+% and then try g = chebfun(gg,d,'exps',[.5 0]).  
 % Better results may sometimes be achieved -- for bounded functions
 % only -- by using a different
 % experimental Chebfun facility based on the same kind of changes of
@@ -306,7 +304,7 @@ ff = @(x) cos(22*x)./(1+x.^2)  + gamma(1.2+x).*real(airy(10*x)).*(1-x).^.3;
 f1 = chebfun(ff,'singmap',[0 .3])
 plot(min(f1,1))
 
-%% 9.4 References
+%% 9.5 References
 %
 % [Boyd 2001] J. P. Boyd, Chebyshev and Fourier Spectral Methods,
 % 2nd ed., Dover, 2001.

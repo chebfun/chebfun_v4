@@ -2,11 +2,11 @@
 % Lloyd N. Trefethen, November 2009, revised February 2011
 
 %% 8.1  Introduction
-% Like any software system, the chebfun system is based on certain design
+% Like any software package, Chebfun is based on certain design
 % decisions.  Some of these are fixed, like the principle of representing
 % functions by Chebyshev expansions.  Others are adjustable, like the
-% maximum number of points at which a function will be sampled before the
-% system gives up trying to resolve it.  A starting point in exploring
+% maximum number of points at which a function will be sampled before Chebfun
+% gives up trying to resolve it.  A starting point in exploring
 % these matters is to type the command help chebfunpref. (For chebops,
 % there is help cheboppref.) Or just to see the list of preferences, you
 % can simply execute chebfunpref. Here we execute it with the argument
@@ -15,10 +15,10 @@
   chebfunpref('factory')
 
 %%
-% In this section of the Chebfun Guide we explore some of these adjustable
+% In this chapter of the Chebfun Guide we explore some of these adjustable
 % preferences, showing how special effects can be achieved by modifying
 % them.  Besides showing off some useful techniques, this review will also
-% serve to deepen the user's understanding of the system by poking about a
+% serve to deepen the user's understanding of Chebfun by poking about a
 % bit at its edges.
 
 %%
@@ -51,7 +51,7 @@ splitting off
 %% 8.3  splitting: splitting on/off
 % Perhaps the preference that users wish to control most often is the
 % choice of splitting off or on.  Splitting off is the factory default,
-% though splitting on was the default in Chebfun versions released in 2008.
+% though splitting on was the default in Chebfun Version 2.
 
 %%
 % In both splitting off and splitting on modes, a chebfun may consist of a
@@ -106,7 +106,7 @@ splitting off
   format long, f((.1:.1:.5)'.^2)
 
 %%
-% Inspection reveals that the system has broken the interval into a
+% Inspection reveals that Chebfun has broken the interval into a
 % succession of pieces, each 100 times smaller than the next:
   
   f.ends
@@ -158,7 +158,7 @@ splitting off
 %%
 % On the other hand, splitting off mode has advantages of robustness.  In
 % particular, operations involving derivatives generally work better when
-% functions are represented by global polynomials, and the chebop system
+% functions are represented by global polynomials, and chebops
 % for the most part requires this.  Also, for educational purposes, it is
 % very convenient that Chebfun can be used so easily to study the
 % properties of pure polynomial representations.
@@ -212,7 +212,7 @@ splitting off
 
 %%
 % Perhaps more often one might wish to adjust this preference to enable use
-% of especially high degrees.  On the machines of 2009, Chebfun is
+% of especially high degrees.  On the machines of 2011, Chebfun is
 % perfectly capable of working with polynomials of degrees in the millions.
 % The function abs(x)^(3/2) on [-1,1] provides a nice example, for it is
 % smooth enough to be resolved by a global polynomial, provided it is of
@@ -269,7 +269,7 @@ splitting off
 % has a narrow spike near x = 0.5, and the closest grid points lie near
 % 0.383 and 0.707.  In the case of the exponent 2, we note that at x=0.383,
 % exp(-(30(x-.5)^2))=4.5e-6, which is large enough to be noticed by the
-% chebfun constructor. On the other hand in the case of exponent 4, we have
+% Chebfun constructor. On the other hand in the case of exponent 4, we have
 % exp(-(30(x-.5)^4))=1.2e-66, which is far below machine precision.  So in
 % the latter case the constructor thinks it has a quadratic and does not
 % try a finer grid.
@@ -315,7 +315,7 @@ splitting off
 % When a chebfun is constructed, a function is normally sampled at 9, 17,
 % 33,... Chebyshev points until convergence is achieved.  Now Chebyshev
 % grids are nested, so the 17-point grid, for example, only contains 8
-% points that are not in the 9-point grid.  By default, the chebfun
+% points that are not in the 9-point grid.  By default, the Chebfun
 % constructor takes advantage of this property so as not to recompute
 % values that have already been computed.  (The default went the other way
 % until 2009.)
@@ -386,11 +386,11 @@ splitting off
 % work.
 
 %%
-% Besides chebops, are there other practical uses of the chebfun resampling
+% Besides chebops, are there other practical uses of the Chebfun resampling
 % feature? We do not currently know the answer and would be pleased to hear
 % from users who may have ideas.
 
-%% 8.8 eps: chebfun constructor tolerance
+%% 8.8 eps: Chebfun constructor tolerance
 % One of the controllable preferences is all too tempting: you can weaken
 % the tolerance used in constructing a chebfun. The chebfunpref parameter
 % eps is set by default to machine precision:
@@ -400,7 +400,7 @@ chebfunpref('eps')
 % However, one can change this with a command like chebfunpref('eps',1e-6).
 
 %%
-% There are certainly cases where weakening the tolerance makes a big
+% There are cases where weakening the tolerance makes a big
 % difference. For example, this happens in certain applications in 2D and
 % in certain applications involving differential equations.  (Indeed, the
 % Chebfun differential equations commands have their own tolerance control

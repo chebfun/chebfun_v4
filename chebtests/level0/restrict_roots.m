@@ -1,6 +1,8 @@
 function pass = restrict_roots
 
-% Test restriction. Rodrigo Platte, May 2009.
+% Test restriction from one interval to another with { }.
+% Rodrigo Platte, May 2009.
+% A Level 0 chebtest.
 
 tol = chebfunpref('eps');
 

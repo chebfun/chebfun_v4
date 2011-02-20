@@ -1,7 +1,7 @@
 function varargout = pdeset(varargin)
 %PDESET Set options for pde15s
 % PDESET('NAME1',VALUE1,'NAME2',VALUE2,...) creates options for the
-% chebfun pde15s routine. It acts as a gateway to odeset for the usual
+% Chebfun pde15s routine. It acts as a gateway to odeset for the usual
 % ode options for use in advancing through time, in addition to some new
 % options.
 %
@@ -29,7 +29,7 @@ function varargout = pdeset(varargin)
 % PDEflag - Specify which entries correspond to time derivatives. 
 %   [  vector of logicals {true} ].
 %
-% Jacobian - set whether chebfun should use AD functionality to determine 
+% Jacobian - set whether Chebfun should use AD functionality to determine 
 %   the Jacobian function automatically, or allow ode15s to compute it
 %   numerically with odenumjac. [{'auto'}, 'none']
 

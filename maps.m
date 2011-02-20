@@ -1,6 +1,6 @@
 function map = maps(varargin)
 % CHEBFUN MAPS
-%  Rather than using Chebyshev polynomial interpolants, chebfun can use
+%  Rather than using Chebyshev polynomial interpolants, Chebfun can use
 %  non-polynomial bases defined by maps. This is useful in a number of
 %  circumstances, such as when working on infinite intervals, or with 
 %  functions which are ill-behaved in localised regions of the interval.
@@ -24,9 +24,9 @@ function map = maps(varargin)
 %  vector containing the images of -1 and 1 under the map. INT may also be
 %  a domain object, and is assumed to be [-1,1] if not given
 %
-%  The LINEAR map is simply a linear scaling and is all the time in chebfun
-%  when working on an interval other than [-1,1]. It does not contain and
-%  tunable parameters.
+%  The LINEAR map is simply a linear scaling and is used all the time in
+%  Chebfun when working on an interval other than [-1,1]. It does not contain
+%  any tunable parameters.
 %
 %  The UNBOUNDED map is for unbounded domains of the form [-inf,b],
 %  [-inf,inf], or [a,inf]. For semi-infinite domains (here with infinity 

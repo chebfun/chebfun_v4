@@ -23,7 +23,7 @@ function varargout = bvpsc(odefun,jacfun,bcmat,y0)
 % should be separated: for each i, row i of either BCMAT{1} or BCMAT{2}
 % must be zero.
 %
-% Y0 should be a chebfun quasimatrix that gives an initial guess to the
+% Y0 should be a Chebfun quasimatrix that gives an initial guess to the
 % solution. If the residual of the equation with this guess is judged to be
 % too large, BVP5C is called for an improved guess, and it is initialized
 % with Y0.

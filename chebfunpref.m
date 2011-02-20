@@ -1,5 +1,5 @@
 function varargout = chebfunpref(varargin)
-% CHEBFUNPREF Settings for chebfuns.
+% CHEBFUNPREF Settings for Chebfun.
 %
 % By itself, CHEBFUNPREF returns a structure with current preferences as
 % fields/values. Use it to find out what preferences are available.
@@ -17,7 +17,7 @@ function varargout = chebfunpref(varargin)
 %
 % S = CHEBFUNPREF will return the current preferences in a structure, which 
 % may then be used in the form CHEBFUNPREF(P) to reload them or be passed 
-% to the chebfun constructor.
+% to the Chebfun constructor.
 %
 % S = CHEBFUNPREF('factory') returns a structure S with the factory values
 % without restoring them. V = CHEBFUNPREF(PREFNAME,'factory') returns the 
