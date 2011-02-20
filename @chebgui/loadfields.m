@@ -98,10 +98,15 @@ if ~isempty(guifile.init)
         if iscellstr(initString)
             allString = [];
             for initCounter = 1:length(initString)
-                allString = [allString,',',initString{initCounter}];
+                % Throw away everything left of = in init 
+                equalSign = find(initString{initCounter}=='=');
+                allString = [allString,',',initString{initCounter}(equalSign+1:end)];
             end
         else % Else wrap in a cell for later use
-            allString = initString;
+            % Throw away everything left of = in init
+            equalSign = find(initString=='=');
+            if isempty(equalSign), equalSign = 0; end
+            allString = initString(equalSign+1:end);
             initString = cellstr(initString);
         end
         % Now obtain the name of the variables
@@ -124,8 +129,11 @@ if ~isempty(guifile.init)
         % Put the initString in a cell
         if ~iscell(initString), initString = cellstr(initString); end
         for initCounter = 1:length(initString)
-            initChebfun = [initChebfun, ...
-                eval('chebfun(vectorize(initString{initCounter}),dom);')];
+            equalSign = find(initString{initCounter}=='=');
+            if isempty(equalSign), equalSign = 0; end
+            currInit = vectorize(initString{initCounter}(equalSign+1:end));
+            if isempty(equalSign), equalSign = 0; end
+            initChebfun = [initChebfun, chebfun(currInit,dom)];
         end
         axes(handles.fig_sol);
         plot(initChebfun,'LineWidth',2)

@@ -37,7 +37,7 @@ switch exampleNumber
         a = '-3*pi/4'; b = 'pi'; t = '0:.05:2';
         DE = 'u_t = 0.1*u" + u''';
         LBC = 'neumann'; RBC = 'dirichlet';
-        init = 'sin(2*x)';
+        init = 'u = sin(2*x)';
         tol = '1e-6'; plotting = 'on';
         fixYaxisLower = '-1'; fixYaxisUpper = '1';
         name = 'Advection-diffusion equation';
@@ -102,7 +102,7 @@ switch exampleNumber
         a = '-1'; b = '1'; t = '0:.1:3';
         DE = {'u_t = 0.1*u" - 100*u*v';'v_t = .2*v" - 100*u*v';'w_t = 0.001*w" + 200*u*v'};
         LBC = {'neumann'}; RBC = {'neumann'};
-        init = {'1-erf(10*(x+0.7))' ; '1 + erf(10*(x-0.7))' ; '0'};
+        init = {'u = 1-erf(10*(x+0.7))' ; 'v = 1 + erf(10*(x-0.7))' ; 'w = 0'};
         tol = '1e-5'; plotting = 'on';
         fixYaxisLower = '0'; fixYaxisUpper = '2.2';
         name = 'Diffusion and reaction of three chemicals';
@@ -113,7 +113,7 @@ switch exampleNumber
         DE = {'u_t = u" - v' ; 'v" - u = 0'};
         LBC = {'u = 1'; 'v = 1'};
         RBC = {'u = 1'; 'v = 1'};
-        init = {'1' ; '1-.5*cos(.5*pi*x)'};
+        init = {'u = 1' ; 'v =1-.5*cos(.5*pi*x)'};
         tol = '1e-6'; plotting = 'on';
         fixYaxisLower = '0.5'; fixYaxisUpper = '1';
         name = 'Coupled PDE-BVP';
@@ -124,7 +124,7 @@ switch exampleNumber
         DE = {'u_t = v''','v_t = u'''};
         LBC = 'u = 0';
         RBC = 'u = 0';
-        init = {'.25*(4-x^2)*exp(-10*x^2)','0'};
+        init = {'u = .25*(4-x^2)*exp(-10*x^2)','v = 0'};
         tol = '1e-4'; plotting = 'on';
         fixYaxisLower = '-1.2'; fixYaxisUpper = '1.2';
         name = 'Wave equation';

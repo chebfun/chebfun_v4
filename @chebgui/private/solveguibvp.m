@@ -31,11 +31,6 @@ deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
-% Find whether the user wants to use the latest solution as a guess. This is
-% only possible when calling from the GUI
-if guiMode
-    useLatest = strcmpi(get(handles.input_GUESS,'String'),'Using latest solution');
-end
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
@@ -76,22 +71,61 @@ else
     DE_RHS = DErhsNum;
 end
 
-% Create the chebop
-if guiMode && useLatest
-    guess = handles.latest.solution;
-    N = chebop(d,DE,LBC,RBC,guess);
-elseif ~isempty(handles.init)
-    guess = handles.init;
-    N = chebop(d,DE,LBC,RBC,guess);
-elseif ~isempty(initInput)
-    guess = eval(vectorize(initInput));
-    if isnumeric(guess)
-        guess = 0*xt+guess;
+% Set up the initial guesses
+guess = [];
+% Find whether the user wants to use the latest solution as a guess. This is
+% only possible when calling from the GUI
+if guiMode
+    useLatest = strcmpi(get(handles.input_GUESS,'String'),'Using latest solution');
+    if useLatest
+        guess = handles.latest.solution;
     end
-    N = chebop(d,DE,LBC,RBC,guess);
+end
+
+if ~isempty(initInput) && isempty(guess)
+    if iscellstr(initInput)
+        order = []; guesses = [];
+        % Match LHS of = with variables in allVarName
+        for initCounter = 1:length(initInput)
+            currStr = initInput{initCounter};
+            equalSign = find(currStr=='=');
+            currVar = strtrim(currStr(1:equalSign-1));
+            match = find(ismember(allVarName, currVar)==1);
+            order = [order;match];
+            currGuess = strtrim(currStr(equalSign+1:end));
+            guesses = [guesses;{currGuess}];
+        end
+        
+        guess = chebfun;
+        for guessCounter = 1:length(guesses)
+            tempGuess = eval(vectorize(guesses{order(guessCounter)}));
+            if isnumeric(tempGuess)
+                tempGuess = 0*xt+tempGuess;
+            end
+            guess = [guess, tempGuess];
+        end
+    else
+        guess = eval(vectorize(initInput));
+        if isnumeric(guess)
+            guess = 0*xt+guess;
+        end
+    end
+end
+
+% Create the chebop
+if ~isempty(guess)
+    N = chebop(d,DE,LBC,RBC,guess);   
 else
     N = chebop(d,DE,LBC,RBC);
 end
+% if guiMode && useLatest
+% 
+% elseif ~isempty(handles.init)
+%     guess = handles.init;
+%     N = chebop(d,DE,LBC,RBC,guess);
+% elseif ~isempty(initInput)
+% 
+% end
 
 tolInput = guifile.tol;
 if isempty(tolInput)

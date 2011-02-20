@@ -27,7 +27,7 @@ end
 deInput = guifile.DE;
 lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
-guessInput = guifile.init;
+initInput = guifile.init;
 a = str2num(guifile.DomLeft);
 b = str2num(guifile.DomRight);
 tolInput = guifile.tol;
@@ -150,24 +150,58 @@ else
     bc.right = RBC;
 end
 
-% Set up the initial condition
 tol = tolNum;
-if ischar(guessInput)
-    guessInput = vectorize(guessInput);
-    u0 =  chebfun(guessInput,[a b]);
-    u0 = simplify(u0,tol);
-    lenu0 = length(u0);
-else
-    u0 = chebfun; 
-    lenu0 = 0;
-    for k = 1:numel(guessInput)
-        guess_k = vectorize(guessInput{k});
-        u0k = chebfun(guess_k,[a b]);
+
+% Set up the initial condition
+
+if iscellstr(initInput)
+    order = []; inits = [];
+    % Match LHS of = with variables in allVarName
+    for initCounter = 1:length(initInput)
+        currStr = initInput{initCounter};
+        equalSign = find(currStr=='=');
+        currVar = strtrim(currStr(1:equalSign-1));
+        match = find(ismember(allVarNames, currVar)==1);
+        order = [order;match];
+        currInit = strtrim(currStr(equalSign+1:end));
+        inits = [inits;{currInit}];
+    end
+    
+    u0 = chebfun; lenu0 = 0;
+    for k = 1:length(inits)
+        init_k = vectorize(inits{order(k)});
+        u0k = chebfun(init_k,[a b]);
         u0k = simplify(u0k,tol);
         u0(:,k) =  u0k;
         lenu0 = max(lenu0,length(u0k));
     end
+else
+    initInput = vectorize(initInput);
+    equalSign = find(initInput=='=');
+    if isempty(equalSign), equalSign = 0; end
+    initInput = initInput(equalSign+1:end);
+    u0 =  chebfun(initInput,[a b]);
+    u0 = simplify(u0,tol);
+    lenu0 = length(u0);
 end
+
+
+% if ischar(initInput)
+%     initInput = vectorize(initInput);
+%     u0 =  chebfun(initInput,[a b]);
+%     u0 = simplify(u0,tol);
+%     lenu0 = length(u0);
+% else
+%     u0 = chebfun; 
+%     lenu0 = 0;
+%     for k = 1:numel(initInput)
+%         guess_k = vectorize(initInput{k});
+%         u0k = chebfun(guess_k,[a b]);
+%         u0k = simplify(u0k,tol);
+%         u0(:,k) =  u0k;
+%         lenu0 = max(lenu0,length(u0k));
+%     end
+% end
 
 % gather options
 opts.HoldPlot = false;
