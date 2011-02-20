@@ -71,7 +71,7 @@ if ishandle(varargin{1})
     ax = varargin{1};
     varargin(1) = [];
 else
-    ax = gca;
+    ax = [];
 end
 
 % Get jumpline style and jumpval markers
@@ -213,7 +213,9 @@ if isempty(jlinestyle) || (ischar(jlinestyle) && strcmpi(jlinestyle,'none'))
 end
 
 % Plot to axes ax
-axes(ax)
+if ~isempty(ax)
+    axes(ax)
+end
 
 % dummy plot for legends
 hdummy = plot(dummydata{:}); hold on
