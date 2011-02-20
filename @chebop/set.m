@@ -12,6 +12,7 @@ while length(propertyArgIn) >= 2,
     propertyArgIn = propertyArgIn(3:end);
     switch prop
         case 'dom'
+            if ~isa(val,'domain'), val = domain(val); end
             N.dom = val;
         case 'bc'
             if isa(val,'struct')  % given .left and .right
@@ -22,15 +23,25 @@ while length(propertyArgIn) >= 2,
                     N = set(N,'rbc',val.right);
                 end
             else  % given same for both sides
-                N = set(N,'lbc',val);
-                N = set(N,'rbc',val);
+                N.lbc = createbc(val);
+                N.lbcshow = val;
+                N.rbc = N.lbc;
+                N.rbcshow = val;
             end
         case 'lbc'
             N.lbc = createbc(val);
             N.lbcshow = val;
+            if strcmpi(val,'periodic')
+                N.rbc = N.lbc;
+                N.rbcshow = val;
+            end
         case 'rbc'
             N.rbc = createbc(val);
             N.rbcshow = val;
+            if strcmpi(val,'periodic')
+                N.lbc = N.rbc;
+                N.lbcshow = val;
+            end 
         case 'op'
             if isa(val,'function_handle') || (iscell(val) && isa(val{1},'function_handle'))
                 N.optype = 'anon_fun';

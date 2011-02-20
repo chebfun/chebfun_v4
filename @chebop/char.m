@@ -30,12 +30,16 @@ else
     
     if ~isempty(A.lbc)
       s = char(s,' ');
+      t = bc2char(A.lbcshow);
       if iscell(A.lbcshow) && length(A.lbcshow) > 1
         s = char(s, '   left boundary conditions:');
+      elseif strcmp(strtrim(t),'periodic')
+         s = char(s, '   with periodic boundary conditions.') ;
+         return
       else
          s = char(s, '   left boundary condition:');
       end
-      t = bc2char(A.lbcshow);
+      
       s = char(s,t{:});
     end
     
