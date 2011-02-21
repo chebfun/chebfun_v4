@@ -86,12 +86,13 @@ switch exampleNumber
         demotype = 'scalar';
     case 8
         a = '-1'; b = '1';
-        DE = '(u""-2*u"+u)/5772-2i*u-1i*(1-x^2)*(u"-u)=lambda*(u"-u)'
+        DE = '(u""-2*u"+u)/5772-2i*u-1i*(1-x^2)*(u"-u)=lambda*(u"-u)';
         LBC = {'u=0';'u''=0'}; RBC = {'u=0';'u''=0'}; 
         tol = '1e-10';
         sigma = '';
         name = 'Orr-Sommerfeld operator';
         demotype = 'scalar';
+        numeigs = 50;
     case 9
         a = '-2'; b = '2';
         DE = {'u" + u*x+v = lambda*u';'v"+sin(x)*u = lambda*v'};
