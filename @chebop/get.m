@@ -18,6 +18,8 @@ switch propName
         val = N.rbc;
     case {'guess','init'}
         val = N.init;
+    case 'dim'
+        val = N.dim;
     otherwise
         error('CHEBOP:get:propname',[propName,' is not a valid chebop property'])
 end

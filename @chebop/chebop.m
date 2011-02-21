@@ -1,58 +1,80 @@
 function N = chebop(varargin)
-% CHEBOP  Nonlinear operator constructor of the chebfun system.
+% CHEBOP  Construct an operator on chebfuns.
+% N = CHEBOP(OP) creates a chebop object N with operator defined by OP,
+% which should be a handle to a function that accepts one or more chebfuns
+% as input and returns a chebfun (or quasimatrix). The first input argument
+% to OP is the independent variable X, while all others represent dependent
+% functions of X; if only one input argument is accepted by OP, it is the
+% dependent variable. Examples:
 %
-% N = CHEBOP creates an empty instance of the class.
+%   @(x,u) x.*diff(u) + u;  % one dependent variable
+%   @(x,u,v,w) [ u.*diff(v), diff(u,2)+w, diff(w)-v ];  % 3 dependent vars
+%   @(x,u) [ u(:,1)-diff(u(:,2)), diff(u(:,1)).*u(:,2) ];  % quasimatrix
+%   @(u) diff(u,2) - exp(u);  % no explicit independent variable
+%   @(u) [ diff(u(:,2))-u(:,1), diff(u(:,1)) ];  % no independent variable
+% 
+% The number of columns in the output quasimatrix should equal the number
+% of independent variables, whether specified as names or quasimatrix
+% columns. For systems of equations not given in quasimatrix form, the
+% first input argument is always the dependent variable.
 %
-% N = CHEBOP(D), where D is a two-vector, defines a chebop that operates on
-% functions defined on the interval D = [D(1) D(end)]. D may also be a
-% vector of length > 2 containing breakpoint information, or a domain object.
-% N = CHEBPOP(D1,D2), where D1 and D2 are scalars, has the same effect as
-% when D = [D1 D2].
+% By default, the operator acts on chebfuns defined on the domain [-1,1]. 
+% CHEBOP(OP,D), for a domain or 2-vector D, gives a different domain.
 %
+% CHEBOP(OP,D,LBC,RBC) or CHEBOP(OP,LBC,RBC) specifies boundary condtions
+% for functions at the left and right endpoints of the domain. Possible
+% values for LBC and RBC are:
 %
-% N = CHEBOP(D,F), where F is an anonymous function or a linop, defines a
-% chebop which when applied to a function u, maps it to F(u).
+%   []          : No condition.
+%   scalar      : All variables equal the given value.
+%   'dirichlet' : All variables equal zero.
+%   'neumann'   : All variables have derivative zero.
+%   function    : Must accept dependent variables as given in OP and return
+%                 a chebfun or quasimatrix. All columns of the result are
+%                 evaluated at the endpoint and forced to equal zero.
 %
-% N = CHEBOP(D,F,LBC,RBC), defines a chebop with imposed boundary
-% conditions. LBC and/or RBC can either be anonymous functions,
-% numerical values or one of the following strings:
+% A boundary condition function may be nonlinear; it must not accept the
+% independent variable X as an input. Some examples:
+% 
+%   @(u) diff(u) - 2;            % set u' = 2
+%   @(u,v,w) [ u-1, w ];         % set u=1 and w=0
+%   @(u) u(:,2) - diff(u(:,2)) ; % set u_2 - (u_2)' = 0
+%   @(u,v,w) u.*v - diff(w)      % set u*v=w' 
 %
-%   'dirichlet' - Imposes homogenous Dirichlet boundary conditions
-%   'neumann' - Imposes homogenous Neumann boundary conditions
+% CHEBOP(OP,BC) or CHEBOP(OP,D,BC) gives boundary or other side conditions
+% in an alternate form. Choices for BC are:
 %
-% As examples of other types of boundary conditions that can be imposed on
-% the operator, the following are allowed syntaxes:
+%   scalar      : All variables equal the given value at both endpoints.
+%   'dirichlet' : All variables equal zero at both endpoints.
+%   'neumann'   : All variables have derivative zero at both endpoints.
+%   'periodic'  : Impose periodicity on all dependent variables.
 %
-%   N = CHEBOP(D,F,2,@(u) diff(u)-3) - Imposes the BCs that u(a) = 2 and
-%   u'(b) = 3 where a and b are the endpoints of the domain D.
+% The 'dirichlet' and 'neumann' keywords impose behavior that may not be
+% identical to the common understanding of Dirichlet or Neumann conditions
+% in every problem.
 %
-%   N = CHEBOP(D,F,@(u) exp(u),@(u) diff(u)-sin(u)-2) - Imposes the BCs
-%   that exp(u(a)) = 0 and u'(b) - sin(u(b)) = 2 where a and b are the
-%   endpoints of the domain D.
+% When BC is given, the more specialized fields LBC and RBC are ignored.
+% Note that CHEBOP(OP,0) is not the same as CHEBOP(OP,0,[]). 
 %
-% Either LBC or RBC can be empty if the operator only has BCs on one side.
+% CHEBOP(OP,...,'init',U) provides a chebfun as a starting point for
+% nonlinear iterations or a PDE solution. See CHEBOP/SOLVEBVP and
+% CHEBOP/PDE15S for details.
 %
-% N = CHEBOP(D,F,LBC,RBC,INIT) where INIT is a chebfun, defines a chebop
-% with associated initial guess when nonlinear boundary value problems
-% involved with the chebop is solved.
+% N = CHEBOP(..., 'dim',DIM) where DIM is an integer informs the chebop 
+% that it operates on quasimatrices of dimension Inf x Dim.
 %
-% N = CHEBOP(D,F,LBC,RBC,INIT,DIM) where DIM is an integer, defines a
-% chebop which operates on quasimatrices of dimension Inf x Dim.
+% Note that many fields can be set after the chebop object N is created:
+% N.op, N.lbc, N.rbc, N.bc, N.init can all be assigned new values. For
+% example:
+%    N = chebop(-5,5);  % Constructs an empty chebop on the interval [-5, 5]
+%    N.op = @(x,u) 0.01*diff(u,2) - x.*u;
+%    N.bc = 'dirichlet';
+%    plot(N\1)
 %
-% Chebops can also be created using the syntax
-%   [D,X,N] = domain(a,b)
-% where a and b are the endpoints of the domain.
+% See also chebop/mtimes, chebop/mldivide, chebop/pde15s.
 %
-% The fields of a chebop object can be set later using subsasgn, i.e.
-%   N.op = @(u) diff(u,2) + sin(u)
-%
-% If U is a chebfun, N(U) returns the chebfun that is the result when
-% N operates on U. N*U is allowed syntax as well.
-%
-% See also domain, linop, chebop/mtimes, chebop/mldivide
+% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-%
 % Copyright 2002-2010 by The Chebfun Team.
 
 persistent default_N
@@ -63,65 +85,157 @@ end
 N = default_N;
 
 % Return an empty chebop.
-if isempty(varargin), return, end
+if isempty(varargin), return, end      
 
-% Flip the first two arguments to allow chebop(dom,op) or chebop(op,dom)
-if numel(varargin) > 1 && isa(varargin{1},'function_handle')
-    tmp = varargin{1};
-    varargin{1} = varargin{2};
-    varargin{2} = tmp;
+op = [];
+dom = chebfunpref('domain');
+
+% Find the first function_handle. This will be the op.
+if isa(varargin{1},'function_handle')
+    op = varargin{1};    
+    varargin(1) = [];
+    N = set(N,'op',op);
+elseif numel(varargin)>1 && isa(varargin{2},'function_handle')
+    dom = varargin{1};
+    op = varargin{2};
+    varargin(1:2) = [];
+    N = set(N,'op',op);
+    N = set(N,'dom',dom);
 end
 
-% Domain
-if isnumeric(varargin{1})
-    dom = varargin{1};
-    varargin(1) = [];
-    while ~isempty(varargin) && isnumeric(varargin{1})
-        dom = [dom varargin{1}];
-        varargin(1) = [];
+% No op is given, we're constructing a blank chebop
+if isempty(op) && isempty(N.dom)
+    if isa(varargin{1}, 'domain')
+        dom = varargin{1};
+    else
+        dom = [];
+        while ~isempty(varargin) && isnumeric(varargin{1})
+            dom = [dom varargin{1}];
+            varargin(1) = [];
+        end
     end
-    N.dom = domain(dom);
-else
-    dom = varargin{1};
-    N.dom = dom;
+    N = set(N,'dom',dom);
+    return % And we're done
+end
+
+
+% Nothing else is given, assume default domain
+if isempty(varargin)
+    N = set(N,'dom',dom);
+    return
+end  
+
+% Look for a dim flag
+if numel(varargin) > 1 && strncmpi(varargin{end-1},'dim',3)
+    N.dim = varargin{end};
+    varargin(end-1:end) = [];
+end
+
+% Nothing else is given, assume default domain
+if isempty(varargin)
+    N = set(N,'dom',dom);
+    return
+end  
+
+% Is the next input (literally) a domain?
+if isa(varargin{1},'domain')
+    N = set(N,'dom',varargin{1});
     varargin(1) = [];
+    if isempty(varargin), return, end
 end
 
-if isempty(varargin), return, end  
+% % Here everything is given, so it's easy
+% if numel(varargin) == 4 && isempty(N.dom) && ~strncmpi(varargin{3},'init',4)
+%     N = set(N,'dom',varargin{1});
+%     N = set(N,'lbc',createbc(varargin{2}));
+%     N.lbcshow = varargin{2};
+%     N = set(N,'rbc',createbc(varargin{3}));
+%     N.rbcshow = varargin{3};
+%     N = set(N,'init',createbc(varargin{4}));
+%     return
+% elseif numel(varargin) == 3 && ~isempty(N.dom) && ~strncmpi(varargin{2},'init',4)
+%     N = set(N,'lbc',createbc(varargin{1}));
+%     N.lbcshow = varargin{1};
+%     N = set(N,'rbc',createbc(varargin{2}));
+%     N.rbcshow = varargin{2};
+%     N = set(N,'init',createbc(varargin{3}));
+%     return
+% end
 
-% Op
-N = set(N,'op',varargin{1});
-varargin(1) = [];
-if isempty(varargin), return, end
-
-% LBC
-N.lbc = createbc(varargin{1});
-N.lbcshow = varargin{1};
-varargin(1) = [];
-if isempty(varargin), return, end
-
-% RBC
-N.rbc = createbc(varargin{1});
-N.rbcshow = varargin{1};
-varargin(1) = [];
-if isempty(varargin), return, end
-
-% Guess
-if isnumeric(varargin{1})
-    N.init = chebfun(varargin{1},dom);
-else
-    N.init = varargin{1};
+% Look for an init flag for the initial guess
+if numel(varargin) > 1 && strncmpi(varargin{end-1},'init',4)
+    N.init = varargin{end};
+    varargin(end-1:end) = [];
+elseif isa(varargin{end},'chebfun')
+    N.init = varargin{end};
+    varargin(end) = [];
 end
-varargin(1) = [];
-if isempty(varargin), return, end
 
-% Dim
-N.dim = varargin{1};
-varargin(1) = [];
-if isempty(varargin), return, end
+% Nothing else is given, assume default domain
+if isempty(varargin), N = set(N,'dom',dom); return, end  
+
+% Now HERE everything is given, so it's easy
+if numel(varargin) == 3 && isempty(N.dom)
+    N = set(N,'dom',varargin{1});
+    N = set(N,'lbc',createbc(varargin{2}));
+    N.lbcshow = varargin{2};
+    N = set(N,'rbc',createbc(varargin{3}));
+    N.rbcshow = varargin{3};
+    return
+elseif numel(varargin) == 2 && ~isempty(N.dom)
+    N = set(N,'lbc',createbc(varargin{1}));
+    N.lbcshow = varargin{1};
+    N = set(N,'rbc',createbc(varargin{2}));
+    N.rbcshow = varargin{2};
+    return
+end
 
 % Error
-error('CHEBOP:numinputs','Too many inoputs to chebop constructor.');
+if numel(varargin) > 2
+    error('CHEBOP:chebop:numinputs','Too many inputs to chebop constructor.');
+end
+
+% The only possibilities we have left are, I think DOM, BC and LBC, RBC if
+% there are still two varargins, or DOM or BC if there's only one.
+% We assume the former, unless varargin{1} doesn't give a valid domain.
+
+% Periodic is special (as it should only be set to bc, not lbc or rbc).
+if numel(varargin) == 2 && strcmpi(varargin{2},'periodic')
+    N = set(N,'dom',varargin{1});
+    if numel(varargin) == 2
+        N = set(N,'bc',createbc(varargin{2}));
+        N.lbcshow = varargin{2};
+        N.rbcshow = varargin{2};
+    end
+    return
+end
+
+% Is varargin a valid domain?
+if ~isnumeric(varargin{1}) || numel(varargin{1})<2 || any(sort(varargin{1})-varargin{1})
+    % No
+    if numel(varargin) == 1
+        N = set(N,'bc',createbc(varargin{1}));
+        N.lbcshow = varargin{1};
+        N.rbcshow = varargin{2};
+    else
+        N = set(N,'lbc',createbc(varargin{1}));
+        N.lbcshow = varargin{1};
+        N = set(N,'rbc',createbc(varargin{2}));
+        N.rbcshow = varargin{2};
+    end  
+    N = set(N,'dom',dom);
+    return
+else
+    % Yes!
+    N = set(N,'dom',varargin{1});
+    if numel(varargin) == 2
+        N = set(N,'bc',createbc(varargin{2}));
+        N.lbcshow = varargin{2};
+        N.rbcshow = varargin{2};
+    end
+    return
+end
+
 
 end
 
