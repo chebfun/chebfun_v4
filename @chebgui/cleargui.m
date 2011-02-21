@@ -31,6 +31,10 @@ set(handles.button_solve,'String','Solve');
 set(handles.input_LBC,'Enable','on');
 set(handles.input_RBC,'Enable','on');
 
+% Reset eigenvalue options
+set(handles.edit_eigN,'String','6');
+set(handles.popupmenu_sigma,'Value',1)
+
 % We don't have a solution available anymore
 handles.hasSolution = 0;
 

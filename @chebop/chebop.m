@@ -118,12 +118,15 @@ if isempty(op) && isempty(N.dom)
     return % And we're done
 end
 
-
 % Nothing else is given, assume default domain
-if isempty(varargin)
-    N = set(N,'dom',dom);
-    return
-end  
+if isempty(varargin), N = set(N,'dom',dom); return, end 
+
+% Is the next input (literally) a domain?
+if isa(varargin{1},'domain')
+    N = set(N,'dom',varargin{1});
+    varargin(1) = [];
+    if isempty(varargin), return, end
+end
 
 % Look for a dim flag
 if numel(varargin) > 1 && strncmpi(varargin{end-1},'dim',3)
@@ -132,17 +135,7 @@ if numel(varargin) > 1 && strncmpi(varargin{end-1},'dim',3)
 end
 
 % Nothing else is given, assume default domain
-if isempty(varargin)
-    N = set(N,'dom',dom);
-    return
-end  
-
-% Is the next input (literally) a domain?
-if isa(varargin{1},'domain')
-    N = set(N,'dom',varargin{1});
-    varargin(1) = [];
-    if isempty(varargin), return, end
-end
+if isempty(varargin), N = set(N,'dom',dom); return, end  
 
 % % Here everything is given, so it's easy
 % if numel(varargin) == 4 && isempty(N.dom) && ~strncmpi(varargin{3},'init',4)
@@ -210,7 +203,7 @@ if numel(varargin) == 2 && strcmpi(varargin{2},'periodic')
     return
 end
 
-% Is varargin a valid domain?
+% Is varargin{1} a valid domain?
 if ~isnumeric(varargin{1}) || numel(varargin{1})<2 || any(sort(varargin{1})-varargin{1})
     % No
     if numel(varargin) == 1

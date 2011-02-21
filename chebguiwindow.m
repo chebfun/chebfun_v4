@@ -748,6 +748,10 @@ function menu_opengui_Callback(hObject, eventdata, handles)
 if ~filterindex, return, end
 cgTemp = chebgui(fullfile(pathname,filename));
 loadfields(cgTemp,handles);
+handles.guifile = cgTemp;
+if ~isempty(cgTemp.type)
+    handles = switchmode(cgTemp,handles,cgTemp.type);
+end    
 guidata(hObject, handles);
 
 % --------------------------------------------------------------------
