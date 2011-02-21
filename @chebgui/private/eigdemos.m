@@ -86,8 +86,8 @@ switch exampleNumber
         demotype = 'scalar';
     case 8
         a = '-1'; b = '1';
-        DE = '-u'''''''' + 5*cos(2*x)*u = lambda*u';
-        LBC = 'periodic'; RBC = 'periodic';
+        DE = '(u""-2*u"+u)/5772-2i*u-1i*(1-x^2)*(u"-u)=lambda*(u"-u)'
+        LBC = {'u=0';'u''=0'}; RBC = {'u=0';'u''=0'}; 
         tol = '1e-10';
         sigma = '';
         name = 'Orr-Sommerfeld operator';
