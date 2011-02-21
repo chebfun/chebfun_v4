@@ -70,6 +70,9 @@ while (nargin > j)
   j = j+1;
 end
 
+% This shouldn't happen, but we might as well deal with it.
+if isnan(k) || isempty(k), k = 6; end
+
 maxdegree = cheboppref('maxdegree');
 m = A.blocksize(2);
 if m~=A.blocksize(1)
