@@ -6,7 +6,11 @@ function varargout = eigs(A,varargin)
 % largest eigenvalues by default.)
 %
 % [V,D] = EIGS(A) returns a diagonal 6x6 matrix D of A's least oscillatory
-% eigenvalues, and a quasimatrix V of the corresponding eigenfunctions.
+% eigenvalues, and the corresponding eigenfunctions in V. If A operates on
+% a single variable, then V is a quasimatrix of size Inf-by-6. If A
+% operates on m (m>1) variables, then V is a 1-by-m cell array of
+% quasimatrices. You can also use [V1,V2,...,Vm,D] = EIGS(A) to get
+% a separate quasimatrix for each variable.
 %
 % EIGS(A,B) solves the generalized eigenproblem A*V = B*V*D, where B
 % is another linop. 
@@ -205,6 +209,14 @@ else
     if m == 1, Vfun = Vfun{1}; end % Return a quasimatrix in this case
     varargout = { Vfun, D };
 end
+
+if nargout > 2 && nargout == 1+length(varargout{1})
+  % Multiple outputs for system case.
+  varargout = { varargout{1}{:}, varargout{2} };
+ end
+
+% END OF MAIN FUNCTION
+
 
   % Called by the chebfun constructor. Returns values of the sum of the
   % "interesting" eigenfunctions. 

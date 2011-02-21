@@ -1,4 +1,4 @@
-function [V D] = eigs(N,varargin)
+function varargout = eigs(N,varargin)
 %EIGS  Find selected eigenvalues and eigenfunctions of a linear chebop.
 % D = EIGS(A) returns a vector of 6 eigenvalues of the linear chebop A.
 % EIGS will attempt to return the eigenvalues corresponding to the least
@@ -52,10 +52,6 @@ catch ME
     end
 end
 
-if nargout < 2
-    D = eigs(L,varargin{:});
-    V = D; % Need to switch order of output variables
-else
-    [V D] = eigs(L,varargin{:});
-end
+[varargout{1:nargout}] = eigs(L,varargin{:});
 
+end
