@@ -129,21 +129,52 @@ useLatest = strcmpi(initInput,'Using latest solution');
 if useLatest
     fprintf(fid,['\n%% Note that it is not possible to use the "Use latest"',...
         'option \n%% when exporting to .m files. \n']);
-elseif ~isempty(initInput)
+elseif ~isempty(initInput)    
     fprintf(fid,'\n%% Construct a linear chebfun on the domain,\n');
     fprintf(fid,'%s = chebfun(@(%s) %s, dom);\n',indVarName,indVarName,indVarName);
     fprintf(fid,'%% and assign an initial guess to the chebop.\n');
 %     fprintf(fid,'N.init = %s;\n',vectorize(char(initInput)));
     initInput = cellstr(initInput);
     if numel(initInput) == 1
-        fprintf(fid,'N.init = %s;\n',vectorize(char(initInput{1})));
-    else
-        ws = '         ';
-        fprintf(fid,'N.init = [%s, ...\n',vectorize(char(initInput{1})));
-        for k = 2:numel(initInput)-1
-            fprintf(fid,'%s %s, ...\n',ws,vectorize(char(initInput{k})));
+        guessInput = vectorize(strtrim(char(initInput{1})));
+        equalSign = find(guessInput=='=',1,'last');
+        if ~isempty(equalSign)
+            guessInput = guessInput(equalSign+1:end); 
         end
-        fprintf(fid,'%s %s];\n',ws,vectorize(char(initInput{end})),ws)
+        fprintf(fid,'N.init = %s;\n',guessInput);
+    else
+        
+        % To deal with 'u = ...' etc in intial guesses
+        order = []; guesses = []; inits = [];
+        % Match LHS of = with variables in allVarName
+        for initCounter = 1:length(initInput)
+            currStr = initInput{initCounter};
+            equalSign = find(currStr=='=',1,'first');
+            currVar = strtrim(currStr(1:equalSign-1));
+            match = find(ismember(allVarNames, currVar)==1);
+            order = [order;match];
+            currInit = strtrim(currStr(1:equalSign-1));
+            currGuess = vectorize(strtrim(currStr(equalSign+1:end)));
+            guesses = [guesses;{currGuess}];
+            inits = [inits;{currInit}];
+        end
+        [ignored order] = sort(order);
+        initText = '_init';
+        for k = 1:numel(initInput)
+            fprintf(fid,'%s%s = %s;\n',inits{order(k)},initText,guesses{order(k)})
+        end
+        fprintf(fid,'N.init = [%s%s,',inits{order(1)},initText);
+        for k = 2:numel(initInput)-1
+            fprintf(fid,' %s%s,',inits{order(k)},initText);
+        end
+        fprintf(fid,' %s%s];\n',inits{order(end)},initText);
+
+%         ws = '         ';
+%         fprintf(fid,'N.init = [%s, ...\n',vectorize(char(initInput{1})));
+%         for k = 2:numel(initInput)-1
+%             fprintf(fid,'%s %s, ...\n',ws,vectorize(char(initInput{k})));
+%         end
+%         fprintf(fid,'%s %s];\n',ws,vectorize(char(initInput{end})),ws)
     end
 end
 

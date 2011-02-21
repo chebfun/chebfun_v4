@@ -184,6 +184,11 @@ if numel(deInput)==1 && ~ischar(deInput)
     end 
     sol = s; sol0 = [sol '0'];
     findx = strfind(initInput,xName);
+    initInput = vectorize(char(initInput));
+    equalSign = find(initInput=='=',1,'last');
+    if ~isempty(equalSign)
+        initInput = strtrim(initInput(equalSign+1:end)); 
+    end
     if isempty(findx)
         fprintf(fid,'%s = chebfun(%s,dom);\n',sol0,initInput);
     else
@@ -206,28 +211,68 @@ else
         s{k+1} = tmp(idx(k)+1:end);
     end    
     
+    % To deal with 'u = ...' etc in intial guesses
+    order = []; guesses = []; inits = [];
+    % Match LHS of = with variables in allVarNa
+    for initCounter = 1:length(initInput)
+        currStr = initInput{initCounter};
+        equalSign = find(currStr=='=',1,'first');
+        currVar = strtrim(currStr(1:equalSign-1));
+        match = find(ismember(allVarNames, currVar)==1);
+        order = [order;match];
+        currInit = strtrim(currStr(1:equalSign-1));
+        currGuess = vectorize(strtrim(currStr(equalSign+1:end)));
+        guesses = [guesses;{currGuess}];
+        inits = [inits;{currInit}];
+    end
+    [ignored order] = sort(order);
+    
     % If the initial guesses are all constants, we need to wrap them in a
     % chebfun call.
     for k = 1:numel(initInput)
         findx = strfind(initInput{k},'x');
         if ~isempty(findx), break, end
     end
-    % Print the conditions.
-    catstr = [];
-    for k = 1:numel(initInput)
-        if ~isempty(findx)
-            fprintf(fid,'%s = %s;\n',s{k},vectorize(initInput{k}));
-        else
-            fprintf(fid,'%s = chebfun(%s,dom);\n',s{k},initInput{k});
+    if isempty(findx)
+        for k = 1:numel(initInput)
+            guesses{k} = sprintf('chebfun(%s,dom)',guesses{k});
         end
-        catstr = [catstr ', ' s{k}];
     end
-    sol0 = 'sol0'; sol = 'sol';
-    fprintf(fid,'%s = [%s];',sol0,catstr(3:end));
-    if isempty(catstr(3:end)),
-        fprintf(fid,'\t%% An initial condition is required!');
+    
+    % These can be changed
+    initText = '0'; sol0 = 'sol0'; sol = 'sol';
+    
+    for k = 1:numel(initInput)
+        fprintf(fid,'%s%s = %s;\n',inits{order(k)},initText,guesses{order(k)});
     end
-    fprintf(fid,'\n');
+    fprintf(fid,'%s = [%s%s,',sol0,inits{order(1)},initText);
+    for k = 2:numel(initInput)-1
+        fprintf(fid,' %s%s,',inits{order(k)},initText);
+    end
+    fprintf(fid,' %s%s];\n',inits{order(end)},initText);
+    
+%     % If the initial guesses are all constants, we need to wrap them in a
+%     % chebfun call.
+%     for k = 1:numel(initInput)
+%         findx = strfind(initInput{k},'x');
+%         if ~isempty(findx), break, end
+%     end
+%     % Print the conditions.
+%     catstr = [];
+%     for k = 1:numel(initInput)
+%         if ~isempty(findx)
+%             fprintf(fid,'%s = %s;\n',s{k},vectorize(initInput{k}));
+%         else
+%             fprintf(fid,'%s = chebfun(%s,dom);\n',s{k},initInput{k});
+%         end
+%         catstr = [catstr ', ' s{k}];
+%     end
+%     sol0 = 'sol0'; sol = 'sol';
+%     fprintf(fid,'%s = [%s];',sol0,catstr(3:end));
+%     if isempty(catstr(3:end)),
+%         fprintf(fid,'\t%% An initial condition is required!');
+%     end
+%     fprintf(fid,'\n');
 end
 
 % Option for tolerance

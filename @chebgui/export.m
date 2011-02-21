@@ -47,14 +47,14 @@ if strcmp(problemType,'bvp')
                 'Save as', [problemType,'.m']);
             
             if filename     % User did not press cancel
-                try
+%                 try
                     exportbvp2mfile(guifile,pathname,filename)
                     % Open the new file in the editor
                     open([pathname,filename])
-                catch ME
-                    errordlg('Error in exporting to .m file. Please make sure there are no syntax errors.',...
-                        'Export chebgui','modal');
-                end
+%                 catch ME
+%                     errordlg('Error in exporting to .m file. Please make sure there are no syntax errors.',...
+%                         'Export chebgui','modal');
+%                 end
             end
         case '.mat'
             u = handles.latest.solution; %#ok<NASGU>
@@ -109,13 +109,13 @@ elseif strcmp(problemType,'pde')
                 'Save as', [problemType,'.m']);
             
             if filename     % User did not press cancel
-                try
+%                 try
                     exportpde2mfile(guifile,pathname,filename)
                     % Open the new file in the editor
                     open([pathname,filename])
-                catch
-                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
-                end
+%                 catch
+%                     error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+%                 end
             end
         case '.mat'
             u = handles.latest.solution; %#ok<NASGU>

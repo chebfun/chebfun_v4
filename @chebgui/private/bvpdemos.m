@@ -109,7 +109,7 @@ switch exampleNumber
         a = '-1'; b = '1';
         DE = '0.01*u" + 2*(1-x^2)*u + u^2 = 1';
         LBC = 'u = 0'; RBC = 'u = 0';
-        init = 'u = 2*(x^2-1).*(1-2/(1+20*x^2))';
+        init = 'u = 2*(x^2-1)*(1-2/(1+20*x^2))';
         tol = '1e-10';
         damping = '1'; plotting = '0.1';
         name = 'Carrier equation';
@@ -118,7 +118,7 @@ switch exampleNumber
         a = '-1'; b = '1';
         DE = '0.01*u" + 2*(1-x^2)*u + u^2 = 1';
         LBC = 'u = 0'; RBC = 'u = 0';
-        init = 'u = 2*x*(x^2-1).*(1-2/(1+20*x^2))';
+        init = 'u = 2*x*(x^2-1)*(1-2/(1+20*x^2))';
         tol = '1e-10';
         damping = '1'; plotting = '0.1';
         name = 'Carrier equation (another solution)';

@@ -8,6 +8,10 @@ lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
 % Sigmas and num eigs
 sigma = guifile.sigma;
+% Convert to a proper string if needed
+if ~isempty(sigma) && isempty(str2num(sigma))
+    sigma = sprintf('''%s''',sigma);
+end
 K = guifile.options.numeigs;
 if isempty(K), K = '6'; end
 
