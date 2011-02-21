@@ -361,17 +361,18 @@ L = chebop(0,10*pi);
 L.op = @(x,u,v) [diff(v), diff(u)];
 L.lbc = @(u,v) u;
 L.rbc = @(u,v) u;
-[V,D] = eigs(L,7);
+[U,V,D] = eigs(L,7);
 eigenvalues = diag(D)
 
 %%
-% The output variable V is a cell array containing the 
-% 7 u eigenfunctions and 7 v eigenfunctions: V{1} is a quasimatrix
-% of the former, and V{2} is a quasimatrix of the latter.  Thus
-% we can plot V{1} to see the u eigenfunctions.  As it happens,
-% they are imaginary (apart from rounding errors), so we divide
-% them by 1i and take the real part before plotting:
-eigenfunctions = real(V{1}/1i);
+% Notice that two eigenfunction quasimatrices U and V have been specified
+% among the output variables.  (If just one had been specified, the
+% output would have been a cell array containing two quasimatrices.)
+% To see the u eigenfunctions, we can plot U.  As it happens,
+% the eigenfunctions as computed by eigs are imaginary,
+% so before plotting we divide by 1i to make them real,
+% and take the real part to filter out rounding errors:
+eigenfunctions = real(U/1i);
 plot(eigenfunctions)
 
 %% 7.9 Nonlinear equations by Newton iteration
