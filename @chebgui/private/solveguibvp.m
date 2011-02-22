@@ -34,7 +34,8 @@ rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString allVarString indVarName ignored ignored allVarName] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarName ignored ignored allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+handles.varnames = allVarNames;
 
 % Assign x or t as the linear function on the domain if indVarName is not
 % empty
@@ -85,12 +86,12 @@ end
 if ~isempty(initInput) && isempty(guess)
     if iscellstr(initInput)
         order = []; guesses = [];
-        % Match LHS of = with variables in allVarName
+        % Match LHS of = with variables in allVarNames
         for initCounter = 1:length(initInput)
             currStr = initInput{initCounter};
             equalSign = find(currStr=='=');
             currVar = strtrim(currStr(1:equalSign-1));
-            match = find(ismember(allVarName, currVar)==1);
+            match = find(ismember(allVarNames, currVar)==1);
             order = [order;match];
             currGuess = strtrim(currStr(equalSign+1:end));
             guesses = [guesses;{currGuess}];
@@ -182,7 +183,7 @@ if guiMode
     
     xLimit = [str2num(guifile.DomLeft) str2num(guifile.DomRight)];
     guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
-        handles.iter_list,[],handles.button_solve,xLimit,allVarName};
+        handles.iter_list,[],handles.button_solve,xLimit,allVarNames};
     set(handles.fig_sol,'Visible','On');
     set(handles.fig_norm,'Visible','On');
 end
@@ -213,7 +214,7 @@ if guiMode
     
     axes(handles.fig_sol) 
     plot(u,'Linewidth',2), xlim(xLimit),
-    if length(allVarName) > 1, legend(allVarName), end
+    if length(allVarNames) > 1, legend(allVarNames), end
     if guifile.options.grid
         grid on
     end

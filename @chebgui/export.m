@@ -22,31 +22,40 @@ if strcmp(problemType,'bvp')
                 assignin('base',answer{1},handles.guifile);
             end
         case 'Workspace'
-            prompt = {'Differential operator','Solution:',...
+            varnames = handles.varnames;
+            nv = numel(varnames);
+            if nv == 1
+                prompt = {'Differential operator','Solution:',...
                 'Vector with norm of updates', 'Options','Chebgui object'};
+            else
+                prompt = ['Differential operator',varnames.',...
+                'Vector with norm of updates', 'Options','Chebgui object'];
+            end
+                    
             name   = 'Export to workspace';
-            varname = handles.varnames{1};
-            defaultanswer={'N',varname,'normVec','options','chebg'};
+            
+            defaultanswer=['N',varnames','normVec','options','chebg'];
             numlines = 1;
             options.Resize='on';
             options.WindowStyle='modal';
             
             answer = inputdlg(prompt,name,numlines,defaultanswer,options);
             
+            sol = handles.latest.solution;
             if ~isempty(answer)
                 assignin('base',answer{1},handles.latest.chebop);
-%                 assignin('base',answer{2},handles.latest.RHS);
-                assignin('base',answer{2},handles.latest.solution);
-                assignin('base',answer{3},handles.latest.norms);
-                assignin('base',answer{4},handles.latest.options);
-                assignin('base',answer{5},handles.guifile);
+                for k = 1:nv
+                    assignin('base',answer{k+1},sol(:,k));
+                end
+                assignin('base',answer{nv+2},handles.latest.norms);
+                assignin('base',answer{nv+3},handles.latest.options);
+                assignin('base',answer{nv+4},handles.guifile);
             end
         case '.m'            
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
                 '*.*',  'All Files (*.*)'}, ...
                 'Save as', [problemType,'.m']);
-            
             if filename     % User did not press cancel
                 try
                     exportbvp2mfile(guifile,pathname,filename)
@@ -64,9 +73,8 @@ if strcmp(problemType,'bvp')
             end
             normVec= handles.latest.norms;  %#ok<NASGU>
             N = handles.latest.chebop;  %#ok<NASGU>
-            rhs = handles.latest.RHS;  %#ok<NASGU>
             options = handles.latest.options;  %#ok<NASGU>
-            uisave([varnames','normVec','N','rhs','options'],'bvp');
+            uisave([varnames','normVec','N','options'],'bvp');
         case 'Cancel'
             return;
     end
@@ -88,29 +96,39 @@ elseif strcmp(problemType,'pde')
                 assignin('base',answer{1},handles.guifile);
             end
         case 'Workspace'           
-            prompt = {'Solution', 'Time domain', 'Final solution'};
+            varnames = handles.varnames;
+            nv = numel(varnames);
+            if nv == 1
+                prompt = {'Solution', 'Time domain', 'Final solution'};
+                defaultanswer={varnames,'t',[varname '_final']};
+            else
+                sol = {}; solfinal = {}; finalsol = {};
+                for k = 1:nv
+                    sol = [sol ['Solution ' varnames{k}]];
+                    finalsol = [finalsol ['Final ' varnames{k}]];
+                    solfinal = [solfinal [varnames{k} '_final']];
+                end
+                prompt = [sol, 'Time domain', finalsol];
+                defaultanswer = [varnames','t',solfinal];
+            end
+            
             name   = 'Export to workspace';
-            varname = handles.varnames{1};
-            defaultanswer={varname,'t',[varname '_final']};
             numlines = 1;
             options.Resize='on';
             options.WindowStyle='modal';
             handles.varnames
             
             answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+            sol = handles.latest.solution;
+            if ~iscell(sol), sol = {sol}; end
             if ~isempty(answer)
-                assignin('base',answer{1},handles.latest.solution);
-                assignin('base',answer{2},handles.latest.solutionT);
-                uFinal = handles.latest.solution;
-                if ~iscell(uFinal)
-                    uFinal = uFinal(:,end);
-                else
-                    tmp = uFinal; uFinal = [];
-                    for k = 1:numel(tmp)
-                        uFinal = [uFinal tmp{k}(:,end)];
-                    end
-                end   
-                assignin('base',answer{3},uFinal);
+                for k = 1:nv
+                    assignin('base',answer{k},sol{k});
+                end
+                assignin('base',answer{nv+1},handles.latest.solutionT);
+                for k = 1:nv
+                    assignin('base',answer{nv+1+k},sol{k}(end,:));
+                end
 %                 msgbox(['Exported chebfun variables named ' answer{1},' and ',...
 %                     answer{2}, ' to workspace.'],...
 %                     'Chebgui export','modal')
@@ -122,7 +140,6 @@ elseif strcmp(problemType,'pde')
                 {'*.m','M-files (*.m)'; ...
                 '*.*',  'All Files (*.*)'}, ...
                 'Save as', [problemType,'.m']);
-            
             if filename     % User did not press cancel
                 try
                     exportpde2mfile(guifile,pathname,filename)
@@ -184,7 +201,6 @@ else
                 {'*.m','M-files (*.m)'; ...
                 '*.*',  'All Files (*.*)'}, ...
                 'Save as', 'bvpeig.m');
-            
             if filename     % User did not press cancel
                 try
                     exporteig2mfile(guifile,pathname,filename,handles)
