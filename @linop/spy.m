@@ -1,6 +1,6 @@
 function spy(A,c)
 % SPY Visualize sparsity pattern.
-%  SPY(S) plots the sparsity pattern of the matrix S.
+%  SPY(S) plots the sparsity pattern of the linop S.
 %
 %  SPY(S,C) uses the color given by C.
 %
@@ -36,7 +36,18 @@ for j = 1:A.blocksize(1)
     end
 end
 
-set(gca,'yTicklabel',-str2num(get(gca,'yTicklabel')))
+allends = [ends repmat([ends(1)+eps ends(2:end)],1,A.blocksize(1)-1)];
+tmp = repmat([0:A.blocksize(1)-1]*de,numel(ends),1);
+allends = unique(allends + [tmp(:)]');
+
+set(gca,'xTick',allends)
+set(gca,'yTick',-allends(end:-1:1))
+set(gca,'xTicklabel', ends )
+set(gca,'yTicklabel', ends )
+set(gca,'yTicklabel',str2num(get(gca,'xTicklabel')))
+
+[Amat,Bmat] = feval(A,N,'bc');
+   
 
 if ~ish, hold off, axis equal, axis tight, end
 
@@ -46,5 +57,11 @@ if ~any(A-diag(diag(A)))
 else
     tf = false;
 end
+
+
+
+
+
+
 
 
