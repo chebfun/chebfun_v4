@@ -361,7 +361,7 @@ for i=1:length(fNames), assignin('caller',fNames{i},importedVar.(fNames{i})), en
 
 function input_DE_Callback(hObject, eventdata, handles)
 handles.guifile.DE = get(hObject,'String');
-str = handles.guifile.DE;
+str = cellstr(handles.guifile.DE);
 for k = 1:numel(str)
     strk = str{k};
     if any(strfind(strk,'_'))
