@@ -105,21 +105,69 @@ else
 end
 
 % Functional part
+nonLinFlag = 0;
 try
     if numberOfInputVariables > 1
         % If we have more than one variables, we know that the first one
         % must be the linear function on the domain.
         uTemp = [{xDom} uCell];
         Nu = N.op(uTemp{:});
+        % Must check whether we have terms on the form u*v, u*w, v*w etc.
+        % Construct each column of the Jacobian separately, let it operate
+        % on the function 1 on the domain, then linearize around next
+        % variable. If the resulting derivative is not zero, we must have
+        % nonlinear terms on the form above.
+        cheb1 = chebfun('1',N.dom);
+        L = linop; nonConst = [];
+        for uCounter = 1:numel(u)
+            [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter));
+            L = [L Lcolumn];
+            nonConst = [nonConst nonConstColumn];
+            if any(nonConstColumn) % If we have u.^2, we don't need to check for u*v
+                nonLinFlag = 1;
+            elseif ~nonLinFlag % Don't need to check if we've already encountered u*v
+                newFun = Lcolumn*cheb1;
+                for vCounter = uCounter+1:numel(u)
+                    Ltemp = diff(newFun,u(:,vCounter));
+                    if ~all(iszero(Ltemp))
+                        nonLinFlag = 1;
+                        break
+                    end
+                end
+            end
+        end
+        [L nonConst] = diff(Nu,u);
     else
         Nu = N.op(u);
+        if numel(u) == 1
+            [L nonConst] = diff(Nu,u);
+        else % We have a quasimatrix, must to similar things as above
+            cheb1 = chebfun('1',N.dom);
+            L = linop; nonConst = [];
+            for uCounter = 1:numel(u)
+                [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter));
+                L = [L Lcolumn];
+                nonConst = [nonConst nonConstColumn];
+                if any(nonConstColumn) % If we have u.^2, we don't need to check for u*v
+                    nonLinFlag = 1;
+                elseif ~nonLinFlag % Don't need to check if we've already encountered u*v
+                    newFun = Lcolumn*cheb1;
+                    for vCounter = uCounter+1:numel(u)
+                        Ltemp = diff(newFun,u(:,vCounter));
+                        if ~all(iszero(Ltemp))
+                            nonLinFlag = 1;
+                            break
+                        end
+                    end
+                end
+            end
+        end
     end
-    [L nonConst] = diff(Nu,u);
 catch ME
     rethrow(ME);
 end
-if any(any(nonConst)),  
-    isLin = 0;   
+if nonLinFlag || any(any(nonConst)),
+    isLin = 0;
 else
     if nargout > 3 % Find the affine part
         if numberOfInputVariables == 1
