@@ -22,10 +22,11 @@ if strcmp(problemType,'bvp')
                 assignin('base',answer{1},handles.guifile);
             end
         case 'Workspace'
-            prompt = {'Differential operator', 'Right hand side','Solution:',...
+            prompt = {'Differential operator','Solution:',...
                 'Vector with norm of updates', 'Options','Chebgui object'};
             name   = 'Export to workspace';
-            defaultanswer={'N','rhs','u','normVec','options','chebg'};
+            varname = handles.varnames{1};
+            defaultanswer={'N',varname,'normVec','options','chebg'};
             numlines = 1;
             options.Resize='on';
             options.WindowStyle='modal';
@@ -34,11 +35,11 @@ if strcmp(problemType,'bvp')
             
             if ~isempty(answer)
                 assignin('base',answer{1},handles.latest.chebop);
-                assignin('base',answer{2},handles.latest.RHS);
-                assignin('base',answer{3},handles.latest.solution);
-                assignin('base',answer{4},handles.latest.norms);
-                assignin('base',answer{5},handles.latest.options);
-                assignin('base',answer{6},handles.guifile);
+%                 assignin('base',answer{2},handles.latest.RHS);
+                assignin('base',answer{2},handles.latest.solution);
+                assignin('base',answer{3},handles.latest.norms);
+                assignin('base',answer{4},handles.latest.options);
+                assignin('base',answer{5},handles.guifile);
             end
         case '.m'            
             [filename, pathname, filterindex] = uiputfile( ...
@@ -47,22 +48,25 @@ if strcmp(problemType,'bvp')
                 'Save as', [problemType,'.m']);
             
             if filename     % User did not press cancel
-%                 try
+                try
                     exportbvp2mfile(guifile,pathname,filename)
                     % Open the new file in the editor
                     open([pathname,filename])
-%                 catch ME
-%                     errordlg('Error in exporting to .m file. Please make sure there are no syntax errors.',...
-%                         'Export chebgui','modal');
-%                 end
+                catch ME
+                    errordlg('Error in exporting to .m file. Please make sure there are no syntax errors.',...
+                        'Export chebgui','modal');
+                end
             end
         case '.mat'
-            u = handles.latest.solution; %#ok<NASGU>
+            varnames = handles.varnames;
+            for k = 1:numel(varnames);
+                eval([varnames{k} ' = handles.latest.solution(:,k);']); %#ok<NASGU>
+            end
             normVec= handles.latest.norms;  %#ok<NASGU>
-            N= handles.latest.chebop;  %#ok<NASGU>
-            rhs= handles.latest.RHS;  %#ok<NASGU>
+            N = handles.latest.chebop;  %#ok<NASGU>
+            rhs = handles.latest.RHS;  %#ok<NASGU>
             options = handles.latest.options;  %#ok<NASGU>
-            uisave({'u','normVec','N','rhs','options'},'bvp');
+            uisave([varnames','normVec','N','rhs','options'],'bvp');
         case 'Cancel'
             return;
     end
@@ -84,18 +88,29 @@ elseif strcmp(problemType,'pde')
                 assignin('base',answer{1},handles.guifile);
             end
         case 'Workspace'           
-            prompt = {'Solution', 'Timedomain'};
+            prompt = {'Solution', 'Time domain', 'Final solution'};
             name   = 'Export to workspace';
-            defaultanswer={'u','t'};
+            varname = handles.varnames{1};
+            defaultanswer={varname,'t',[varname '_final']};
             numlines = 1;
             options.Resize='on';
             options.WindowStyle='modal';
+            handles.varnames
             
             answer = inputdlg(prompt,name,numlines,defaultanswer,options);
-            
             if ~isempty(answer)
                 assignin('base',answer{1},handles.latest.solution);
                 assignin('base',answer{2},handles.latest.solutionT);
+                uFinal = handles.latest.solution;
+                if ~iscell(uFinal)
+                    uFinal = uFinal(:,end);
+                else
+                    tmp = uFinal; uFinal = [];
+                    for k = 1:numel(tmp)
+                        uFinal = [uFinal tmp{k}(:,end)];
+                    end
+                end   
+                assignin('base',answer{3},uFinal);
 %                 msgbox(['Exported chebfun variables named ' answer{1},' and ',...
 %                     answer{2}, ' to workspace.'],...
 %                     'Chebgui export','modal')
@@ -109,18 +124,24 @@ elseif strcmp(problemType,'pde')
                 'Save as', [problemType,'.m']);
             
             if filename     % User did not press cancel
-%                 try
+                try
                     exportpde2mfile(guifile,pathname,filename)
                     % Open the new file in the editor
                     open([pathname,filename])
-%                 catch
-%                     error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
-%                 end
+                catch
+                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+                end
             end
         case '.mat'
-            u = handles.latest.solution; %#ok<NASGU>
+            varnames = handles.varnames;
+            sol = handles.latest.solution;
+            if ~iscell(sol), sol = {sol}; end
+            for k = 1:numel(varnames);
+                eval([varnames{k} ' = sol{k};']); %#ok<NASGU>
+            end
+%             u = handles.latest.solution; %#ok<NASGU>
             t = handles.latest.solutionT;  %#ok<NASGU>
-            uisave({'u','t'},'pde');
+            uisave([varnames','t'],'pde');
         case 'Cancel'
             return;
     end

@@ -77,21 +77,20 @@ else % Have a system, go through each row
     end
     % Remove duplicate variable names
     allVarNames = unique(allVarNames); 
-    [allPdeVarNames I J] = unique(allPdeVarNames);
-    emptyPdeVarNames = strcmp(allPdeVarNames,'|');
-    allPdeVarNames(emptyPdeVarNames) = [];
-    pdeVarNames = allPdeVarNames;
     
-    if ~isempty(allPdeVarNames) && ~all(emptyPdeVarNames)
-        % For PDEs we need to reorder so that the order of the time derivatives
-        % matches the order of the input arguments. For this, we use the
-        % indices returned from the unique method above. !!! Temporarily
-        % experimental.
-        indx = I;
-        pdeflag = pdeflag(I);
-    else
-        indx = (1:numOfRows)';
-    end
+%     [allPdeVarNames I J] = unique(allPdeVarNames);
+%     emptyPdeVarNames = strcmp(allPdeVarNames,'|');
+%     allPdeVarNames(emptyPdeVarNames) = [];
+%     pdeVarNames = allPdeVarNames;
+%     if ~isempty(allPdeVarNames) && ~all(emptyPdeVarNames)
+%          For this, we use the
+%         % indices returned from the unique method above. !!! Temporarily
+%         % experimental.
+%         indx = J;
+%         pdeflag = pdeflag(J);
+%     else
+%         indx = (1:numOfRows)';
+%     end
     
     % Construct the handle part. For the DE field, we need to collect all
     % the variable names in one string. If we are working with BCs, we have
@@ -101,6 +100,25 @@ else % Have a system, go through each row
         for varCounter = 2:length(allVarNames)
             allVarString = [allVarString,',',allVarNames{varCounter}];
         end
+    end
+    
+    indx = (1:numOfRows)';
+    % For PDEs we need to reorder so that the order of the time derivatives
+    % matches the order of the input arguments.
+    if any(pdeflag)
+        for k = 1:numel(allPdeVarNames)
+            if ~pdeflag(k), continue, end % Not a PDE variable, do nothing
+            vark = allPdeVarNames{k};
+            if strcmp(vark,'|'), continue, end % Skip dummy pdevarname
+            vark = vark(1:find(vark=='_',1,'first')-1); % Get the kth pdevarname
+            idx3 = find(strcmp(vark,allVarNames)); % Find which varname this matches
+            indx(find(indx==idx3)) = indx(k); % Update the index list
+            indx(k) = idx3;
+        end
+        [ignored indx] = sort(indx); % Invert the index
+        pdeflag = pdeflag(indx); % Update the pdeflags
+        allPdeVarNames(strcmp(allPdeVarNames,'|')) = []; % Delete the junk
+        pdeVarNames = allPdeVarNames;
     end
     
     % If we are solving a BVP or EIG, we now need x as the first argument
