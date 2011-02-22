@@ -1,11 +1,11 @@
 function varargout = why(f,r)  
-%WHY  Provides a succinct answer to almost any chebfun related 
-%     question in the many languages of the friends of chebfun.
+%WHY  Provides a succinct answer to almost any Chebfun related 
+%     question in the many languages of the friends of Chebfun.
 %
 %     For fun, try also
 %       plot(why(chebfun)), axis equal
 
-N = 8;  % Number of chebfun languages
+N = 8;  % Number of Chebfun languages
 if nargin == 1
     r = ceil(N*rand);
 end
@@ -15,6 +15,7 @@ switch r
         % English (or American-English!):
         % Nick Trefethen, Toby Driscoll, Nick Hale,  
         % Sheehan Olver, Mark Richardson, Zachary Battles (?)
+        % Alex Townsend
         
     case 2,         s = 'Porque Nick Trefethen lo dice!';
         % Spanish:

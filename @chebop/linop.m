@@ -18,7 +18,11 @@ if nargin == 1
     end
 %   Create a chebfun to let the operator operate on. Using the findguess
 %   method ensures that the guess is of the right (quasimatrix) dimension.
-    u = findguess(N,0);
+    if ~isa(N.op,'linop')
+        u = findguess(N,0);
+    else
+        u = [];
+    end
 end
 
 if nargout == 1

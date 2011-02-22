@@ -97,7 +97,7 @@ imps(1,:) = tmp;
 % end
 
 % Set chebfun: (use f)
-f.jacobian = anon('[Jfu nonConstJfu] = diff(f,u); [Jgu nonConstJgu] = diff(g,u); der = diag(f)*Jgu + diag(g)*Jfu; nonConst = (~Jfu.iszero & ~Jgu.iszero) | (nonConstJgu | nonConstJfu);',{'f' 'g'},{f g},1);
+f.jacobian = anon('[Jfu nonConstJfu] = diff(f,u,''linop''); [Jgu nonConstJgu] = diff(g,u,''linop''); der = diag(f)*Jgu + diag(g)*Jfu; nonConst = (~Jfu.iszero & ~Jgu.iszero) | (nonConstJgu | nonConstJfu);',{'f' 'g'},{f g},1);
 f.ID = newIDnum();
 
 % update scales in funs:

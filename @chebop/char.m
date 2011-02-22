@@ -7,8 +7,7 @@ if isempty(A)
 else
     s = '   operating on chebfuns defined on:';
     s = char(s,['  ' char(A.dom)]);
-    
-    if ~isempty(A.op)
+    if ~isempty(A.op) && ~isempty(A.opshow) && size(A.opshow{1},1) == 1%&& ~isa(A.op,'linop')
       s = char(s, '   representing the operator:');
       for j = 1:length(A.opshow)
           s = char(s,['     ',A.opshow{j}]);

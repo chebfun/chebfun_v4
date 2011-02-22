@@ -9,7 +9,7 @@ function Fout = abs(F)
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = abscol(F(k));
-    Fout(k).jacobian = anon('diag1 = diag(sign(Fout)); der2 = diff(Fout,u); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout'},{Fout(k)},1);
+    Fout(k).jacobian = anon('diag1 = diag(sign(Fout)); der2 = diff(Fout,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout'},{Fout(k)},1);
     Fout(k).ID = newIDnum;
 end
 

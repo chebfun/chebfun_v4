@@ -374,7 +374,7 @@ if dojac || dojacbc
     end
 end
 
-% Support for user-defined mass matrices - experimental!
+% Support for user-defined mass matrices and coupled BVP-PDEs!
 if ~isempty(opt.Mass) || ~all(pdeflag)
     usermass = true; userM = [];
     if ~all(pdeflag)
@@ -908,14 +908,15 @@ while k < 4 && isempty(Nops)
     k = k+1;
 end
 
+
 % Check for 'sum' and 'cumsum' in string, in case the above failed
 % (which can happen if 'diff' is not present). This is a last resort, 
 % and won't work if the function is, say, an mfile.
 if isempty(Nops)
     funstr = func2str(infun); funstrl = lower(funstr);
-    if ~isempty(strfind(funstrl,'cumsum'))
+    if ~isempty(strfind(funstrl,'cumsum('))
         Nops = 3;
-    elseif ~isempty(strfind(funstrl,'sum')) || ~isempty(strfind(funstrl,'int'))
+    elseif ~isempty(strfind(funstrl,'sum(')) || ~isempty(strfind(funstrl,'int('))
         Nops = 2;
     elseif ~isempty(strfind(funstr,'D(')) || ~isempty(strfind(funstrl,'diff('))
         Nops = 1; % Well, we might as well give this a shot...
@@ -927,6 +928,7 @@ if isempty(Nops)
 end
 
 if QUASIN, Ndep = 1; else Ndep = syssize; end
+
 Nind = Nin - Nops - Ndep;
 % We don't accept only time or space as input args (both or nothing).
 if ~(Nind == 0 || Nind == 2)

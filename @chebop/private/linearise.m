@@ -68,7 +68,7 @@ else
                 guj = lbc{j}(u);
             end
             for k = 1:numel(guj);
-                [Dgujk nonConst] = diff(guj(:,k),u);
+                [Dgujk nonConst] = diff(guj(:,k),u,'linop');
                 if any(nonConst),  isLin = 0;   end
                 if ~isLin && flag == 1, return, end
                 linBC.left(l) = struct('op',Dgujk,'val',-guj(a,k));
@@ -92,7 +92,7 @@ else
                 guj = rbc{j}(u);
             end
             for k = 1:numel(guj);
-                [Dgujk nonConst] = diff(guj(:,k),u);
+                [Dgujk nonConst] = diff(guj(:,k),u,'linop');
                 if any(nonConst),  isLin = 0;   end
                 if ~isLin && flag, return,      end
                 linBC.right(l) = struct('op',Dgujk,'val',-guj(b,k));
@@ -104,6 +104,15 @@ else
     end
 end
 
+% If N.op is a linop, there's nothing to do here.
+if isa(N.op,'linop')
+    L = N.op;
+    if nargout > 3
+        affine = repmat(0*xDom,1,numberOfInputVariables-1); 
+    end
+    return
+end
+    
 % Functional part
 nonLinFlag = 0;
 try
@@ -120,7 +129,7 @@ try
         cheb1 = chebfun('1',N.dom);
         L = linop; nonConst = [];
         for uCounter = 1:numel(u)
-            [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter));
+            [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter),'linop');
             L = [L Lcolumn];
             nonConst = [nonConst nonConstColumn];
             if any(nonConstColumn) % If we have u.^2, we don't need to check for u*v
@@ -128,7 +137,7 @@ try
             elseif ~nonLinFlag % Don't need to check if we've already encountered u*v
                 newFun = Lcolumn*cheb1;
                 for vCounter = uCounter+1:numel(u)
-                    Ltemp = diff(newFun,u(:,vCounter));
+                    Ltemp = diff(newFun,u(:,vCounter),'linop');
                     if ~all(iszero(Ltemp))
                         nonLinFlag = 1;
                         break
@@ -136,16 +145,16 @@ try
                 end
             end
         end
-        [L nonConst] = diff(Nu,u);
+        [L nonConst] = diff(Nu,u,'linop');
     else
         Nu = N.op(u);
         if numel(u) == 1
-            [L nonConst] = diff(Nu,u);
+            [L nonConst] = diff(Nu,u,'linop');
         else % We have a quasimatrix, must to similar things as above
             cheb1 = chebfun('1',N.dom);
             L = linop; nonConst = [];
             for uCounter = 1:numel(u)
-                [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter));
+                [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter),'linop');
                 L = [L Lcolumn];
                 nonConst = [nonConst nonConstColumn];
                 if any(nonConstColumn) % If we have u.^2, we don't need to check for u*v
@@ -153,7 +162,7 @@ try
                 elseif ~nonLinFlag % Don't need to check if we've already encountered u*v
                     newFun = Lcolumn*cheb1;
                     for vCounter = uCounter+1:numel(u)
-                        Ltemp = diff(newFun,u(:,vCounter));
+                        Ltemp = diff(newFun,u(:,vCounter),'linop');
                         if ~all(iszero(Ltemp))
                             nonLinFlag = 1;
                             break

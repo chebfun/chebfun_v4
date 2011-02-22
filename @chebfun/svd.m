@@ -18,7 +18,7 @@ function varargout = svd(A,econ)
 % The computation is carried out by orthogonalization operations
 % following Battles' 2006 thesis.
 
-if (nargin>2) | ((nargin==2) & (econ~=0))
+if (nargin>2) || ((nargin==2) && (econ~=0))
     error('CHEBFUN:svd:twoargs',...
           'Use svd(A) or svd(A,0) for QR decomposition of quasimatrix.');
 end

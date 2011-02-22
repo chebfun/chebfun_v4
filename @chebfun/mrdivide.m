@@ -9,7 +9,7 @@ function fout = mrdivide(f1,f2)
 if isa(f2,'double')
     fout = f1*(1/f2);
 elseif isa(f1,'double')
-    error('CHEBFUN:ldivide:nonscalar','currently mrdivide only divides the chebfun by a scalar')
+    error('CHEBFUN:ldivide:nonscalar','Currently mrdivide only divides the chebfun by a scalar.')
 else
     [q,r]=qr(f2,0);
     fout=r\(q'*f1);

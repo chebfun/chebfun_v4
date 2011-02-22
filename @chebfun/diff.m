@@ -23,15 +23,26 @@ function [F nonConst] = diff(F,n,dim)
 
 % Check inputs
 if nargin == 1, n = 1; end
-if nargin < 3, dim = 1+F(1).trans; end
-if ~(dim == 1 || dim == 2)
+if nargin < 3
+    dim = 1+F(1).trans; 
+end
+if isnumeric(dim) && ~(dim == 1 || dim == 2)
     error('CHEBFUN:diff:dim','Input DIM should take a value of 1 or 2');
 end
 
 if isa(n,'chebfun')     
     % AD
     [F nonConst] = jacobian(F,n);
-    
+    if nargin == 3, return, end
+    J = chebop(F.fundomain);
+    J.op = F; 
+    if ~isempty(inputname(1)) && ~isempty(inputname(2))
+        s = ['diff(' inputname(1) ',' inputname(2) ')'];
+    else
+        s = '';
+    end
+    J = set(J,'opshow',s);
+    F = J;
 elseif round(n)~=n      
     % Fractional derivatives
     F = fraccalc(diff(F,ceil(n)),ceil(n)-n);
@@ -69,7 +80,7 @@ tol = max(chebfunpref('eps')*10, 1e-14) ;
 F = f;
 funs = f.funs;
 ends = get(f,'ends');
-F.jacobian = anon('der1=diff(domain(f),n); [der2 nonConst] = diff(f,u); der = der1*der2;',{'f' 'n'},{f n},1);
+F.jacobian = anon('der1=diff(domain(f),n); [der2 nonConst] = diff(f,u,''linop''); der = der1*der2;',{'f' 'n'},{f n},1);
 F.ID = newIDnum;
 
 c = cell(1,f.nfuns);

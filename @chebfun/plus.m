@@ -72,7 +72,7 @@ else
     end
     h.scl = scl;
 
-    h.jacobian = anon('[der1 nonConst1] = diff(f1,u); [der2 nonConst2] = diff(f2,u); der = der1 + der2; nonConst = nonConst1 | nonConst2;',{'f1' 'f2'},{f1 f2},1);
+    h.jacobian = anon('[der1 nonConst1] = diff(f1,u,''linop''); [der2 nonConst2] = diff(f2,u,''linop''); der = der1 + der2; nonConst = nonConst1 | nonConst2;',{'f1' 'f2'},{f1 f2},1);
     h.ID = newIDnum();
     
 end

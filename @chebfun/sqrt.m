@@ -9,7 +9,7 @@ function Fout = sqrt(F)
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = sqrtcol(F(k));
-    Fout(k).jacobian = anon('diag1 = (1/2)*diag(1./Fout); der2 = diff(F,u); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout','F'},{Fout(k) F(k)},1);
+    Fout(k).jacobian = anon('diag1 = (1/2)*diag(1./Fout); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout','F'},{Fout(k) F(k)},1);
     Fout(k).ID = newIDnum;
 end
 

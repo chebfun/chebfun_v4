@@ -2,7 +2,7 @@ function sound(f,varargin)
 %SOUND Play a chebfun as a sound.
 % SOUND(F) overloads the MATLAB sound command for chebfuns
 %
-% See also sound, chebfun/sing.
+% See also sound, sing.
 
 if numel(f) > 1,
     error('CHEBFUN:sound:quasi','chebfun/sound is not defined for quasimatrices');
@@ -19,14 +19,14 @@ for k = 1:f.nfuns
     n = n + f.funs(k).n;
 end
 
-n = 2*n+1;
-n = max(n,(b-a)*80);
+Fs = 8192;
+n = (b-a)*Fs;
 x = linspace(a,b,n);
 y = feval(f,x);
 
 if numel(varargin) > 0
     sound(y,varargin{:});
 else
-    sound(y,n/(b-a));
+    sound(y,Fs);
 end
 

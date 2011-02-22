@@ -14,6 +14,6 @@ for k = 1:numel(F)
     F(k).funs = funs;
     F(k).imps = conj(F(k).imps);
     
-    F(k).jacobian = anon('diag1 = diag(conj(F)); der2 = diff(F,u); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1);
+    F(k).jacobian = anon('diag1 = diag(conj(F)); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1);
     F(k).ID = newIDnum();
 end

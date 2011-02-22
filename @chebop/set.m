@@ -56,6 +56,8 @@ while length(propertyArgIn) >= 2,
             else
                 N.opshow = cellfun(@char,val,'uniform',false);
             end
+        case 'opshow'            
+            N.opshow = {char(val)};
         case {'guess','init'}
             % Convert constant initial guesses to chebfuns
             if isnumeric(val)

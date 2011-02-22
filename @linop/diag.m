@@ -1,15 +1,11 @@
 function fout = diag(L)
 % DIAG The diagonal of linops
-%
 % F = DIAG(L) returns the chebfun that lies on the diagonal line of the
 % linear operator L. Note that this is not well defined if L is not a
 % diagonal operator, in that case, diag(L) issues a warning.
 % See http://www.maths.ox.ac.uk/chebfun.
 
 % Copyright 2008 by the Chebfun Team.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
 
 d = domain(L);
 cheb1 = chebfun(1,d);

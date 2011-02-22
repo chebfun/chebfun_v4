@@ -195,7 +195,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
             % constructor (so not to use the default tolerance of chebfuns
             % but rather a size related to the tolerance requested).
         else
-            A = diff(deResFun,u) & bc;
+            A = diff(deResFun,u,'linop') & bc;
             subsasgn(A,struct('type','.','subs','scale'), normu);
             % Linop backslash with the third argument added
             delta = -(A\deResFun);
@@ -322,7 +322,7 @@ end
             else
                 v = lbcResFun;
                 for j = 1:numel(v);
-                    bcOut.left(j) = struct('op',diff(v(:,j),u),'val',v(a,j));
+                    bcOut.left(j) = struct('op',diff(v(:,j),u,'linop'),'val',v(a,j));
                 end
             end
             % Check whether a boundary happens to have no BC attached
@@ -331,7 +331,7 @@ end
             else
                 v = rbcResFun;
                 for j = 1:numel(v);
-                    bcOut.right(j) = struct('op',diff(v(:,j),u),'val',v(b,j));
+                    bcOut.right(j) = struct('op',diff(v(:,j),u,'linop'),'val',v(b,j));
                 end
             end
         end

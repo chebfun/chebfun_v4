@@ -1,4 +1,4 @@
-function J = diff(N,u)
+function J = diff(N,u,flag)
 %DIFF    Jacobian (Frechet derivative) of nonlinear operator.
 % J = DIFF(N,U) for a chebop N and chebfun U, returns a chebop
 % represening the Jacobian (i.e., the Frechet derivative) of N evaluated at
@@ -51,7 +51,7 @@ if ~isempty(N.lbc)
     end
     for j = 1:length(lbc)
         gu = lbc{j}(u);
-        linBC.left(j) = struct('op',diff(gu,u),'val',gu(a,j));
+        linBC.left(j) = struct('op',diff(gu,u,'linop'),'val',gu(a,j));
     end
 end
 
@@ -62,15 +62,29 @@ if ~isempty(N.rbc)
     end
     for j = 1:length(rbc)
         gu = rbc{j}(u);
-        linBC.right(j) = struct('op',diff(gu,u),'val',gu(b,j));
+        linBC.right(j) = struct('op',diff(gu,u,'linop'),'val',gu(b,j));
     end
 end
 
 % Functional part + add BCs
 Nu = N.op(u);
 if exist('linBC','var')
-    J = diff(Nu,u) & linBC;
+    J = diff(Nu,u,'linop') & linBC;
 else
-    J = diff(Nu,u);
+    J = diff(Nu,u,'linop');
 end
+
+if nargin == 3 && strcmp(flag,'linop')
+    return
 end
+
+% No flag, so return a chebop
+F = J;
+J = chebop(get(F,'fundomain'));
+J.op = F; 
+if ~isempty(inputname(1)) && ~isempty(inputname(2))
+    s = ['diff(' inputname(1) ',' inputname(2) ')'];
+else
+    s = '';
+end
+J = set(J,'opshow',s);

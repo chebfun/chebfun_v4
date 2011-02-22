@@ -25,7 +25,7 @@ if isa(F2,'double')
     F2 = repmat(F2,1,numel(F1));
 elseif size(F1) ~= size(F2) 
     % two quasimatrices must have the same size
-    error('CHEBFUN:eq:wrongsize','Quasimatrix dimensions must agree')
+    error('CHEBFUN:eq:wrongsize','Quasimatrix dimensions must agree.')
 end
 
 fout = chebfun;

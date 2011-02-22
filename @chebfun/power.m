@@ -29,7 +29,7 @@ elseif isa(F1,'chebfun')
     else
         for k = 1:numel(F1)
             Fout(k) = powercol(F1(k),F2);
-            Fout(k).jacobian = anon('diag1 = F2*diag(F1.^(F2-1)); der2 = diff(F1,u); der = diag1*der2; nonConst = ~der2.iszero;',{'F1', 'F2'},{F1(k) F2},1);
+            Fout(k).jacobian = anon('diag1 = F2*diag(F1.^(F2-1)); der2 = diff(F1,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F1', 'F2'},{F1(k) F2},1);
             Fout(k).ID = newIDnum();
         end
     end
@@ -38,7 +38,7 @@ else
     Fout = F2;
     for k = 1:numel(F2)
         Fout(k) = powercol(F1,F2(k));
-        Fout(k).jacobian = anon('diag1 = diag(F1.^F2.*log(F1)); der2 = diff(F2,u); der = diag1*der2; nonConst = ~der2.iszero;',{'F1', 'F2'},{F1 F2(k)},1);
+        Fout(k).jacobian = anon('diag1 = diag(F1.^F2.*log(F1)); der2 = diff(F2,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F1', 'F2'},{F1 F2(k)},1);
         Fout(k).ID = newIDnum();
     end
 end
@@ -51,7 +51,7 @@ if (isa(f,'chebfun') && isa(b,'chebfun'))
         error('CHEBFUN:powercol:interval','F and G must be defined in the same interval')
     end
     fout = comp(f,@power,b);
-    fout.jacobian = anon('[Jfu constJfu] = diff(f,u); [Jbu constJbu] = diff(b,u); der = diag(b.*f.^(b-1))*Jfu + diag(f.^b.*log(f))*Jbu; nonConst = (~Jfu.iszero | ~Jbu.iszero) | (constJbu | constJfu);',{'f' 'b'},{f b},1);
+    fout.jacobian = anon('[Jfu constJfu] = diff(f,u,''linop''); [Jbu constJbu] = diff(b,u,''linop''); der = diag(b.*f.^(b-1))*Jfu + diag(f.^b.*log(f))*Jbu; nonConst = (~Jfu.iszero | ~Jbu.iszero) | (constJbu | constJfu);',{'f' 'b'},{f b},1);
     fout.ID = newIDnum();
 else
     if isa(f,'chebfun')
