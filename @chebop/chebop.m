@@ -1,4 +1,4 @@
-function N = chebop(varargin)
+function [N x] = chebop(varargin)
 % CHEBOP  Construct an operator on chebfuns.
 % N = CHEBOP(OP) creates a chebop object N with operator defined by OP,
 % which should be a handle to a function that accepts one or more chebfuns
@@ -20,6 +20,7 @@ function N = chebop(varargin)
 %
 % By default, the operator acts on chebfuns defined on the domain [-1,1]. 
 % CHEBOP(OP,D), for a domain or 2-vector D, gives a different domain.
+% [N X] = CHEBOP(OP,D) returns also the linear function X on the domain D.
 %
 % CHEBOP(OP,D,LBC,RBC) or CHEBOP(OP,LBC,RBC) specifies boundary condtions
 % for functions at the left and right endpoints of the domain. Possible
@@ -89,6 +90,7 @@ if isempty(varargin), return, end
 
 op = [];
 dom = chebfunpref('domain');
+if nargout > 1, x = chebfun(dom,dom);  end
 
 % Find the first function_handle. This will be the op.
 if isa(varargin{1},'function_handle')
@@ -209,7 +211,7 @@ if ~isnumeric(varargin{1}) || numel(varargin{1})<2 || any(sort(varargin{1})-vara
     if numel(varargin) == 1
         N = set(N,'bc',createbc(varargin{1}));
         N.lbcshow = varargin{1};
-        N.rbcshow = varargin{2};
+        N.rbcshow = varargin{1};
     else
         N = set(N,'lbc',createbc(varargin{1}));
         N.lbcshow = varargin{1};

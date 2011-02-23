@@ -7,7 +7,8 @@ function u = pde15s(N, t, varargin)
 % PDE15S(N, T, OPTS) allows extra input options defined by OPTS = PDESET
 %
 % Example 1: Nonlinear Advection
-%   [d,x,N] = domain(-1,1);
+%   d = [-1 1];
+%   [N x] = chebop(d);
 %   N.op = @(u,t,x,D) -(1+0.6*sin(pi*x)).*D(u);
 %   N.init = exp(3*sin(pi*x));
 %   N.bc = 'periodic';
@@ -15,17 +16,18 @@ function u = pde15s(N, t, varargin)
 %   surf(u,0:.05:3)
 %
 % Example 2: Kuramoto-Sivashinsky
-%   [d,x,N] = domain(-1,1);
-%   I = eye(d); D = diff(d);
+%   d = [-1 1];
+%   [N x] = chebop(d);
 %   N.op = @(u,D) u.*D(u)-D(u,2)-0.006*D(u,4);
 %   N.init = 1 + 0.5*exp(-40*x.^2);
-%   N.lbc = struct('op',{I,D},'val',{1,2});
-%   N.rbc = struct('op',{I,D},'val',{1,2});  
+%   N.lbc = struct('op',{'dirichlet','neumann'},'val',{1,2});
+%   N.rbc = struct('op',{'dirichlet','neumann'},'val',{1,2});  
 %   u = pde15s(N,0:.01:.5);
 %   surf(u,0:.01:.5)
 %
 % Example 3: Chemical reaction (system)
-%   [d,x,N] = domain(-1,1);  
+%   d = [-1 1];
+%   [N x] = chebop(d);
 %   N.init = [ 1-erf(10*(x+0.7)) , 1 + erf(10*(x-0.7)) , chebfun(0,d) ];
 %   N.op = @(u,v,w,diff)  [ 0.1*diff(u,2) - 100*u.*v , ...
 %                      0.2*diff(v,2) - 100*u.*v , ...
@@ -64,4 +66,23 @@ if nargin > 2
     end
 end
 
+% Some basic error catching
+if isempty(N.init)
+    error('CHEBFUN:chebop:pde15:init','Initial condition is empty.');
+elseif isempty(N.op)
+    error('CHEBFUN:chebop:pde15:op','PDE RHS (N.op) is empty.');
+elseif isa(N.op,'linop')
+    error('CHEBFUN:chebop:pde15:linop','PDE15 does not support linops.');
+end
+
+% Ensure initial guess is a chebfun
+if ~isa(N.init,'chebfun')
+    init = [];
+    for k = 1:numel(init)
+        init = chebfun(N.init(k),N.dom);
+    end
+    N.init = init;
+end
+
+% Pass to chebfun/pde15s
 u = pde15s( N.op, t, N.init, bc, varargin{:} );
