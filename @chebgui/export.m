@@ -22,22 +22,35 @@ if strcmp(problemType,'bvp')
                 assignin('base',answer{1},handles.guifile);
             end
         case 'Workspace'
+            numlines = 1;
+            options.Resize='on';
+            options.WindowStyle='modal';
+            
+%             if isempty(handles.latest)
+%                 % Export only the chebgui object
+%                 prompt = {'Chebgui object'};
+%                 defaultanswer = {'chebg'};
+%                 answer = inputdlg(prompt,name,numlines,defaultanswer,options);
+%                 if ~isempty(answer)
+%                     assignin('base',answer{1},handles.guifile);
+%                 end
+%                 return
+%             end
+                
             varnames = handles.varnames;
             nv = numel(varnames);
             if nv == 1
                 prompt = {'Differential operator','Solution:',...
-                'Vector with norm of updates', 'Options','Chebgui object'};
+                'Vector with norm of updates', 'Options'};
             else
                 prompt = ['Differential operator',varnames.',...
-                'Vector with norm of updates', 'Options','Chebgui object'];
+                'Vector with norm of updates', 'Options'];
             end
                     
             name   = 'Export to workspace';
             
-            defaultanswer=['N',varnames','normVec','options','chebg'];
-            numlines = 1;
-            options.Resize='on';
-            options.WindowStyle='modal';
+            defaultanswer=['N',varnames','normVec','options'];
+
             
             answer = inputdlg(prompt,name,numlines,defaultanswer,options);
             
@@ -49,7 +62,7 @@ if strcmp(problemType,'bvp')
                 end
                 assignin('base',answer{nv+2},handles.latest.norms);
                 assignin('base',answer{nv+3},handles.latest.options);
-                assignin('base',answer{nv+4},handles.guifile);
+%                 assignin('base',answer{nv+4},handles.guifile);
             end
         case '.m'            
             [filename, pathname, filterindex] = uiputfile( ...
@@ -100,7 +113,7 @@ elseif strcmp(problemType,'pde')
             nv = numel(varnames);
             if nv == 1
                 prompt = {'Solution', 'Time domain', 'Final solution'};
-                defaultanswer={varnames,'t',[varname '_final']};
+                defaultanswer=  [varnames,'t',[varnames{1} '_final']];
             else
                 sol = {}; solfinal = {}; finalsol = {};
                 for k = 1:nv
@@ -112,7 +125,7 @@ elseif strcmp(problemType,'pde')
                 defaultanswer = [varnames','t',solfinal];
             end
             
-            name   = 'Export to workspace';
+            name = 'Export to workspace';
             numlines = 1;
             options.Resize='on';
             options.WindowStyle='modal';
