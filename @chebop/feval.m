@@ -4,15 +4,14 @@ function Narg = feval(Nin,argument,varargin)
 % Evaluate the operator with the given argument.
 
 if isnumeric(argument)
-    [L linBC isLin affine] = linearise(Nin);
+    [L linBC isLin] = linearise(Nin);
     if ~isLin
         error('CHEBOP:feval:expansion','Matrix expansion is only allowed for linear chebops.')
     end
     L = L & linBC;
-    Narg = feval(L,argument);
+    Narg = feval(L,argument,varargin{:});
     return
 end
-
 
 % Need to do a trick if the operator is a cell
 if ~isa(Nin.op,'cell')

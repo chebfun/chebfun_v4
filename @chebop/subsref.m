@@ -14,7 +14,16 @@ switch index(1).type
           varargout = cellfun(fun,varargout,'uniform',false);
         end
     case '()'
-        varargout = {feval(f,idx{1})};
+        if ~isnumeric(idx{1})
+            varargout = {feval(f,idx{1})};
+        else
+            [L linBC isLin] = linearise(f);
+            if ~isLin
+                error('CHEBOP:feval:expansion','Matrix expansion is only allowed for linear chebops.')
+            end
+            L = L & linBC;
+            varargout{1} = subsref(L,index);
+        end
     otherwise
         error('CHEBOP:subsref:indexType',['Unexpected index.type of ' index(1).type]);
 end
