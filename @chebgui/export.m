@@ -129,7 +129,6 @@ elseif strcmp(problemType,'pde')
             numlines = 1;
             options.Resize='on';
             options.WindowStyle='modal';
-            handles.varnames
             
             answer = inputdlg(prompt,name,numlines,defaultanswer,options);
             sol = handles.latest.solution;
@@ -140,7 +139,7 @@ elseif strcmp(problemType,'pde')
                 end
                 assignin('base',answer{nv+1},handles.latest.solutionT);
                 for k = 1:nv
-                    assignin('base',answer{nv+1+k},sol{k}(end,:));
+                    assignin('base',answer{nv+1+k},sol{k}(:,end));
                 end
 %                 msgbox(['Exported chebfun variables named ' answer{1},' and ',...
 %                     answer{2}, ' to workspace.'],...
