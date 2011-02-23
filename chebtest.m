@@ -149,7 +149,8 @@ failed = zeros(length(mfiles),1);  % Pass/fail
 t = failed;                        % Vector to store times
 
 % Clear the report file (and check we can open file)
-[fid message] = fopen(fullfile(chbfundir,'chebtests','chebtest_report.txt'),'w+');
+report = fullfile(chbfundir,'chebtests','chebtest_report.txt');
+[fid message] = fopen(report,'w+');
 if fid < 0
     warning('CHEBFUB:chebtest:fopenfail', ...
         ['Cannot create chebtest report: ', message]);
@@ -226,7 +227,7 @@ for j = 1:length(mfiles)
       
       % Create an error report entry for a failure
       if createreport
-        fid = fopen(fullfile(dirname,'chebtest_report.txt'),'a');
+        fid = fopen(report,'a');
         fprintf(fid,[fun '  (failed) \n']);
         fprintf(fid,['pass: ''' int2str(pass) '''\n\n']);
         fclose(fid);
@@ -252,7 +253,7 @@ for j = 1:length(mfiles)
    
     % Create an error report entry for a crash
     if createreport
-        fid = fopen(fullfile(dirname,'chebtest_report.txt'),'a');
+        fid = fopen(report,'a');
         fprintf(fid,[fun '  (crashed) \n']);
         fprintf(fid,['identifier: ''' msg.identifier '''\n']);
         fprintf(fid,['message: ''' msg.message '''\n']);
@@ -287,9 +288,8 @@ else
   fprintf('\n%i failed and %i crashed\n',sum(failed>0),sum(failed<0))
   failfun = mfiles(failed~=0);
   if createreport
-      fun = 'chebtest_report.txt';
       if javacheck
-          link = ['<a href="matlab: edit ' fullfile(dirname,fun) '">' fun '</a>'];
+          link = ['<a href="matlab: edit ' report '">chebtest_report.txt</a>'];
       else
           link = fullfile(dirname,fun);
       end
@@ -316,8 +316,9 @@ else
     fprintf('    ');
     for k = 1:sum(abs(failed))
         fun = failfun{k};
+        whichfun = which(fun);
         if javacheck         
-            link = ['<a href="matlab: edit ' fullfile(dirname,fun) '">' fun '</a>    '];
+            link = ['<a href="matlab: edit ' whichfun '">' fun '</a>    '];
             link = strrep(link,'\','\\');  % maintain fprintf compatability in MSwin
         else
             link = fun;
@@ -329,7 +330,7 @@ end
 if nargout > 0, varargout{2} = t; end
 
 if createreport && any(failed)
-    fid = fopen(fullfile(dirname,'chebtest_report.txt'),'a');
+    fid = fopen(report,'a');
 
     % GET SYSTEM INFORMATION
     % find platform OS
