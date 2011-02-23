@@ -61,11 +61,11 @@ switch exampleNumber
         name = 'Coupled system with sin(v) and cos(u)';
         demotype = 'system';
     case 5
-        a = '-1'; b = '1';
+        a = '0'; b = '18';
         DE = {'u'' = u - u*v';'v'' = -v + u*v'};
-        LBC = {'u = 1';'v = 1'};
+        LBC = {'u = 1.2';'v = 1.2'};
         RBC = '';
-        init = ''; tol = '1e-10';
+        init = {'u = 1.2';'v = 1.2'}; tol = '1e-10';
         damping = '0'; plotting = '0.4';
         name = 'Lotka-Volterra predator-prey';
         demotype = 'system';
