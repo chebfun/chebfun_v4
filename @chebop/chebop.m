@@ -90,7 +90,7 @@ if isempty(varargin), return, end
 
 op = [];
 dom = chebfunpref('domain');
-if nargout > 1, x = chebfun(dom,dom);  end
+if nargout > 1, x = chebfun('x',dom);  end
 
 % Find the first function_handle. This will be the op.
 if isa(varargin{1},'function_handle')
