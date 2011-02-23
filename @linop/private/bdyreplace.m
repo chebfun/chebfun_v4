@@ -9,9 +9,6 @@ function [B,c,rowidx] = bdyreplace(A,ns,map,breaks)
 %  Last commit: $Author: hale $: $Rev: 1160 $:
 %  $Date: 2010-07-21 15:48:29 +0100 (Wed, 21 Jul 2010) $:
 
-persistent time2
-if isempty(time2), time2 = 0; end
-
 n = [ns{:}];
 m = size(A,2);
 B = zeros(A.numbc,sum(n));

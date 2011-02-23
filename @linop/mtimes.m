@@ -16,6 +16,10 @@ function C = mtimes(A,B)
 %  Last commit: $Author$: $Rev$:
 %  $Date$:
 
+persistent storage
+if isempty(storage), storage = struct([]); end
+use_store = cheboppref('storage');
+
 if isa(A,'double')
    % We allow double*linop if the inner dimensions match--i.e., the linop
    % is really a functional. Or (below) if A is scalar.
@@ -80,9 +84,14 @@ switch(class(B))
     C.blocksize = [size(A,1) size(B,2)];
     C.iszero = isz;
     
+    if ~all(size(C)==size(C.difforder))
+        error
+    end
+
+
   case 'chebfun'    % linop * chebfun
     dom = domaincheck(A,B);
-    dom = dom.endsandbreaks;
+    dom = dom.ends;
     if isinf(size(B,2))
       error('LINOP:mtimes:dimension','Inner dimensions do not agree.')
     end
@@ -90,19 +99,6 @@ switch(class(B))
     if (A.blocksize(2) > 1) && (A.blocksize(2)~=size(B,2))
       error('LINOP:mtimes:blockdimension',...
         'Number of column blocks must equal number of quasimatrix columns.')
-    end
-    
-    % Deal with maps.
-    % TODO : test this.
-    map = mapcheck(get(B(:,1),'map'),get(B(:,1),'ends'),1);
-    if ~isempty(map)
-        settings.map = map;
-    end   
-    % Can't do this yet. 
-    if ~isempty(map) && numel(map)~=numel(dom)-1
-        warning('CHEBFUN:linop:mldivide:mapbreaks',...
-            'New breakpoint introduced, so map data from RHS is ignored.');
-        map = [];
     end
     
     % Behavior for quasimatrix B is different depending on whether
@@ -115,7 +111,6 @@ switch(class(B))
         else                     % matrix application
           combine = 1;  % no component combination required
           Z = chebfun( @(x) value(x,B(:,k)), dom, chebopdefaults );
-%           Z = chebfun( @(x,N,bks) value_sys(x,B(:,k),N,bks), {dom}, chebopdefaults );
         end
         C = [C Z]; 
       end
@@ -124,79 +119,30 @@ switch(class(B))
         C = feval(A.oparray,B);
       else
         V = [];  % force nested function overwrite
-        
-%% old
-%         For adaptation, combine solution components randomly.
+        % For adaptation, combine solution components randomly.
         combine = randn(A.blocksize(2),1);  
-        c = chebfun( @(x) value(x,B), dom, chebopdefaults );  % adapt       
+        c = chebfun( @(x) value(x,B), dom, chebopdefaults );  % adapt
         % Now V is defined with values of each component at cheb points.
         for k = 1:size(B,2)
           c = chebfun( V(:,k), dom, chebopdefaults );
           Z = chebfun( @(x) c(x), dom, chebopdefaults );  % to force simplification
           C = [C Z];
         end
-    
-%% new
-%         settings = chebopdefaults;
-%         c = chebfun( @(x,N,bks) value_sys(x,B,N,bks), {dom}, settings );
-%         % V has been overwritten by the nested value function.
-%         % We need to simplify it and store as the output.
-%         C = chebfun; % Will contain the output.
-%         for j = 1:A.blocksize(2)  % For each variable, build a chebfun.
-%             tmp = chebfun;          % Temporary chebfun for the jth variable.
-%             for k = 1:numel(dom)-1 % Loop over each subinterval.
-%                 funk = fun( V{1}, dom(k:k+1), settings);
-%                 tmp = [tmp ; set(chebfun,'funs',funk,'ends',dom(k:k+1),...
-%                     'imps',[funk.vals(1) funk.vals(end)],'trans',0)];
-%                 V(1) = [];
-%             end
-%             C(:,j) = simplify(tmp,settings.eps); % Simplify and store.
-%         end
-%         C = merge(C,settings.eps);
-        
       end
     end
-
+           
   otherwise
     error('LINOP:mtimes:badoperand','Unrecognized operand.')
 end
 
   function v = value(x,f)
     N = length(x);
-%     L = feval(A.varmat,{N,map,[]}); 
     L = feval(A.varmat,N); 
     fx = feval(f,x);  fx = fx(:);
     v = L*fx;
     V = reshape(v,N,A.blocksize(1));
     v = V*combine;
     v = filter(v,1e-8);
-  end
-
-  function v = value_sys(x,f,N,bks)
-    % x is a cell array with the points for each function.
-    % N is the number of points on each subinterval.
-    % bks contains the ends of the subintervals.
-
-    syssize = A.blocksize(1);     % Number of eqns in system.
-    N = N{:};   bks = bks{:};     % We allow only the same discretization.
-                                  % Size and breaks for each system.
-    x = x{1};
-    A
-    L = feval(A,N,'nobc',map,bks);
-    fx = feval(f,x);  fx = fx(:);
-    size(L)
-    size(fx)
-    v = L*fx;
-    
-    V = mat2cell(v,repmat(N,1,syssize),1);  % Store for output.
-    v = sum(reshape(v,[sum(N),syssize]),2); % Combine equations.
-    % Filter
-    csN = cumsum([0 N]);
-    for ll = 1:numel(N)
-        ii = csN(ll) + (1:N(ll));
-        v(ii) = filter(v(ii),1e-8);
-    end
-    v = {v};                                % Output as cell array.
   end
    
 

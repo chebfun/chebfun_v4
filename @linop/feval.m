@@ -108,15 +108,7 @@ else
       && length(storage(A.ID).mat)>=n && ~isempty(storage(A.ID).mat{n})
     M = storage(A.ID).mat{n};
   else % If not,m then make it.
-    try
-        M = feval(A.varmat,{n,map,breaks});
-    catch
-        if ~isempty(map) || ~isempty(breaks)
-            error('CHEBFUN:linop:feval:cellin',...
-                'This linop definition does not allow maps or breaks.');
-        end
-        M = feval(A.varmat,n);
-    end
+    M = feval(A.varmat,{n,map,breaks});
     if use_store && n > 4
       % This is very crude garbage collection! 
       % If size is exceeded, wipe out everything.
@@ -137,7 +129,7 @@ else
   if usebc == 1.5
       if ~isempty(breaks)
           % We force rectangular matrices in this case.
-          warning('CHEBFUN:linop:feval:rowrep', ...
+          warning('CHEBFUN:linop:feval:oldschool', ...
               '''rowrep'' does not support piecewise linops.');
       else
           [B,c,rowreplace] = bdyreplace_old(A,n,map,breaks);

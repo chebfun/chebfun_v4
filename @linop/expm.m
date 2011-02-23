@@ -76,7 +76,7 @@ F.blocksize = [m m];
       error('LINOP:expm:NoConverge',msg)
     end
 
-    [L,B,c,rowrep] = feval(A,n,'rowrep',map,breaks);
+    [L,B,c,rowrep] = feval(A,n,'oldschool',map,breaks);
     elim = false(n*m,1);  elim(rowrep) = true;
     % Use algebra with the BCs to remove degrees of freedom.
     R = -L(elim,elim)\L(elim,~elim);  % maps interior to removed values
