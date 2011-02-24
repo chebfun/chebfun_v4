@@ -24,7 +24,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     a = str2num(guifile.DomLeft);
     b = str2num(guifile.DomRight);
     if b <= a
-        s = sprintf('Error in constructing domain. [%f,%f] is not valid.',a,b);
+        s = sprintf('Error in constructing domain. [%s,%s] is not valid.',guifile.DomLeft,guifile.DomRight);
         errordlg(s, 'Chebgui error', 'modal');
         return
     end

@@ -253,14 +253,18 @@ handles = solveGUI(handles.guifile,handles);
 guidata(hObject, handles);
 
 function input_LBC_Callback(hObject, eventdata, handles)
-newString = get(hObject,'String');
+newString = cellstr(get(hObject,'String'));
+newString = removeTabs(newString); % Remove tabs
+set(hObject,'String',newString);
 handles = callbackBCs(handles.guifile,handles,newString,'lbc');
 handles.guifile.LBC = newString;
 guidata(hObject, handles);
 
 
 function input_RBC_Callback(hObject, eventdata, handles)
-newString = get(hObject,'String');
+newString = cellstr(get(hObject,'String'));
+newString = removeTabs(newString); % Remove tabs
+set(hObject,'String',newString);
 handles = callbackBCs(handles.guifile,handles,newString,'rbc');
 handles.guifile.RBC = newString;
 guidata(hObject, handles);
@@ -312,9 +316,13 @@ guidata(hObject, handles);
 % -------------------------------------------------------------------------
 
 function input_GUESS_Callback(hObject, eventdata, handles)
-newString = get(hObject,'String');
+newString = cellstr(get(hObject,'String'));
 
-handles.guifile.init = cellstr(newString);
+% Remove tabs
+newString = removeTabs(newString);
+set(hObject,'String',newString);
+
+handles.guifile.init = newString;
 if isempty(newString)
     handles.init = '';
     axes(handles.fig_sol);
@@ -360,8 +368,16 @@ for i=1:length(fNames), assignin('caller',fNames{i},importedVar.(fNames{i})), en
 
 
 function input_DE_Callback(hObject, eventdata, handles)
-handles.guifile.DE = get(hObject,'String');
-str = cellstr(handles.guifile.DE);
+str = cellstr(get(hObject,'String'));
+
+% Remove tabs
+str = removeTabs(str);
+
+% Update the DE input and store in guifile
+set(handles.input_DE,'String',str);
+handles.guifile.DE = str;
+
+% Auto PDE and EIG detection
 for k = 1:numel(str)
     strk = str{k};
     if any(strfind(strk,'_'))
@@ -374,6 +390,66 @@ for k = 1:numel(str)
 end
 guidata(hObject, handles);
 
+function str = removeTabs(str)
+for k = 1:numel(str)
+    idx = 1;
+    strk = str{k};
+    while ~isempty(idx)
+        idx = strfind(strk,double(9));
+        strk(idx) = [];
+    end
+    str{k} = strk;
+end
+
+% Tab switches for multi-lines
+function input_DE_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab'), 
+    if strcmp(eventdata.Modifier,'shift')
+        if get(handles.button_pde,'value')
+            uicontrol(handles.timedomain); 
+        else
+            uicontrol(handles.dom_right); 
+        end
+    else
+        uicontrol(handles.input_LBC); 
+    end
+end
+function input_LBC_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        uicontrol(handles.input_DE); 
+    else
+        uicontrol(handles.input_RBC); 
+    end
+end
+function input_RBC_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        uicontrol(handles.input_LBC); 
+    else
+        if get(handles.button_eig,'value')
+            uicontrol(handles.edit_eigN); 
+        else
+            uicontrol(handles.input_GUESS); 
+        end
+    end
+end
+function input_GUESS_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        uicontrol(handles.input_RBC); 
+    else
+        uicontrol(handles.button_solve); 
+    end
+end
+function popupmenu_sigma_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        uicontrol(handles.edit_eigN); 
+    else
+        uicontrol(handles.button_solve); 
+    end
+end
 
 function input_tol_Callback(hObject, eventdata, handles)
 handles.guifile.tol = get(hObject,'String');
@@ -1358,13 +1434,5 @@ end
 
 % --------------------------------------------------------------------
 function menu_annotateon_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_annotateon (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --------------------------------------------------------------------
 function menu_annotateoff_Callback(hObject, eventdata, handles)
-% hObject    handle to menu_annotateoff (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
