@@ -1,4 +1,4 @@
-function [out varNames pdeVarNames eigVarNames indVarName] = lexer(guifile,str)
+function [out varNames pdeVarNames eigVarNames indVarNames] = lexer(guifile,str)
 % LEXER Lexer for string expression in the chebfun system
 % [OUT VARNAMES INDVARNAME] = LEXER(STR) performs a lexical analysis on the
 % string STR. OUT is a cell array with two columns, the left is a token and
@@ -57,20 +57,43 @@ varNames = symvar(str);
 % Create a cell for potential pdeVarNames and lambdaVariables
 pdeVarNames = {};
 eigVarNames = {};
-
-% x and t are reserved for independent variables
+indVarNames = {};
+% r, x and t are reserved for independent variables
 xLoc = strcmp('x',varNames); varNames(xLoc) = [];
 tLoc = strcmp('t',varNames); varNames(tLoc) = [];
 rLoc = strcmp('r',varNames); varNames(rLoc) = [];
 
-% Return the name of the independent variable. Use x if none is found
-if sum(tLoc)
-    indVarName = 't';
-elseif sum(rLoc)
-    indVarName = 'r';
+rExists = sum(rLoc) > 0;
+tExists = sum(tLoc) > 0;
+xExists = sum(xLoc) > 0;
+
+
+% Return the name of the independent variable. Use x if none is found.
+% Check whether we have too many independent variables.
+if strcmp(guifile.type,'pde')
+    if (rExists+tExists+xExists) > 2
+        error('Chebgui:solve:Lexer:TooManyIndVars','Too many independent variables in input.');
+    end
+    if rExists
+        indVarNames{1} = 'r';
+    elseif xExists
+        indVarNames{1} = 'x';
+    end
+    indVarNames{2} = 't'; 
 else
-    indVarName = 'x';
+    if (rExists+tExists+xExists) > 1
+        error('Chebgui:solve:Lexer:TooManyIndVars','Too many independent variables in input.');
+    end
+    if rExists
+        indVarNames{1} = 'r';
+    elseif tExists
+        indVarNames{1} = 't';
+    elseif xExists
+        indVarNames{1} = 'x';
+    end        
 end
+    
+
 % Replace with lines below to return empty indVarName if no variable appear
 % in the problem.
 % elseif sum(xLoc)

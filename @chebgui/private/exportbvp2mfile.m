@@ -25,12 +25,42 @@ initInput = guifile.init;
 if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
 if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
+if isa(initInput,'char'), initInput = cellstr(initInput); end
 
 deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
+initRHSInput = cellstr(repmat('0',numel(initInput),1));
 
-[deString allVarString indVarName ignored ignored allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarNameDE ignored ignored allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+
+% Do some error checking before we do further printing. Check that
+% independent variable name match.
+% Obtain the independent variable name appearing in the initial condition
+useLatest = strcmpi(initInput{1},'Using latest solution');
+if ~isempty(initInput{1}) && ~useLatest
+    [initString ignored indVarNameInit] = setupFields(guifile,initInput,initRHSInput,'BC',allVarString);
+else
+    indVarNameInit = [];
+end
+
+% Make sure we don't have a disrepency in indVarNames
+if ~isempty(indVarNameInit) && ~isempty(indVarNameDE)
+    if strcmp(indVarNameDE{1},indVarNameInit{1})
+        indVarNameSpace = indVarNameDE{1};
+    else
+        error('Chebgui:SolveGUIbvp','Independent variable names do not agree')
+    end
+elseif ~isempty(indVarNameInit) && isempty(indVarNameDE)
+    indVarNameSpace = indVarNameInit{1};
+elseif isempty(indVarNameInit) && ~isempty(indVarNameDE)
+    indVarNameSpace = indVarNameDE{1};
+else
+    indVarNameSpace = 'x'; % Default value
+end
+
+% Replace the 'DUMMYSPACE' variable in the DE field
+deString = strrep(deString,'DUMMYSPACE',indVarNameSpace);
 
 % Support for periodic boundary conditions
 if (~isempty(lbcInput{1}) && strcmpi(lbcInput{1},'periodic')) || ...
@@ -45,7 +75,7 @@ fprintf(fid,'%% Solving\n');
 for k = 1:numel(deInput)
     fprintf(fid,'%%   %s,\n',deInput{k});
 end
-fprintf(fid,'%% for %s in [%s,%s]',indVarName,a,b);
+fprintf(fid,'%% for %s in [%s,%s]',indVarNameSpace,a,b);
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     fprintf(fid,', subject to\n%%');
     if  ~isempty(lbcInput{1})
@@ -58,10 +88,10 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
             fprintf(fid,'%s',lbcInput{k});
             if k~=numel(lbcInput) && numel(lbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,' at %s = % s\n',indVarName,a);
+        fprintf(fid,' at %s = % s\n',indVarNameSpace,a);
     end
     if  ~isempty(lbcInput{1}) && ~isempty(rbcInput{1})
-        fprintf(fid,'%% and\n%%',indVarName,a);
+        fprintf(fid,'%% and\n%%',indVarNameSpace,a);
     end
     if ~isempty(rbcInput{1})
         if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann'}))
@@ -73,7 +103,7 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
             fprintf(fid,'%s',rbcInput{k});
             if k~=numel(rbcInput) && numel(rbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,' at %s = % s\n',indVarName,b);
+        fprintf(fid,' at %s = % s\n',indVarNameSpace,b);
     end
     fprintf(fid,'\n');
 elseif periodic
@@ -125,13 +155,12 @@ if periodic
 end
 
 % Set up for the initial guess of the solution.
-useLatest = strcmpi(initInput,'Using latest solution');
 if useLatest
     fprintf(fid,['\n%% Note that it is not possible to use the "Use latest"',...
         'option \n%% when exporting to .m files. \n']);
-elseif ~isempty(initInput)    
+elseif ~isempty(initInput{1})    
     fprintf(fid,'\n%% Construct a linear chebfun on the domain,\n');
-    fprintf(fid,'%s = chebfun(@(%s) %s, dom);\n',indVarName,indVarName,indVarName);
+    fprintf(fid,'%s = chebfun(@(%s) %s, dom);\n',indVarNameSpace,indVarNameSpace,indVarNameSpace);
     fprintf(fid,'%% and assign an initial guess to the chebop.\n');
 %     fprintf(fid,'N.init = %s;\n',vectorize(char(initInput)));
     initInput = cellstr(initInput);
@@ -226,7 +255,7 @@ fprintf(fid,'\n%% Create plot of the solution and the norm of the updates.\n');
 
 
 fprintf(fid,['figure\nplot(u,''LineWidth'',2)\ntitle(''Final solution''), ',...
-    'xlabel(''%s'')'],indVarName);
+    'xlabel(''%s'')'],indVarNameSpace);
 if numel(allVarNames) == 1
     fprintf(fid,', ylabel(''%s'')',allVarNames{:});
 else

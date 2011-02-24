@@ -81,7 +81,8 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     catch ME
         MEID = ME.identifier;
         errordlg(ME.message, 'Chebgui error', 'modal');
-        if ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:'))
+        if ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:')) ...
+                ||~isempty(strfind(MEID,'Lexer:')) || ~isempty(strfind(MEID,'Chebgui:'))
             errordlg(ME.message, 'Chebgui error', 'modal');
         elseif strcmp(MEID,'CHEBOP:solve:findguess:DivisionByZeroChebfun')
             errordlg(['Error in constructing initial guess. The the zero '...

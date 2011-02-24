@@ -26,40 +26,34 @@ initInput = guifile.init;
 if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
 if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
+if isa(initInput,'char'), initInput = cellstr(initInput); end
 
 deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
+initRHSInput = cellstr(repmat('0',numel(initInput),1));
 
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString allVarString indVarName ignored ignored allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarNameDE ignored ignored allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
 handles.varnames = allVarNames;
 
-% Assign x or t as the linear function on the domain if indVarName is not
-% empty
-if ~isempty(indVarName)
-    eval([indVarName, '=xt;']);
-end
-% Convert the string to proper anon. function using eval
-DE  = eval(deString);
-
 if ~isempty(lbcInput{1})
-    [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
+    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
     LBC = eval(lbcString);
 else
     LBC = [];
 end
 if ~isempty(rbcInput{1})
-    [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
+    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
     RBC = eval(rbcString);
 else
     RBC = [];
 end
 
 if isempty(lbcInput) && isempty(rbcInput)
-    error('chebfun:bvpgui','No boundary conditions specified');
+    error('Chebgui:bvpgui','No boundary conditions specified');
 end
 
 
@@ -83,7 +77,40 @@ if guiMode
     end
 end
 
-if ~isempty(initInput) && isempty(guess)
+% Obtain the independent variable name appearing in the initial condition
+if ~isempty(initInput{1}) && isempty(guess)
+    [initString ignored indVarNameInit] = setupFields(guifile,initInput,initRHSInput,'BC',allVarString);
+else
+    indVarNameInit = [];
+end
+
+
+% Assign r, x or t as the linear function on the domain if indVarName is
+% not empty
+
+% Make sure we don't have a disrepency in indVarNames
+if ~isempty(indVarNameInit) && ~isempty(indVarNameDE)
+    if strcmp(indVarNameDE{1},indVarNameInit{1})
+        indVarNameSpace = indVarNameDE{1};
+    else
+        error('Chebgui:SolveGUIbvp','Independent variable names do not agree')
+    end
+elseif ~isempty(indVarNameInit) && isempty(indVarNameDE)
+    indVarNameSpace = indVarNameInit{1};
+elseif isempty(indVarNameInit) && ~isempty(indVarNameDE)
+    indVarNameSpace = indVarNameDE{1};
+else
+    indVarNameSpace = 'x'; % Default value
+end
+
+eval([indVarNameSpace, '=xt;']);
+
+% Replace the 'DUMMYSPACE' variable in the DE field
+deString = strrep(deString,'DUMMYSPACE',indVarNameSpace);
+% Convert the string to proper anon. function using eval
+DE  = eval(deString);
+
+if ~isempty(initInput{1}) && isempty(guess)
     if iscellstr(initInput)
         order = []; guesses = [];
         % Match LHS of = with variables in allVarNames

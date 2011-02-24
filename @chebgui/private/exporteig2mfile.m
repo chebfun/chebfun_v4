@@ -25,6 +25,12 @@ lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
 [allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+% Replace 'DUMMYSPACE' by the correct independent variable name
+if isempty(indVarName)
+    indVarName = {'x'};
+end
+allStrings = strrep(allStrings,'DUMMYSPACE',indVarName{1});
+
 % If allStrings return a cell, we have both a LHS and a RHS string. Else,
 % we only have a LHS string, so we need to create the LHS linop manually.
 if iscell(allStrings)
@@ -36,7 +42,7 @@ else
 end
 % Assign x or t as the linear function on the domain
 [d,xt] = domain(str2num(a),str2num(b));
-eval([indVarName, '=xt;']);
+eval([indVarName{1}, '=xt;']);
 
 % Convert the strings to proper anon. function using eval
 LHS  = eval(lhsString);
@@ -152,7 +158,7 @@ else
         fprintf(fid,'%%   %s,\n',deInput{k});
     end
 end
-fprintf(fid,'%% for %s in [%s,%s]',indVarName,a,b);
+fprintf(fid,'%% for %s in [%s,%s]',indVarName{1},a,b);
 if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
     fprintf(fid,', subject to\n%%');
     if  ~isempty(lbcInput{1})
@@ -165,10 +171,10 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
             fprintf(fid,'%s',lbcInput{k});
             if k~=numel(lbcInput) && numel(lbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,' at %s = % s\n',indVarName,a);
+        fprintf(fid,' at %s = % s\n',indVarName{1},a);
     end
     if  ~isempty(lbcInput{1}) && ~isempty(rbcInput{1})
-        fprintf(fid,'%% and\n%%',indVarName,a);
+        fprintf(fid,'%% and\n%%',indVarName{1},a);
     end
     if ~isempty(rbcInput{1})
         if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann'}))
@@ -180,7 +186,7 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
             fprintf(fid,'%s',rbcInput{k});
             if k~=numel(rbcInput) && numel(rbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,' at %s = % s\n',indVarName,b);
+        fprintf(fid,' at %s = % s\n',indVarName{1},b);
     end
     fprintf(fid,'\n');
 elseif periodic
@@ -245,7 +251,7 @@ if ischar(allVarNames) || numel(allVarNames) == 1
     fprintf(fid,'\n%% Plot the eigenmodes.\n');
     fprintf(fid,'figure\n');
     fprintf(fid,'plot(real(V),''linewidth'',2);\n');
-    fprintf(fid,'title(''Eigenmodes''); xlabel(''%s''); ylabel(''%s'');\n',indVarName,allVarString);
+    fprintf(fid,'title(''Eigenmodes''); xlabel(''%s''); ylabel(''%s'');\n',indVarName{1},allVarString);
 end
 
 fclose(fid);

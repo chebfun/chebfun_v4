@@ -3,6 +3,8 @@ numOfRows = max(size(input));%numel(input,1);
 pdeflag = zeros(1,numOfRows); % Binary flag for PDE detection.
 allVarNames = [];
 pdeVarNames = '';
+dummys = 'DUMMYSPACE';
+dummyt = 'DUMMYTIME';
 
 % For BCs, we need to check whether varNames contains anything not found in
 % varNames of the DE. Should we make the varNames of the DE as parameters?
@@ -43,11 +45,11 @@ if numOfRows == 1 % Not a system, can call convert2anon with two output argument
     % !!! Check for a cell, make field a cell if we are in eigMode and
     % anFun is a cell.
     if strcmp(guifile.type,'eig') && iscell(anFun)
-        field1 = ['@(',indVarName,',', allVarString ') ' anFun{1}];
-        field2 = ['@(',indVarName,',', allVarString ') ' anFun{2}];
+        field1 = ['@(',dummys,',', allVarString ') ' anFun{1}];
+        field2 = ['@(',dummys,',', allVarString ') ' anFun{2}];
         field = {field1;field2};
     elseif ~strcmp(guifile.type,'pde') && strcmp(type,'DE')
-        field = ['@(',indVarName,',', allVarString ') ' anFun];
+        field = ['@(',dummys,',', allVarString ') ' anFun];
     % Otherwise, add variables in front of what will be anonymous
     % functions. This is not needed for 'dirichlet','neumann',etc... This
     % can only happen in BCs, and in that case, allVarNames will be empty
@@ -126,7 +128,7 @@ else % Have a system, go through each row
     % use that information when setting up BCs. Create the string that goes
     % at the start of the final string.
     if ~strcmp(guifile.type,'pde') && strcmp(type,'DE')
-        fieldStart = ['@(',indVarName,',', allVarString ') '];%[' allAnFun,']'];
+        fieldStart = ['@(',dummys,',', allVarString ') '];%[' allAnFun,']'];
     else
         fieldStart = ['@(', allVarString ') '];% [' allAnFun,']'];
     end
@@ -213,22 +215,4 @@ if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
 %     else % Three output arguments -- Multiple rows
         [field indVarName varNames pdeVarNames] = convertToAnon(guifile,input);
 %     end
-end
-
-function data = subtractRhs(data)
-data = strtrim(data);
-for k = 1:numel(data)
-    idx = strfind(data{k},'=');
-    if numel(idx)>1
-        error('too many = signs');
-    elseif ~isempty(idx)
-        rhs = strtrim(data{k}(idx+1:end));
-        data{k} = strtrim(data{k}(1:idx-1));
-        numrhs = str2num(rhs);
-        if ~isempty(numrhs) && numrhs == 0
-            % Do nothing
-        else % If not zero, subtract the rhs from the lhs
-            data{k} = [data{k} '-(' rhs ')'];
-        end
-    end
 end

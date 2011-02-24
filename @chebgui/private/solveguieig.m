@@ -40,36 +40,14 @@ deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
-% Find whether the user wants to use the latest solution as a guess. This is
-% only possible when calling from the GUI
-if guiMode
-    useLatest = strcmpi(get(handles.input_GUESS,'String'),'Using latest solution');
-end
-
-% Convert the input to the an. func. format, get information about the
-% linear function in the problem. Need to split the string around = before
-% setupFields in this case, as we need to construct two linear operators.
-% lhs =''; rhs = '';
-% for k = 1:numel(deInput)
-%     idx = strfind(deInput{k},'=');
-%     if numel(idx)>1
-%         error('too many = signs');
-%     elseif ~isempty(idx)
-%         lhs{k} = strtrim(deInput{k}(1:idx-1));
-%         rhs{k} = strtrim(deInput{k}(idx+1:end));
-%     else
-%         lhs{k} = deInput{k};
-%     end
-% end
-% [lhsString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,lhs,deRHSInput,'DE');
-% if ~isempty(rhs)
-%     [rhsString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,rhs,deRHSInput,'DE');
-% else % Need to create a backup string for our function to be able to carry on
-%    rhsString = ['@(',allVarString,') [',allVarString,']']; 
-% end
 
 [allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
 
+% Replace 'DUMMYSPACE' by the correct independent variable name
+if isempty(indVarName)
+    indVarName = {'x'};
+end
+allStrings = strrep(allStrings,'DUMMYSPACE',indVarName{1});
 % If allStrings return a cell, we have both a LHS and a RHS string. Else,
 % we only have a LHS string, so we need to create the LHS linop manually.
 if iscell(allStrings)
@@ -80,26 +58,26 @@ else
     rhsString = '';
 end
 % Assign x or t as the linear function on the domain
-eval([indVarName, '=xt;']);
+eval([indVarName{1}, '=xt;']);
 
 % Convert the strings to proper anon. function using eval
 LHS  = eval(lhsString);
 
 if ~isempty(lbcInput{1})
-    [lbcString indVarName] = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
+    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
     LBC = eval(lbcString);
 else
     LBC = [];
 end
 if ~isempty(rbcInput{1})
-    [rbcString indVarName] = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
+    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
     RBC = eval(rbcString);
 else
     RBC = [];
 end
 
 if isempty(lbcInput) && isempty(rbcInput)
-    error('chebfun:bvpgui','No boundary conditions specified');
+    error('Chebgui:bvpgui','No boundary conditions specified');
 end
 
 
