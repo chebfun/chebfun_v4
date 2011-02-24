@@ -7,11 +7,9 @@ function fx = bary(x,gvals,xk,ek)
 %
 %  All inputs should be column vectors.
 %
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+%  See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+%  $Copyright$:
 
 n = length(gvals);
 
