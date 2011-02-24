@@ -1378,3 +1378,15 @@ end
 function menu_annotateon_Callback(hObject, eventdata, handles)
 % --------------------------------------------------------------------
 function menu_annotateoff_Callback(hObject, eventdata, handles)
+% --------------------------------------------------------------------
+function menu_about_Callback(hObject, eventdata, handles)
+handles
+curpos = get(gcf,'position');
+
+h = dialog('WindowStyle', 'normal', 'Name', 'About chebgui','Position', [500 500 200 200]);
+uicontrol(h, 'Style', 'text',...
+           'String', 'chebgui was developed by Ásgeir Birkisson and Nick Hale as an interface to the differential equations in chebfun/',...
+           'Position', [500 500 200 200])
+
+       
+       

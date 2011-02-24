@@ -23,7 +23,7 @@ else
     numints = 1; dom = [];
 end
 
-nmaps = numel(maps);
+nmaps = numel(map);
 if isa(map,'function_handle')
     map = {map};
 end
