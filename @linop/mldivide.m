@@ -56,18 +56,18 @@ function C = mldivide(A,B,tolerance)
         settings.eps = tolerance;
     end
 
+    % Take the union of all the ends.
+    ends = dom.endsandbreaks;
+    for k = 1:numel(B)
+        ends = union(B(:,k).ends,ends);
+    end
+
     % Deal with maps.
     % TODO : test this.
     map = mapcheck(get(B(:,1),'map'),get(B(:,1),'ends'),1);
     if ~isempty(map)
         settings.map = map;
     end   
-  
-    % Take the union of all the ends.
-    ends = dom.endsandbreaks;
-    for k = 1:numel(B)
-        ends = union(B(:,k).ends,ends);
-    end
     
     % Can't do this yet. 
     if ~isempty(map) && numel(map)~=numel(ends)-1
@@ -75,7 +75,7 @@ function C = mldivide(A,B,tolerance)
             'New breakpoint introduced, so map data from RHS is ignored.');
         map = [];
     end
-
+    
     V = [];  % Initialise V so that the nested function overwrites it.
     
     if isa(A.scale,'function_handle')
