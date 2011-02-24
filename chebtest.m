@@ -359,4 +359,6 @@ if createreport && any(failed)
     char(strread(version('-java'),'%s',1,'delimiter','\n'))]);
 
     fclose(fid);
+elseif createreport && ~any(failed)
+    delete(report);
 end

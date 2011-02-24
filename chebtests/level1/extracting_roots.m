@@ -19,7 +19,6 @@ for k = 1:2
             h = f;
             h.funs(1) = extract_roots(f.funs(1));
             xx = linspace(d);
-            norm(f(xx)-h(xx),inf)
             pass(l) = norm(f(xx)-h(xx),inf) < tol;
             
             % right root
@@ -27,7 +26,6 @@ for k = 1:2
             h = f;
             h.funs(1) = extract_roots(f.funs(1));
             xx = linspace(d);
-            norm(f(xx)-h(xx),inf)
             pass(l+1) = norm(f(xx)-h(xx),inf) < tol;
             
         end
