@@ -153,6 +153,17 @@ else
     initSuccess = 0;
 end
 
+if strcmpi(guifile.LBC,'periodic')
+        set(handles.input_RBC,'String','periodic');
+        handles.guifile.RBC = '';
+        set(handles.input_RBC,'Enable','off');
+elseif strcmpi(guifile.RBC,'periodic')
+        set(handles.input_LBC,'String','periodic');
+        handles.guifile.LBC = 'periodic';
+        handles.guifile.RBC = '';
+        set(handles.input_RBC,'Enable','off');
+end
+
 %
 % % If input for BCs is a number, anon. func. or dirichlet/neumann,
 % % disable BC rhs input
