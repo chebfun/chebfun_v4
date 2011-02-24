@@ -1,4 +1,4 @@
-function map = maps(varargin)
+function varargout = maps(varargin)
 % CHEBFUN MAPS
 %  Rather than using Chebyshev polynomial interpolants, Chebfun can use
 %  non-polynomial bases defined by maps. This is useful in a number of
@@ -56,7 +56,31 @@ function map = maps(varargin)
 %
 % M = MAPS(F) returns a cell structure of the maps used by the chebfun F.
 % M = MAPS(D) returns the default map for the domain D.
+%
+%  For help on the MAPS function from the MAPPING TOOLBOX, type
+%  help([fileparts(which('aitoff')),filesep 'maps'])
 
 % This code is just a wrapper for fun/maps.
 
-map = maps(fun,varargin{:});
+% Try to resolve conflicts with the mapping toolbox.
+if nargin == 1 && ischar(varargin{1}) && exist('aitoff','file')
+    mapsAllowedStr = {'namelist','idlist'};
+    chebAllowedStr = {'LINEAR','UNBOUNDED','SING','KTE','STRIP','SAUSAGE', 'SLIT','SLITP', 'MPINCH'};
+    if ~any(strcmpi(varargin{1},chebAllowedStr))
+        try
+            curDir = pwd;
+            cd(fileparts(which('aitoff')));
+            builtin_maps = @maps;
+            cd(pwd);
+            varargout = {builtin_maps(varargin{:})};
+            return
+        catch
+            warning('CHEBFUN:maps:conflict',...
+                ['Possible conflict with mapping toolbox. To ensure the mapping ', ...
+            'toolbox works correctly, ensure it is higher on the MATLAB path than ', ...
+            'Chebfun. See ''help path''.']);
+        end
+    end
+end
+
+varargout = {maps(fun,varargin{:})};
