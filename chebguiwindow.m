@@ -1,5 +1,5 @@
 function varargout = chebguiwindow(varargin)
-%CHEBGUIWINDOW Chebfun BVP and PDE GUI for solvebvp and pde15s.
+%CHEBGUI Chebfun BVP and PDE GUI for solvebvp and pde15s.
 % INTRODUCTION
 % 
 % Chebgui is a graphical user interface to Chebfun's capabilities
@@ -1380,7 +1380,34 @@ function menu_annotateon_Callback(hObject, eventdata, handles)
 function menu_annotateoff_Callback(hObject, eventdata, handles)
 % --------------------------------------------------------------------
 function menu_about_Callback(hObject, eventdata, handles)
+aboutWindow = dialog('WindowStyle', 'normal', 'Name', 'About chebgui','Position', [500 500 200 200]);
+uicontrol(aboutWindow, ... % Text
+             'Style','text', ...
+             'String', 'chebgui was developed by Ásgeir Birkisson and Nick Hale as an interface to the differential equations in Chebfun.',...
+             'position',[0 -100 200 200])
+uicontrol(aboutWindow, ... % Close button
+             'Style','pushbutton','String', 'OK','position',[65 10 75 20],'callback',@(a,b,c)delete(aboutWindow))
 
 
+hPlotAxes = axes(...       % Axes for plotting the selected plot
+                 'Parent', aboutWindow, ...
+                 'Units', 'normalized', ...
+                 'HandleVisibility','callback','position',[0.1 0.6 .8 .25]);
+
+% Plot the logo
+f = chebpoly(10);
+xx = linspace(-1,.957,1000);
+plot(hPlotAxes,xx,f(xx),'linewidth',3)
+t = -cos(pi*(2:8)'/10) *0.99;  % cheb extrema (tweaked)
+y = 0*t;
+h = text(t, y, num2cell(transpose('chebgui')), ...
+    'fontsize',16,'hor','cen','vert','mid','parent',hPlotAxes);
+flist = listfonts;
+k = strmatch('Rockwell',flist);  % 1st choice
+k = [k; strmatch('Luxi Serif',flist)];  % 2nd choice
+k = [k; strmatch('luxiserif',flist)];  % 2.5th choice
+k = [k; strmatch('Times',flist)];  % 3rd choice
+if ~isempty(k), set(h,'fontname',flist{k(1)}), end
+axis(hPlotAxes,'off')
        
        
