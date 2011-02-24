@@ -133,7 +133,16 @@ end
 if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
+    try
     gui_mainfcn(gui_State, varargin{:});
+    catch ME
+        MEID = ME.identifier;
+        if ~isempty(strfind(MEID,'Chebgui:'))
+            errordlg(ME.message, 'Chebgui error', 'modal');
+        else
+            rethrow(ME)
+        end
+    end
 end
 % End initialization code - DO NOT EDIT
 
@@ -345,16 +354,20 @@ for k = 1:numel(str)
     strk = str{k};
     equalSigns = find(strk=='=');
     if numel(equalSigns) > 1
-        error('Too many equals signs');
+        error('Chebgui:InitInput','Too many equals signs in input.');
     elseif numel(equalSigns) == 1
         strk = strk(equalSigns+1:end);
     elseif numel(str) > 1
-        error('Must be of form "u = %s"',strk)
+        error('Chebgui:InitInput','Input must be of form "u = %s"',strk)
     end
         
     strk = deblank(vectorize(strk));
-    if ~isempty(strk)
-        init = [init eval(strk)];
+    try
+        if ~isempty(strk)
+            init = [init eval(strk)];
+        end
+    catch ME
+        error('Chebgui:InitInput',ME.message)
     end
 end
 handles.init = init;
@@ -451,29 +464,6 @@ if strcmp(eventdata.Key,'tab')
     end
 end
 
-function input_tol_Callback(hObject, eventdata, handles)
-handles.guifile.tol = get(hObject,'String');
-guidata(hObject, handles);
-
-
-% function input_DE_RHS_Callback(hObject, eventdata, handles)
-% inputString = get(hObject,'String');
-% handles.guifile.DErhs = inputString;
-% % Check whether we might be entering into PDE mode.
-% % Find whether any line contains _
-% underscoreLocations = strfind(cellstr(inputString),'_');
-% % Check whether the results are empty using cellfun
-% containsUnderscore = ~cellfun(@isempty,underscoreLocations);
-% if get(handles.button_ode,'Value') && any(containsUnderscore)
-%     switch2pde = questdlg('You appear to be entering a PDE. Would you like to swtich the PDE mode?', ...
-%         'Switch to PDE mode?', 'Yes', 'No','Yes');
-%     if strcmp(switch2pde,'Yes')
-%         set(handles.button_ode,'Value',0);
-%         set(handles.button_ode,'Value',1);
-%         button_pde_Callback(hObject, eventdata, handles);
-%     end
-% end
-% guidata(hObject, handles);
 
 
 function timedomain_Callback(hObject, eventdata, handles)
@@ -564,6 +554,7 @@ if get(handles.button_ode,'Value');
     plot(latestSolution,'Linewidth',2), title('Solution at end of iteration')
     % Turn on grid
     if handles.guifile.options.grid, grid on,  end
+    if numel(handles.varnames) > 1, legend(handles.varnames), end
 elseif get(handles.button_pde,'Value');
     u = handles.latest.solution;
     tt = handles.latest.solutionT;
@@ -607,6 +598,7 @@ if newVal % User wants to use latest solution
 else
     set(handles.input_GUESS,'String','');
     set(handles.input_GUESS,'Enable','On');
+    input_GUESS_CreateFcn(hObject, eventdata, handles)
 end
 guidata(hObject, handles);
 
@@ -632,44 +624,6 @@ function button_eig_Callback(hObject, eventdata, handles)
 handles = switchmode(handles.guifile,handles,'eig');
 guidata(hObject, handles);
 
-% --- Executes on button press in button_pdeploton.
-function button_pdeploton_Callback(hObject, eventdata, handles)
-% hObject    handle to button_pdeploton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of button_pdeploton
-% set(handles.button_pdeplotoff,'Value',0);
-onoff = 'on';
-set(handles.ylim_text,'Enable',onoff);
-set(handles.ylim1,'Enable',onoff);
-set(handles.text33,'Enable',onoff);
-set(handles.ylim2,'Enable',onoff);
-set(handles.plotstyle_text,'Enable',onoff);
-set(handles.input_plotstyle,'Enable',onoff);
-
-
-function button_pdeplotoff_Callback(hObject, eventdata, handles)
-onoff = 'off';
-set(handles.ylim_text,'Enable',onoff);
-set(handles.ylim1,'Enable',onoff);
-set(handles.text33,'Enable',onoff);
-set(handles.ylim2,'Enable',onoff);
-set(handles.plotstyle_text,'Enable',onoff);
-set(handles.input_plotstyle,'Enable',onoff);
-
-
-function checkbox_fixN_Callback(hObject, eventdata, handles)
-if get(hObject,'Value')
-    set(handles.N_text,'Enable','on');
-    set(handles.input_N,'Enable','on');
-else
-    set(handles.N_text,'Enable','off');
-    set(handles.input_N,'Enable','off');
-end
-
-
-function input_plotstyle_Callback(hObject, eventdata, handles)
 
 
 % --- Executes on selection change in iter_list.
@@ -719,11 +673,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-function input_tol_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 function input_RBC_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
@@ -783,19 +732,12 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
-function input_N_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
 function tempedit_CreateFcn(hObject, eventdata, handles)
 
 function ylim1_CreateFcn(hObject, eventdata, handles)
 function ylim1_Callback(hObject, eventdata, handles)
 function ylim2_CreateFcn(hObject, eventdata, handles)
 function ylim2_Callback(hObject, eventdata, handles)
-function input_plotstyle_CreateFcn(hObject, eventdata, handles)
 
 function button_solve_KeyPressFcn(hObject, eventdata, handles)
 
