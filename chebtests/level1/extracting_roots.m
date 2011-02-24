@@ -1,7 +1,7 @@
 function pass = extracting_roots
 % Test extracting roots with and without maps
 
-tol = 1000*chebfunpref('eps');
+tol = 1e4*chebfunpref('eps');
 
 F = @(x) cos(x);
 var = {};
@@ -19,6 +19,7 @@ for k = 1:2
             h = f;
             h.funs(1) = extract_roots(f.funs(1));
             xx = linspace(d);
+            norm(f(xx)-h(xx),inf)
             pass(l) = norm(f(xx)-h(xx),inf) < tol;
             
             % right root
@@ -26,7 +27,9 @@ for k = 1:2
             h = f;
             h.funs(1) = extract_roots(f.funs(1));
             xx = linspace(d);
+            norm(f(xx)-h(xx),inf)
             pass(l+1) = norm(f(xx)-h(xx),inf) < tol;
+            
         end
     end
     var = {'map',{'kte',.99}};
