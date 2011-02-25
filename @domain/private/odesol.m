@@ -1,6 +1,5 @@
 function [y t] = odesol(sol)
 %ODESOL  Convert an ODE solution to chebfun.
-
 % ODESOL(SOL,OPT) converts the solution of an ODE initial-value or 
 % boundary-value problem by standard MATLAB methods into a chebfun 
 % representation. SOL is the one-output form of any solver such as ODE45,
@@ -8,9 +7,9 @@ function [y t] = odesol(sol)
 %
 % The result is a piecewise chebfun of low polynomial degree on 
 % each piece. 
-%
 
-% Copyright 2009 by the Chebfun Team. See www.maths.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Current tolerance used by user
 usertol = chebfunpref('eps'); 

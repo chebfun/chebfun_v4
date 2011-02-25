@@ -3,6 +3,9 @@ function Narg = feval(Nin,argument,varargin)
 %
 % Evaluate the operator with the given argument.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if isnumeric(argument)
     [L linBC isLin] = linearise(Nin);
     if ~isLin

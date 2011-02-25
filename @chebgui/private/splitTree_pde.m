@@ -1,5 +1,8 @@
 function [newTree pdeSign] = splitTree_pde(guifile,treeIn)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Begin by replacing the subtree which contains the pde_variable with a 0
 
 [newTree pdeTree pdeSign] = findPDE(treeIn,1);

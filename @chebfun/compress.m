@@ -1,6 +1,9 @@
 function fout = compress(fin,fin2,failflag,plotflag,paramoutflag)
 % Attempt to compress the length of a chebfun using pinch maps.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 eps = 1e-14;
 [a b] = domain(fin);
 scale = @(y) .5*((b-a)*y+b+a);

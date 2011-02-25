@@ -8,10 +8,9 @@ function fout = eq(F1,F2)
 %    plot(sign(x) == 1)
 %
 %  See also chebfun/find, chebfun/ne, chebfun/not.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Make sure F1 is a chebfun
 if ~isa(F1,'chebfun')

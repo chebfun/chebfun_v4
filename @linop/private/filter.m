@@ -8,11 +8,8 @@ function [v cut] = filter(v,thresh)
 % relative threshold. If so, we replace the coefficients on the plateau
 % with zero in order to nudge the constructor to stop.
 
-% Copyright 2008 by Toby Driscoll.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 cut = inf;
 n = length(v);

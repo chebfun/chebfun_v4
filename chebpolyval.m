@@ -3,10 +3,9 @@ function v = chebpolyval(c,kind)
 %   CHEBPOLYVAL(C) returns the values of the polynomial 
 %   P(x) = C(1)T_{N-1}(x)+C(2)T_{N-2}(x)+...+C(N) at 2nd-kind Chebyshev nodes.
 %   CHEBPOLYVAL(C,1) returns the values of P at 1st-kind Chebyshev points. 
-%               
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+%   Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%   See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isa(c,'chebfun'), v = c.vals; return, end
 

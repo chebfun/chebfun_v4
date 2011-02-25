@@ -15,13 +15,9 @@ function S = sum(d)
 %      1.365866063614065   1.365866063614065
 %
 % See also linop, chebpts, chebfun/sum.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2010 by Toby Driscoll.
-
-%  Last commit: $Author: hale $: $Rev: 1069 $:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 S = linop(@mat,@sum,d);
 

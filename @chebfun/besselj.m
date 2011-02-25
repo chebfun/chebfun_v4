@@ -1,11 +1,9 @@
 function Fout = besselj(nu,F)
 % BESSELJ   Bessel function of first kind of a chebfun.
 %  BESSELJ(NU,F)
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 [r,c] = size(nu);
 if r > 1 && c > 1
     error('CHEBFUN:besselj:nu','The first argument of besselj must be a vector of real numbers');

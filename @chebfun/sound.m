@@ -4,6 +4,9 @@ function sound(f,varargin)
 %
 % See also sound, sing.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if numel(f) > 1,
     error('CHEBFUN:sound:quasi','chebfun/sound is not defined for quasimatrices');
 end

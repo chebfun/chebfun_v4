@@ -40,12 +40,9 @@ function varargout = eigs(A,varargin)
 %   format long, sqrt(-diag(D))  % integers, to 14 digits
 %
 % See also EIGS, EIG.
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2008 by Toby Driscoll.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Parsing.
 B = [];  k = 6;  sigma = []; map = []; breaks = [];

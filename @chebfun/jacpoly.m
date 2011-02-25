@@ -6,10 +6,9 @@ function out = jacpoly(f,a,b,n)
 % the first fun of chebfun F.
 %
 % A = JACPOLY(F,ALPHA,BETA,I) returns the coefficients for the I-th fun.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
  
 if numel(f) > 1, error('CHEBFUN:jacpoly:quasi','JACPOLY does not handle chebfun quasi-matrices'), end
 

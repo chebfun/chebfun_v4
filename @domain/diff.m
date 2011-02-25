@@ -6,13 +6,9 @@ function D = diff(d,m)
 % D = DIFF(R,M) returns the chebop for M-fold differentiation.
 %
 % See also chebop, linop, chebfun/diff.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin == 1, m = 1; end
 

@@ -5,10 +5,10 @@ function varargout = polyfit(x,y,n,d)
 %   in the least-squares sense.
 %
 %   See also polyfit, chebfun/polyfit
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2010 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Nick Hale  09/02/2010
 
 if length(x)~=length(y)

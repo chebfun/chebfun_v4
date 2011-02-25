@@ -4,11 +4,9 @@ function A = diag(f,d)
 % by the function F on the domain D. 
 %
 % See also chebfun/diag, chebop, linop/mtimes
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin < 2
     error('CHEBUFN:domain:diag:nargin','Two inputs required to domain/diag.');

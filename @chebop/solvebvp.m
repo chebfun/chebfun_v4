@@ -23,6 +23,9 @@ function varargout = solvebvp(N,rhs,varargin)
 % One can also control display options during the solution process.
 % See CHEBOPPREF.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Developed by Toby Driscoll and Asgeir Birkisson, 2009.
 
 % Do all parsing of varargin here rather than in solve_bvp_routines

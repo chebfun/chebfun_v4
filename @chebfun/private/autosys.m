@@ -14,13 +14,10 @@ function [funs,ends,scl] = autosys(op,ends,pref)
 % 
 % PREF is the chebfun preference structure (see chebfunpref).
 %
-% Note: this function is used in ctor_2.m
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% Note: this function is used in ctor_adapt.m
 
-% Copyright 2002-2009 by The Chebfun Team. 
-% Last commit: $Author: nich $: $Rev: 458 $:
-% $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if ~iscell(ends), ends = {ends}; end
 

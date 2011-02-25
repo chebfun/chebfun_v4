@@ -5,12 +5,9 @@ function varargout = surf(u,varargin)
 %
 %  SURF(U,'NUMPTS',N) or SURF(U,T,'NUMPTS',N) changes the number of points
 %  used in the mesh. (The default is 201).
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 numpts = 201;
 

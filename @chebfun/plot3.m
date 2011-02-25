@@ -5,8 +5,9 @@ function varargout = plot3(varargin)
 %
 %   PLOT3(X,Y,Z), where X, Y and Z are three chebfun quasimatrices, plots
 %   several curves obtained from the columns (or rows) of X, Y, and Z. 
-%
-%   See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 %   This code is a modification of the code in chebfun/plot.
 

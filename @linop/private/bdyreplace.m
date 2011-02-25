@@ -3,11 +3,8 @@ function [B,c,rowidx] = bdyreplace(A,ns,map,breaks)
 % B*u=c. This function finds all rows of B and c, and also the indices of
 % rows of A*u=f that should be replaced by them.
 
-% Copyright 2008 by Toby Driscoll.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author: hale $: $Rev: 1160 $:
-%  $Date: 2010-07-21 15:48:29 +0100 (Wed, 21 Jul 2010) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 n = [ns{:}];
 m = size(A,2);

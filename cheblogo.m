@@ -1,7 +1,8 @@
 function cheblogo
 % Chebfun logo.
 
-% Copyright 2008 by The Chebfun Team. See www.maths.ox.ac.uk/chebfun.
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 figure
 f = chebpoly(10);

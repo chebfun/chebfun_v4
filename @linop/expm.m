@@ -20,13 +20,9 @@ function E = expm(A)
 %  end
 %
 % See also EXPM, CHEBOP/AND, CHEBOP/SUBSASGN.
-% See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2008-2009 by Toby Driscoll.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 maxdegree = cheboppref('maxdegree');
 

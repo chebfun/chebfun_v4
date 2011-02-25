@@ -2,12 +2,9 @@ function out = roots(g,varargin)
 % ROOTS	Roots in the interval [-1,1]
 % ROOTS(G) returns the roots of the FUN G in the interval [-1,1].
 % ROOTS(G,'all') returns all the roots.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Default preferences
 rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots'));

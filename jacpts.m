@@ -25,14 +25,11 @@ function [x,w,v] = jacpts(n,alpha,beta,varargin)
 %  ALPHA = BETA = 0 calls LEGPTS, which is a more efficient code.
 %
 %  See also legpts and chebpts.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 %  'FAST' by Nick Hale, April 2009 - algorithm adapted from [1].
-%
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
 %
 %  References:
 %   [1] A. Glaser, X. Liu and V. Rokhlin, "A fast algorithm for the 

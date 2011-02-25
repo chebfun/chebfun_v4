@@ -1,10 +1,8 @@
 function [m,v] = kte(par,fh,n)
 % KTE mapping strategy
 
-%   Copyright 2009 by The Chebfun Team.
-%   First author: Rodrigo Platte, May 2009.
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % end points
 a = par(1); b = par(2);

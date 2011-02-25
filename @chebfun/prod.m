@@ -1,9 +1,8 @@
 function Fout = prod(F)
 % PROD   Product integral.
 % PROD(F) for chebfun F returns exp( sum(log(F)) ).
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 Fout = exp(sum(log(F)));

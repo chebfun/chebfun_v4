@@ -4,6 +4,9 @@ function prefixOut = tree2prefix(guifiles,syntaxTree)
 % function we have put the output through the parser so we don't have to
 % worry about syntax errors.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Begin by finding the center node of the (partial) syntax tree
 nextCenter = syntaxTree.center;
 

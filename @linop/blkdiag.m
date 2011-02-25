@@ -12,12 +12,9 @@ function B = blkdiag(varargin)
 % the diagonal.
 %
 % See also blkdiag.
-% See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2009 by Toby Driscoll.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % If given (A,m) as arguments, replace with {A,A,...,A}.
 if nargin==2 && isnumeric(varargin{2})

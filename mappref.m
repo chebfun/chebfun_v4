@@ -10,11 +10,9 @@ function varargout = mappref(varargin)
 %       mapname = mappref('name')
 %       mappref
 %       mappref('adaptinf', true)
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
-% Rodrigo Platte, May 09.
+%   Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%   See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 persistent prefmap
 

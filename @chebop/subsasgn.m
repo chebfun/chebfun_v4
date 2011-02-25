@@ -1,9 +1,8 @@
 function varargout = subsasgn(f,index,varargin)
 % SUBSASGN   Modify a chebop.
-%
-%     See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 idx = index(1).subs;
 vin = varargin{:};

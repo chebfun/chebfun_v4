@@ -15,9 +15,8 @@ function normA = norm(A,n)
 %    NORM(A,inf) is the maximum of the 1-norms of the rows of A.
 %    NORM(A,'fro') is the same as NORM(A).
 
-%   Copyright 2002-2009 by The Chebfun Team.
-%   Last commit: $Author: nich $: $Rev: 489 $:
-%   $Date: 2009-06-04 22:25:42 +0100 (Thu, 04 Jun 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin==1, n='fro'; end              % Frobenius norm is the default
                                         % (2 norm would be much slower)

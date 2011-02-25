@@ -1,15 +1,10 @@
 function C = mtimes(A,B)
 % *   Compose oparrays or scalar multiply.
-
 % c*A or A*c multiplies the oparray A by scalar c.
 % A*B is the oparray that represents the composition of A and B.
 
-% Copyright 2008-2009 by Toby Driscoll. 
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isempty(A) || isempty(B)
   C = oparray({});

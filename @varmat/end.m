@@ -1,8 +1,8 @@
 function e = end(A,k,m)
 % END  Last row or column of a varmat.
 
-% Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % We use a really dirty kludge here. By making the result be imaginary
 % infinity, the caller can use a syntax like A(end-2,:) and get the -2 part

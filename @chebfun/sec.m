@@ -1,9 +1,8 @@
 function Fout = sec(F)
 % SEC   Secant of a chebfun.
-%
-% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.am. 
 
 for k = 1:numel(F)
     if any(get(F(:,k),'exps')<0), error('CHEBFUN:sec:inf',...

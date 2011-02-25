@@ -14,12 +14,9 @@ function A = subsasgn(A,s,B)
 % global solution.
 %
 % See also linop.and, linop.mldivide.
-% See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2008 by Toby Driscoll.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 valid = false;
 switch s(1).type

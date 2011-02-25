@@ -13,10 +13,9 @@ function H = hermpoly(n,type)
 % for some testing.
 %
 % See also chebpoly, legpoly, jacpoly, and lagpoly.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin == 1
     % By default we take the physicist's definition

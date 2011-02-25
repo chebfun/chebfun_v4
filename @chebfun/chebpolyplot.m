@@ -22,12 +22,9 @@ function varargout = chebpolyplot(u,varargin)
 %     chebpolyplot(u,'--ok');
 %
 %   See also chebfun/chebpoly, plot
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2009 by The Chebfun Team. 
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 k = 0;                      % plot all funs by default
 ll = false;                 % default to semilogy plot

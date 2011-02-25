@@ -9,12 +9,9 @@ function varargout = waterfall(u,varargin)
 %
 %  Additional plotting options can also be passed, for example
 %   WATERFALL(U,T,'linewidth',2).
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % numpts = chebfunpref('plot_numpts');
 

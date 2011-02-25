@@ -25,12 +25,9 @@ function V = volt(k,d,onevar)
 % u = (1+diag(x)*V) \ sin(exp(3*x)); 
 %
 % See also fred, chebop.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by Toby Driscoll.
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 C = cumsum(d);
 V = linop(@matrix,@op,d,-1);

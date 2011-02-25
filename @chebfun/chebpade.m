@@ -16,13 +16,9 @@ function [p, q, r_handle] = chebpade(F,m,n,varargin)
 %
 % If F is a quasimatrix then so are the outputs P & Q, 
 % and R_HANDLE is a cell array of function handles.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin == 2, 
     n = 0; 

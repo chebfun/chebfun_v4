@@ -26,12 +26,9 @@ function [p,q,rh] = ratinterp(f,d,m,varargin)
 % and arbitrary grids on the complex plane are also treated in that paper
 % although not implemented in RATINTERP. See also CHEBPADE and CF for other
 % rational approximation methods in Chebfun.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author: pachon $: $Rev: 768 $:
-%  $Date: 2009-11-16 12:54:19 +0000 (Mon, 16 Nov 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 %  This version of RATINTERP lives in @domain.
 %  There is a companion code in @chebfun.

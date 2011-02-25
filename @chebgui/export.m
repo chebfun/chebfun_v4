@@ -1,4 +1,8 @@
 function export(guifile,handles,exportType)
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 problemType = guifile.type;
 % handles and exportType are empty if user calls export from command window,
 % always export to .m file in that case.

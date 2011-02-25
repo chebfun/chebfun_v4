@@ -26,15 +26,12 @@ function [L,Lconst] = lebesgue(x,varargin)
 %  subplot(1,3,3), plot(L), title(['Equispaced: ' num2str(c)])
 %  grid on, axis([-1 1 0 8])
 
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-%  Copyright 2009 by The Chebfun Team. 
-%
 %  This version of LEBESGUE lives in the Chebfun trunk directory.
 %  There is a companion code in @domain.
-%
-%  Nick Trefethen,  22/07/2009
- 
+
 if nargin==1
   d = domain(-1,1);
 elseif nargin==2

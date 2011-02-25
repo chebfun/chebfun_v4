@@ -2,6 +2,9 @@ function varargout = subsref(an,index)
 % SUBSREF for the anon class. At the moment, the only allowed subsref type
 % is . and ().
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 idx = index(1).subs;
 switch index(1).type
     case '.'

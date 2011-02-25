@@ -2,12 +2,9 @@ function [g1 ish] = minus(g1,g2)
 % -	Minus
 % G1 - G2 subtracts fun G1 from G2 or a scalar from a fun if either
 % G1 or G2 is a scalar.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 %if (isempty(g1) || isempty(g2)), gout=fun; return; end
 

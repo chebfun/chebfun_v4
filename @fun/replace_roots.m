@@ -1,5 +1,8 @@
 function f = replace_roots(f)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Get the exponents
 exps = get(f,'exps');
 if ~any(exps >= 1)

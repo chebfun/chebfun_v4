@@ -1,5 +1,8 @@
 function initSuccess = loadfields(guifile,handles)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Fill the String fields of the handles
 set(handles.dom_left,'String',guifile.DomLeft);
 set(handles.dom_right,'String',guifile.DomRight);

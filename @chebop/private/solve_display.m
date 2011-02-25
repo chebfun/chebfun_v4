@@ -1,6 +1,8 @@
 function solve_display(pref,handles,phase,u,du,nrmdu,nrmres,lambda)
-
 % Utility routine for displaying iteration progress in the solve functions.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Display for damped Newton is a bit different from the undamped (want to
 % show the stepsize as well).

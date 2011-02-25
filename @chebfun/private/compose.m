@@ -7,12 +7,9 @@ function h = compose(f,g)
 %           f = chebfun(@(x) 1./(1+100*x.^2));
 %           g = chebfun(@(x) asin(.99*x)/asin(.99));
 %           h = compose(f,g);
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2009 by The Chebfun Team.
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isa(g,'chebfun') && f(1).trans ~= g(1).trans
     error('CHEBFUN:compose:QMdim','Inconsistent quasimatrix dimensions');

@@ -20,10 +20,9 @@ function f = fov(A)
 %   The algorithm use is that of C. R. Johnson, Numerical
 %   determination of the field of values of a general complex
 %   matrix, SIAM J. Numer. Anal. 15 (1978), 595-602.
-%
-%   See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
-% Copyright 2002-2010 by The Chebfun Team.
+%   Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%   See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 f = chebfun(@(theta) z(theta,A),[0, 2*pi],'splitting','on');
 

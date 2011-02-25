@@ -2,6 +2,9 @@ function varargout = convertToAnon(guifile,str)
 % CONVERTTOANON Converts a string on 'natural syntax form' to an anonymous
 % function Matlab can work with.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % In Matlab2007a and previous versions, the code runs into error if we
 % don't clear the functions cache before running the code. Contacting
 % technical support at Mathworks, they told me that this bug has been fixed

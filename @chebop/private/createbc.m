@@ -1,6 +1,9 @@
 function bcOut = createbc(bcArg)
 % CREATEBC Converts various types of allowed BC syntax to correct form.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if strcmp(bcArg,'neumann')
     bcOut = @(u) diff(u);
 elseif strcmp(bcArg,'dirichlet')

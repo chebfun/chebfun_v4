@@ -11,12 +11,9 @@ function u = simplify(u,k,tol,force)
 %   U = SIMPLIFY(U,TOL,'force') or SIMPLIFY(U,K,TOL,'force') forces an 
 %   agressive simplify, where any trailing coefficients less than TOL are
 %   removed.
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2009 by The Chebfun Team. 
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % deal with input arguments
 if nargin < 4, force = []; end

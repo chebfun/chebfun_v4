@@ -32,13 +32,8 @@ function J = diff(N,u,flag)
 %
 % See also chebfun/diff.
 
-% Copyright 2009 by Toby Driscoll.
-% See http://www2.maths.ox.ac.uk/chebfun/ for more on chebfun.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
-
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Boundary conditions part
 ab = N.dom.ends;

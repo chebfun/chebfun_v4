@@ -17,13 +17,11 @@ function A = linop(varargin)
 % Normally one does not call LINOP directly. Instead, use one of the
 % five first functions in the see-also line.
 %
-% For information 
-%
 % See also domain/eye, domain/diff, domain/cumsum, chebfun/diag,
 % domain/zeros.
 
-% Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Default properties.
 A.varmat = [];

@@ -61,8 +61,9 @@ function varargout = plot(varargin)
 % H(:,2) contains handles for the 'marks', (i.e. the values at Chebyshev 
 % points), H(:,3) for the jump lines, H(:,4) for the jump vals, and H(:,5) 
 % contains the handle for a dummy plot used to supply correct legends.
-%
-% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 numpts = chebfunpref('plot_numpts');
 

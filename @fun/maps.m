@@ -1,8 +1,11 @@
 function map = maps(fun,varargin)
-% Maps
+% MAPS
 %  This function allows you to call the maps which are buried in
 %  @fun/private. It will not usually be called directly by the user, 
 %  but rather by its sister function maps.m in the trunk.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin == 1 && isempty(fun)
     map = struct('for',[],'inv',[],'der',[],'name',[],'par',[],'inherited',[]);

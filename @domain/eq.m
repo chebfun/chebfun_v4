@@ -2,10 +2,9 @@ function e = eq(a,b)
 % ==     Equality of domains
 % Domains are considered equal if their endpoints are identical floating
 % point numbers. Breakpoints are not considered.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isempty(a) || isempty(b)
   e = [];

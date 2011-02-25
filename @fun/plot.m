@@ -1,8 +1,8 @@
 function varargout = plot(varargin)
 % A simple plot to graph a mapped FUN on the interval [-1,1].
 
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 g = varargin{1};
 g.exps = [0 0];

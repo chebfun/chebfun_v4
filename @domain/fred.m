@@ -40,13 +40,9 @@ function F = fred(k,d,onevar)
 %   %(Elapsed time is 0.205714 seconds.)
 %
 % See also volt, chebop.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by Toby Driscoll and Folkmar Bornemann.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 F = linop(@matrix,@op,d);
 

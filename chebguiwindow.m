@@ -80,8 +80,9 @@ function varargout = chebguiwindow(varargin)
 % See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 %
 % See also chebop/solvebvp, chebfun/pde15s
-%
-% Copyright 2002-2011 by The Chebfun Team.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 
 % Matlab automatically inserts comments for every callback and create

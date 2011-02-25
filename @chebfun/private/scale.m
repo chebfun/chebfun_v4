@@ -6,8 +6,8 @@ function X = scale(x,a,b)
 % 
 % to scale X between the scalars A and B to a value between -1 and 1.
 % X can be a scalar or a matrix.
-%
 
-% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 X = (1-x)*a/2 + (x+1)*b/2;

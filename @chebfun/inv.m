@@ -28,12 +28,9 @@ function g = inv(f,varargin)
 %  functions.
 %
 %  See also chebfun/inv2
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team.
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % No quasimatrix support
 if numel(f) > 1

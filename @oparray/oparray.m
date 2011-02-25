@@ -5,7 +5,8 @@ function A = oparray(varargin)
 % combinations of them. It helps chebops maintain "infinite-dimensional"
 % implementations of themselves. 
 
-% Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % This is the only field. It is always a cell, even in the 1x1 case.
 A.op = {};

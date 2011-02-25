@@ -8,13 +8,10 @@ function D = diffmat(N,k)
 %
 % The matrices are computed using the 'hybrid' formula of Schneider & 
 % Werner [1] and Welfert [2] proposed by Tee [3].
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2010 by The Chebfun Team. 
-% Last commit: $Author$: $Rev: 1214 $:
-% $Date$:
-%
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % References:
 %  [1] Schneider, C. and Werner, W., "Some new aspects of rational 
 %   interpolation", Math. Comp. (47) 285--299, 1986.

@@ -61,8 +61,9 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 % with the input format being the same as PDEFUN described above.
 %
 % See also pdeset, ode15s, chebop/pde15s
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 global ORDER QUASIN GLOBX
 ORDER = 0; % Initialise to zero

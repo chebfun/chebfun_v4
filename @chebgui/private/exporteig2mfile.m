@@ -1,5 +1,8 @@
 function exportbvp2mfile(guifile,pathname,filename,handles)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Extract information from the GUI fields
 a = guifile.DomLeft;
 b = guifile.DomRight;

@@ -6,14 +6,9 @@ function A = diag(f,d)
 % A = DIAG(F,D) is similar, but restricts the domain of F to D.
 %
 % See also domain/diag, chebop, linop/mtimes.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2008 by Toby Driscoll.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin < 2, d = domain(f); else f = restrict(f,d); end
 

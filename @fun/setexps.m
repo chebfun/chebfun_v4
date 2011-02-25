@@ -1,5 +1,8 @@
 function f = setexps(f,newexps)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 oldexps = f.exps;
 ends = f.map.par(1:2);
 

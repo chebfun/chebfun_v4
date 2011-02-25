@@ -36,10 +36,9 @@ function [u,flag,normres,Q] = gmres(varargin)
 %   f = chebfun('exp(-4*x.^2)',[-1 1]);
 %   A = @(u) cumsum(u) + 20*u;
 %   u = gmres(A,f,Inf,1e-14);
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Parse inputs and supply defaults.
 defaults = {[],[],Inf,1e-10,36,[],[]};

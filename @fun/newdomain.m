@@ -3,9 +3,8 @@ function g = newdomain(g,ends)
 % NEWDOMAIN(G,ENDS) returns a fun with a domain defined by ENDS. This is 
 % done with a linear map. 
 
-% Copyright 2009 by The Chebfun Team. 
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 map = g.map;
 if isa(ends,'domain'), ends = ends.ends; end

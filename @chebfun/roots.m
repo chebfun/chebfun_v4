@@ -21,12 +21,9 @@ function rts = roots(f,varargin)
 % ROOTS(F,'all','norecursion') and ROOTS(F,'complex','norecursion')
 % deactivates the recursion procedure to compute the roots as explained in
 % the 'all' and 'complex' modes.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 tol = 1e-14;
 

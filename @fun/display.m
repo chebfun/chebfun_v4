@@ -3,12 +3,9 @@ function display(g)
 % DISPLAY(G) is called when the semicolon is not used at the end of a statement.
 % DISPLAY(G) shows the type of fun and the function values at the
 % Chebyshev points.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isequal(get(0,'FormatSpacing'),'compact')
     if numel(g) == 1

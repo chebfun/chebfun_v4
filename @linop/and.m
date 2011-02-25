@@ -34,12 +34,9 @@ function A = and(A,bc)
 % another function.
 %
 % See also linop/subsref, linop/subsasgn.
-% See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2008 by Toby Driscoll.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 A = setbc(A,bc);
 

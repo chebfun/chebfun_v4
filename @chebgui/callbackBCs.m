@@ -1,5 +1,8 @@
 function handles = callbackBCs(guifile, handles, inputString, type)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % For systems we check a row at a time
 flag = false; flag2 = false;
 if ~iscell(inputString)

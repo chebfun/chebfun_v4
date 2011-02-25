@@ -28,13 +28,12 @@ function [x w v] = chebpts(n,d,kind)
 %   the value of 'chebkind' in chebfunpref.
 %
 %   See also legpts, jacpts, lagpts, and hermpts.
-%   
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
-%
-% [1] Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis
-% quadrature rules", BIT Numerical Mathematics 43 (1), pp 1--18 (2004).
+%   Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%   See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
+%   [1] Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis
+%   quadrature rules", BIT Numerical Mathematics 43 (1), pp 1--18 (2004).
 
 
 % Intialise

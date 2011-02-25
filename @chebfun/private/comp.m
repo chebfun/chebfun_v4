@@ -9,10 +9,9 @@ function Fout = comp(F1, op, F2)
 %        x = chebfun('x')
 %        Fout = comp(x,@sin)
 %        Fout = comp(x+1,@power,x+5)
-%
-%    See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Note: this function does not deal with deltas! It will delete them!
 % Only the first row of imps is updated. 

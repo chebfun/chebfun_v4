@@ -6,6 +6,9 @@ function guess = findguess(N,fitBC)
 % it's able to apply the operator to the quasimatrix (which means that the
 % quasimatrix is then of the correct size).
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % If we don't pass the parameter fitBC, we assume that we want to try to
 % fit to BCs. The opposite is true when we try to linearise a chebop.
 if nargin == 1, fitBC = 1; end

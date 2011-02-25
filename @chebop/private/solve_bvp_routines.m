@@ -5,6 +5,8 @@ function [u nrmDeltaRelvec isLin] = solve_bvp_routines(N,rhs,pref,handles)
 % treates the cases where the user requests damped Newton iteration and
 % pure Newton iteration.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Damped Newton iteration. More details will follow.
 

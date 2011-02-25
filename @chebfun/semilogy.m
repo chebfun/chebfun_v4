@@ -4,12 +4,9 @@ function varargout = semilogy(varargin)
 %   logarithmic (base 10) scale is used for the Y-axis.
 %
 %   See also PLOT, SEMILOGX, LOGLOG.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 h = plot(varargin{:});
 set(gca,'YScale','log');

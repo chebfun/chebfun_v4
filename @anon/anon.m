@@ -15,10 +15,10 @@ function ADH = anon(varargin)
 % differentiation in Chebfun and is therefore lightly
 % documented. It is intented to be used in the overloaded functions in the
 % @chebfun directory.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 maxdepth = chebfunpref('addepth');
 
 % Store a persistent dummy anon

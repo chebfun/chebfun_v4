@@ -10,8 +10,9 @@ function map = strip(pars,plotflag)
 %   This is useful for testing and understanding maps.
 %
 %  See also smap, kte
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 a = pars(1); b = pars(2);
 if length(pars) > 2 

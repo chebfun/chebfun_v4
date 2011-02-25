@@ -8,13 +8,9 @@ function C = mtimes(A,B)
 % used. Otherwise, the application is done through finite matrix-vector
 % multiplications until the chebfun constructor is satisfied with
 % convergence. In all cases, boundary conditions on A are ignored.
-%
-% See also linop/mldivide.
-% See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2008 by Toby Driscoll.
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 persistent storage
 if isempty(storage), storage = struct([]); end

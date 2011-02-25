@@ -1,4 +1,8 @@
 function infixOut = prefix2infix(guifile,prefIn)
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 prefixIn = prefIn; prefCounter = 1; %#ok<NASGU> Disable warning message
 infixOut = getInfix();
 

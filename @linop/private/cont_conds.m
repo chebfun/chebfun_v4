@@ -1,6 +1,9 @@
 function [Cmat,c] = cont_conds_sys(A,Nsys,map,breaks)
 % Retrieve continuity conditions for a piecewise linop
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
     Adifforder = A.difforder;
     maxdo = max(Adifforder,[],2); % maxdo(j) is the difforder of eqn j
     bks = breaks;

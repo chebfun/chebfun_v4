@@ -10,8 +10,8 @@ function A = varmat(defn)
 %
 % See also CHEBOP.
 
-% Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 A.defn = [];
 A.rowsel = [];

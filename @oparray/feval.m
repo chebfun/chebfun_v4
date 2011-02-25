@@ -1,7 +1,8 @@
 function g = feval(A,f)
 % FEVAL   Apply oparray to a chebfun.
 
-% Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % feval(A,f) requires that size(A,2)==size(f,2); i.e., f should be a
 % quasimatrix whose columns are different variables.

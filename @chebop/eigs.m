@@ -37,6 +37,9 @@ function varargout = eigs(N,varargin)
 %
 % See also linop/eigs.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Linearize and check whether the chebop is linear
 try
     L = linop(N);

@@ -8,10 +8,9 @@ function out = legpoly(f,n)
 %
 % There is also a LEGPOLY command in the chebfun trunk directory, which
 % computes the chebfun corresponding to the Legendre polynomial P_n.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
  
 if numel(f)>1, error('CHEBFUN:legpoly:quasi','LEGPOLY does not handle chebfun quasi-matrices'), end
  

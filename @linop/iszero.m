@@ -8,11 +8,8 @@ function isz = iszero(A,inspect)
 % By default this information is only extracted from the L.iszero field
 % to force an inspection of the linop use the command ISZERO(L,'inspect').
 
-% Copyright 2008 by the Chebfun Team.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.:
 
 dimExpand = 10;
 

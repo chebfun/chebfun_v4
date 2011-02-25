@@ -3,10 +3,9 @@ function u = fraccalc(u,alpha)
 %  FRANCCALC(U,N) is called by DIFF(U,N) and CUMSUM(U,N) when N is not an
 %  integer and computes the fractional integral of order ALPHA
 %  (as defined by the Riemann–Liouville integral) of the chebfun U.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-%
-%  Copyright 2002-2009 by The Chebfun Team. 
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 for k = 1:numel(u)
     u(:,k) = fracintcol(u(:,k),alpha);

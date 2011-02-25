@@ -1,9 +1,8 @@
 function N = set(N,varargin)
 % SET Set chebop properties.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 propertyArgIn = varargin;
 while length(propertyArgIn) >= 2,

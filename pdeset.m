@@ -33,6 +33,9 @@ function varargout = pdeset(varargin)
 %   the Jacobian function automatically, or allow ode15s to compute it
 %   numerically with odenumjac. [{'auto'}, 'none']
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 names = ['Eps      ' 
          'N        '
          'Plot     '

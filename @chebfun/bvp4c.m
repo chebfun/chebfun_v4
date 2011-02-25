@@ -24,10 +24,9 @@ function varargout = bvp4c(fun1,fun2,y0,varargin)
 %   plot(y)
 %
 % See also bvp4c, bvpset, chebfun/bvp5c, domain/ode113
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Parse the inputs.
 params = {};

@@ -1,12 +1,9 @@
 function gout = mtimes(g1,g2)
 % *	Scalar multiplication
 % k*G or G*k multiplies a fun G by a scalar k. 
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if (isempty(g1) || isempty(g2)), gout=fun; return; end
 if (isa(g1,'double'))

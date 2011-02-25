@@ -1,6 +1,9 @@
 function ploteigenmodes(guifile,handles,selection,h1,h2)
 % Plot the eigenmodes in the GUI
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % selection == 0 corresponds to no selection being made, i.e. plot everything
 if nargin < 3, selection = 0; end 
 if nargin < 4, h1 = handles.fig_sol; end

@@ -19,10 +19,9 @@ function [t,y] = ode15s(varargin)
 %   roots( y(:,1)-1 );   % find times when first component is 1
 %
 % See also ode15s, odeset, domain/ode113, domain/ode45
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Convert domain to 2-vector of endpoints.
 j = find( cellfun('isclass',varargin,'domain') );

@@ -2,8 +2,8 @@ function [m,v,scl] = unbounded(par,fh,n)
 % maps for unbounded domains
 % [-inf,b], [-inf,inf], [a,inf]
 
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.:
 
 a = par(1); b = par(2); par = par(:).';
 m = struct('for',[],'inv',[],'der',[],'name',[],'par',[],'inherited',[]);

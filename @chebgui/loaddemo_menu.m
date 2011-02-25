@@ -1,5 +1,8 @@
 function loaddemo_menu(guifile,handles,type)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Obtain the DE of all available examples
 DE = '';
 counter = 1;

@@ -3,10 +3,9 @@ function out = legpoly(f,n)
 % A = LEGPOLY(F) returns the coefficients such that
 % F = a_N P_N(x)+...+a_1 P_1(x)+a_0 P_0(x) where P_N(x) denotes the N-th
 % normalized Legendre polynomial.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 ends = f.map.par(1:2);
 f.exps = [0 0];

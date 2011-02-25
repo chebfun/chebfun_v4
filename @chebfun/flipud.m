@@ -11,10 +11,9 @@ function F = flipud(F)
 % quasimatrix, FLIPUD(F) reverses the order of the rows. 
 %
 % See also chebfun/fliplr.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Deal with quasi-matrices
 if F(1).trans

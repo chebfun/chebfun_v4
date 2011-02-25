@@ -4,10 +4,9 @@ function g = ceil(f)
 % X in the domain of F.
 %
 % See also CHEBFUN/FLOOR, CHEBFUN/ROUND, CHEBFUN/FIX, CEIL.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 for k = 1:numel(f)
     if any(get(f(:,k),'exps')<0), error('CHEBFUN:ceil:inf',...

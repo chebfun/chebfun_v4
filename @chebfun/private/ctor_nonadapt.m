@@ -1,12 +1,9 @@
 function f = ctor_nonadapt(f,ops,ends,n,pref)
 %CTOR_NONADAPT  non-adaptive chebfun constructor
 % CTOR_NONADAPT handles non-adaptive construction of chebfuns.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-% Last commit: $Author: nich $: $Rev: 458 $:
-% $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isempty(ends)
     error('CHEBFUN:ctor_nonadapt:emptydomain','Cannot construct chebfun on an empty domain.'); 

@@ -1,5 +1,8 @@
 function Nout = plus(N1,N2)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if isnumeric(N1)
     N1show = cellstr(repmat(mat2str(N1),size(N2.opshow)));
     mode = num2cell(repmat(1,size(N2.opshow)));

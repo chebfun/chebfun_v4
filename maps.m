@@ -60,7 +60,10 @@ function varargout = maps(varargin)
 %  For help on the MAPS function from the MAPPING TOOLBOX, type
 %  help([fileparts(which('aitoff')),filesep 'maps'])
 
-% This code is just a wrapper for fun/maps.
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
+%  This code is just a wrapper for fun/maps.
 
 % Try to resolve conflicts with the mapping toolbox.
 if nargin == 1 && ischar(varargin{1}) && exist('aitoff','file')

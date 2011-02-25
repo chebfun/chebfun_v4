@@ -3,9 +3,9 @@ function fout = diag(L)
 % F = DIAG(L) returns the chebfun that lies on the diagonal line of the
 % linear operator L. Note that this is not well defined if L is not a
 % diagonal operator, in that case, diag(L) issues a warning.
-% See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2008 by the Chebfun Team.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 d = domain(L);
 cheb1 = chebfun(1,d);

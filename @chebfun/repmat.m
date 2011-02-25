@@ -8,10 +8,9 @@ function Fout = repmat(F,M,N)
 %    quasimatrix, REPMAT(F,M,1) returns a quasimatrix with M*size(F,1).
 %
 %    REPMAT(F,[M,N]) is the same as REPMAT(F,M,N).
-%
-%    See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin==2
   if length(M)~=2

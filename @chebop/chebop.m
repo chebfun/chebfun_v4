@@ -73,10 +73,9 @@ function [N x] = chebop(varargin)
 %    plot(N\1)
 %
 % See also chebop/mtimes, chebop/mldivide, chebop/pde15s.
-%
-% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
-% Copyright 2002-2010 by The Chebfun Team.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 persistent default_N
 if isnumeric(default_N)

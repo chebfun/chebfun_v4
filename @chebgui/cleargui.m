@@ -1,5 +1,8 @@
 function [newGUI handles] = cleargui(guifile, handles)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Clear the input fields
 set(handles.dom_left,'String','');
 set(handles.dom_right,'String','');

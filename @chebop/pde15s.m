@@ -39,6 +39,9 @@ function u = pde15s(N, t, varargin)
 %
 % See also chebfun/pde15s, pdeset
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if strcmpi(N.lbc,'periodic') || strcmpi(N.rbc,'periodic'), 
     bc = 'periodic';
 else

@@ -3,10 +3,9 @@ function [f,g] = overlap(f,g)
 %
 % [fout,gout] = OVERLAP(f,g) returns two chebfuns such that
 % fout.ends==gout.ends 
-% 
-% This function replaces support/overlap.m
 
-% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isa(g,'domain') || isnumeric(g)
     g = chebfun(1,g);

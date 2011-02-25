@@ -3,11 +3,8 @@ function [B,c,rowidx] = bdyreplace_old(A,n,map,breaks)
 % B*u=c. This function finds all rows of B and c, and also the indices of
 % rows of A*u=f that should be replaced by them.
 
-% Copyright 2008 by Toby Driscoll.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin < 3, map = []; end
 if nargin < 4, breaks = []; end

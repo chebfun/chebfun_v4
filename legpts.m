@@ -19,15 +19,12 @@ function [x,w,v] = legpts(n,int,meth)
 %       By default LEGPTS uses 'GW' when N < 128.
 %
 %  See also chebpts and jacpts.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 %  'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
 %  'FAST' by Nick Hale, April 2009 - algorithm adapted from [2].
-%
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
 %
 %  References:
 %   [1] G. H. Golub and J. A. Welsch, "Calculation of Gauss quadrature

@@ -22,11 +22,10 @@ function p = interp1(xk,yk,d)
 %  hold off, plot(f,'k')
 %  hold on, plot(p,'r')
 %  grid on, plot(x,p(x),'.r')
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2009 by The Chebfun Team. 
-%
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 %  This version of INTERP1 lives in @domain.
 %  There is a companion code in @chebfun.
 %

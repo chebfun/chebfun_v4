@@ -4,6 +4,9 @@ function varargout = chebgui(varargin)
 %
 % See also chebguiwindow.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % If chebgui is called without any arguments, we load a random example and
 % display it in the GUI window
 if isempty(varargin)

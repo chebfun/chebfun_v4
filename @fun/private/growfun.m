@@ -11,9 +11,8 @@ function [g,ish] = growfun(op,g,pref,g1,g2)
 %   OP(G1,G2), where G1 and G2 are funs.
 %
 
-% Copyright 2002-2009 by The Chebfun Team. See www.maths.ox.ac.uk/chebfun/
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Check preferences
 split = pref.splitting;

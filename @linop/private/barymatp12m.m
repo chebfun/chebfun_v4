@@ -8,12 +8,9 @@ function P = barymatp12(Ny,Nx,dom,map)
 %
 %  BARYMATP12(NY,NX,DOM,MAP) is the same, but for mapped Chebyshev grids, 
 %  with the map (or maps) given in MAP.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author: hale $: $Rev: 1166 $:
-%  $Date: 2010-08-02 10:03:38 +0100 (Mon, 02 Aug 2010) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isa(dom,'domain'), dom = dom.endsandbreaks; end
 if isempty(dom), dom = [-1 1]; end

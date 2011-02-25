@@ -8,10 +8,10 @@ function f = polyfit(y,n)
 %   in the least-squares sense.
 %
 %   See also polyfit, domain/polyfit
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Nick Hale & Rodrigo Platte,  21/01/2009
 
 if nargout > 1

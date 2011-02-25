@@ -8,11 +8,9 @@ function [lines marks jumps jval misc] = plotdata(f,g,h,numpts,interval)
 % OUTPUT: LINES cell array with line data. MARKS cell array for markers at
 % chebyshev data. JUMPS cell array to generate jump lines. JVAL function
 % value at jump points.
-%
 
-%  Copyright 2002-2009 by The Chebfun Team.
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 misc = []; infy = false;
 if nargin < 5, interval = []; end

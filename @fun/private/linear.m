@@ -6,13 +6,9 @@ function map = linear(ends)
 %   MAP.INV is the inverse map.
 %   MAP.DER is the derivative of the map defined in MAP.FOR
 %   MAP.ID is a string that identifies the map.
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2009 by The Chebfun Team.
-%   First author: Rodrigo Platte, May 2009.
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 a = ends(1); b = ends(2);
 map = struct('for',@(y) b*(y+1)/2+a*(1-y)/2, ...

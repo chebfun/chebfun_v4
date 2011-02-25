@@ -9,8 +9,8 @@
 % readers of the book need only download Chebfun to be able
 % to execute each section.
 
-% These formats are a work in progress -- they will go through
-% various changes in the months ahead.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 set(0,'defaultfigureposition',[380 320 540 200],...
 'defaultaxeslinewidth',0.9,'defaultaxesfontsize',8,...

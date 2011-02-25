@@ -6,10 +6,9 @@ function fx = bary(x,gvals,xk,ek)
 %  P = BARY(X,GVALS) assumes Chebyshev nodes and weights. 
 %
 %  All inputs should be column vectors.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
-%  $Copyright$:
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 n = length(gvals);
 

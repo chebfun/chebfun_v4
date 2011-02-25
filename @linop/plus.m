@@ -4,12 +4,8 @@ function C = plus(A,B)
 % sum. If one is a scalar, it is interpreted as the scalar times the
 % identity operator.
 
-% See http://www.maths.ox.ac.uk/chebfun.
-
-% Copyright 2008 by Toby Driscoll.
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isa(A,'double')
     C=A; A=B; B=C;    % swap to make A a linop

@@ -9,9 +9,8 @@ function comet3(f,g,h,varargin)
 % speed at which the comet is updated. A larger P will result in a slower plot.
 %
 % See also chebfun/comet
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-%
-% Copyright 2002-2009 by The Chebfun Team. 
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 comet(f,g,h,varargin{:});

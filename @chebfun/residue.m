@@ -31,6 +31,9 @@ function [coeffs,poles,k] = residue(u,v,k)
 %     Problem formulations making use of state-space or zero-pole
 %     representations are preferable.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if (nargin == 2),
   if (u.nfuns > 1) || (v.nfuns > 1), error('CHEBFUN:residue:multiple_funs',...
       'Residue does not support chebfuns consisting of multiple funs.'); end

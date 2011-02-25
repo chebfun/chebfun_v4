@@ -7,12 +7,9 @@ function f = scribble(s)
 %  Example;
 %   f = scribble('The quick brown fox jumps over the lazy dog. 123456789');
 %   plot(f), axis equal
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 L = length(s);
 f0 = [];

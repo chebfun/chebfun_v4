@@ -9,10 +9,8 @@ function [fout hpy sclv] = growsys(op,ends,pref)
 %     f{1},f{2}
 %     plot(f{1},'b',f{2},'r','linewidth',2)
 
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-% Copyright 2002-2009 by The Chebfun Team.
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Written by RodP, updated by NicH 07/2010
 

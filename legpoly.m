@@ -11,10 +11,9 @@ function p = legpoly(n,d,normalize)
 %   'sch' or 'norm'.
 %
 % See also chebfun/legpoly and chebpoly.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin < 3, normalize = 'unnorm'; end
 if nargin < 2, d = [-1,1]; end

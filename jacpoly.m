@@ -11,10 +11,9 @@ function Q = jacpoly(N,a,b,d,flag)
 %   normalise so that P(1) or P(D(2)) = 1 ;
 %
 % See also legpoly and chebpoly.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 Nmax = max(N);
 x = chebpts(Nmax+1);

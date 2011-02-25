@@ -1,6 +1,9 @@
 function F = add_breaks_at_roots(F,tol,r)
 % Adds new breakpoints at the root sof a chebfun
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if nargin == 1 || isempty(tol),
     tol = 50*chebfunpref('eps');
 end

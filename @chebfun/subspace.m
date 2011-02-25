@@ -4,8 +4,6 @@ function theta = subspace(A,B)
 %   chebfun columns of the quasimatrices A and B. 
 %
 %   If the angle is small, the two spaces are nearly linearly dependent.
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
 %   References:
 %   [1] A. Bjorck & G. Golub, Numerical methods for computing
@@ -19,8 +17,9 @@ function theta = subspace(A,B)
 %       in an A-Based Scalar Product: Algorithms and Perturbation Estimates. 
 %       SIAM Journal on Scientific Computing, 23 (2002), no. 6, 2009-2041.
 %       http://epubs.siam.org:80/sam-bin/dbq/article/37733
-%
-% Copyright 2008 by The Chebfun Team. 
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if ~(isa(A,'chebfun') && isa(B,'chebfun'))
     error('CHEBFUN:subspace:argin', ...

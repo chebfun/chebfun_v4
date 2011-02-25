@@ -2,9 +2,9 @@ function m = sausage(pars)
 %SAUSAGE sausage map.
 %   SAUSAGE(D) creates a sausage map of degree D that maps Chebyshev points 
 %   into more evenly spaced ones. 
-%
-% See N.Hale and N. Trefthen, New quadrature formulas from conformal maps. 
-% SINUM, 2008.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if length(pars) == 2, 
     d = 9;

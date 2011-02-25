@@ -18,11 +18,10 @@ function out = sum(F,dim,b)
 %   sum(A,2)    % returns the chebfun for 1+x+x^2
 %   sum(A.',2)  % transpose of sum(A,1)
 %
-% See also SUM (built-in).
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% See also sum (built-in).
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isempty(F), out = 0; return, end    % empty chebfun has sum 0
 

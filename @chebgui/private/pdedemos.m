@@ -1,4 +1,8 @@
 function [cg name demotype] = pdedemos(guifile,exampleNumber,mode)
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if nargin < 3
     mode = 'start';
 end

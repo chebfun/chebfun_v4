@@ -8,6 +8,9 @@ function [L linBC isLin affine] = linearise(N,u,flag)
 % also used by chebop/linop which returns an error when the chebop is
 % nonlinear).
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % For expm, we need to be able to linearize around u = 0, so we offer the
 % option of linearizing around a certain function here (similar to diff),
 % the difference is that we check for linearity in this method as well.

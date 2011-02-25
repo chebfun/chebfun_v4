@@ -19,15 +19,11 @@ function [y,x] = minandmax(f,dim)
 %  but the resulting values correspond to those of the original function.
 %
 %  See also chebfun/max chebfun/min. 
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Provide a default for the dim argument.
-
 ftrans = f(1).trans;
 
 if nargin==1

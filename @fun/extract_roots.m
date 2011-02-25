@@ -5,6 +5,9 @@ function f = extract_roots(f,numroots,sides,tol)
 % from the right, and [1 1] from both.
 % TOL manually adjusts the tolerance
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if nargin < 2 || isempty(numroots), numroots = inf; end
 if nargin < 3 || isempty(sides), sides = [true true]; end
 

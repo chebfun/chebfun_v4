@@ -1,7 +1,8 @@
 function s = char(A)
 % CHAR   Convert oparray to pretty-printed string.
 
-% Copyright 2008 by Toby Driscoll. See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isempty(A)
   s = '{}';

@@ -4,6 +4,9 @@ function stackout = parse(guifiles,lexOutArg)
 % As it is now, it only checks the validity of the syntax. My plan is to
 % modify the code so it returns a syntax tree.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Initialize all global variables
 global NEXT; global NEXTCOUNTER; global LEXOUT; global pStack;
 pStack = [];

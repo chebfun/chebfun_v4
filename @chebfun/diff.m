@@ -16,10 +16,9 @@ function [F nonConst] = diff(F,n,dim)
 %      If N >= size(U,DIM), DIFF returns an empty chebfun.
 %
 % See also chebfun/fracdiff, chebfun/diff
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Check inputs
 if nargin == 1, n = 1; end

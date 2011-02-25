@@ -22,13 +22,9 @@ function E = feval(d,s)
 %     -0.083229367309428  -0.083229367309428
 %
 % See also linop, chebfun/feval.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2010 by Toby Driscoll.
-
-%  Last commit: $Author$ $Rev$
-%  $Id$
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 a = d.ends(1);  b = d.ends(end);
 x = 2*(s(:)-a)/(b-a) - 1;

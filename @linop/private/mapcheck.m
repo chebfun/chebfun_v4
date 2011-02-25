@@ -5,6 +5,9 @@ function m = mapcheck(map,dom,flag)
 %
 %  MAP = MAPCHECK(MAP,DOM) checks the MAP is appropriate for the domain DOM.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if isempty(map), m = map; return; end
 
 if nargin < 3, flag = 0; end

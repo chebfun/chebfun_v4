@@ -4,12 +4,9 @@ function [gout ish] = compfun(g1,op,g2)
 % Here GOUT, G1, and G2 are funs, and OP is a function handle.
 % This function is called at the chebfun level (CHEBFUN/PRIVATE/COMP.M)
 % See also FUN/PRIVATE/GROWFUN.M
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 pref = chebfunpref;
 

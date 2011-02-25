@@ -1,6 +1,9 @@
 function handles = solveGUI(guifile,handles)
 % SOLVEGUI Called when a user hits the solve button of the chebfun GUI
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Check whether some input is missing
 if isempty(guifile.DomLeft) || isempty(guifile.DomRight)
     errordlg('The endpoints of the domain must be defined.', 'Chebgui error', 'modal');

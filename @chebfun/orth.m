@@ -6,10 +6,9 @@ function Q = orth(A)
 %   That is, Q'*Q = I, the columns of Q span the same space as 
 %   the columns of A, and the number of columns of Q is the 
 %   rank of A.
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if A(1).trans
    error('CHEBFUN:orth:row','ORTH only defined for column quasimatrices')

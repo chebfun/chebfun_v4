@@ -1,7 +1,8 @@
 function B = repmat(A,m,n)
 % REPMAT   Replicate and tile varmats.
 
-% See http://www.maths.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if any([m,n] == 0), B = []; return, end
 

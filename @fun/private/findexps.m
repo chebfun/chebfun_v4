@@ -3,6 +3,9 @@ function exps = findexps(op,ends,leftrightflag,integerflag)
 % EXPS = FINDEXPS(H,ENDS) returns a vector EXPS such that
 % H(X).*(X-ENDS(1)).^EXPS(1).*(X+ENDS(2)).^EXPS(2) is a bounded function
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Rodrigo Platte & Nick Hale  2009
 
 if nargin < 3, leftrightflag = 0; end

@@ -5,4 +5,7 @@ function out = int(varargin)
 %
 % See also chebfun/sum
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 out = sum(varargin{:});

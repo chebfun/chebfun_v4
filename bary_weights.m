@@ -2,12 +2,9 @@ function w = bary_weights(xk)
 % W = BARY_WEIGHTS(XK)
 % Compute the barycentric weights W for the points XK, scaled such that
 % norm(W,inf) == 1.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author: nich $: $Rev: 458 $:
-%  $Date: 2009-05-10 20:51:03 +0100 (Sun, 10 May 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 n = length(xk);
 if isreal(xk)

@@ -6,6 +6,9 @@ function [L f] = linop(N,u)
 % [L F] = LINOP(N) returns also the affine part F of the linear chebop N
 % such that if, say, N.op = @(x,u), then L*u + F(x) = N.op(x,u).
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % This is simply a wrapper for @chebop/private/linearise.m
 
 % For expm, we need to be able to linearize around u = 0, so we offer the

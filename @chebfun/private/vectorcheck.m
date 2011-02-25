@@ -1,9 +1,8 @@
 function [f ends] = vectorcheck(f,x,pref)
 % Try to determine whether f is vectorized or maybe returns a system. 
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 ends = [];
 if isfield(pref,'vectorize') % force vectorization

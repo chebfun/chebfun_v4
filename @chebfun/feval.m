@@ -11,12 +11,10 @@ function Fx = feval(F,x,varargin)
 %  feval(s,0,'left')  % returns -1,
 %  feval(s,0,'right') % returns 1.
 %
-% See also CHEBFUN/SUBSREF.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% See also chebfun/subsref.
 
-% Copyright 2002-2009 by The Chebfun Team.
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Because chebfuns are superior to function_handle, this call can result
 % when f is function_handle and x is chebfun. In that case, revert to the

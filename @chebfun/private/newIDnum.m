@@ -5,8 +5,10 @@ function newID = newIDnum()
 % function is cleared (erasing persistent storage) while the chebop methods
 % are left uncleared, but this possibility seems remote.
 
-% Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
+
 persistent ID SESSION
 % Store the number of the second the function is first called in a Matlab
 % session (the second is given by now*100000)

@@ -2,10 +2,9 @@ function val = get(a, propName)
 % GET   Get anon properties.
 % P = GET(F,PROP) returns the property P specified in the string PROP from
 % the anon A.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 switch propName
     case 'function'

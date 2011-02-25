@@ -3,11 +3,10 @@ function [Q,R] = qr(A,econ)
 % [Q,R] = QR(A) or QR(A,0), where A is a column quasimatrix with n
 % columns, produces a column quasimatrix Q with n orthonormal columns
 % and an n x n upper triangular matrix R such that A = Q*R.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-%
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % This algorithm was developed by Nick Trefethen, June 2008: see
 % Trefethen, "Householder triangularization of a quasimatrix", to appear.
 

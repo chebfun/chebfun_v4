@@ -37,10 +37,9 @@ function varargout = chebtest(dirname)
 %
 % Tests residing directly in the chebtests directory will be executed
 % only after the 'level*' tests.
-%
-% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 
-% Copyright 2002-2011 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 persistent userpref
 

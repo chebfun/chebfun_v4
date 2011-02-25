@@ -3,10 +3,9 @@ function d = times(d,a)
 % A*D or D*A for domain D and scalar A multiplies all the endpoints and
 % breakpoints of D by A. If A is negative, the ordering of the points is
 % then reversed.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Swap if needed to make D the domain.
 if isnumeric(d)

@@ -5,10 +5,8 @@ function E = exp(A)
 % See also CHEBOP/EXPM.
 % See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2008 by Toby Driscoll.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 E = expm(A);
 

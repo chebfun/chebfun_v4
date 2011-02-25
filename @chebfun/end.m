@@ -1,9 +1,8 @@
 function e = end(F,k,n)
 % END  Rightmost point of a chebfuns domain (or last row/col of quasimatrix).
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2010 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % if n > 2
 %     error('CHEBFUN:end:ngt2','Index exceeds chebfun dimensions.');

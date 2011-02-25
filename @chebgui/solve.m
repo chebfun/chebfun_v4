@@ -2,6 +2,9 @@ function varargout = solve(guifile,handles)
 % SOLVE Called when a user hits calls the solve method for a chebgui object
 % outside the GUI (i.e. solve(cg))
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if strcmpi(guifile.type,'bvp')
     [varargout{1} varargout{2}] = solveguibvp(guifile);
 elseif strcmpi(guifile.type,'pde')

@@ -6,10 +6,9 @@ function val = get(f, propName)
 % with Dirac impulses respectively. Or 'nfuns', 'points', 'scl', 'vals',
 % 'exps', or 'trans'. If F is a row (column) quasimatrix, GET will only return the 
 % property of the first row (column).
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 val = [];
 

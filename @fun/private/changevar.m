@@ -1,9 +1,8 @@
 function g = changevar(g)
 % Change in integrand (used in sum and cumsum) for unbounded domains!
 
-% Last commit: $Author$: $Rev$:
-% $Date$:
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 vends = g.vals([1,end]);
 tol = chebfunpref('eps');

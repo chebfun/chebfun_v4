@@ -8,10 +8,9 @@ function y = odesol(sol,opt)
 %
 % The result is a piecewise chebfun of low polynomial degree on 
 % each piece. 
-%
 
-% Copyright 2009 by the Chebfun Team. See www.comlab.ox.ac.uk/chebfun.
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Current tolerance used by user
 usertol = chebfunpref('eps'); 

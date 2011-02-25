@@ -18,15 +18,12 @@ function [x w v] = hermpts(n,varargin)
 %  By default HERMPTS uses 'GW' when N < 128.
 %
 %  See also chebpts, legpts, lagpts, and jacpts.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 %  'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
 %  'FAST' by Nick Hale, March 2010 - algorithm adapted from [2].
-%
-%  Copyright 2002-2009 by The Chebfun Team.
-%  Last commit: $Author: hale $: $Rev: 1022 $:
-%  $Date: 2010-01-25 14:06:01 +0000 (Mon, 25 Jan 2010) $:
 %
 %  References:
 %   [1] G. H. Golub and J. A. Welsch, "Calculation of Gauss quadrature

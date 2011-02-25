@@ -7,10 +7,9 @@ function isr=isreal(F)
 % it is all zero.
 %   
 % See also CHEBFUN/REAL, CHEBFUN/IMAG.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 isr = true;
 for k = 1:numel(F)

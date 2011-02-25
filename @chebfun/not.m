@@ -8,10 +8,9 @@ function fout = not(F)
 %       g = ~chebfun(@(x) x); g([-1 0 1])
 %       
 %  See also chebfun/eq.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 fout = chebfun;
 for k = 1:min(size(F)) % Do it for each column of F1.

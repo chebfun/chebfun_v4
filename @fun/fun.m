@@ -22,12 +22,9 @@ function [g,ish] = fun(op,ends,varargin)
 % otherwise.
 %
 % FUN creates an empty fun.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2009 by The Chebfun Team.
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 persistent default_g
 if isnumeric(default_g)                     % Generate an empty fun!

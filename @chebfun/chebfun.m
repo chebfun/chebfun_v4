@@ -69,9 +69,9 @@ function f = chebfun(varargin)
 %
 % CHEBFUN(F,...,'map',{MAPNAME,MAPPARS}) allows the use of mapped Chebyshev
 % expansions. See help chebfun/maps for more information.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-% Copyright 2002-2009 by The Chebfun Team.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 persistent default_f
 if isnumeric(default_f)

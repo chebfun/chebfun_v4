@@ -3,6 +3,9 @@ function str = parSimp(guifile,str)
 %  parSimp does some basic parsing of the input STR to attempt to remove
 %  unnecessary parenthesis, zeros, and consecutive +/- pairs.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if length(str) < 2, return, end
 
 oldlength = 0;

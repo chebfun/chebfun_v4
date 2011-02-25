@@ -1,9 +1,8 @@
 function varargout = subsasgn(cg,index,varargin)
-% SUBSREF   Modify a chebgui
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% SUBSASGN   Modify a chebgui
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Allow calls on the form guifile.options.plotting
 idx1 = index(1).subs;

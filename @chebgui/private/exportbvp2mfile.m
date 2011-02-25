@@ -1,5 +1,8 @@
 function exportbvp2mfile(guifile,pathname,filename)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 fullFileName = [pathname,filename];
 fid = fopen(fullFileName,'wt');
 

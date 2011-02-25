@@ -30,13 +30,9 @@ function [fout,mpts] = merge(f, varargin)
 %       [g,ind] = merge(f.^2);
 %
 %   See also SPLITTING, CHEBFUNPREF, SIMPLIFY.
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2009 by The Chebfun Team. 
-%   Last commit: $Author$: $Rev$:
-%   $Date$:
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if numel(f) > 1
     error('CHEBFUN:merge:quasimatrix','MERGE does not handle chebfun quasimatrices')

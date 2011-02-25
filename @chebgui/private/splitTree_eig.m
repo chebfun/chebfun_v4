@@ -1,5 +1,8 @@
 function [newTree lambdaTree lambdaSign] = splitTree_eig(guifile,treeIn)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Begin by finding the subtree which contains lambda
 
 [newTree lambdaTree lambdaSign] = findLambda(treeIn,1);

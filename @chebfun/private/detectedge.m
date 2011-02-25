@@ -10,9 +10,9 @@ function [edge,vs] = detectedge(f,a,b,hs,vs,der,checkblowup)
 % DER is optional and is the derivative of a map (a function handle).
 % It is used in the unbounded domain case. If it is not provided, the
 % identity map is assumed.
-%
 
-% Copyright 2002-2009 by The Chebfun Team. See www.comlab.ox.ac.uk/chebfun/
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Assume no edge is found
 edge = [];

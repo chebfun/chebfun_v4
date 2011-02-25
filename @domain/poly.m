@@ -2,6 +2,9 @@ function f = poly(v,d)
 %POLY(V,D), when V is a vector and D is a domain, is a chebfun of 
 % degree length(V) and domain D whose roots are the elements of V.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if min(size(v) > 1)
     error('CHEBFUN:domain:poly:vec','domain/poly only supports vector input.');
 end

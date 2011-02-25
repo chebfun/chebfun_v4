@@ -2,6 +2,9 @@ function g = extrapolate(g,pref,x)
 % Extrapolate at endpoints if needed using "Fejer's 2nd rule" type of
 % barycentric formula. Also updates the vertical scale of g.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if pref.extrapolate || pref.splitting || any(g.exps) || any(isinf(g.map.par([1 2]))) || any(isnan(g.vals))
     if pref.chebkind == 2
            

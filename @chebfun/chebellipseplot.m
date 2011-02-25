@@ -24,12 +24,9 @@ function varargout = chebellipseplot(u,varargin)
 %   Example
 %     u = chebfun({@sin @cos @tan @cot},[-2,-1,0,1,2]);
 %     chebellipseplot(u,sqrt(eps),'--');
-%
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%   Copyright 2002-2009 by The Chebfun Team. 
-%   Last commit: $Author: rodp $: $Rev: 663 $:
-%   $Date: 2009-10-16 17:25:00 +0100 (Fri, 16 Oct 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Default options
 k = 0;                      % plot all funs by default

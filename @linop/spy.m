@@ -8,6 +8,9 @@ function spy(A,c)
 %   d = domain(-1,.5,1);
 %   spy([diff(d) 0 ; 1 diff(d,2)],'m')
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 ends = A.fundomain.endsandbreaks;
 de = ends(end)-ends(1);
 LW = 'linewidth'; lw = 3;

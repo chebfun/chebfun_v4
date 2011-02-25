@@ -4,12 +4,9 @@ function varargout = loglog(varargin)
 %   scales are used for both the X- and Y- axes.
 %
 %   See also PLOT, SEMILOGX, SEMILOGY.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 h = plot(varargin{:});
 set(gca,'XScale','log','YScale','log');

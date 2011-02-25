@@ -1,5 +1,8 @@
 function handles = switchmode(guiObject,handles,newMode,callMode)
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Only use callMode when calling from loaddemo_menu - for demos with an initial
 % guess / condition, we don't want to clear the figures.
 if nargin == 3

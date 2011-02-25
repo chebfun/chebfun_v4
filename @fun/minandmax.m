@@ -1,11 +1,8 @@
 function [y,x] = minandmax(g)
 % Minimum and maximum of a fun, i.e. [min(g), max(g)]
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 x = [0 0]; y = [0 0];
 

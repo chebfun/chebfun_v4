@@ -54,11 +54,8 @@ function varargout = cheboppref(varargin)
 %
 % See also chebfunpref.
 
-% Copyright 2008-2009 by Toby Driscoll and Asgeir Birkisson.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 persistent prefs
 

@@ -13,12 +13,9 @@ function varargout = gmres(varargin)
 %   u = gmres(A,f,Inf,1e-14);
 %
 % See also chebfun/gmres, gmres.
-% See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2008 by Toby Driscoll.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 A = varargin{1};
 op = @(u) A*u;

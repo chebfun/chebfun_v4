@@ -4,6 +4,8 @@ function h = lt(f,g)
 %   which is true (i.e. takes the value 1) where F < G, and false (0)
 %   elsewhere.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Quasimatrices?
 nf = numel(f); ng = numel(g);

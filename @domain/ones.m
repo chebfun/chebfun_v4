@@ -7,10 +7,9 @@ function S = ones(d,m)
 % identically zero.
 %
 % See also DOMAIN/ZEROS, DOMAIN/EYE.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information. 
 
 if isnumeric(d) % number given first
   s = chebfun(1,m);

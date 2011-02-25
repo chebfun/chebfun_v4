@@ -20,13 +20,9 @@ function N = and(N,bc)
 %   N = chebop(domain(0,1),@(u) diff(u,3)+sin(u));
 %   bc.left = {1,'neumann'};  bc.right = -1;
 %   u = (N & bc) \ 0;   % solve a BVP
-%
-% See also chebop/mldivide, chebop.
-% See http://www.maths.ox.ac.uk/chebfun.
 
-% Copyright 2009 by Toby Driscoll.
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 N = set(N,'bc',bc);
 

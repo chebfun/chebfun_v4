@@ -2,6 +2,9 @@ function varargout = feval(Fin,u,anonType)
 % FEVAL Evaluates an anon with an input argument, similar to f(u) where f
 % is an anonymous function and u is the argument.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 if nargin < 3
     anonType = 2;
 end

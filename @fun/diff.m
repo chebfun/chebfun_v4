@@ -22,14 +22,10 @@ function [g c] = diff(g,k,c)
 %
 % with c_{n} = c_{n+1} = 0.
 %
-%
 % See "Chebyshev Polynomials" by Mason and Handscomb, CRC 2002, pg 34.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isempty(g), return, end
 if nargin==1, k=1; end

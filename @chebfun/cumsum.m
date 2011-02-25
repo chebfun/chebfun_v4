@@ -14,10 +14,9 @@ function F = cumsum(F,n)
 % CUMSUM does not currently support chebfuns whose indefinite integral diverges
 % (i.e. has exponents <-1) when using nontrivial maps. Even for chebfuns
 % with a bounded definite integral, nontrivial maps will be slow.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin==1, n=1; end
 

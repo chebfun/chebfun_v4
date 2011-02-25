@@ -24,6 +24,9 @@ function varargout = chebguiedit(varargin)
 
 % Last Modified by GUIDE v2.5 31-Jan-2011 09:40:10
 
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...

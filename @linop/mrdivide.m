@@ -3,11 +3,8 @@ function C = mrdivide(A,B)
 % A/M for linop A and scalar M returns (1/M)*A. No other syntax is
 % supported.
 
-% See www.maths.ox.ac.uk/chebfun.
-
-% Copyright 2008 by Toby Driscoll.
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if ~isnumeric(B)
   error('LINOP:mrdivide:noright','Right inverses not implemented.')

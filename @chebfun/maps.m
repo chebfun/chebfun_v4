@@ -56,6 +56,9 @@ function map = maps(f)
 % M = MAPS(F) returns a cell structure of the maps used by the chebfun F.
 % M = MAPS(D) returns the default map for the domain D.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 map = {};
 for j = 1:numel(f)
     for k = 1:f(j).nfuns

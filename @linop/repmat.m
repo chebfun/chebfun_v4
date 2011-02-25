@@ -1,7 +1,8 @@
 function B = repmat(A,m,n)
 % REPMAT   Replicate and tile linops.
 
-% See http://www.maths.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin == 2
    if isscalar(m)

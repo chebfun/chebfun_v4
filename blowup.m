@@ -38,12 +38,9 @@ function varargout = blowup(on_off)
 %       f = chebfun('gamma(x)',[-4:0 4],'exps',[-ones(1,5) 0])
 %       f = chebfun('gamma(x)',[-4:0 4],'blowup','on')
 %       f = chebfun('gamma(x)',[-4 4],'splitting','on','blowup','on');
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author: rodp $: $Rev: 445 $:
-%  $Date: 2009-05-01 11:56:27 +0100 (Fri, 01 May 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % This is default behavior for "blowup on"
 default = 1;

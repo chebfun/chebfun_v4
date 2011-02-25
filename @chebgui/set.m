@@ -1,9 +1,8 @@
 function cg = set(cg, propName,propName2,vin)
-% GET   Get chebgui properties.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% SET   Set chebgui properties.
 
-% Copyright 2002-2009 by The Chebfun Team.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Avoid storing {''} in fields, rather store ''
 if iscell(vin) && isempty(vin{1})

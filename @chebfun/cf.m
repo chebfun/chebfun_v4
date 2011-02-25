@@ -35,10 +35,9 @@ function [p,q,r,s] = cf(f,m,n,M)
 % Anal. 19 (1982), 358-371, and L. N. Trefethen and M. H. Gutknecht, "The
 % Caratheodory-Fejer method for real rational approximation", SIAM J.
 % Numer. Anal. 20 (1983), 420-436.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if (nargin < 3), n = 0; end
 

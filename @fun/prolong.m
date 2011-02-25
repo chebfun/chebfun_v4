@@ -1,12 +1,9 @@
 function g = prolong(g,nout)
 % This function allows one to manually adjust the number of points.
 % The output gout has length(gout) = nout (number of points).
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-% Last commit: $Author: rodp $: $Rev: 537 $:
-% $Date: 2009-07-17 16:15:29 +0100 (Fri, 17 Jul 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 m = nout - g.n;
 

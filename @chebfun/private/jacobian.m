@@ -4,11 +4,8 @@ function [J constInfo] = jacobian(F,u)
 % J = jacobian(F,u) returns the Jacobian of the chebfun F with respect to
 % the chebfun u. Both F and u can be a quasimatrix.
 
-% Copyright 2008 by Asgeir Birkisson and Toby Driscoll.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author: driscoll $: $Rev: 907 $:
-%  $Date: 2009-12-04 15:49:08 +0000 (Fri, 04 Dec 2009) $:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Obtain a list of all ID-s of the chebfun u (concat. the list if u is a
 % quasimatrix

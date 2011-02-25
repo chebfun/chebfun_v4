@@ -35,11 +35,9 @@ function song = sing(str,bpm)
 %     S = SING('CG CG DG BG CG DG EC EC FC EC DG CG DG CG BG CG',30);
 %
 %  See also chebfun/sound.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-%
-%  Copyright 2002-2009 by The Chebfun Team. 
 
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 s0 = 2^(1/12);
 f0 = 440*pi;

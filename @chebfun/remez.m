@@ -38,12 +38,9 @@ function varargout = remez(f,varargin)
 % Mathematics 49 (2009),721-741) and Pachon, "Algorithms for 
 % Polynomial and Rational Approximation", D.Phil. Thesis, University of 
 % Oxford, 2010 (Chapter 6).
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if numel(f) > 1, error('CHEBFUN:remez:quasi',...
         'Remez does not currently support quasimatrices'); end

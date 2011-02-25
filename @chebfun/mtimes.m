@@ -8,14 +8,9 @@ function Fout = mtimes(F1,F2)
 %
 % A=F*G, if F is Inf-by-m and G is m-by-Inf, results in a rank-m linop A
 % such that A*U=F*(G*U) for any chebfun U. 
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
-
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Quasi-matrices product
 if (isa(F1,'chebfun') && isa(F2,'chebfun'))

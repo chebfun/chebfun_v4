@@ -23,9 +23,9 @@ function C = mldivide(A,B,tolerance)
 %     du = -(A\r);
 %     u = u+du;
 %   end
-%
-% See also linop/and, linop/mtimes.
-% See http://www.maths.ox.ac.uk/chebfun.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
  maxdegree = cheboppref('maxdegree');
 

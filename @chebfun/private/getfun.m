@@ -10,7 +10,8 @@ function [g, hpy, scl] = getfun(op, interval, pref, scl)
 %
 %   HPY is true if the coefficients
 
-% Copyright 2002-2009 by The Chebfun Team. See www.maths.ox.ac.uk/chebfun/
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Initial setup
 a = interval(1); b = interval(2);

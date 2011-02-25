@@ -1,8 +1,8 @@
 function display(V)
 % DISPLAY  Pretty-print a varmat.
 
-% Copyright 2008 by Toby Driscoll.
-% See www.comlab.ox.ac.uk/chebfun.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 loose = ~isequal(get(0,'FormatSpacing'),'compact');
 if loose, disp(' '), end

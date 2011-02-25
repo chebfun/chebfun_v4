@@ -6,6 +6,9 @@ function E = expm(N)
 %
 % See also linop/linop
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Linearize and check whether the chebop is linear
 try
     L = linop(N,chebfun(0,N.dom));

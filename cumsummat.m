@@ -4,8 +4,8 @@ function Q = cumsummat(N)
 % points to values of the integral of the interpolating polynomial at
 % those points, with the convention that the first value is zero. 
 
-% Toby Driscoll, 14 May 2008.
-% Copyright 2008.
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 N = N-1;
 

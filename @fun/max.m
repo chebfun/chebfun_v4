@@ -2,12 +2,9 @@ function [out,idx] = max(g)
 % MAX	Global maximum on [-1,1]
 % MAX(G) is the global maximum of the fun G on [-1,1].
 % [Y,X] = MAX(G) returns the value X such that Y = G(X), Y the global maximum.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if (g.exps(1) < 0 && g.vals(1) >= 0) 
     out = inf; 

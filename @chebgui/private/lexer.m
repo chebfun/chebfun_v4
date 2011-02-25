@@ -6,6 +6,9 @@ function [out varNames pdeVarNames eigVarNames indVarNames] = lexer(guifile,str)
 % the expression. INDVARNAME is a string which represents the independent
 % variable in the problem (i.e. x or t).
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 out = [];
 % A string array containing all functions which take one argument which 
 % we are interested in differentiating

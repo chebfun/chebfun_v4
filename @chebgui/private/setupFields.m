@@ -1,4 +1,8 @@
 function [field allVarString indVarName pdeVarNames pdeflag allVarNames]  = setupFields(guifile,input,rhs,type,allVarString)
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 numOfRows = max(size(input));%numel(input,1);
 pdeflag = zeros(1,numOfRows); % Binary flag for PDE detection.
 allVarNames = [];

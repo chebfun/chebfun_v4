@@ -1,6 +1,7 @@
 function NewInputArg = unwrap_arg(varargin)
 
-% Copyright 2002-2009 by The Chebfun Team. See www.maths.ox.ac.uk/chebfun/
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if length(varargin) == 2
     var2 = varargin{2};

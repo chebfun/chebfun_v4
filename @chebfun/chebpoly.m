@@ -13,10 +13,9 @@ function out = chebpoly(f,ii,N)
 %
 % There is also a CHEBPOLY command in the chebfun trunk directory, which
 % computes the chebfun corresponding to the Chebyshev polynomial T_n.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
  
 if numel(f) > 1, 
     error('CHEBFUN:chebpoly:quasi','CHEBPOLY does not handle chebfun quasi-matrices.')

@@ -12,9 +12,9 @@ function [M,B,c,rowreplace,P] = feval(A,n,usebc,map,breaks)
 % FEVAL(A,Inf) returns the functional form of A if it is available.
 %
 % See also linop/subsref.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
-% Copyright 2002-2009 by The Chebfun Team.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % For future performance, store realizations.
 persistent storage

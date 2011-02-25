@@ -36,12 +36,9 @@ function [g gsing] = cumsum(g)
 %
 % Functions with both exponents and nonlinear maps can only be dealt with
 % by switching to and from a linear map, and are therefore often very slow.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team.
-% Last commit: $Author$: $Rev$:
-% $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 ends = g.map.par(1:2);
 

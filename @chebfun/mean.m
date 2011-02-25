@@ -3,10 +3,9 @@ function Fout = mean(F1,F2)
 % MEAN(F) is the mean value of the chebfun F.
 %
 % MEAN(F,G) is the average chebfun between chebfuns F and G.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin == 1
     

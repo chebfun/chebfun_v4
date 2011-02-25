@@ -5,6 +5,9 @@ function varargout = why(f,r)
 %     For fun, try also
 %       plot(why(chebfun)), axis equal
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 N = 8;  % Number of Chebfun languages
 if nargin == 1
     r = ceil(N*rand);

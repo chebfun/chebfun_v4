@@ -15,12 +15,9 @@ function B = barymat(M,N,map,w) %BARYMAT(Y,X,W)
 %
 %  BARYMAT(M,N,W) or BARYMAT(M,N,MAP,W) is similar, but uses the barycentric 
 %  weights given in W, which should be a vector of length N.
-%
-%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+%  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+%  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if length(M) == 1 && length(M) == length(N)
 % Size of matrix is given.

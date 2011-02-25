@@ -30,8 +30,8 @@ function varargout = bvpsc(odefun,jacfun,bcmat,y0)
 %
 % See also bvp5c, bvpset, chebfun/bvp5c
 
-% Copyright 2009 by Toby Driscoll. See www.maths.ox.ac.uk/chebfun.
-% $Id$
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 d = domain(y0);
 x = chebfun(@(x)x,d);

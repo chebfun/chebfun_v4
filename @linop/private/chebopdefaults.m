@@ -1,9 +1,8 @@
 function pref = chebopdefaults
 % Default chebfunprefs for chebops
 
-%  Copyright 2002-2009 by The Chebfun Team. 
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 pref = chebfunpref;
 % pref.splitting = false;

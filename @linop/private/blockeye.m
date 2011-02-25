@@ -1,11 +1,8 @@
 function B = blockeye(dom,m)
 % Block identity operator of size m by m.
 
-% Copyright 2008 by Toby Driscoll.
-% See http://www.maths.ox.ac.uk/chebfun.
-
-%  Last commit: $Author$: $Rev$:
-%  $Date$:
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 Z = zeros(dom);  
 I = eye(dom);

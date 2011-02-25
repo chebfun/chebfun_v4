@@ -3,10 +3,9 @@ function len = length(f)
 % LENGTH(F) is the number of sample points used by the chebfun F.
 %
 % If F is a quasi-matrix, LENGTH(F) is max_k{ LENGTH(F(:,k)) }.
-%
-% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
-% Copyright 2002-2009 by The Chebfun Team. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if numel(f)>1
     error('CHEBFUN:length:quasi','LENGTH does not work with CHEBFUN quasi-matrices')
