@@ -102,7 +102,7 @@ elseif isempty(indVarNameInit) && ~isempty(indVarNameDE)
 else
     indVarNameSpace = 'x'; % Default value
 end
-
+handles.indVarName = {indVarNameSpace};
 eval([indVarNameSpace, '=xt;']);
 
 % Replace the 'DUMMYSPACE' variable in the DE field
@@ -209,8 +209,7 @@ if guiMode
     set(handles.iter_list,'Visible','On');
     
     xLimit = [str2num(guifile.DomLeft) str2num(guifile.DomRight)];
-    guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
-        handles.iter_list,[],handles.button_solve,xLimit,allVarNames};
+    handles.xLim = xLimit;
     set(handles.fig_sol,'Visible','On');
     set(handles.fig_norm,'Visible','On');
 end
@@ -218,7 +217,7 @@ end
 % Call solvebvp with different arguments depending on whether we're in GUI
 % or not. If we're not in GUI mode, we can finish here.
 if guiMode
-    [u vec isLinear] = solvebvp(N,DE_RHS,'options',options,'guihandles',guihandles);
+    [u vec isLinear] = solvebvp(N,DE_RHS,'options',options,'guihandles',handles);
 else
     [u vec] = solvebvp(N,DE_RHS,'options',options);
     varargout{1} = u;

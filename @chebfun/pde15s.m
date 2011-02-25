@@ -118,23 +118,25 @@ end
 % Determine which figure to plot to (for CHEBGUI)
 % and set default display values for variables.
 YLim = opt.YLim;
-if isfield(opt,'guihandles')
-    if ~isempty(opt.guihandles{1});
-        axes(opt.guihandles{1});
+gridon = 0;
+guiflag = false;
+if isfield(opt,'handles')
+    if opt.handles.gui
         guiflag = true;
-    else
-        guiflag = false;
+        axesSol = opt.handles.fig_sol;
+        axesNorm = opt.handles.fig_norm;
+        axes(axesSol);
+        gridon = opt.handles.guifile.options.grid;
+        solveButton = opt.handles.button_solve;
+        clearButton = opt.handles.button_clear;
     end
-    varnames = opt.guihandles{7};
-    xLabel = opt.guihandles{8}{1};
-    tlabel = opt.guihandles{8}{2};
-    gridon = opt.guihandles{10};
+    varnames = opt.handles.varnames;
+    xLabel = opt.handles.indVarName{1};
+    tlabel = opt.handles.indVarName{2};
 else
-    guiflag = false; 
     varnames = 'u';
     xLabel = 'x';
     tlabel = 't';
-    gridon = 0;
 end
 
 % Parse plotting options
@@ -527,7 +529,7 @@ try
 
         if guiflag
             % Interupt comutation if stop or pause  button is pressed in the GUI.
-            if strcmp(get(opt.guihandles{6},'String'),'Solve')
+            if strcmp(get(solveButton,'String'),'Solve')
                 tt = tt(1:nt+1);
                 if syssize == 1,  
                     uu = uu(:,1:nt+1);
@@ -537,9 +539,9 @@ try
                     end
                 end
                 break
-            elseif strcmp(get(opt.guihandles{9},'String'),'Continue')
+            elseif strcmp(get(clearButton,'String'),'Continue')
                 defaultlinewidth = 2;
-                axes(opt.guihandles{2})
+                axes(axesNorm)
                 if ~iscell(uu)
                     waterfall(uu(:,1:nt+1),tt(1:nt+1),'simple','linewidth',defaultlinewidth)
                     xlabel(xLabel), ylabel(tlabel), zlabel(varnames)
@@ -548,15 +550,15 @@ try
                     for k = 1:numel(uu)
                         plot(0,NaN,'linewidth',defaultlinewidth,'color',cols(k,:)), hold on
                     end
-                    legend(opt.guihandles{7});
+                    legend(varnames);
                     for k = 1:numel(uu)
                         waterfall(uu{k},tt(1:nt+1),'simple','linewidth',defaultlinewidth,'edgecolor',cols(k,:)), hold on
                         xlabel(xLabel), ylabel(tlabel)
                     end
                     view([322.5 30]), box off, grid on, hold off
                 end
-                axes(opt.guihandles{1})
-                waitfor(opt.guihandles{9}, 'String');
+                axes(axesSol)
+                waitfor(clearButton, 'String');
             end
         end
     end
