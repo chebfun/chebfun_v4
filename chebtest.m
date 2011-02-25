@@ -57,10 +57,13 @@ if nargin == 1 && ischar(dirname) && strcmpi(dirname,'restore')
     return
 end
 
+% init some local data
 pref = chebfunpref;
 tol = pref.eps;
 createreport = true;
 avgtimes = false; % If turning off, remember to remove line from help comments.
+nr_tests = 0;
+tests = struct('fun','','path','','funptr',[]);
 
 if verLessThan('matlab','7.4')
     matlabver = ver('matlab');
@@ -113,7 +116,6 @@ addpath(dirname)
 % loop over the level directories (first)
 subdirlist = dir( fullfile(dirname,'level*') );
 subdirnames = { subdirlist.name };
-mfiles = {};
 for i=1:length(subdirnames)
 
     % is this really a directory?
@@ -124,27 +126,44 @@ for i=1:length(subdirnames)
 
     % Get the names of the tests for this level
     dirlist = dir(fullfile(dirname,subdirnames{i},'*.m'));
-    mfiles = { mfiles{:} , dirlist.name };
+    for j=1:length(dirlist)
+        nr_tests = nr_tests + 1;
+        tests(nr_tests).fun = dirlist(j).name(1:end-2);
+        tests(nr_tests).path = [ dirname filesep subdirnames{i} filesep dirlist(j).name ];
+        tests(nr_tests).funptr = str2func( dirlist(j).name(1:end-2) );
+    end;
+    
+    % remove the path
+    rmpath( fullfile(dirname,subdirnames{i}) )
     
 end;
 
 % Get the names of any un-sorted tests
 dirlist = dir( fullfile(dirname,'*.m') );
-mfiles = { mfiles{:} , dirlist.name };
+for j=1:length(dirlist)
+    nr_tests = nr_tests + 1;
+    tests(nr_tests).fun = dirlist(j).name(1:end-2);
+    tests(nr_tests).path = [ dirname filesep dirlist(j).name ];
+    tests(nr_tests).funptr = str2func( dirlist(j).name(1:end-2) );
+end;
 
-um = unique(mfiles,'first');
-if numel(um) < numel(mfiles)
+% restore the original path names
+path( userpref.path );
+
+% check for duplicate chebtest names
+um = unique( { tests(:).fun } , 'first' );
+if numel(um) < nr_tests
     warning('CHEBFUN:chebtest:unique','Nonunique chebtest names detected.');
 end
 
 % Find the length of the names (for pretty display later).
 namelen = 0;
-for k = 1:numel(mfiles)
-    namelen = max(namelen,length(mfiles{k}));
+for k = 1:nr_tests
+    namelen = max(namelen,length(tests(k).fun));
 end;
     
 % Initialise some storage
-failed = zeros(length(mfiles),1);  % Pass/fail
+failed = zeros(nr_tests,1);  % Pass/fail
 t = failed;                        % Vector to store times
 
 % Clear the report file (and check we can open file)
@@ -185,21 +204,21 @@ if ~usejava('jvm') || ~usejava('desktop')
     javacheck = false;
 end
 
-prevdir = [];
+prevdir = 'bogus';
 
 % Turn off warnings for the test
 warning off
 
 % loop through the tests
-for j = 1:length(mfiles)
-  fun = mfiles{j}(1:end-2);
+for j = 1:nr_tests
+  fun = tests(j).fun;
   % Print the test directory (if new)
-  whichfun = which(fun);
+  whichfun = tests(j).path;
   fparts = fileparts(whichfun);
   curdir = fparts(find(fparts==filesep,1,'last')+1:end);
   if ~strcmp(curdir,prevdir)
       prevdir = curdir;
-      fprintf('%s tests\n',curdir);
+      fprintf('%s tests:\n',curdir);
   end
   % Print the test name
   if javacheck
@@ -207,7 +226,7 @@ for j = 1:length(mfiles)
   else
       link = fun;
   end
-  ws = repmat(' ',1,namelen+1-length(fun)-length(num2str(j)));
+  ws = repmat(' ',1,namelen+3-length(fun)-length(num2str(j)));
   msg = ['  Function #' num2str(j) ' (' link ')... ', ws ];
   msg = strrep(msg,'\','\\');  % escape \ for fprintf
   numchar = fprintf(msg);
@@ -218,7 +237,7 @@ for j = 1:length(mfiles)
     cheboppref('factory');
     chebfunpref('eps',tol);
     tic
-    pass = feval( fun );
+    pass = feval( tests(j).funptr );
     t(j) = toc;
     failed(j) = ~ all(pass);
     if failed(j)
@@ -266,8 +285,6 @@ for j = 1:length(mfiles)
   end
   
 end
-rmpath(dirname)
-path(path,userpref.path); % If dirname was already in path, put it back.
 warning(warnstate)
 chebfunpref(pref);
 cheboppref(userpref.oppref);
@@ -282,15 +299,15 @@ end
 
 if all(~failed)
   fprintf('\nAll tests passed!')
-  failfun = {};
+  failfun = [];
 else
   fprintf('\n%i failed and %i crashed\n',sum(failed>0),sum(failed<0))
-  failfun = mfiles(failed~=0);
+  failfun = tests(failed~=0);
   if createreport
       if javacheck
           link = ['<a href="matlab: edit ' report '">chebtest_report.txt</a>'];
       else
-          link = fullfile(dirname,fun);
+          link = report;
       end
       msg = [' Error report available here: ' link '. ' ];
       msg = strrep(msg,'\','\\');  % escape \ for fprintf
@@ -310,12 +327,12 @@ end
 
 % Output args
 if nargout > 0
-    varargout{1} = failfun; 
+    varargout{1} = { failfun(:).fun }; 
 else
     fprintf('    ');
     for k = 1:sum(abs(failed))
-        fun = failfun{k};
-        whichfun = which(fun);
+        fun = failfun(k).fun;
+        whichfun = failfun(k).path;
         if javacheck         
             link = ['<a href="matlab: edit ' whichfun '">' fun '</a>    '];
             link = strrep(link,'\','\\');  % maintain fprintf compatability in MSwin
