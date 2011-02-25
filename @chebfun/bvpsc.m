@@ -6,8 +6,8 @@ function varargout = bvpsc(odefun,jacfun,bcmat,y0)
 %
 % ODEFUN specifies the differential equation exactly as in BVP4C and BVP5C
 % with the 'Vectorized' option set. That is, if x is a row vector/chebfun
-% and each row of y represents the values of one variable in the system, ODEFUN(x,y) should return
-% the derivative dy/dx, one row per variable. 
+% and each row of y represents the values of one variable in the system,
+% ODEFUN(x,y) should return the derivative dy/dx, one row per variable.
 %
 % JACFUN gives the Jacobian of the differential equation with respect to
 % the system variables. It has the same syntax as the 'FJacobian' option
