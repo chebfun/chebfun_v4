@@ -148,7 +148,8 @@ else
     xlim(xLims);
 end
 set(h2,'NextPlot','replace')
-xlabel('x')
+handles
+xlabel(handles.indVarName);
 
 % Set the xlim according to the domain of the function
 title(s);

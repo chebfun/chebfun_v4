@@ -508,16 +508,21 @@ elseif get(handles.button_pde,'Value');
     tt = handles.latest.solutionT;
     varnames = handles.varnames;
     
+%     xLab = handles.indVarName{1};
+%     tLab = handles.indVarName{2};
+    xLab = 'x';
+    tLab = 't';
+    
     if ~iscell(u)
         figure
         waterfall(u,tt,'simple','linewidth',2)
-        xlabel('x'), ylabel('t'); zlabel(varnames{1});
+        xlabel(xLab), ylabel(tLab); zlabel(varnames{1});
     else
         figure
         for k = 1:numel(u)
             subplot(1,numel(u),k);
             waterfall(u{k},tt,'simple','linewidth',2)
-            xlabel('x'), ylabel('t'), zlabel(varnames{k})
+            xlabel(xLab), ylabel(tLab), zlabel(varnames{k})
             title(varnames{k})
         end
         
@@ -535,7 +540,7 @@ elseif get(handles.button_pde,'Value');
         for k = 1:numel(u)
             waterfall(u{k},tt,'simple','linewidth',2,'edgecolor',cols(k,:))
         end
-        xlabel('x'), ylabel('t'), grid on
+        xlabel(xLab), ylabel(tLab), grid on
     end
 else % eigs
     
@@ -553,6 +558,11 @@ if get(handles.button_ode,'Value');
     latestSolution = handles.latest.solution;
     figure
     plot(latestSolution,'Linewidth',2), title('Solution at end of iteration')
+    xlabel(handles.indVarName);
+    varnames = handles.varnames;
+    if numel(varnames) == 1
+        ylabel(varnames)
+    end
     % Turn on grid
     if handles.guifile.options.grid, grid on,  end
     if numel(handles.varnames) > 1, legend(handles.varnames), end

@@ -241,18 +241,26 @@ if ~isempty(guifile.options.fixN)
     opts.N = str2num(guifile.options.fixN);
 end       
 
-if ~iscell(pdeVarName)
-    pdeVarName = {pdeVarName};
-end   
-k = 0;
-idx = [];
-while isempty(idx)
-    k = k+1;
-    idx = strfind(pdeVarName{k},'_');
-end
-timeVarName = pdeVarName{k}((idx+1):end);
+% if ~iscell(pdeVarName)
+%     pdeVarName = {pdeVarName};
+% end   
+% k = 0;
+% idx = [];
+% while isempty(idx)
+%     k = k+1;
+%     idx = strfind(pdeVarName{k},'_');
+% end
+% timeVarName = pdeVarName{k}((idx+1):end);
+% handles.indVarName = {indVarName{1},timeVarName};
+% indVarName{2} = timeVarName;
 
-handles.indVarName = {indVarName,timeVarName};
+if isempty(indVarName{1})
+    indVarName{1} = 'x';
+end
+if isempty(indVarName{2})
+    indVarName{2} = 't'; % This should never be empty for a PDE though.
+end
+handles.indVarName = indVarName;
 opts.handles = handles;
 
 
@@ -282,7 +290,7 @@ if guiMode, axes(handles.fig_norm), else figure, end
 if ~iscell(u)
 %     surf(u,t,'facecolor','interp')
     waterfall(u,t,'simple','linewidth',defaultLineWidth)
-    xlabel(indVarName), ylabel(timeVarName), zlabel(allVarNames)
+    xlabel(indVarName{1}), ylabel(indVarName{2}), zlabel(allVarNames)
 else
     
     cols = get(0,'DefaultAxesColorOrder');
@@ -292,7 +300,7 @@ else
     legend(allVarNames);
     for k = 1:numel(u)
         waterfall(u{k},t,'simple','linewidth',defaultLineWidth,'edgecolor',cols(k,:)), hold on
-        xlabel(indVarName), ylabel('t')
+        xlabel(indVarName{1}), ylabel(indVarName{2})
     end
     view([322.5 30]), box off, grid on
     
