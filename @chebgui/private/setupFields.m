@@ -66,9 +66,10 @@ else % Have a system, go through each row
     % Keep track of every variable encountered in the problem
     allVarNames = {};
     allPdeVarNames = {};
+    indVarName = [];
     if numel(rhs) == 1, rhs = repmat(rhs,numOfRows,1); end
     for k = 1:numOfRows
-        [anFun{k} indVarName varNames pdeVarNames] = setupLine(guifile,input{k},rhs{k},type);
+        [anFun{k} indVarNameTemp varNames pdeVarNames] = setupLine(guifile,input{k},rhs{k},type);
         allVarNames = [allVarNames;varNames];
         if length(pdeVarNames) > 1 % Only allow one time derivative in each line
             error('Chebgui:setupField:TooManyTimeDerivatives',...
@@ -79,6 +80,13 @@ else % Have a system, go through each row
         else
             pdeflag(k) = 1;
         end
+        
+        if isempty(indVarName)
+            indVarName = indVarNameTemp;
+        elseif ~mystrcmp(indVarName{1},indVarNameTemp{1}) || ~mystrcmp(indVarName{2},indVarNameTemp{2}) 
+            error('Chebgui:Lexer:setupFields','Different names for independent variables detected')
+        end
+        
         allPdeVarNames = [allPdeVarNames;pdeVarNames];
     end
     % Remove duplicate variable names
@@ -219,4 +227,12 @@ if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
 %     else % Three output arguments -- Multiple rows
         [field indVarName varNames pdeVarNames] = convertToAnon(guifile,input);
 %     end
+end
+
+% Modified strcmp, if we compare with an empty string, give a match
+function res =  mystrcmp(str1,str2)
+if isempty(str1) || isempty(str2)
+    res = 1;
+else
+    res = strcmp(str1,str2);
 end

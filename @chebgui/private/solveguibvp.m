@@ -84,7 +84,7 @@ end
 if ~isempty(initInput{1}) && isempty(guess)
     [initString ignored indVarNameInit] = setupFields(guifile,initInput,initRHSInput,'BC',allVarString);
 else
-    indVarNameInit = [];
+    indVarNameInit = {''};
 end
 
 
@@ -92,15 +92,15 @@ end
 % not empty
 
 % Make sure we don't have a disrepency in indVarNames
-if ~isempty(indVarNameInit) && ~isempty(indVarNameDE)
+if ~isempty(indVarNameInit{1}) && ~isempty(indVarNameDE{1})
     if strcmp(indVarNameDE{1},indVarNameInit{1})
         indVarNameSpace = indVarNameDE{1};
     else
         error('Chebgui:SolveGUIbvp','Independent variable names do not agree')
     end
-elseif ~isempty(indVarNameInit) && isempty(indVarNameDE)
+elseif ~isempty(indVarNameInit{1}) && isempty(indVarNameDE{1})
     indVarNameSpace = indVarNameInit{1};
-elseif isempty(indVarNameInit) && ~isempty(indVarNameDE)
+elseif isempty(indVarNameInit{1}) && ~isempty(indVarNameDE{1})
     indVarNameSpace = indVarNameDE{1};
 else
     indVarNameSpace = 'x'; % Default value

@@ -60,7 +60,8 @@ varNames = symvar(str);
 % Create a cell for potential pdeVarNames and lambdaVariables
 pdeVarNames = {};
 eigVarNames = {};
-indVarNames = {};
+indVarNames = {''};
+pdeSubScript = [];
 % r, x and t are reserved for independent variables
 xLoc = strcmp('x',varNames); varNames(xLoc) = [];
 tLoc = strcmp('t',varNames); varNames(tLoc) = [];
@@ -82,7 +83,6 @@ if strcmp(guifile.type,'pde')
     elseif xExists
         indVarNames{1} = 'x';
     end
-    indVarNames{2} = 't'; 
 else
     if (rExists+tExists+xExists) > 1
         error('Chebgui:solve:Lexer:TooManyIndVars','Too many independent variables in input.');
@@ -231,6 +231,8 @@ while ~strcmp(str,'$')
                     % Remove from the varNames array, store in pdeVarNames instead
                     pdeVarLoc = strcmp(nextstring,varNames); varNames(pdeVarLoc) = [];
                     pdeVarNames = [pdeVarNames;nextstring];
+                    undersLoc = strfind(nextstring,'_');
+                    pdeSubScript = nextstring(undersLoc+1:end);
                 end
             % Check if this string is one of the function defined in
             % strfun1 (functions with one argument)
@@ -261,6 +263,12 @@ while ~strcmp(str,'$')
     str(1:expr_end) = '';       %  Throw away from string what we have already scanned
 end
 out = [out; {'', '$'}];
+
+if strcmp(guifile.type,'pde')
+    indVarNames{2} = pdeSubScript;
+else
+    indVarNames{2} = '';
+end
 end
 
 function type = myfindtype(str,prevtype)

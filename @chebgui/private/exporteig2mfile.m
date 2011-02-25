@@ -28,10 +28,13 @@ lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 
 [allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
-% Replace 'DUMMYSPACE' by the correct independent variable name
-if isempty(indVarName)
-    indVarName = {'x'};
+
+% If indVarName is empty, use the default value
+if isempty(indVarName{1})
+    indVarName{1} = 'x';
 end
+
+% Replace 'DUMMYSPACE' by the correct independent variable name
 allStrings = strrep(allStrings,'DUMMYSPACE',indVarName{1});
 
 % If allStrings return a cell, we have both a LHS and a RHS string. Else,
