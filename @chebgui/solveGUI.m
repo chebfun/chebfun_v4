@@ -31,19 +31,6 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         errordlg(s, 'Chebgui error', 'modal');
         return
     end
-    if strcmpi(guifile.type,'pde');
-        tt = str2num(guifile.timedomain);
-        if isempty(tt)
-            s = sprintf('Error in constructing time interval.');
-            errordlg(s, 'Chebgui error', 'modal');
-        return
-        end
-        if isempty(guifile.init)
-            s = sprintf('Initial condition is empty.');
-            errordlg(s, 'Chebgui error', 'modal');
-        return
-        end
-    end
     tol = guifile.tol;
     if ~isempty(tol)
         tolnum = str2num(tol);
@@ -53,7 +40,30 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
             return
         end
     end   
-    if get(handles.button_eig,'Value')
+    if strcmpi(guifile.type,'pde');
+        tt = str2num(guifile.timedomain);
+        if isempty(tt)
+            s = sprintf('Error in constructing time interval.');
+            errordlg(s, 'Chebgui error', 'modal');
+            return
+        end
+        if isempty(guifile.init)
+            s = sprintf('Initial condition is empty.');
+            errordlg(s, 'Chebgui error', 'modal');
+            return
+        end
+        if str2num(tol) < 1e-6
+            tolchk = questdlg('WARNING: PDE solves in chebgui are limited to a tolerance of 1e-6', ...
+                         'WARNING','Continue', 'Cancel','Continue');
+            if strcmp(tolchk,'Continue')
+                tol = '1e-6';
+                guifile.tol = tol;
+                handles.guifile.tol = tol;
+            else
+                return
+            end
+        end
+    elseif get(handles.button_eig,'Value')
         newString = handles.guifile.sigma;
     end
     

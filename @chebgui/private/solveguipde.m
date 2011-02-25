@@ -19,8 +19,6 @@ defaultTol = opts.Eps;
 defaultLineWidth = 2;
 
 if guiMode
-    guihandles = {handles.fig_sol,handles.fig_norm,handles.iter_text, ...
-        handles.iter_list,[],handles.button_solve};
     set(handles.fig_sol,'Visible','On');
     set(handles.fig_norm,'Visible','On');
     cla(handles.fig_sol,'reset')
@@ -263,8 +261,6 @@ end
 handles.indVarName = indVarName;
 opts.handles = handles;
 
-
-% error
 % try
 [t u] = pde15s(DE,tt,u0,bc,opts);
 % catch ME
