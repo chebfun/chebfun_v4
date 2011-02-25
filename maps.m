@@ -54,8 +54,8 @@ function varargout = maps(varargin)
 %  SING type maps can be called directly in the constructor via
 %     f = chebfun('(4-x.^2).^.3',[-2 2],'singmap',[.25 .25])
 %
-% M = MAPS(F) returns a cell structure of the maps used by the chebfun F.
-% M = MAPS(D) returns the default map for the domain D.
+%  M = MAPS(F) returns a cell structure of the maps used by the chebfun F.
+%  M = MAPS(D) returns the default map for the domain D.
 %
 %  For help on the MAPS function from the MAPPING TOOLBOX, type
 %  help([fileparts(which('aitoff')),filesep 'maps'])
@@ -64,7 +64,6 @@ function varargout = maps(varargin)
 
 % Try to resolve conflicts with the mapping toolbox.
 if nargin == 1 && ischar(varargin{1}) && exist('aitoff','file')
-    mapsAllowedStr = {'namelist','idlist'};
     chebAllowedStr = {'LINEAR','UNBOUNDED','SING','KTE','STRIP','SAUSAGE', 'SLIT','SLITP', 'MPINCH'};
     if ~any(strcmpi(varargin{1},chebAllowedStr))
         try

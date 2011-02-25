@@ -21,6 +21,9 @@ if guiMode
     set(handles.fig_norm,'Visible','On');
     cla(handles.fig_sol,'reset')
     cla(handles.fig_norm,'reset')
+    handles.gui = 1;
+else
+    handles.gui = 0;
 end
 
 % Extract information from the guifile
@@ -244,12 +247,10 @@ while isempty(idx)
     idx = strfind(pdeVarName{k},'_');
 end
 timeVarName = pdeVarName{k}((idx+1):end);
-        
-guihandles{7} = allVarNames;
-guihandles{8} = {indVarName,timeVarName};
-if guiMode, guihandles{9} = handles.button_clear; else guihandles{9} = 'nogui'; end
-guihandles{10} = guifile.options.grid;
-opts.guihandles = guihandles;
+
+handles.indVarName = {indVarName,timeVarName};
+opts.handles = handles;
+
 
 % error
 % try

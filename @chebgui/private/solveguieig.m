@@ -211,6 +211,7 @@ if guiMode
     % Notify the GUI we have a solution available
     handles.hasSolution = 1;
     handles.varnames = allVarNames;
+    handles.indVarNameSpace = indVarNameSpace;
     
     ploteigenmodes(handles.guifile,handles,0,handles.fig_sol,handles.fig_norm);
     
