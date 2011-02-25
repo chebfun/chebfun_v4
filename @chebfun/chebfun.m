@@ -5,8 +5,11 @@ function f = chebfun(varargin)
 % @(x) x.^2 + 2*x +1, or a vector of numbers. For the first two, F should 
 % in most cases be "vectorized" in the sense that it may be evaluated at a 
 % column vector of points x(:) and return an output of size length(x(:)).
-% If F is a doubles array, [A1,A2,...,An], the numbers A1,...,An are used 
-% as function values at n Chebyshev points of the 2nd kind, i.e. chebpts(n).
+%
+% If F is a doubles array, A = [A1,A2,...,An]', the numbers A1,...,An are 
+% used as function values at n Chebyshev points of the 2nd kind, i.e. 
+% chebpts(n). If F is a matrix CHEBFUN(F) returns a chebfun 'quasimatrix', 
+% taking each column of F as function values in the same way as above.
 %
 % CHEBFUN(F,[A B]) specifies an interval [A B] where the function is
 % defined. A and/or B may be infinite.
@@ -252,9 +255,8 @@ if iscell(f)
     return
 end
     
-
 % Prune repeated endpoints and assign values to the imps matrix
-if f.nfuns > 1 && any(diff(f.ends) == 0)
+if numel(f) == 1 && f.nfuns > 1 && any(diff(f.ends) == 0)
     k = 1;
     while k < length(f.ends)
         if diff(f.ends(k:k+1)) == 0
@@ -271,6 +273,9 @@ end
 
 % 'Truncate' option
 if isfield(pref,'trunc')
+    if numel(f) > 1
+        error('CHEBFUN:trunc:quasi','''trunc'' flag does not support matrix input');
+    end
     c = chebpoly(f,0,pref.trunc);
     f = chebfun(chebpolyval(c),f.ends([1 end]));
 end

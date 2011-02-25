@@ -59,6 +59,16 @@ else
     map = [];
 end
 
+% Support for matrix input
+if length(ops) == 1 && isnumeric(ops{1}) && min(size(ops{1})) > 1
+    pref.domain = ends;
+    f = [];
+    for k = 1:size(ops{1},2)
+        f = [f chebfun(ops{1}(:,k),pref)];
+    end
+    return
+end
+
 ii = 0;
 while ii < length(ops)
     ii = ii + 1;
