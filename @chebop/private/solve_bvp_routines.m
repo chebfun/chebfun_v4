@@ -1,4 +1,4 @@
-function [u nrmDeltaRelvec isLin] = solve_bvp_routines(N,rhs,pref,guihandles)
+function [u nrmDeltaRelvec isLin] = solve_bvp_routines(N,rhs,pref,handles)
 % SOLVE_BVP_ROUTINES Private function of the chebop class.
 %
 % This function gets called by nonlinear backslash and solvebvp. It both
@@ -152,21 +152,21 @@ if isLin
             nrmDeltaRelvec = norm(deFun(xDom,currentGuessCell{:})-rhs);
         end
     end
-    if isempty(guihandles) && any(strcmpi(pref.display,{'iter','display'}))
+    if isempty(handles) && any(strcmpi(pref.display,{'iter','display'}))
         fprintf('Converged in one step. (Chebop is linear).\n');
-    elseif ~isempty(guihandles)
-        solve_display(pref,guihandles,'init',u);
-        solve_display(pref,guihandles,'iter',u,norm(delta),nrmDeltaRel,nrmDeltaRelvec)
-        solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,0)
+    elseif ~isempty(handles)
+        solve_display(pref,handles,'init',u);
+        solve_display(pref,handles,'iter',u,norm(delta),nrmDeltaRel,nrmDeltaRelvec)
+        solve_display(pref,handles,'final',u,[],nrmDeltaRel,0)
     end
     
     return
 end
 
 if dampedOn
-    solve_display(pref,guihandles,'initNewton',u);
+    solve_display(pref,handles,'initNewton',u);
 else
-    solve_display(pref,guihandles,'init',u);
+    solve_display(pref,handles,'init',u);
 end
 
 % Pause to show the initial guess before starting the iteration
@@ -267,17 +267,17 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     % We want a slightly different output when we do a damped Newton
     % iteration. Also, in damped Newton, we check for stagnation.
     if dampedOn
-        solve_display(pref,guihandles,'iterNewton',u,lambda*delta,nrmDeltaRel,normr,lambda)
+        solve_display(pref,handles,'iterNewton',u,lambda*delta,nrmDeltaRel,normr,lambda)
         stagCounter = checkForStagnation(stagCounter);
     else
-        solve_display(pref,guihandles,'iter',u,lambda*delta,nrmDeltaRel,normr)
+        solve_display(pref,handles,'iter',u,lambda*delta,nrmDeltaRel,normr)
     end
     
     % If the user has pressed the stop button on the GUI, we stop and
     % return the latest solution
-    if ~isempty(guihandles) && strcmpi(get(guihandles{6},'String'),'Solve')
+    if ~isempty(handles) && strcmpi(get(handles.button_solve,'String'),'Solve')
         nrmDeltaRelvec(counter+1:end) = [];
-        solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
+        solve_display(pref,handles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
         return
     end
     
@@ -286,7 +286,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
 end
 % Clear up norm vector
 nrmDeltaRelvec(counter+1:end) = [];
-solve_display(pref,guihandles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
+solve_display(pref,handles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
 
 % Issue a warning message if stagnated. Should this in output argument
 % (i.e. flag)?

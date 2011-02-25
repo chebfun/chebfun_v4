@@ -1,4 +1,4 @@
-function solve_display(pref,guihandles,phase,u,du,nrmdu,nrmres,lambda)
+function solve_display(pref,handles,phase,u,du,nrmdu,nrmres,lambda)
 
 % Utility routine for displaying iteration progress in the solve functions.
 
@@ -10,11 +10,10 @@ mode = lower(pref.display);%lower(cheboppref('display'));
 plotMode = lower(pref.plotting);%lower(cheboppref('plotting'));
 persistent fig
 persistent itercount;
-persistent iterInfo;
 
 % guiMode is equal to 1 if we are working with the chebopgui. Used as
 % control variable throughout.
-if ~isempty(guihandles)
+if ~isempty(handles)
     guiMode = 1;
 else
     guiMode = 0;
@@ -29,7 +28,7 @@ switch(phase)
                 fprintf(initString);
                 fprintf('------------------------------------------------------------\n');
             else
-                set(guihandles{3},'String', initString);
+                set(handles.iter_text,'String', initString);
             end
         end
         
@@ -38,10 +37,10 @@ switch(phase)
                 fig = figure('name','BVP solver convergence');
                 plot(u,'.-'), title('Initial guess of solution')
             else
-                axes(guihandles{1})
+                axes(handles.fig_sol)
                 plot(u,'.-'), title('Initial guess of solution')
-                xlim(guihandles{7}),
-                if length(guihandles{8})> 1, legend(guihandles{8}),end
+                xlim(handles.xLim),
+                if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
             end
         end
@@ -54,7 +53,7 @@ switch(phase)
                 fprintf(initString);
                 fprintf('---------------------------------------------------------------------------\n');
             else
-                set(guihandles{3},'String', initString);
+                set(handles.iter_text,'String', initString);
             end
         end
         
@@ -63,10 +62,10 @@ switch(phase)
                 fig = figure('name','BVP solver convergence');
                 plot(u,'.-'), title('Initial guess of solution')
             else
-                axes(guihandles{1})
+                axes(handles.fig_sol)
                 plot(u,'.-'), title('Initial guess of solution')
-                xlim(guihandles{7})
-                if length(guihandles{8})> 1, legend(guihandles{8}),end
+                xlim(handles.xLim)
+                if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
             end
         end
@@ -77,9 +76,9 @@ switch(phase)
             if ~guiMode
                 fprintf(iterString);
             else
-                currString = get(guihandles{4},'String');
-                set(guihandles{4},'String', [currString;iterString]);
-                set(guihandles{4},'Value',itercount);
+                currString = get(handles.iter_list,'String');
+                set(handles.iter_list,'String', [currString;iterString]);
+                set(handles.iter_list,'Value',itercount);
             end
         end
         if ~strcmp(plotMode,'off')
@@ -94,11 +93,11 @@ switch(phase)
                     plot(du,'.-'), title('Current correction step')
                 end
             else
-                axes(guihandles{1})
-                plot(u,'.-'), title('Current solution'), xlim(guihandles{7})
-                if length(guihandles{8})> 1, legend(guihandles{8}),end
+                axes(handles.fig_sol)
+                plot(u,'.-'), title('Current solution'), xlim(handles.xLim)
+                if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
-                axes(guihandles{2})
+                axes(handles.fig_norm)
                 if numel(du) == 1 % If we have only one function, plot update in red
                     plot(du,'r.-'), title('Current correction step')
                     if pref.grid, grid on, end
@@ -106,7 +105,7 @@ switch(phase)
                     plot(du,'.-'), title('Current correction step')
                     if pref.grid, grid on, end
                 end
-                xlim(guihandles{7})
+                xlim(handles.xLim)
             end
         end
         drawnow
@@ -117,9 +116,9 @@ switch(phase)
             if ~guiMode
                 fprintf(iterString);
             else
-                currString = get(guihandles{4},'String');
-                set(guihandles{4},'String', [currString;iterString]);
-                set(guihandles{4},'Value',itercount);
+                currString = get(handles.iter_list,'String');
+                set(handles.iter_list,'String', [currString;iterString]);
+                set(handles.iter_list,'Value',itercount);
             end
         end
         if ~strcmp(plotMode,'off')
@@ -134,11 +133,11 @@ switch(phase)
                     plot(du,'.-'), title('Current correction step')
                 end
             else
-                axes(guihandles{1})
-                plot(u,'.-'), title('Current solution'), xlim(guihandles{7})
-                if length(guihandles{8})> 1, legend(guihandles{8}),end
+                axes(handles.fig_sol)
+                plot(u,'.-'), title('Current solution'), xlim(handles.xLim)
+                if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
-                axes(guihandles{2})
+                axes(handles.fig_norm)
                 if numel(du) == 1 % If we have only one function, plot update in red
                     plot(du,'r.-'), title('Current correction step')
                     if pref.grid, grid on, end
@@ -146,12 +145,11 @@ switch(phase)
                     plot(du,'.-'), title('Current correction step')
                     if pref.grid, grid on, end
                 end
-                xlim(guihandles{7})
+                xlim(handles.xLim)
             end
         end
         drawnow
     case 'final'
-        
         if strcmp(plotMode,'on')
             if ~guiMode
                 figure(fig), clf
@@ -170,7 +168,6 @@ switch(phase)
                 end
                 if strcmp(mode,'iter')
                     figure
-                    nargin
                     normVec = lambda;
                     semilogy(normVec,'-*'),title('Norm of updates')
                     xlabel('Iteration number')
@@ -183,11 +180,11 @@ switch(phase)
                 end
                 
             else
-                axes(guihandles{1})
-                plot(u,'.-'), title('Final solution'), xlim(guihandles{7})
-                if length(guihandles{8})> 1, legend(guihandles{8}),end
+                axes(handles.fig_sol)
+                plot(u,'.-'), title('Final solution'), xlim(handles.xLim)
+                if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
-                axes(guihandles{2})
+                axes(handles.fig_norm)
                 if numel(du) == 1 % If we have only one function, plot update in red
                     plot(du,'r.-'), title('Final correction step')
                     if pref.grid, grid on, end
@@ -195,7 +192,7 @@ switch(phase)
                     plot(du,'.-'), title('Final correction step')
                     if pref.grid, grid on, end
                 end
-                xlim(guihandles{7})
+                xlim(handles.xLim)
             end
         end 
         
@@ -203,17 +200,16 @@ switch(phase)
             if ~guiMode
                 fprintf('\n');
                 if itercount == 1
-                    fprintf('%i iteration\n',itercount)
+                    fprintf('%i iteration\n',itercount);
                 else
-                    fprintf('%i iterations\n',itercount)
+                    fprintf('%i iterations\n',itercount);
                 end
-                fprintf('Final residual norm: %.2e (interior) and %.2e (boundary conditions). \n\n',nrmres)
+                fprintf('Final residual norm: %.2e (interior) and %.2e (boundary conditions). \n\n',nrmres);
             else
-                currString = get(guihandles{4},'String');
+                currString = get(handles.iter_list,'String');
                 if numel(nrmres) == 1
-                    finalString2 = sprintf('Linear equation detected. Converged in one step.',nrmres);
-                    finalString3 = '';
-                    set(guihandles{4},'String',{finalString2});
+                    finalString2 = sprintf('Linear equation detected. Converged in one step.');
+                    set(handles.iter_list,'String',{finalString2});
                     return
                 elseif itercount == 1
 %                     finalString = sprintf('%i iteration.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
@@ -223,8 +219,8 @@ switch(phase)
                     finalString2 = sprintf('Final residual norm: %.2e (interior)',nrmres(1));
                     finalString3 = sprintf('and %.2e (boundary conditions).',nrmres(2));
                 end
-                set(guihandles{4},'String',{currString,finalString2,finalString3});
-                set(guihandles{4},'Value',get(guihandles{4},'Value')+2);
+                set(handles.iter_list,'String',{currString,finalString2,finalString3});
+                set(handles.iter_list,'Value',get(handles.iter_list,'Value')+2);
             end
         end
         
