@@ -1,85 +1,98 @@
 function varargout = chebguiwindow(varargin)
-%CHEBGUI Chebfun BVP and PDE GUI for solvebvp and pde15s.
-% INTRODUCTION
+%
+% INTRODUCTION TO CHEBGUI
 % 
-% Chebgui is a graphical user interface to Chebfun's capabilities
-% for solving ODEs and PDEs (ordinary and partial differential
-% equations).  More precisely, it deals with these types of
-% problems:
+% Chebgui is a graphical user interface to Chebfun's capabilities for
+% solving ODEs and PDEs (ordinary and partial differential equations) and
+% eigenvalue problems. More precisely, it deals with the following classes
+% of problems.  In all cases both single equations and systems of equations
+% can be treated, as well as integral and integro-differential equations.
 % 
-% ODE BVP (boundary-value problem): an ODE or system of ODEs on
-% an interval [a,b] with boundary conditions at both boundaries.
+% ODE BVP (boundary-value problem): an ODE or system of ODEs on an interval
+% [a,b] with boundary conditions at both boundaries.
 % 
-% ODE IVP (initial-value problem): an ODE or system of ODEs on an
-% interval [a,b] with boundary conditions at just one boundary.
-% (However, for complicated IVPs like the Lorenz equations, other
-% more specialized methods will be much more effective.)
+% ODE IVP (initial-value problem): an ODE or system of ODEs on an interval
+% [a,b] with boundary conditions at just one boundary. (However, for
+% complicated IVPs like the Lorenz equations, other methods such as
+% chebfun/ode45 will be much more effective.)
+%
+% ODE EIGENVALUE PROBLEM: a differential or integral operator or system of
+% operators on an interval [a,b] with homogeneous boundary conditions,
+% where we want to compute one or more eigenvalues and eigenfunctions.
+% Generalized eigenvalue problems L*u = lambda*M*u are also treated.
 % 
-% PDE BVP: a time-dependent problem of the form u_t = N(u,x),
-% where N is a linear or nonlinear differential operator.
+% PDE BVP: a time-dependent problem of the form u_t = N(u,x), where N is a
+% linear or nonlinear differential operator.
 % 
-% For ODEs, Chebgui assumes that the independent variable, which
-% varies over the interval [a,b], is either x or t, and that
-% the dependent variable(s) have name(s) different from x and t.
+% For ODEs, Chebgui assumes that the independent variable, which varies
+% over the interval [a,b], is either x or t, and that the dependent
+% variable(s) have name(s) different from x and t.
+%
+% For eigenvalue problems, Chebgui assumes that the eigenvalue is called
+% lambda or lam or l.
 % 
-% For PDEs, Chebgui assumes that the space variable, on [a,b],
-% is x, and that the time variable, which ranges over an interval
-% [t1,t2] is t.
+% For PDEs, Chebgui assumes that the space variable on [a,b] is x and that
+% the time variable, which ranges over a span t1:dt:t2 is t.
 % 
-% Here's a three-sentence sketch of how the solutions are
-% computed.  Both types of ODE problems are solved by Chebfun's
-% automated Chebyshev spectral methods underlying the Chebfun
-% commands <backslash> and SOLVEBVP.  The discretizations
-% involved will be described in a forthcoming paper by Driscoll
-% and Hale, and the Newton and damped Newton iterations used to
-% handle nonlinearity will be described in a forthcoming paper
-% by Birkisson and Driscoll.  The PDE problems are solved by
+% Here is a three-sentence sketch of how the solutions are computed.  The
+% ODE and eigenvalue problems are solved by Chebfun's automated Chebyshev
+% spectral methods underlying the Chebfun commands <backslash> and
+% SOLVEBVP.  The discretizations involved will be described in a
+% forthcoming paper by Driscoll and Hale, and the Newton and damped Newton
+% iterations used to handle nonlinearity will be described in a forthcoming
+% paper by Birkisson and Driscoll.  The PDE problems are solved by
 % Chebfun's PDE15S method, due to Hale, which is based on spectral
 % discretization in x coupled with Matlab's ODE15S solution in t.
 % 
-% To use Chebgui, the simplest method is to type chebgui at
-% the Matlab prompt.  The GUI will appear with a demo already
-% loaded and ready to run; you can get its solution by pressing
-% the green SOLVE button.  To try other preloaded examples, open
-% the DEMOS menu at the top.  To input your own example on the
-% screen, change the windows in ways which we hope are obvious.
-% Inputs are vectorized, so x*u and x.*u are equivalent, for
-% example.  Derivatives are indicated by single or double primes,
-% so a second derivative is u'' or u".
+% To use Chebgui, the simplest method is to type chebgui at the Matlab
+% prompt.  The GUI will appear with a demo already loaded and ready to run;
+% you can get its solution by pressing the green SOLVE button.  To try
+% other preloaded examples, open the DEMOS menu at the top.  To input your
+% own example on the screen, change the windows in ways which we hope are
+% obvious. Inputs are vectorized, so x*u and x.*u are equivalent, for
+% example.  Derivatives are indicated by single or double primes, so a
+% second derivative is u'' or u".
 % 
 % The GUI allows various types of syntax for describing the differential
 % equation and boundary conditions of problems. The differential equations
-% can either be on anonymous function form, e.g.
+% can either be in anonymous function form, e.g.
 %
 %   @(u) diff(u,2)+x.*sin(u)
 %
 % or a "natural syntax form", e.g.
+%
 %   u''+x.*sin(u)
+%
+% The first format gives extra flexibility, e.g. for specifying an
+% integral operator with the help of CUMSUM.
 % 
-% Boundary conditions can be on either of these two forms, but furthermore,
+% Boundary conditions can be in either of these two forms, or alternatively
 % one can specify homogeneous Dirichlet or Neumann conditions simply by
-% typing 'dirichlet' or 'neumann' in the relevant fields.
+% typing 'dirichlet' or 'neumann' in the relevant fields.  Eigenvalue
+% problems can be specified by equations like
 %
-% The GUI supports system of coupled equations, where the problem can
-% either be set up on quasimatrix form, e.g.
+%   -u" + x^2*u = lambda*u
 %
-%   @(u) diff(u(:,1))+sin(u(:,2))
-%   @(u) cos(u(:,1))+diff(u(:,2))
+% The GUI supports systems of coupled equations, where the problem can most
+% easily be set up with a format like
 %
-% or on multivariable form, e.g.
+%   u' + sin(v) = u+v
+%   cos(u) + v' = 0
 %
-%   u'+sin(v)
-%   cos(u)+v'
-% 
-% Finally, the most valuable Chebgui capability of all is
-% Export-to-M-file in the FILE -> EXPORT menu.  With this feature,
-% you can turn an ODE or PDE solution from the GUI into an M-file
-% in standard Chebfun syntax.  This is a great starting point
-% for more serious explorations.
+% or
+%
+%   u" = lambda*v
+%   v" = lambda*(u+u')
+%
+% Finally, the most valuable Chebgui capability of all is "Export to m-file
+% button".  With this feature, you can turn an ODE or PDE solution from the
+% GUI into an M-file in standard Chebfun syntax.  This is a great starting
+% point for more serious explorations.
 %
 % See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
 %
-% See also chebop/solvebvp, chebfun/pde15s
+% See also chebop/solvebvp, chebop/eigs, chebfun/pde15s, chebfun/ode45,
+% chebfun/ode113, chebfun/ode15s, chebfun/bvp4c, chebfun/bvp5c.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
