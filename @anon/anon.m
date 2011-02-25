@@ -42,7 +42,7 @@ if maxdepth % If maxdepth == 0, AD is turned off
         for vararginCounter = 1:length(varargin{3})
             currVar = varargin{3}{vararginCounter};
             if isa(currVar,'chebfun')
-                varDepth = getdepth(currVar);
+                varDepth = get(currVar,'depth');
                 if varDepth > currdepth
                     currdepth = varDepth;
                 end

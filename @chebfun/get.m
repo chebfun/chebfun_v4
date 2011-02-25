@@ -51,6 +51,8 @@ switch propName
         val = f(1).trans;
     case {'jacobian','jac'}
         val = f.jacobian;
+    case 'depth'
+        val = getdepth(f.jacobian);
     otherwise
         error('CHEBFUN:get:propnam',[propName,' is not a valid chebfun property.'])
 end
