@@ -16,7 +16,7 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.button_pde,'Value',0)
     set(handles.button_eig,'Value',0)
     
-    set(handles.text_DEs,'String','Differential equations(s)')
+    set(handles.text_DEs,'String','Differential equation(s)')
     set(handles.input_GUESS,'visible','On')
     set(handles.text_initial,'Strin','Initial guess')
     set(handles.toggle_useLatest,'Visible','on')
@@ -65,7 +65,7 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.iter_list,'Visible','off')
     set(handles.iter_text,'Visible','off')
     set(handles.text_initial,'String','Initial condition')
-    set(handles.text_DEs,'String','Differential equations(s)')
+    set(handles.text_DEs,'String','Differential equation(s)')
     
     pdeplotopts(handles,1)
     
