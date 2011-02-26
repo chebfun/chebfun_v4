@@ -196,8 +196,8 @@ w = u + diff(v);
 dvdu = diff(v,u);
 
 %%
-% The result dvdu is a linop, Chebfun's internal representation of a linear
-% operator as briefly mentioned in Chapter 7.
+% The result dvdu is a linear chebop of the kind discussed in
+% Chapter 7.
 % For example, dvdu*x is 3x^4 times x, or 3x^5:
 plot(dvdu*x,LW,lw)
 
@@ -233,7 +233,15 @@ norm(dwdu*x - (x+15*x.^4))
 % All these AD calculations are built into Chebfun's diff(f,g) command,
 % making available in principle the linear operator representing the
 % Jacobian (Frechet derivative) of any chebfun with respect to any other
-% chebfun.  We now look at how AD enables Chebfun users
+% chebfun.  We use use the overload "spy" command to see at a glance that the
+% first of our Frechet derivaties is a multiplier operator while the
+% others are non-diagonal:
+subplot(1,3,1), spy(dvdu), title dvdu
+subplot(1,3,2), spy(dwdv), title dwdv
+subplot(1,3,3), spy(dwdu), title dwdu
+
+%%
+% We now look at how AD enables Chebfun users
 % to solve nonlinear ODE problems with backslash, just like the
 % linear ones solved in Chapter 7.
 
@@ -248,7 +256,8 @@ L.op = @(x,u) 0.0001*diff(u,2) + x.*u;
 % We could then solve a BVP:
 L.lbc = 0;
 L.rbc = 1;
-u = L\0; plot(u,'m',LW,lw)
+u = L\0;
+clf, plot(u,'m',LW,lw)
 %%
 % What's going on in such a calculation is that L is a prescription for
 % constructing matrices of arbitrary dimensions which are spectral

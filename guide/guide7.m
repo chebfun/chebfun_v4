@@ -342,7 +342,7 @@ end
 % We can solve the problem like this:
 L = chebop(0,10*pi);
 L.op = @(x,u,v) [diff(u)-v, diff(v)+u];
-L.lbc = @(u,v) [u-1;v];
+L.lbc = @(u,v) [u-1,v];
 rhs = [0, 0];
 U = L\rhs;
 
