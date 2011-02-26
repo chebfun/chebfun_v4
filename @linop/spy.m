@@ -29,7 +29,7 @@ for j = 1:A.blocksize(1)
             NN = N*(numel(ends)-1);
             Ajk = Amat((j-1)*NN+(1:NN),(k-1)*NN+(1:NN));
             if isdiag(Ajk)
-                plot(ends([end 1])+(k-1)*de,ends([1 end])-(j-1)*de,LW,lw,C,c);
+                plot(ends([end 1])+(k-1)*de,-ends([end 1])-(j-1)*de,LW,lw,C,c);
             else
                 for l = 1:numel(ends)-1
                     fill(ends([l+1 l l l+1])+(k-1)*de,-ends([l+1 l+1 l l])-(j-1)*de,c,EC,c);
@@ -39,18 +39,17 @@ for j = 1:A.blocksize(1)
     end
 end
 
-allends = [ends repmat([ends(1)+eps ends(2:end)],1,A.blocksize(1)-1)];
-tmp = repmat([0:A.blocksize(1)-1]*de,numel(ends),1);
-allends = unique(allends + [tmp(:)]');
+% allends = [ends repmat([ends(1)+eps ends(2:end)],1,A.blocksize(1)-1)];
+% tmp = repmat([0:A.blocksize(1)-1]*de,numel(ends),1);
+% allends = unique(allends + [tmp(:)]');
+% set(gca,'xTick',allends)
+% set(gca,'yTick',-allends(end:-1:1))
+% set(gca,'xTicklabel', ends )
+% set(gca,'yTicklabel', ends )
+% set(gca,'yTicklabel',str2num(get(gca,'xTicklabel')))
 
-set(gca,'xTick',allends)
-set(gca,'yTick',-allends(end:-1:1))
-set(gca,'xTicklabel', ends )
-set(gca,'yTicklabel', ends )
-set(gca,'yTicklabel',str2num(get(gca,'xTicklabel')))
-
-[Amat,Bmat] = feval(A,N,'bc');
-   
+set(gca,'xTick',[])
+set(gca,'yTick',[])
 
 if ~ish, hold off, axis equal, axis tight, end
 
