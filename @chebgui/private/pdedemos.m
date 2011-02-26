@@ -7,7 +7,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 11;
+numberOfExamples = 13;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -63,7 +63,7 @@ switch exampleNumber
         init = 'u = -1+2*(exp(-35*(x+2)^2)+exp(-11*x^2)+exp(-7*(x-2)^2))';
         tol = '1e-6'; plotting = 'on';
         name = 'Allen-Cahn equation';
-        fixYaxisLower = '-1'; fixYaxisUpper = '1';
+        fixYaxisLower = '-1'; fixYaxisUpper = '1.1';
         demotype = 'scalar';
     case 4
         a = '-1'; b = '1'; t = '0:.04:5';
@@ -84,6 +84,24 @@ switch exampleNumber
         name = 'Cahn-Hilliard equation';
         demotype = 'scalar';
     case 6
+        a = '0'; b = '1000'; t = '0:.5:16';
+        DE = 'u_t = u''''+u-u^2';
+        LBC = 'u = 1'; RBC = 'u = 0';
+        init = 'u = exp(-x)';
+        tol = '1e-6'; plotting = 'on';
+        fixYaxisLower = '-1'; fixYaxisUpper = '2';
+        name = 'Fisher-KPP equation';
+        demotype = 'scalar';
+    case 7
+        a = '-1'; b = '1'; t = '0:.01772:3.544';
+        DE = 'u_t = u'''' + exp(u)';
+        LBC = 'u = 0'; RBC = 'u = 0';
+        init = 'u = 0';
+        tol = '1e-6'; plotting = 'on';
+        fixYaxisLower = '0'; fixYaxisUpper = '8';
+        name = 'Frank-Kamenetskii blowup equation';
+        demotype = 'scalar';
+    case 8
         a = '-4'; b = '4'; t = '0:.01:1.5';
         DE = 'u_t = 0.1*u''''';
         LBC = 'dirichlet'; RBC = 'dirichlet';
@@ -92,7 +110,7 @@ switch exampleNumber
         fixYaxisLower = '-3'; fixYaxisUpper = '3';
         name = 'Heat equation';
         demotype = 'scalar';
-    case 7
+    case 9
         a = '-1'; b = '1'; t = '0:.1:4';
         DE = {'u_t = .02*u" + cumsum(u)*sum(u)'};
         LBC = {'dirichlet'};
@@ -102,7 +120,7 @@ switch exampleNumber
         name = 'Integro-differential equation';
         fixYaxisLower = '0'; fixYaxisUpper = '1.4';
         demotype = 'scalar';
-    case 8
+    case 10
         a = '-1'; b = '1'; t = '0:.01:2';
         DE = 'u_t = u*u'' - u" - 0.006*u""';
         LBC = {'u = 1','u'' = 2'}; RBC = {'u = 1','u'' = 2'};
@@ -111,7 +129,7 @@ switch exampleNumber
         fixYaxisLower = '-30'; fixYaxisUpper = '30';
         name = 'Kuramoto-Sivashinsky equation';
         demotype = 'scalar';
-    case 9
+    case 11
         a = '-1'; b = '1'; t = '0:.1:3';
         DE = {'u_t = 0.1*u" - 100*u*v';'v_t = .2*v" - 100*u*v';'w_t = 0.001*w" + 200*u*v'};
         LBC = {'neumann'}; RBC = {'neumann'};
@@ -120,7 +138,7 @@ switch exampleNumber
         fixYaxisLower = '0'; fixYaxisUpper = '2.2';
         name = 'Diffusion and reaction of three chemicals';
         demotype = 'system';
-    case 10
+    case 12
         a = '-1'; b = '1';
         t = '0:.1:2';
         DE = {'u_t = u" - v' ; 'v" - u = 0'};
@@ -131,7 +149,7 @@ switch exampleNumber
         fixYaxisLower = '0.5'; fixYaxisUpper = '1';
         name = 'Coupled PDE-BVP';
         demotype = 'system';
-    case 11
+    case 13
         a = '-2'; b = '2';
         t = '0:.1:10';
         DE = {'u_t = v''','v_t = u'''};
