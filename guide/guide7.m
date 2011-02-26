@@ -346,10 +346,27 @@ L.lbc = @(u,v) [u-1,v];
 rhs = [0, 0];
 U = L\rhs;
 
+
 %%
 % The solution U is an "infinity-by-2" Chebfun quasimatrix with columns
 % u=U(:,1) and v=U(:,2).  Here is a plot:
 clf, plot(U)
+
+%%
+% The overloaded "spy" command helps clarify the structure of
+% this operator we just made use of:
+spy(L)
+
+%%
+% This image shows that L maps a pair of functions [u;v] to a
+% pair of functions [w;y], where the dependences of w on u and
+% y on v are global (because of the derivative) whereas the
+% dependences of w on v and y on u are local (diagonal).  Note that
+% for such interpretations we think of [u;v] and [w;y] as 2-vectors
+% oriented columnwise, but the Chebfun syntax actually builds them
+% as [u,v] and [w,y].  This is potentially confusing but was necessary
+% since [u;v] has the quite different meaning in Chebfun of a concatenation
+% of two functions into a single function on a longer interval. 
 
 %%
 % To illustrate the solution of an eigenvalue problem involving a block
@@ -374,6 +391,11 @@ eigenvalues = diag(D)
 % and take the real part to filter out rounding errors:
 eigenfunctions = real(U/1i);
 plot(eigenfunctions)
+
+%%
+% The operator in this eigenvalue problem has a simpler structure
+% than before:
+spy(L)
 
 %% 7.9 Nonlinear equations by Newton iteration
 % As mentioned at the beginning of this chapter, nonlinear differential equations are
