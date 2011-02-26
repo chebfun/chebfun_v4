@@ -53,12 +53,12 @@ set(gca,'yTick',[])
 
 if ~ish, hold off, axis equal, axis tight, end
 
-function tf = isdiag(A)
-if ~any(A-diag(diag(A)))
-    tf = true;
-else
-    tf = false;
-end
+% function tf = isdiag(A)
+% if ~any(A-diag(diag(A)))
+%     tf = true;
+% else
+%     tf = false;
+% end
 
 
 
