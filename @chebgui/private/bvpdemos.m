@@ -124,7 +124,7 @@ switch exampleNumber
         LBC = 'u = 0'; RBC = 'u = 0';
         init = 'u = 2*x*(x^2-1)*(1-2/(1+20*x^2))';
         tol = '1e-10';
-        damping = '1'; plotting = '0.1';
+        damping = '0'; plotting = '0.1';
         name = 'Carrier equation (another solution)';
         demotype = 'bvp';
     case 12
