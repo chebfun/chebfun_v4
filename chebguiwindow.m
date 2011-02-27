@@ -1,136 +1,11 @@
 function varargout = chebguiwindow(varargin)
+% CHEBGUIWINDOW Driver file for Chebfun's CHEBGUI
+%  This m-file populates and controls Chebfun's CHEBGUI.
 %
-% INTRODUCTION TO CHEBGUI
-% 
-% Chebgui is a graphical user interface to Chebfun's capabilities for
-% solving ODEs and PDEs (ordinary and partial differential equations) and
-% eigenvalue problems. More precisely, it deals with the following classes
-% of problems.  In all cases both single equations and systems of equations
-% can be treated, as well as integral and integro-differential equations.
-% 
-% ODE BVP (boundary-value problem): an ODE or system of ODEs on an interval
-% [a,b] with boundary conditions at both boundaries.
-% 
-% ODE IVP (initial-value problem): an ODE or system of ODEs on an interval
-% [a,b] with boundary conditions at just one boundary. (However, for
-% complicated IVPs like the Lorenz equations, other methods such as
-% chebfun/ode45 will be much more effective.)
-%
-% ODE EIGENVALUE PROBLEM: a differential or integral operator or system of
-% operators on an interval [a,b] with homogeneous boundary conditions,
-% where we want to compute one or more eigenvalues and eigenfunctions.
-% Generalized eigenvalue problems L*u = lambda*M*u are also treated.
-% 
-% PDE BVP: a time-dependent problem of the form u_t = N(u,x), where N is a
-% linear or nonlinear differential operator.
-% 
-% For ODEs, Chebgui assumes that the independent variable, which varies
-% over the interval [a,b], is either x or t, and that the dependent
-% variable(s) have name(s) different from x and t.
-%
-% For eigenvalue problems, Chebgui assumes that the eigenvalue is called
-% lambda or lam or l.
-% 
-% For PDEs, Chebgui assumes that the space variable on [a,b] is x and that
-% the time variable, which ranges over a span t1:dt:t2 is t.
-% 
-% Here is a three-sentence sketch of how the solutions are computed.  The
-% ODE and eigenvalue problems are solved by Chebfun's automated Chebyshev
-% spectral methods underlying the Chebfun commands <backslash> and
-% SOLVEBVP.  The discretizations involved will be described in a
-% forthcoming paper by Driscoll and Hale, and the Newton and damped Newton
-% iterations used to handle nonlinearity will be described in a forthcoming
-% paper by Birkisson and Driscoll.  The PDE problems are solved by
-% Chebfun's PDE15S method, due to Hale, which is based on spectral
-% discretization in x coupled with Matlab's ODE15S solution in t.
-% 
-% To use Chebgui, the simplest method is to type chebgui at the Matlab
-% prompt.  The GUI will appear with a demo already loaded and ready to run;
-% you can get its solution by pressing the green SOLVE button.  To try
-% other preloaded examples, open the DEMOS menu at the top.  To input your
-% own example on the screen, change the windows in ways which we hope are
-% obvious. Inputs are vectorized, so x*u and x.*u are equivalent, for
-% example.  Derivatives are indicated by single or double primes, so a
-% second derivative is u'' or u".
-% 
-% The GUI allows various types of syntax for describing the differential
-% equation and boundary conditions of problems. The differential equations
-% can either be in anonymous function form, e.g.
-%
-%   @(u) diff(u,2)+x.*sin(u)
-%
-% or a "natural syntax form", e.g.
-%
-%   u''+x.*sin(u)
-%
-% The first format gives extra flexibility, e.g. for specifying an
-% integral operator with the help of CUMSUM.
-% 
-% Boundary conditions can be in either of these two forms, or alternatively
-% one can specify homogeneous Dirichlet or Neumann conditions simply by
-% typing 'dirichlet' or 'neumann' in the relevant fields.  Eigenvalue
-% problems can be specified by equations like
-%
-%   -u" + x^2*u = lambda*u
-%
-% The GUI supports systems of coupled equations, where the problem can most
-% easily be set up with a format like
-%
-%   u' + sin(v) = u+v
-%   cos(u) + v' = 0
-%
-% or
-%
-%   u" = lambda*v
-%   v" = lambda*(u+u')
-%
-% Finally, the most valuable Chebgui capability of all is "Export to m-file
-% button".  With this feature, you can turn an ODE or PDE solution from the
-% GUI into an M-file in standard Chebfun syntax.  This is a great starting
-% point for more serious explorations.
-%
-% See http://www.maths.ox.ac.uk/chebfun for Chebfun information.
-%
-% See also chebop/solvebvp, chebop/eigs, chebfun/pde15s, chebfun/ode45,
-% chebfun/ode113, chebfun/ode15s, chebfun/bvp4c, chebfun/bvp5c.
+% See also chebgui
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
-
-
-% Matlab automatically inserts comments for every callback and create
-% functions of buttons, input fields etc. For cleaner code, we have removed
-% these comments. For reference, here are examples of what the lines looked
-% like:
-%
-% % --- Executes on button press in button_solve.
-% function button_solve_Callback(hObject, eventdata, handles)
-% % hObject    handle to button_solve (see GCBO)
-% % eventdata  reserved - to be defined in a future version of MATLAB
-% % handles    structure with handles and user data (see GUIDATA)
-% % Hint: get(hObject,'Value') returns toggle state of solve
-%
-%
-%
-% % --- Executes during object creation, after setting all properties.
-% function input_RBC_CreateFcn(hObject, eventdata, handles)
-% % hObject    handle to input_RBC (see GCBO)
-% % eventdata  reserved - to be defined in a future version of MATLAB
-% % handles    empty - handles not created until after all CreateFcns called
-%
-% % Hint: edit controls usually have a white background on Windows.
-% %       See ISPC and COMPUTER.
-%
-%
-%
-% function input_LBC_Callback(hObject, eventdata, handles)
-% % hObject    handle to input_LBC (see GCBO)
-% % eventdata  reserved - to be defined in a future version of MATLAB
-% % handles    structure with handles and user data (see GUIDATA)
-%
-% % Hints: get(hObject,'String') returns contents of input_LBC as text
-% %        str2double(get(hObject,'String')) returns contents of input_LBC as a double
-
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -894,8 +769,7 @@ function menu_help_Callback(hObject, eventdata, handles)
 
 
 function menu_openhelp_Callback(hObject, eventdata, handles)
-
-doc('chebguiwindow')
+doc('chebgui')
 
 
 % --------------------------------------------------------------------
@@ -1413,8 +1287,8 @@ function menu_about_Callback(hObject, eventdata, handles)
 aboutWindow = dialog('WindowStyle', 'normal', 'Name', 'About chebgui','Position', [500 500 200 200]);
 uicontrol(aboutWindow, ... % Text
              'Style','text', ...
-             'String', 'chebgui was developed by Ásgeir Birkisson and Nick Hale as an interface to the differential equations in Chebfun.',...
-             'position',[0 -100 200 200])
+             'String', 'Chebgui was developed by Asgeir Birkisson and Nick Hale as an interface to the differential equations in Chebfun.',...
+             'position',[0 -90 200 200])
 uicontrol(aboutWindow, ... % Close button
              'Style','pushbutton','String', 'Close','position',[65 10 75 20],'callback',@(a,b,c)delete(aboutWindow))
 
