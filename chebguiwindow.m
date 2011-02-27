@@ -148,7 +148,7 @@ if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
     try
-    gui_mainfcn(gui_State, varargin{:});
+        gui_mainfcn(gui_State, varargin{:});
     catch ME
         MEID = ME.identifier;
         if ~isempty(strfind(MEID,'Chebgui:'))
@@ -359,6 +359,7 @@ loadVariables(handles.importedVar)
 xtTemp = chebfun('x',[str2num(handles.guifile.DomLeft) ...
     str2num(handles.guifile.DomRight)]);
 % handles.init
+if ~exist('r','var'), r = xtTemp; end
 if ~exist('x','var'), x = xtTemp; end
 if ~exist('t','var'), t = xtTemp; end
 % Do something clever with multilines
@@ -387,6 +388,11 @@ end
 handles.init = init;
 axes(handles.fig_sol);
 plot(handles.init,'linewidth',2)
+if ~isempty(handles.guifile.options.fixYaxisLower)
+    ylim([str2num(handles.guifile.options.fixYaxisLower) ...
+        str2num(handles.guifile.options.fixYaxisUpper)]);
+end
+if handles.guifile.options.grid, grid on,  end
 guidata(hObject, handles);
 
 function loadVariables(importedVar)
@@ -1407,10 +1413,10 @@ function menu_about_Callback(hObject, eventdata, handles)
 aboutWindow = dialog('WindowStyle', 'normal', 'Name', 'About chebgui','Position', [500 500 200 200]);
 uicontrol(aboutWindow, ... % Text
              'Style','text', ...
-             'String', 'chebgui was developed by √Åsgeir Birkisson and Nick Hale as an interface to the differential equations in Chebfun.',...
+             'String', 'chebgui was developed by ¡sgeir Birkisson and Nick Hale as an interface to the differential equations in Chebfun.',...
              'position',[0 -100 200 200])
 uicontrol(aboutWindow, ... % Close button
-             'Style','pushbutton','String', 'OK','position',[65 10 75 20],'callback',@(a,b,c)delete(aboutWindow))
+             'Style','pushbutton','String', 'Close','position',[65 10 75 20],'callback',@(a,b,c)delete(aboutWindow))
 
 
 hPlotAxes = axes(...       % Axes for plotting the selected plot
