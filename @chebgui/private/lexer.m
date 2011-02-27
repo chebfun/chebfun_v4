@@ -12,11 +12,13 @@ function [out varNames pdeVarNames eigVarNames indVarNames] = lexer(guifile,str)
 out = [];
 % A string array containing all functions which take one argument which 
 % we are interested in differentiating
-strfun1 = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...
+strfun1 = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...     % Trigonometric functions
     'sinh', 'cosh', 'tanh', 'coth', 'sech', 'csch', ...
     'asin', 'acos', 'atan', 'acot', 'asec', 'acsc', ...
-    'asinh', 'acosh', 'atanh', 'acoth', 'asech', 'acsch', ...
-    'sqrt', 'exp', 'log','log10','sum','abs','sign');
+    'asinh', 'acosh', 'atanh', 'acoth', 'asech', 'acsch', ...  
+    'sqrt', 'exp', 'log','log10','log2',...                     % Exp, log and sqrt functions. 
+    'sum','abs','sign',...                                      % sum, abs, sign
+    'erf','erfc','erfcx','erfinv','erfcinv');                   % Error functions
 % A string array containing all functions which take two arguments which 
 % we are interested in differentiating
 strfun2 = char('airy','besselj','cumsum','diff','power');
@@ -70,32 +72,7 @@ rLoc = strcmp('r',varNames); varNames(rLoc) = [];
 rExists = sum(rLoc) > 0;
 tExists = sum(tLoc) > 0;
 xExists = sum(xLoc) > 0;
-
-
-% Return the name of the independent variable. Use x if none is found.
-% Check whether we have too many independent variables.
-if strcmp(guifile.type,'pde')
-    if (rExists+tExists+xExists) > 2
-        error('Chebgui:solve:Lexer:TooManyIndVars','Too many independent variables in input.');
-    end
-    if rExists
-        indVarNames{1} = 'r';
-    elseif xExists
-        indVarNames{1} = 'x';
-    end
-else
-    if (rExists+tExists+xExists) > 1
-        error('Chebgui:solve:Lexer:TooManyIndVars','Too many independent variables in input.');
-    end
-    if rExists
-        indVarNames{1} = 'r';
-    elseif tExists
-        indVarNames{1} = 't';
-    elseif xExists
-        indVarNames{1} = 'x';
-    end        
-end
-    
+  
 
 % Replace with lines below to return empty indVarName if no variable appear
 % in the problem.
@@ -263,6 +240,22 @@ while ~strcmp(str,'$')
     str(1:expr_end) = '';       %  Throw away from string what we have already scanned
 end
 out = [out; {'', '$'}];
+
+% Return the name of the independent variable. Use x if none is found.
+% Check whether we have too many independent variables.
+if strcmp(guifile.type,'pde') && (rExists+tExists+xExists) > 2
+        error('Chebgui:solve:Lexer:TooManyIndVars','Too many independent variables in input.');
+elseif (rExists+tExists+xExists) > 1 % Must be in BVP or EIG mode
+        error('Chebgui:solve:Lexer:TooManyIndVars','Too many independent variables in input.');     
+end
+
+if rExists
+    indVarNames{1} = 'r';
+elseif tExists
+    indVarNames{1} = 't';
+elseif xExists
+    indVarNames{1} = 'x';
+end
 
 if strcmp(guifile.type,'pde')
     indVarNames{2} = pdeSubScript;

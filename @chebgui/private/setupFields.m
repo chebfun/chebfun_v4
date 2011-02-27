@@ -179,20 +179,13 @@ convertBCtoAnon  = 0;
 % x = xt; t = xt;
 if ~isempty(strfind(input,'@')) % User supplied anon. function
     % Find the name of the independent variable (which we assume to be
-    % either x or t)
+    % either r, x or t)
     
-    varNames = symvar(input);
-    xLoc = strcmp('x',varNames); varNames(xLoc) = [];
-    tLoc = strcmp('t',varNames); varNames(tLoc) = [];
+    firstRPloc = strfind(input,')');
+    trimmedInput = input(firstRPloc+1:end);
     
-    % Return the name of the independent variable. Use x if none is found
-    if sum(tLoc)
-        indVarName = 't';
-    else
-        indVarName = 'x';
-    end
+    [field indVarName varNames pdeVarNames] = convertToAnon(guifile,trimmedInput);
     
-    field = input;
     return
 elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
     bcNum = str2num(input);

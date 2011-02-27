@@ -26,28 +26,67 @@ deRHSInput = 'u_t';
 initInput = guifile.init;
 tt = guifile.timedomain;
 
-xName = 'x';
-tName = 't';
-
-
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
 if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
 if isa(deRHSInput,'char'), deRHSInput = cellstr(deRHSInput); end
+if isa(initInput,'char'), initInput = cellstr(initInput); end
 
 % deRHSInput = cellstr(repmat('0',numel(deInput),1));
 lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
 rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
+initRHSInput = cellstr(repmat('0',numel(initInput),1));
 
 % [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
-[deString allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarNameDE pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
 if ~any(pdeflag)
     error('CHEBFUN:chebpde:notapde',['Input does not appear to be a PDE, ', ...
         'or at least is not a supported type.']);
 end
 
+% Obtain the independent variable name appearing in the initial condition
+if ~isempty(initInput{1})
+    [initString ignored indVarNameInit] = setupFields(guifile,initInput,initRHSInput,'BC',allVarString);
+else
+    indVarNameInit = {''};
+end
+
+% Make sure we don't have a disrepency in indVarNames. Create a new
+% variable indVarName which contains both independent variable, the first
+% entry corresponds to space, the second to time.
+if ~isempty(indVarNameInit{1}) && ~isempty(indVarNameDE{1})
+    if strcmp(indVarNameDE{1},indVarNameInit{1})
+        indVarName{1} = indVarNameDE{1};
+    else
+        error('Chebgui:SolveGUIpde','Independent variable names do not agree')
+    end
+elseif ~isempty(indVarNameInit{1}) && isempty(indVarNameDE{1})
+    indVarName{1} = indVarNameInit{1};
+elseif isempty(indVarNameInit{1}) && ~isempty(indVarNameDE{1})
+    indVarName{1} = indVarNameDE{1};
+else
+    indVarName{1} = 'x'; % Default value
+end
+
+if ~isempty(indVarNameDE{2})
+    indVarName{2} = indVarNameDE{2}; % This should never be empty for a PDE though.
+else
+    indVarName{2} = 't'; % Default value
+end
+
+if strcmp(indVarName{1},indVarName{2})
+     error('Chebgui:SolveGUIpde','The same variable appears to be used as space and time variable');
+end
+
+% Create a string with the variables used in the problem
+variableString = [',',indVarName{2},',',indVarName{1},','];
+
+xName = indVarName{1};
+tName = indVarName{2};
+
 idx = strfind(deString, ')');
+
 
 % Support for sum and cumsum
 sops = {''};
@@ -67,7 +106,7 @@ else
     periodic = false;
 end
 
-deString = [deString(1:idx(1)-1), ',t,x,diff',sops{:},deString(idx(1):end)];
+deString = [deString(1:idx(1)-1), variableString,'diff',sops{:},deString(idx(1):end)];
 
 % Print the PDE
 fprintf(fid,'%% Solving\n');
@@ -139,7 +178,7 @@ if ~isempty(lbcInput{1})
         else
             sops = {''};
         end
-        lbcString = [lbcString(1:idx(1)-1), ',t,x,diff', sops{:},lbcString(idx(1):end)];
+        lbcString = [lbcString(1:idx(1)-1), variableString,'diff', sops{:},lbcString(idx(1):end)];
 %             lbcString = strrep(lbcString,'diff','D');
     end
     fprintf(fid,'bc.left = %s;\n',lbcString);
@@ -157,7 +196,7 @@ if ~isempty(rbcInput{1})
         else
             sops = {''};
         end
-        rbcString = [rbcString(1:idx(1)-1), ',t,x,diff',sops{:},rbcString(idx(1):end)];
+        rbcString = [rbcString(1:idx(1)-1), variableString,'diff',sops{:},rbcString(idx(1):end)];
 %             rbcString = strrep(rbcString,'diff','D');
     end
     fprintf(fid,'bc.right = %s;\n',rbcString);
@@ -176,17 +215,18 @@ else
     fprintf(fid,'%% and of the initial condition.\n');
 end
 if numel(deInput)==1 && ~ischar(deInput)
-    % Get the strings of the dependant variable.
-    idx = strfind(deString,')');
-    tmp = deString(3:idx(1)-10);
-    idx = strfind(tmp,',');
-    if isempty(idx)
-        s = tmp;
-    else
-        s = tmp(1:idx(1)-1);
-    end 
-    sol = s; sol0 = [sol '0'];
-    findx = strfind(initInput,xName);
+    % Get the strings of the dependant variable. Just use allVarNames.
+%     idx = strfind(deString,')');
+%     tmp = deString(3:idx(1)-10);
+%     idx = strfind(tmp,',');
+%     if isempty(idx)
+%         s = tmp;
+%     else
+%         s = tmp(1:idx(1)-1);
+%     end 
+    s = allVarNames;
+    sol = s{1}; sol0 = [sol '0'];
+    findx = strfind(initInput{1},xName);
     initInput = vectorize(char(initInput));
     equalSign = find(initInput=='=',1,'last');
     if ~isempty(equalSign)
@@ -198,22 +238,22 @@ if numel(deInput)==1 && ~ischar(deInput)
         fprintf(fid,'%s = %s;\n',sol0,vectorize(initInput));
     end        
 else
-    % Get the strings of the dependant variables.
-    idx = strfind(deString,')');
-    tmp = deString(3:idx(1)-10);
-    idx = strfind(tmp,',');
-    if isempty(idx)
-        s = {tmp};
-    else
-        s = cell(1,length(idx)+1);
-        s{1} = tmp(1:idx(1)-1);
-        for k = 2:length(idx)
-            s{k} = tmp(idx(k-1)+1:idx(k)-1);
-        end
-        if isempty(k), k = 1; end
-        s{k+1} = tmp(idx(k)+1:end);
-    end    
-    
+    % Get the strings of the dependant variables. Just use allVarNames
+%     idx = strfind(deString,')');
+%     tmp = deString(3:idx(1)-10);
+%     idx = strfind(tmp,',');
+%     if isempty(idx)
+%         s = {tmp};
+%     else
+%         s = cell(1,length(idx)+1);
+%         s{1} = tmp(1:idx(1)-1);
+%         for k = 2:length(idx)
+%             s{k} = tmp(idx(k-1)+1:idx(k)-1);
+%         end
+%         if isempty(k), k = 1; end
+%         s{k+1} = tmp(idx(k)+1:end);
+%     end    
+    s = allVarNames;
     % To deal with 'u = ...' etc in intial guesses
     order = []; guesses = []; inits = [];
     % Match LHS of = with variables in allVarNa
@@ -323,7 +363,7 @@ else
 end
 
 fprintf(fid,['\n%% Solve the problem using pde15s.\n']);
-fprintf(fid,'[t %s] = pde15s(pdefun,t,%s,bc,opts);\n',sol,sol0);
+fprintf(fid,'[%s %s] = pde15s(pdefun,%s,%s,bc,opts);\n',indVarName{2},sol,indVarName{2},sol0);
 
 % Conver sol to variable names
 if numel(deInput) > 1
@@ -337,7 +377,7 @@ end
 if numel(deInput) == 1
     fprintf(fid,'\n%% Create plot of the solution.\n');
 %     fprintf(fid,'surf(%s,t,''facecolor'',''interp'')\n',sol);
-    fprintf(fid,'waterfall(%s,t,''simple'',''linewidth'',2)\n',sol);
+    fprintf(fid,'waterfall(%s,%s,''simple'',''linewidth'',2)\n',sol,indVarName{2});
 else
     fprintf(fid,'\n%% Create plots of the solutions.\n');
 %     fprintf(fid,'for k = 1:numel(%s)\n',sol);
@@ -347,8 +387,8 @@ else
     M = numel(deInput);
     for k = 1:numel(deInput)
         fprintf(fid,'subplot(1,%d,%d)\n',M,k);
-        fprintf(fid,'waterfall(%s,t,''linewidth'',2)\n',s{k});
-        fprintf(fid,'xlabel(''x''), ylabel(''t''), title(''%s'')\n',s{k});
+        fprintf(fid,'waterfall(%s,%s,''linewidth'',2)\n',s{k},indVarName{2});
+        fprintf(fid,'xlabel(''%s''), ylabel(''%s''), title(''%s'')\n',indVarName{1},indVarName{2},s{k});
     end
 end
 
