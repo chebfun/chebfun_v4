@@ -1,0 +1,11 @@
+roots Rootfinding  
+opt Optimization  
+quad Quadrature  
+linalg Linear algebra  
+approx Approximation of functions  
+complex Complex variables 
+geom Geometry
+ode Ordinary differential equations  
+integro Integral and integro-differential equations  
+pde Partial differential equations 
+temp Temporary folder
