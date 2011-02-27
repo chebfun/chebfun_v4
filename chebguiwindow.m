@@ -505,11 +505,12 @@ newVal = get(hObject,'Value');
 
 if newVal % User wants to use latest solution
     set(handles.input_GUESS,'String','Using latest solution');
-    set(handles.input_GUESS,'Enable','Off');
+    set(handles.input_GUESS_cover,'Visible','On');
 else
     set(handles.input_GUESS,'String','');
     set(handles.input_GUESS,'Enable','On');
-    input_GUESS_CreateFcn(hObject, eventdata, handles)
+    set(handles.input_GUESS_cover,'Visible','Off');
+    handles.guifile.init = '';
 end
 guidata(hObject, handles);
 
@@ -1325,3 +1326,26 @@ if ~isempty(k), set(h,'fontname',flist{k(1)}), end
 axis(hPlotAxes,'off')
        
        
+
+
+
+function input_GUESS_cover_Callback(hObject, eventdata, handles)
+% hObject    handle to input_GUESS_cover (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of input_GUESS_cover as text
+%        str2double(get(hObject,'String')) returns contents of input_GUESS_cover as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function input_GUESS_cover_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to input_GUESS_cover (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

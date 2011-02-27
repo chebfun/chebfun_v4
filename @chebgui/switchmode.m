@@ -18,7 +18,7 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     
     set(handles.text_DEs,'String','Differential equation(s)')
     set(handles.input_GUESS,'visible','On')
-    set(handles.text_initial,'Strin','Initial guess')
+    set(handles.text_initial,'String','Initial guess')
     set(handles.toggle_useLatest,'Visible','on')
     
     set(handles.text_timedomain,'Visible','off')
@@ -27,6 +27,12 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.button_realplot,'Visible','off')
     set(handles.button_imagplot,'Visible','off')
     set(handles.button_envelope,'Visible','off')
+    set(handles.input_GUESS_cover,'Visible','Off');
+    set(handles.toggle_useLatest,'Value',0)
+    
+    if isempty(fieldnames(handles.latest))
+        set(handles.toggle_useLatest,'Enable','off')
+    end
     
     set(handles.iter_list,'Visible','off')
     set(handles.iter_list,'String','')
@@ -71,7 +77,9 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     
     set(handles.input_GUESS,'Visible','On')
     set(handles.input_GUESS,'Enable','On')
+    set(handles.input_GUESS_cover,'Visible','Off');
     set(handles.toggle_useLatest,'Value',0)
+    set(handles.toggle_useLatest,'Enable','off')
     
     set(handles.text_timedomain,'Visible','on')
     set(handles.timedomain,'Visible','on')
@@ -111,6 +119,8 @@ else % Going into EIG mode
     % set(handles.iter_text,'Visible','on')
     set(handles.text_initial,'String','Look for')
     set(handles.input_GUESS,'visible','Off')
+    set(handles.input_GUESS_cover,'Visible','Off');
+    set(handles.toggle_useLatest,'Enable','off')
     
     set(handles.text_timedomain,'Visible','off')
     set(handles.timedomain,'Visible','off')

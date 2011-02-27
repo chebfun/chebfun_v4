@@ -293,7 +293,12 @@ solve_display(pref,handles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
 % Issue a warning message if stagnated. Should this in output argument
 % (i.e. flag)?
 if stagCounter == maxStag
-    warning('CHEBOP:Solvebvp', 'Function exited with stagnation flag.')
+    if ~isempty(handles)
+        w = warndlg('Function exited with stagnation flag.','Stagnation','modal');
+        uiwait(w)
+    else
+        warning('CHEBOP:Solvebvp', 'Function exited with stagnation flag.')
+    end
 end
 
 % Function which returns all residual functions
