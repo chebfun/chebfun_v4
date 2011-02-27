@@ -659,12 +659,16 @@ function button_solve_ButtonDownFcn(hObject, eventdata, handles)
 
 function input_DE_ButtonDownFcn(hObject, eventdata, handles)
 chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_DE');
+input_DE_Callback(hObject, eventdata, handles); % Go through the callback function
 function input_LBC_ButtonDownFcn(hObject, eventdata, handles)
 chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_LBC');
+input_LBC_Callback(hObject, eventdata, handles); % Go through the callback function
 function input_RBC_ButtonDownFcn(hObject, eventdata, handles)
 chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_RBC');
+input_RBC_Callback(hObject, eventdata, handles); % Go through the callback function
 function input_GUESS_ButtonDownFcn(hObject, eventdata, handles)
 chebguiedit('chebguiwindow', handles.chebguimainwindow,'input_GUESS');
+input_GUESS_Callback(hObject, eventdata, handles); % Go through the callback function
 
 function editfontsize_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))

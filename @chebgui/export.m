@@ -162,7 +162,6 @@ elseif strcmp(problemType,'pde')
                     % Open the new file in the editor
                     open([pathname,filename])
                 catch ME
-                    rethrow(ME)
                     error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
                 end
             end
