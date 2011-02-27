@@ -42,8 +42,8 @@ end
 if ~isempty(lambdaTreeLeft)
     if strcmp(treeCenter{2},'OP*')
         lambdaTree = treeIn;
-    % If we have a =, and lambda is on the left, we need to switch signs on
-    % the lambdaTree.
+    % If we have a =, and lambda is on the left, we need to add a unary -
+    % switch signs on the lambdaTree.
     elseif strcmp(treeCenter{2},'OP=') 
         lambdaSign = -1*lambdaSign;
         lambdaTree = lambdaTreeLeft;
@@ -54,6 +54,8 @@ end
 if ~isempty(lambdaTreeRight)
     if strcmp(treeCenter{2},'OP*')
         lambdaTree = treeIn;
+    elseif strcmp(treeCenter{2},'UN-')
+        lambdaTree= struct('center',{{'-','UN-'}},'right', lambdaTreeRight);
     % If we have a binary -, and lambda is on the right, we need to switch
     % signs on the lambdaTree. Add a unary minus at the top of the tree.
     elseif strcmp(treeCenter{2},'OP-')
