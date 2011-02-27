@@ -398,14 +398,11 @@ if get(handles.button_ode,'Value');
     end
 elseif get(handles.button_pde,'Value');
     u = handles.latest.solution;
-    % latestNorms = handles.latestNorms;
     tt = handles.latest.solutionT;
     varnames = handles.varnames;
     
-%     xLab = handles.indVarName{1};
-%     tLab = handles.indVarName{2};
-    xLab = 'x';
-    tLab = 't';
+    xLab = handles.indVarName{1};
+    tLab = handles.indVarName{2};
     
     if ~iscell(u)
         figure
@@ -464,10 +461,17 @@ elseif get(handles.button_pde,'Value');
     u = handles.latest.solution;
     tt = handles.latest.solutionT;
     
+    varnames = handles.varnames;  
+    xLab = handles.indVarName{1};
+    tLab = handles.indVarName{2};    
+    
+    titleStr = sprintf('Solution at final time, %s = %f',tLab,tt(end));
     figure
     if ~iscell(u)
         plot(u(:,end),'Linewidth',2)
-        title('Solution at final time.')
+        xlabel(xLab);
+        ylabel(varnames);
+        title(titleStr)
     else
         v = chebfun;
         for k = 1:numel(u)
@@ -475,7 +479,9 @@ elseif get(handles.button_pde,'Value');
             v(:,k) = uk(:,end);
         end
         plot(v,'Linewidth',2);
-        title('Solution at final time.')
+        xlabel(xLab);
+        legend(varnames);
+        title(titleStr)
     end
     % Turn on grid
     if handles.guifile.options.grid, grid on,  end
