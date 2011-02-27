@@ -43,7 +43,7 @@ function varargout = plot(varargin)
 % and jumpmarkers are ':' and 'x' respectively with colours chosen to match
 % the lines they correspond to, and jump values are only plotted when the
 % Chebyshev points are also plotted, unless an input 'JumpLine','S' is
-% passed. It is possibly to modify other properties of jumplines and
+% passed. It is possible to modify other properties of jumplines and
 % jumpmarkers with syntax like PLOT(F,'JumpLine',{'r','LineWidth',5}).
 % Jumplines can be suppressed with the argument 'JumpLine','none'.
 %

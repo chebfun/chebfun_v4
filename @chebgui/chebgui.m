@@ -83,10 +83,10 @@ function varargout = chebgui(varargin)
 %   u" = lambda*v
 %   v" = lambda*(u+u')
 %
-% Finally, the most valuable Chebgui capability of all is "Export to m-file
-% button".  With this feature, you can turn an ODE or PDE solution from the
-% GUI into an M-file in standard Chebfun syntax.  This is a great starting
-% point for more serious explorations.
+% Finally, the most valuable Chebgui capability of all is the "Export to
+% m-file" button.  With this feature, you can turn an ODE or PDE solution
+% from the GUI into an M-file in standard Chebfun syntax.  This is a great
+% starting point for more serious explorations.
 %
 % CHEBGUI is also the constructor for chebgui objects. For example
 %    chebg = chebgui('type','bvp','domleft','-1','domright','1', ...
