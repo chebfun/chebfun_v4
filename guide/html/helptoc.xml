@@ -1,10 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1' ?>
-<!-- $Revision: 1.1.6.1.40.1 $ $Date: 2007/08/02 17:20:57 $ -->
-
-<toc version="3.1111">
+<toc version="4.0">
 
 <tocitem target="index.html">Chebfun
-
 <tocitem target="guide1.html">Getting started with chebfuns</tocitem>
 <tocitem target="guide2.html">Integration and differentiation</tocitem>
 <tocitem target="guide3.html">Rootfinding and minima and maxima</tocitem>
