@@ -11,7 +11,7 @@ sum(sin(sin(x)));
 pass(1) = abs(ans - 1.629603118459496) < tol;
 
 % What's the maximum of sin(x)+sin(x2) over the same interval?
-max(sin(x)+sin(x.^2))
+max(sin(x)+sin(x.^2));
 pass(2) = abs(ans - 1.985446580874100) < 2*tol;
 
 % (This used to be on the web page, though no longer)

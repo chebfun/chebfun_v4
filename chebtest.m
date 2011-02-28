@@ -298,7 +298,7 @@ else
 end
 
 if all(~failed)
-  fprintf('\nAll tests passed!')
+  fprintf('\nAll tests passed!\n')
   failfun = [];
 else
   fprintf('\n%i failed and %i crashed\n',sum(failed>0),sum(failed<0))
@@ -327,7 +327,11 @@ end
 
 % Output args
 if nargout > 0
-    varargout{1} = { failfun(:).fun }; 
+    if isempty(failfun)
+        varargout{1} = [];
+    else
+        varargout{1} = { failfun(:).fun }; 
+    end
 else
     fprintf('    ');
     for k = 1:sum(abs(failed))
