@@ -113,7 +113,7 @@ if strcmp(type,'chebyshev')
         wk = half.*(-1).^((0:N)');                        % barycentric weights        
     end
 elseif strcmp(type,'arbitrary')
-    [C,~] = qr(fliplr(vander(xk)));                       % construct orth matrix
+    [C,ignored] = qr(fliplr(vander(xk)));                       % construct orth matrix
     Z = C(:,m+2:N+1).' * diag(fk) * C(:,1:n+1);           % assemble matrix
     [u,s,v] = svd(Z);                                     % svd of syst w size nx(n+1)
     beta = v(end:-1:1,end); beta(end) = beta(end)/sqrt(2);

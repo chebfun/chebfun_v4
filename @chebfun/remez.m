@@ -26,7 +26,6 @@ function varargout = remez(f,varargin)
 % [P,ERR] = REMEZ(...) and [P,Q,R_HANDLE,ERR] = REMEZ(...) also return the 
 % maximum error ERR.    
 %
-%
 % [P,ERR,STATUS] = REMEZ(...) and [P,Q,R_HANDLE,ERR,STATUS] = REMEZ(...) 
 % also return the structure array STATUS with the fields DELTA, ITER, DIFFX
 % and XK with the obtained tolerance, number of performed iterations, 
@@ -150,7 +149,7 @@ while (delta/normf > tol) && iter <maxit && diffx > 0
     if n > 0 
         % in case of rational case, obtain simultaneously the levelled
         % error and the values of the trial denominator
-       [C,~] = qr(fliplr(vander(xk)));            % orthogonal matrix wrt <,>_xk
+       [C,ignored] = qr(fliplr(vander(xk)));            % orthogonal matrix wrt <,>_xk
        ZL=C(:,m+2:N+2).'*diag(fk)*C(:,1:n+1);     % left rational interp matrix
        ZR=C(:,m+2:N+2).'*diag(sigma)*C(:,1:n+1);  % right rational interp matrix 
        [v,d] = eig(ZL,ZR);                        % solve generalize eig problem
