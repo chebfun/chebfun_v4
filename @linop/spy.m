@@ -21,18 +21,16 @@ N = 3;
 Amat = feval(A,N,'nobc');
 ish = ishold;
 
-if ~ish, cla, hold on, end
-
 for j = 1:A.blocksize(1)
     for k = 1:A.blocksize(2)
         if ~A.iszero(j,k)
             NN = N*(numel(ends)-1);
             Ajk = Amat((j-1)*NN+(1:NN),(k-1)*NN+(1:NN));
             if isdiag(Ajk)
-                plot(ends([end 1])+(k-1)*de,-ends([end 1])-(j-1)*de,LW,lw,C,c);
+                plot(ends([end 1])+(k-1)*de,-ends([end 1])-(j-1)*de,LW,lw,C,c); hold on
             else
                 for l = 1:numel(ends)-1
-                    fill(ends([l+1 l l l+1])+(k-1)*de,-ends([l+1 l+1 l l])-(j-1)*de,c,EC,c);
+                    fill(ends([l+1 l l l+1])+(k-1)*de,-ends([l+1 l+1 l l])-(j-1)*de,c,EC,c); hold on
                 end
             end
         end
