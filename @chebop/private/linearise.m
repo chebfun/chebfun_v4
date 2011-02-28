@@ -235,7 +235,8 @@ try
             end
         end
     end
-catch ME
+catch
+    ME = lasterror;
     rethrow(ME);
 end
 if nonLinFlag || any(any(nonConst)),

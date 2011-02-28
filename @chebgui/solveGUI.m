@@ -91,7 +91,8 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         else
             handles = solveguieig(guifile,handles);            
         end
-    catch ME
+    catch
+        ME = lasterror;
         MEID = ME.identifier;
         errordlg(ME.message, 'Chebgui error', 'modal');
         if ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:')) ...

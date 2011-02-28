@@ -64,7 +64,8 @@ while ~success && counter < 10
         end
         success = 1;
         counter = counter+1;
-    catch ME
+    catch
+        ME = lasterror;
         if strcmp(ME.identifier,'CHEBFUN:mtimes:dim') || strcmp(ME.identifier,'MATLAB:badsubscript')
             counter = counter + 1;
         elseif strcmp(ME.identifier,'CHEBFUN:rdivide:DivisionByZeroChebfun')

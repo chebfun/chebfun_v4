@@ -24,7 +24,8 @@ if nargout
 else
     try
         gui_mainfcn(gui_State, varargin{:});
-    catch ME
+    catch
+        ME = lasterror;
         MEID = ME.identifier;
         if ~isempty(strfind(MEID,'Chebgui:'))
             errordlg(ME.message, 'Chebgui error', 'modal');
@@ -256,7 +257,8 @@ for k = 1:numel(str)
         if ~isempty(strk)
             init = [init eval(strk)];
         end
-    catch ME
+    catch
+        ME = lasterror;
         error('Chebgui:InitInput',ME.message)
     end
 end

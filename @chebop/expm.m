@@ -12,7 +12,8 @@ function E = expm(N)
 % Linearize and check whether the chebop is linear
 try
     L = linop(N,chebfun(0,N.dom));
-catch ME
+catch
+    ME = lasterror;
     if strcmp(ME.identifier,'CHEBOP:linop:nonlinear')
         error('CHEBOP:expm',['Chebop appears to be nonlinear. Currently, expm is only' ...
             '\nsupported for linear chebops.']);

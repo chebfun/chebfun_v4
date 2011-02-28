@@ -290,12 +290,13 @@ end
 
 
 
-% try
-[t u] = pde15s(DE,tt,u0,bc,opts);
-% catch ME
-%     errordlg('Error in solution process.', 'chebopbvp error', 'modal');
-%     return
-% end
+try
+    [t u] = pde15s(DE,tt,u0,bc,opts);
+catch
+    ME = lasterror;
+    errordlg('Error in solution process.', 'chebopbvp error', 'modal');
+    return
+end
 
 if ~guiMode
     varargout{1} = t;

@@ -354,7 +354,8 @@ end
         % have periodic BCs (i.e. we check for example whether u(0) = u(1),
         % u'(0) = u'(1) etc.).
         if strcmpi(bcFunLeft,'periodic')
-            diffOrderA = struct(A).difforder;
+            sA = struct(A);
+            diffOrderA =  sA.difforder;
             for orderCounter = 0:diffOrderA - 1
                 sn(2) = sn(2) + norm(feval(diff(u,orderCounter),b)-feval(diff(u,orderCounter),a))^2;
             end
