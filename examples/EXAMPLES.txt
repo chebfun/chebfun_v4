@@ -1,0 +1,26 @@
+CHEBFUN EXAMPLES
+
+The quickest way to solve your problem with Chebfun may be to find a similar problem someone 
+else has solved to use as a template. This page connects you to dozens of such templates, 
+called Chebfun Examples. Each example is an M-file producing text and/or graphical output 
+which executes, in most cases, in less than 5 seconds. You can also execute the example with 
+Matlab's PUBLISH command to get a more informative story. Type open(publish('filename')) to 
+see the quickest version on your screen or publish('filename','latex') for a better formatted 
+LaTeX version, which will appear in a directory called html. The published output is also 
+available for direct download as a pdf file.
+
+Each example is signed by the author, and we welcome new contributions. Please send drafts 
+to discuss@chebfun.org with an indication of which section they belong in.
+
+   1. Rootfinding
+   2. Optimization
+   3. Quadrature
+   4. Linear algebra
+   5. Approximation of functions
+   6. Complex variables
+   7. Geometry
+   8. Ordinary differential equations
+   9. Integral and integro-differential equations
+  10. Partial differential equations
+
+All these examples (and more) are available on the web at www.maths.ox.ac.uk/chebfun/examples.
