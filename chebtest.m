@@ -222,7 +222,7 @@ for j = 1:nr_tests
   end
   % Print the test name
   if javacheck
-      link = ['<a href="matlab: edit ' whichfun '">' fun '</a>'];
+      link = ['<a href="matlab: edit ''' whichfun '''">' fun '</a>'];
   else
       link = fun;
   end
@@ -305,7 +305,7 @@ else
   failfun = tests(failed~=0);
   if createreport
       if javacheck
-          link = ['<a href="matlab: edit ' report '">chebtest_report.txt</a>'];
+          link = ['<a href="matlab: edit ''' report '''">chebtest_report.txt</a>'];
       else
           link = report;
       end
@@ -338,7 +338,7 @@ else
         fun = failfun(k).fun;
         whichfun = failfun(k).path;
         if javacheck         
-            link = ['<a href="matlab: edit ' whichfun '">' fun '</a>    '];
+            link = ['<a href="matlab: edit ''' whichfun '''">' fun '</a>    '];
             link = strrep(link,'\','\\');  % maintain fprintf compatability in MSwin
         else
             link = fun;
