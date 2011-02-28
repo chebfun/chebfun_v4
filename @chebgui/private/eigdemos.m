@@ -7,7 +7,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 9;
+numberOfExamples = 11;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -40,6 +40,7 @@ switch exampleNumber
         sigma = '';
         name = 'A cross of eigenvalues';
         demotype = 'scalar';
+        numeigs = '12';
     case 2
         a = '0'; b = '10';
         DE = 'u" + u'' = lambda*u';
@@ -49,6 +50,15 @@ switch exampleNumber
         name = 'Advection-diffusion';
         demotype = 'scalar';
     case 3
+        a = '-1'; b = '1';
+        DE = '.002*u" + 1i*x*u = lambda*u';
+        LBC = 'u=0'; RBC = 'u=0';
+        tol = '1e-10';
+        sigma = 'lr';
+        name = 'Airy operator';
+        demotype = 'scalar';
+        numeigs = '25';
+    case 4
         a = '-8'; b = '8';
         DE = '-u'''' + 1i*x^2*u  = lambda*u';
         LBC = 'u = 0'; RBC = 'u = 0';
@@ -56,7 +66,7 @@ switch exampleNumber
         sigma = '';
         name = 'Davies complex harmonic oscillator';
         demotype = 'scalar';
-    case 4
+    case 5
         a = '-pi'; b = 'pi';
         DE = '-u'' = lambda*u';
         LBC = 'periodic'; RBC = 'periodic';
@@ -64,15 +74,17 @@ switch exampleNumber
         sigma = '';
         name = 'Derivative operator on periodic domain';
         demotype = 'scalar';
-    case 5
+        numeigs = '16';
+    case 6
         a= '-5'; b = '5';
-        DE = '-.1*u'''' + 4*(sign(x+1)-sign(x-1))*u = lambda*u';
+        DE = '-.1*u'''' + 4*(sign(x+1)-sign(x-.9))*u = lambda*u';
         LBC = 'u = 0'; RBC = 'u = 0';
         tol = '1e-12';
         sigma = '';
         name = 'Double well Schrodinger';
         demotype = 'scalar';
-    case 6
+        numeigs = '4';
+    case 7
         a = '-8'; b = '8';
         DE = '-u'''' + x^2*u = lambda*u';
         LBC = 'u = 0'; RBC = 'u = 0';
@@ -80,7 +92,7 @@ switch exampleNumber
         sigma = '';
         name = 'Harmonic oscillator';
         demotype = 'scalar';
-    case 7
+    case 8
         a = '-pi'; b = 'pi';
         DE = '-u'''' + 5*cos(2*x)*u = lambda*u';
         LBC = 'periodic'; RBC = 'periodic';
@@ -88,7 +100,7 @@ switch exampleNumber
         sigma = '';
         name = 'Mathieu equation';
         demotype = 'scalar';
-    case 8
+    case 9
         a = '-1'; b = '1';
         DE = '(u""-2*u"+u)/5772-2i*u-1i*(1-x^2)*(u"-u)=lambda*(u"-u)';
         LBC = {'u=0';'u''=0'}; RBC = {'u=0';'u''=0'}; 
@@ -97,14 +109,23 @@ switch exampleNumber
         name = 'Orr-Sommerfeld operator';
         demotype = 'scalar';
         numeigs = '50';
-    case 9
+    case 10
+        a = '0'; b = 'pi';
+        DE = {'u'' = lambda*v';'v'' = -lambda*u'};
+        LBC = 'u = 0';
+        RBC = 'u = 0';
+        tol = '1e-10';
+        sigma = '';
+        name = 'Harmonic oscillator as 1st-order system';
+        demotype = 'system';
+    case 11
         a = '-2'; b = '2';
         DE = {'u" + u*x+v = lambda*u';'v"+sin(x)*u = lambda*v'};
         LBC = {'u = 0';'v = 0'};
         RBC = {'u = 0';'v = 0'};
         tol = '1e-10';
         sigma = '';
-        name = 'System';
+        name = 'System with variable coefficients';
         demotype = 'system';
 end
 

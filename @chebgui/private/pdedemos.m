@@ -66,9 +66,9 @@ switch exampleNumber
         fixYaxisLower = '-1'; fixYaxisUpper = '1.1';
         demotype = 'scalar';
     case 4
-        a = '-1'; b = '1'; t = '0:.04:5';
+        a = '-1'; b = '1'; t = '0:.04:6';
         DE = 'u_t = -(u^2)'' + .02*u"';
-        LBC = 'dirichlet'; RBC = 'dirichlet';
+        LBC = 'periodic'; RBC = 'periodic';
         init = 'u = (1-x.^2).*exp(-30*(x+.5).^2)';
         tol = '1e-4'; plotting = 'on';
         name = 'Burgers equation';
@@ -151,12 +151,12 @@ switch exampleNumber
         demotype = 'system';
     case 13
         a = '-2'; b = '2';
-        t = '0:.1:10';
+        t = '0:.1:8';
         DE = {'u_t = v''','v_t = u'''};
         LBC = 'u = 0';
-        RBC = 'u = 0';
-        init = {'u = .25*(4-x^2)*exp(-10*x^2)','v = 0'};
-        tol = '1e-4'; plotting = 'on';
+        RBC = 'u'' = 0';
+        init = {'u = .25*(4-x^2)*exp(-4*x^2)','v = 0'};
+        tol = '1e-5'; plotting = 'on';
         fixYaxisLower = '-1.2'; fixYaxisUpper = '1.2';
         name = 'Wave equation';
         demotype = 'system';    
