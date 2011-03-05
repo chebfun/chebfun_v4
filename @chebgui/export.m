@@ -80,8 +80,7 @@ if strcmp(problemType,'bvp')
                     open([pathname,filename])
                 catch
                     ME = lasterror;
-                    errordlg('Error in exporting to .m file. Please make sure there are no syntax errors.',...
-                        'Export chebgui','modal');
+                    error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
                 end
             end
         case '.mat'
@@ -164,7 +163,7 @@ elseif strcmp(problemType,'pde')
                     open([pathname,filename])
                 catch
                     ME = lasterror;
-                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+                    error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
                 end
             end
         case '.mat'
@@ -225,7 +224,7 @@ else
                     % Open the new file in the editor
                     open([pathname,filename])
                 catch
-                    error('chebfun:BVPgui','Error in exporting to .m file. Please make sure there are no syntax errors.');
+                    error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
                 end
             end
         case '.mat'

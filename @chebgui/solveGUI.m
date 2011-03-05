@@ -94,10 +94,12 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     catch
         ME = lasterror;
         MEID = ME.identifier;
-        errordlg(ME.message, 'Chebgui error', 'modal');
-        if ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:')) ...
+        if strcmp(MEID,'LINOP:mldivide:NoConverge')
+            errordlg([cleanerrormsg(ME.message),' See "help cheboppref" for details ',...
+                'how to increase number of points.'],'Chebgui error', 'modal');
+        elseif ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:')) ...
                 ||~isempty(strfind(MEID,'Lexer:')) || ~isempty(strfind(MEID,'Chebgui:'))
-            errordlg(ME.message, 'Chebgui error', 'modal');
+            errordlg(cleanerrormsg(ME.message), 'Chebgui error', 'modal');
         elseif strcmp(MEID,'CHEBOP:solve:findguess:DivisionByZeroChebfun')
             errordlg(['Error in constructing initial guess. The the zero '...
                 'function on the domain is not a permitted initial guess '...
@@ -112,7 +114,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     set(handles.toggle_useLatest,'Enable','on');
 else   % In stop mode
     set(handles.button_clear,'String','Clear all');
-    set(handles.button_clear,'BackgroundColor',0.941*[1 1 1]);
+    set(handles.button_clear,'BackgroundColor',get(handles.button_export,'BackgroundColor'));
     set(handles.button_solve,'String','Solve');
     set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
     set(handles.menu_demos,'Enable','on');
@@ -125,7 +127,7 @@ function resetComponents(handles)
 set(handles.button_solve,'String','Solve');
 set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
 set(handles.button_clear,'String','Clear all');
-set(handles.button_clear,'BackgroundColor',0.941*[1 1 1]);
+set(handles.button_clear,'BackgroundColor',get(handles.button_export,'BackgroundColor'));
 set(handles.button_figsol,'Enable','on');
 set(handles.button_fignorm,'Enable','on');
 set(handles.menu_demos,'Enable','on');

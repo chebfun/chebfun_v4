@@ -28,8 +28,12 @@ else
         ME = lasterror;
         MEID = ME.identifier;
         if ~isempty(strfind(MEID,'Chebgui:'))
-            errordlg(ME.message, 'Chebgui error', 'modal');
+            % These are expected GUI errors. We only show the dialog
+            errordlg(cleanerrormsg(ME.message), 'Chebgui error', 'modal');
         else
+            % Show an error dialog, but also throw the error to the command
+            % window
+            errordlg(cleanerrormsg(ME.message), 'Chebgui error', 'modal');
             rethrow(ME)
         end
     end
@@ -81,10 +85,8 @@ set(handles.menu_pdefixon,'UserData',{''});
 
 % Populate the Demos menu, but only once (i.e. if user calls chebgui again,
 % don't reload the examples).
-if ~isfield(handles,'demosLoaded')
-    loaddemo_menu(handles.guifile,handles,'bvp');
-    loaddemo_menu(handles.guifile,handles,'pde');
-    loaddemo_menu(handles.guifile,handles,'eig');
+if isempty(get(handles.menu_demos,'UserData'))
+    loaddemo_menu(handles.guifile,handles);
     handles.demosLoaded = 1;
 end
 % Load the input fields
