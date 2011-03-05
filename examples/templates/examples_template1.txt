@@ -71,7 +71,7 @@ p.footer {
                 The quickest way to solve your problem with Chebfun may be to find a similar problem someone else has solved to use as a template. This page connects you to dozens of such templates, called Chebfun Examples. Each example is an M-file producing text and/or graphical output which executes, in most cases, in less than 5 seconds. You can also execute the example with Matlab's PUBLISH command to get a more informative story. Type open(publish('filename')) to see the quickest version on your screen or publish('filename','latex') for a better formatted LaTeX version, which will appear in a directory called html. The published output is also available for direct download as a pdf file.
             </p>
             <p>
-                Each example is signed by the author, and we welcome new contributions. Please send drafts to <a href="mailto:chebfun@maths.ox.ac.uk">chebfun@maths.ox.ac.uk</a> with an indication of which section they belong in.
+                Each example is signed by the author, and we welcome new contributions. Please send drafts to <a href="mailto:discuss@chebfun.org">discuss@chebfun.org</a> with an indication of which section they belong in.
             </p> 
  
             <ol> 

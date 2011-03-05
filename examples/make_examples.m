@@ -140,12 +140,9 @@ elseif nargin == 2
         if ~exist('html','dir'), mkdir('html'), end
         if ~exist('pdf','dir'), mkdir('pdf'), end
         fprintf('Uploading html.\n')
-        copyfile(fullfile(curdir,dirs,'html',[filename,'*.html']),'html');
-        pngfiles = fullfile(curdir,dirs,'html',[filename,'*.png']);
-        if exist(pngfiles,'file')
-            copyfile(pngfiles,'html');
-        end
-        copyfile(fullfile(curdir,dirs,'html',[filename,'*.shtml']),'html');
+        copyfile(fullfile(curdir,dirs,'html',[filename,'.html']),'html');
+        copyfile(fullfile(curdir,dirs,'html',[filename,'*.png']),'html');
+        copyfile(fullfile(curdir,dirs,'html',[filename,'.shtml']),'html');
         if isunix, cd html, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
         fprintf('Complete.\n')
         fprintf('Uploading pdf.\n')
@@ -224,22 +221,66 @@ if listing
     mfile = mfile(indx);
     filedir = filedir(indx);
     
-    % Print data to file
+%     % Print data to file (list version)
+%     fid = fopen('listing.html','w');
+%     fprintf(fid,'<ul class="atap" style="padding-left:15px;">\n');
+%     for k = 1:numel(mfile)
+%          if isempty(desc{k}), continue, end
+%          if strcmp(desc{k}(1),' '), continue, end
+%          origdesc{k} = capitalize(origdesc{k});
+%          mfile{k} = mfile{k}(1:end-2);
+%          newtext = sprintf(['  <li>%s  <span style="float:right"><a href="%s/" ',...
+%              'style="width:70px; display: inline-block;">%s</a>', ...
+%              '(<a href="%s/html/%s.shtml">html</a>, <a href="%s/pdf/%s.pdf">PDF</a>, ',...
+%              '<a href="%s/%s.m">M-file</a>)</span></li>\n\n'], ...
+%                     origdesc{k},filedir{k},filedir{k},filedir{k},mfile{k},filedir{k},mfile{k},filedir{k},mfile{k});
+%          fprintf(fid,newtext);
+%     end
+%     fclose(fid);
+    
+    % Print data to file (table version)
     fid = fopen('listing.html','w');
-    fprintf(fid,'<ul class="atap" style="padding-left:15px;">\n');
+    if ~shtml
+        fprintf(fid,'Here is the complete list of Chebfun Examples and the sections they belong to.<br/><br/>\n');
+    end
+    fprintf(fid,'<table style="padding-left:15px; cellpadding:2px; width:700px;">\n');
+    ms = 0;
     for k = 1:numel(mfile)
          if isempty(desc{k}), continue, end
          if strcmp(desc{k}(1),' '), continue, end
          origdesc{k} = capitalize(origdesc{k});
          mfile{k} = mfile{k}(1:end-2);
-         newtext = sprintf(['  <li>%s  <span style="float:right"><a href="%s/" ',...
-             'style="width:70px; display: inline-block;">%s</a>', ...
-             '(<a href="%s/html/%s.shtml">html</a>, <a href="%s/pdf/%s.pdf">PDF</a>, ',...
-             '<a href="%s/%s.m">M-file</a>)</span></li>\n\n'], ...
-                    origdesc{k},filedir{k},filedir{k},filedir{k},mfile{k},filedir{k},mfile{k},filedir{k},mfile{k});
+         ms = max(ms,length(origdesc{k}));
+         if shtml
+             newtext = sprintf(['  <tr>\n   <td>%s</td>\n', ...
+                 '   <td style="float:right"><a href="%s/" style="width:70px; display: inline-block;">%s</a></td>\n', ...
+                 '   <td>(<a href="%s/html/%s.shtml">html</a>, <a href="%s/pdf/%s.pdf">PDF</a>, ',...
+                 '<a href="%s/%s.m">M-file</a>)</td>\n  </tr>\n\n'], ...
+                        origdesc{k},filedir{k},filedir{k},filedir{k},mfile{k},filedir{k},mfile{k},filedir{k},mfile{k});
+         else
+             newtext = sprintf(['  <tr>\n   <td><a href="%s/%s.m">%s</a></td>\n', ...
+                 '   <td style="float:right">(<a href="%s/" style="width:70px; display: inline-block;">%s</a>)</td>\n  </tr>\n\n'], ...
+                        filedir{k},mfile{k},origdesc{k},filedir{k},filedir{k});
+         end
          fprintf(fid,newtext);
     end
+    fprintf(fid,'<table>\n');
+    fclose(fid);
     
+%     % Print data to file (.txt version)
+%     fid = fopen('LIST.txt','w');
+%     fprintf(fid,'Below is a list of all the available Chebfun Examples in this directory\nMore can be found on the web at http://www.maths.ox.ac.uk/chebfun/examples/\n\n');
+%     for k = 1:numel(mfile)
+%          if isempty(desc{k}), continue, end
+%          if strcmp(desc{k}(1),' '), continue, end
+%          origdesc{k} = capitalize(origdesc{k});
+%          ws = repmat(' ',1,ms-length(origdesc{k})+4);
+% %          mfile{k} = mfile{k}(1:end-2);
+%          newtext = sprintf('%s%s%s/%s.m\n',origdesc{k},ws,filedir{k},mfile{k});
+%          fprintf(fid,newtext);
+%     end
+%     fclose(fid);
+
     if shtml 
         curdir = pwd;
         cd(webdir)
@@ -262,6 +303,23 @@ tmp = fread(fid_et1,inf,'*char');
 fclose(fid_et1);
 % Write
 fprintf(fid0,' %s',tmp);
+
+% Sort the directories to match contents.txt
+if numel(dirs) > 1
+    fidc = fopen('contents.txt','r+');
+    titletxt = fgetl(fidc);
+    titles = [];
+    while titletxt > 0
+        titles = [titles ; titletxt(1:3)];
+        titletxt = fgetl(fidc);
+    end
+    titles = cellstr(titles);
+    if numel(dirs) == numel(titles)
+        [ignored idx1] = sort(titles);
+        [ignored idx2] = sort(idx1);
+        dirs = dirs(idx2);
+    end        
+end
 
 % Loop over the directories.
 for j = 1:numel(dirs)    
@@ -480,8 +538,13 @@ if shtml
         if exist(fullfile(curdir,dirs{j},'html'),'dir')
             copyfile(fullfile(curdir,dirs{j},'html','*.shtml'),'html');
             if html
-                copyfile(fullfile(curdir,dirs{j},'html','*.html'),'html');
-                copyfile(fullfile(curdir,dirs{j},'html','*.png'),'html');
+                if isunix
+                    eval(['!cp ',fullfile(curdir,dirs{j},'html','*.html') ' html']); 
+                    eval(['!cp ',fullfile(curdir,dirs{j},'html','*.png') ' html']);
+                else
+                    copyfile(fullfile(curdir,dirs{j},'html','*.html'),'html');
+                    copyfile(fullfile(curdir,dirs{j},'html','*.png'),'html');
+                end
             end
         if isunix
             eval(['!chmod -R 775 ','html']); 

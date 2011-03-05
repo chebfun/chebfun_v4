@@ -22,8 +22,8 @@
 % multiple variables, solving for two chebfuns u and v.
 % Here we do this, setting up the problem using anonymous functions that take
 % two chebfuns as input and return a quasimatrix of two chebfuns as output:
-[d,x,N] = domain(-1,1);
-N.op = @(u,v)[ diff(u,2) - sin(v), diff(v,2) + cos(u)];
+[N x] = chebop(-1,1);
+N.op = @(x,u,v)[ diff(u,2) - sin(v), diff(v,2) + cos(u)];
 N.lbc = @(u,v)[ u-1,  diff(v)];
 N.rbc =  @(u,v)[ v, diff(u)];
 N.guess = [0*x,0*x];
@@ -55,7 +55,7 @@ xlabel('Iteration no.',FS,10), ylabel('Norm of update',FS,10)
 %
 % (u_1)'(1) = 0,   u_2(1) = 0
 %
-[d,x,N] = domain(-1,1);
+[N x] = chebop(-1,1);
 N.op = @(u) [ diff(u(:,1),2) - sin(u(:,2)), diff(u(:,2),2) + cos(u(:,1)) ];
 N.lbc = @(u)[ u(:,1)-1, diff(u(:,2))];
 N.rbc =  @(u)[ u(:,2), diff(u(:,1))];

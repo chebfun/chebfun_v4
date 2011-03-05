@@ -23,4 +23,4 @@ pass(2) = abs(ans - 1.985446580874100) < 2*tol;
 L = chebop(-20,20);
 L.op = @(x,u) diff(u,2) - x.*u;
 L.bc = 'dirichlet';
-pass(3) = abs(feval(L\1,-5) - 1.981471116055969) < 50*tol;
+pass(3) = abs(feval(L\1,-5) - 1.981471116055969) < 500*tol;

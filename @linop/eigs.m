@@ -542,7 +542,11 @@ while ~isempty(queue)
   tenPercent = ceil(N/10);
   ii1 = 1:tenPercent; % First 10%
   ii2 = 1:(N-tenPercent); % First 90%
-  if norm( vc(ii1) ) > 0.5*norm(vc(ii2))
+  ii3 = (N-tenPercent):N; % Last 10%
+  if norm(vc(ii1)) > 0.5*norm(vc(ii2)) && norm(vc(ii2)) > 1e-8*norm(vc(ii3))
+      % Recipe: More than half of the energy in the last 90% of the Chebyshev
+      % modes is in the highest 10% modes, and the energy of the last 90% is
+      % not really small (1e-8) compared to the first 10% (i.e. is not noise).
     keeper(j) = false;
     if queue(end) < length(idx)
       m = queue(end)+1;
