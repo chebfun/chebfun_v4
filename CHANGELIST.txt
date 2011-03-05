@@ -1,0 +1,17 @@
+CHANGELIST.txt
+
+This list is intended to keep track of the critical bug updates and bug 
+fixes within minor revision updates, i.e., when the version number doesn't
+change, but the revision number does (such as 4.0.1660 being updated to 
+4.0.1666). For a list of major updates on new releases, see 
+www.maths.ox.ac.uk/chebfun/notes/
+
+4.0.1660
+Version 4.0 release
+
+4.0.1666
+Suppressed semicolon in ATAPFormats
+Fix in EIGS from problems with constant eigenvectors
+Fix to the way error messages are displayed in CHEBGUI
+Minor fixes to GUI appearance
+Tolerance loosened in webexamples chebtest
