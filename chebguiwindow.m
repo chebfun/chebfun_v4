@@ -29,11 +29,11 @@ else
         MEID = ME.identifier;
         if ~isempty(strfind(MEID,'Chebgui:'))
             % These are expected GUI errors. We only show the dialog
-            errordlg(cleanerrormsg(ME.message), 'Chebgui error', 'modal');
+            errordlg(cleanErrorMsg(ME.message), 'Chebgui error', 'modal');
         else
             % Show an error dialog, but also throw the error to the command
             % window
-            errordlg(cleanerrormsg(ME.message), 'Chebgui error', 'modal');
+            errordlg(cleanErrorMsg(ME.message), 'Chebgui error', 'modal');
             rethrow(ME)
         end
     end
@@ -1352,4 +1352,15 @@ function input_GUESS_cover_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+function msg = cleanErrorMsg(msg)
+errUsingLoc = strfind(msg,sprintf('Error using'));
+if errUsingLoc
+    % Trim everything before this
+    msg = msg(errUsingLoc:end);
+    % Look for first two line breaks (char(10))
+    idx = find(msg==char(10),1);
+    % Take only what's after the 2nd
+    msg = msg(idx+1:end);
 end
