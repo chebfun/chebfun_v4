@@ -56,8 +56,7 @@ handles.varnames = allVarNames;
 if ~any(pdeflag)
     s = ['Input does not appear to be a PDE, ', ...
         'or at least is not a supported type. Perhaps you need to switch to ''ODE'' mode?'];
-    errordlg(s, 'Chebgui error', 'modal');
-    return
+    error('Chebgui:SolveGUIpde',s);
 end
 idx = strfind(deString, ')');
 
