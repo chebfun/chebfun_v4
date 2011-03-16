@@ -122,7 +122,7 @@ if numel(n) > 1,
     error('CHEBFUN:chebpts:vecn','Vector N does not match domain D.');
 end
 
-if nargin > 1 && (all(d==[-1 1])), scale = false; end
+if nargin > 1 && (d(1)==-1 && d(2)==-2), scale = false; end
 
 if      strcmpi(kind,'1st'), kind = 1;
 elseif  strcmpi(kind,'2nd'), kind = 2; end
