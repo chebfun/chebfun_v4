@@ -174,7 +174,7 @@ end
 % Pause to show the initial guess before starting the iteration
 if strcmp(plotMode,'pause')
     pause
-else
+elseif ~strcmp(plotMode,'off')
     pause(plotMode)
 end
 
