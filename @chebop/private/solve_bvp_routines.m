@@ -128,10 +128,9 @@ stagCounter = 0;
 % If it's not, the linop will return the linearisation about the initial
 % guess (plus the identity?).
 [A bc isLin] = linearise(N,u);
-A = A & bc;
 if isLin
     % N is linear. Sweet!
-    
+    A = A & bc;
     % Do we need to worry about scaling here?
     %     subsasgn(A,struct('type','.','subs','scale'), normu);
     
@@ -163,6 +162,16 @@ if isLin
     end
     
     return
+else
+    % Need to switch the signs of bc.left.vals and bc.right.vals for
+    % nonlinear problems. Why is that??? [!!!]
+    for lCounter = 1:numel(bc.left)
+        bc.left(lCounter).val = -bc.left(lCounter).val;
+    end
+    for rCounter = 1:numel(bc.right)
+        bc.right(rCounter).val = -bc.right(rCounter).val;
+    end
+    A = A & bc;
 end
 
 if dampedOn
