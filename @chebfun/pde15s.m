@@ -762,7 +762,7 @@ function up = Diff(u,k)
     Dk = diffmat(N,k);
 
     % Find the derivative by muliplying by the kth-order differentiation matrix
-    up = c*(Dk*u);
+    up = c^k*(Dk*u);
 end 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   SUM   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
