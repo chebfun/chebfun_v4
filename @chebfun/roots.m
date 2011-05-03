@@ -21,6 +21,10 @@ function rts = roots(f,varargin)
 % ROOTS(F,'all','norecursion') and ROOTS(F,'complex','norecursion')
 % deactivates the recursion procedure to compute the roots as explained in
 % the 'all' and 'complex' modes.
+%
+% ROOTS(chebfun(0,[A,B])) will return by default a zero at the midpoint of 
+% the interval [A B], i.e., (A+B)/2. ROOTS(chebfun(0,[A,B]),'nozerofun') 
+% will prevent this.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -33,6 +37,7 @@ end
 
 % Default preferences
 rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots'));
+zerofun = 1;
 for k = 1:nargin-1
     argin = varargin{k};
     switch argin
@@ -46,6 +51,10 @@ for k = 1:nargin-1
             rootspref.polish = 1;
         case 'nopolish'
             rootspref.polish = 0;
+        case 'zerofun'
+            zerofun = 1;  
+        case 'nozerofun'
+            zerofun = 0;              
         otherwise
             if strncmpi(argin,'rec',3),       % recursion
                 rootspref.recurse = 1;
@@ -59,12 +68,20 @@ end
 
 ends = f.ends;
 hs = hscale(f);
+rs = [];
 rts = []; % All roots will be stored here
 realf = isreal(f);
 for i = 1:f.nfuns
     b = ends(i+1);
     lfun = f.funs(i);
-    rs = roots(lfun,rootspref); % Get the roots of the current fun
+    if ~zerofun
+        % Do not return midpoint of zero funs.
+        if any(lfun.vals)
+            rs = roots(lfun,rootspref); % Get the roots of the current fun
+        end
+    else
+        rs = roots(lfun,rootspref); % Get the roots of the current fun
+    end
     if ~isempty(rts)
         % Trim out roots that are repeated on either side of the breakpoint.
         while ~isempty(rs) && abs(rts(end)-rs(1))<tol*hs

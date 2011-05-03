@@ -21,11 +21,14 @@ function fout = notcol(f)
 % Not for one single chebfun 
 
 fout = sign(f);
+
 for k = 1:fout.nfuns
-    if all(fout.funs(k).vals) == 0
-        fout.funs(k) = fun(1);
+    if fout.funs(k).vals(1) == 0
+        fout.funs(k).vals = 1;
+        fout.funs(k).n = 1;
     else 
-        fout.funs(k) = fun(0);
+        fout.funs(k).vals = 0;
+        fout.funs(k).n = 1;
     end
 end
 

@@ -21,9 +21,17 @@ if isempty(f), fout = chebfun; return, end
 % If f is not real, sign returns f.
 if ~isreal(get(f,'vals'))
     fout = f; return
+% If f is zero Chebfun, then return zero.
+elseif ~any(get(f,'vals'))
+    imps = sign(f.imps(1,:));
+    idx = logical(imps); idx([1 end]) = true;
+    ends = f.ends(idx);
+    fout = chebfun(0,ends);
+    fout.imps = imps(idx);
+    return
 end
 
-r = roots(f);
+r = roots(f,'nozerofun');
 ends = f.ends;
 hs = hscale(f);
     
