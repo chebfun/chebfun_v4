@@ -1,10 +1,10 @@
 function [x,w,v] = jacpts(n,alpha,beta,varargin)
-%JACPTS  Legendre points and Gauss Quadrature Weights.
+%JACPTS  Gauss-Jacobi Abscissae and Quadrature Weights.
 %  X = JACPTS(N,ALPHA,BETA) returns the N roots of the degree N Jacobi 
 %       polynomial with parameters ALPHA and BETA (which must both be 
 %       greater than or equal -1)
 %
-%  [X,W] = JACPTS(N,ALPHA,BETA) also returns a row vector W of weights for 
+%  [X,W] = JACPTS(N,ALPHA,BETA) returns also a row vector W of weights for 
 %       Gauss-Jacobi quadrature.
 %
 %  [X,W,V] = JACPTS(N,ALPHA,BETA) returns additionally a column vector V of 

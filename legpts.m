@@ -1,8 +1,8 @@
-function [x,w,v] = legpts(n,int,meth)
+function [x w v] = legpts(n,int,meth)
 %LEGPTS  Legendre points and Gauss Quadrature Weights.
 %  LEGPTS(N) returns N Legendre points X in (-1,1).
 %
-%  [X,W] = LEGPTS(N) also returns a row vector W of weights for Gauss quadrature.
+%  [X,W] = LEGPTS(N) returns also a row vector W of weights for Gauss quadrature.
 %
 %  LEGPTS(N,D) scales the nodes and weights for the domain D. D can be
 %  either a domain object or a vector with two components. If the interval
