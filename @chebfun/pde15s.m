@@ -81,7 +81,8 @@ dohold = 0;             % hold plot?
 plotopts = '-';         % Plot Style
 J = [];                 % Supply Jacobian
 dojac = false;          % Use AD to compute Jacobian? 
-dojacbc = false;        % Use AD to figure out BC rows.
+dojacbc = true;        % Use AD to figure out BC rows.
+getorder = true;        % Use AD to get the ORDER
 
 % Parse the variable inputs
 if numel(varargin) == 2
@@ -327,12 +328,17 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Compute Jacobians %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 t0 = tt(1);
-if dojac % This only really makes sense if the rhs is linear...
+if dojac || getorder % This only really makes sense if the rhs is linear...
     Fu0 = pdefun(u0,t0,xd);
     Jac = diff(Fu0,u0); J = [];
+    
+    if getorder
+        ORDER = max(max(max(Jac.op.difforder)),ORDER);
+    end
 %     udep = any(any(isnan(feval(diff(pdefun(utmp+NaN,tt(1),xd),utmp+NaN),9))))
 %     tdep = any(any(isnan(feval(diff(pdefun(utmp,NaN,xd),utmp),9))))
 end
+
 if dojac || dojacbc
     JacL = []; JL = []; JacR = []; JR = [];
     if funflagl
@@ -351,7 +357,7 @@ if dojac || dojacbc
                 bc.left(j).op = tmpp;
             end
         else
-            bc.left(j).op = JacL(1,:);
+            bc.left(1).op = JacL(1,:);
         end
             
     end
@@ -371,7 +377,7 @@ if dojac || dojacbc
                 bc.right(j).op = tmpp;
             end
         else
-            bc.right(j).op = JacR(end,:);
+            bc.right(1).op = JacR(end,:);
         end
         
     end
