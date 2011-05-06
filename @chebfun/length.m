@@ -7,11 +7,12 @@ function len = length(f)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-if numel(f)>1
-    error('CHEBFUN:length:quasi','LENGTH does not work with CHEBFUN quasi-matrices')
+len = zeros(numel(f),1);
+
+for j = 1:numel(f);
+    for k = 1:f.nfuns
+        len(j) = len(j) + f(j).funs(k).n;
+    end
 end
 
-len=0; 
-for i = 1:f.nfuns
-    len = len + f.funs(i).n;
-end
+len = max(len);
