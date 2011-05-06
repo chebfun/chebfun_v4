@@ -290,6 +290,8 @@ if isempty(f)
     end
     
     lines = {fl, gl};
+    if ~isfinite(bot), bot = min(gl); end
+    if ~isfinite(top), top = max(gl); end
     misc = [infy bot top];
     
 elseif isempty(h) % Two quasimatrices case
