@@ -7,7 +7,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 22;
+numberOfExamples = 23;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -215,6 +215,14 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Water droplet';
         demotype = 'bvp';
+    case 23
+        a = '0'; b = '10';
+        DE = 'x*u" +2*u''+x*u^2';
+        LBC = {'u = 1','u'' = 0'}; RBC = '';
+        init = ''; tol = '1e-8';
+        damping = '1'; plotting = '0.1';
+        name = 'Lane-Emden equation';
+        demotype = 'ivp';
 end
 
 options = struct('damping',damping,'plotting',plotting);
