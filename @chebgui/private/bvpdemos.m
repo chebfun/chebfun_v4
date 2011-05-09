@@ -135,7 +135,15 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Discontinuous coefficient wave equation';
         demotype = 'bvp';
-    case 13 
+    case 13
+        a = '0'; b = '1';
+        DE = '0.02*u'''' + sign(x-.5)*u'' + u = 0';
+        LBC = 'u = 0.5'; RBC = 'u = 1';
+        init = ''; tol = '1e-10';
+        damping = '0'; plotting = '0.1';
+        name = 'Discontinuous coefficient advection-diffusion';
+        demotype = 'bvp';
+    case 14
         a = '-4'; b = '4';
         DE = 'u" + u - u^2 = 0';
         LBC = 'u = 1'; RBC = 'u = 0';
@@ -143,7 +151,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Fisher-KPP equation';
         demotype = 'bvp';
-    case 14 
+    case 15 
         a = '0'; b = '1';
         DE = 'u'''''''' = u''*u'''' - u*u''''''';
         LBC = {'u = 0','u'' = 0'}; RBC = {'u = 1','u'' = -5'};
@@ -151,7 +159,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Fourth-order equation';
         demotype = 'bvp';
-    case 15
+    case 16
         a = '-1'; b = '1';
         DE= 'u" + .87*exp(u) = 0';
         LBC = 'u = 0'; RBC = 'u = 0';
@@ -159,7 +167,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Frank-Kamenetskii blowup equation';
         demotype = 'bvp';
-    case 16
+    case 17
         a = '-1'; b = '1';
         DE = '.0005*u'''' + x*(x^2-0.5)*u'' + 3*(x^2-0.5)*u = 0';
         LBC = 'u = -2'; RBC = 'u = 4';
@@ -167,7 +175,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Interior layers (linear)';
         demotype = 'bvp';
-    case 17
+    case 18
         a = '0'; b = '1';
         DE = '.01*u" + u*u'' = u';
         LBC = 'u = -7/6'; RBC = 'u = 3/2';
@@ -175,7 +183,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Interior layer (nonlinear)';
         demotype = 'bvp';
-    case 18
+    case 19
         a = '0'; b = '10';
         DE = 'u'''' = - sin(u)';
         LBC = 'u = 2'; RBC = 'u = 2';
@@ -183,7 +191,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Nonlinear pendulum';
         demotype = 'bvp';
-    case 19
+    case 20
         a = '0'; b = '10';
         DE = 'u'''' = - sin(u)';
         LBC = 'u = 2'; RBC = 'u = 2';
@@ -191,7 +199,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Nonlinear pendulum (another solution)';
         demotype = 'bvp';
-    case 20
+    case 21
         a = '-1'; b = '1';
         DE = '0.05*u" + (u'')^2 = 1';
         LBC = 'u = 0.8'; RBC = 'u = 1.2';
@@ -199,7 +207,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.03';
         name = 'Sawtooth problem';
         demotype = 'bvp';
-    case 21
+    case 22
         a = '0'; b = '1';
         DE = 'u" = 8*sinh(8*u)';
         LBC = 'u = 0'; RBC = 'u = 1';
@@ -207,7 +215,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Troesch equation';
         demotype = 'bvp';
-    case 22
+    case 23
         a = '-1'; b = '1';
         DE = 'u" = (u-1)*(1+(u'')^2)^1.5';
         LBC = 'u = 0'; RBC = 'u = 0';
@@ -215,7 +223,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Water droplet';
         demotype = 'bvp';
-    case 23
+    case 24
         a = '0'; b = '10';
         DE = 'x*u" +2*u''+x*u^2';
         LBC = {'u = 1','u'' = 0'}; RBC = '';
