@@ -142,7 +142,7 @@ if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
             fprintf(fid,'%s',rbcInput{k});
             if k~=numel(rbcInput) && numel(rbcInput)>1, fprintf(fid,', '); end
         end
-        fprintf(fid,' at %s = % s\n',xName,b);
+        fprintf(fid,' at %s = %s\n',xName,b);
     end
     fprintf(fid,'\n');
 elseif periodic
