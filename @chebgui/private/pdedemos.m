@@ -7,7 +7,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 13;
+numberOfExamples = 14;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,

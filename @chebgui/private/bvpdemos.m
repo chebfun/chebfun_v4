@@ -7,7 +7,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 23;
+numberOfExamples = 24;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -83,6 +83,14 @@ switch exampleNumber
         name = 'Blow-up initial value problem';
         demotype = 'ivp';
     case 7
+        a = '0'; b = '10';
+        DE = 'x*u" +2*u''+x*u^2';
+        LBC = {'u = 1','u'' = 0'}; RBC = '';
+        init = ''; tol = '1e-8';
+        damping = '1'; plotting = '0.1';
+        name = 'Lane-Emden equation';
+        demotype = 'ivp';  
+    case 8
         a = '0'; b = '10*pi';
         DE = 'u" = -u';
         DErhs = '0';
@@ -91,7 +99,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Linear wave equation';
         demotype = 'ivp';
-    case 8
+    case 9
         a = '0'; b = '8';
         DE = 'u'' = sign(sin(x^2)) - u/2';
         DErhs = '0';
@@ -99,15 +107,6 @@ switch exampleNumber
         init = ''; tol = '1e-10';
         damping = '1'; plotting = '0.1';
         name = 'Linear Sawtooth IVP';
-        demotype = 'ivp';
-    case 9
-        a = '0'; b = '15';
-        DE = 'u" - (1-u^2)*u'' + u = 0';
-        DErhs = '0';
-        LBC = {'u = 2';'u'' = 0'}; RBC = '';
-        init = ''; tol = '1e-10';
-        damping = '1'; plotting = '0.1';
-        name = 'Van der Pol equation';
         demotype = 'ivp';
     case 10
         a = '-1'; b = '1';
@@ -151,7 +150,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Fisher-KPP equation';
         demotype = 'bvp';
-    case 15 
+    case 15
         a = '0'; b = '1';
         DE = 'u'''''''' = u''*u'''' - u*u''''''';
         LBC = {'u = 0','u'' = 0'}; RBC = {'u = 1','u'' = -5'};
@@ -183,6 +182,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Interior layer (nonlinear)';
         demotype = 'bvp';
+      
     case 19
         a = '0'; b = '10';
         DE = 'u'''' = - sin(u)';
@@ -216,6 +216,15 @@ switch exampleNumber
         name = 'Troesch equation';
         demotype = 'bvp';
     case 23
+        a = '0'; b = '15';
+        DE = 'u" - (1-u^2)*u'' + u = 0';
+        DErhs = '0';
+        LBC = {'u = 2';'u'' = 0'}; RBC = '';
+        init = ''; tol = '1e-10';
+        damping = '1'; plotting = '0.1';
+        name = 'Van der Pol equation';
+        demotype = 'ivp';
+    case 24
         a = '-1'; b = '1';
         DE = 'u" = (u-1)*(1+(u'')^2)^1.5';
         LBC = 'u = 0'; RBC = 'u = 0';
@@ -223,14 +232,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Water droplet';
         demotype = 'bvp';
-    case 24
-        a = '0'; b = '10';
-        DE = 'x*u" +2*u''+x*u^2';
-        LBC = {'u = 1','u'' = 0'}; RBC = '';
-        init = ''; tol = '1e-8';
-        damping = '1'; plotting = '0.1';
-        name = 'Lane-Emden equation';
-        demotype = 'ivp';
+
 end
 
 options = struct('damping',damping,'plotting',plotting);
