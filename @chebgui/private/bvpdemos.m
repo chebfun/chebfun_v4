@@ -200,6 +200,14 @@ switch exampleNumber
         name = 'Nonlinear pendulum (another solution)';
         demotype = 'bvp';
     case 21
+        a = '-5'; b = '5';
+        DE = '0.1*u'''' - u^3 = -100*(x>=0.99999)*(x<=1.00001)';
+        LBC = 'u'' = 0'; RBC = 'u = 0';
+        init = ''; tol = '1e-10';
+        damping = '0'; plotting = '0.1';
+        name = 'Piecewise forcing term';
+        demotype = 'bvp';
+    case 22
         a = '-1'; b = '1';
         DE = '0.05*u" + (u'')^2 = 1';
         LBC = 'u = 0.8'; RBC = 'u = 1.2';
@@ -207,7 +215,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.03';
         name = 'Sawtooth problem';
         demotype = 'bvp';
-    case 22
+    case 23
         a = '0'; b = '1';
         DE = 'u" = 8*sinh(8*u)';
         LBC = 'u = 0'; RBC = 'u = 1';
@@ -215,7 +223,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Troesch equation';
         demotype = 'bvp';
-    case 23
+    case 24
         a = '0'; b = '15';
         DE = 'u" - (1-u^2)*u'' + u = 0';
         DErhs = '0';
@@ -224,7 +232,7 @@ switch exampleNumber
         damping = '1'; plotting = '0.1';
         name = 'Van der Pol equation';
         demotype = 'ivp';
-    case 24
+    case 25
         a = '-1'; b = '1';
         DE = 'u" = (u-1)*(1+(u'')^2)^1.5';
         LBC = 'u = 0'; RBC = 'u = 0';

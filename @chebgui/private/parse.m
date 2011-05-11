@@ -41,8 +41,13 @@ end
 end
 
 function parseExp0()
-parseExp1();
+parseExp05();
 parseExp0pr();
+end
+
+function parseExp05()
+parseExp1();
+parseExp05pr();
 end
 
 function parseExp1()
@@ -116,7 +121,7 @@ elseif strcmp(NEXT,'FUNC2') % Functions which take two arguments
     push(newTree);
 elseif strcmp(NEXT,'LPAR')
     advance();
-    parseExp1();
+    parseExp05();
     % Check if NEXT symbol is ')' as it should be. If not, there is a
     % parenthesis imbalance in the expression and we return an error.
     m = match('RPAR');  
@@ -205,7 +210,7 @@ elseif strcmp(NEXT,'COMMA')
 elseif strcmp(NEXT,'RPAR') || strcmp(NEXT,'$') || strcmp(NEXT,'OP=')
 	% Do nothing
 else % If we don't have ) or the end symbol now something has gone wrong.
-    reportError('Parse:end','Syntax error in input fields.')
+%     reportError('Parse:end','Syntax error in input fields.')
 end
 end
 
@@ -295,7 +300,7 @@ global NEXT; global  pStack;
 if strcmp(NEXT,'OP=')
     leftArg  = pop();
     advance();
-    parseExp1();
+    parseExp05();
     rightArg = pop();
     
     pdeflag = leftArg.pdeflag || rightArg.pdeflag;
@@ -303,7 +308,30 @@ if strcmp(NEXT,'OP=')
     newTree = struct('left',leftArg,'center',{{'=', 'OP='}},...
         'right',rightArg,'pdeflag',pdeflag);
     push(newTree);
-    parseExp4pr();
+%     parseExp4pr();
+else
+	% Do nothing
+end
+end
+
+function parseExp05pr()
+global NEXT; global  pStack;
+if any(strcmp(NEXT,{'OP>','OP>=','OP<','OP<='}))
+    tempOpType = NEXT;
+    tempOpLabel = tempOpType(3:end);
+    
+    advance();
+    leftArg  = pop();
+    parseExp1();
+    rightArg = pop();
+    
+        
+    pdeflag = leftArg.pdeflag || rightArg.pdeflag;
+    
+    newTree = struct('left',leftArg,'center',{{tempOpLabel, tempOpType}},...
+        'right',rightArg,'pdeflag',pdeflag);
+    push(newTree);
+%     parseExp4pr();
 else
 	% Do nothing
 end

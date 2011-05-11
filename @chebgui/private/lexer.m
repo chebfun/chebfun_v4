@@ -19,9 +19,11 @@ strfun1 = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...     % Trigonometric
     'sqrt', 'exp', 'heaviside', 'log','log10','log2',...                     % Exp, log and sqrt functions. 
     'sum','abs','sign',...                                      % sum, abs, sign
     'erf','erfc','erfcx','erfinv','erfcinv');                   % Error functions
+
 % A string array containing all functions which take two arguments which 
 % we are interested in differentiating
-strfun2 = char('airy','besselj','cumsum','diff','power');
+strfun2 = char('airy','besselj','cumsum','diff','power',...
+        'eq','ne','ge','gt','le','lt');                             % Relational functions
 
 % Remove all whitespace
 str = strrep(str,' ','');
@@ -156,9 +158,8 @@ while ~strcmp(str,'$')
             % already vectorized the string. Thus, we don't have to treat
             % those operators here.
             expr_end = 1;
+            char2 = str(2);
             switch char1
-                case '='
-                    out = [out; {char1, 'OP='}];
                 case '+'
                     out = [out; {char1, 'OP+'}];
                 case '-'
@@ -167,6 +168,34 @@ while ~strcmp(str,'$')
                     out = [out; {char1, 'LPAR'}];
                 case ')'
                     out = [out; {char1, 'RPAR'}];
+                case '='
+                    if char2 == '='
+                        expr_end = 2;
+                        out = [out; {'==', 'OP=='}];
+                    else
+                        out = [out; {'=', 'OP='}];                      
+                    end
+                case '>'
+                    if char2 == '='
+                        expr_end = 2;
+                        out = [out; {'>=', 'OP>='}];
+                    else
+                        out = [out; {'>', 'OP>'}];                     
+                    end
+                case '<'
+                    if char2 == '='
+                        expr_end = 2;
+                        out = [out; {'<=', 'OP<='}];
+                    else
+                        out = [out; {'<', 'OP<'}];                      
+                    end
+                case '~'
+                    if char2 == '='
+                        expr_end = 2;
+                        out = [out; {'~=', 'OP~='}];
+                    else
+                        error('Chebgui:Lexer:UnsupportedOperator','Unsupported operator ~.');
+                    end
             end
         case 'deriv'
             [m s e] = regexp(str, '''+', 'match', 'start', 'end');
@@ -275,7 +304,7 @@ elseif regexp(str,'[A-Za-z_]')
     type = 'char';
 elseif str == '.' % We need to be able to distinguish between doubles and operators
     type = 'point';
-elseif regexp(str,'\.?[\=\+\-\*\/\.\^\(\)]')
+elseif regexp(str,'\.?[\=\+\-\*\/\.\^\(\)\>\<\~]')
     type = 'operator';
 elseif regexp(str,'''')
     type = 'deriv';

@@ -52,16 +52,19 @@ if ~isempty(strmatch('OP',next))
             elseif strcmp(exp1,'-0') || strcmp(exp2,'-0')
                 infixOut = '0';
             else
-                infixOut = [exp1, '.*', exp2];
+                infixOut = ['(',exp1, '.*', exp2,')'];
             end
         case 'OP/'
             if strcmp(exp2,'1')
                 infixOut = exp1;
             else
-                infixOut = [exp1, './', exp2];
+                infixOut = ['(',exp1, './', exp2,')'];
             end
         case 'OP^'
             infixOut = [exp1, '.^(', exp2 ,')'];
+        case {'OP>','OP>=','OP<','OP<='}
+            nextSym = next(3:end);
+            infixOut = ['(', exp1, nextSym, exp2, ')'];
     end
 elseif strcmp(next,'FUNC1')
     nextFun = char(prefixIn(prefCounter,1));

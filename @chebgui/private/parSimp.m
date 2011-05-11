@@ -27,6 +27,7 @@ opVec = (str=='-')+(str=='+')+2*((str=='*')+(str=='/'))+3*(str=='^');
 opLoc = find(opVec);
 % Location of characters and numbers
 charLoc = regexp(str,'[A-Za-z0-9]');
+ltgtLoc = regexp(str,'[\<\>]');
 
 % Error if the number of ( and ) are not equal
 if length(leftParLoc) ~= length(rightParLoc)
@@ -53,6 +54,16 @@ for strIndex = 1:length(str)
         parCounter = parCounter + 1;
     end
 end
+
+for k = 1:numel(ltgtLoc)
+    idx = find(pairsLoc(:,1)<ltgtLoc(k) & pairsLoc(:,2)>ltgtLoc(k));
+    [ignored idx2] = max(pairsLoc(idx,1));
+    charLoc = sort([charLoc pairsLoc(idx(idx2),:)]);
+    pairsLoc(idx(idx2),:) = [];
+    numOfPars = numOfPars - 1;
+end
+
+
 leftParsLoc = pairsLoc(:,1);
 rightParsLoc = pairsLoc(:,2);
 
