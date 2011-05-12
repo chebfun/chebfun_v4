@@ -42,6 +42,13 @@ cut = find(mindmax > 0.01*min(mindmax), 3);
 cut = cut(end) + t + k + 3;
 c(cut:end) = 0;
 
+w = ones(size(c));
+w(2:2:end) = -1;
+am1 = v(1)-sum(w.*c);
+ap1 = v(end)-sum(c);
+c1 = 0.5*(ap1+am1);
+c2 = 0.5*(ap1-am1);
+c([1 2]) = c([1 2]) + [c1 ; c2];
 v = cp2cd(c);
 
 end

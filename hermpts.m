@@ -7,7 +7,7 @@ function [x w v] = hermpts(n,varargin)
 %  HERMPTS(N,'PROB') normalises instead by the probablist's definition
 %  (with weight exp(-x.^2/2)), which gives rise to monomials.
 %
-%  [X,W] = HERMPTS(N) also returns a row vector W of weights for Gauss-Hermite
+%  [X,W] = HERMPTS(N) returns also a row vector W of weights for Gauss-Hermite
 %  quadrature. [X,W,V] = HERMPTS(N) returns in addition a column vector V
 %  of the barycentric weights corresponding to X.
 %

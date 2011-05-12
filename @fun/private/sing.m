@@ -53,14 +53,14 @@ switch pos
         powi = powi(1);
         m.for = @(y) L.for( 2*( .5*(y+1) ).^powi - 1 );
 %         m.der = @(y) L.der(1) * 2 * powi * ( .5*(y+1) ).^(powi-1);
-        m.der = @(y) L.der(1) * 1 * powi * ( .5*(y+1) ).^(powi-1);
         m.inv = @(x) 2*( .5*(L.inv(x)+1) ).^pow(1) - 1;
+        m.der = @(y) L.der(1) * 1 * powi * ( .5*(y+1) ).^(powi-1);
     case 1 % Right point singularity
         powi = powi(2);
         m.for = @(y) L.for( 1 - 2*( .5*(1-y) ).^powi);
 %         m.der = @(y) -L.der(1) * 2 * powi * ( .5*(1-y) ).^(powi-1);
-        m.der = @(y) L.der(1) * 1 * powi * ( .5*(1-y) ).^(powi-1);
         m.inv = @(x) 1 - 2*( .5*(1-L.inv(x)) ).^pow(2);
+        m.der = @(y) L.der(1) * 1 * powi * ( .5*(1-y) ).^(powi-1);
     case 0 % Both points sigularities
         if all(pow(1) == .5)
             m.for = @(y) L.for(sin(pi/2*y));

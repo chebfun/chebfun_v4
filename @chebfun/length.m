@@ -10,7 +10,7 @@ function len = length(f)
 len = zeros(numel(f),1);
 
 for j = 1:numel(f);
-    for k = 1:f.nfuns
+    for k = 1:f(j).nfuns
         len(j) = len(j) + f(j).funs(k).n;
     end
 end
