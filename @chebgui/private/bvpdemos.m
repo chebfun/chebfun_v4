@@ -201,7 +201,7 @@ switch exampleNumber
         demotype = 'bvp';
     case 21
         a = '-5'; b = '5';
-        DE = '0.1*u'''' - u^3 = -100*(x>=0.99999)*(x<=1.00001)';
+        DE = 'u'''' - 0.1*u^3 = -(x>=0.9)*(x<=1.1)';
         LBC = 'u'' = 0'; RBC = 'u = 0';
         init = ''; tol = '1e-10';
         damping = '0'; plotting = '0.1';
