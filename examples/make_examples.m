@@ -13,9 +13,11 @@ shtml = true; % This should only be used by admin for creating the
               % shtml files for the Chebfun website.
 clean = false;
 listing = false;
+exampleshtml = false;
 if nargin > 0 && ischar(dirs) 
     if strncmp(dirs,'listing',4); listing = true; end
     if strcmp(dirs,'clean'); clean = true; end
+    if strcmp(dirs,'html'); exampleshtml = true; end, 
 end
 
 webdir = '/common/htdocs/www/maintainers/hale/chebfun/';
@@ -41,7 +43,7 @@ end
 optsPDF.outputDir = 'pdf'; 
 optsPDF.catchError = false;
 
-if nargin == 0 || listing || clean
+if nargin == 0 || listing || clean || exampleshtml
     % Find all the directories (except some exclusions).
     dirlist = struct2cell(dir(fullfile(pwd)));
     dirs = {}; k = 1;
@@ -142,7 +144,9 @@ elseif nargin == 2
         fprintf('Uploading html.\n')
         copyfile(fullfile(curdir,dirs,'html',[filename,'.html']),'html');
         copyfile(fullfile(curdir,dirs,'html',[filename,'*.png']),'html');
-        copyfile(fullfile(curdir,dirs,'html',[filename,'.shtml']),'html');
+        if exist(fullfile(curdir,dirs,'html',[filename,'.shtml']),'file')
+            copyfile(fullfile(curdir,dirs,'html',[filename,'.shtml']),'html');
+        end
         if isunix, cd html, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
         fprintf('Complete.\n')
         fprintf('Uploading pdf.\n')
@@ -319,6 +323,35 @@ if numel(dirs) > 1
         [ignored idx2] = sort(idx1);
         dirs = dirs(idx2);
     end        
+end
+
+if exampleshtml
+    for j = 1:numel(dirs)    
+        % Find the title of this directory
+        fidc = fopen('contents.txt','r+');
+        titletxt = fgetl(fidc);
+        while ~strncmp(dirs{j},titletxt,3)
+            titletxt = fgetl(fidc);
+            if titletxt < 0, 
+                error('CHEBFUN:examples:dirname', ...
+                    ['Unknown directory name "',dirs{j},'. Update contents.txt.']);
+            end        
+        end
+        titletxt = titletxt(length(dirs{j})+2:end);
+        % Add entry to examples/examples.html
+        if ~strcmp(dirs{j},'temp')
+            fprintf(fid0,['<li><a href="',dirs{j},'/',dirs{j},'.html">',titletxt,'</a>\n</li>\n\n']);
+        end
+    end
+    % Open template
+    fid_et2 = fopen('templates/examples_template2.txt','r');
+    % Read data.
+    tmp = fread(fid_et2,inf,'*char');
+    fclose(fid_et2);
+    % Write
+    fprintf(fid0,' %s',tmp);
+    fclose(fid0);
+    return
 end
 
 % Loop over the directories.
