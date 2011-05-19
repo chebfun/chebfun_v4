@@ -42,7 +42,9 @@ if isempty(N.init) % No initial guess given
         error('CHEBOP:solve_bvp_routines:noGuess','Neither domain nor initial guess is given.')
     else
         dom = N.dom;
+        N.dom = domain(N.dom.ends([1 end]));
         u = findguess(N); % Initial quasimatrix guess of linear chebfuns
+        N.dom = dom;
     end
 else
     N.init = 1*N.init; % This is weird, but for some reason need. AB?
@@ -128,20 +130,31 @@ stagCounter = 0;
 % If it's not, the linop will return the linearisation about the initial
 % guess (plus the identity?).
 [A bc isLin] = linearise(N,u);
-if isLin
-    % N is linear. Sweet!
-    A = A & bc;
+if isLin % N is linear. Sweet!
+    
+    % Correct for bc vals.
+    rhs = rhs - feval(N,0*u);
+    N.op = A;
+    A = linop(N);
+    
+    uguess = u;
+    u = A\rhs;
+    delta = uguess-u;
+
     % Do we need to worry about scaling here?
     %     subsasgn(A,struct('type','.','subs','scale'), normu);
     
+    %  THIS IS NOW TAKEN CARE OF BY THE ABOVE LINOP CALL. NH&AB 03/05/2011
     % As we have linearised around the initial guess u, which if is
     % constructed automatically is designed to satisfy (inhom.) Dirichlet
     % conditions, we can't find the solution simply by solving for the
     % linop A with the original rhs. Instead, we calculate a Newton step
     % from the initial guess, and add that to the guess to obtain our
-    % solution.
-    delta = -A\deResFun;
-    u = u+delta; % Can safely take a full Newton step
+    % solution.'
+%     A = A & bc;
+%     delta = -A\deResFun;
+%     u = u+delta; % Can safely take a full Newton step
+    
     if nargout == 2
         if numberOfInputVariables == 1
             nrmDeltaRelvec = norm(feval(N,u)-rhs);
@@ -242,7 +255,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     
     % Reset the currentGuessCell variable
     currentGuessCell = [];
-    
+
     [deResFun, lbcResFun, rbcResFun] = evalResFuns;
     
     normu = norm(u,'fro');
