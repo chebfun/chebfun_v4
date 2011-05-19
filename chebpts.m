@@ -167,8 +167,8 @@ if scale
     
     if ~any(isinf(d))
         % finite interval
-        x = x/2*dab + (d(1) + dab/2);
-        w = dab*w/2;
+        x = .5*x*dab + (d(1) + .5*dab);
+        w = .5*dab*w;
     else
         % infinite interval
         m = maps(fun,{'unbounded'},d); % use default map

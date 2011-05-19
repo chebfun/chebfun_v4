@@ -1,4 +1,4 @@
-function E = feval(d,s)
+function E = feval(d,s,lr)
 % FEVAL  Evaluation functional.
 % E = FEVAL(D,S) returns a linop representing the functional of evaluation
 % of a chebfun at the points in vector S. If f is a chebfun also defined on
@@ -7,28 +7,46 @@ function E = feval(d,s)
 %
 % Example:
 %
-% E = feval(domain(-1,2),[-1;0;2]);  % evaluate at endpoints and one other
-% E(5)   % note first and last rows are like the identity
-%   ans =
-%      1.0000e+000  1.6653e-016 -5.5511e-017 -1.1102e-016            0
-%     -1.7284e-001  6.1656e-001  6.9136e-001 -2.2150e-001  8.6420e-002
-%                0 -1.9429e-016  8.3267e-017 -1.1102e-016  1.0000e+000
+%  E = feval(domain(-1,2),[-1;0;2]);  % evaluate at endpoints and one other
+%  format short
+%  E(5)   % note first and last rows are like the identity
+%    ans =
+%       1.0000         0         0         0         0
+%      -0.1728    0.6166    0.6914   -0.2215    0.0864
+%            0         0         0         0    1.0000
 %
-% f = chebfun(@(x) cos(x)./(1+x.^2),[-1 2]); 
-% format long, [f([-1;0;2]), E*f]
-%   ans =
-%      0.270151152934070   0.270151152934070
-%      1.000000000000000   1.000000000000000
-%     -0.083229367309428  -0.083229367309428
+%  f = chebfun(@(x) cos(x)./(1+x.^2),[-1 2]); 
+%  format long, [f([-1;0;2]), E*f]
+%    ans =
+%       0.270151152934070   0.270151152934070
+%       1.000000000000000   1.000000000000000
+%      -0.083229367309428  -0.083229367309428
 %
 % See also linop, chebfun/feval.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+if nargin > 2
+    if ~any(strcmpi(lr,{'left','right'}));
+        if ischar(lr)
+            msg = sprintf('Unknown input argument "%s".',lr);
+            error('CHEBFUN:feval:leftrightchar',msg);
+        else
+            error('CHEBFUN:feval:leftright','Unknown input argument.');
+        end
+    end
+else
+    lr = [];
+end
+
 a = d.ends(1);  b = d.ends(end);
 x = 2*(s(:)-a)/(b-a) - 1;
-E = linop(@mat2,@(u) feval(u,s(:)),d);
+if isempty(lr)
+    E = linop(@mat2,@(u) feval(u,s(:)),d);
+else
+    E = linop(@mat2,@(u) feval(u,s(:),lr),d);
+end
 
     function P = mat2(n)
         breaks = []; map = [];
@@ -63,46 +81,11 @@ E = linop(@mat2,@(u) feval(u,s(:)),d);
             P = barymat(x,map(chebpts(n)));
         elseif isempty(map)
             % Breaks / no map
-            P = barymatp(x,chebpts(n,breaks));
+            P = barymatp(x,n,breaks,[],lr);
         else
             % Breaks and maps
-            csn = [0 cumsum(n)];
-            P = zeros(csn(end));
-            if iscell(map) && numel(map) == 1
-                map = map{1};
-            end
-            mp = map;
-            for k = 1:numints
-                if numel(map) > 1
-                    if iscell(map), mp = map{k}; end
-                    if isstruct(map), mp = map(k); end
-                end
-                if isstruct(mp), mp = mp.for; end
-                ii = csn(k)+(1:n(k));
-                P(ii,ii) = barymat(x,mp(chebpts(n(k))));
-            end
+            P = barymatp(x,n,breaks,map,lr);
         end   
     end
 
-%   function A = mat(N)
-%       if iscell(N), N = N{1}; end
-%     C = cd2cpm(N);   % Cheb point values to polynomial coeffs
-%     T = cos( acos(x)*(0:N-1) );    % poly coeffs to values at points
-%     A = T*C;
-%   end
-
-end
-
-function C = cd2cpm(N)
-% Matrix to convert values at Cheb points to Cheb poly coefficients.
-
-% Three steps: Double the data around the circle, apply the DFT matrix,
-% and then take half the result with 0.5 factor at the ends.
-N1 = N-1;
-theta = (pi/N1)*(0:2*N1-1)';
-F = exp( -1i*theta*(0:2*N1-1) );  % DFT matrix
-rows = 1:N;  % output upper half only
-% Impose symmetries on data and coeffs.
-C = real( [ F(rows,N) F(rows,N1:-1:2)+F(rows,N1+2:2*N1) F(rows,1) ] );
-C = C/N1;  C([1 N],:) = 0.5*C([1 N],:);
 end

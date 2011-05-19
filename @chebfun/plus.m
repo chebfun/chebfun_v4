@@ -63,7 +63,7 @@ else
         h.funs(k) = f1.funs(k) + f2.funs(k);
         scl = max(scl, h.funs(k).scl.v);
     end
-    h.imps=f1.imps+f2.imps;
+    h.imps = f1.imps+f2.imps;
 
     % update scale
     for k = 1:f1.nfuns

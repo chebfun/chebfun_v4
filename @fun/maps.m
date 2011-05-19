@@ -58,7 +58,8 @@ end
 v1 = varargin{1};
 if isstruct(v1)
     mapname = v1.name;
-    pars = v1.par(3:end);
+    v1par = v1.par;
+    pars = v1par(3:end);
 elseif iscell(v1)
     mapname = v1{1};
     if numel(v1) == 2

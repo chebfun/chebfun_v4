@@ -24,7 +24,7 @@ if isa(F,'function_handle')
     return
 end  
 
-if isempty(F), Fx=[]; return, end
+if isempty(F), Fx = []; return, end
 
 % Deal with feval(f,x,'left') and feval(f,x,'right')
 if nargin > 2
@@ -41,7 +41,7 @@ if nargin > 2
     nchebs = numel(F);
     if strcmpi(lr,'left')
         for k = 1:nchebs
-            F(k).imps(2:end) = 0*F(k).imps(1,2:end);
+            F(k).imps(2:end,:) = []; % Level 2 imps are not needed here
             nfuns = F(k).nfuns;
             for j = 1:nfuns
                 F(k).imps(1,j+1) = get(F(k).funs(j),'rval');
@@ -49,7 +49,7 @@ if nargin > 2
         end
     else % right
         for k = 1:nchebs
-            F(k).imps(1:end-1) = 0*F(k).imps(1,1:end-1);
+            F(k).imps(2:end,:) = []; % Level 2 imps are not needed here
             nfuns = F(k).nfuns;
             for j = 1:nfuns
                 F(k).imps(1,j) = get(F(k).funs(j),'lval');
@@ -60,10 +60,10 @@ end
 
 % Deal with quasimatrices.
 nchebs = numel(F);
-if nchebs>1,
-    x=x(:); Fx=[];
+if nchebs > 1,
+    x = x(:); Fx = [];
     for k = 1:nchebs
-        trans=F(1).trans;
+        trans = F(1).trans;
         if trans
             Fx = [Fx; fevalcolumn(F(k),x')];
         else

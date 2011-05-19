@@ -1,4 +1,4 @@
-function out = legpoly(f,n)
+function out = legpoly(f)
 % LEGPOLY   Legendre polynomial coefficients.
 % A = LEGPOLY(F) returns the coefficients such that
 % F = a_N P_N(x)+...+a_1 P_1(x)+a_0 P_0(x) where P_N(x) denotes the N-th

@@ -21,7 +21,6 @@ function B = barymat(M,N,map,w) %BARYMAT(Y,X,W)
 
 if length(M) == 1 && length(M) == length(N)
 % Size of matrix is given.
-    
     if M == N    % Nothing to do here.
         B = eye(M); 
         return
@@ -40,6 +39,9 @@ if length(M) == 1 && length(M) == length(N)
     y = chebpts(M);            % The up/down-sampled grid
     if ~isempty(map), x = map(x); y = map(y); end % Map the points
 
+elseif isempty(M) || isempty(N) 
+% Not much to do here.
+    B = []; return, 
 else
 % Grid points are given.
 

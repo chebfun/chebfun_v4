@@ -20,6 +20,8 @@ if numints > 1
     if numel(Nx) < numints,   Nx = repmat(Nx,numints,1);   end
     if numel(Ny) < numints,   Ny = repmat(Ny,numints,1);   end
     csNx = [0 ; cumsum(Nx(:))]; csNy = [0 ; cumsum(Ny(:))]; 
+else
+    csNx = 0; csNy = 0;
 end
 
 % Construct the Chebyshev points
@@ -36,8 +38,14 @@ end
 if ~isempty(map)
     % Map the points.
     for k = 1:numints
-        mapk = map{k};
-        if any(strcmp(map.name,{'unbounded','linear'})), continue, end
+        if iscell(map)
+            mapk = map{k};
+        elseif numel(map) == 1
+            mapk = map;
+        else
+            mapk = map(k);
+        end
+        if any(strcmp(mapk.name,{'unbounded','linear'})), continue, end
         iix = csNx(k)+(1:Nx(k));
         x(iix) = mapk.for(chebpts(Nx,[-1 1],2));
         iiy = csNy(k)+(1:Ny(k));
