@@ -90,7 +90,7 @@ if ~recurse || (g.n<101)                                    % for small length f
         A(end-1,end) = 1;
         A(:,1) = flipud(c);
 
-        r=eig(A);                               % compute roots as eig(A)
+        r = eig(A);                               % compute roots as eig(A)
 
     end
     if ~all
@@ -105,7 +105,7 @@ if ~recurse || (g.n<101)                                    % for small length f
 %             outnew = out - step;
 %             mask = abs(gout) > abs(feval(g,outnew));
 %             out(mask) = outnew(mask);
-            out = out-step;
+            out = real(out-step);
             
             if any(isnan(out)), error, end
         end
