@@ -89,7 +89,6 @@ if isempty(varargin), return, end
 
 op = [];
 dom = chebfunpref('domain');
-if nargout > 1, x = chebfun('x',dom);  end
 
 % Find the first function_handle. This will be the op.
 if isa(varargin{1},'function_handle')
@@ -116,17 +115,26 @@ if isempty(op) && isempty(N.dom)
         end
     end
     N = set(N,'dom',dom);
+    if nargout > 1, x = chebfun('x',dom);  end % Return x if asked for
     return % And we're done
 end
 
+
 % Nothing else is given, assume default domain
-if isempty(varargin), N = set(N,'dom',dom); return, end 
+if isempty(varargin), 
+    N = set(N,'dom',dom); 
+    if nargout > 1, x = chebfun('x',dom);  end % Return x if asked for
+    return, 
+end 
 
 % Is the next input (literally) a domain?
 if isa(varargin{1},'domain')
     N = set(N,'dom',varargin{1});
     varargin(1) = [];
-    if isempty(varargin), return, end
+    if isempty(varargin), 
+        if nargout > 1, x = chebfun('x',N.dom); end % Return x if asked for
+        return
+    end
 end
 
 % Look for a dim flag
@@ -136,7 +144,11 @@ if numel(varargin) > 1 && strncmpi(varargin{end-1},'dim',3)
 end
 
 % Nothing else is given, assume default domain
-if isempty(varargin), N = set(N,'dom',dom); return, end  
+if isempty(varargin), 
+    N = set(N,'dom',dom); 
+    if nargout > 1, x = chebfun('x',N.dom); end % Return x if asked for
+    return
+end  
 
 % % Here everything is given, so it's easy
 % if numel(varargin) == 4 && isempty(N.dom) && ~strncmpi(varargin{3},'init',4)
@@ -166,7 +178,11 @@ elseif isa(varargin{end},'chebfun')
 end
 
 % Nothing else is given, assume default domain
-if isempty(varargin), N = set(N,'dom',dom); return, end  
+if isempty(varargin), 
+    N = set(N,'dom',dom); 
+    if nargout > 1, x = chebfun('x',dom); end % Return x if asked for
+    return
+end  
 
 % Now HERE everything is given, so it's easy
 if numel(varargin) == 3 && isempty(N.dom)
@@ -175,12 +191,14 @@ if numel(varargin) == 3 && isempty(N.dom)
     N.lbcshow = varargin{2};
     N = set(N,'rbc',createbc(varargin{3}));
     N.rbcshow = varargin{3};
+    if nargout > 1, x = chebfun('x',N.dom); end % Return x if asked for
     return
 elseif numel(varargin) == 2 && ~isempty(N.dom)
     N = set(N,'lbc',createbc(varargin{1}));
     N.lbcshow = varargin{1};
     N = set(N,'rbc',createbc(varargin{2}));
     N.rbcshow = varargin{2};
+    if nargout > 1, x = chebfun('x',N.dom); end % Return x if asked for
     return
 end
 
@@ -201,6 +219,7 @@ if numel(varargin) == 2 && strcmpi(varargin{2},'periodic')
         N.lbcshow = varargin{2};
         N.rbcshow = varargin{2};
     end
+    if nargout > 1, x = chebfun('x',N.dom); end % Return x if asked for
     return
 end
 
@@ -218,6 +237,7 @@ if ~isnumeric(varargin{1}) || numel(varargin{1})<2 || any(sort(varargin{1})-vara
         N.rbcshow = varargin{2};
     end  
     N = set(N,'dom',dom);
+    if nargout > 1, x = chebfun('x',dom);  end % Return x if asked for
     return
 else
     % Yes!
@@ -227,6 +247,7 @@ else
         N.lbcshow = varargin{2};
         N.rbcshow = varargin{2};
     end
+    if nargout > 1, x = chebfun('x',N.dom);  end % Return x if asked for
     return
 end
 
