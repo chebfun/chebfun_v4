@@ -1,4 +1,4 @@
-function [gout ish] = compfun(g1,op,g2)
+function [gout ish] = compfun(g1,op,g2,pref)
 % GOUT = COMPFUN(G1,OP,G2)
 % Fun composition: GOUT = OP(G1) or GOUT = OG(G1,G2)
 % Here GOUT, G1, and G2 are funs, and OP is a function handle.
@@ -8,9 +8,14 @@ function [gout ish] = compfun(g1,op,g2)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-pref = chebfunpref;
+if nargin > 2 && isstruct(g2)
+    pref = g2;
+    g2 = [];
+elseif nargin < 4
+    pref = chebfunpref;
+end
 
-if nargin == 3
+if nargin > 2 && ~isempty(g2)
     if ~samemap(g1,g2) || any(g1.exps) || any(g2.exps)
         ends = g1.map.par(1:2);
         if norm(ends-g2.map.par(1:2),inf) > 1e-15*max(g1.scl.h,g2.scl.h)

@@ -1,4 +1,4 @@
-function Fout = comp(F1, op, F2)
+function Fout = comp(F1, op, F2, pref)
 % FOUT = COMP(F1,OP,F2)
 % COMP(F1,OP) returns the composition of the chebfun F with OP, i.e.,
 %   FOUT = OP(F1).
@@ -20,10 +20,17 @@ function Fout = comp(F1, op, F2)
 % Deal with quasimatrices.
 Fout = F1;
 
+if nargin > 2 && isstruct(F2)
+    pref = F2;
+    F2 = [];
+elseif nargin < 4
+    pref = chebfunpref;
+end
+
 % One chebfun
-if nargin < 3
+if nargin < 3 || isempty(F2)
     for k = 1:min(size(F1))
-        Fout(k) = compcol(F1(k), op);
+        Fout(k) = compcol(F1(k), op, [], pref);
     end
 % Two chebfuns    
 else        
@@ -31,13 +38,13 @@ else
         error('CHEBFUN:comp:QMdimensions','Quasimatrix dimensions must agree')
     end
     for k = 1:min(size(F1))
-        Fout(k) = compcol(F1(k), op, F2(k));
+        Fout(k) = compcol(F1(k), op, F2(k), pref);
     end
 end
 
 %-------------------------------------------------------
 % Deal with a single chebfun (op needs only ONE input)
-function f1 = compcol(f1, op, f2)
+function f1 = compcol(f1, op, f2, pref)
 
 % For an empty chebfun, there is nothing to do.
 if isempty(f1), return, end
@@ -45,7 +52,7 @@ if isempty(f1), return, end
 % Initialise (and overlap if there are two chebfuns)
 ffuns = [];
 ends = f1.ends(1);
-if nargin == 2
+if isempty(f2)
     imps = op(f1.imps(1,1));
     vscl = norm( op(get(f1,'vals')), inf);
 else
@@ -59,12 +66,12 @@ for k = 1:f1.nfuns
     % Update vscale (horizontal scale remains the same)
     f1.funs(k).scl.v = vscl;
     % Attaempt to generate funs using the fun constructor.
-    if nargin == 2
-        [newfun ish] = compfun(f1.funs(k),op);
+    if isempty(f2)
+        [newfun ish] = compfun(f1.funs(k),op,pref);
     else
-        [newfun ish] = compfun(f1.funs(k),op,f2.funs(k));
+        [newfun ish] = compfun(f1.funs(k),op,f2.funs(k),pref);
     end
-    if ish || (~ish && ~chebfunpref('splitting')) 
+    if ish || (~ish && ~pref.splitting) 
     % If we're happy, or not allowed to split, this will do.
        if ~ish
             warning('CHEBFUN:comp:resolv', ...
@@ -73,7 +80,7 @@ for k = 1:f1.nfuns
        end
        ffuns = [ffuns newfun];                  % Store this fun
        ends = [ends f1.ends(k+1)];              % Store the ends
-       if nargin == 2                           % Store the imps
+       if isempty(f2)                           % Store the imps
            imps = [imps op(f1.imps(1,k+1))];
        else
            imps = [imps op(f1.imps(1,k+1),f2.imps(1,k+1))]; 
@@ -89,10 +96,10 @@ for k = 1:f1.nfuns
        % For unbounded domains, we let the constructor figure out where to split.    
            endsk = f1.ends(k:k+1);
        end
-       if nargin == 2
-           newf = chebfun(@(x) op(feval(f1,x)), endsk);
+       if isempty(f2)
+           newf = chebfun(@(x) op(feval(f1,x)), endsk, pref);
        else
-           newf = chebfun(@(x) op(feval(f1,x),feval(f2,x)), endsk);
+           newf = chebfun(@(x) op(feval(f1,x),feval(f2,x)), endsk, pref);
        end
        if all(isfinite(f1.ends(k:k+1)))
        % We forced a breakpoint above, try to remove it.   
