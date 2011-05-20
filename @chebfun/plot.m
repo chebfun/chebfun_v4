@@ -42,7 +42,7 @@ function varargout = plot(varargin)
 % jump values with black dots. By default the plotting styles for jumplines
 % and jumpmarkers are ':' and 'x' respectively with colours chosen to match
 % the lines they correspond to, and jump values are only plotted when the
-% Chebyshev points are also plotted, unless an input 'JumpLine','S' is
+% Chebyshev points are also plotted, unless an input 'JumpMarker','x' is
 % passed. It is possible to modify other properties of jumplines and
 % jumpmarkers with syntax like PLOT(F,'JumpLine',{'r','LineWidth',5}).
 % Jumplines can be suppressed with the argument 'JumpLine','none'.
@@ -223,7 +223,11 @@ hdummy = plot(dummydata{:}); hold on
 h1 = plot(linedata{:},'handlevis','off');
 h2 = plot(markdata{:},'linestyle','none','handlevis','off');
 h3 = plot(jumpdata{:},'handlevis','off');
-h4 = plot(jvaldata{:},'linestyle','none','handlevis','off');
+if forcejmarks
+    h4 = plot(jvaldata{:},'linestyle','none','handlevis','off');
+else
+    h4 = NaN;
+end
 
 defjlcol = true;
 for k = 1:length(jlinestyle)
@@ -248,7 +252,7 @@ if numel(h2) == numel(h1)  % This should always be the case??
         if defjlcol && numel(h3) == numel(h1)
             set(h3(k),'color',h1color);
         end
-        if numel(h4) == numel(h1)
+        if forcejmarks && numel(h4) == numel(h1)
             if defjmcol
                 set(h4(k),'color',h1color);
             end

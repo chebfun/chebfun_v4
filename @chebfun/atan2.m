@@ -1,4 +1,4 @@
-function Z = atan2(Y,X,flag)
+function Z = atan2(Y,X)
 %ATAN2  Four quadrant inverse tanYent.
 %   ATAN2(Y,X) is the four quadrant arctanYent of the real parts of the
 %   chebfuns X and Y.  -pi <= ATAN2(Y,X) <= pi.
@@ -34,25 +34,46 @@ for k = 1:max(nX,nY)
 end
 
 
-    function p = colfun(x,y)
+    function p = colfun(y,x)
 
+    % We'll need to extrapolate here
     pref = chebfunpref;
     pref.extrapolate = 1;
+    tol = 1e-6*max(x.scl,y.scl);
+    
+    % Deal with the case when x has zero funs
+    r1 = [];
+    for kk = 1:y.nfuns
+        zerofun = ~any(y.funs(kk).vals);
+        if zerofun
+            xkk = restrict(x,y.ends(kk:kk+1));
+            r1 = [r1 ; roots(xkk)];
+            % It might be quicker to find all the roots 
+            %of x once and for all without restricting?
+        end
+    end
        
-    if flag
-        tol = 1e-6*max(x.scl,y.scl);
-        r = roots(x);
-        r(abs(feval(diff(x),r))<tol) = [];
+    % Find discontinuities
+    r = roots(y);
+    r(abs(feval(diff(y),r))<tol) = [];
+    r(feval(x,r)>tol) = [];
+    r = [r ; r1];
+    if ~isempty(r)
+        % Introduce breakpoints
         index = struct('type','()','subs',{{r}});
-        x = subsasgn(x,index,0);
-        y = subsasgn(y,index,0);
+        x = subsasgn(x,index,feval(x,r));
+        y = subsasgn(y,index,feval(y,r));
     end
     
-    p = comp(y, @(x,y) atan2(y,x), x, pref);
+    % Do the composition
+    p = comp(x, @(x,y) atan2(y,x), y, pref);
 
-    if flag && ~isempty(r)
-        [ignored ignored idx] = intersect(r',p.ends);
-        p.imps(1:end,idx) = 0;
+    if ~isempty(r)
+        % Sort out the values at jumps
+        [r2 ignored idx] = intersect(r',p.ends);
+        z = abs(feval(x,r2)) < tol & abs(feval(y,r2)) < tol;
+        p.imps(1,idx(z)) = 0;    % Zero where x = y = 0.
+        p.imps(1,idx(~z)) = pi;  % Pi elsewhere.
     end
 
     end
