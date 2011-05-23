@@ -86,7 +86,7 @@ for k = 1:f1.nfuns
            imps = [imps op(f1.imps(1,k+1),f2.imps(1,k+1))]; 
        end
        vscl = max(vscl,newfun.scl.v);           % Get new estimate for vscale
-    elseif chebfunpref('splitting')
+    elseif pref.splitting
     % If sad and splitting is 'on', get a chebfun for that subinterval.
        if all(isfinite(f1.ends(k:k+1)))
        % Since we know we must split at least once: 

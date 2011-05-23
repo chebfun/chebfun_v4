@@ -38,18 +38,31 @@ tol = 1e-14*p.scl;
 idxl = abs(p.imps(1,:) - feval(p,p.ends,'left')) < tol;
 idxr = abs(p.imps(1,:) - feval(p,p.ends,'right')) < tol;
 
-% Simply call built-in unwrap on the values
-v = get(p,'vals');
-w = unwrap(v,varargin{:});
-
 % Get the indices of the break points
 n = zeros(p.nfuns,1);
-for k = 1:p.nfuns, n(k) = p.funs(k).n; end
+idx = zeros(p.nfuns,1);
+for k = 1:p.nfuns
+    n(k) = p.funs(k).n; 
+    % There can be problems if the length is <= 2, so prolong to 3.
+    if n(k) <= 2;
+        idx(k) = n(k);
+        p.funs(k) = prolong(p.funs(k),3);
+        n(k) = 3;
+    end
+end
 csn = [0 ; cumsum(n)];
+
+% Simply call built-in UNWRAP on the values
+v = get(p,'vals');
+w = unwrap(v,varargin{:});
 
 % Update to the new values
 for k = 1:p.nfuns
     p.funs(k).vals = w(csn(k)+(1:n(k)));
+    % Decrease the degree if it was increased to 3 above.
+    if idx(k)
+        p.funs(k) = prolong(p.funs(k),idx(k));
+    end
 end
 
 % Update the imps
