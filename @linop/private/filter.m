@@ -16,11 +16,11 @@ n = length(v);
 if n < 17, return, end
 
 c = cd2cp(v);    % coeffs in ascending degree
-ac = abs(c);
+ac = abs(c)/min(max(v),1); % abs and scl relative to size.
 
 % Smooth using a windowed max to overcome symmetry oscillations.
 maxac = ac;
-for k=1:8
+for k = 1:8
   maxac = max(maxac(1:end-1),ac(k+1:end));
 end
 
@@ -42,6 +42,7 @@ cut = find(mindmax > 0.01*min(mindmax), 3);
 cut = cut(end) + t + k + 3;
 c(cut:end) = 0;
 
+% Add a linear function to ensure enpoint values are unchanged.
 w = ones(size(c));
 w(2:2:end) = -1;
 am1 = v(1)-sum(w.*c);
@@ -49,6 +50,7 @@ ap1 = v(end)-sum(c);
 c1 = 0.5*(ap1+am1);
 c2 = 0.5*(ap1-am1);
 c([1 2]) = c([1 2]) + [c1 ; c2];
+
 v = cp2cd(c);
 
 end
