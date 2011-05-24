@@ -11,7 +11,7 @@ ends = g.map.par(1:2);
 
 % Try to remove exps
 if any(exps<=-1)
-    g = extract_roots(g);
+    g = extract_roots(g,[],exps<=-1);
     exps = g.exps;
 end
 

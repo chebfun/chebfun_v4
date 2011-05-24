@@ -32,7 +32,16 @@ switch propName
     case 'exps'
         val = g.exps;
     case 'lval'  % value at left endpoint
-        if g.exps(1) < 0  % inf case, need to check sign
+        if g.exps(1) < 0  % inf case, 
+            % First try to extract root
+            if any(strcmp(g.map.name,{'linear','unbounded'}))
+                tmp = extract_roots(g,[],[1 0]);
+                if tmp.exps(1) >= 0
+                    val = get(tmp,'lval');
+                    return
+                end
+            end
+            % If not, then need to check sign
             if g.n > 5 && isinf(g.map.par(1))
                 val = inf*sign(mean(g.vals(1:2))+g.vals(1));
             else
@@ -52,7 +61,16 @@ switch propName
             end
         end
     case 'rval' % value at right endpoint 
-        if g.exps(2) < 0  % inf case, need to check sign
+        if g.exps(2) < 0  % inf case
+            % First try to extract root
+            if any(strcmp(g.map.name,{'linear','unbounded'}))
+                tmp = extract_roots(g,[],[0 1]);
+                if tmp.exps(2) >= 0 
+                    val = get(tmp,'rval');
+                    return
+                end
+            end
+            % If not, then need to check sign
             if g.n > 5 && isinf(g.map.par(2))
                 val = inf*sign(mean(g.vals(end-1:end))+g.vals(end));
             else

@@ -76,8 +76,14 @@ if isempty(f), out = 0; return, end
 
 % Things can go wrong with blowups.
 exps = get(f,'exps');
-if any(any(exps<=-1)),
+for k = 1:f.nfuns
+    if any(exps(k,:) <= -1)
+        f.funs(k) = extract_roots(f.funs(k),[],exps(k,:)<=-1);
+        exps(k,:) = get(f.funs(k),'exps');
+    end
+end
 
+if any(any(exps<=-1)),
    % get the sign at these blowups
    expsl = find(exps(:,1)<=-1);
    expsr = find(exps(:,2)<=-1);
