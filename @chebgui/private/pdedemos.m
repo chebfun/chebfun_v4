@@ -7,7 +7,7 @@ if nargin < 3
     mode = 'start';
 end
 
-numberOfExamples = 14;
+numberOfExamples = 15;
 
 % If called with a 0, open with an empty gui. If called with a number less
 % than 0, bigger than the number of available examples, or no argument,
@@ -120,6 +120,15 @@ switch exampleNumber
         name = 'Heat equation';
         demotype = 'scalar';
     case 10
+        a = '0'; b = '8'; t = '0:.005:.2';
+        DE = 'u_t = (u''/(1+x^2))''';
+        LBC = 'dirichlet'; RBC = 'dirichlet';
+        init = 'u = sin(4*pi*x)';
+        tol = '1e-6'; plotting = 'on';
+        fixYaxisLower = '-1.2'; fixYaxisUpper = '1.2';
+        name = 'Heat equation with variable coefficient';
+        demotype = 'scalar';
+    case 11
         a = '-1'; b = '1'; t = '0:.1:4';
         DE = {'u_t = .02*u" + cumsum(u)*sum(u)'};
         LBC = {'dirichlet'};
@@ -129,7 +138,7 @@ switch exampleNumber
         name = 'Integro-differential equation';
         fixYaxisLower = '0'; fixYaxisUpper = '1.4';
         demotype = 'scalar';
-    case 11
+    case 12
         a = '-1'; b = '1'; t = '0:.01:2';
         DE = 'u_t = u*u'' - u" - 0.006*u""';
         LBC = {'u = 1','u'' = 2'}; RBC = {'u = 1','u'' = 2'};
@@ -138,7 +147,7 @@ switch exampleNumber
         fixYaxisLower = '-30'; fixYaxisUpper = '30';
         name = 'Kuramoto-Sivashinsky equation';
         demotype = 'scalar';
-    case 12
+    case 13
         a = '-1'; b = '1'; t = '0:.1:3';
         DE = {'u_t = 0.1*u" - 100*u*v';'v_t = .2*v" - 100*u*v';'w_t = 0.001*w" + 200*u*v'};
         LBC = {'neumann'}; RBC = {'neumann'};
@@ -147,7 +156,7 @@ switch exampleNumber
         fixYaxisLower = '0'; fixYaxisUpper = '2.2';
         name = 'Diffusion and reaction of three chemicals';
         demotype = 'system';
-    case 13
+    case 14
         a = '-1'; b = '1';
         t = '0:.1:2';
         DE = {'u_t = u" - v' ; 'v" - u = 0'};
@@ -158,7 +167,7 @@ switch exampleNumber
         fixYaxisLower = '0.5'; fixYaxisUpper = '1';
         name = 'Coupled PDE-BVP';
         demotype = 'system';
-    case 14
+    case 15
         a = '-2'; b = '2';
         t = '0:.1:8';
         DE = {'u_t = v''','v_t = u'''};
