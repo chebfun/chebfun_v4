@@ -1,0 +1,8 @@
+'Water droplet'
+'bvp'
+a = '-1'; b = '1';
+DE = 'u" = (u-1)*(1+(u'')^2)^1.5';
+LBC = 'u = 0'; RBC = 'u = 0';
+init = ''; tol = '1e-8';
+damping = '1'; plotting = '0.1';
+type = 'bvp';

@@ -1,0 +1,9 @@
+'Blow-up initial value problem'
+'ivp'
+a = '0'; b = '.99';
+DE = 'u'' = u^2';
+LBC = 'u = 1';
+RBC = ' ';
+init = ''; tol = '1e-10';
+damping = '1'; plotting = '0.1';
+type = 'bvp';

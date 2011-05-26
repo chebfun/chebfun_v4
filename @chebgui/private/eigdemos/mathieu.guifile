@@ -1,0 +1,8 @@
+'Mathieu equation'
+'scalar'
+a= '-pi'; b = 'pi';
+DE = '-u'''' + 5*cos(2*x)*u = lambda*u';
+LBC = 'periodic'; RBC = 'periodic';
+tol = '1e-10';
+sigmatemp = '';
+type = 'eig';

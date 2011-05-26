@@ -1,0 +1,9 @@
+'Linear wave equation'
+'ivp'
+a = '0'; b = '10*pi';
+DE = 'u" = -u';
+DErhs = '0';
+LBC = {'u = 2';'u'' = 0'}; RBC = '';
+init = ''; tol = '1e-10';
+damping = '1'; plotting = '0.1';
+type = 'bvp';

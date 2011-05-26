@@ -1,0 +1,12 @@
+'Airy equation'
+'bvp'
+a = '-5';
+b = '5';
+DE = '0.01*u'''' - x*u = 1';
+LBC = 'u = 0';
+RBC = 'u = 0';
+init = '';
+tol = '1e-10';
+damping = '0';
+plotting = '0.1';
+type = 'bvp';

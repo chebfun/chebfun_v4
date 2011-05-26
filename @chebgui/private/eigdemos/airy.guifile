@@ -1,0 +1,9 @@
+'Airy operator'
+'scalar'
+a= '-1'; b = '1';
+DE = '.002*u" + 1i*x*u = lambda*u';
+LBC = 'u=0'; RBC = 'u=0';
+tol = '1e-10';
+sigmatemp = 'lr';
+type = 'eig';
+numeigs = '25';

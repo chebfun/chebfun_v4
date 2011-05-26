@@ -1,0 +1,8 @@
+'Advection-diffusion'
+'scalar'
+a= '0'; b = '10';
+DE = 'u" + u'' = lambda*u';
+LBC = 'u = 0'; RBC = 'u = 0';
+tol = '1e-10';
+sigmatemp = '';
+type = 'eig';

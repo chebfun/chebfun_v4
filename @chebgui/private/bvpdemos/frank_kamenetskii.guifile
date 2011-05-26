@@ -1,0 +1,8 @@
+'Frank-Kamenetskii blowup equation'
+'bvp'
+a = '-1'; b = '1';
+DE= 'u" + .87*exp(u) = 0';
+LBC = 'u = 0'; RBC = 'u = 0';
+init = ''; tol = '1e-10';
+damping = '1'; plotting = '0.1';
+type = 'bvp';

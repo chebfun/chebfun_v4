@@ -1,0 +1,8 @@
+'Fourth-order equation'
+'bvp'
+a = '0'; b = '1';
+DE = 'u'''''''' = u''*u'''' - u*u''''''';
+LBC = {'u = 0','u'' = 0'}; RBC = {'u = 1','u'' = -5'};
+init = ''; tol = '1e-10';
+damping = '1'; plotting = '0.1';
+type = 'bvp';

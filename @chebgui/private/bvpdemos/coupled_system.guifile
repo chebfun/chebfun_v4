@@ -1,0 +1,9 @@
+'Coupled system with sin(v) and cos(u)'
+'system'
+a = '-1'; b = '1';
+DE = {'u" - sin(v) = 0';'cos(u) + v" = 0'};
+LBC = {'u = 1';'v'' = 0'};
+RBC = {'u'' = 0';'v = 0'};
+init = ''; tol = '1e-10';
+damping = '0'; plotting = '0.4';
+type = 'bvp';

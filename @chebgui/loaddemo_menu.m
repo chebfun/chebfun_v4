@@ -9,104 +9,111 @@ if ~isempty(get(handles.menu_demos,'UserData'))
 end
 
 % Set up ODEs, PDEs and EIGs demos separately
-% Begin by setting up BVPs demos
-type = 'bvp';
-counter = 1;
 
-while 1
-    [cg name demotype] = bvpdemos(guifile,counter,'demo');
-    if strcmp(name,'stop')
-        break
-    else
-        demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,type,counter);
-        switch demotype
-            case 'bvp'
-                hDemoitem  =  uimenu('Parent',handles.menu_bvps,...
-                    'Label',name,...
-                    'Separator','off',...
-                    'HandleVisibility','callback', ...
-                    'Callback', demoFun);
-            case 'ivp'
-                hDemoitem  =  uimenu('Parent',handles.menu_ivps,...
-                    'Label',name,...
-                    'Separator','off',...
-                    'HandleVisibility','callback', ...
-                    'Callback', demoFun);
-            case 'system'
-                hDemoitem  =  uimenu('Parent',handles.menu_systems,...
-                    'Label',name,...
-                    'Separator','off',...
-                    'HandleVisibility','callback', ...
-                    'Callback', demoFun);
-        end
-    end
-    counter = counter+1;
+% Find the folders which demos are stored in
+guipath = which('chebgui');
+
+find_frontslash = max(strfind(guipath,'/'));
+guipath = guipath(1:find_frontslash);
+bvppath = [guipath,'private/bvpdemos/'];
+pdepath = [guipath,'private/pdedemos/'];
+eigpath = [guipath,'private/eigdemos/'];
+
+% Setup ODEs
+D = dir(bvppath);
+for demoCounter = 3:length(D) % First two entries are . and ..
+   demoPath = [bvppath,D(demoCounter,:).name];
+   % Need to obtain the name and type of the demo as well
+   fid = fopen(demoPath);
+   demoName = fgetl(fid); demoName = demoName(2:end-1); % Throw away ' at the ends of the string
+   demoType = fgetl(fid); demoType = demoType(2:end-1);
+   fclose(fid);
+   demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,demoPath);
+   switch demoType
+       case 'bvp'
+           hDemoitem  =  uimenu('Parent',handles.menu_bvps,...
+               'Label',demoName,...
+               'Separator','off',...
+               'HandleVisibility','callback', ...
+               'Callback', demoFun);
+       case 'ivp'
+           hDemoitem  =  uimenu('Parent',handles.menu_ivps,...
+               'Label',demoName,...
+               'Separator','off',...
+               'HandleVisibility','callback', ...
+               'Callback', demoFun);
+       case 'system'
+           hDemoitem  =  uimenu('Parent',handles.menu_systems,...
+               'Label',demoName,...
+               'Separator','off',...
+               'HandleVisibility','callback', ...
+               'Callback', demoFun);
+   end
 end
 
-% Now PDEs demos
-type = 'pde';
-counter = 1;
-while 1
-    [cg name demotype] = pdedemos(guifile,counter,'demo');
-    if strcmp(name,'stop')
-        break
-    else
-        demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,type,counter);
-        switch demotype
-            case 'scalar'
-                hDemoitem  =  uimenu('Parent',handles.menu_pdesingle,...
-                    'Label',name,...
-                    'Separator','off',...
-                    'HandleVisibility','callback', ...
-                    'Callback', demoFun);
-            case 'system'
-                hDemoitem  =  uimenu('Parent',handles.menu_pdesystems,...
-                    'Label',name,...
-                    'Separator','off',...
-                    'HandleVisibility','callback', ...
-                    'Callback', demoFun);
-        end
-    end
-    counter = counter+1;
+% Setup PDEs
+D = dir(pdepath);
+for demoCounter = 3:length(D) % First two entries are . and ..
+   demoPath = [pdepath,D(demoCounter,:).name];
+   % Need to obtain the name and type of the demo as well
+   fid = fopen(demoPath);
+   demoName = fgetl(fid); demoName = demoName(2:end-1); % Throw away ' at the ends of the string
+   demoType = fgetl(fid); demoType = demoType(2:end-1);
+   fclose(fid);
+   demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,demoPath);
+   switch demoType
+       case 'scalar'
+           hDemoitem  =  uimenu('Parent',handles.menu_pdesingle,...
+               'Label',demoName,...
+               'Separator','off',...
+               'HandleVisibility','callback', ...
+               'Callback', demoFun);
+       case 'system'
+           hDemoitem  =  uimenu('Parent',handles.menu_pdesystems,...
+               'Label',demoName,...
+               'Separator','off',...
+               'HandleVisibility','callback', ...
+               'Callback', demoFun);
+   end
 end
 
-% Finally EIGs demos
-type = 'eig';
-counter = 1;
-while 1
-    [cg name demotype] = eigdemos(guifile,counter,'demo');
-    if strcmp(name,'stop')
-        break
-    else
-        demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,type,counter);
-        switch demotype
-            case 'scalar'
-                hDemoitem  =  uimenu('Parent',handles.menu_eigsscalar,...
-                    'Label',name,...
-                    'Separator','off',...
-                    'HandleVisibility','callback', ...
-                    'Callback', demoFun);
-            case 'system'
-                hDemoitem  =  uimenu('Parent',handles.menu_eigssystem,...
-                    'Label',name,...
-                    'Separator','off',...
-                    'HandleVisibility','callback', ...
-                    'Callback', demoFun);
-        end
-    end
-    counter = counter+1;
+% Setup EIGs
+D = dir(eigpath);
+for demoCounter = 3:length(D) % First two entries are . and ..
+   demoPath = [eigpath,D(demoCounter,:).name];
+   % Need to obtain the name and type of the demo as well
+   fid = fopen(demoPath);
+   demoName = fgetl(fid); demoName = demoName(2:end-1); % Throw away ' at the ends of the string
+   demoType = fgetl(fid); demoType = demoType(2:end-1);
+   fclose(fid);
+   demoFun = @(hObject,eventdata) hOpenMenuitemCallback(hObject, eventdata,handles,demoPath);
+   switch demoType
+       case 'scalar'
+           hDemoitem  =  uimenu('Parent',handles.menu_eigsscalar,...
+               'Label',demoName,...
+               'Separator','off',...
+               'HandleVisibility','callback', ...
+               'Callback', demoFun);
+       case 'system'
+           hDemoitem  =  uimenu('Parent',handles.menu_eigssystem,...
+               'Label',demoName,...
+               'Separator','off',...
+               'HandleVisibility','callback', ...
+               'Callback', demoFun);
+   end
 end
 
 % Notify that we have loaded demos to prevent reloading
 set(handles.menu_demos,'UserData',1);
 
 
-function hOpenMenuitemCallback(hObject, eventdata,handles,type,demoNumber)
+function hOpenMenuitemCallback(hObject, eventdata,handles,demoPath)
 % Callback function run when the Open menu item is selected
-handles.guifile = loadexample(handles.guifile,demoNumber,type);
+handles.guifile = loaddemos(handles.guifile,demoPath);
 initSuccess = loadfields(handles.guifile,handles);
 if initSuccess, switchModeCM = 'demo'; else switchModeCM = 'notdemo'; end 
 % Swith the mode of the GUI according to the type of the problem.
-switchmode(handles.guifile,handles,type,switchModeCM);
+switchmode(handles.guifile,handles,handles.guifile.type,switchModeCM);
 % Update handle structure
 guidata(hObject, handles);
+

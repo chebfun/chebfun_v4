@@ -1,0 +1,8 @@
+'Bessel equation'
+'bvp'
+a = '0'; b = '30';
+DE = 'x^2*u'''' + x*u'' + (x^2-3^2)*u = 0';
+LBC = 'u = 0'; RBC = 'u = 1';
+init = ''; tol = '1e-10';
+damping = '0'; plotting = '0.1';
+type = 'bvp';

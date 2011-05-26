@@ -1,0 +1,9 @@
+'A cross of eigenvalues'
+'scalar'
+a= '0'; b = '2*pi';
+DE = '-u" = lambda*(u+u'')';
+LBC = '0'; RBC = '0';
+tol = '1e-10';
+sigmatemp = '';
+type = 'eig';
+numeigs = '12';

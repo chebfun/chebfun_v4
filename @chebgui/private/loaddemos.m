@@ -1,37 +1,43 @@
 function cg = loaddemos(guifile,guifilepath)
+% Load a demo from a .guifile to a chebgui object
 
-% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Defaults
-name = '';
-demotype = '';
-a = ''; 
+type = '';
+a = '';
 b = '';
 t = '';
 DE = '';
-LBC = ''; 
+LBC = '';
 RBC = '';
-init = ''; 
+init = '';
 tol = '';
 damping = '';
 plotting = '';
-sigma = '';
+sigmatemp = '';
 numeigs = '';
+fixYaxisLower = '';
+fixYaxisUpper = '';
 
 % Import from the given file and evaluate to fill the workspace
 fid = fopen(guifilepath);
-while 1
+inputEnded = 0;
+while ~inputEnded
     tline = fgetl(fid);
+    if isempty(strfind(tline,'=')), continue, end % Don't eval names and demotypes
     if ~ischar(tline), break, end
     eval(tline);
+    inputEnded = feof(fid);
 end
 fclose(fid);
 
 % Create the options structure
-options = struct('damping',damping,'plotting',plotting,'numeigs',numeigs);
+options = struct('damping',damping,'plotting',plotting,'numeigs',numeigs, ...
+    'fixYaxisLower', fixYaxisLower,'fixYaxisUpper', fixYaxisUpper,'sigma',sigmatemp);
 
 % Build the chebguifile
-cg = chebgui('type',demotype,'domleft',a,'domright',b,'timedomain',t,'de',DE,...
+cg = chebgui('type',type,'domleft',a,'domright',b,'timedomain',t,'de',DE,...
     'lbc',LBC,'rbc',RBC,'init',init,'tol',tol,...
     'options',options);

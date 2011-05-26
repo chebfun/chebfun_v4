@@ -1,0 +1,8 @@
+'Fisher-KPP equation'
+'bvp'
+a = '-4'; b = '4';
+DE = 'u" + u - u^2 = 0';
+LBC = 'u = 1'; RBC = 'u = 0';
+init = ''; tol = '1e-10';
+damping = '1'; plotting = '0.1';
+type = 'bvp';

@@ -1,0 +1,9 @@
+'Harmonic oscillator as 1st-order system'
+'system'
+a= '0'; b = 'pi';
+DE = {'u'' = lambda*v';'v'' = -lambda*u'};
+LBC = 'u = 0';
+RBC = 'u = 0';
+tol = '1e-10';
+sigmatemp = '';
+type = 'eig';

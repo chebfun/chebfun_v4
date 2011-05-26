@@ -106,7 +106,7 @@ if isempty(varargin)
     % loadexample method
     cgTemp = chebgui('type','bvp');
     % Calling loadexample with second argument -1 gives a random example
-    cg = loadexample(cgTemp,-1,'bvp');
+    cg = loadexample(cgTemp,-1);
     show(cg);
 elseif nargin == 1 && isa(varargin{1},'chebgui')
     chebguiwindow(varargin{1});

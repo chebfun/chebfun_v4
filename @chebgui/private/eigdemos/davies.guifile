@@ -1,0 +1,8 @@
+'Davies complex harmonic oscillator'
+'scalar'
+a= '-8'; b = '8';
+DE = '-u'''' + 1i*x^2*u  = lambda*u';
+LBC = 'u = 0'; RBC = 'u = 0';
+tol = '1e-10';
+sigmatemp = '';
+type = 'eig';

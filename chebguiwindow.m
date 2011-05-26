@@ -68,7 +68,7 @@ if ~isempty(varargin)
     handles.guifile = varargin{1};
 else
     cgTemp = chebgui('dummy');
-    handles.guifile = loadexample(cgTemp,3,'bvp'); % Start with Airy as a default
+    handles.guifile = loadexample(cgTemp,-1); % Load a random example
 end
 % Create a new structure which contains information about the latest
 % solution obtained

@@ -1,0 +1,8 @@
+'Troesch equation'
+'bvp'
+a = '0'; b = '1';
+DE = 'u" = 8*sinh(8*u)';
+LBC = 'u = 0'; RBC = 'u = 1';
+init = ''; tol = '1e-8';
+damping = '1'; plotting = '0.1';
+type = 'bvp';
