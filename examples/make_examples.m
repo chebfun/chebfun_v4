@@ -202,6 +202,7 @@ if listing
         fidk = fopen([filename,'.m']);
         txt = fgetl(fidk);
         origtxt = txt;
+        txt = upper(txt);
         fclose(fidk);
         if txt < 1, continue, end % This mfile will be ignored
         if numel(txt) >1 && strcmp(txt(1:2),'%%')
@@ -252,17 +253,17 @@ if listing
     for k = 1:numel(mfile)
          if isempty(desc{k}), continue, end
          if strcmp(desc{k}(1),' '), continue, end
-         origdesc{k} = capitalize(origdesc{k});
+%          origdesc{k} = capitalize(origdesc{k});
          mfile{k} = mfile{k}(1:end-2);
          ms = max(ms,length(origdesc{k}));
          if shtml
-             newtext = sprintf(['  <tr>\n   <td>%s</td>\n', ...
+             newtext = sprintf(['  <tr>\n   <td style="text-transform: uppercase;">%s</td>\n', ...
                  '   <td style="float:right"><a href="%s/" style="width:70px; display: inline-block;">%s</a></td>\n', ...
                  '   <td>(<a href="%s/html/%s.shtml">html</a>, <a href="%s/pdf/%s.pdf">PDF</a>, ',...
                  '<a href="%s/%s.m">M-file</a>)</td>\n  </tr>\n\n'], ...
                         origdesc{k},filedir{k},filedir{k},filedir{k},mfile{k},filedir{k},mfile{k},filedir{k},mfile{k});
          else
-             newtext = sprintf(['  <tr>\n   <td><a href="%s/%s.m">%s</a></td>\n', ...
+             newtext = sprintf(['  <tr>\n   <td style="text-transform: uppercase;"><a href="%s/%s.m">%s</a></td>\n', ...
                  '   <td style="float:right">(<a href="%s/" style="width:70px; display: inline-block;">%s</a>)</td>\n  </tr>\n\n'], ...
                         filedir{k},mfile{k},origdesc{k},filedir{k},filedir{k});
          end
@@ -340,7 +341,7 @@ if exampleshtml
         titletxt = titletxt(length(dirs{j})+2:end);
         % Add entry to examples/examples.html
         if ~strcmp(dirs{j},'temp')
-            fprintf(fid0,['<li><a href="',dirs{j},'/',dirs{j},'.html">',titletxt,'</a>\n</li>\n\n']);
+            fprintf(fid0,['<li><a href="',dirs{j},'/',dirs{j},'.html" style="text-transform: uppercase;>',titletxt,'</a>\n</li>\n\n']);
         end
     end
     % Open template
@@ -407,7 +408,7 @@ for j = 1:numel(dirs)
         % Make dirname/index.shtml
         make_shtml('index',dirs{j},[],titletxt,[],nextdir,prevdir);
     end
-    
+        
     % Get the ordering (we need to ignore A, AN, THE, ETC)
     desc = cell(numel(mfile),1); 
     for k = 1:numel(mfile)
@@ -450,13 +451,13 @@ for j = 1:numel(dirs)
             continue % This mfile will be ignored
 %             txt = [filename,'.m'];
         end
-        fprintf(fid,[txt, '     (']);
+        fprintf(fid,['<a style="text-transform:uppercase;">',txt, '</a>     (']);
         
         % Make dirname/html/filename.shtml
         if shtml
             if k < numel(mfile), next = mfile{k+1}(1:end-2); else next = []; end
             if k > 1, prev = mfile{k-1}(1:end-2); else prev = []; end
-            make_shtml(filename,filename,'html',upper(txt),titletxt,next,prev);
+            make_shtml(filename,filename,'html',(txt),titletxt,next,prev);
         end
 
         %%% HTML %%%
@@ -469,10 +470,10 @@ for j = 1:numel(dirs)
             curfile = [dirs{j},'/',filename,'.m']; 
             filetext = fileread([filename,'.html']);
             if shtml
-                newtext = sprintf('<a href="/chebfun/examples/%s">%s</a>', ...
+                newtext = sprintf('<a href="/chebfun/examples/%s" style="text-transform: uppercase;">%s</a>', ...
                     curfile,curfile);
             else
-                newtext = sprintf('<a href="%s">%s</a>', ...
+                newtext = sprintf('<a href="%s" style="text-transform: uppercase;">%s</a>', ...
                     fullfile(examplesdir,dirs{j},[filename,'.m']),curfile);
             end
             filetext = strrep(filetext,curfile,newtext);
@@ -488,6 +489,7 @@ for j = 1:numel(dirs)
             cd ..
             
         end
+        
         if shtml && exist(fullfile('html',[filename,'.shtml']),'file')
         % Link to dirname/html/filename.shtml
             fprintf(fid,'<a href="html/%s.shtml">html</a>, ',filename);
@@ -513,6 +515,7 @@ for j = 1:numel(dirs)
                 end            
             end
         end
+        
         % Link to dirname/pdf/<filename>.pdf
 %         if exist(fullfile('pdf',[filename,'.pdf']),'file')
             if shtml
@@ -526,8 +529,7 @@ for j = 1:numel(dirs)
         
         %%% M-FILES %%%
         fprintf(fid,'<a href="%s.m">M-file</a>)\n',filename);
-        fprintf(fid,'                <br/>\n\n');
-        
+        fprintf(fid,'                <br/>\n\n');   
 
     end
     fclose(fid);
@@ -644,7 +646,7 @@ end
 % HEAD
 fprintf(fid,'\n<head>\n');
 % TITLE
-fprintf(fid,'<title>%s</title>\n',lower(title)); % Lower case
+fprintf(fid,'<title>%s</title>\n',(title)); % Lower case
 % fprintf(fid,'<title>%s</title>\n',capitalize(title)); % Captialised
 
 % META DATA
@@ -682,12 +684,12 @@ else
     fprintf(fid,'            <div id="breadcrumb">\n            <table id="bctable"><tbody><tr>\n');
     fprintf(fid,'            <td> > <a href="../">examples</a>');
     if ~isempty(prev)
-        fprintf(fid, ' | <a href="../%s">previous</a>',prev);
+        fprintf(fid, ' | <a href="../%s/">previous</a>',prev);
     else
         fprintf(fid, ' | previous');
     end
     if ~isempty(next)
-        fprintf(fid, ' | <a href="../%s">next</a>',next);
+        fprintf(fid, ' | <a href="../%s/">next</a>',next);
     else
         fprintf(fid, ' | next');
     end

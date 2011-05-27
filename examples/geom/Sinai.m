@@ -60,7 +60,7 @@ axis([-2 2 -2 2],'square','off')
 % to the required time interval by the command b = b{0,tfinal}.
 
 %%
-% Perhaps the only point of substance in the computation
+% Perhaps the only point of real substance in the computation
 % is the matter of how nextpoint, given a
 % position and direction, finds the next intersection with a circle.  It does
 % this by repeatedly moving a distance 0.15, checking for intersections
@@ -71,7 +71,10 @@ axis([-2 2 -2 2],'square','off')
 % unit squares surrounding the adjacent other circles.  Therefore
 % if one moves a distance <1/6 from any point p, the only circle with which a
 % possible intersection might occur is the one closest to p.
-% See Chapter~2 of [1], by Stan Wagon.
+% See Chapter 2 of [1], by Stan Wagon.
+
+%%
+% Here is trajectory.
 
 function b = trajectory(p0,d0,tfinal)
 b = chebfun; t = 0;                   % initial chebfun: empty
@@ -86,7 +89,7 @@ b = b{0,tfinal};                      % trim chebfun to [0,tfinal]
 end
 
 %%
-% And here's the nextpoint function.
+% And here is nextpoint.
 function [p,d] = nextpoint(p0,d0)
 hit = false; p = p0;
 smax = 0.15;                          % max travel per exploring step
@@ -110,8 +113,8 @@ end
 % Well, from the point of view of efficiency, it is not so great.
 % On the other hand as a laboratory in which to explore this problem,
 % it is very appealing, because it produces the trajectory b
-% in such a conveniently usable form.  can now illustrate this by doing various
-% things with it.
+% in such a conveniently usable form.  We can now illustrate this in 
+% various ways.
 % First of all, here is the solution trajectory for the Challenge problem:
  
 plot(0,0,'.k')                   
@@ -142,12 +145,12 @@ b([5 10])'
 %%
 % What was its distance from the origin as a function of t?
 % For this we can execute plot(abs(b)), and we do this below both for
-% the problem as posed and for the same
-% problem over the time interval [0,100]:
+% the problem as posed and for the same problem over the time interval [0,100]:
 
 clf, plot(abs(b),LW,1.6)
 %%
-plot(abs(trajectory(.5+.1i,1,100)),LW,1.6)
+b2 = trajectory(.5+.1i,1,100);
+plot(abs(b2),LW,1.6)
 
 %%
 % Another interesting question is suggested by the trajectory figure above.
@@ -175,8 +178,11 @@ dtheta = angle(d(t-.1)) - angle(d(t+.1)) - pi
 
 %%
 % What does a longer trajectory of this system look like?
-% To see the result for 2000 time units, we can execute
-plot(trajectory(.5+.1i,1,2000),'r',LW,1), axis equal
+% Here is a plot of the trajectory to 200 time units
+% computed a moment ago.  One sees that in this system,
+% for obvious reasons, some long segments appear but they
+% are always approximately vertical or horizontal.
+plot(b2,'r',LW,1), axis equal
 
 %%
 % Finally we come to the scientific heart of this problem, which is the
@@ -188,14 +194,17 @@ plot(trajectory(.5+.1i,1,2000),'r',LW,1), axis equal
 % bounce at a mirror, the difference between the two paths will be amplified, and
 % the effect over time is an exponential divergence of trajectories, which is the
 % hallmark of chaos.  We can explore this effect with the following code, which
-% computes trajectories b and b2 over 30 time units from two initial points
-% differing by 1e-16:
-b = trajectory(p0,d0,30);
-b2 = trajectory(p0+1e-16i,d0,30);
+% computes trajectories b and b2 over 20 time units from two initial points
+% differing by 1e-14:
+b = trajectory(p0,d0,20);
+b2 = trajectory(p0+1e-14i,d0,20);
 semilogy(abs(b2-b),LW,1.6), grid on
+axis([0 20 1e-14 1e2])
 
 %%
-% 
+% The first part of this figure is erroneous; Chebfun's tolerances
+% give incorrect results, a matter to be investigated further.  After
+% 7 time units or so, the correct image begins to appear.
 % The two trajectories are close to one another, but as the figure
 % shows, they diverge exponentially.
 % The rate of divergence is about exp(2.3t), and the coefficient
@@ -224,7 +233,7 @@ semilogy(abs(b2-b),LW,1.6), grid on
 %%
 % Since the time scales go well beyond t=16,
 % these observations imply that several of the plots in this
-% writeup are entirely wrong, at least
+% Example are entirely wrong, at least
 % after the first few time units.  Or, more precisely, they
 % are wrong in a literal sense, but they are right in the
 % deeper sense of reflecting accurately the typical behavior

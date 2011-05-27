@@ -1,4 +1,4 @@
-%% ABSCISSA OF THE LINEARIZED VLASOV-POISSON OPERATOR
+%% Abscissa of the linearized Vlasov-Poisson operator
 % Toby Driscoll, 20 October 2010
 
 %%
