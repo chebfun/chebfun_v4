@@ -17,8 +17,15 @@ end
 
 function Fout = sqrtcol(F)
 
+pref = chebfunpref;
 % Add breakpoints at roots
-F = add_breaks_at_roots(F);
+if ~isreal(F)
+    r = roots(imag(F));
+    pref.extrapolate = true;
+else
+    r = roots(F);
+end
+F = add_breaks_at_roots(F,[],r);
 Fout = F;
 
 % Loop through funs
@@ -26,7 +33,7 @@ for k = 1:F.nfuns
     f = extract_roots(F.funs(k));
     exps = f.exps;
     f.exps = [0 0];
-    fout = compfun(f, @sqrt);
+    fout = compfun(f, @sqrt,[],pref);
     fout.exps = exps/2;
     fout = replace_roots(fout);
     Fout.funs(k) = fout;
