@@ -2,7 +2,7 @@ function varargout = remez(f,varargin)
 % Best polynomial or rational approximation.
 %
 % REMEZ(F,M,N) computes the best rational approximation of type [M/N] of a
-% chebfun F using the Remez algorithm. The particular case REMEZ(F,N) 
+% chebfun F using the Remez algorithm.  The particular case REMEZ(F,N) 
 % computes the best polynomial approximation of degree N .
 %
 % REMEZ(...'tol',TOL) uses the value TOL as the termination tolerance on
@@ -16,8 +16,7 @@ function varargout = remez(f,varargin)
 % REMEZ(...'plotfcns','error') plots the error function while the algorithm
 % executes.
 %
-% P = REMEZ(...) returns a chebfun P for the best polynomial
-% approximation.
+% P = REMEZ(...) returns a chebfun P for the best polynomial approximation.
 %
 % [P,Q] = REMEZ(...) returns chebfuns P and Q for best rational
 % approximation. [P,Q,R_HANDLE] = REMEZ(...) also returns a function handle 
@@ -31,6 +30,10 @@ function varargout = remez(f,varargin)
 % and XK with the obtained tolerance, number of performed iterations, 
 % maximum correction in the last trial reference and last trial reference 
 % on which the error equioscillates respectively.
+%
+% This code is quite reliable for polynomial approximations but rather
+% fragile for rational approximations.  Better results can often be
+% obtained with CF, especially if f is smooth.
 %
 % See Pachon and Trefethen, "Barycentric-Remez algorithms for best 
 % polynomial approximation in the chebfun system", BIT Numerical 
@@ -89,11 +92,11 @@ diffx = 1;
 disp_iter = 0;
 draw_option = 0;
 % set tolerances according
-if N < 15, 
+if N < 15
     tol = 1e-15; 
-elseif N <= 100, 
+elseif N <= 100,
     tol = 1e-13; 
-elseif N <= 1000, 
+elseif N <= 1000
     tol = 1e-13; 
 elseif N > 1000
     tol = 2e-10;
@@ -179,14 +182,12 @@ while (delta/normf > tol) && iter <maxit && diffx > 0
         [xk,err,e] = exchange(xo,h,1,f,p,q,N+2);  % point exchange
     end    
         if draw_option
-              
           plot(xk,0*xk,'*k','markersize',12); 
           plot(xxk,e(xxk)),   
           hold off,
           xlim([a,b])
           legend('current ref','next ref','error')
           drawnow,
-          %pause,
          end
     diffx = max(abs([xo-xk]));
     xo = xk;
@@ -216,7 +217,9 @@ if delta/normf > tol
         ' iterations to the tolerance ',num2str(tol),'.']),
 end
     
-if rational , q = qmin; end
+%if rational , q = qmin; end
+if rational , q = simplify(qmin,1e-14,'force'); end
+p = simplify(p,1e-14,'force');
 if ~rational 
     if nargout >= 1, varargout(1) = {p};   end
     if nargout >= 2, varargout(2) = {err}; end
@@ -324,7 +327,7 @@ chebfunpref('splitting',spl_ini),
         if mod(n,2), n = n -1; end        
     elseif max(abs(c(end:-2:1)))/f.scl < eps, % f is an odd function
         if ~mod(m,2), m = m-1; end
-        if ~mod(n,2), n = n - 1; end
+        if mod(n,2), n = n - 1; end
     end
         
     % END DETECTDEGENERACY
