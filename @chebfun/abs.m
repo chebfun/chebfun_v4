@@ -8,7 +8,7 @@ function Fout = abs(F)
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = abscol(F(k));
-    Fout(k).jacobian = anon('diag1 = diag(sign(Fout)); der2 = diff(Fout,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout'},{Fout(k)},1);
+    Fout(k).jacobian = anon('diag1 = diag(sign(F)); der2 = diff(Fout,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout','F'},{Fout(k),F(k)},1);
     Fout(k).ID = newIDnum;
 end
 
@@ -22,7 +22,7 @@ if isempty(F)                % Empty case
     
 elseif isreal(F)             % Real case
     
-    r = roots(F);            % Abs is singular at roots 
+    r = roots(F,'nozerofun');% Abs is singular at roots 
     r = setdiff(r,F.ends).'; % ignore if already an endpoint
     if ~isempty(r)           % Avoid adding new breaks where not needed
         tol = 1000*chebfunpref('eps').*max(min(diff(F.ends)),1);
