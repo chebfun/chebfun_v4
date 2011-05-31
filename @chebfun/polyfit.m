@@ -7,6 +7,9 @@ function f = polyfit(y,n)
 %   corresponds to the polynomial of degree N that fits the data (X,Y) 
 %   in the least-squares sense.
 %
+%   Note chebfun/POLYFIT does not not support more than one output argument
+%   in the way that matlab/OLYFIT does.
+%
 %   See also polyfit, domain/polyfit
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
@@ -18,13 +21,16 @@ if nargout > 1
     error('CHEBFUN:polyfit:nargout','Chebfun/polyfit only supports one output');
 end
 
+for k = 1:numel(y)
+    f(k) = columnfit(y(k),n);
+end
+
+function f = columnfit(y,n)
+
 if n > length(y) && y.nfuns == 1
     f = y;
 else
     [a,b] = domain(y);
-    for k = 0:n
-       E(:,k+1) = legpoly(k,[a,b],'norm');  % Legendre-Vandermonde matrix
-    end
-    
-    f = E*(E'*y);                          % least squares chebfun
+    E = legpoly(0:n,[a,b],'norm');  % Legendre-Vandermonde matrix   
+    f = E*(E'*y);                   % least squares chebfun
 end

@@ -23,4 +23,4 @@ else
 end
 F = add_breaks_at_roots(F,[],r);
 
-Fout = comp(F, @(x) log(x), [], pref);
+Fout = comp(F, @(x) log10(x), [], pref);
