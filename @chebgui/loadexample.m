@@ -6,9 +6,9 @@ function cg = loadexample(guifile,exampleNumber)
 % Find the folders which demos are stored in
 guipath = which('chebgui');
 
-find_frontslash = max(strfind(guipath,'/'));
-guipath = guipath(1:find_frontslash);
-bvppath = [guipath,'private/bvpdemos/'];
+find_filesep = max(strfind(guipath,filesep));
+guipath = guipath(1:find_filesep);
+bvppath = fullfile(guipath,'private','bvpdemos');
 
 
 % Setup ODEs
@@ -22,5 +22,5 @@ else
     selected = exampleNumber + 2;
 end
 
-demoPath = [bvppath,D(selected,:).name];
+demoPath = fullfile(bvppath,D(selected).name);
 cg = loaddemos(guifile,demoPath);
