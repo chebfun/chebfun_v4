@@ -44,6 +44,18 @@ function varargout = blowup(on_off)
 
 % This is default behavior for "blowup on"
 default = 1;
+
+if ischar(on_off)
+    check = strcmpi(on_off,{'on','off'});
+    if check(1)
+        on_off = default;
+    elseif check(2)
+        on_off = 0;
+    else
+        error('CHEBFUN:blowup:charin','Unkown string input to blowup.m');
+    end
+end
+
 if nargin == 1 && isnan(on_off)
     if nargout == 1, varargout{1} = default;  end
     return
