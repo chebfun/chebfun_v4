@@ -1,6 +1,5 @@
 function Fout = round(f)
 % ROUND   Round pointwise to nearest integer.
-%
 % G = ROUND(F) returns the chebfun G such that G(X) = ROUND(F(X)) for each
 % X in the domain of F.
 %
@@ -22,6 +21,16 @@ if isempty(f), g=chebfun; return, end
 
 if any(get(f,'exps')<0), error('CHEBFUN:round:inf',...
         'Round is not defined for functions which diverge to infinity'); end
+
+% Deal with complex functions
+if ~isreal(f)
+    if isreal(1i*f)
+        g = 1i*roundcol(imag(f));
+    else
+        g = roundcol(real(f))+1i*roundcol(imag(f));
+    end
+    return
+end
 
 % Find all the half-integer crossings for f.
 range = round( [min(f) max(f)] );

@@ -13,11 +13,24 @@ for k = 1:numel(F)
     Fout(k) = floorcol(F(k));
 end
 
+
 %------------------------------------------
 function g = floorcol(f)
 
+if isempty(f), g=chebfun; return, end
+
 if any(get(f,'exps')<0), error('CHEBFUN:floor:inf',...
         'Floor is not defined for functions which diverge to infinity'); end
+
+% Deal with complex functions
+if ~isreal(f)
+    if isreal(1i*f)
+        g = 1i*floorcol(imag(f));
+    else
+        g = floorcol(real(f))+1i*floorcol(imag(f));
+    end
+    return
+end
 
 % Find all the integer crossings for f.
 range = floor( [min(f) max(f)] );

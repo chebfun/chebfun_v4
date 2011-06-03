@@ -22,6 +22,16 @@ if isempty(f), g=chebfun; return, end
 if any(get(f,'exps')<0), error('CHEBFUN:fix:inf',...
         'Fix is not defined for functions which diverge to infinity'); end
 
+% Deal with complex functions
+if ~isreal(f)
+    if isreal(1i*f)
+        g = 1i*fixcol(imag(f));
+    else
+        g = fixcol(real(f))+1i*fixcol(imag(f));
+    end
+    return
+end
+
 % Find all the integer crossings for f.
 range = floor( [min(f) max(f)] );
 breakpts = [];
