@@ -3,7 +3,7 @@ function p = angle(h)
 %   ANGLE(H) returns the phase angles, in radians, of a complex-valued 
 %   chebfun or quasi-matrix.
 %
-%   See also ABS, UNWRAP.
+%   See also ANGLE, CHEBFUN/ABS, CHEBFUN/UNWRAP.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
