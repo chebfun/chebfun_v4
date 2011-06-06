@@ -133,12 +133,16 @@ stagCounter = 0;
 if isLin % N is linear. Sweet!
     
     % Correct for bc vals.
-    rhs = rhs - feval(N,0*u);
+    Nfeval = feval(N,0*u);    
+    for rhsCounter = 1:numel(Nfeval)
+        newRhs(:,rhsCounter) = rhs(rhsCounter) - Nfeval(:,rhsCounter);
+    end
+    %         rhs = rhs - evalProblemFun('DE',0*u);
     N.op = A;
-    A = linop(N);
+    A = linop(N,0*u); % Linearise around the zero chebfun
     
     uguess = u;
-    u = A\rhs;
+    u = A\newRhs;
     delta = uguess-u;
 
     % Do we need to worry about scaling here?
@@ -157,13 +161,13 @@ if isLin % N is linear. Sweet!
     
     if nargout == 2
         if numberOfInputVariables == 1
-            nrmDeltaRelvec = norm(feval(N,u)-rhs);
+            nrmDeltaRelvec = norm(feval(N,u)-newRhs);
         else
             uCell = cell(1,numel(u));
             for quasiCounter = 1:numel(u)
                 uCell{quasiCounter} = u(:,quasiCounter);
             end
-            nrmDeltaRelvec = norm(deFun(xDom,currentGuessCell{:})-rhs);
+            nrmDeltaRelvec = norm(deFun(xDom,currentGuessCell{:})-newRhs);
         end
     end
     if isempty(handles) && any(strcmpi(pref.display,{'iter','display'}))

@@ -22,6 +22,7 @@ if ~isa(Nin.op,'cell')
         Narg = feval(Nin.op,argument,varargin);
         return
     end
+    
     numberOfInputVariables = nargin(Nin.op);
     
     % Need to load a cell if the number of input arguments is greater than
@@ -32,7 +33,12 @@ if ~isa(Nin.op,'cell')
         % Create the linear function on the domain of Nin to use as the
         % first argument
         xDom = chebfun('x',Nin.dom);
-        Narg = feval(Nin.op,xDom,argument);
+
+        argCell = cell(1,numel(argument));
+        for quasiCounter = 1:numel(argument)
+            argCell{quasiCounter} = argument(:,quasiCounter);
+        end
+        Narg = feval(Nin.op,xDom,argCell{:});
     else
         error('CHEBOP:feval:nargin','Incorrect number of input arguments.')
     end
