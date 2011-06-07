@@ -44,10 +44,10 @@ if p.nfuns == 1, return, end
 tol = 100*chebfunpref('eps')*p.scl;
 lvals = feval(p,p.ends,'left');
 rvals = feval(p,p.ends,'right');
-idxl = abs(p.imps(1,:) - lvals) < tol;
-idxr = abs(p.imps(1,:) - rvals) < tol;
+idxl = abs(p.imps(1,:) - lvals) < 100*tol;
+idxr = abs(p.imps(1,:) - rvals) < 100*tol;
 
-idx1 = mod(abs(lvals - rvals),2*jumptol) <  tol;
+idx1 = mymod(abs(lvals - rvals),2*jumptol) <  tol;
 idx2 = abs(lvals - rvals) > tol;
 idx = idx1 & idx2;
 scale = round((lvals - rvals)/(2*jumptol));
@@ -56,7 +56,7 @@ for j = 2:p.nfuns
     p.funs(j) = p.funs(j)+shift(j);
 end
 
-% In the olden days we used to us the built-in unwrap...
+% % In the olden days we used to us the built-in unwrap...
 % % Get the indices of the break points
 % n = zeros(p.nfuns,1);
 % idx = zeros(p.nfuns,1);
@@ -73,7 +73,7 @@ end
 % 
 % % Simply call built-in UNWRAP on the values
 % v = get(p,'vals');
-% w = unwrap(v,varargin{:});
+% w = unwrap(v);
 % 
 % % Update to the new values
 % for k = 1:p.nfuns
@@ -88,7 +88,8 @@ end
 p.imps(1,idxl) = feval(p,p.ends(idxl),'left');
 p.imps(1,idxr) = feval(p,p.ends(idxr),'right');
 
-% Merge to tidy up unneeded breakpoints
-% pref = chebfunpref;
-% pref.extrapolate = 1;
+% Merge to tidy up unneeded breakpoints;
 p = merge(p,find(idx));
+
+function m = mymod(f,g)
+m = min([abs(mod(f,g)) ; abs(mod(f,-g)) ; abs(mod(-f,g)) ; abs(mod(-f,-g))]);
