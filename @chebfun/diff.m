@@ -1,4 +1,4 @@
-function [F nonConst] = diff(F,n,dim)
+function [F nonConst] = diff(F,n,dim,RL)
 %DIFF   Differentiation of a chebfun.
 % DIFF(F) is the derivative of the chebfun F. At discontinuities, DIFF
 % creates a Dirac delta with coefficient equal to the size of the jump.
@@ -6,8 +6,10 @@ function [F nonConst] = diff(F,n,dim)
 %
 % DIFF(F,N) is the Nth derivative of F.
 %
-% DIFF(F,ALPHA) when ALPHA is not an integer offers some support for 
-% fractional derivatives (of degree ALPHA) of F.
+% DIFF(F,ALPHA) when ALPHA is not an integer offers some support for
+% fractional derivatives (of degree ALPHA) of F. For ALPHA > 1 the Riemann-
+% Liouville definition is used by default. On can switch to the Caputo
+% definition with a call of the form DIFF(F,ALPHA,[],'Caputo').
 %
 % DIFF(F,U) where U is a chebfun returns the Jacobian of the chebfun F 
 % with respect to the chebfun U. Either F, U, or both can be a quasimatrix.
@@ -15,18 +17,21 @@ function [F nonConst] = diff(F,n,dim)
 % DIFF(U,N,DIM) is the Nth difference function along dimension DIM. 
 %      If N >= size(U,DIM), DIFF returns an empty chebfun.
 %
-% See also chebfun/fracdiff, chebfun/diff
+% See also diff, chebfun/private/fracdiff
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Check inputs
 if nargin == 1, n = 1; end
-if nargin < 3
+if nargin < 3 || isempty(dim)
     dim = 1+F(1).trans; 
 end
 if isnumeric(dim) && ~(dim == 1 || dim == 2)
     error('CHEBFUN:diff:dim','Input DIM should take a value of 1 or 2');
+end
+if nargin < 4 || isempty(RL)
+    RL = 'RL';
 end
 
 if isa(n,'chebfun')     
@@ -44,9 +49,11 @@ if isa(n,'chebfun')
     F = J;
 elseif round(n)~=n      
     % Fractional derivatives
-    F = fraccalc(diff(F,ceil(n)),ceil(n)-n);
-%     F = diff(fraccalc(F,ceil(n)-n),ceil(n));
-
+    if strcmpi(RL,'Caputo')
+        F = fraccalc(diff(F,ceil(n)),ceil(n)-n); % Caputo
+    else
+        F = diff(fraccalc(F,ceil(n)-n),ceil(n)); % Riemann-Liouville 
+    end
 elseif dim == 1+F(1).trans
     % Differentiate along continuous variable
     for k = 1:numel(F)
