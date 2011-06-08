@@ -10,14 +10,17 @@ function varargout = subsref(f,index)
 idx = index(1).subs;
 switch index(1).type
     case '.'
-        if numel(f) > 1
-            error('CHEBFUN:SUBSREF:QUASIMATRIX', ...
-                'Subsref does not support ''.'' notation for chebfun quasimatrices.');
+%         if numel(f) > 1
+%             error('CHEBFUN:SUBSREF:QUASIMATRIX', ...
+%                 'Subsref does not support ''.'' notation for chebfun quasimatrices.');
+%         end
+        varargout = get(f,idx);
+        if ~iscell(varargout),
+            varargout = {varargout};
         end
-        varargout = { get(f,idx) };
     case '()'
         % --- transpose row chebfuns/quasimatrices -------
-        if get(f,'trans')   
+        if get(f(1),'trans')   
             n = size(f,1);
             if length(idx) > 1,   s = idx{2}; % where to evaluate 
             else                  s = idx{1};            end
@@ -38,7 +41,7 @@ switch index(1).type
             % f(s,:), f(:,s), or, 
             if any(strcmpi(idx{2},{'left','right'}))
                 varin = {idx(2)};
-            elseif get(f,'trans')
+            elseif get(f(1),'trans')
                 f = f(cat(2,idx{1}),:);
             else
                 f = f(:,cat(2,idx{2}));
@@ -50,7 +53,7 @@ switch index(1).type
                 error('CHEBFUN:subsref:dimensions',...
                 'Index exceeds chebfun dimensions.')
             end
-            if get(f,'trans')
+            if get(f(1),'trans')
                 f = f(cat(2,idx{1}),:);
             else
                 f = f(:,cat(2,idx{2}));
@@ -94,20 +97,18 @@ switch index(1).type
         error('CHEBFUN:UnexpectedType',['??? Unexpected index.type of ' index(1).type]);
 end
 
-
-
 if length(index) > 1
     varargout = {subsref([varargout{:}], index(2:end))};
 end  
 
-if numel(varargout) > 1 && nargout <= 1
-   if iscellstr(varargout) || any(cellfun('isempty',varargout))
-       varargout = {varargout};
-   else
-       try
-           varargout = {[varargout{:}]};
-       catch
-           varargout = {varargout};
-       end
-   end
-end
+% if numel(varargout) > 1 && nargout <= 1
+%    if iscellstr(varargout) || any(cellfun('isempty',varargout))
+%        varargout = {varargout};
+%    else
+%        try
+%            varargout = {[varargout{:}]};
+%        catch
+%            varargout = {varargout};
+%        end
+%    end
+% end

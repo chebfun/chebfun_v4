@@ -7,12 +7,12 @@ function varargout = subsasgn(f,index,varargin)
 %  
 %     F(PTS) = VALS assigns the values of vector VALS at locations
 %     specified in vector PTS in the chebfun F. length(PTS) should be equal
-%     to length(VALS)). Subsasgn introduces new break-points in F at points
+%     to length(VALS). Subsasgn introduces new break-points in F at points
 %     in PTS that were not before in F.ENDS. Similarly, A(PTS,C) = VALS
 %     assigns values for specific points PTS of the column C of a
 %     quasimatrix A.
 %  
-%     F{A,B} = G is a wrapper for the command DEFINE(F,[A,B],G).
+%     F{A,B} = G is a wrapper for the command DEFINE(F,[A,B],CHEBFUN(G,[A,B])).
 %  
 %     F.FIELD = B is a wrapper for the command SET(F,FIELD,B), where FIELD
 %     is any of the chebfun fields.
@@ -24,11 +24,18 @@ idx = index(1).subs;
 vin = varargin{:};
 switch index(1).type
     case '.'
+        if length(index) > 2
+            tmp = subsref(f,index(1:2));
+            vin = subsasgn(tmp,index(3),vin);
+            if strcmp(index(3).subs,'vals')
+                vin = subsasgn(vin,struct('type','.','subs','n'),numel(vin));
+            end
+        end
         varargout = {set(f,idx,vin)};
     case '()'
         % --- transpose row chebfuns/quasimatrices -------
         trans = 0;
-        if get(f,'trans')
+        if ~isempty(f) && get(f(1),'trans')
             trans = 1;
             f = f.';
             idx = fliplr(idx);
@@ -38,7 +45,7 @@ switch index(1).type
         % ---- read input arguments -----------------------------
         if length(idx) == 1  
             % f(s), where s can be vector, domain or ':'
-            % syntaxis not allowed when f is a quasimatrix
+            % syntax is not allowed when f is a quasimatrix
             if n ~= 1
                 error('CHEBFUN:subsasgn:dimensions',...
                     'Index missing for quasi-matrix assignment.')
@@ -68,43 +75,44 @@ switch index(1).type
         end
         fcol = f(:,col);        
         % ---- assign values/chebfuns at given points/domains ---        
-        if isnumeric(s)
-            if ~isa(vin,'numeric')
-                error('CHEBFUN:subsasgn:conversion',...
-                        ['Conversion to numeric from ',class(vin),...
-                        ' is not possible.'])
-            end
-            if length(vin) == 1
-               vin = vin*ones(length(s),length(col));
-            elseif length(col) == 1 && min(size(vin)) == 1 && ...
-                    length(vin)==length(s)
-                vin = vin(:);
-            elseif length(s)~=size(vin,1) || length(col)~=size(vin,2)
-                error('CHEBFUN:subsasgn:dimensions',...
-                        'Subscripted assignment dimension mismatch.')
-            end
-            ends = get(fcol(:,1),'ends'); a = ends(1); b = ends(end);
-            if min(s) < a || max(s) > b
-                error('CHEBFUN:subsasgn:outbounds',...
-                    'Cannot introduce endpoints outside domain.')
-            end
-            stemp = s;    
-            s = setdiff(s,ends); impsends = zeros(length(col),2);
-            for k = 1:length(col)
-                impsends(k,:) = fcol(:,k).imps(1,[1 end]);
-            end
-            for i = 1:length(s)
-                fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
-            end 
-            for k = 1:length(col)
-                fcol(:,k).imps([1 end]) = impsends(k,:);
-            end
-            for i = 1:length(col)   
-                [mem,loc] = ismember(stemp,fcol(i).ends);
-               % fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
-                fcol(:,i).imps(1,loc) = vin(mem,i); 
-            end
-        elseif isa(s,'domain')
+%         if isnumeric(s)
+%             if ~isa(vin,'numeric')
+%                 error('CHEBFUN:subsasgn:conversion',...
+%                         ['Conversion to numeric from ',class(vin),...
+%                         ' is not possible.'])
+%             end
+%             if length(vin) == 1
+%                vin = vin*ones(length(s),length(col));
+%             elseif length(col) == 1 && min(size(vin)) == 1 && ...
+%                     length(vin)==length(s)
+%                 vin = vin(:);
+%             elseif length(s)~=size(vin,1) || length(col)~=size(vin,2)
+%                 error('CHEBFUN:subsasgn:dimensions',...
+%                         'Subscripted assignment dimension mismatch.')
+%             end
+%             ends = get(fcol(:,1),'ends'); a = ends(1); b = ends(end);
+%             if min(s) < a || max(s) > b
+%                 error('CHEBFUN:subsasgn:outbounds',...
+%                     'Cannot introduce endpoints outside domain.')
+%             end
+%             stemp = s;    
+%             s = setdiff(s,ends); impsends = zeros(length(col),2);
+%             for k = 1:length(col)
+%                 impsends(k,:) = fcol(:,k).imps(1,[1 end]);
+%             end
+%             for i = 1:length(s)
+%                 fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
+%             end 
+%             for k = 1:length(col)
+%                 fcol(:,k).imps([1 end]) = impsends(k,:);
+%             end
+%             for i = 1:length(col)   
+%                 [mem,loc] = ismember(stemp,fcol(i).ends);
+%                % fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
+%                 fcol(:,i).imps(1,loc) = vin(mem,i); 
+%             end
+%         else
+            if isa(s,'domain') || isnumeric(s)
             fcol = define(fcol,s,vin);
         elseif isequal(s,':')
             if isempty(fcol)
@@ -141,6 +149,7 @@ switch index(1).type
             error('CHEBFUN:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
+        % s should be a domain here
         varargout = { define(f,s,vin) };
     otherwise
         error('CHEBFUN:subsasgn:indextype',['??? Unexpected index.type of ' index(1).type]);

@@ -11,7 +11,7 @@ function F = set(F,varargin)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if numel(F)>1
-    error('CHEBFUN:set:quasi','set currently does not work with quasi-matrices')
+    error('CHEBFUN:set:quasi','Set currently does not work with quasi-matrices.')
 end
 
 propertyArgIn = varargin;
