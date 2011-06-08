@@ -32,4 +32,5 @@ for k = 1:fout.nfuns
     end
 end
 
-fout.imps = ~feval(f,fout.ends(1,:));
+tol = 100*chebfunpref('eps')*f.scl;
+fout.imps = abs(feval(f,fout.ends(1,:))) < tol;
