@@ -14,7 +14,7 @@ function fout = not(F)
 
 fout = chebfun;
 for k = 1:min(size(F)) % Do it for each column of F1.
-      fout = [fout  notcol(F(k))];
+    fout(k) = notcol(F(k));
 end
 
 function fout = notcol(f)
