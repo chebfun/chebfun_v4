@@ -11,18 +11,15 @@ end
 % Set up ODEs, PDEs and EIGs demos separately
 
 % Find the folders which demos are stored in
-guipath = which('chebgui');
-
-find_frontslash = max(strfind(guipath,'/'));
-guipath = guipath(1:find_frontslash);
-bvppath = [guipath,'private/bvpdemos/'];
-pdepath = [guipath,'private/pdedemos/'];
-eigpath = [guipath,'private/eigdemos/'];
+[guipath,guiname,guiext] = fileparts(which('chebgui'));
+bvppath = fullfile(guipath,'private','bvpdemos');
+pdepath = fullfile(guipath,'private','pdedemos');
+eigpath = fullfile(guipath,'private','eigdemos');
 
 % Setup ODEs
 D = dir(bvppath);
 for demoCounter = 1:length(D)
-    demoPath = [bvppath,D(demoCounter,:).name];
+    demoPath = fullfile(bvppath,D(demoCounter,:).name);
     if isempty(strfind(demoPath,'.guifile')) % Only want to load files ending in .guifile
         continue
     end
@@ -57,7 +54,7 @@ end
 % Setup PDEs
 D = dir(pdepath);
 for demoCounter = 1:length(D) % First two entries are . and ..
-    demoPath = [pdepath,D(demoCounter,:).name];
+    demoPath = fullfile(pdepath,D(demoCounter,:).name);
     if isempty(strfind(demoPath,'.guifile')) % Only want to load files ending in .guifile
         continue
     end
@@ -86,7 +83,7 @@ end
 % Setup EIGs
 D = dir(eigpath);
 for demoCounter = 1:length(D) % First two entries are . and ..
-    demoPath = [eigpath,D(demoCounter,:).name];
+    demoPath = fullfile(eigpath,D(demoCounter,:).name);
     if isempty(strfind(demoPath,'.guifile')) % Only want to load files ending in .guifile
         continue
     end
