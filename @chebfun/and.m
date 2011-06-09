@@ -14,13 +14,15 @@ end
 
 % Deal with scalar inputs. (This is a bit lazy...)
 if isnumeric(F)
+    tmp = F; F = chebfun;
     for k = 1:numel(F)
-        F(k) = chebfun(F(k),G.ends([1 end]));
+        F(k) = chebfun(tmp(k),G.ends([1 end]));
     end
     if G.trans, F = transpose(F); end
 elseif isnumeric(G)
+    tmp = G; G = chebfun;
     for k = 1:numel(G)
-        G(k) = chebfun(G(k),F.ends([1 end]));
+        G(k) = chebfun(tmp(k),F.ends([1 end]));
     end
     if F.trans, G = transpose(G); end
 end    
