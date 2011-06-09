@@ -135,7 +135,7 @@ if isLin % N is linear. Sweet!
     % Correct for bc vals.
     Nfeval = feval(N,0*u);    
     for rhsCounter = 1:numel(Nfeval)
-        newRhs(:,rhsCounter) = rhs(rhsCounter) - Nfeval(:,rhsCounter);
+        newRhs(:,rhsCounter) = rhs(:,rhsCounter) - Nfeval(:,rhsCounter);
     end
     %         rhs = rhs - evalProblemFun('DE',0*u);
     N.op = A;
