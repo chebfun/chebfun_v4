@@ -217,14 +217,14 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
         % Using A.scale if we are in the first iteration - Handles linear
         % problems better
         if counter == 1
-            subsasgn(A,struct('type','.','subs','scale'), normu);
+            A = subsasgn(A,struct('type','.','subs','scale'), normu);
             delta = -(A\deResFun);
             % After the first iteration, we lower the tolerance of the chebfun
             % constructor (so not to use the default tolerance of chebfuns
             % but rather a size related to the tolerance requested).
         else
             A = diff(deResFun,u,'linop') & bc;
-            subsasgn(A,struct('type','.','subs','scale'), normu);
+            A = subsasgn(A,struct('type','.','subs','scale'), normu);
             % Linop backslash with the third argument added
             delta = -(A\deResFun);
             %             delta = -mldivide(A,deResFun,deltol);
@@ -234,7 +234,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
         
         % Do similar tricks as above for the tolerances.
         if counter == 1
-            subsasgn(A,struct('type','.','subs','scale'), normu);
+            A = subsasgn(A,struct('type','.','subs','scale'), normu);
             delta = -(A\(r-rhs));
         else
             delta = -mldivide(A,r-rhs,deltol);
