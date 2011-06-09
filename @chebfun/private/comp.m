@@ -61,17 +61,27 @@ else
     vscl = norm( op(f1.imps(1,:),f2.imps(1,:)), inf);
 end
 
+% We can skip the fun constructor if we know it will fail.
+if isfield(pref,'skipfunconstruct')  
+    skip = pref.skipfunconstruct;
+    ish = false;
+else
+    skip = false;
+end
+
 % Loop through the funs
 for k = 1:f1.nfuns
     % Update vscale (horizontal scale remains the same)
     f1.funs(k).scl.v = vscl;
-    % Attaempt to generate funs using the fun constructor.
-    if isempty(f2)
-        [newfun ish] = compfun(f1.funs(k),op,pref);
-    else
-        [newfun ish] = compfun(f1.funs(k),op,f2.funs(k),pref);
+    if ~skip
+        % Attempt to generate funs using the fun constructor.
+        if isempty(f2)
+            [newfun ish] = compfun(f1.funs(k),op,pref);
+        else
+            [newfun ish] = compfun(f1.funs(k),op,f2.funs(k),pref);
+        end
     end
-    if ish || (~ish && ~pref.splitting) 
+    if ish || (~ish && ~pref.splitting && ~pref.blowup) 
     % If we're happy, or not allowed to split, this will do.
        if ~ish
             warning('CHEBFUN:comp:resolv', ...
@@ -110,6 +120,19 @@ for k = 1:f1.nfuns
        ends = [ends newf.ends(2:end)];          % Store new ends
        imps = [imps newf.imps(1,2:end)];        % Store new imps
        vscl = max(vscl,newfun.scl.v);           % Get new estimate for vscale
+    elseif pref.blowup
+    % If sad and blowup is 'on', look for some exponents
+       endsk = f1.ends(k:k+1);
+       if isempty(f2)
+           newf = chebfun(@(x) op(feval(f1,x)), endsk, pref);
+       else
+           newf = chebfun(@(x) op(feval(f1,x),feval(f2,x)), endsk, pref);
+       end
+       ffuns = [ffuns newf.funs];               % Store new funs
+       ends = [ends newf.ends(2:end)];          % Store new ends
+       imps = [imps newf.imps(1,2:end)];        % Store new imps
+       % Blowup will have destroyed vscale. Make up a new one...
+       vscl = max(newf.scl);                    % Get new estimate for vscale
     end
          
 end

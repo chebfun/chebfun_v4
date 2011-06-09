@@ -173,7 +173,7 @@ else                              % rational case
   z = z(abs(z)<1); rho = 1/max(abs(z)); z = .5*(z+1./z);
   % compute q from the roots for stability reasons
   qt = chebfun(@(x) real(prod(x-z)/prod(-z)),'vectorize');
-  q = chebfun; q = define(q,d,qt);
+  q = chebfun; q = define(q,d,qt); % (d should be a domain here).
  
   % compute Chebyshev coeffs of approximation Rt from Laurent coeffs of
   % Blaschke product using fft

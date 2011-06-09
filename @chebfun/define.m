@@ -2,7 +2,9 @@ function Fout = define(F,subdom,G)
 % DEFINE Supply a new definition for a chebfun on a subdomain.
 %
 % F = DEFINE(F,S,G) uses the chebfun G to define the chebfun F in the
-% domain S. You can specify S as the vector [A,B] or using DOMAIN. 
+% domain S. You can specify S as the vector [A,B] or using DOMAIN. If S
+% happens to coincide with with an existing breakpoint of F, the impulse
+% data (F.imps) is taken from G.
 % 
 % DEFINE supports expansion/compression: the domain of G is scaled and
 % translated to coincide with [A,B]. If G is a scalar numerical value, it
@@ -40,14 +42,26 @@ function Fout = define(F,subdom,G)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-% Deal with quasi-matrices.
-if numel(F)~=numel(G), 
-    error('CHEBFUN:cumsum:quasidim','Chebfun quasi-matrix dimensions must agree')
-end 
 
 Fout = F;
-for k = 1:numel(F)
-    Fout(k) = definecol(F(k),subdom,G(k));
+
+if isa(subdom,'domain') || nargin == 4 || isa(G,'chebfun')
+    % Define an interval
+
+    % Deal with quasi-matrices.
+    if numel(F)~=numel(G), 
+        error('CHEBFUN:cumsum:quasidim','Chebfun quasi-matrix dimensions must agree')
+    end
+    
+    for k = 1:numel(F)
+        Fout(k) = definecol(F(k),subdom,G(k));
+    end
+    
+else
+    % Define a point
+    
+    Fout = definecolpoint(F,subdom,G);
+    
 end
 
 end
@@ -154,6 +168,52 @@ end
 f.nfuns = numel(f.funs);
 for k = 1:f.nfuns
     f.scl = max(f.scl, f.funs(k).scl.v);
+end
+
+end
+
+function fcol = definecolpoint(f,s,vin)
+% Deal with a single chebfun.
+
+fcol = f;     
+col = 1:numel(f);
+
+if isempty(s), return, end
+
+if ~isa(vin,'numeric')
+    error('CHEBFUN:subsasgn:conversion',...
+            ['Conversion to numeric from ',class(vin),...
+            ' is not possible.'])
+end
+if length(vin) == 1
+   vin = vin*ones(length(s),length(col));
+elseif length(col) == 1 && min(size(vin)) == 1 && ...
+        length(vin)==length(s)
+    vin = vin(:);
+elseif length(s)~=size(vin,1) || length(col)~=size(vin,2)
+    error('CHEBFUN:subsasgn:dimensions',...
+            'Subscripted assignment dimension mismatch.')
+end
+ends = get(fcol(:,1),'ends'); a = ends(1); b = ends(end);
+if min(s) < a || max(s) > b
+    error('CHEBFUN:subsasgn:outbounds',...
+        'Cannot introduce endpoints outside domain.')
+end
+stemp = s;    
+s = setdiff(s,ends); impsends = zeros(length(col),2);
+for k = 1:length(col)
+    impsends(k,:) = fcol(:,k).imps(1,[1 end]);
+end
+for i = 1:length(s)
+    fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
+end 
+for k = 1:length(col)
+    fcol(:,k).imps([1 end]) = impsends(k,:);
+end
+for i = 1:length(col)   
+    [mem,loc] = ismember(stemp,fcol(i).ends);
+   % fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
+    fcol(:,i).imps(1,loc) = vin(mem,i); 
 end
 
 end
