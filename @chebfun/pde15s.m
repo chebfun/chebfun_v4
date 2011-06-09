@@ -343,7 +343,7 @@ if dojac || dojacbc
     JacL = []; JL = []; JacR = []; JR = [];
     if funflagl
         uL = nlbcsl(u0,t0,xd);
-        JacL = diff(uL,u0);
+        JacL = diff(uL,u0,'linop');
         
         if syssize > 1
             isz = JacL.iszero;
@@ -363,7 +363,7 @@ if dojac || dojacbc
     end
     if funflagr
         uR = nlbcsr(u0,t0,xd);
-        JacR = diff(uR,u0);
+        JacR = diff(uR,u0,'linop');
         
         if syssize > 1
             isz = JacR.iszero;
@@ -414,7 +414,10 @@ if syssize > 1
 end
 
 % Check for (and try to remove) piecewise initial conditions
-if get(u0,'trans'), u0 = transpose(u0); end
+u0trans = get(u0,'trans');
+% Get u0trans as a cell if u0 is a quasimatrx
+if numel(u0trans) > 1, u0trans = u0trans{1}; end
+if u0trans, u0 = transpose(u0); end
 for k = 1:numel(u0)
     if u0(:,k).nfuns > 1
         u0(:,k) = merge(u0(:,k),tol);
@@ -719,7 +722,7 @@ clear global GLOBX
 
     function J = makejac2(u,t,n,B,rows,xd)
         Fu = pdefun(u,t,xd);
-        J = feval(diff(Fu,u),n,'oldschool');
+        J = feval(diff(Fu,u,'linop'),n,'oldschool');
         J(rows,:) = B;
         if funflagl
             indx = rows(1:length(nllbc));
