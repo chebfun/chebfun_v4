@@ -77,7 +77,9 @@ function C = mldivide(A,B,tolerance)
     end
     
     V = [];  % Initialise V so that the nested function overwrites it.
-    
+    syssize = A.blocksize(1);     % Number of eqns in system.
+    coef = [1, 2 + sin(1:syssize-1)];  % for a linear combination of variables
+
     if isa(A.scale,'function_handle')
         A.scale = chebfun(A.scale,ends);
     end
@@ -118,7 +120,6 @@ function C = mldivide(A,B,tolerance)
     % N is the number of points on each subinterval.
     % bks contains the ends of the subintervals.
 
-    syssize = A.blocksize(1);     % Number of eqns in system.
     N = N{:};   bks = bks{:};     % We allow only the same discretization.
                                   % Size and breaks for each system.
     maxdo = max(A.difforder(:));  % Maximum derivative order of the system.
@@ -155,7 +156,12 @@ function C = mldivide(A,B,tolerance)
     
     v = Amat\f;                             % Solve the system.
     V = mat2cell(v,repmat(N,1,syssize),1);  % Store for output.
-    v = sum(reshape(v,[sum(N),syssize]),2); % Combine equations.
+    v = reshape(v,[sum(N),syssize]);        % one variable per column
+    % Need to return a single function to test happiness. If you just sum
+    % functions, you get weird results if v(:,1)=-v(:,2), as can happen in
+    % very basic problems. We just use an arbitrary linear combination (but
+    % the same one each time!). 
+    v = v*coef(:); 
     
     % Filter
     csN = cumsum([0 N]);
