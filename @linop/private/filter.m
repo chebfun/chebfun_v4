@@ -16,7 +16,7 @@ n = length(v);
 if n < 17, return, end
 
 c = cd2cp(v);    % coeffs in ascending degree
-ac = abs(c)/min(max(v),1); % abs and scl relative to size.
+ac = abs(c)/min(max(abs(v)),1); % abs and scl relative to size.
 
 % Smooth using a windowed max to overcome symmetry oscillations.
 maxac = ac;
