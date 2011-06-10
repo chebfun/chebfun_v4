@@ -60,7 +60,11 @@ while length(propertyArgIn) >= 2,
         case {'guess','init'}
             % Convert constant initial guesses to chebfuns
             if isnumeric(val)
-                N.init = chebfun(val,N.dom);
+                u = chebfun;
+                for k = 1:size(val,2)
+                    u(:,k) = chebfun(val(:,k),N.dom);
+                end
+                N.init = u;
             else
                 N.init = val;
             end
