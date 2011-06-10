@@ -15,12 +15,12 @@ end
 
 for k = 1:numel(F)
 %     Fout(k).jacobian = eval('jacerror');
-    Fout(k).jacobian = anon('diag1 = diag(0*sign(Fout)); der2 = diff(Fout,u,''linop''); der = diag1*der2; nonConst = 1;',{'Fout'},{Fout(k)},1);
+    Fout(k).jacobian = anon('diag1 = diag(0*sign(Fout)); der2 = diff(Fout,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout'},{Fout(k)},1);
     Fout(k).ID = newIDnum;
 end
 
-function varargout = jacerror
-error('CHEBFUN:sign:jac','sign function is not Frechet differentiable.');
+% function varargout = jacerror
+% error('CHEBFUN:sign:jac','sign function is not Frechet differentiable.');
 
 
 % ----------------------------------
