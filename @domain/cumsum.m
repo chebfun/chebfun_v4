@@ -49,7 +49,10 @@ end
         elseif isempty(breaks)
             % Map / no breaks
             if isstruct(map) && isfield(map,'der') && ~isempty(map.der)
-                C = cumsummat(n)*diag(map.der(chebpts(n)));
+                gp = map.der(chebpts(n));
+                if isinf(gp(1)), gp(1) = 1; end
+                if isinf(gp(end)), gp(end) = 1; end
+                C = cumsummat(n)*diag(gp);
             else
                 error('DOMAIN:cumsum:mapder', ...
                     'Cumsum requires a map structure for mapped methods.');

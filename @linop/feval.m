@@ -84,8 +84,9 @@ if numel(n) == 1 && ~isempty(breaks)
 end
 
 % Force maps for unbounded domains
-if isempty(map) && any(isinf(breaks))
-    map = maps(domain(breaks));
+if isempty(map) && (any(isinf(breaks)) || any(isinf(A.fundomain([1 end]))))
+    mapdomain = union(breaks,A.fundomain([1 end]));
+    map = maps(mapdomain);
 end
   
 % %%%%%%%%%% function (i,e., infinite dimensional operator) %%%%%%
@@ -150,7 +151,7 @@ else
   if max(A.blocksize) == 1  % Single equation
       if isempty(breaks)     % No breakpoints
           % Project
-          P = barymatp12m(n-A.difforder,n,[-1 1],map);
+          P = barymatp12m(n-abs(A.difforder),n,[-1 1],map);
           M = P*M;
           % Compute boundary conditions and apply (if required)
           if usebc == 1
@@ -160,7 +161,7 @@ else
           end
       else                   % Break points
           % Project
-          P = barymatp12m(n-A.difforder,n,breaks,map);
+          P = barymatp12m(n-abs(A.difforder),n,breaks,map);
           M = P*M;
           % Compute boundary conditions and apply (if required)
           if usebc == 1
@@ -173,7 +174,7 @@ else
   else                     % System of equations
       % Project
       MM = []; sn = sum(n);
-      do = max(A.difforder,[],2); % Max difforder for each equation
+      do = max(abs(A.difforder),[],2); % Max difforder for each equation
       sizeM = A.blocksize(1)*sn; 
       nbc = sizeM;
       P = cell(A.blocksize(1),1);

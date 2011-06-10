@@ -79,6 +79,22 @@ function C = mldivide(A,B,tolerance)
     V = [];  % Initialise V so that the nested function overwrites it.
     syssize = A.blocksize(1);     % Number of eqns in system.
     coef = [1, 2 + sin(1:syssize-1)];  % for a linear combination of variables
+    
+    % Enforce required conditions on an unbounded integro-equation
+    infdom = isinf(isinf(ends));
+    if syssize == 1 && A.difforder == -1 && (any(infdom) || (isempty(A.lbc) && isempty(A.rbc)))
+        bc = struct('left',struct([]),'right',struct([]));
+        I = eye(domain(ends));
+        if infdom(end)
+            bc.right = struct('op',I,'val',0);
+            if infdom(1)
+                bc.left = struct('op',I,'val',0);
+            end
+        else
+            bc.left = struct('op',I,'val',0);
+        end
+        A = setbc(A,bc);
+    end
 
     if isa(A.scale,'function_handle')
         A.scale = chebfun(A.scale,ends);
@@ -147,13 +163,21 @@ function C = mldivide(A,B,tolerance)
 
     % Project the RHS
     if syssize == 1
-        f = B(P*y{1},1);
+        if any(isinf(B.ends))
+            f = P*B(y{1},1);
+        else
+            f = B(P*y{1},1);
+        end
     else
         f = [];
-        for jj = 1:syssize, f = [f ; B(P{jj}*y{1},jj)]; end
+        if any(isinf(B(:,1).ends))
+            for jj = 1:syssize, f = [f ; P{jj}*B(y{1},jj)]; end
+        else
+            for jj = 1:syssize, f = [f ; B(P{jj}*y{1},jj)]; end
+        end
     end
     f = [f ; c];                            % Add boundary conditions.
-    
+
     v = Amat\f;                             % Solve the system.
     V = mat2cell(v,repmat(N,1,syssize),1);  % Store for output.
     v = reshape(v,[sum(N),syssize]);        % one variable per column
