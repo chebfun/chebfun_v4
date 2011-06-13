@@ -8,17 +8,23 @@ function varargout = why(f,r)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-N = 8;  % Number of Chebfun languages
+N = 9;  % Number of Chebfun languages
 if nargin == 1
     r = ceil(N*rand);
+end
+
+if verLessThan('matlab','7.9') %|| nargout > 0
+    simpletext = true;
+else
+    simpletext = false;
 end
     
 switch r
     case 1,         s = 'Because Nick Trefethen said so!';
         % English (or American-English!):
         % Nick Trefethen, Toby Driscoll, Nick Hale,  
-        % Sheehan Olver, Mark Richardson, Zachary Battles (?)
-        % Alex Townsend
+        % Sheehan Olver, Mark Richardson, Zachary Battles
+        % Alex Townsend, James Lottes, Matthew Green
         
     case 2,         s = 'Porque Nick Trefethen lo dice!';
         % Spanish:
@@ -29,7 +35,7 @@ switch r
         % Rodrigo Platte
                 
     case 4,         
-        if getfield(ver('matlab'),'Version') >= 7.9
+        if ~simpletext
                     s = 'Því Nick Trefethen mælti svo!';
         else
                     s = 'Thvi Nick Trefethen maelti svo!';
@@ -38,7 +44,7 @@ switch r
         % Asgeir Birkisson
         
     case 5,
-        if getfield(ver('matlab'),'Version') >= 7.9
+        if ~simpletext
                     s = 'Omdat Nick Trefethen so sê!';
         else
                     s = 'Omdat Nick Trefethen so se!';
@@ -57,6 +63,9 @@ switch r
     case 8,         s = 'Parce que Nick Trefethen le dit!';
         % French:
         % Cecile Piret
+    case 9,         s = 'Kiyon ke Nick Trefethen ne kaha tha!'; 
+        % Urdu:
+        % Mohsin Javed
     
     otherwise,      s = 'Good question!';
 end
@@ -66,5 +75,3 @@ if nargout < 1
 else
     varargout{1} = scribble(s);
 end
-    
-
