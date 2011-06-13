@@ -1,5 +1,6 @@
 function F = add_breaks_at_roots(F,tol,r)
-% Adds new breakpoints at the root sof a chebfun
+% Adds new breakpoints at the roots of a chebfun. These can be passed in
+% the third input if already computed elsewhere.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -8,7 +9,7 @@ if nargin == 1 || isempty(tol),
     tol = 50*chebfunpref('eps');
 end
 
-% Add new break points at zeros
+% Find the roots
 ends = get(F,'ends');
 if nargin < 3
     r = roots(F);
@@ -23,11 +24,8 @@ for k = 1:length(r)
 end
 r(isnan(r)) = [];
 
-% A new chebfun with the right breaks
-newends = union(ends,r);
-
-if length(newends)~= length(ends)
-%     F = chebfun(F,newends);
-      index = struct('type','()','subs',{{newends}});
-      F = subsasgn(F,index,feval(F,newends));
+% Add the new breaks
+if ~isempty(r)
+    F = define(F,r,0);
 end
+
