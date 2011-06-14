@@ -174,13 +174,22 @@ v = []; NNold = NN;
 
 %%% %%%%%%%%%%%%%%%%%%% ADAPTIVE PROCEDURE %%%%%%%%%%%%%%%%%%%% %%%
 while any(~hpy) && all([NN{:}] < maxn) && all(ii <= numel(kk))
-
     % Generate points in each interval and place in a cell array.
     NN = mat2cell(kk(ii),1,bks);
     for j = 1:syssize
-        if ~all(NN{j} == NNold{j}), x{j} = chebpts(NN{j},oldends{j}); end
+        if ~all(NN{j} == NNold{j}),                
+            x{j} = chebpts(NN{j},oldends{j}); 
+        end
     end
-
+    
+    if isfield(pref,'map')
+        for j = 1:syssize
+            if ~all(NN{j} == NNold{j}),                
+                x{j} = pref.map.for(x{j}); 
+            end
+        end
+    end
+    
     if ~pref.resampling
         for j = 1:syssize
             if all(NN{j}==NNold{j}), x{j} = x{j}([1 end]); end
@@ -213,14 +222,17 @@ while any(~hpy) && all([NN{:}] < maxn) && all(ii <= numel(kk))
         for k = 1:bks(j)
             % Get the right parts.
             indx = cNNj(k)+(1:NN{j}(k));
-            vjk = v{j}(indx)';
+            vjk = v{j}(indx).';
 
             % Set fun scales (horizontal and vertical).
             sclv(l) = max(sclv(l), norm(vjk,inf));
             scl = struct('h',sclh(l),'v',sclv(l));
               
             % The new fun.
-            fn = set(fun(vjk,ends(l,:)),'scl',scl);   
+            fn = set(fun(vjk,ends(l,:)),'scl',scl);  
+            if isfield(pref,'map')
+                fn.map = pref.map;
+            end
             fn = extrapolate(fn,pref);          % Extrapolate if need be
 
             % Happiness test.
@@ -242,7 +254,8 @@ end
 % end
 
 % Set chebfuns
-fout = cell(1,syssize); l = 1; dom = zeros(syssize,2);
+fout = cell(1,syssize); l = 1; 
+% dom = zeros(syssize,2);
 for j = 1:syssize
     tmp = chebfun;
     for k = 1:bks(j)
