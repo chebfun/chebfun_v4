@@ -34,7 +34,7 @@ A = linop( @(n) mat(n), oper, d  );
         if numel(n) > 2, breaks = n{3}; end
         n = n{1};
     end
-    
+
     % Force a default map for unbounded domains.
     if any(isinf(d)) && isempty(map), map = maps(d); end
     % Inherit the breakpoints from the domain.
@@ -51,14 +51,18 @@ A = linop( @(n) mat(n), oper, d  );
         end
     end
 
-    if isempty(map) || isempty(breaks)
-        % Not maps and breaks
-        if isempty(breaks), breaks = d.ends([1 end]); end
-        xpts = chebpts(n,breaks);
-        if ~isempty(map)
+    if isempty(breaks)
+        % No breaks
+        if isempty(map)
+            xpts = chebpts(n,d.ends([1 end]));
+        else
             if isstruct(map), map = map.for; end
-            xpts = map(xpts);
+            xpts = map(chebpts(n));
         end
+        xpts = trim(xpts);
+    elseif isempty(map)
+        % No maps
+        xpts = chebpts(n,breaks);
         xpts = trim(xpts);
     else
         % Breaks and maps
