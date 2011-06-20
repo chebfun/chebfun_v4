@@ -49,10 +49,11 @@ else
 end
     
 num = 0;
+
 if strcmp(map.name,'linear') || strcmp(map.name,'unbounded')
 % Linear case is nice
     c = chebpoly(f); % The Chebyshev coefficients of f
-    
+
     while any(f0 < tol) && f.n >1 && num < numroots
         c = flipud(c);
         if f0(1) < tol
@@ -78,6 +79,7 @@ if strcmp(map.name,'linear') || strcmp(map.name,'unbounded')
         f0 = abs(f.vals([1 end]));
         f0(~sides) = inf;
         num = num+1;
+        tol = 10*tol;
     end
     
     f.exps = exps;
