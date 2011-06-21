@@ -4,10 +4,13 @@ function [ x , fval , exitflag ] = fzero( f , x0 , options )
 %
 %   This function is a wrapper for chebfun/roots.
 %
-%   [X,FVAL,EXITFLAG] = FZERO(F,X0,OPTIONS) returns a single root of the
-%   chebfun F near X0 if it is a scalar or in the interval defined by
-%   XO if it is a vector of length two. FVAL is set to the value of F at
-%   the root X and EXITFLAG is set to one of the following exit conditions:
+%   X = FZERO(F,X0) returns the real root of the chebfun F nearest to X0 if it
+%   is a scalar or the first real root in the interval defined by
+%   XO if it is a vector of length two.
+%
+%   [X,FVAL,EXITFLAG] = FZERO(F,X0,OPTIONS) sets FVAL to the value of F at
+%   the root X. All OPTIONS are ignored. EXITFLAG is set to one of the
+%   following exit conditions:
 %
 %        1  FZERO found a zero X.
 %       -6  FZERO could not find a root in the interval.

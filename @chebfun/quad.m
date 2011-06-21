@@ -4,11 +4,12 @@ function [ q , fcnt ] = quad( f , a , b , tol , trace )
 %
 %   This function is a wrapper for chebfun/sum.
 %
-%   [Q,FCNT] = QUAD(F,A,B,TOL,TRACE) evaluates the integral of the
-%   chebfun F over the interval [A,B] using chebfun/sum. The arguments
-%   TOL and TRACE are ignored, as the integral is evaluated to full accuracy
-%   in one single step. The number of function evaluations FCNT is set to
-%   the length of F.
+%   Q = QUAD(F,A,B) evaluates the integral of the chebfun F over the interval
+%   [A,B] using chebfun/sum.
+%
+%   [Q,FCNT] = QUAD(F,A,B,TOL,TRACE) The arguments TOL and TRACE are ignored,
+%   as the integral is evaluated to full accuracy in one single step. The number
+%   of function evaluations FCNT is set to the length of F.
 %
 %   To use the original QUAD on a chebfun, you can bypass this overloaded
 %   function by wrapping it in an anonymous function:
