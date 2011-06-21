@@ -244,6 +244,10 @@ end
 
 g = replace_roots(g);
 exps = g.exps;
+if ~any(exps)
+    g = diff(g);
+    return
+end
 map = g.map;
 s = map.par(3);
 ends = map.par(1:2);
