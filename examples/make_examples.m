@@ -451,7 +451,7 @@ for j = 1:numel(dirs)
             continue % This mfile will be ignored
 %             txt = [filename,'.m'];
         end
-        fprintf(fid,['<a style="text-transform:uppercase;">',txt, '</a>     (']);
+        fprintf(fid,['<span style="text-transform:uppercase;">',txt, '</span>     (']);
         
         % Make dirname/html/filename.shtml
         if shtml
