@@ -60,10 +60,17 @@ A = linop( @(n) mat(n), oper, d  );
             xpts = map(chebpts(n));
         end
         xpts = trim(xpts);
+        fx = feval( f, xpts );
     elseif isempty(map)
         % No maps
         xpts = chebpts(n,breaks);
         xpts = trim(xpts);
+        fx = feval( f, xpts );
+%         tol = 100*chebfunpref('eps')*f.scl;
+%         dxloc = find(abs(diff(xpts)<tol));
+        dxloc = cumsum(n(1:end-1));
+        fx(dxloc) = feval(f, xpts(dxloc), 'left');
+        fx(dxloc+1) = feval(f, xpts(dxloc), 'right');
     else
         % Breaks and maps
         csn = [0 cumsum(n)];
@@ -81,9 +88,15 @@ A = linop( @(n) mat(n), oper, d  );
             ii = csn(k)+(1:n(k));
             xpts(ii) = mp(chebpts(n(k)));
         end
-    end    
+        fx = feval( f, xpts );
+        dxloc = csn(2:end-1);
+        fx(dxloc) = feval(f, xpts(dxloc), 'left');
+        fx(dxloc+1) = feval(f, xpts(dxloc), 'right');
+    end  
     
-    m = spdiags( feval( f, xpts ) ,0,sum(n),sum(n));
+    m = spdiags( fx ,0,sum(n),sum(n));
+    
+    
     end
 
     function y = trim(x)
