@@ -5,9 +5,9 @@ function pass = fzerotest
 
 % (A Level 1 chebtest)
 
-tol = chebfunpref('eps');
+tol = 100*chebfunpref('eps');
 f = chebfun( @cos , [0,10] );
 
-pass(1) = abs( fzero( f , 1.5 ) - pi/2 ) < 10*tol;
-pass(2) = abs( fzero( f , [ 1 , 2 ] ) - pi/2 ) < 10*tol;
-pass(3) = abs( fzero( f , [ 1 , 10 ] ) - pi/2 ) < 10*tol;
+pass(1) = abs( fzero( f , 1.5 ) - pi/2 ) < tol;
+pass(2) = abs( fzero( f , [ 1 , 2 ] ) - pi/2 ) < tol;
+pass(3) = abs( fzero( f , [ 1 , 10 ] ) - pi/2 ) < tol;
