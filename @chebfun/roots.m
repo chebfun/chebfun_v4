@@ -69,7 +69,8 @@ end
 ends = f.ends;
 hs = hscale(f);
 rs = [];
-rts = []; % All roots will be stored here
+% rts = []; % All roots will be stored here
+rts = f.ends(abs(f.imps(1,:))<tol*hs*f.scl).'; % Zero imps are roots.
 realf = isreal(f);
 for i = 1:f.nfuns
     b = ends(i+1);
@@ -99,6 +100,7 @@ for i = 1:f.nfuns
 %             end
         end
     end
+    rts = sort(rts);
 %     if i < f.nfuns && ( isempty(rts) || abs(rts(end)-b) > 1e-14*hs )
 %         rfun = f.funs(i+1);
 %         fleft = feval(lfun,1); fright = feval(rfun,-1);
