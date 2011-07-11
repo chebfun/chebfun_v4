@@ -78,7 +78,7 @@ if ~samemap(g1,g2) && ~any([exps1 exps2])
     
     % Sing maps are inherited during plus.
     if strcmp(g1.map.name,'sing') && strcmp(g2.map.name,'sing')
-        par4 = min(g1.map.par(3),g2.map.par(3));
+        par3 = min(g1.map.par(3),g2.map.par(3));
         par4 = min(g1.map.par(4),g2.map.par(4));
         ends = map({'sing',[par3 par4]},ends);
     elseif strcmp(g1.map.name,'sing')
