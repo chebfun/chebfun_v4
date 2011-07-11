@@ -193,6 +193,10 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
         end % Main loop
     
     % If n=0, so be it.    
+    elseif evenf
+        b = [ 1 ; 0 ];
+    elseif oddf
+        b = [ 0 ; 1 ];
     else
         b = 1;
     end
