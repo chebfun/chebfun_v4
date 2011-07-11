@@ -33,6 +33,9 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( f , varargin )
 %   residues RES at those points. If any of the nodes XI lie in the complex
 %   plane, the complex poles are returned as well.
 %
+%   [P,Q,R_HANDLE] = RATINTERP(D,F,M,N) computes the (M,N) rational interpolant
+%   of F on the M+N+1 Chebyshev points of the second kind on the domain D.
+%
 %   See also DOMAIN/RATINTERP, CHEBFUN/INTERP1, DOMAIN/INTERP1.
 
 %   Based on P. Gonnet,  R. Pachon, and L. N. Trefethen, "ROBUST RATIONAL

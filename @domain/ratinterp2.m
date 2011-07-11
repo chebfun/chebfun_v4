@@ -198,7 +198,20 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     end
     
     % Get the coefficients a
-    a = Z( 1:m+1 , 1:n+1 ) * b;
+    if strncmpi( xi_type , 'type' , 4 )
+        if xi_type(5) == '0'
+            a = fft( ifft( b , N1 ) .* f );
+            a = a( 1:m+1 );
+        elseif xi_type(5) == '1'
+            a = dct1( idct1( [ b ; zeros( N-n , 1 ) ] ) .* f );
+            a = a( 1:m+1 );
+        elseif xi_type(5) == '2'
+            a = dct2( idct2( [ b ; zeros( N-n , 1 ) ] ) .* f );
+            a = a( 1:m+1 );
+        end
+    else
+        a = Z( 1:m+1 , 1:n+1 ) * b;
+    end;
     if evenf
         a( 2:2:end ) = 0;
     elseif oddf
