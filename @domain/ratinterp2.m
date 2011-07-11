@@ -280,7 +280,8 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 
         % Residues too?
         if nargout > 6
-            residues = p( poles );
+            t = max(tol,1e-7);                     
+            residues = t*(r(poles+t)-r(poles-t))/2;
         end
 
     end
