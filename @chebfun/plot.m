@@ -278,11 +278,6 @@ end
 if ~h, hold off; end
 
 if nargout == 1
-    h1
-    h2
-    h3
-    h4
-    hdummy
     varargout = {[h1 h2 h3 h4 hdummy]};
 end
 
