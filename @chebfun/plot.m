@@ -226,7 +226,7 @@ h3 = plot(jumpdata{:},'handlevis','off');
 if forcejmarks
     h4 = plot(jvaldata{:},'linestyle','none','handlevis','off');
 else
-    h4 = NaN;
+    h4 = NaN(size(h1));
 end
 
 defjlcol = true;
@@ -278,6 +278,11 @@ end
 if ~h, hold off; end
 
 if nargout == 1
+    h1
+    h2
+    h3
+    h4
+    hdummy
     varargout = {[h1 h2 h3 h4 hdummy]};
 end
 
