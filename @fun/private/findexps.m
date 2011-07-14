@@ -82,6 +82,7 @@ function exponent = getExp1(f,loc)
     while blowupB(softenR(f,loc,exponent),loc) && exponent < 101
         exponent = exponent +1;
     end 
+    if exponent == 101, exponent = 0; end
 end
 
 function exponent = getExp2(f,loc)
