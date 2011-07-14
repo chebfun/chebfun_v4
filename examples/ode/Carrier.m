@@ -1,4 +1,4 @@
-%% CARRIER EQUATION
+%% Carrier equation
 % Asgeir Birkisson, October 2010
 
 %%

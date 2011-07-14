@@ -1,4 +1,4 @@
-%% BOUNDARY LAYER FOR ADVECTION-DIFFUSION EQUATION
+%% Boundary layer for advection-diffusion equation
 % Nick Trefethen, 22 October 2010
 
 %%

@@ -1,4 +1,4 @@
-%% THE ROSENBROCK FUNCTION IN 2D OPTIMISATION
+%% The Rosenbrock function in 2D optimisation
 % Nick Trefethen, October 2010
 
 %%

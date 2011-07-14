@@ -1,4 +1,4 @@
-%% ROOTS OF A SECULAR EQUATION WITH POLES
+%% Roots of a secular equation with poles
 % Nick Trefethen, November 2010
 
 %%

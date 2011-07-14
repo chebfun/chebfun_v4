@@ -1,4 +1,4 @@
-%% SPIKE INTEGRAL
+%% Spike integral
 % Nick Hale, October 2010
 
 %%

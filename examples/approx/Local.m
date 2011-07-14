@@ -1,4 +1,4 @@
-%% LOCAL COMPLEXITY OF A FUNCTION
+%% Local complexity of a function
 % Nick Trefethen, June 2011
 
 function Local()

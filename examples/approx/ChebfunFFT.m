@@ -1,4 +1,4 @@
-%% THE FFT IN CHEBFUN
+%% The FFT in Chebfun
 % Mark Richardson, 9th May 2011
 
 %%

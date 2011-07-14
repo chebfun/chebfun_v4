@@ -1,4 +1,4 @@
-%% A WIGGLY FUNCTION AND ITS BEST APPROXIMATIONS
+%% A wiggly function and its best approximations
 % Ricardo Pachon and Nick Trefethen, November 2010
 
 %%

@@ -1,4 +1,4 @@
-%% CHEBYSHEV COEFFICIENTS
+%% Chebyshev Coefficients
 % Nick Trefethen, September 2010
 
 %%

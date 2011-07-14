@@ -1,4 +1,4 @@
-%% RESOLVENT NORM ON THE IMAGINARY AXIS
+%% Resolvent norm on the imaginary axis
 % Nick Trefethen, May 2011
 
 %%

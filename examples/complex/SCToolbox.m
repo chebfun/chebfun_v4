@@ -1,4 +1,4 @@
-%% SCHWARZ-CHRISTOFFEL TOOLBOX AND CHEBFUN
+%% Schwarz-Christoffel toolbox and Chebfun
 % Nick Trefethen, October 2010
 
 %%

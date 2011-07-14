@@ -1,4 +1,4 @@
-%% BEST APPROXIMATION WITH THE REMEZ COMMAND
+%% Best approximation with the Remez command
 % Nick Trefethen, September 2010
 
 %%

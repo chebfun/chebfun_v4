@@ -1,4 +1,4 @@
-%% THE DIXON-SZEGŐ FUNCTION IN 2D OPTIMISATION
+%% The Dixon-Szegő function in 2D optimisation
 % Jari Fowkes and Nick Trefethen, November 2010
 
 %%

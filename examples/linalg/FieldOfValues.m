@@ -1,4 +1,4 @@
-%% FIELD OF VALUES AND NUMERICAL ABSCISSA
+%% Field of values and numerical abscissa
 % Nick Trefethen, November 2010
 
 %%

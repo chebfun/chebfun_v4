@@ -1,4 +1,4 @@
-%% ADVECTION-DIFFUSION EQUATION WITH A JUMP
+%% Advection-diffusion equation with a jump
 % Nick Trefethen, November 2010
 
 %%

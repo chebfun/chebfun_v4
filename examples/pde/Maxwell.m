@@ -1,4 +1,4 @@
-%% MAXWELL'S EQUATIONS
+%% Maxwell's equations
 % Toby Driscoll, November 10, 2010
 
 %%

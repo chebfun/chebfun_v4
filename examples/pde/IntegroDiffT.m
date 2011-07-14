@@ -1,4 +1,4 @@
-%% TIME-DEPENDENT INTEGRO-DIFFERENTIAL EQUATION
+%% Time-dependent integro-differential equation
 % Nick Hale, October 2010
 
 %%

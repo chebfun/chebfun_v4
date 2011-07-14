@@ -1,4 +1,4 @@
-%% GRAVITATIONAL FORCE BETWEEN TWO CUBES
+%% Gravitational force between two cubes
 % Bengt Fornberg and Nick Hale, October 2010
 
 %%

@@ -1,4 +1,4 @@
-%% CONVERGENCE RATES FOR INTERPOLATING FUNCTIONS
+%% Convergence rates for interpolating functions
 % Alex Townsend, October 2010
 
 %%

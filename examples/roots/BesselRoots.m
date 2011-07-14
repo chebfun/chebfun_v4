@@ -1,4 +1,4 @@
-%% ROOTS OF A BESSEL FUNCTION
+%% Roots of a Bessel function
 % Nick Trefethen, September 2010
 
 %%

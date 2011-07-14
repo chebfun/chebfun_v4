@@ -1,4 +1,4 @@
-%% COUPLED SYSTEM OF REACTION-DIFFUSION EQUATIONS
+%% Coupled system of reaction-diffusion equations
 % Nick Hale, October 2010
 
 %%

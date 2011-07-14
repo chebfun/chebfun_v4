@@ -1,4 +1,4 @@
-%% USING CHEBFUN AS AN INTEGRATOR
+%% Using Chebfun as an integrator
 % Pedro Gonnet, September 2010
 
 %%

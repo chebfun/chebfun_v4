@@ -1,4 +1,4 @@
-%% DOUBLE-WELL SCHRÖDINGER EIGENSTATES
+%% Double-well Schrödinger eigenstates
 % Nick Trefethen, November 2010
 
 %%

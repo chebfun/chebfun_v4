@@ -1,4 +1,4 @@
-%% ORR-SOMMERFELD EIGENVALUES
+%% Orr-Sommerfeld eigenvalues
 % Toby Driscoll and Nick Trefethen, October 2010
 
 %%

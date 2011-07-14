@@ -1,4 +1,4 @@
-%% GAUSS AND CLENSHAW-CURTIS QUADRATURE
+%% Gauss and Clenshaw-Curtis quadrature
 % Nick Trefethen, September 2010
 
 %%

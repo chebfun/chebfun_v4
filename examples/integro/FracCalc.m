@@ -1,4 +1,4 @@
-%% FRACTIONAL CALCULUS IN CHEBFUN
+%% Fractional calculus in Chebfun
 % Nick Hale, October 2010
 
 %%
@@ -74,7 +74,7 @@ xlabel('x',FS,fs); ylabel('d^a x / d x ^a',FS,fs)
 
 close 
 u = chebfun('sin(x)',[0 20]);
-for alpha = sqrt(2)*(0:2:12)/17
+for alpha = sqrt(2)*(0:2:10)/17
     u = [ u diff(u(:,1),alpha) ];
     plot(u,LW,lw), ylim(1.2*[-1 1]), drawnow, 
 end

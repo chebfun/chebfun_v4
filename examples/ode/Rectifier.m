@@ -1,4 +1,4 @@
-%% HALF-WAVE RECTIFIER
+%% Half-wave rectifier
 % Toby Driscoll, May 18, 2011
 
 %%
@@ -17,7 +17,7 @@
 ep = 1e-3;  alpha = 12;
 N = chebop(0,30);
 N.op = @(t,v) diff(v) + ep*v - ep*( exp(alpha*(sin(t)-v)) - 1 );
-N.lbc =0;    % initial condition
+N.lbc = 0;    % initial condition
 v_12 = N\0;
 
 %%
@@ -44,7 +44,10 @@ title(['alpha = ',num2str(alpha),', length(v) = ',int2str(length(v_20))])
 
 %%
 % Let's turn up the stiffness one more time. The representation length will
-% close in on 1025, which is the default maximum size.
+% close in on 1025, which is the default maximum size, so we increase it
+% temporarily.
+cheboppref('maxdegree',2048);
+
 alpha = 40;
 N.op = @(t,v) diff(v) + ep*v - ep*( exp(alpha*(sin(t)-v)) - 1 );
 N.init = v_20;
@@ -52,6 +55,8 @@ v_40 = N\0;
 plot(v_40,LW,lw)
 xlabel('t'), ylabel('v(t)'), 
 title(['alpha = ',num2str(alpha),', length(v) = ',int2str(length(v_40))])
+
+cheboppref('factory'); % Reset the maxium length
 
 %%
 % A comparison to one of Matlab's trusty built-in IVP solvers gives us some

@@ -1,4 +1,4 @@
-%% WAVE EQUATION WITH DECAY BAND
+%% Wave equation with decay band
 % Nick Trefethen, November 2010
 
 %%

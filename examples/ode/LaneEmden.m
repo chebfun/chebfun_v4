@@ -1,4 +1,4 @@
-%% LANE-EMDEN EQUATION FROM ASTROPHYSICS
+%% Lane-Emden equation from astrophysics
 % Alex Townsend, 6th May 2011
 %
 % (Chebfun example ode/LaneEmden.m)

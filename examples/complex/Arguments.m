@@ -1,4 +1,4 @@
-%% ANGLE, UNWRAP and branches of complex chebfuns
+%% ANGLE, UNWRAP, and branches of complex chebfuns
 % Nick Trefethen, May 2011
 
 %%

@@ -1,4 +1,4 @@
-%% EIGENVALUE LEVEL REPULSION
+%% Eigenvalue level repulsion
 % Nick Trefethen, October 2010
 
 %%

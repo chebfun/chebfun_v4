@@ -1,4 +1,4 @@
-%% A PERIODIC ODE SYSTEM
+%% A periodic ODE system
 % Nick Hale, November 2010
 
 %%

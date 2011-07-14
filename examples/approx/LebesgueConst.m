@@ -1,4 +1,4 @@
-%% LEBESGUE FUNCTIONS AND LEBESGUE CONSTANTS
+%% Lebesgue functions and Lebesgue constants
 % Nick Trefethen, November 2010
 
 %%

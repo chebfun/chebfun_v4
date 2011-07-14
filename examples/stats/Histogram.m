@@ -1,4 +1,4 @@
-%% HISTOGRAM FROM FUNCTION OR DATA
+%% Histogram from function or data
 % Nick Trefethen, May 2011
 
 %%

@@ -1,4 +1,4 @@
-%% MATCHED ASYMPTOTICS AND BOUNDARY LAYERS
+%% Matched asymptotics and boundary layers
 % Nick Trefethen, December 2010
 
 %%

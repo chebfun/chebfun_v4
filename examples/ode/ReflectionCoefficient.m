@@ -1,6 +1,4 @@
-
-
-%% TIME-INDEPENDENT SCHRODINGER EQUATION AND REFLECTION COEFFICIENTS
+%% Time-independent Schrödinger eqn & reflection coefficients
 % Sheehan Olver, 27 September 2010
 
 %%
@@ -47,10 +45,8 @@
 %     u(0) = a phim(0) + b phip(0) and u'(0) = a phim'(0) + b phip'(0)
 
 warnstate = warning;
-% warning('off','LINOP:mldivide:bcnum')
-% warning('off','LINOP:mldivide:OnePoint')
 
-tic,
+tic
 w = 2.0;
 dneg = domain([-inf,0]);
 
@@ -77,23 +73,20 @@ phim = Lposm \ (-qpos);
 phipD = diff(phip);
 phimD = diff(phim);
 
-ab=[[phim(0)+1, phip(0)+1],
-  [phimD(0)-1i.*w.*(phim(0)+1), phipD(0)+1i.*w.*(phip(0)+1)]] \ [1 + p(0); pD(0) - 1i.*w.*(p(0)+1)];
+ab = [[phim(0)+1, phip(0)+1],
+     [phimD(0)-1i.*w.*(phim(0)+1), phipD(0)+1i.*w.*(phip(0)+1)]] \ ...
+       [1 + p(0); pD(0) - 1i.*w.*(p(0)+1)];
 
 soln = ab(2)/ab(1)
 
 %%
-%  The exact reflection coefficient for this initial condition can be 
-%  found in [Drazin & Johnson 1989]:
+% The exact reflection coefficient for this initial condition can be 
+% found in [Drazin & Johnson 1989]:
 %
 truesoln = -0.0016078067215641416 + 0.00308747394810661i
-%
-%  This matches the computed result to 7 digits.
-%
-%  (Oddly, when I implement the same method in Matrhematica, I get 
-%   13 digits, without using any extra precision. Is chebop accuracy
-%   limited?)
-%
+
+%%
+% This matches the computed result to 7 digits.
 
 error = abs(soln - truesoln)
 toc

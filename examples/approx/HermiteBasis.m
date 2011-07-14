@@ -1,4 +1,4 @@
-%% POLYNOMIAL BASIS FOR HERMITE INTERPOLATION
+%% Polynomial basis for Hermite interpolation
 % Pedro Gonnet, September 2010
 
 %%

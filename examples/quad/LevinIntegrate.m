@@ -1,4 +1,5 @@
-%% AN OSCILLATORY INTEGRAL
+
+%% An oscillatory integral
 % Sheehan Olver, December 2010
 
 %%

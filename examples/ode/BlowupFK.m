@@ -1,4 +1,4 @@
-%% BLOWUP EQUATION (FRANK-KAMENETSKII)
+%% Blowup equation (Frank-Kamenetskii)
 % Nick Trefethen, 25 September 2010
 
 %%

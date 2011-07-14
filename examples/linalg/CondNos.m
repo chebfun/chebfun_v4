@@ -1,4 +1,4 @@
-%% CONDITION NUMBERS OF VARIOUS BASES
+%% Condition numbers of various bases
 % Nick Trefethen, September 2010
 
 %%

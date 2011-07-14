@@ -1,4 +1,4 @@
-%% AN ALLEN-CAHN EQUATION WITH CONTINUATION
+%% An Allen-Cahn equation with continuation
 % Nick Trefethen, November 2010
 
 %%

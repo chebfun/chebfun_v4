@@ -1,4 +1,4 @@
-%% WRITING A MESSAGE IN 3D
+%% Writing a message in 3D
 % Nick Trefethen, November 2010 
 
 %%

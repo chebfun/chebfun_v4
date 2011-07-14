@@ -1,4 +1,4 @@
-%% WIKIPEDIA INTEGRO-DIFFERENTIAL EQUATION EXAMPLE
+%% Wikipedia integro-differential equation example
 % Mark Richardson, 27 September 2010
 
 %%

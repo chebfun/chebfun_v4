@@ -1,4 +1,4 @@
-%% BIRTHDAY CARDS AND ANALYTIC FUNCTIONS
+%% Birthday cards and analytic functions
 % Nick Trefethen, September 2010
 
 %%

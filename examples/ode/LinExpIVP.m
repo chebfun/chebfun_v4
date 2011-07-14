@@ -1,4 +1,4 @@
-%% LINEAR EXP INITIAL-VALUE PROBLEM
+%% Linear EXP initial-value problem
 % Tom Maerz, 05 October 2010
 
 %%

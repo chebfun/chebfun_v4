@@ -1,4 +1,4 @@
-%% HEAT EQUATION VIA EXPM
+%% Heat equation via EXPM
 % Nick Trefethen, October 2010
 
 %%

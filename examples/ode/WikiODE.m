@@ -1,4 +1,4 @@
-%% WIKIPEDIA ODE EXAMPLES
+%% Wikipedia ODE examples
 % Mark Richardson, 27 September 2010
 
 %%

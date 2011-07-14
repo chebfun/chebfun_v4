@@ -7,8 +7,8 @@ function make_examples(dirs,filename)
 % $Chebfunroot/examples/DIR/ where FILENAME and DIR must be strings.
 
 % The flags below can only be adjusted manually.
-html = false;  % Publish to html? (This should be true when released).
-pdf = false;   % By default this will be off.
+html = true;  % Publish to html? (This should be true when released).
+pdf = true;   % By default this will be off.
 shtml = true; % This should only be used by admin for creating the 
               % shtml files for the Chebfun website.
 clean = false;
@@ -143,7 +143,9 @@ elseif nargin == 2
         if ~exist('pdf','dir'), mkdir('pdf'), end
         fprintf('Uploading html.\n')
         copyfile(fullfile(curdir,dirs,'html',[filename,'.html']),'html');
-        copyfile(fullfile(curdir,dirs,'html',[filename,'*.png']),'html');
+        try
+            copyfile(fullfile(curdir,dirs,'html',[filename,'*.png']),'html');
+        end
         if exist(fullfile(curdir,dirs,'html',[filename,'.shtml']),'file')
             copyfile(fullfile(curdir,dirs,'html',[filename,'.shtml']),'html');
         end
@@ -451,6 +453,7 @@ for j = 1:numel(dirs)
             continue % This mfile will be ignored
 %             txt = [filename,'.m'];
         end
+%         fprintf(fid,['<span>',txt, '</span>     (']);
         fprintf(fid,['<span style="text-transform:uppercase;">',txt, '</span>     (']);
         
         % Make dirname/html/filename.shtml
@@ -470,10 +473,10 @@ for j = 1:numel(dirs)
             curfile = [dirs{j},'/',filename,'.m']; 
             filetext = fileread([filename,'.html']);
             if shtml
-                newtext = sprintf('<a href="/chebfun/examples/%s" style="text-transform: uppercase;">%s</a>', ...
+                newtext = sprintf('<a href="/chebfun/examples/%s">%s</a>', ...
                     curfile,curfile);
             else
-                newtext = sprintf('<a href="%s" style="text-transform: uppercase;">%s</a>', ...
+                newtext = sprintf('<a href="%s">%s</a>', ...
                     fullfile(examplesdir,dirs{j},[filename,'.m']),curfile);
             end
             filetext = strrep(filetext,curfile,newtext);

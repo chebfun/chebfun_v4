@@ -1,4 +1,4 @@
-%% EIGENVALUES OF THE FOX-LI INTEGRAL OPERATOR
+%% Eigenvalues of the Fox-Li integral operator
 % Toby Driscoll and Nick Trefethen, 7 October 2010
 
 %%

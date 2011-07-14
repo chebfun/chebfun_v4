@@ -1,4 +1,4 @@
-%% ONE LINE DESCRIPTION OF EXAMPLE
+%% One line description of Example
 % Name, Date
 
 %%
@@ -8,8 +8,11 @@
 % Short description of what the example does.
 
 %%
-% 
+%  
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
+
+%%
+% The Example.
 
 %%
 % References:

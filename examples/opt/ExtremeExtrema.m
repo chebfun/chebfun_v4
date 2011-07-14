@@ -1,4 +1,4 @@
-%% EXTREMA OF A COMPLICATED FUNCTION
+%% Extrema of a complicated function
 % Nick Trefethen, September 2010
 
 %%

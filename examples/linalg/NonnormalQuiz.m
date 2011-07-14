@@ -1,4 +1,4 @@
-%% NONNORMALITY QUIZ FROM TREFETHEN AND EMBREE
+%% Nonnormality quiz from Trefethen and Embree
 % Nick Trefethen, October 2010
 
 %%

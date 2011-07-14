@@ -1,4 +1,4 @@
-%% ABSOLUTE VALUE APPROXIMATED BY RATIONALS
+%% Absolute value approximates by rationals
 % Nick Trefethen, May 2011
 
 %%

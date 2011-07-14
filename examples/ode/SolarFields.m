@@ -1,4 +1,4 @@
-%% NONLINEAR ODE MODELING SOLAR MAGNETIC FIELDS
+%% Nonlinear ODE modeling solar magnetic fields
 % Nick Hale & Natasha Flyer, September 2010
 
 %%

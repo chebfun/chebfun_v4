@@ -1,4 +1,4 @@
-%% EXACT SOLUTIONS OF SOME ODES
+%% Exact solutions of some ODEs
 % Nick Trefethen, December 2010
 
 %%

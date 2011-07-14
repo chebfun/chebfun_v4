@@ -1,4 +1,4 @@
-%% MULTIPLE BVP SOLUTIONS BY SOLVING AN IVP
+%% Multiple BVP solutions by solving an IVP
 % Asgeir Birkisson, May 2011
 
 %%

@@ -1,4 +1,4 @@
-%% LINEAR SINE/COSINE INITIAL-VALUE PROBLEM
+%% Linear sine/cosine initial-value problem
 % Nick Trefethen and Tom Maerz, 30 September 2010
 
 %%

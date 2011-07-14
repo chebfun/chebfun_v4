@@ -1,4 +1,4 @@
-%% SYSTEM OF TWO NONLINEAR BVPs
+%% System of two nonlinear BVPs
 % Asgeir Birkisson, September 2010
 
 %%

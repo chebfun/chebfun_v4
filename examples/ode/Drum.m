@@ -1,4 +1,4 @@
-%% FREQUENCIES OF A DRUM
+%% Frequencies of a drum
 % Toby Driscoll, November 2010
 
 %%

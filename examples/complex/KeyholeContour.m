@@ -1,4 +1,4 @@
-%% A KEYHOLE CONTOUR INTEGRAL
+%% A keyhole contour integral
 % Nick Trefethen and Nick Hale, October 2010
 
 %%

@@ -1,4 +1,4 @@
-%% BOUNCING PHOTON, SINAI BILLIARDS
+%% Bouncing Photon, Sinai billiards
 % Nick Trefethen, May 2011
 
 %%

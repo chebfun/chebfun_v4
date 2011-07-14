@@ -1,4 +1,4 @@
-%% AREA AND CENTROID OF A 2D REGION
+%% Area and centroid of a 2D region
 % Stefan Güttel, October 2010
 
 %%

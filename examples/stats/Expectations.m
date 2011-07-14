@@ -1,4 +1,4 @@
-%% SIMPLE COMPUTATIONS WITH PROBABILITY DISTRIBUTIONS
+%% Simple computations with probability distributions
 % Mark Richardson, 21 May 2011
 %
 %%

@@ -1,4 +1,4 @@
-%% THE GAMMA FUNCTION AND ITS POLES
+%% The Gamma function and its poles
 % Nick Hale, December 2009
 
 %%

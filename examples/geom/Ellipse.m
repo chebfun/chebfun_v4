@@ -1,4 +1,4 @@
-%% PERIMETER OF AN ELLIPSE
+%% Perimeter of an ellipse
 % Nick Hale and Nick Trefethen, December 2010
 
 %%

@@ -1,4 +1,4 @@
-%% MODEL OF A QUANTUM DOT ARRAY FOR SOLAR ENERGY
+%% Model of a quantum dot array for solar energy
 % Toby Driscoll, May 7, 2011
 
 %%
