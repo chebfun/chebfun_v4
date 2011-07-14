@@ -81,7 +81,7 @@ dohold = 0;             % hold plot?
 plotopts = '-';         % Plot Style
 J = [];                 % Supply Jacobian
 dojac = false;          % Use AD to compute Jacobian? 
-dojacbc = true;        % Use AD to figure out BC rows.
+dojacbc = false;        % Use AD to figure out BC rows.
 getorder = true;        % Use AD to get the ORDER
 
 % Parse the variable inputs
@@ -344,7 +344,7 @@ if dojac || dojacbc
     if funflagl
         uL = nlbcsl(u0,t0,xd);
         JacL = diff(uL,u0,'linop');
-        
+        JacL = JacL.op;
         if syssize > 1
             isz = JacL.iszero;
             for j = 1:size(isz,1)
@@ -364,7 +364,7 @@ if dojac || dojacbc
     if funflagr
         uR = nlbcsr(u0,t0,xd);
         JacR = diff(uR,u0,'linop');
-        
+        JacR = JacR.op;
         if syssize > 1
             isz = JacR.iszero;
             for j = 1:size(isz,1)
