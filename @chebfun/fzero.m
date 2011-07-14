@@ -1,4 +1,3 @@
-
 function [ x , fval , exitflag ] = fzero( f , x0 , options )
 % FZERO  Find a single root of a chebfun.
 %
@@ -45,7 +44,6 @@ function [ x , fval , exitflag ] = fzero( f , x0 , options )
         f = f{ x0(1) , x0(2) };
     end
     r = roots( f );
-    r = real( r( abs( imag( r ) ) < 10*eps*f.scl ) );
 
     % Grab the first root closest to x0.
     if isempty( r )

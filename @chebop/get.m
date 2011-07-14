@@ -20,5 +20,5 @@ switch propName
     case 'dim'
         val = N.dim;
     otherwise
-        error('CHEBOP:get:propname',[propName,' is not a valid chebop property'])
+        error('CHEBOP:get:propname',[propName,' is not a valid chebop property.'])
 end

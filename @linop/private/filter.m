@@ -39,7 +39,11 @@ for k = 1:2
 end
 %cut = t+k+8 + find(mindmax < 0.02*min(mindmax), 1, 'last');
 cut = find(mindmax > 0.01*min(mindmax), 3);
-cut = cut(end) + t + k + 3;
+if isempty(cut)
+    cut = 1;
+else
+    cut = cut(end) + t + k + 3;
+end
 c(cut:end) = 0;
 
 % Add a linear function to ensure enpoint values are unchanged.

@@ -111,6 +111,7 @@ end
 if (size(f.imps,1) == 1 || ~any(any(f.imps(2:end,:)))) %&& any(f.imps(1,:))
     % RodP and NickH used this to fix the problem
     % when repeated values of x intersect with ends.
+    x = xin;
     if f.nfuns < 10
         for k = 1:f.nfuns+1
             fx( x==ends(k) ) = f.imps(1,k);
