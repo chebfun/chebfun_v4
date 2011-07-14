@@ -12,8 +12,8 @@ for n = [1 5]
     k = k+1;
     xn = x.^n;
     xnpq = diff(xn,q);
-    true = gamma(n+1)./gamma(n+1-q)*chebfun(@(x) x.^(n-q),[0 1],'exps',[n-q 0]);    
-    pass(k) = norm(true-xnpq,inf) < tol;
+    tru = gamma(n+1)./gamma(n+1-q)*chebfun(@(x) x.^(n-q),[0 1],'exps',[n-q 0]);   
+    pass(k) = norm(tru-xnpq,inf) < tol;
 end
 
 % exponential
@@ -31,3 +31,4 @@ pass(4) = norm(trueC-uint05,inf) < tol; % Answer for int is actually same as C.
 up05 = diff(u,.5,[],'Caputo');
 trueC = chebfun('erf(sqrt(x)).*exp(x)',[0 1],'exps',[.5 0]);
 pass(5) = norm(trueC-up05,inf) < tol;
+
