@@ -171,7 +171,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
             % Get the smallest singular value
             ssv = S(ns,ns);
 
-            % Converged?x = chebfun('x');
+            % Converged?
             if ssv > ts
                 break;
 
@@ -186,6 +186,14 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
                 if n == 0
                     b = 1;
                     break;
+                elseif n == 1
+                    if evenf 
+                        b = [ 1 ; 0 ]; 
+                        break;
+                    elseif oddf
+                        b = [ 0 ; 1 ]; 
+                        break; 
+                    end
                 end
 
             end;
