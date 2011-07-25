@@ -350,7 +350,7 @@ function [V,D] = bc_eig(A,N,k,sigma,map,breaks)
         % Force difforder to be the same, so that projection P is the same.
         do = A{1}.difforder;
         for j = 2:numel(A)
-            doj = max(do, A{j}.difforder);
+            do = max(do, A{j}.difforder);
         end
         for j = 1:numel(A)
             A{j}.difforder = do;
@@ -392,7 +392,7 @@ function [V,D] = bc_eig_sys(A,N,k,sigma,map,bks)
         % Force difforder to be the same, so that projection P is the same.
         do = A{1}.difforder;
         for j = 2:numel(A)
-            doj = max(do, A{j}.difforder);
+            do = max(do, A{j}.difforder);
         end
         for j = 1:numel(A)
             A{j}.difforder = do;
