@@ -43,6 +43,7 @@ try
                 'Chebfun input should return a COLUMN array. Attempting to transpose.')
     end
 catch %ME
+    warning(dbz_state); % Restore warnings
     last = lasterror;
     try 
         % Perhaps it's a system?
@@ -62,7 +63,6 @@ catch %ME
         end
     end
 end
-warning(dbz_state); % Restore warnings
 
 end
 
