@@ -13,10 +13,14 @@ function [x w v] = legpts(n,int,meth)
 %  the barycentric formula corresponding to the points X.
 %
 %  [X,W] = LEGPTS(N,METHOD) allows the user to select which method to use.
-%       METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method,
-%       which is best for when N is small. METHOD = 'FAST' will use the
-%       Glaser-Liu-Rokhlin fast algorithm, which is much faster for large N.
-%       By default LEGPTS uses 'GW' when N < 128.
+%    METHOD = 'FASTSMALL' uses the recurrence relation for the Legendre 
+%       polynomials and their derivatives to perform Newton iteration 
+%       on the WKB approximation to the roots.
+%    METHOD = 'FAST' uses the Glaser-Liu-Rokhlin fast algorithm, which
+%       is much faster for large N. 
+%    METHOD = 'GW' will use the traditional Golub-Welsch eigenvalue method, 
+%       which is maintained mostly for historical reasons.
+%       By default LEGPTS uses 'FASTSMALL' when N<=256 and FAST when N>256
 %
 %  See also chebpts and jacpts.
 
@@ -53,7 +57,7 @@ if nargin > 1
     elseif nargin == 2
         if ischar(int), method = int; else interval = int; end
     end
-    if ~(strcmpi(method,'default') || strcmpi(method,'GW') || strcmpi(method,'fast'))
+    if ~any(strcmpi(method,{'default','GW','fast','fastsmall'}))
         error('CHEBFUN:legpts:inputs',['Unrecognised input string.', method]); 
     end
     if isa(interval,'domain')
@@ -67,7 +71,7 @@ if nargin > 1
 end
 
 % Decide to use GW or FAST
-if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast') 
+if strcmpi(method,'GW')
 % GW, see [1]
    beta = .5./sqrt(1-(2*(1:n-1)).^(-2)); % 3-term recurrence coeffs
    T = diag(beta,1) + diag(beta,-1);     % Jacobi matrix
@@ -87,7 +91,13 @@ if (n < 128 || strcmpi(method,'GW')) && ~strcmpi(method,'fast')
         x = [x ; -x(end:-1:1)];      w = [w w(end:-1:1)];      
         v = [v ; v(end:-1:1)];
    end
-   v(2:2:n) = -v(2:2:end); 
+   v(2:2:n) = -v(2:2:end);
+elseif (n < 128 && ~strcmpi(method,'fast')) || strcmpi(method,'fastsmall')
+% Fastsmall    
+   [x ders] = fastsmall(n);              % Nodes and P_n'(x)
+   w = 2./((1-x.^2).*ders.^2)';          % Quadrature weights
+   v = 1./ders; v = v./max(abs(v));      % Barycentric weights  
+   if ~mod(n,2), ii = (floor(n/2)+1):n; v(ii) = -v(ii);   end
 else
 % Fast, see [2]
    [x ders] = alg0_Leg(n);               % Nodes and P_n'(x)
@@ -116,6 +126,41 @@ if ~all(interval == [-1 1])
         x([1 end]) = interval([1 end]);
     end
 end
+
+% -------------------- Routines for FAST_SMALL algorithm ------------------
+
+function [x PP] = fastsmall(n)
+
+% Asymptotic formula (WKB) - only positive x.
+if mod(n,2), s = 1; else s = 0; end 
+k = (n+s)/2:-1:1; theta = pi*(4*k-1)/(4*n+2);
+x = (1-(n-1)/(8*n^3)-1/(384*n^4)*(39-28./sin(theta).^2)).*cos(theta);
+
+% Initialise
+Pm2 = 1; Pm1 = x;  PPm2 = 0; PPm1 = 1;
+dx = inf; l = 0;
+
+% Loop until convergence
+while norm(dx,inf) > eps && l < 10
+    l = l + 1;
+    for k = 1:n-1, 
+        P = ((2*k+1)*Pm1.*x-k*Pm2)/(k+1);           Pm2 = Pm1; Pm1 = P; 
+        PP = ((2*k+1)*(Pm2+x.*PPm1)-k*PPm2)/(k+1);  PPm2 = PPm1; PPm1 = PP;  
+    end
+    dx = -P./PP; x = x + dx;    
+    Pm2 = 1; Pm1 = x; PPm2 = 0; PPm1 = 1;
+end
+
+% Once more for derivatives
+for k = 1:n-1, 
+    P = ((2*k+1)*Pm1.*x-k*Pm2)/(k+1);           Pm2 = Pm1; Pm1 = P; 
+    PP = ((2*k+1)*(Pm2+x.*PPm1)-k*PPm2)/(k+1);  PPm2 = PPm1; PPm1 = PP;  
+end
+
+% Reflect for negative values
+x = [-x(end:-1:1+s) x].';
+PP = [PP(end:-1:1+s) PP].';
+
 
 % -------------------- Routines for FAST algorithm ------------------------
 
