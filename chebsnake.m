@@ -7,9 +7,9 @@ function chebsnake(nodes,alpha)
 %   Any other key will quit the game.
 %
 %   CHEBSNAKE(NODES) allows one to change the
-%   interpolation nodes from Chebyshev points
+%   interpolation nodes from Chebyshev nodes
 %   (NODES = 'cheby', default) to equispaced 
-%   points ('equi'). The blue dots on the snake 
+%   nodes ('equi'). The blue dots on the snake 
 %   indicate the interpolated function values.
 %
 %   CHEBSNAKE(NODES,ALPHA) allows to change the
