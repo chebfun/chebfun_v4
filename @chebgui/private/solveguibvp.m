@@ -242,7 +242,13 @@ if guiMode
     handles.hasSolution = 1;
     
     axes(handles.fig_sol) 
-    plot(u,'Linewidth',2), xlim(xLimit),
+    plot(u,'Linewidth',2)
+    % Do different things depending on whether the solution is real or not
+    if isreal(u)
+        xlim(xLimit)
+    else
+        axis equal
+    end
     if length(allVarNames) > 1, legend(allVarNames), end
     if guifile.options.grid
         grid on

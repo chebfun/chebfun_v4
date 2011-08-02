@@ -1,7 +1,7 @@
 function solve_display(pref,handles,phase,u,du,nrmdu,nrmres,lambda)
 % Utility routine for displaying iteration progress in the solve functions.
 
-% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Display for damped Newton is a bit different from the undamped (want to
@@ -41,7 +41,12 @@ switch(phase)
             else
                 axes(handles.fig_sol)
                 plot(u,'.-'), title('Initial guess of solution')
-                xlim(handles.xLim),
+                % Do different things depending on whether the solution is real or not
+                if isreal(u)
+                    xlim(handles.xLim)
+                else
+                    axis equal
+                end
                 if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
             end
@@ -66,7 +71,12 @@ switch(phase)
             else
                 axes(handles.fig_sol)
                 plot(u,'.-'), title('Initial guess of solution')
-                xlim(handles.xLim)
+                % Do different things depending on whether the solution is real or not
+                if isreal(u)
+                    xlim(handles.xLim)
+                else
+                    axis equal
+                end
                 if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
             end
@@ -96,7 +106,13 @@ switch(phase)
                 end
             else
                 axes(handles.fig_sol)
-                plot(u,'.-'), title('Current solution'), xlim(handles.xLim)
+                plot(u,'.-'), title('Current solution'),
+                                % Do different things depending on whether the solution is real or not
+                if isreal(u)
+                    xlim(handles.xLim)
+                else
+                    axis equal
+                end
                 if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
                 axes(handles.fig_norm)
@@ -107,7 +123,12 @@ switch(phase)
                     plot(du,'.-'), title('Current correction step')
                     if pref.grid, grid on, end
                 end
-                xlim(handles.xLim)
+                                % Do different things depending on whether the solution is real or not
+                if isreal(u)
+                    xlim(handles.xLim)
+                else
+                    axis equal
+                end
             end
         end
         drawnow
@@ -136,7 +157,12 @@ switch(phase)
                 end
             else
                 axes(handles.fig_sol)
-                plot(u,'.-'), title('Current solution'), xlim(handles.xLim)
+                plot(u,'.-'), title('Current solution'),                % Do different things depending on whether the solution is real or not
+                if isreal(u)
+                    xlim(handles.xLim)
+                else
+                    axis equal
+                end
                 if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
                 axes(handles.fig_norm)
@@ -147,7 +173,12 @@ switch(phase)
                     plot(du,'.-'), title('Current correction step')
                     if pref.grid, grid on, end
                 end
-                xlim(handles.xLim)
+                                % Do different things depending on whether the solution is real or not
+                if isreal(u)
+                    xlim(handles.xLim)
+                else
+                    axis equal
+                end
             end
         end
         drawnow
@@ -183,7 +214,13 @@ switch(phase)
                 
             else
                 axes(handles.fig_sol)
-                plot(u,'.-'), title('Final solution'), xlim(handles.xLim)
+                plot(u,'.-'), title('Final solution'),
+                                % Do different things depending on whether the solution is real or not
+                if isreal(u)
+                    xlim(handles.xLim)
+                else
+                    axis equal
+                end
                 if length(handles.varnames)> 1, legend(handles.varnames),end
                 if pref.grid, grid on, end
                 axes(handles.fig_norm)
@@ -194,9 +231,14 @@ switch(phase)
                     plot(du,'.-'), title('Final correction step')
                     if pref.grid, grid on, end
                 end
-                xlim(handles.xLim)
+                % Do different things depending on whether the solution is real or not
+                if isreal(u)
+                    xlim(handles.xLim)
+                else
+                    axis equal
+                end
             end
-        end 
+        end
         
         if strcmp(mode,'iter') || strcmp(mode,'final')
             if ~guiMode
@@ -211,10 +253,11 @@ switch(phase)
                 currString = get(handles.iter_list,'String');
                 if numel(nrmres) == 1
                     finalString2 = sprintf('Linear equation detected. Converged in one step.');
-                    set(handles.iter_list,'String',{finalString2});
+                    lenString = sprintf('Length of solution: %i',length(u));
+                    set(handles.iter_list,'String',{finalString2,lenString});
                     return
                 elseif itercount == 1
-%                     finalString = sprintf('%i iteration.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
+                    %                     finalString = sprintf('%i iteration.\nFinal residual norm: %.2e (interior) \n and %.2e (boundary conditions).',itercount,nrmres);
                     finalString2 = sprintf('Final residual norm: %.2e (interior)',nrmres(1));
                     finalString3 = sprintf('and %.2e (boundary conditions).',nrmres(2));
                 else

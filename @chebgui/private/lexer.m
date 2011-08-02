@@ -97,7 +97,7 @@ while ~strcmp(str,'$')
         case 'num'
             % Obtain the numbers continously (with match), their start and
             % end positions.
-            [m s e] = regexp(str, '[\+\-]?(([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][\+\-]?[0-9]+)?)', 'match', 'start', 'end');
+            [m s e] = regexp(str, '[\+\-]?(([0-9]+(\.[0-9]*)?|\.[0-9]+)([eE][\+\-]?[0-9]+)?[ij]?)', 'match', 'start', 'end');
             
             % We can run into trouble with string such as 2*3 which will
             % become 2.*3 as we vectorize. But the . here should be a part
@@ -134,8 +134,8 @@ while ~strcmp(str,'$')
             type2 = myfindtype(str(2),prevtype);
             switch type2
                 
-                case 'num'      % We have a float
-                    [m s e] = regexp(str, '[0-9]+([eE][\+\-]?[0-9]+)?', 'match', 'start', 'end');
+                case 'num'      % We have a floating point number
+                    [m s e] = regexp(str, '[0-9]+([eE][\+\-]?[0-9]+)?[ij]?', 'match', 'start', 'end');
                     nextnum = ['.', char(m(1))];   % Add a . and convert from cell to string
                     expr_end = e(1);
                     out = [out; {nextnum, 'NUM'}];
@@ -296,7 +296,7 @@ end
 
 function type = myfindtype(str,prevtype)
 
-if regexp(str, '[0-9]') % Breyta i float  [+-]?(([0-9]+(.[0-9]*)?|.[0-9]+)([eE][+-]?[0-9]+)?)
+if regexp(str, '[0-9]') % Change to floating point format?  [+-]?(([0-9]+(.[0-9]*)?|.[0-9]+)([eE][+-]?[0-9]+)?)
     type = 'num';
 % If we want to treat unary operators especially
 elseif (strcmp(prevtype,'operator') || strcmp(prevtype,'unary')) && ~isempty(regexp(str, '[+-]'))
