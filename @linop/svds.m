@@ -51,7 +51,7 @@ U = simplify(chebfun(U,d));
 V = Minv*(spdiags(1./D,0,pts,pts)*V);
 V = chebfun(V,d);
 
-if nargout == 1,
+if nargout <= 1,
     varargout = { S };
 else
     varargout = { U,diag(S),V, flag };
