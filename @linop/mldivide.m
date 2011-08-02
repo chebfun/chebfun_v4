@@ -37,7 +37,8 @@ function C = mldivide(A,B,tolerance)
 
   case 'double'
     if length(B)==1  % scalar expansion
-      C = mldivide(A,chebfun(B,domain(A),chebopdefaults));
+      B = repmat(chebfun(B,domain(A),chebopdefaults),1,A.blocksize(1));
+      C = mldivide(A,B);
     else
       error('LINOP:mldivide:operand','Use scalar or chebfun with backslash.')
     end
@@ -78,11 +79,11 @@ function C = mldivide(A,B,tolerance)
     
     V = [];  % Initialise V so that the nested function overwrites it.
     syssize = A.blocksize(1);     % Number of eqns in system.
-    coef = [1, 2 + sin(1:syssize-1)];  % for a linear combination of variables
+    coef = [1, 2 + sin(1:A.blocksize(2)-1)];  % for a linear combination of variables
     
     % Enforce required conditions on an unbounded integro-equation
     infdom = isinf(isinf(ends));
-    if syssize == 1 && A.difforder == -1 && (any(infdom) || (isempty(A.lbc) && isempty(A.rbc)))
+    if syssize == 1 && all(A.difforder) == -1 && (any(infdom) || (isempty(A.lbc) && isempty(A.rbc)))
         bc = struct('left',struct([]),'right',struct([]));
         I = eye(domain(ends));
         if infdom(end)
@@ -136,8 +137,8 @@ function C = mldivide(A,B,tolerance)
     % N is the number of points on each subinterval.
     % bks contains the ends of the subintervals.
 
-    N = N{:};   bks = bks{:};     % We allow only the same discretization.
-                                  % Size and breaks for each system.
+    N = N{:};   bks = bks{:};     % We allow only the same discretization
+                                  %  size and breaks for each system.
     maxdo = max(A.difforder(:));  % Maximum derivative order of the system.
                                     
     if sum(N) > maxdegree+1
@@ -156,13 +157,44 @@ function C = mldivide(A,B,tolerance)
           v{csN(jj(kk))+(1:N(jj(kk)))} = e; 
       end
       return
+    end 
+    
+    % Deal with parameter dependent problems
+    paridx = max(abs(A.difforder),[],1) == 0;
+    funidx = find(~paridx);     paridx = find(paridx);
+    nfun = numel(funidx);       npar = numel(paridx); 
+
+    if isempty(paridx) % No parameters - straightforward
+        % Evaluate the matrix with boundary conditions attached.
+        [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,bks);
+    else % The are parameters in the problem
+        % Evaluate the matrix with boundary conditions attached.
+        [Amat,ignored,c,ignored,P,Amat2] = feval(A,N,'bc',map,bks);
+        ii = [];  nbc = numel(c); bc = zeros(nbc,npar); % initialise
+        for kk = 1:npar                                 % cols to remove
+            iik = sum(N)*(paridx(kk)-1)+1:sum(N)*paridx(kk);
+            bc(:,kk) = sum(Amat(end-nbc+1:end,iik),2);
+            ii = [ii iik];
+        end
+        Amat2 = Amat2(:,ii);
+        diagA2 = diag(Amat2);
+        
+        % Sanity check (integral operators can sometimes have zero difforder.)
+        if norm(Amat2 - diag(diagA2)) > 0
+            % Something has gone wrong. Bail out and use full matrices
+            paridx = []; npar = 0;
+            funidx = 1:syssize; nfun = syssize;
+        else        
+            % Remove parameter columns from Amat
+            Amat(:,ii) = [];                                
+            % colapse them each onto a single col and add back to Amat
+            Amat = [Amat [P{1}*diagA2 ; bc]];    
+        end
     end    
-
-    % Evaluate the matrix with boundary conditions attached.
-    [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,bks);
-
+    
     % Project the RHS
     if syssize == 1
+        if iscell(P), P = P{:}; end
         if any(isinf(B.ends))
             f = P*B(y{1},1);
         else
@@ -179,13 +211,23 @@ function C = mldivide(A,B,tolerance)
     f = [f ; c];                            % Add boundary conditions.
 
     v = Amat\f;                             % Solve the system.
-    V = mat2cell(v,repmat(N,1,syssize),1);  % Store for output.
-    v = reshape(v,[sum(N),syssize]);        % one variable per column
+    
+    if any(paridx)
+        V = mat2cell(v(1:end-npar,1),repmat(N,1,numel(funidx)),1);  % Store for output.
+        V = [V ; repmat({v(end-npar+1:end)},size(V,1),1)];          % Add params
+        V = reshape(V,numel(N),numel(V)/numel(N));
+        [ignored resort] = sort([funidx paridx]); V = V(:,resort);  % Resort
+        v = v(1:end-npar,1);                                        % Remove params from v
+    else
+        V = mat2cell(v,repmat(N,1,A.blocksize(2)),1);  % Store for output.
+    end
+    
+    v = reshape(v,[sum(N),numel(funidx)]);        % one variable per column
     % Need to return a single function to test happiness. If you just sum
     % functions, you get weird results if v(:,1)=-v(:,2), as can happen in
     % very basic problems. We just use an arbitrary linear combination (but
     % the same one each time!). 
-    v = v*coef(:); 
+    v = v*coef(1:nfun).';
     
     % Filter
     csN = cumsum([0 N]);

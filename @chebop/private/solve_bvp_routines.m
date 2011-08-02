@@ -133,7 +133,13 @@ stagCounter = 0;
 if isLin % N is linear. Sweet!
     
     % Correct for bc vals.
-    Nfeval = feval(N,0*u);    
+    Nfeval = feval(N,0*u);   
+    if isnumeric(rhs)
+        if numel(rhs) == 1
+            bs = get(A,'blocksize');
+            rhs = repmat(rhs,1,bs(2));
+        end
+    end
     for rhsCounter = 1:numel(Nfeval)
         newRhs(:,rhsCounter) = rhs(:,rhsCounter) - Nfeval(:,rhsCounter);
     end

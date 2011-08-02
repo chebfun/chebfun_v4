@@ -3,7 +3,7 @@ function pass = chebop_polyeigs
 % Nick Hale, july 2011
 
 %Tolerance
-tol = 1000*chebfunpref('eps');
+tol = 1e5*chebfunpref('eps');
 
 % Precomputed.
 precomp = [   
@@ -29,5 +29,5 @@ B = chebop(@(x,u) -x.*diff(u));
 C = chebop(@(x,u) u);
 [V D] = polyeigs(A,B,C,6,0);
 
-pass(2) = norm(D-precomp,inf) < tol
+pass(2) = norm(D-precomp,inf) < tol;
 

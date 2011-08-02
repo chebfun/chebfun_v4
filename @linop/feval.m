@@ -1,4 +1,4 @@
-function [M,B,c,rowreplace,P] = feval(A,n,usebc,map,breaks)
+function [M,B,c,rowreplace,P,Mmat] = feval(A,n,usebc,map,breaks)
 % FEVAL  Apply or realize a linop.
 % FEVAL(A,U) for chebfun U applies A to U; i.e., it returns A*U.
 %
@@ -129,6 +129,8 @@ else
     end 
   end
   
+  if nargout >= 6, Mmat = M; end
+  
 % %%%%%%%%%%%%%%%%%%%%%% Boundary conditions %%%%%%%%%%%%%%%%%%%%%%
 
   % No boundary conditions
@@ -186,7 +188,7 @@ else
           Pk = barymatp12m(nk,n,breaks,map);
           ii = ((k-1)*sn+1):k*sn;
           MM = [MM ; Pk*M(ii,:)];
-          if nargout == 5, P{k} = Pk; end % Store P
+          if nargout >= 5, P{k} = Pk; end % Store P
           nbc = nbc - sum(nk);
       end
 
