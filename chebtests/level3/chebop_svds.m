@@ -1,4 +1,4 @@
-function pass = chebop_eigs
+function pass = chebop_svds
 % Test the chebop svds method.
 % Nick Hale, August 2011
 
