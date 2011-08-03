@@ -93,7 +93,7 @@ end;
             error('chebfun:linop:svds','Nonsquare collocation currently not supported.')
         end
                 
-        if nbc > 1
+        if nbc > 0
             B = [P ; zeros(nbc,size(P,2))];
             Apts = full(full(spdiags(D,0,pts,pts)*M)*(Apts\B)*full(Minv*spdiags(1./D,0,pts,pts)));
             [U,Sinv,V] = svd(Apts);
@@ -125,10 +125,8 @@ end;
         end
         Sold = S;
 
-        % Create L2-orthonormal Chebfuns from U,V (V actually outside of drive)
-%         U = Minv*(spdiags(1./D,0,pts,pts)*U);
-        coef = [1, 2 + sin(1:length(ind)-1)]';  % for a linear combination of variables
-        u = U*coef; % (See LINOP/MLDIVIDE for more details)
+        coef = [1, 2 + sin(1:length(ind)-1)]';  % Form a linear combination of variables
+        u = U*coef; % Collapse to one vector (See LINOP/MLDIVIDE for more details)
         u = Minv*(spdiags(1./D,0,pts,pts)*u); % Convert to L2-orthonormal Chebyshev basis
     end
 end
