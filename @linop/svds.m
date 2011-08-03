@@ -32,10 +32,12 @@ function varargout = svds(A,k,sigma)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 
-if nargin < 2, k = 6; end;
-if nargin < 3 || strcmp(sigma,'L'), sigma = inf; end;
 
 d = domain(A);
+nbc = A.numbc;
+if nargin < 2, k = 6; end;
+if nbc == 0 && (nargin < 3 || strcmp(sigma,'L')), sigma = inf; end;
+if nbc > 0 && (nargin < 3 || strcmp(sigma,'S')), sigma = 0; end;
 
 U = []; S = []; V = []; flag = 0; pts = [];
 
@@ -45,11 +47,20 @@ pref.eps = tol;
 Sold = -inf;
 
 ignored = chebfun(@(x) drive(x),'splitting','off','sampletest','off',...
-    'vectorcheck','off','minsamples',33,'resampling','on','eps',tol);
+    'vectorcheck','off','minsamples',129,'resampling','on','eps',tol);
 
-U = simplify(chebfun(U,d));
-V = Minv*(spdiags(1./D,0,pts,pts)*V);
-V = chebfun(V,d);
+if nbc > 0
+    UU = U; % swap U and V, as we have computed singvecs of "inv(A)"
+    U = Minv*(spdiags(1./D,0,pts,pts)*V);
+    U = chebfun(U,d);
+    V = Minv*(spdiags(1./D,0,pts,pts)*UU);
+    V = simplify(chebfun(V,d)); % left singvecs are smooth
+else
+    U = Minv*(spdiags(1./D,0,pts,pts)*U);
+    U = simplify(chebfun(U,d)); % right singvecs are smooth
+    V = Minv*(spdiags(1./D,0,pts,pts)*V);
+    V = chebfun(V,d);
+end
 
 if nargout <= 1,
     varargout = { S };
@@ -66,22 +77,35 @@ end;
             return;
         end;
         
-        % get collocation matrix
-        pts = numel(x); 
-        Apts = feval(A,pts);
+        % Size of current discretisation
+        pts = numel(x);
+        % Legendre to Chebyshev projection and quadrature matrices
+        [M,D,Minv] = getL2InnerProductMatrix(pts,d);
+        
+        % Get collocation matrix
+        if nbc > 0 % Construct a rectangular matrix
+            [Apts ignored ignored ignored P] = feval(A,pts,'bc');
+        else       % a square matrix with no boundary conditions
+            [Apts ignored ignored ignored P] = feval(A,pts);
+        end
         
         if diff(size(Apts)),
             error('chebfun:linop:svds','Nonsquare collocation currently not supported.')
-        end;
+        end
+                
+        if nbc > 1
+            B = [P ; zeros(nbc,size(P,2))];
+            Apts = full(full(spdiags(D,0,pts,pts)*M)*(Apts\B)*full(Minv*spdiags(1./D,0,pts,pts)));
+            [U,Sinv,V] = svd(Apts);
+            S = 1./diag(Sinv); 
+        else
+            % SVD in L2 inner product
+            Apts = full(full(spdiags(D,0,pts,pts)*M)*Apts*full(Minv*spdiags(1./D,0,pts,pts)));
+            [U,S,V] = svd(Apts);
+            S = diag(S);
+        end
         
-        
-        % SVD in L2 inner product
-        [M,D,Minv] = getL2InnerProductMatrix(pts,d);
-        Apts = full(full(spdiags(D,0,pts,pts)*M)*Apts*full(Minv*spdiags(1./D,0,pts,pts)));
-        [U,S,V] = svd(Apts);
-        S = diag(S);
-        
-        % sort and truncate
+        % Sort and truncate
         S = S(S>tol/10*S(1)); % ignore these, as singular vectors are noisy
         [dummy,ind] = sort(abs(sigma - S),'ascend'); % singvals closest to sigma
         ind = ind(1:min(k,length(ind)));
@@ -90,7 +114,7 @@ end;
         U = U(:,ind);
         S = S(ind);
 
-        if length(S) ~= length(Sold),
+        if length(S) ~= length(Sold) || isempty(S)
             u = x; u(2:2:end) = -u(2:2:end);
             Sold = S;
             return
@@ -100,11 +124,12 @@ end;
             return
         end
         Sold = S;
-        
-        % create L2-orthonormal Chebfuns from U,V (V actually outside of drive)
-        U = Minv*(spdiags(1./D,0,pts,pts)*U);
-        K = 1./(1:length(ind))';
-        u = U*K;        
+
+        % Create L2-orthonormal Chebfuns from U,V (V actually outside of drive)
+%         U = Minv*(spdiags(1./D,0,pts,pts)*U);
+        coef = [1, 2 + sin(1:length(ind)-1)]';  % for a linear combination of variables
+        u = U*coef; % (See LINOP/MLDIVIDE for more details)
+        u = Minv*(spdiags(1./D,0,pts,pts)*u); % Convert to L2-orthonormal Chebyshev basis
     end
 end
 
