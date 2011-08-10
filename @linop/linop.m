@@ -28,6 +28,7 @@ A.varmat = [];
 A.oparray = oparray;     % inf-dim representation
 A.difforder = 0;
 A.iszero = 0;
+A.isdiag = 0;
 A.fundomain = domain(chebfunpref('domain'));
 A.lbc = struct([]);
 A.rbc = struct([]);

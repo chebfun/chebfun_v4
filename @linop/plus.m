@@ -55,10 +55,12 @@ if isa(B,'linop') % linop + linop
     op = A.oparray + B.oparray;
     order = max( A.difforder, B.difforder );
     isz = ~(~A.iszero+~B.iszero);
+    isd = A.isdiag & B.isdiag;
     order(isz) = 0;
     C = linop( A.varmat+B.varmat, op, dom, order );
     C.blocksize = A.blocksize;
     C.iszero = isz;
+    C.isdiag = isd;
     
 else
     error('LINOP:plus:badoperand','Unrecognized operand.')

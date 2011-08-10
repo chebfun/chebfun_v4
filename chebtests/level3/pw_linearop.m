@@ -11,8 +11,6 @@ A = diff(d,2) + diag(abs(x+.5)) & {'dirichlet',[3 0]};
 f = abs(x) + abs(x-.5) + 2*sign(x);
 u = A\f;
 
-% plot(f,'b',u,'--r')
-
 err = A*u-f;
 err = set(err,'imps',0*err.imps(1,:));
-pass = norm(err,inf) < 2e-8;
+pass = norm(err,inf) < 8e-8;

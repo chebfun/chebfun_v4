@@ -81,7 +81,9 @@ switch s(1).type
       case 'iszero'                    % BC MNEMONICS OR STRUCT
         A.iszero = B;
         valid = true;
-        
+      case 'isdiag'                    % BC MNEMONICS OR STRUCT
+        A.isdiag = B;
+        valid = true;
     end
 end
 

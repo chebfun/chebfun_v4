@@ -51,17 +51,13 @@ V = vertcat(V{:});
 op = cellfun( @(A) A.oparray, varargin, 'uniform',false );
 op = vertcat( op{:} );
 
-% Nick H, 5/Aug/2010
-% Instead of disabling, we keep track of all difforders
-% Asgeir B, 21/Nov/2010
-% Do similar things for zero detection
-difford = []; isz = [];
+% Keep track of difforders, zeros, and diags
+difford = []; isz = []; isd = [];
 for k = 1:numel(varargin)
     difford = [difford ; varargin{k}.difforder];
     isz = [isz ; varargin{k}.iszero];
+    isd = [isd ; varargin{k}.isdiag];
 end
-% difford = cellfun( @(A) A.difforder, varargin, 'UniformOutput', 'false').'
-% difford = 0;    % We disable differential order.
 
 A = linop( V, op, dom, difford );
 
@@ -69,7 +65,9 @@ A = linop( V, op, dom, difford );
 bs1 = cellfun( @(A) A.blocksize(1), varargin );
 A.blocksize = [sum(bs1) bs2(1)];
 
-% Update iszero.
+
+% Update iszero and isdiag.
 A.iszero = isz;
+A.isdiag = isd;
 
 end

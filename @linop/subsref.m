@@ -92,6 +92,8 @@ switch s(1).type
         A = A.varmat;
       case 'iszero'
         A = A.iszero;
+      case 'isdiag'
+        A = A.isdiag;        
       case {'domain','fundomain'}
         A = A.fundomain;
       otherwise 

@@ -11,6 +11,9 @@ S = svds(F);
 
 pass(1) = numel(S) == 2 && norm(S - pi/2) < tol;
 
+return
+
+%% Skip these for speed
 
 %% SVD of D and Eigs of D2
 D1 = chebop(@(u) diff(u));

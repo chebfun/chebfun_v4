@@ -44,6 +44,7 @@ a = d.ends(1);  b = d.ends(end);
 x = 2*(s(:)-a)/(b-a) - 1;
 if isempty(lr)
     E = linop(@mat2,@(u) feval(u,s(:)),d);
+    E.isdiag = 1;
 else
     E = linop(@mat2,@(u) feval(u,s(:),lr),d);
 end

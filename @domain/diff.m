@@ -108,4 +108,67 @@ end
 
 end
 
+function Dk = barydiffmat(x,w,k)  
+% BARYDIFFMAT  Barycentric differentiation matrix with arbitrary weights/nodes.
+%  D = BARYDIFFMAT(X,W) creates the first-order differentiation matrix with
+%       nodes X and weights W.
+%
+%  D = BARYDIFFMAT(X) assumes Chebyshev weights. 
+%
+%  DK = BARYDIFFMAT(X,W,K) returns the differentiation matrice of DK of order K.
+%
+%  All inputs should be column vectors.
+%
+%  See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+
+%  Copyright 2002-2009 by The Chebfun Team. 
+%  Last commit: $Author: hale $: $Rev: 1285 $:
+%  $Date: 2010-11-22 16:09:51 +0000 (Mon, 22 Nov 2010) $:
+
+N = length(x)-1;
+if N == 0
+    N = x;
+    x = chebpts(N);
+end
+
+if nargin == 2 && length(w)-1~=N
+    if length(w) == 1
+        k = w; 
+        w = [];
+    else
+        error('DOMAIN:diff:barydiffmat:lengthin',['Length of weights vector ', ...
+        'must match length of points.']);
+    end
+end
+
+if nargin < 2 || isempty(w) % Default to Chebyshev weights
+    w = [.5 ; ones(N,1)]; 
+    w(2:2:end) = -1;
+    w(end) = .5*w(end);
+end
+
+if nargin < 3, k = 1; end
+
+ii = (1:N+2:(N+1)^2)';
+Dx = bsxfun(@minus,x,x');   % all pairwise differences
+Dx(ii) = Dx(ii) + 1;        % add identity
+Dw = bsxfun(@rdivide,w.',w);
+Dw(ii) = Dw(ii) - 1;        % subtract identity
+
+% k = 1
+Dk = Dw ./ Dx;
+Dk(ii) = 0; Dk(ii) = - sum(Dk,2);
+if k == 1, return; end
+% k = 2
+Dk = 2*Dk .* (repmat(Dk(ii),1,N+1) - 1./Dx);
+Dk(ii) = 0; Dk(ii) = - sum(Dk,2);
+% higher orders
+for j = 3:k
+    Dk = j./Dx .* (Dw.*repmat(Dk(ii),1,N+1) - Dk);
+    Dk(ii) = 0; Dk(ii) = - sum(Dk,2);
+end
+
+end
+    
+
 

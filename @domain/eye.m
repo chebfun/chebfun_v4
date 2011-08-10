@@ -12,6 +12,7 @@ if isempty(d)
   I = linop;
 else
   I = linop( @(n) makespeye(n), @(u) u, d );
+  I.isdiag = 1;
 end
 
 

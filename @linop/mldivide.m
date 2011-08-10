@@ -136,11 +136,11 @@ function C = mldivide(A,B,tolerance)
     % y is a cell array with the points for each function.
     % N is the number of points on each subinterval.
     % bks contains the ends of the subintervals.
-
     N = N{:};   bks = bks{:};     % We allow only the same discretization
                                   %  size and breaks for each system.
     maxdo = max(A.difforder(:));  % Maximum derivative order of the system.
-                                    
+                           
+    % Error checking
     if sum(N) > maxdegree+1
       error('LINOP:mldivide:NoConverge',...
           ['Failed to converge with ',int2str(maxdegree+1),' points.'])
@@ -159,67 +159,60 @@ function C = mldivide(A,B,tolerance)
       return
     end 
     
+    % Evaluate the matrix with boundary conditions attached.
+    [Amat,ignored,c,ignored,P,Amat2] = feval(A,N,'bc',map,bks);
+    if ~iscell(P), P = {P}; end
+    
     % Deal with parameter dependent problems
-    paridx = max(abs(A.difforder),[],1) == 0;
+    paridx = min(A.isdiag,[],1) == 1;
     funidx = find(~paridx);     paridx = find(paridx);
     nfun = numel(funidx);       npar = numel(paridx); 
-
-    if isempty(paridx) % No parameters - straightforward
-        % Evaluate the matrix with boundary conditions attached.
-        [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,bks);
-    else % The are parameters in the problem
-        % Evaluate the matrix with boundary conditions attached.
-        [Amat,ignored,c,ignored,P,Amat2] = feval(A,N,'bc',map,bks);
+    syssize = A.blocksize(1);
+    if ~isempty(paridx) % The are parameters in the problem
         ii = [];  nbc = numel(c); bc = zeros(nbc,npar); % initialise
         for kk = 1:npar                                 % cols to remove
             iik = sum(N)*(paridx(kk)-1)+1:sum(N)*paridx(kk);
             bc(:,kk) = sum(Amat(end-nbc+1:end,iik),2);
             ii = [ii iik];
         end
-        Amat2 = Amat2(:,ii);
-        diagA2 = diag(Amat2);
-        
-        % Sanity check (integral operators can sometimes have zero difforder.)
-        if norm(Amat2 - diag(diagA2)) > 0
-            % Something has gone wrong. Bail out and use full matrices
-            paridx = []; npar = 0;
-            funidx = 1:syssize; nfun = syssize;
-        else        
-            % Remove parameter columns from Amat
-            Amat(:,ii) = [];                                
-            % colapse them each onto a single col and add back to Amat
-            Amat = [Amat [P{1}*diagA2 ; bc]];    
+        % Remove parameter columns from Amat
+        Amat(:,ii) = [];  Amat2 = Amat2(:,ii);                          
+        % Colapse them each onto a single col and add back to Amat
+        if syssize == 1 && npar == 1 % Easy case
+            Acol = P{1}*diag(Amat2);
+        else                         % Tricker case (systems, #params > 1)
+            Acol = []; sN = sum(N); idx = 1:(syssize*sN+1):(syssize*sN^2);
+            for kk = 1:npar % Project the diagonals of each of the parameters subblocks
+                Acolkk = []; idxj = idx;
+                for jj = 1:syssize
+                    Acolkk = [Acolkk ; P{jj}*Amat2(idxj).'];
+                    idxj = idxj+sN;
+                end
+                Acol = [Acol Acolkk];
+                idx = idx + syssize*sN^2;
+            end
         end
-    end    
-    
-    % Project the RHS
-    if syssize == 1
-        if iscell(P), P = P{:}; end
-        if any(isinf(B.ends))
-            f = P*B(y{1},1);
-        else
-            f = B(P*y{1},1);
-        end
-    else
-        f = [];
-        if any(isinf(B(:,1).ends))
-            for jj = 1:syssize, f = [f ; P{jj}*B(y{1},jj)]; end
-        else
-            for jj = 1:syssize, f = [f ; B(P{jj}*y{1},jj)]; end
-        end
-    end
-    f = [f ; c];                            % Add boundary conditions.
+        Amat = [Amat [Acol ; bc]]; % Reform the big matrix with the new columns augmented
+    end 
+         
+    % The RHS
+    f = [];
+    for jj = 1:syssize, f = [f ; P{jj}*B(y{1},jj)]; end  % Project the RHS
+    f = [f ; c];                                         % Add boundary conditions.
 
-    v = Amat\f;                             % Solve the system.
-    
+    % Solve the system.
+    v = Amat\f;                                          
+
+    % Store V for output.
     if any(paridx)
-        V = mat2cell(v(1:end-npar,1),repmat(N,1,numel(funidx)),1);  % Store for output.
-        V = [V ; repmat({v(end-npar+1:end)},size(V,1),1)];          % Add params
-        V = reshape(V,numel(N),numel(V)/numel(N));
+        % Recover parameters (some effort required to get in correct order)
+        V = [mat2cell(v(1:end-npar,1),repmat(N,1,numel(funidx)),1)                        % funs
+             reshape(repmat(num2cell(v(end-npar+1:end))',numel(N),1),npar*numel(N),1)];   % params
+        V = reshape(V,numel(N),numel(V)/numel(N));                            
         [ignored resort] = sort([funidx paridx]); V = V(:,resort);  % Resort
         v = v(1:end-npar,1);                                        % Remove params from v
     else
-        V = mat2cell(v,repmat(N,1,A.blocksize(2)),1);  % Store for output.
+        V = mat2cell(v,repmat(N,1,A.blocksize(2)),1);
     end
     
     v = reshape(v,[sum(N),numel(funidx)]);        % one variable per column
@@ -242,124 +235,6 @@ function C = mldivide(A,B,tolerance)
 
 end
 
+function Amat = parremove(Amat,Amat2,P,A,N,c)
 
-
-
-
-%%%%%%%%%%%%%%%%%% JUNK %%%%%%%%%%%%%%%%%%%%
-
-% For future performance, store LU factors of realized matrices.
-% persistent storage
-% if isempty(storage), storage = struct([]); end
-% use_store = cheboppref('storage');
-
-% dorectmat = 1;
-    
-%     % Call the constructor 
-%     if numel(ends) == 2 && ~chebfunpref('splitting') && ~dorectmat
-%     % Smooth and non-systems
-%         if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
-%           C = chebfun( @(x) A.scale(x)+value_old(x), ends, settings) - A.scale;
-%         else
-%           settings.scale = A.scale;
-%           C = chebfun( @(x) value_old(x), ends, settings);
-%         end
-%     else
-%     % Piecewise and/or systems
-%         if isa(A.scale,'chebfun') || isa(A.scale,'function_handle')
-%             warning('CHEBFUN:linop:mldivide:sclfun', ...
-%                 'No support for function scaling for piecewise domains.')
-%             if isa(A.scale,'function_handle'), A.scale = 1;
-%             else A.scale = norm(A.scale,inf); end
-%         end
-%         settings.scale = A.scale;
-%         C = chebfun( @(x,N,bks) value(x,N,bks), {ends}, settings);
-%         if m == 1, C = C{:}; end
-%     end
-
-
-%   function v = value_old(x)
-%     N = length(x);
-%     if N > maxdegree+1
-%       error('LINOP:mldivide:NoConverge',['Failed to converge with %i points.',maxdegree+1])
-%     elseif N==1
-%       error('LINOP:mldivide:OnePoint',...
-%         'Solution requested at a lone point. Check for a bug in the linop definition.')
-%     elseif N <= A.numbc+1 || N < 2
-%       % Too few points: force refinement
-%       v = ones(N,1); 
-%       v(2:2:end) = -1;
-%       return
-%     end
-%     A.difforder = abs(A.difforder);
-%     x1 = [];
-%     
-%     % We don't store matrices if there are maps.
-%     if ~isempty(map), use_store = 0; end
-%     
-%     % Retrieve or compute LU factors of the matrix.
-%     if use_store && N > 5 && length(storage)>=A.ID ...
-%         && length(storage(A.ID).L)>=N && ~isempty(storage(A.ID).L{N})
-%       L = storage(A.ID).L{N};
-%       U = storage(A.ID).U{N};
-%       x1 = storage(A.ID).x1{N};
-%       c = storage(A.ID).c{N};
-%       rowidx = storage(A.ID).rowidx{N};
-%     else  % have to compute L and U
-%       Amat = feval(A,N,map,ends);
-%       
-%       if dorectmat && m == 1% New rectangular matrix method
-%         [Bmat,c] = bdyreplace(A,{N},map,{ends}); rowidx = [];
-%         if any(isinf(ends))
-%             % We don't want chebpts to do the scaling in this case. (Done below).
-%             x1 = chebpts(N-A.numbc,[-1 1],1);            
-%         else
-%             x1 = chebpts(N-A.numbc,ends,1);
-%         end
-%         if ~isempty(map) % Map the 1st-kind points. (x is already mapped).
-%             if isstruct(map)
-%                 x1 = map.for(x1);
-%             else
-%                 x1 = map(x1);
-%             end
-%         end
-%         Amat = [barymat(x1,x)*Amat; Bmat];
-%       else                   % Do things the old way
-%         [Bmat,c,rowidx] = bdyreplace_old(A,N,map,ends);
-%         Amat(rowidx,:) = Bmat;
-%       end
-%       
-%       [L,U] = lu(Amat);
-%       if use_store && N > 5   % store L and U
-%         % Very crude garbage collection! If over capacity, clear out
-%         % everything.
-%         ssize = whos('storage');
-%         if ssize.bytes > cheboppref('maxstorage')
-%           storage = struct([]);
-%         end
-%         storage(A.ID).L{N} = L;
-%         storage(A.ID).U{N} = U;
-%         storage(A.ID).x1{N} = x1;
-%         storage(A.ID).c{N} = c;
-%         storage(A.ID).rowidx{N} = rowidx;
-%       end        
-%     end
-%     
-%     % Evaluate and modify RHS as needed.
-%     if m == 1 && dorectmat
-%         f = B(x1,:);
-%         f = [f ; c]; 
-%     else
-%         f = B(x,:);
-%         f = f(:);
-%         f(rowidx) = c;
-%     end
-% 
-%     % Solve.
-%     v = U\(L\f);
-% 
-%     V = reshape(v,N,m);
-%     v = sum(V,2);
-%     v = filter(v,1e-8);
-% 
-%   end
+end

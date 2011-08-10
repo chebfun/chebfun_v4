@@ -21,6 +21,15 @@ if (m > 0)
   % Find the zeros
   isz = ~double(~A.iszero)^m;
   
+  % Find the diagonals
+  isd = zeros(size(A));
+  for i1 = 1:size(A,1)
+      for i2 = 1:size(A,2)
+          isd(i1,i2) = double(logical(A.isdiag(i1,:)+A.iszero(:,i2)'))*double(logical(A.iszero(i1,:)'+A.isdiag(:,i2)));
+      end
+  end
+  isd = isd == size(A,2);
+  
   % Get the difforder
   difforder = A.difforder;
   for j = 2:m
@@ -41,6 +50,7 @@ if (m > 0)
   C.difforder = difforder;
   C.blocksize = s;
   C.iszero = isz;
+  C.isdiag = isd;
   
       if ~all(size(C)==size(C.difforder))
         error

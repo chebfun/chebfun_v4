@@ -3,7 +3,7 @@ function isz = iszero(A,inspect)
 %
 % ISZ = ISZERO(L) returns 1 if the linop L is the zero linop on its
 % domain of definition, 0 otherwise. For block linops, ISZ will be a 
-% matrix with entries 1 or zero corresponding to each block. 
+% matrix with entries 1 or 0 corresponding to each block. 
 %
 % By default this information is only extracted from the L.iszero field
 % to force an inspection of the linop use the command ISZERO(L,'inspect').
@@ -31,8 +31,8 @@ for rowcounter = 1:A.blocksize(1)
     for colcounter = 1:A.blocksize(2)
         if ~A.iszero(rowcounter,colcounter)
             isz(rowcounter,colcounter) =  ...
-                norm(Aexpand(1+(rowcounter-1)*dimExpand:rowcounter*dimExpand, ...
-                1+(colcounter-1)*dimExpand:colcounter*dimExpand)) == 0;
+                ~any(any(Aexpand(1+(rowcounter-1)*dimExpand:rowcounter*dimExpand, ...
+                1+(colcounter-1)*dimExpand:colcounter*dimExpand)));
         end
     end
 end

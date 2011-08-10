@@ -53,6 +53,11 @@ E.blocksize = [m m];
 F = linop( @expm_mat, [], domain(A), 0);
 F.blocksize = [m m];
 
+% Manually update zero and diagonal fields
+E.iszero = zeros(m); E.iszero = iszero(E,'inspect');
+E.isdiag = zeros(m); E.isdiag = isdiag(E,'inspect');
+E.difforder = zeros(m);
+
 
   function E = expm_mat(n)
     breaks = []; map = [];

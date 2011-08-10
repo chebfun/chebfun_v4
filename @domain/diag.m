@@ -9,7 +9,7 @@ function A = diag(f,d)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin < 2
-    error('CHEBUFN:domain:diag:nargin','Two inputs required to domain/diag.');
+    error('CHEBFUN:domain:diag:nargin','Two inputs required to domain/diag.');
 end
 
 % Switch f and d (as in a call from chebfun/diag
@@ -19,12 +19,17 @@ end
 
 % Define the oparray
 if isa(f,'chebfun')
+    if numel(f) > 1
+        error('CHEBFUN:domain:diag:quasi','Quasimatrix input not allowed.');
+    end
+    if ~any(f.vals), A = zeros(d); return, end
     oper = @(u) times(f,u);
 else
     oper = @(u) chebfun(@(x) feval(f,x).*feval(u,x),d);
 end
 
 A = linop( @(n) mat(n), oper, d  );
+A.isdiag = 1;
 
     % Define the mat
     function m = mat(n)

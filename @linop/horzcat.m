@@ -22,7 +22,6 @@ if any(isnum)
     idx = find(isnum);
     for k = 1:numel(idx)
         if numel(varargin{idx(k)}) > 1
-            varargin{idx(k)}
             error('CHEBFUN:linop:vertcat', ...
                 'Syntax not supported in linop construction.');
         elseif varargin{idx(k)} == 0
@@ -50,22 +49,22 @@ V = horzcat(V{:});
 op = cellfun( @(A) A.oparray, varargin, 'uniform',false );
 op = horzcat( op{:} );
 
-% Nick H, 5/Aug/2010
-% Instead of disabling, we keep track of all difforders
-% Asgeir B, 21/Nov/2010
-% Do similar things for zero detection
-difford = []; isz = [];
+% Keep track of difforders, zeros, and diags
+difford = []; isz = []; isd = [];
 for k = 1:numel(varargin)
     difford = [difford varargin{k}.difforder];
     isz = [isz varargin{k}.iszero];
+    isd = [isd varargin{k}.isdiag];
 end
+
 A = linop( V, op, dom, difford );
 
 % Update the block size.
 bs2 = cellfun( @(A) A.blocksize(2), varargin );
 A.blocksize = [bs1(1) sum(bs2)];
 
-% Update iszero.
+% Update iszero and isdiag.
 A.iszero = isz;
+A.isdiag = isd;
 
 end

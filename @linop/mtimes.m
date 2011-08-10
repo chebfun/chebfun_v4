@@ -60,6 +60,15 @@ switch(class(B))
     % Find the zeros
     isz = ~(double(~A.iszero)*double(~B.iszero));
     
+    % Find the diagonals
+    isd = zeros(size(A,1),size(B,2));
+    for i1 = 1:size(A,1)
+        for i2 = 1:size(B,2)
+            isd(i1,i2) = double(logical(A.isdiag(i1,:)+B.iszero(:,i2)'))*double(logical(A.iszero(i1,:)'+B.isdiag(:,i2)));
+        end
+    end
+    isd = isd == size(A,2);
+    
     % Get the difforder
     [jj kk] = meshgrid(1:size(A,1),1:size(B,2));
     order = zeros(numel(jj),size(A,2));
@@ -79,12 +88,8 @@ switch(class(B))
     C = linop(mat,op,dom,order);
     C.blocksize = [size(A,1) size(B,2)];
     C.iszero = isz;
+    C.isdiag = isd;
     
-    if ~all(size(C)==size(C.difforder))
-        error
-    end
-
-
   case 'chebfun'    % linop * chebfun
     dom = domaincheck(A,B);
     dom = dom.ends;
