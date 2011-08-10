@@ -112,7 +112,7 @@ switch index(1).type
 %                 fcol(:,i).imps(1,loc) = vin(mem,i); 
 %             end
 %         else
-            if isa(s,'domain') || isnumeric(s)
+        if isa(s,'domain') || isnumeric(s)
             fcol = define(fcol,s,vin);
         elseif isequal(s,':')
             if isempty(fcol)
@@ -129,6 +129,8 @@ switch index(1).type
         % Check orientation
         if fcol(1).trans ~= trans
             error('CHEBFUN:subsasgn:trans','Inconsistent chebfun transpose fields')
+        elseif fcol(1).trans
+            fcol = fcol.';
         end
         f(:,col) = fcol;
         if trans, f = f.'; end
