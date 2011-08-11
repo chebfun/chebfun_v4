@@ -1,17 +1,19 @@
 function F = set(F,varargin)
 % SET Set chebfun properties.
 % F = SET(F,PROP,VAL) modifies the property PROP of the chebfun F with
-% the value VAL. PROP can be 'funs', 'ends', or 'imps' to modify the cell 
-% array of funs, the vector with endpoints or the matrix with Dirac 
-% impulses respectively.
-%
+% the value VAL. PROP can be used to set:
+%   'FUNS'   - The cell array of funs
+%   'IMPS'   - Values F takes at the F.ENDS.
+%   'SCL'    - Vertical scale of F.
+%   'TRANS'  - Orientation of F (i.e., column or row chebfun).
+%   'DOMAIN' - The domain of F (via a rescaling of the dependent variable).
 % F = SET(F,PROP_1,VAL_1,...,PROP_n,VAL_n) modifies more than one property.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if numel(F)>1
-    error('CHEBFUN:set:quasi','Set currently does not work with quasi-matrices.')
+    error('CHEBFUN:set:quasi', 'Set does not support quasi-matrices.')
 end
 
 propertyArgIn = varargin;
@@ -23,14 +25,11 @@ while length(propertyArgIn) >= 2,
     case 'funs'
         F.funs = val;
         F.nfuns = numel(val);
-       % scl = 0;
-       % for i = 1:F.nfuns, scl = max(scl,norm(val(i).vals,inf)); end
-       % F.scl = scl;
-       F = update_vscl(F);
-    case 'nfuns'
-        F.nfuns = val;    
+        F = update_vscl(F);
+%     case 'nfuns'
+%         F.nfuns = val;    
     case 'ends'
-        F.ends = val(:).';
+        F.ends = reshape(val,1,numel(val));
     case 'imps'
         F.imps = val;
     case 'scl'
@@ -44,7 +43,8 @@ while length(propertyArgIn) >= 2,
         old = get(F,'ends');
         if isa(val,'domain'), val = val.ends; end
         if numel(val) > 2
-            warning('CHEBFUN:set:domainasgn','Can only scale. Breakpoints ignored.');
+            warning('CHEBFUN:set:domainasgn',...
+                'Can only scale. Breakpoints ignored.');
         elseif numel(val) == 1
             error('CHEBFUN:set:domainasgn2','2 vector required.');
         end
@@ -55,7 +55,8 @@ while length(propertyArgIn) >= 2,
             F.funs(k) = newdomain(F.funs(k),new(k:k+1));
         end        
     otherwise
-        error('CHEBFUN:set:UnknownProperty','chebfun properties: funs, ends and imps')
+        error('CHEBFUN:set:UnknownProperty', ...
+            'Chebfun properties: funs, ends, imps, scl, and trans.')
     end
 end
 

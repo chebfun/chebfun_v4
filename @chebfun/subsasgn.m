@@ -75,43 +75,6 @@ switch index(1).type
         end
         fcol = f(:,col);        
         % ---- assign values/chebfuns at given points/domains ---        
-%         if isnumeric(s)
-%             if ~isa(vin,'numeric')
-%                 error('CHEBFUN:subsasgn:conversion',...
-%                         ['Conversion to numeric from ',class(vin),...
-%                         ' is not possible.'])
-%             end
-%             if length(vin) == 1
-%                vin = vin*ones(length(s),length(col));
-%             elseif length(col) == 1 && min(size(vin)) == 1 && ...
-%                     length(vin)==length(s)
-%                 vin = vin(:);
-%             elseif length(s)~=size(vin,1) || length(col)~=size(vin,2)
-%                 error('CHEBFUN:subsasgn:dimensions',...
-%                         'Subscripted assignment dimension mismatch.')
-%             end
-%             ends = get(fcol(:,1),'ends'); a = ends(1); b = ends(end);
-%             if min(s) < a || max(s) > b
-%                 error('CHEBFUN:subsasgn:outbounds',...
-%                     'Cannot introduce endpoints outside domain.')
-%             end
-%             stemp = s;    
-%             s = setdiff(s,ends); impsends = zeros(length(col),2);
-%             for k = 1:length(col)
-%                 impsends(k,:) = fcol(:,k).imps(1,[1 end]);
-%             end
-%             for i = 1:length(s)
-%                 fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
-%             end 
-%             for k = 1:length(col)
-%                 fcol(:,k).imps([1 end]) = impsends(k,:);
-%             end
-%             for i = 1:length(col)   
-%                 [mem,loc] = ismember(stemp,fcol(i).ends);
-%                % fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
-%                 fcol(:,i).imps(1,loc) = vin(mem,i); 
-%             end
-%         else
         if isa(s,'domain') || isnumeric(s)
             fcol = define(fcol,s,vin);
         elseif isequal(s,':')
@@ -136,9 +99,15 @@ switch index(1).type
         if trans, f = f.'; end
         varargout = { f };          
     case '{}'
+        if numel(f) > 1,
+            error('CHEBFUN:subsasgn:curly',...
+              'Subsasgn does not support {} for quasimatrices. Use chebfun/define.');
+        end
         if length(idx) == 1
             if isequal(idx{1},':')
                 s = domain(f); 
+%                 varargout = {f};
+%                 return
             elseif isa(idx{1},'domain')
                 s = idx{1};                 
             else

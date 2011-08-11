@@ -1,8 +1,26 @@
 function varargout = subsref(f,index)
-% SUBSREF   Evaluate a chebfun.
-% F(X) returns the values of the chebfun F evaluated on the array X. The 
-% function at the right of a breakpoint x is used for the evaluation of F
-% on x.
+% SUBSREF   Chebfun subsref. 
+% ( )
+%   F(X) returns the values of the chebfun F evaluated on the array X. If F
+%   is a column quasimatrix, then F(X,:) will evaluate each of the columns
+%   at the points in the array X. F(X,I), where I is a vector of integers
+%   in [0, numel(F)] returns the values of the columns indexed by I. F(:,I)
+%   will extract the I chebfun columns indexed by I. For row quasimatrices
+%   the order of the inputs is reversed.
+% 
+%   If X falls on a breakpoint of F, the corresponding value from F.IMPS is
+%   returned. F(X,'left') or F(X,'right') will evaluate F to the left or
+%   right of the breakpoint respectively.
+%
+%   F(G), where G is also a chebfun, computes the composition of F and G.
+%
+% .
+%   F.PROP returns the property PROP of F as defined by GET(F,'PROP').
+%
+% {}
+%   F{S} restricts F to the domain [S(1) S(end)] < [F.ENDS(1) F.ENDS(end)].
+%
+% See also CHEBFUN/FEVAL, CHEBFUN/GET, CHEBFUN/RESTRICT
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -10,10 +28,6 @@ function varargout = subsref(f,index)
 idx = index(1).subs;
 switch index(1).type
     case '.'
-%         if numel(f) > 1
-%             error('CHEBFUN:SUBSREF:QUASIMATRIX', ...
-%                 'Subsref does not support ''.'' notation for chebfun quasimatrices.');
-%         end
         varargout = get(f,idx);
         if ~iscell(varargout),
             varargout = {varargout};
@@ -68,10 +82,9 @@ switch index(1).type
         elseif isa(s,'domain')
             f = restrict(f,s);            
             varargout = { f };
-        % RodP added this here for composition of chebfuns (May 2009) -----    
         elseif isa(s,'chebfun') || isa(s,'function_handle')
             varargout = { compose(f,s) };
-        % -----------------------------------------------------------------
+        % --------------------------------------------------------
         elseif isequal(s,':')
             varargout = { f }; 
         else
@@ -79,9 +92,15 @@ switch index(1).type
               'Cannot evaluate chebfun for non-numeric type.')
         end       
     case '{}'
+        if numel(f) > 1,
+            error('CHEBFUN:subsref:curly',...
+              'Subsref does not support {} for quasimatrices. Use chebfun/restrict.');
+        end
         if length(idx) == 1
             if isequal(idx{1},':')
-                s = domain(f); 
+%                 s = domain(f);
+                varargout = {f};
+                return
             else
                 error('CHEBFUN:subsref:baddomain',...
                     'Invalid domain syntax.')
@@ -94,21 +113,10 @@ switch index(1).type
         end
         varargout = { restrict(f,s) };        
     otherwise
-        error('CHEBFUN:UnexpectedType',['??? Unexpected index.type of ' index(1).type]);
+        error('CHEBFUN:UnexpectedType',...
+            ['??? Unexpected index.type of ' index(1).type]);
 end
 
 if length(index) > 1
     varargout = {subsref([varargout{:}], index(2:end))};
 end  
-
-% if numel(varargout) > 1 && nargout <= 1
-%    if iscellstr(varargout) || any(cellfun('isempty',varargout))
-%        varargout = {varargout};
-%    else
-%        try
-%            varargout = {[varargout{:}]};
-%        catch
-%            varargout = {varargout};
-%        end
-%    end
-% end
