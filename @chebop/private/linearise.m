@@ -70,7 +70,14 @@ else
         for j = 1:length(lbc)
             % Evaluate the BC function
             if numberOfInputVariables > 1
-                guj = lbc{j}(uCell{:});
+                try
+                    guj = lbc{j}(uCell{:});
+                catch
+                    lbcshow = {N.lbcshow};
+                    s = sprintf('''%s'' boundary condition is not valid for systems of equations.', ...
+                        lbcshow{j});
+                    error('CHEBFUN:chebop:linearise',s);
+                end
             else
                 guj = lbc{j}(u);
             end
@@ -124,7 +131,14 @@ else
         for j = 1:length(rbc)
             % Evaluate the BC function
             if numberOfInputVariables > 1
-                guj = rbc{j}(uCell{:});
+                try
+                    guj = rbc{j}(uCell{:});
+                catch
+                    rbcshow = {N.rbcshow};
+                    s = sprintf('''%s'' boundary condition is not valid for systems of equations.', ...
+                        rbcshow{j});
+                    error('CHEBFUN:chebop:linearise',s);
+                end
             else
                 guj = rbc{j}(u);
             end
