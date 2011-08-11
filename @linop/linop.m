@@ -40,6 +40,7 @@ A.ID = newIDnum();    % for storage of realizations/factorizations
 if nargin==0
 elseif nargin==1 && isa(varargin{1},'linop')
   A = varargin{1};
+  return
 else
   % First argument defines the matrix part.
   if isa(varargin{1},'function_handle')
