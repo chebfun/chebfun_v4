@@ -73,9 +73,10 @@ pref.sampletest = false;
 pref.resampling = false;
 pref.splitting = false;
 pref.blowup = false;
+pref.extrapolate = true;
 
 % Construct funs
-for k =1:length(ends)-1  
+for k = 1:length(ends)-1  
     newfun = fun(@(x) integral(x,a,b,c,d,f,g,pref,scl), ends(k:k+1), pref, scl);
     scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
     funs = [funs simplify(newfun)];
