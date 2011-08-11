@@ -37,6 +37,15 @@ end
 
 g = f;
 dom = domain(f);
+
+tol = 10*chebfunpref('eps')*diff(f.ends([1 end]));
+if subint(1) < dom(1) && subint(1) > dom(1) - tol
+    subint(1) = dom(1);
+end
+if subint(2) > dom(2) && subint(1) < dom(2) + tol
+    subint(2) = dom(2);
+end
+
 if (subint(1)<dom(1)) || (subint(2)>dom(2))
   error('CHEBFUN:restrict:badinterval','Given interval is not in the domain.')
 end
