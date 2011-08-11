@@ -137,9 +137,9 @@ function C = mldivide(A,B,tolerance)
     % N is the number of points on each subinterval.
     % bks contains the ends of the subintervals.
     N = N{:};   bks = bks{:};     % We allow only the same discretization
-                                  %  size and breaks for each system.
+    csN = [0 cumsum(N)];          %  size and breaks for each system.
     maxdo = max(A.difforder(:));  % Maximum derivative order of the system.
-                           
+                        
     % Error checking
     if sum(N) > maxdegree+1
       error('LINOP:mldivide:NoConverge',...
@@ -150,7 +150,6 @@ function C = mldivide(A,B,tolerance)
     elseif any(N < maxdo+1)
       % Too few points: force refinement.
       jj = find(N < maxdo+1);
-      csN = [0 ; cumsum(N)];
       v = y;
       for kk = 1:length(jj)
           e = ones(N(jj(kk)),1); e(2:2:end) = -1;
@@ -194,14 +193,21 @@ function C = mldivide(A,B,tolerance)
         end
         Amat = [Amat [Acol ; bc]]; % Reform the big matrix with the new columns augmented
     end 
-         
-    % The RHS
+
+    % The RHS.
     f = [];
-    for jj = 1:syssize, f = [f ; P{jj}*B(y{1},jj)]; end  % Project the RHS
-    f = [f ; c];                                         % Add boundary conditions.
+    % Project the RHS.
+    for jj = 1:syssize 
+        Bj = B(y{1},jj);
+        Bj(csN(2:end),:) = B(bks(2:end),jj,'left');
+        Bj(csN(1:end-1)+1,:) = B(bks(1:end-1),jj,'right');
+        f = [f ; P{jj}*Bj];
+    end  
+    % Add boundary conditions.
+    f = [f ; c]; 
 
     % Solve the system.
-    v = Amat\f;                                          
+    v = Amat\f ;
 
     % Store V for output.
     if any(paridx)
@@ -223,7 +229,6 @@ function C = mldivide(A,B,tolerance)
     v = v*coef(1:nfun).';
     
     % Filter
-    csN = cumsum([0 N]);
     for jj = 1:numel(N)
         ii = csN(jj) + (1:N(jj));
         v(ii) = filter(v(ii),1e-8);
