@@ -19,7 +19,7 @@ function ADH = anon(varargin)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-maxdepth = chebfunpref('addepth');
+maxdepth = chebfunpref('ADdepth');
 
 % Store a persistent dummy anon
 persistent dummyAnon
@@ -30,7 +30,6 @@ if isempty(dummyAnon)
     dummyAnon.workspace = [];
     dummyAnon.type  = 1;
     dummyAnon.depth = maxdepth;
-
     dummyAnon = class(dummyAnon,'anon');
 end
 if maxdepth % If maxdepth == 0, AD is turned off

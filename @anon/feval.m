@@ -9,7 +9,7 @@ if nargin < 3
     anonType = 2;
 end
 if isempty(Fin.function)
-    error('Unable to evaluate AD derivative, maximum AD depth reached. Try increasing chebfunpref(''addepth''). Please contact the chebfun team at chebfun@maths.ox.ac.uk for more information.');
+    error('Unable to evaluate AD derivative, maximum AD depth reached. Try increasing chebfunpref(''ADdepth''). Please contact the chebfun team at chebfun@maths.ox.ac.uk for more information.');
 elseif anonType == 1 && Fin.depth == 1 % Base variable, return []
     varargout{1} = []; varargout{2} = 0;
     return;

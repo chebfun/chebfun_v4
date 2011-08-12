@@ -447,7 +447,7 @@ f = chebfun('sign(x)',[0 1],'extrapolate','on');
 % function is sampled at for plotting.
 
 %%
-% 'addepth' stands for 'automatic differentiation depth', and limits how
+% 'ADdepth' stands for 'automatic differentiation depth', and limits how
 % deep an automatic differentiation stack can go in order to limit memory
 % use.
 

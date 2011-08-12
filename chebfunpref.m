@@ -126,7 +126,7 @@ end
 % If the above didn't work, go through the longer process:
 
 % These are the options
-options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest', 'blowup', 'chebkind', 'extrapolate','plot_numpts','polishroots','addepth'};
+options =    {'splitting', 'minsamples', 'maxdegree', 'maxlength', 'splitdegree', 'resampling', 'domain', 'eps', 'sampletest', 'blowup', 'chebkind', 'extrapolate','plot_numpts','polishroots','ADdepth'};
 factoryvals = {false,       9,            2^16,         6000,        128,           false,        [-1 1],  2^-52,    true,     false,     2,          false,         2001,         false,          25};
 % Note: The proper number of points for Chebyshev points of the first kind
 % is 2^k (not 2^k+1 as for the second kind).
