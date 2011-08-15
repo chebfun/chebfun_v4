@@ -242,7 +242,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     mu = length(a)-1; nu = length(b)-1;          % exact numer, denom degrees
 
     % Assemble the anonymous function for r
-    md = 0.5 * sum(d); hd = 0.5 * diff(d);
+    md = 0.5 * sum(d); ihd = 2.0 / diff(d);
     if strncmpi( xi_type , 'type' , 4 )
         if xi_type(5) == '0'
             % For speed, compute px and qx using Horner's scheme and convert
@@ -253,21 +253,21 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
             qx = b(end) * ones( nu+1 , 1 ); x = chebpts( nu+1 );
             for k=nu:-1:1, qx = b(k) + x .* qx; end;
             q = chebfun( qx , d );
-            r = @(x) polyval( a(mu+1:-1:1) , hd*(x-md) ) ./ polyval( b(nu+1:-1:1) , hd*(x-md) );
+            r = @(x) polyval( a(mu+1:-1:1) , ihd*(x-md) ) ./ polyval( b(nu+1:-1:1) , ihd*(x-md) );
         elseif xi_type(5) == '1'
             w = (-1).^(0:N)' .* sin((2*(0:N)+1)*pi/(2*N1))';
             px = idct1( [ a ; zeros( N-mu , 1 ) ] );
             qx = idct1( [ b ; zeros( N-nu , 1 ) ] );
             p = chebfun( idct1( a ) , d , 'chebkind' , 1 );
             q = chebfun( idct1( b ) , d , 'chebkind' , 1 );
-            r = @(x) bary( hd*(x-md) , px./qx , xi , qx.*w );
+            r = @(x) bary( ihd*(x-md) , px./qx , xi , qx.*w );
         else
             w = (-1).^(0:N)'; w(1) = 0.5; w(end) = w(end)/2;
             p = chebfun( a(end:-1:1) , 'coeffs' , d );
             q = chebfun( b(end:-1:1) , 'coeffs' , d );
             px = idct2( [ a ; zeros( N-mu , 1 ) ] );
             qx = idct2( [ b ; zeros( N-nu , 1 ) ] );
-            r = @(x) bary( hd*(x-md) , px./qx , xi , qx.*w );
+            r = @(x) bary( ihd*(x-md) , px./qx , xi , qx.*w );
         end
     else
         % Compute the basis C at the mu+1 and nu+1 Chebyshev points and
