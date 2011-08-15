@@ -80,6 +80,16 @@ switch index(1).type
         elseif isequal(s,':')
             if isempty(fcol)
                 fcol = define(fcol,domain(vin),vin);
+            elseif isempty(vin)               
+                indx = 1:numel(f); indx(col) = [];
+                if ~isempty(indx)
+                    f = f(:,indx);
+                    if trans, f = f.'; end
+                else
+                    f(1) = chebfun;
+                end
+                varargout = { f }; 
+                return
             else
                 %fcol = define(fcol,domain(fcol),vin);
                 fcol = restrict(vin,domain(fcol));
