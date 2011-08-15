@@ -18,7 +18,9 @@ v = N\0;
 
 pass(1) = norm(u-v) < 1e-10;
 
-%% More complicated (systems + 2 params
+return
+
+%% More complicated (systems + 2 params)
 
 x = chebfun('x');
 N = chebop(@(x,u,a,b,v) [x.*v + .001*diff(u,2) + a + 2*b, diff(v)-u],[-1 0 1]);

@@ -24,17 +24,7 @@ elseif isa(B,'chebfun')
     if strcmp(class(A.op),'linop')
         C = feval(A.op,B);
     else
-        Anargin = nargin(A.op);
-        if numel(B) == Anargin
-            C = feval(A.op,B);
-        elseif numel(B) == Anargin - 1
-            % Create the linear function on the domain of A to use as the
-            % first argument
-            xDom = chebfun('x',A.dom);
-            C = feval(A.op,xDom,B);
-        else
-             error('CHEBOP:mtimes:nargin','Incorrect number of input arguments.')
-        end
+        C = feval(A,B);
     end
 elseif isnumeric(A) || isnumeric(B)
     % Switch argument to make sure A is numeric

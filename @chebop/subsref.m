@@ -14,7 +14,7 @@ switch index(1).type
         end
     case '()'
         if ~isnumeric(idx{1})
-            varargout = {feval(f,idx{1})};
+            varargout = {feval(f,idx{:})};
         else
             [L linBC isLin] = linearise(f);
             if ~isLin
