@@ -59,6 +59,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( f , varargin )
             [ p , q , r , mu , nu ] = ratinterp2( domain(f) , f , varargin{:} );
         end
     else
+        s = '@(x) [ r{1}(x)';
         for k=1:numel(f)
             if nargout > 6
                 [ p(:,k) , q(:,k) , r{k} , mu(k) , nu(k) , poles{k} , residues{k} ] = ratinterp2( domain(f) , f(:,k) , varargin{:} );
@@ -67,5 +68,8 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( f , varargin )
             else
                 [ p(:,k) , q(:,k) , r{k} , mu(k) , nu(k) ] = ratinterp2( domain(f) , f(:,k) , varargin{:} );
             end
+            s = [ s , sprintf( ' , r{%i}(x)' , k ) ]; 
         end
+        s = [ s , ' ]' ];
+        r = eval( s );
     end
