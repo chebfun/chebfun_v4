@@ -85,7 +85,8 @@ end
 
 % Force maps for unbounded domains
 if isempty(map) && (any(isinf(breaks)) || any(isinf(A.fundomain([1 end]))))
-    mapdomain = union(breaks,A.fundomain([1 end]));
+    domA = A.fundomain([1 end]);
+    mapdomain = domain(union(breaks,domA.endsandbreaks));
     map = maps(mapdomain);
 end
   

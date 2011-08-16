@@ -2,7 +2,7 @@ function pass = legptstest
 % This tests checks legpts and the accuracy of the method GW and FAST
 
 % Nick Hale  22/04/2009. (Updated 02/08/2011)
-tol = 30*eps;
+tol = 50*eps;
 
 N = 32;
 [x1 w1 v1] = legpts(N,'GW');

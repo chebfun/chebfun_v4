@@ -5,7 +5,7 @@ function pass = mathieu
 %
 % u'' = (2q cos(2x) + lambda)*u
 
-tol = 3e-9*chebfunpref('eps')/eps;
+tol = 5e-9*chebfunpref('eps')/eps;
 
 q = 25;
 A = chebop(-pi,pi);
@@ -21,5 +21,5 @@ exactA25 = [ -40.256779546566787276, -21.314899690665726935, -3.5221647271582959
 85.076999881816530410, 103.23020480449483818, 123.64301237608357484,...
 146.20769064280234639, 170.87371080831606219, 197.61116494244372124 ]';
 
-err = norm( -lam(1:2:end) - exactA25, Inf);
+err = norm( -lam(1:2:end) - exactA25, Inf)
 pass = err < tol;
