@@ -205,6 +205,8 @@ try
         % on the function 1 on the domain, then linearize around next
         % variable. If the resulting derivative is not zero, we must have
         % nonlinear terms on the form above.
+        % At the same time, we accumulate the linop, one "block-column" at
+        % a time.
         L = linop; nonConst = [];
         for uCounter = 1:numel(u)
             [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter),'linop');
@@ -223,7 +225,6 @@ try
                 end
             end
         end
-        [L nonConst] = diff(Nu,u,'linop');
     else
         Nu = N.op(u);
         if numel(u) == 1

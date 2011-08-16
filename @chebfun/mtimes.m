@@ -93,7 +93,9 @@ f.imps = a*f.imps;
 f.scl = abs(a)*f.scl;
 
 if a==0
-    f.jacobian = anon('der = zeros(domain(f)); nonConst = 0;',{'f'},{f},1);
+    % Make sure to create a zero linop of a correct blocksize by using
+    % repmat, similarly, ensure nonConst is of correct size using zeros.
+    f.jacobian = anon('der = repmat(zeros(domain(f)),1,numel(u)); nonConst = zeros(1,numel(u));',{'f'},{f},1);
 else
     f.jacobian = anon('[tempDer nonConst] = diff(f,u,''linop''); der = a*tempDer;',{'a' 'f'},{a f},1);
 end
