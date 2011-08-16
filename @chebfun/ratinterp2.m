@@ -68,7 +68,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( f , varargin )
             else
                 [ p(:,k) , q(:,k) , r{k} , mu(k) , nu(k) ] = ratinterp2( domain(f) , f(:,k) , varargin{:} );
             end
-            s = [ s , sprintf( ' , r{%i}(x)' , k ) ]; 
+            if k > 1, s = [ s , sprintf( ' , r{%i}(x)' , k ) ]; end
         end
         s = [ s , ' ]' ];
         r = eval( s );
