@@ -88,7 +88,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
         end
     end
     if nargin < 7, tol = 1.0e-14; end
-    d = d.ends;
+    d = [ d.ends(1) , d.ends(end) ];
     if isa( f , 'chebfun' ) && ~(domain(f) == domain(d))
         f = f{d(1),d(2)};
     end
@@ -180,7 +180,11 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 
                 % Reduce n
                 s = diag( S( 1:ns , 1:ns ) );
-                n = n - sum( s-ssv <= ts );
+                if evenf || oddf
+                    n = n - 2*sum( s-ssv <= ts );
+                else
+                    n = n - sum( s-ssv <= ts );
+                end
 
                 % Any denominator left?
                 if n == 0

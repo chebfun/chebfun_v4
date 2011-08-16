@@ -50,10 +50,22 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( f , varargin )
 %   See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
     % Re-direct to domain/ratinterp
-    if nargout > 6
-        [ p , q , r , mu , nu , poles , residues ] = ratinterp2( domain(f) , f , varargin{:} );
-    elseif nargout > 5
-        [ p , q , r , mu , nu , poles ] = ratinterp2( domain(f) , f , varargin{:} );
+    if numel( f ) == 1
+        if nargout > 6
+            [ p , q , r , mu , nu , poles , residues ] = ratinterp2( domain(f) , f , varargin{:} );
+        elseif nargout > 5
+            [ p , q , r , mu , nu , poles ] = ratinterp2( domain(f) , f , varargin{:} );
+        else
+            [ p , q , r , mu , nu ] = ratinterp2( domain(f) , f , varargin{:} );
+        end
     else
-        [ p , q , r , mu , nu ] = ratinterp2( domain(f) , f , varargin{:} );
+        for k=1:numel(f)
+            if nargout > 6
+                [ p(:,k) , q(:,k) , r{k} , mu(k) , nu(k) , poles{k} , residues{k} ] = ratinterp2( domain(f) , f(:,k) , varargin{:} );
+            elseif nargout > 5
+                [ p(:,k) , q(:,k) , r{k} , mu(k) , nu(k) , poles{k} ] = ratinterp2( domain(f) , f(:,k) , varargin{:} );
+            else
+                [ p(:,k) , q(:,k) , r{k} , mu(k) , nu(k) ] = ratinterp2( domain(f) , f(:,k) , varargin{:} );
+            end
+        end
     end
