@@ -7,8 +7,8 @@ function make_examples(dirs,filename)
 % $Chebfunroot/examples/DIR/ where FILENAME and DIR must be strings.
 
 % The flags below can only be adjusted manually.
-html = true;  % Publish to html? (This should be true when released).
-pdf = true;   % By default this will be off.
+html = false;  % Publish to html? (This should be true when released).
+pdf = false;   % By default this will be off.
 shtml = true; % This should only be used by admin for creating the 
               % shtml files for the Chebfun website.
 clean = false;

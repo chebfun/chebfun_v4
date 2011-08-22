@@ -2,7 +2,7 @@
 % Mark Richardson, 27 September 2010
 
 %%
-% (Chebfun example integro/wikiIntegroDiff.m)
+% (Chebfun example integro/WikiIntegroDiff.m)
 
 %%
 % Here, we solve a first order linear integro-differential equation 

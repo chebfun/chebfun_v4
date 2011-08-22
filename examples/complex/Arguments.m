@@ -2,7 +2,7 @@
 % Nick Trefethen, May 2011
 
 %%
-% (Chebfun example complex/Arguments)
+% (Chebfun example complex/Arguments.m)
 
 %%
 % A complex number z has a modulus or

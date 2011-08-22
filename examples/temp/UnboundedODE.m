@@ -1,8 +1,6 @@
 %% AN ODE ON AN UNBOUNDED INTERVAL
 % Nick Hale, November 2010
 
-cc
-
 %%
 % (Chebfun example ode/UnboundedODE.m)
 

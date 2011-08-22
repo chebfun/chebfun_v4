@@ -2,7 +2,7 @@
 % Nick Trefethen and Nick Hale, October 2010
 
 %%
-% (Chebfun example roots/KeyholeContour.m)
+% (Chebfun example complex/KeyholeContour.m)
 
 %%
 % Chebfun is able to represent complex functions of a real variable,

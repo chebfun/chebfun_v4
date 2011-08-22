@@ -2,7 +2,7 @@
 % Nick Trefethen, September 2010
 
 %%
-% (Chebfun example complex/Birthday)
+% (Chebfun example complex/Birthday.m)
 
 %%
 % Chebfun's SCRIBBLE command was introduced for

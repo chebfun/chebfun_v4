@@ -13,7 +13,7 @@ v = chebfun([0 1],d);
 lx = chebfun([0 1],d);
 lv = chebfun([0 1],d);
 
-N.op = @(x,v,lx,lv) [ diff(x)-v, diff(v)-sign(1-t)*maxAcc, diff(lx),diff(lv)+lx];
+N.op = @(t,x,v,lx,lv) [ diff(x)-v, diff(v)-sign(1-t)*maxAcc, diff(lx),diff(lv)+lx];
 
 N.lbc = @(x,v,lx,lv) [x,v];
 N.rbc = @(x,v,lx,lv) [lx,lv];

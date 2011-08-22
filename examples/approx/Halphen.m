@@ -1,4 +1,4 @@
-%% Helphen's constant for approximation of exp(x)
+%% Halphen's constant for approximation of exp(x)
 % Nick Trefethen, May 2011
 
 %%

@@ -2,7 +2,7 @@
 % Nick Trefethen, December 2010
 
 %%
-% (Chebfun example ode/Exact Solutions.m)
+% (Chebfun example ode/ExactSolns.m)
 
 %%
 % Chapter 1 of the textbook by Bender and Orszag contains an
