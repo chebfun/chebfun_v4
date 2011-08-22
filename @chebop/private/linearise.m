@@ -225,6 +225,7 @@ try
                 end
             end
         end
+%         [L nonConst] = diff(Nu,u,'linop');
     else
         Nu = N.op(u);
         if numel(u) == 1
@@ -256,6 +257,13 @@ catch
 end
 if nonLinFlag || any(any(nonConst)),
     isLin = 0;
+    
+    for lCounter = 1:numel(linBC.left)
+        linBC.left(lCounter).val = -linBC.left(lCounter).val;
+    end
+    for rCounter = 1:numel(linBC.right)
+        linBC.right(rCounter).val = -linBC.right(rCounter).val;
+    end
 else
     if nargout > 3 % Find the affine part
         if numberOfInputVariables == 1

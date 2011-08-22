@@ -1,4 +1,4 @@
-function J = diff(N,u,flag)
+function [J linbc] = diff(N,u,flag)
 %DIFF    Jacobian (Frechet derivative) of nonlinear operator.
 %
 % Please note this method is experimental in Chebfun version 4.0.
@@ -39,9 +39,11 @@ function J = diff(N,u,flag)
 % Initialise
 if nargin < 3, flag = 0; end
 
-[L linBC isLin affine] = linearise(N,u,flag);
+[J linbc isLin affine] = linearise(N,u,flag);
 
-J = L & linBC;
+if nargout == 1
+    J = J & linbc;
+end
 
 % No flag, so return a chebop
 % F = J;

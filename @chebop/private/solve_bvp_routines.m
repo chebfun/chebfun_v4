@@ -143,28 +143,14 @@ if isLin % N is linear. Sweet!
     for rhsCounter = 1:numel(Nfeval)
         newRhs(:,rhsCounter) = rhs(:,rhsCounter) - Nfeval(:,rhsCounter);
     end
-    %         rhs = rhs - evalProblemFun('DE',0*u);
     N.op = A;
     A = linop(N,0*u); % Linearise around the zero chebfun
     
+    % Solve the linear system
     uguess = u;
     u = A\newRhs;
     delta = uguess-u;
 
-    % Do we need to worry about scaling here?
-    %     subsasgn(A,struct('type','.','subs','scale'), normu);
-    
-    %  THIS IS NOW TAKEN CARE OF BY THE ABOVE LINOP CALL. NH&AB 03/05/2011
-    % As we have linearised around the initial guess u, which if is
-    % constructed automatically is designed to satisfy (inhom.) Dirichlet
-    % conditions, we can't find the solution simply by solving for the
-    % linop A with the original rhs. Instead, we calculate a Newton step
-    % from the initial guess, and add that to the guess to obtain our
-    % solution.'
-%     A = A & bc;
-%     delta = -A\deResFun;
-%     u = u+delta; % Can safely take a full Newton step
-    
     if nargout == 2
         if numberOfInputVariables == 1
             nrmDeltaRelvec = norm(feval(N,u)-newRhs);
@@ -188,12 +174,6 @@ if isLin % N is linear. Sweet!
 else
     % Need to switch the signs of bc.left.vals and bc.right.vals for
     % nonlinear problems. Why is that??? [!!!]
-    for lCounter = 1:numel(bc.left)
-        bc.left(lCounter).val = -bc.left(lCounter).val;
-    end
-    for rCounter = 1:numel(bc.right)
-        bc.right(rCounter).val = -bc.right(rCounter).val;
-    end
     A = A & bc;
 end
 
@@ -236,7 +216,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
             %             delta = -mldivide(A,deResFun,deltol);
         end
     else
-        A = deFun & bc; % deFun is a chebop
+        A = deFun & bc; % deFun is a LINOP
         
         % Do similar tricks as above for the tolerances.
         if counter == 1
