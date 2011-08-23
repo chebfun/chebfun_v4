@@ -66,7 +66,6 @@ end
 
 % The new breakpoints
 newbkpts = setdiff(r,ends);
-
 if ~isempty(newbkpts)
     d = union(ends,newbkpts);
     d = union(d,get(f2,'ends'));
@@ -140,7 +139,8 @@ else
         end
     end
     if fout.nfuns == f2.nfuns
-        fout.imps = f1.imps./f2.imps;
+        f1imps = feval(f1,fout.ends);
+        fout.imps = f1imps./f2.imps;
     end
     
     fout.jacobian = anon('[Jf1u constJf1u] = diff(f1,u,''linop'');  [Jf2u constJf2u] = diff(f2,u,''linop''); der = diag(1./f2)*Jf1u - diag(f1./f2.^2)*Jf2u; nonConst = ~Jf2u.iszero | (~Jf1u.iszero & (constJf2u | constJf1u));',{'f1','f2'},{f1 f2},1);
