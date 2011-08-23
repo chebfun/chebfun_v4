@@ -241,9 +241,8 @@ subplot(1,3,2), spy(dwdv), title dwdv
 subplot(1,3,3), spy(dwdu), title dwdu
 
 %%
-% We now look at how AD enables Chebfun users
-% to solve nonlinear ODE problems with backslash, just like the
-% linear ones solved in Chapter 7.
+% We now look at how AD enables Chebfun users to solve nonlinear ODE
+% problems with backslash, just like the linear ones solved in Chapter 7.
 
 %% 10.4 Nonlinear backslash and SOLVEBVP
 % In Chapter 7, we realized linear operators as chebops constructed by
@@ -270,16 +269,39 @@ clf, plot(u,'m',LW,lw)
 struct(L)
 
 %%
-% Notice that one of the fields is called init, which may hold an
-% initial guess for an iteration if one is specified.  If a 
-% guess is not specified, then a zero or linear function is used
-% depending on the boundary conditions.
-% To solve a nonlinear ODE, Chebfun uses a Newton or damped
+% Notice that one of the fields is called init, which may hold an initial
+% guess for an iteration if one is specified.  If a guess is not specified,
+% then a zero or linear function is used depending on the boundary
+% conditions. To solve a nonlinear ODE, Chebfun uses a Newton or damped
 % Newton iteration starting at the given initial guess.  Each step of the
 % iteration requires the solution of a linear problem specified by a
 % Jacobian operator (Frechet derivative) evaluated at the current estimated
 % solution.  This is provided by the AD facility, and the linear problem is
 % then solved by chebops.
+
+%%
+% In Section 7.9 we hand-coded our own Newton iteration to solve the
+% nonlinear BVP 0.001u''-u^3 = 0, u(-1) = 1, u(1) = -1. However, since the
+% required Jacobian information is now computed by AD, construction of the
+% Jacobian operator J is taken care of by diff(L,u). Compare the code
+% below to the in Section 7.9.
+
+L = chebop(@(x,u) 0.001*diff(u,2) - u.^3);
+L.lbc = 1; L.rbc = -1;
+u = chebfun('-x');  nrmdu = Inf;
+while nrmdu > 1e-10
+   r = L*u;
+   J = diff(L,u);
+   du = -(J\r);
+   u = u + du;  nrmdu = norm(du)
+end
+clf, plot(u)
+
+%%
+% However, it is not necessary to construct such Newton iterations by hand!
+% The code above is a much simplified version of what happens
+% under-the-hood when `nonlinear backslash' is called to solve nonlinear
+% differential equations. A few examples of this are demonstrated below.
 
 %%
 % Let us reconsider some of the examples of the last three sections.  First

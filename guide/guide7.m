@@ -388,7 +388,7 @@ spy(L)
 % 
 % could be solved by Newton iteration as follows.
 L = chebop(-1,1);
-L.op = @(x,u) .001*diff(u,2);
+L.op = @(x,u) 0.001*diff(u,2);
 J = chebop(-1,1);
 x = chebfun('x'); 
 u = -x;  nrmdu = Inf;
@@ -411,7 +411,7 @@ clf, plot(u)
 % Differentiation (AD) to construct the Frechet derivative automatically.
 % In fact, all you need to type is
 N = chebop(-1,1);
-N.op = @(x,u) .001*diff(u,2) - u.^3;
+N.op = @(x,u) 0.001*diff(u,2) - u.^3;
 N.lbc = 1; N.rbc = -1;
 v = N\0;
 
