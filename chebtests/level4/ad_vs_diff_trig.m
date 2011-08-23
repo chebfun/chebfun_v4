@@ -6,7 +6,7 @@ function pass = ad_vs_diff_trig
 
 [d,x] = domain(0.1,0.9);
 cheb1 = chebfun(1,d);
-norms = zeros(1,24);
+norms = zeros(1,25);
 
 % Inverse trigonometric and hyperbolic functions
 norms(1) = norm(diag(diff(acos(x),x))-diff(acos(x)));
@@ -46,5 +46,7 @@ norms(22) = norm(diff(sinh(x),x)*cheb1-diff(sinh(x)));
 
 norms(23) = norm(diff(tan(x),x)*cheb1-diff(tan(x)));
 norms(24) = norm(diff(tanh(x),x)*cheb1-diff(tanh(x)));
+
+norms(25) = norm((diff(hypot(1e300*sin(5*x),1e300*x),x)*cheb1-diff(hypot(1e300*sin(5*x),1e300*x)))/1e300);
 
 pass = norms < chebfunpref('eps')*1e4;
