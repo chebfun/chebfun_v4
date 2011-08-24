@@ -290,13 +290,32 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     % Does the user want the poles?
     if nargout > 5
 
-        % get the roots of the denominator
-        poles = roots( q , 'complex' );
-
         % Residues too?
         if nargout > 6
-            t = max(tol,1e-7);                     
-            residues = t*(r(poles+t)-r(poles-t))/2;
+            
+            % produce partial fraction expansion of r
+            [residues, poles] = residue(p,q);
+
+            % prune out the spurious roots of q
+            rho_roots = ihd*(poles-md);
+            rho_roots = abs(rho_roots+sqrt(rho_roots.^2-1));
+            rho_roots(rho_roots<1) = 1./rho_roots(rho_roots<1);
+            rho = sqrt(eps)^(-1/length(q));
+            poles = poles(rho_roots<=rho);
+            residues = residues(rho_roots<=rho);
+            [poles,ind] = sort(poles);
+            residues = residues(ind);
+              
+            % residues are the coefficients of 1/(x-poles(j))
+            for j = 1:length(poles)-1
+                if poles(j+1) == poles(j)
+                    residues(j+1) = residues(j);
+                end
+            end
+           
+        % Nope, poles only.
+        else
+            poles = roots( q , 'complex' );
         end
 
     end
