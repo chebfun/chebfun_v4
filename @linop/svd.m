@@ -1,4 +1,4 @@
-function varargout = svd(varargin)
+function svd(varargin)
 % Use SVDS to find singular values of a linear operator.
 % See also chebop/svds
 
