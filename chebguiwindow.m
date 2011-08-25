@@ -22,11 +22,12 @@ end
 if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
+    warnstate = warning('off','MATLAB:hg:uicontrol:ParameterValuesMustBeValid');
     try
-        warnstate = warning('off','MATLAB:hg:uicontrol:ParameterValuesMustBeValid');
         gui_mainfcn(gui_State, varargin{:});
         warning(warnstate);
     catch
+        warning(warnstate)
         ME = lasterror;
         MEID = ME.identifier;
         if ~isempty(strfind(MEID,'Chebgui:'))
