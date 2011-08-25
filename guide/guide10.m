@@ -280,7 +280,7 @@ struct(L)
 % then solved by chebops.
 
 %%
-% In Section 7.9 we hand-coded our own Newton iteration to solve the
+% In Section 7.9 we hand coded our own Newton iteration to solve the
 % nonlinear BVP 0.001u''-u^3 = 0, u(-1) = 1, u(1) = -1. However, since the
 % required Jacobian information is now computed by AD, construction of the
 % Jacobian operator J is taken care of by diff(L,u). Compare the code

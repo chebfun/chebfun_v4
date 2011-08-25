@@ -10,7 +10,7 @@
 % following linear Fredholm operator L associated with the names of Fox 
 % and Li (also Fresnel and H. J. Landau):
 %
-%    v(x) = sqrt(i*F/pi) int_1^1 K(x,s) u(s) ds.
+%    v(x) = sqrt(i*F/pi) int_{-1}^1 K(x,s) u(s) ds.
 %
 % L maps a function u defined on [-1,1] to another function v = Lu defined 
 % on [-1,1].  The number F is a positive real parameter, the Fresnel number, 

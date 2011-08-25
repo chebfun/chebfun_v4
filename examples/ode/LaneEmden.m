@@ -42,7 +42,7 @@ for n = 0:5
     % Create plot of the solutions
     plot(u,'Linewidth',2,'Color',myColor(n+1,:)), hold on, 
     axis([0 10 -1 1]),
-    title('Solution of the Lane-Emden equation for n=0:5'),
+    title('Solution of the Lane-Emden equation for n=0,1,2,3,4,5'),
     xlabel('x'), ylabel('u')
 end 
 legend('n=0','n=1','n=2','n=3','n=4','n=5');
@@ -52,7 +52,7 @@ legend('n=0','n=1','n=2','n=3','n=4','n=5');
 
 %%
 % Analytic solution from [3]:
-f = chebfun(@(x) (1+x.^2/3)^-.5,[0,10]);
+f = chebfun(@(x) (1+x.^2/3).^-.5,[0,10]);
 
 %%
 % Compute the L2 error
@@ -63,23 +63,31 @@ fprintf('The L2 error is: %1.3e\n', norm(f-u));
 % the outer boundary of the sphere where the gas cloud is polytropic. Since
 % the magnitude of the radius is not known a priori, it can be introduced
 % as an unknown function v; the independent variable can then be
-% transformed as x -> x/v.  We then use a perturbation trick by Nick Hale
-% to stop Chebfun from using maps and exponents.
+% transformed as x -> x/v.  We then use a perturbation trick by a small
+% factor eps to stop Chebfun from using maps and exponents.
 
 %% 
-% As an example I choose the polytropic index to be n=1.5, appropriate to 
+% As an example we choose the polytropic index to be n=1.5, appropriate to 
 % model the structure of a white dwarf.
 
 [d,x,N] = domain(0,1);
 n = 1.5; eps = 1e-8;
-N.op = @(x,u,v) [x.*diff(u,2) + 2*diff(u) + x.*v.^2.*(u+eps).^n,diff(v)];
+N.op = @(x,u,v) x.*diff(u,2) + 2*diff(u) + x.*v.^2.*(u+eps).^n;
 N.lbc = @(u,v) [u-1,diff(u)];
 N.rbc = @(u,v) u;
 N.init = [1-x.^2,1];
 uv = N\0;
 
 %%
-% Thus the radius of the polytrope describing the structure of a white dwarf is
+
+plot(uv,'Linewidth',2), hold on, 
+axis([0 1 0 1.05*uv(1,2)]),
+title('Solution u and radius v'), legend('u','v')
+xlabel('x'), ylabel('u')
+
+%%
+% Thus the radius of the polytrope describing the structure of a white
+% dwarf is
 
 v = uv(:,2);
 fprintf('Polytropic range for white dwarfs: [0,%1.4f)\n',v(1));
@@ -91,4 +99,4 @@ fprintf('Polytropic range for white dwarfs: [0,%1.4f)\n',v(1));
 % [2] Horedt, George Paul (1986) 'Seven-digit tables of Lane-Emden functions'
 %
 % [3] Wikipedia article:
-% 'http://en.wikipedia.org/wiki/Lane%E2%80%93Emden_equation'
+% 'http://en.wikipedia.org/wiki/Lane-Emden_equation'
