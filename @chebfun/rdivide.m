@@ -34,7 +34,7 @@ function fout = rdividecol(f1,f2)
 if (isempty(f1) || isempty(f2)), fout=chebfun; return; end
 
 if isa(f2,'double')
-    if f2 ==  0, error('CHEBFUN:rdivide:DivisionByZero','Division by zero.'), end
+    if f2 == 0, error('CHEBFUN:rdivide:DivisionByZero','Division by zero.'), end
     fout = f1*(1/f2);  
     return
 end
@@ -146,3 +146,6 @@ else
     fout.jacobian = anon('[Jf1u constJf1u] = diff(f1,u,''linop'');  [Jf2u constJf2u] = diff(f2,u,''linop''); der = diag(1./f2)*Jf1u - diag(f1./f2.^2)*Jf2u; nonConst = ~Jf2u.iszero | (~Jf1u.iszero & (constJf2u | constJf1u));',{'f1','f2'},{f1 f2},1);
     fout.ID = newIDnum();
 end
+
+% Ensure correct orientation
+fout.trans = f2.trans;
