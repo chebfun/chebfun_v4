@@ -22,7 +22,6 @@ if isa(f,'chebfun')
     if numel(f) > 1
         error('CHEBFUN:domain:diag:quasi','Quasimatrix input not allowed.');
     end
-    if ~any(f.vals), A = zeros(d); return, end
     oper = @(u) times(f,u);
 else
     oper = @(u) chebfun(@(x) feval(f,x).*feval(u,x),d);

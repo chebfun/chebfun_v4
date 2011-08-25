@@ -73,8 +73,19 @@ switch index(1).type
             error('CHEBFUN:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
         end
+
+        if ~any(col)
+            if islogical(col)
+                varargout = {f};
+                return
+            else
+                error('CHEBFUN:subsasgn:notlogical',...
+                    'Subscript indices must either be real positive integers or logicals.');
+            end
+        end
+            
         fcol = f(:,col);        
-        % ---- assign values/chebfuns at given points/domains ---        
+        % ---- assign values/chebfuns at given points/domains --- 
         if isa(s,'domain') || isnumeric(s)
             fcol = define(fcol,s,vin);
         elseif isequal(s,':')

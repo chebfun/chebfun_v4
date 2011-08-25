@@ -118,9 +118,9 @@ for j = 1:n % loop n times for nth derivative
     
     % update imps
     if size(F.imps,1)>1
-       F.imps=[F.imps(1,:); newimps; F.imps(2:end,:)];
+       F.imps = [F.imps(1,:); newimps; F.imps(2:end,:)];
     elseif any(newimps)
-      F.imps(2,:)= newimps;
+      F.imps(2,:) = newimps;
     end
     
     f = F;
