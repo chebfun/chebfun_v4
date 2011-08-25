@@ -6,7 +6,7 @@ function pass = ad_vs_diff_special
 
 [d,x] = domain(0.1,0.9);
 cheb1 = chebfun(1,d);
-norms = zeros(1,18);
+norms = zeros(1,20);
 
 % Inverse trigonometric and hyperbolic functions
 norms(1) = norm(diag(diff(airy(2,x),x))-diff(airy(2,x)));
@@ -30,16 +30,18 @@ norms(10) = norm(diff(erfinv(x),x)*cheb1-diff(erfinv(x)));
 
 % exp and log
 norms(11) = norm(diff(exp(x),x)*cheb1-diff(exp(x)));
-norms(12) = norm(diff(log(x),x)*cheb1-diff(log(x)));
-norms(13) = norm(diff(log2(x),x)*cheb1-diff(log2(x)));
-norms(14) = norm(diff(log10(x),x)*cheb1-diff(log10(x)));
+norms(12) = norm(diff(expm1(x),x)*cheb1-diff(expm1(x)));
+norms(13) = norm(diff(log(x),x)*cheb1-diff(log(x)));
+norms(14) = norm(diff(log2(x),x)*cheb1-diff(log2(x)));
+norms(15) = norm(diff(log10(x),x)*cheb1-diff(log10(x)));
+norms(16) = norm(diff(log1p(x),x)*cheb1-diff(log1p(x)));
 
 % power
-norms(15) = norm(diff(x.^x,x)*cheb1-diff(x.^x));
-norms(16) = norm(diff(x.^2,x)*cheb1-diff(x.^2));
-norms(17) = norm(diff(2.^x,x)*cheb1-diff(2.^x));
+norms(17) = norm(diff(x.^x,x)*cheb1-diff(x.^x));
+norms(18) = norm(diff(x.^2,x)*cheb1-diff(x.^2));
+norms(19) = norm(diff(2.^x,x)*cheb1-diff(2.^x));
 
 % sqrt
-norms(18) = norm(diff(sqrt(x),x)*cheb1-diff(sqrt(x)));
+norms(20) = norm(diff(sqrt(x),x)*cheb1-diff(sqrt(x)));
 
 pass = norms < chebfunpref('eps')*1e3;
