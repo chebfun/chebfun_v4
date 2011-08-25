@@ -15,7 +15,7 @@ end
 
 for k = 1:numel(F)
 %     Fout(k).jacobian = eval('jacerror');
-    Fout(k).jacobian = anon('diag1 = diag(0*sign(Fout)); der2 = diff(Fout,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'Fout'},{Fout(k)},1);
+    Fout(k).jacobian = anon('diag1 = diag(0*Fout); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero; if(any(nonConst)), warning(''chebfun:noADsupport'',''Chebops and AD do not support the sign method in the unknown function(s)/the functions being differentiated with respect to.''),end',{'Fout','F'},{Fout(k),F},1);
     Fout(k).ID = newIDnum;
 end
 
