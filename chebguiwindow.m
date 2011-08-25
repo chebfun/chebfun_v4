@@ -23,7 +23,9 @@ if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
 else
     try
+        warnstate = warning('off','MATLAB:hg:uicontrol:ParameterValuesMustBeValid');
         gui_mainfcn(gui_State, varargin{:});
+        warning(warnstate);
     catch
         ME = lasterror;
         MEID = ME.identifier;
