@@ -1,4 +1,4 @@
-function eig(varargin)
+function varargout = eig(varargin)
 % Use EIGS to find selected eigenvalues of a linear operator.
 % See also chebop/eigs
 
