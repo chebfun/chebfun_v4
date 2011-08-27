@@ -43,7 +43,9 @@ if ( a~=-1 || b~=1 )
     % Rescale coefficients to actual interval
     for j = 0:n-1
         k = j:n-1;
-        binom = factorial(k)./(factorial(k-j)*factorial(j)); % Binomial coeff
+        % binom = factorial(k)./(factorial(k-j)*factorial(j)); % Binomial coeff
+        binom = round(exp(gammaln(k+1)-gammaln(k-j+1)-gammaln(j+1))); % Binomial coeff
+        % Matlab's NCHOOSEK appears to be less accurate than the above.
         out(j+1) = sum(out(k+1).*binom.*beta.^(k-j).*alpha^(j));
     end
     out = out(end:-1:1);
