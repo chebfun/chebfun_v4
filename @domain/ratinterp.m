@@ -322,15 +322,6 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     
 end
 
-% Compact implementation of the barycentric interpolation formula
-function y = bary ( x , fx , xi , w )
-    y = zeros(size(x)); fxw = fx(:).*w(:);
-    for i=1:length(x),
-        dxinv = 1.0 ./ ( x(i) - xi(:) ); ind = find( ~isfinite(dxinv) );
-        if length(ind)>0, y(i)=fx(ind);
-        else, y(i)=(fxw.'* dxinv)/(w(:).'* dxinv); end
-    end
-end
 
 % Compact implementation of the DCT for Chebyshev points of the first kind.
 function y = dct1(x)
