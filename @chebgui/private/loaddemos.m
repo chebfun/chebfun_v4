@@ -24,7 +24,7 @@ fixYaxisUpper = '';
 % Import from the given file and evaluate to fill the workspace
 fid = fopen(guifilepath);
 if fid==-1
-  error('chebfun:chebgui:noload','Unable to open demo file: %s.',guifilepath)
+  error('CHEBGUI:noload','Unable to open demo file: %s.',guifilepath)
 end
 inputEnded = 0;
 while ~inputEnded

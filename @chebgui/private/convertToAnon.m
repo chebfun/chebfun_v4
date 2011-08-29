@@ -16,6 +16,16 @@ end
 % Put the original string through the lexer
 [lexOut varNames pdeVarNames eigVarNames indVarNames] = lexer(guifile,str);
 
+% Make sure we have enough variables!
+if isempty(varNames)
+    if numel(indVarNames) > 1 && ~isempty(indVarNames{2})
+        str = sprintf('Variables ''%s'' and ''%s'' ', indVarNames{1:2});
+    else
+        str = sprintf('Variable ''%s'' ', indVarNames{1});
+    end
+    error('Chebgui:chebgui:depvars',...
+        ['No dependent variables detected. ' str 'treated as independent.']);
+end 
 % Check whether we have something like u" = u_t+v_t which we don't allow
 if length(pdeVarNames) > 1
     error('Chebgui:convertToAnon:pdeVariables',...
@@ -75,7 +85,7 @@ infixOut = prefix2infix(guifile,prefixOut);
 
 % Finally, remove unneeded parenthesis.
 anFun = parSimp(guifile,infixOut);
-
+ 
 % Convert the cell array varNames into one string
 varString = varNames{1};
 for varCounter = 2:length(varNames)

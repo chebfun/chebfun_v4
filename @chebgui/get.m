@@ -51,9 +51,9 @@ switch lower(propName)
                 case 'numeigs'
                     val = cg.options.fixYaxisUpper;                    
                 otherwise
-                    error('CHEBOP:get:options:propname',[propName2,' is not a valid chebgui option.'])
+                    error('CHEBGUI:get:options:propname',[propName2,' is not a valid chebgui option.'])
             end
         end
     otherwise
-        error('CHEBOP:get:propname',[propName,' is not a valid chebgui property'])
+        error('CHEBGUI:get:propname',[propName,' is not a valid chebgui property'])
 end
