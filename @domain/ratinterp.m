@@ -17,7 +17,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 %   [P,Q,R_HANDLE] = RATINTERP(F,M,N,NN,XI) computes a (M,N) rational
 %   interpolant or approximant of F over the NN nodes XI. XI can also be one
 %   of the strings 'type1', 'type2', 'unitroots' or 'equidistant', in which
-%   case NN of the respective nodes are created on the interval [-1,1].
+%   case NN of the respective nodes are created on the respective interval.
 %
 %   [P,Q,R_HANDLE,MU,NU] = RATINTERP(F,M,N,NN,XI,TOL) computes a robustified
 %   (M,N) rational interpolant or approximant of F over the NN+1 nodes XI, in
@@ -50,6 +50,11 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 %   See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
     % Check the inputs
+    d = [ d.ends(1) , d.ends(end) ];
+    md = 0.5 * sum(d); ihd = 2.0 / diff(d);
+    if isa( f , 'chebfun' ) && ~(domain(f) == domain(d))
+        f = f{d(1),d(2)};
+    end
     if nargin < 5 || isempty(NN)
         if nargin > 6 && ~isempty(xi_type) && ~isstr(xi_type)
             N = length( xi_type ) - 1;
@@ -71,7 +76,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
         if length(xi_type) ~= N+1
             error( 'CHEBFUN:ratinterp:InputLengthX' , 'The input vector xi is of the wrong length' );
         end
-        xi = xi_type;
+        xi = ( xi_type - md ) * ihd;
         xi_type = 'arbitrary';
     else
         if strcmpi( xi_type , 'TYPE2' )
@@ -88,10 +93,6 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
         end
     end
     if nargin < 7, tol = 1.0e-14; end
-    d = [ d.ends(1) , d.ends(end) ];
-    if isa( f , 'chebfun' ) && ~(domain(f) == domain(d))
-        f = f{d(1),d(2)};
-    end
     if ~isfloat(f)
         f = f( 0.5*sum(d) + 0.5*diff(d)*xi );
     elseif length(f) ~= N+1
@@ -246,7 +247,6 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     mu = length(a)-1; nu = length(b)-1;          % exact numer, denom degrees
 
     % Assemble the anonymous function for r
-    md = 0.5 * sum(d); ihd = 2.0 / diff(d);
     if strncmpi( xi_type , 'type' , 4 )
         if xi_type(5) == '0'
             % For speed, compute px and qx using Horner's scheme and convert
