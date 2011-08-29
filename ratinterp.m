@@ -17,7 +17,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( f , varargin )
 %   [P,Q,R_HANDLE] = RATINTERP(F,M,N,NN,XI) computes a (M,N) rational
 %   interpolant or approximant of F over the NN nodes XI. XI can also be one
 %   of the strings 'type1', 'type2', 'unitroots' or 'equidistant', in which
-%   case NN of the respective nodes are created on the interval [-1,1].
+%   case NN of the respective nodes are created on the respective interval.
 %
 %   [P,Q,R_HANDLE,MU,NU] = RATINTERP(F,M,N,NN,XI,TOL) computes a robustified
 %   (M,N) rational interpolant or approximant of F over the NN+1 nodes XI, in
@@ -51,9 +51,9 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( f , varargin )
 
     % Re-direct to domain/ratinterp
     if nargout > 6
-        [ p , q , r , mu , nu , poles , residues ] = ratinterp2( domain(-1,1) , f , varargin{:} );
+        [ p , q , r , mu , nu , poles , residues ] = ratinterp( domain(-1,1) , f , varargin{:} );
     elseif nargout > 5
-        [ p , q , r , mu , nu , poles ] = ratinterp2( domain(-1,1) , f , varargin{:} );
+        [ p , q , r , mu , nu , poles ] = ratinterp( domain(-1,1) , f , varargin{:} );
     else
-        [ p , q , r , mu , nu ] = ratinterp2( domain(-1,1) , f , varargin{:} );
+        [ p , q , r , mu , nu ] = ratinterp( domain(-1,1) , f , varargin{:} );
     end
