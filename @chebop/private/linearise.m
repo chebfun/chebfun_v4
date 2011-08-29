@@ -8,7 +8,7 @@ function [L linBC isLin affine] = linearise(N,u,flag)
 % also used by chebop/linop which returns an error when the chebop is
 % nonlinear).
 
-% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % For expm, we need to be able to linearize around u = 0, so we offer the
@@ -71,12 +71,42 @@ else
             % Evaluate the BC function
             if numberOfInputVariables > 1
                 try
+                    % If errorString will not be empty below the second
+                    % next line (guj = ...), it means that that evaluation
+                    % has failed. We use that information to throw the
+                    % correct error in the catch statement.
+                    errorString = [];
                     guj = lbc{j}(uCell{:});
+                    
+                    % If we have a system, and the user assigns BCs on the
+                    % form L.lbc = @(u,v) [u-1 ; v]; rather than L.lbc =
+                    % @(u,v) [u-1,v]; the domains of u and guj will not be
+                    % the same. Use that to throw an error.
+                    domu = domain(u);
+                    domguj = domain(guj);
+                    if domu(1) ~= domguj(1) || domu(end) ~= domguj(end)
+                        errorString = ['Incorrect form of left BCs. Did you use ', ...
+                            'BCs of the form @(u,v)[u;v] rather than @(u,v)[u,v]',...
+                            '(i.e. a semicolon rather than a comma)?',...
+                            '\n\nSee ''help chebop'' for details of allowed BC syntax.'];
+                        error('throw me to get to the catch-statement below')
+                    end
                 catch
-                    lbcshow = {N.lbcshow};
-                    s = sprintf('''%s'' boundary condition is not valid for systems of equations.', ...
-                        lbcshow{j});
-                    error('CHEBFUN:chebop:linearise',s);
+                    if ~isempty(errorString)
+                        error('CHEBFUN:chebop:linearise',errorString);
+                    else
+                        lbcshow = {N.lbcshow};
+                        lbcshow = lbcshow{j};
+                        % Convert function handles to strings
+                        if isa(lbcshow,'function_handle')
+                            lbcshow = char(lbcshow);
+                        elseif isnumeric(lbcshow)
+                            lbcshow = num2str(lbcshow);
+                        end
+                        s = sprintf(['''%s'' boundary condition is not valid for systems of equations.',...
+                            '\n\nSee ''help chebop'' for details of allowed syntax.'],lbcshow);
+                        error('CHEBFUN:chebop:linearise',s);
+                    end
                 end
             else
                 guj = lbc{j}(u);
@@ -132,12 +162,42 @@ else
             % Evaluate the BC function
             if numberOfInputVariables > 1
                 try
+                    % If errorString will not be empty below the second
+                    % next line (guj = ...), it means that that evaluation
+                    % has failed. We use that information to throw the
+                    % correct error in the catch statement.
+                    errorString = [];
                     guj = rbc{j}(uCell{:});
+                    
+                    % If we have a system, and the user assigns BCs on the
+                    % form L.rbc = @(u,v) [u-1 ; v]; rather than L.lbc =
+                    % @(u,v) [u-1,v]; the domains of u and guj will not be
+                    % the same. Use that to throw an error.
+                    domu = domain(u);
+                    domguj = domain(guj);
+                    if domu(1) ~= domguj(1) || domu(end) ~= domguj(end)
+                        errorString = ['Incorrect form of right BCs. Did you use ', ...
+                            'BCs of the form @(u,v)[u;v] rather than @(u,v)[u,v]',...
+                            '(i.e. a semicolon rather than a comma)?',...
+                            '\n\nSee ''help chebop'' for details of allowed BC syntax.'];
+                        error('throw me to get to the catch-statement below')
+                    end
                 catch
-                    rbcshow = {N.rbcshow};
-                    s = sprintf('''%s'' boundary condition is not valid for systems of equations.', ...
-                        rbcshow{j});
-                    error('CHEBFUN:chebop:linearise',s);
+                    if ~isempty(errorString)
+                        error('CHEBFUN:chebop:linearise',errorString);
+                    else
+                        rbcshow = {N.rbcshow};
+                        rbcshow = rbcshow{j};
+                        % Convert function handles to strings
+                        if isa(rbcshow,'function_handle')
+                            rbcshow = char(rbcshow);
+                        elseif isnumeric(rbcshow)
+                            rbcshow = num2str(rbcshow);
+                        end
+                        s = sprintf(['''%s'' boundary condition is not valid for systems of equations.',...
+                            '\n\nSee ''help chebop'' for details of allowed syntax.'],rbcshow);
+                        error('CHEBFUN:chebop:linearise',s);
+                    end
                 end
             else
                 guj = rbc{j}(u);
@@ -178,7 +238,7 @@ else
                     l = l+1;
                 end
             end
-        end        
+        end
     else
         linBC.right = struct([]);
     end
@@ -214,7 +274,9 @@ try
             nonConst = [nonConst nonConstColumn];
             if any(nonConstColumn) % If we have u.^2, we don't need to check for u*v
                 nonLinFlag = 1;
-            elseif ~nonLinFlag % Don't need to check if we've already encountered u*v
+            % Don't go into this part if uCounter+1 == numel(u) as the
+            % for-loop won't be executed anyway.
+            elseif ~nonLinFlag && (uCounter+1)<= numel(u)% Don't need to check if we've already encountered u*v
                 newFun = Lcolumn*cheb1;
                 for vCounter = uCounter+1:numel(u)
                     Ltemp = diff(newFun,u(:,vCounter),'linop');
@@ -225,7 +287,6 @@ try
                 end
             end
         end
-%         [L nonConst] = diff(Nu,u,'linop');
     else
         Nu = N.op(u);
         if numel(u) == 1

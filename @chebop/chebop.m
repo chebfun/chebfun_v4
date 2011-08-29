@@ -187,16 +187,16 @@ end
 % Now HERE everything is given, so it's easy
 if numel(varargin) == 3 && isempty(N.dom)
     N = set(N,'dom',varargin{1});
-    N = set(N,'lbc',createbc(varargin{2}));
+    N = set(N,'lbc',createbc(varargin{2},N.numvar));
     N.lbcshow = varargin{2};
-    N = set(N,'rbc',createbc(varargin{3}));
+    N = set(N,'rbc',createbc(varargin{3},N.numvar));
     N.rbcshow = varargin{3};
     if nargout > 1, x = chebfun('x',N.dom); end % Return x if asked for
     return
 elseif numel(varargin) == 2 && ~isempty(N.dom)
-    N = set(N,'lbc',createbc(varargin{1}));
+    N = set(N,'lbc',createbc(varargin{1},N.numvar));
     N.lbcshow = varargin{1};
-    N = set(N,'rbc',createbc(varargin{2}));
+    N = set(N,'rbc',createbc(varargin{2},N.numvar));
     N.rbcshow = varargin{2};
     if nargout > 1, x = chebfun('x',N.dom); end % Return x if asked for
     return
@@ -215,7 +215,7 @@ end
 if numel(varargin) == 2 && strcmpi(varargin{2},'periodic')
     N = set(N,'dom',varargin{1});
     if numel(varargin) == 2
-        N = set(N,'bc',createbc(varargin{2}));
+        N = set(N,'bc',createbc(varargin{2},N.numvar));
         N.lbcshow = varargin{2};
         N.rbcshow = varargin{2};
     end
@@ -227,13 +227,13 @@ end
 if ~isnumeric(varargin{1}) || numel(varargin{1})<2 || any(sort(varargin{1})-varargin{1})
     % No
     if numel(varargin) == 1
-        N = set(N,'bc',createbc(varargin{1}));
+        N = set(N,'bc',createbc(varargin{1},N.numvar));
         N.lbcshow = varargin{1};
         N.rbcshow = varargin{1};
     else
-        N = set(N,'lbc',createbc(varargin{1}));
+        N = set(N,'lbc',createbc(varargin{1},N.numvar));
         N.lbcshow = varargin{1};
-        N = set(N,'rbc',createbc(varargin{2}));
+        N = set(N,'rbc',createbc(varargin{2},N.numvar));
         N.rbcshow = varargin{2};
     end  
     N = set(N,'dom',dom);
@@ -243,7 +243,7 @@ else
     % Yes!
     N = set(N,'dom',varargin{1});
     if numel(varargin) == 2
-        N = set(N,'bc',createbc(varargin{2}));
+        N = set(N,'bc',createbc(varargin{2},N.numvar));
         N.lbcshow = varargin{2};
         N.rbcshow = varargin{2};
     end
@@ -264,6 +264,7 @@ function N = Nop_ini()
     N(1).rbc = [];
     N(1).rbcshow = [];
     N(1).init = [];
+    N(1).numvar = [];
     N(1).optype = [];
     N(1).dim = [];
 end

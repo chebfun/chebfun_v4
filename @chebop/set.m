@@ -22,20 +22,20 @@ while length(propertyArgIn) >= 2,
                     N = set(N,'rbc',val.right);
                 end
             else  % given same for both sides
-                N.lbc = createbc(val);
+                N.lbc = createbc(val,N.numvar);
                 N.lbcshow = val;
                 N.rbc = N.lbc;
                 N.rbcshow = val;
             end
         case 'lbc'
-            N.lbc = createbc(val);
+            N.lbc = createbc(val,N.numvar);
             N.lbcshow = val;
             if strcmpi(val,'periodic')
                 N.rbc = N.lbc;
                 N.rbcshow = val;
             end
         case 'rbc'
-            N.rbc = createbc(val);
+            N.rbc = createbc(val,N.numvar);
             N.rbcshow = val;
             if strcmpi(val,'periodic')
                 N.lbc = N.rbc;
@@ -44,12 +44,13 @@ while length(propertyArgIn) >= 2,
         case 'op'
             if isa(val,'function_handle') || (iscell(val) && isa(val{1},'function_handle'))
                 N.optype = 'anon_fun';
-            elseif isa(val,'chebop') || (isa(val,'cell') && isa(val{1},'chebop'))
-                N.optype = 'chebop';
+            elseif isa(val,'linop') || (isa(val,'cell') && isa(val{1},'linop'))
+                N.optype = 'linop';
             else
                 error('CHEBOP:set:opType','Operator must by a function handle or linop.')
             end
             N.op = val;
+            N.numvar = nargin(val);
             if ~iscell(val)
                 N.opshow = {char(val)};
             else
