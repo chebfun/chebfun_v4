@@ -36,7 +36,7 @@ if numel(f)>1
 end
 
 % Default preferences
-rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots'));
+rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots') , 'new' , false );
 zerofun = 1;
 for k = 1:nargin-1
     argin = varargin{k};
@@ -55,6 +55,8 @@ for k = 1:nargin-1
             zerofun = 1;  
         case 'nozerofun'
             zerofun = 0;              
+        case 'new'
+            rootspref.new = true;              
         otherwise
             if strncmpi(argin,'rec',3),       % recursion
                 rootspref.recurse = 1;
@@ -80,10 +82,18 @@ for i = 1:f.nfuns
     if ~zerofun
         % Do not return midpoint of zero funs.
         if any(lfun.vals)
-            rs = roots(lfun,rootspref); % Get the roots of the current fun
+            if rootspref.new
+                rs = roots_new(lfun,rootspref); % Get the roots of the current fun
+            else
+                rs = roots(lfun,rootspref); % Get the roots of the current fun
+            end;
         end
     else
-        rs = roots(lfun,rootspref); % Get the roots of the current fun
+        if rootspref.new
+            rs = roots_new(lfun,rootspref); % Get the roots of the current fun
+        else
+            rs = roots(lfun,rootspref); % Get the roots of the current fun
+        end
     end
     if ~isempty(rts)
         % Trim out roots that are repeated on either side of the breakpoint.
