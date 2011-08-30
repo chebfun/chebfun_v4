@@ -516,7 +516,24 @@ end
                         end
                     end
             end
-        else
+        elseif numberOfInputVariables == 2 % Now we're working with @(x,u) where u could be a single column or a quasimatrix
+            switch type
+                case 'DE'
+                    fOut = deFun(xDom,currentGuess);
+                case 'LBC'
+                    if strcmpi(bcFunRight,'periodic')
+                        fOut = chebfun(0,dom);
+                    else
+                        fOut = bcFunLeft(currentGuess);
+                    end
+                case 'RBC'
+                    if strcmpi(bcFunLeft,'periodic')
+                        fOut = chebfun(0,dom);
+                    else
+                        fOut = bcFunRight(currentGuess);
+                    end
+            end
+        else % Now we're working with @(x,u,v)
             % Load the cell variable
             if isempty(currentGuessCell)
                 currentGuessCell = cell(1,numel(currentGuess));

@@ -40,6 +40,11 @@ nonLinFlag = 0;
 % entries equal to each column of the quasimatrix representing the
 % current solution.
 numberOfInputVariables = nargin(N.op);
+% If we have a linop and more than one variable, the independent function x
+% is not one of them. In order for the code to work, we need to add 1 to
+% numberOfInputVariables
+% if isa(N.op,'linop') && numberOfInputVariables > 1
+%     numberOfInputVariables = numberOfInputVariables
 
 if numberOfInputVariables > 1 % Load a cell, with the linear function x as the first entry
     uCell = cell(1,numel(u));
@@ -69,7 +74,7 @@ else
         l = 1;
         for j = 1:length(lbc)
             % Evaluate the BC function
-            if numberOfInputVariables > 1
+            if nargin(lbc{j}) > 1 % Need to expand uCell in order to be able to evaluate
                 try
                     % If errorString will not be empty below the second
                     % next line (guj = ...), it means that that evaluation
@@ -160,7 +165,7 @@ else
         l = 1;
         for j = 1:length(rbc)
             % Evaluate the BC function
-            if numberOfInputVariables > 1
+            if nargin(rbc{j}) > 1
                 try
                     % If errorString will not be empty below the second
                     % next line (guj = ...), it means that that evaluation
@@ -258,8 +263,12 @@ try
     if numberOfInputVariables > 1
         % If we have more than one variables, we know that the first one
         % must be the linear function on the domain.
-        uTemp = [{xDom} uCell];
-        Nu = N.op(uTemp{:});
+        if numberOfInputVariables == 2 % Then we're working with @(x,u) where u might (or not) be a quasimatrix
+            Nu = N.op(xDom,u);
+        else
+            uTemp = [{xDom} uCell];
+            Nu = N.op(uTemp{:});
+        end
         % Must check whether we have terms on the form u*v, u*w, v*w etc.
         % Construct each column of the Jacobian separately, let it operate
         % on the function 1 on the domain, then linearize around next
