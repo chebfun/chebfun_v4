@@ -5,32 +5,31 @@
 % (Chebfun example ode/ThreeBodyProblem.m)
 
 %% 
-% This example is motivated by a discussion with Divakar Viswanath,
+% This example is motivated by a correspondence with Divakar Viswanath,
 % University of Michigan.
 
 %% Introduction
 % The three body problem is a system of ODEs modelling three particles of
 % prescribed masses m1,m2,m3 under mutual gravitation in two or three
-% dimensions:
+% dimensions. We will consider the two dimensional case, so that we can use
+% complex arithmetic to solve it in Chebfun.
 %% 
-% u'' = m2*(v-u)*abs(v-u)^-3 + m3*(w-u)*abs(w-u)^-3,
+% u'' = m2*(v-u)*abs(v-u)-3 + m3*(w-u)*abs(w-u)-3,
 %% 
-% v'' = m1*(u-v)*abs(u-v)^-3 + m3*(w-v)*abs(w-v)^-3, 
+% v'' = m1*(u-v)*abs(u-v)-3 + m3*(w-v)*abs(w-v)-3, 
 %% 
-% w'' = m1*(u-w)*abs(u-w)^-3 + m2*(v-w)*abs(v-w)^-3. 
+% w'' = m1*(u-w)*abs(u-w)-3 + m2*(v-w)*abs(v-w)-3. 
 %%
 % Subject to initial conditions.
 
 %% Figure Of Eight Solution
-% In 2000 Chenciner and Montgomery [3] presented a paper showing the
-% existence of "A remarkable periodic solution of the three-body problem in
-% the case of equal masses". This solution is in two dimesions, where the
-% particles each travel around the same figure of eight shape. This is
-% convenient as we can use complex variables to solve the problem in
-% Chebfun.
+% In 2000 Chenciner and Montgomery [3] presented a paper showing the existence 
+% of "A remarkable periodic solution of the three-body problem in the case 
+% of equal masses". The particles travel around a figure of eight shape
+% (shown below).
 
 %% 
-% Here we use modified versions of the intial conditions given in the
+% Here we use modified versions of the initial conditions given in the
 % paper.
 
 dom = domain([0,4*pi]);
@@ -72,20 +71,21 @@ v = u(:,3)
 
 %%
 % The above output shows that the degree of v is 313. In general, a good
-% estimate for the degrees of the numerator and denominator for a rational
+% choice for the degrees of the numerator and denominator for a rational
 % interpolant of a polynomial with robustness is about half the degree, so
-% we shall use a [157,156] rational interpolant. We use as interpolation
-% nodes the 314 Chebyshev points of type 2 along [0,4pi] and a tolerance of
-% 1e-12 for the robustness.
+% we shall use a [157,156] rational interpolant. We don't expect 
+% there to be 156 singularities - ratinterp will remove extra poles of
+% small residue. For interpolation nodes we use the 314 Chebyshev points of 
+% type 2 along [0,4pi] and a tolerance of 1e-12 for the robustness.
 
-[p,q,rh,mu,nu,poles] = ratinterp2(v,157,156, 314, 'type2', 1e-12);
+[p,q,rh,mu,nu,poles] = ratinterp(v,157,156, 314, 'type2', 1e-12);
 
 mu
 nu
 
 %%
 % The robustness of the algorithm reduces the degree of the rational
-% interpolant to [mu,nu] = [154,6] in this case, to remove spurious poles,
+% interpolant to [mu,nu] = [154,6] in this case,
 % but we still have a good error estimate on the real interval:
 
 max(abs(rh(0:0.1:4*pi) - v(0:0.1:4*pi)))
@@ -113,7 +113,7 @@ real(poles)*3/pi
 %%
 % Let us plot the poles with blue dots and the zeros as black circles:
 
-plot([0,4*pi]+eps*1i,'-r'); hold on
+plot([0,4*pi]+eps*i,'-r'); hold on
 plot(roots(q,'all'),'o','markersize',4,'color','b','markerfacecolor','b');
 plot(roots(p,'complex'), 'ok', 'markersize',5);
 
@@ -125,15 +125,15 @@ title('Poles, Zeros Of Rational Interpolant and Bernstein Ellipse For v');
 hold off;
 
 %%
-% chebellipseplot(v) plots the Bernstein ellipse associated with v. This
-% ellipse is an estimate, based on the decay of the Chebyshev coefficients
-% of v, of the largest ellipse with foci -1 and 1 in which the underlying
-% function approximated by v is analytic. The poles appear around the edge
-% of this ellipse.
+% chebellipseplot(v) plots the Bernstein ellipse associated with v.
+% This ellipse is an estimate, based on the decay of the Chebyshev
+% coefficients of v, of the largest ellipse with foci -1 and 1 in which
+% the underlying function approximated by v is analytic. The poles appear
+% around the edge of this ellipse.
 
 %%
 % Interestingly, at time t=real(t_0) where v has a singularity at complex
-% time, t_0, the particles form a triangle. In the following plot, the
+% time, t_0, the particles form a triangle. In the following plot, the 
 % particle under consideration, number 3, is coloured black and the other
 % two particles are blue.
 
@@ -154,9 +154,9 @@ hold off;
 %% Without Robustness
 % Now let us do exactly the same with robustness switched off (tol=0):
 
-[p,q,rh,mu,nu,poles,res] = ratinterp2(v,157,156, 314, 'type2', 0);
+[p,q,rh,mu,nu,poles,res] = ratinterp(v,157,156, 314, 'type2', 0);
 
-plot([0,4*pi]+eps*1i,'-r'); hold on
+plot([0,4*pi]+eps*i,'-r'); hold on
 plot(roots(q,'complex'),'o','markersize',4,'color','b','markerfacecolor','b');
 plot(roots(p,'complex'), 'ok', 'markersize',5);
 
@@ -166,9 +166,9 @@ chebellipseplot(v);
 title('Without Robustness');
 
 %%
-% This is a demonstration of the phenomenon of spurious poles or "Froissart
-% doublets" - each pole is paired (almost) with a zero in the numerator.
-% The robust algorithm in [2] removes such poles with an implementation
+% This is a demonstration of the phenomenon of spurious poles or 
+% "Froissart doublets" - each pole is paired (almost) with a zero in the
+% numerator. The robust algorithm in [2] removes such poles with an implementation
 % based on the singular value decomposition.
 
 %% References
@@ -176,8 +176,9 @@ title('Without Robustness');
 % three-body problem in the case of equal masses. Annals of Mathematics-
 % Second Series, 152(3):881–902, 2000.
 %
-% [2] P. Gonnet, R. Pachón, and L.N. Trefethen. Robust rational
-% interpolation and least-squares. Electronic Transactions on Numerical
-% Analysis, 38:146–167, 2011.
+% [2] P. Gonnet, R. Pachón, and L.N. Trefethen. Robust rational 
+% interpolation and least-squares. Electronic Transactions on 
+% Numerical Analysis, 38:146–167, 2011.
 %
-% [3] Wikipedia article: 'http://en.wikipedia.org/wiki/Three_body_problem'
+% [3] Wikipedia article:
+% 'http://en.wikipedia.org/wiki/Three_body_problem'

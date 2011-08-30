@@ -32,7 +32,7 @@ a = ua(1,2)
 
 %% 2. Newton's Law of Cooling
 % During the Jack the Ripper murder investigations in the 1880s, detectives
-% estimated the time of death of a victim by using body temperature. Apon
+% estimated the time of death of a victim by using body temperature. Upon
 % finding the victim, body temperature was measured. If the body was warm
 % then the murder had only just occurred. If the body was cold then it
 % happened many hours before. To make this more precise, take Newton's Law
@@ -52,7 +52,7 @@ S = 15;   % Ambient temperature
 t0 = 37;  % Initial temperature
 tT = 20;  % Discovery temperature
 % Rescale the equation by x=t/T to form parameter-dependent ODE.
-N = chebop(@(x,y,T) diff(y) + k.*T.*(y-S) + eps(0)*y.^2,[0 1]);
+N = chebop(@(x,y,T) diff(y) + k.*T.*(y-S),[0 1]);
 N.lbc = @(y,T) y-t0;
 N.rbc = @(y,T) y-tT;
 % Solve
@@ -82,15 +82,16 @@ fprintf('T is estimated to be %1.2f hrs.\n',yT(1,2)/360)
 
 n = 4.5;
 %Parameter-dependent ODE
-N.op = @(x,u,v) x.*diff(u,2) + 2*diff(u) + x.*v.^2.*(u+1e-12).^n;
+N = chebop(@(x,u,v) x.*diff(u,2) + 2*diff(u) + x.*v.^2.*(u+1e-12).^n,[0 1]);
 N.lbc = @(u,v) [u-1,diff(u)];
 N.rbc = @(u,v) u;
-%Choose initial condition depending on n.
+%Choose initial condition.
+x = chebfun(@(x) x,[0 1]);
 N.init = [cos(pi/2*x),3];
 %Solve
 uv = N\0;
 %Rescale solution and plot.
-t = chebfun('x',[0,uv(1,2)]); u = uv(t./uv(1,2),1);
+t = chebfun('t',[0,uv(1,2)]); u = uv(t./uv(1,2),1);
 plot(u,LW,2), hold on; 
 title('Solution of the Lane-Emden equation for n=4.5',FS,16),
 
