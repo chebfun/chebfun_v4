@@ -158,6 +158,14 @@ else
 end
 % Now V,D are already defined at the highest value of N used.
 
+if size(D,1) < k
+    if gotk
+        str = sprintf('Input has finite rank, only %d eigenvalues returned.', size(D,1));
+        warning('CHEBFUN:linop:eigs:rank',str);
+    end
+    k = size(D,1);
+end
+
 if nargout < 2
   varargout = { diag(D) };
 elseif numel(breaks) == 2 && ~chebfunpref('splitting')
@@ -343,8 +351,6 @@ end
 function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
 
     if ~isempty(B) % Generalised
-% [V,D] = bc_eig_old(A,B,N,k,sigma,map,breaks);
-% return
 
         % Force difforder to be the same, so that projection P is the same.
         do = max(A.difforder, B.difforder);
@@ -369,26 +375,32 @@ function [V,D] = bc_eig(A,B,N,k,sigma,map,breaks)
 
     else % not generalised
 
-    % Evaluate the Matrix with boundary conditions attached
-    [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,breaks);
-        % Compute the (discrete) e-vals and e-vecs generalised e-val problem.
+        % Evaluate the Matrix with boundary conditions attached
+        [Amat,ignored,c,ignored,P] = feval(A,N,'bc',map,breaks);
 
-    m = A.blocksize(1);
-    if m == 1
-        Pmat = [P ; zeros(numel(c),N)];
-    else
-        Pmat = zeros(sum(N)*m);
-        i1 = 0; i2 = 0;
-        for j = 1:A.blocksize(1)
-            ii1 = i1+(1:size(P{j},1));
-            ii2 = i2+(1:size(P{j},2));
-            Pmat(ii1,ii2) = P{j};
-            i1 = ii1(end); i2 = ii2(end);
-        end   
-    end
+        m = A.blocksize(1);
+        if m == 1
+            Pmat = [P ; zeros(numel(c),N)];
+        else
+            Pmat = zeros(sum(N)*m);
+            i1 = 0; i2 = 0;
+            for j = 1:A.blocksize(1)
+                ii1 = i1+(1:size(P{j},1));
+                ii2 = i2+(1:size(P{j},2));
+                Pmat(ii1,ii2) = P{j};
+                i1 = ii1(end); i2 = ii2(end);
+            end   
+        end
 
         % Compute generalised e-val problem.
         [V,D] = eig(full(Amat),full(Pmat));
+        
+        if max(max(A.difforder)) == 0 % only do this for intergral operators
+            d = diag(D);
+            idx = find(abs(d) > 1e-15*max(abs(d))); % Find zero eigenvalues
+            D = diag(d(idx));         % Remove them
+            V = V(:,idx);             % Remove null-space vectors
+        end
 
         % Find the droids we're looking for.
         idx = nearest(diag(D),V,sigma,min(k,N),N);
