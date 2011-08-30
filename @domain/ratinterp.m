@@ -97,6 +97,8 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
         f = f( 0.5*sum(d) + 0.5*diff(d)*xi );
     elseif length(f) ~= N+1
         error( 'CHEBFUN:ratinterp:InputLengthF' , 'The input vector f is of the wrong length' );
+    else
+        f = f(:);
     end
     
     % Init some values that we will use often
@@ -346,7 +348,6 @@ end
 % Compact implementation of the DCT for Chebyshev points of the second kind.
 function c = dct2( v )
     n = size( v , 1 );
-    % v([1,end],:) = v([1,end],:) * 2;
     c = [ v(end:-1:2,:) ; v(1:end-1,:) ];
     if isreal(v)
         c = fft(c)/(2*n-2);
