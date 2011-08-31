@@ -8,11 +8,11 @@ tol = 100*chebfunpref('eps');
 x = chebfun('x',[0 1]);
 q = sqrt(2)/2;
 k = 0;
-for n = [1 5]
+for n = [1 4]
     k = k+1;
     xn = x.^n;
     xnpq = diff(xn,q);
-    tru = gamma(n+1)./gamma(n+1-q)*chebfun(@(x) x.^(n-q),[0 1],'exps',[n-q 0]);   
+    tru = gamma(n+1)./gamma(n+1-q)*chebfun(@(x) x.^(n-q),[0 1],'exps',[n-q 0]); 
     pass(k) = norm(tru-xnpq,inf) < tol;
 end
 

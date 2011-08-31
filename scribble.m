@@ -220,7 +220,7 @@ try
     for n = 1:N
         sCell{n} = sStr(inds(n)+1:inds(n+1));
     end
-catch ME
+catch
     error('CHEBFUN:scribble:splitIntoNStrings',...
         ['We do not know how to break up your %i strings ' ...
         'into %i sentances'],numel(s),N);

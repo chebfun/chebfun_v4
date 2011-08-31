@@ -8,7 +8,7 @@ pass = [];
 try
     f = scribble;
     pass(end+1) = isa(f,'chebfun');
-catch ME
+catch
     pass(end+1) = false;
 end
 
@@ -16,7 +16,7 @@ end
 try
     f = scribble('l');
     pass(end+1) = isa(f,'chebfun') && all(size(f) == [Inf 1]);
-catch ME
+catch
     pass(end+1) = false;
 end
 
@@ -24,7 +24,7 @@ end
 try
     f = scribble('ll',3);
     pass(end+1) = isa(f,'chebfun') && all(size(f) == [Inf 2]);
-catch ME
+catch
     pass(end+1) = false;
 end
 
@@ -32,7 +32,7 @@ end
 try
     f = scribble('l','l');
     pass(end+1) = isa(f,'chebfun') && all(size(f) == [Inf 2]);
-catch ME
+catch
     pass(end+1) = false;
 end
 
@@ -40,7 +40,7 @@ end
 try
     f = scribble('l','l','l');
     pass(end+1) = isa(f,'chebfun') && all(size(f) == [Inf 3]);
-catch ME
+catch
     pass(end+1) = false;
 end
 
@@ -48,7 +48,7 @@ end
 try
     f = scribble({'l','l','l'});
     pass(end+1) = isa(f,'chebfun') && all(size(f) == [Inf 3]);
-catch ME
+catch
     pass(end+1) = false;
 end
 
@@ -57,6 +57,6 @@ try
     f = scribble(['`1234567890-=qwertyuiop[]\asdfghjkl;''zxcvbnm,./', ...
         '~!@#$%^&*()_+{}|:"<>?']);
     pass(end+1) = isa(f,'chebfun') && all(size(f) == [Inf 1]);
-catch ME
+catch
     pass(end+1) = false;
 end
