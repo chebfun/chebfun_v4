@@ -83,12 +83,8 @@ end
         if n > 1 && n < length(c)
             nn = 2*n - 2;
             for j=n+1:length(c)
-                k = mod( j-1 , nn );
-                if k < n
-                    c(k+1) = c(k+1) + c(j);
-                else
-                    c(nn-k+1) = c(nn-k+1) + c(j);
-                end
+                k = abs( mod( j+n-3 , nn ) - n + 2 ) + 1;
+                c(k) = c(k) + c(j);
             end
             c = c(1:n);
         end;
