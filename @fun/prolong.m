@@ -50,12 +50,8 @@ else % Use FFTs to prolong
             c = c(end:-1:1);
             nn = 2*nout - 2;
             for j=nout+1:length(c)
-                k = mod( j-1 , nn );
-                if k < nout
-                    c(k+1) = c(k+1) + c(j);
-                else
-                    c(nn-k+1) = c(nn-k+1) + c(j);
-                end
+                k = abs( mod( j+nout-3 , nn ) - nout + 2 ) + 1;
+                c(k) = c(k) + c(j);
             end
             g.vals = chebpolyval(c(1:nout)); g.n = nout;
         end;
