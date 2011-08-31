@@ -14,7 +14,7 @@ else
       try
           Vmat = feval(V,defreal);
           M = max(max(abs(Vmat)));
-          if M > 1e3;
+          if (M > 1e2 || M < 1) && M ~= 0
               M = 10^round(log10(M)-1);
               Vmat = Vmat/M;
               s1 = [s1 sprintf('\n    %2.1e * ',M)];
@@ -29,7 +29,7 @@ else
       s1 = ['   with n = ',int2str(defreal),' realization:'];
       Vmat = feval(V,{defreal,[],dom});
       M = max(max(abs(Vmat)));
-      if M > 1e3;
+      if (M > 1e2 || M < 1) && M ~= 0
           M = 10^round(log10(M)-1);
           Vmat = Vmat/M;
           s1 = [s1 sprintf('\n    %2.1e * ',M)];
