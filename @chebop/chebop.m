@@ -72,6 +72,16 @@ function [N x] = chebop(varargin)
 %    N.bc = 'dirichlet';
 %    plot(N\1)
 %
+% There is some support for solving systems of equations containing unkown
+% parameters without the need to introduce extra equations into the system.
+% For example, y''+x.*y+p = 0, y(-1) = 1, y'(-1) = 1, y(1) = 1 can be
+% solved via
+%    N = chebop(@(x,y,p)diff(y,2)+x.*y+p,@(y,p)[y-1,diff(y)],@(y,p)y-1);
+%    plot(N\0)
+% This syntax will work whenever p is not differentiated within N.op, i.e.,
+% something like @(x,y,p) diff(p*diff(y)) will require a second equation
+% explicitly enforcing that diff(p) = 0.
+%
 % See also chebop/mtimes, chebop/mldivide, chebop/pde15s.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
