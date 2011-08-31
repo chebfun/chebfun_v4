@@ -7,15 +7,14 @@ function f = scribble(varargin)
 %  write it and email it to develop@chebfun.org.
 %
 %  SCRIBBLE(STRING,N) returns a quasimatrix of complex chebfuns, where 
-%  STRING has been split into N substrings, each a line in a paragraph.
+%  STRING has been split into N substrings, each on a separate line.
 %
-%  SCRIBBLE('STRING_1',STRING_2',...,'STRING_N') returns a quasimatrix of
-%  complex chebfuns, where column k represents the text in STRING_K.
+%  SCRIBBLE('STRING_1',STRING_2',...,'STRING_N') or
+%  SCRIBBLE({'STRING_1',STRING_2',...,'STRING_N'}) also returns a quasimatrix
+%  of complex chebfuns, with column k of the quasimatrix (i.e. row k of
+%  the text when plotted) representing the text in STRING_K.
 %
-%  SCRIBBLE({'STRING_1',STRING_2',...,'STRING_N'}) returns a quasimatrix of
-%  complex chebfuns, where column k represents the text in STRING_K.
-%
-%  Example;
+%  Examples:
 %   f = scribble('The quick brown fox jumps over the lazy dog. 0123456789');
 %   plot(f), axis equal
 % 
