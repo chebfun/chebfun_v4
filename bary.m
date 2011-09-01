@@ -10,40 +10,34 @@ function fx = bary(x,gvals,xk,ek)
 %  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 %  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+% Parse inputs
 n = length(gvals);
-
-if any(isnan(gvals))
+if n == 1                 % The function is a constant
+    fx = gvals*ones(size(x));
+    return
+end
+if any(isnan(gvals))      % The function is NaN
     fx = NaN(size(x));
     return
 end
-
-if n == 1                % The function is a constant
-    fx = gvals*ones(size(x));
-    return;
+if nargin < 3             % Default to Chebyshev nodes
+    xk = chebpts(n);
 end
-
-if nargin < 4            % Default to Chebyshev weights
+if nargin < 4             % Default to Chebyshev weights
     ek = [.5 ; ones(n-1,1)]; 
     ek(2:2:end) = -1;
     ek(end) = .5*ek(end);
-%     % Weights for 1st kind points (at the moment only second kind should be used)
-%     ek = sin((2*(0:n-1)+1)*pi/(2*n)).';
-%     ek(2:2:end) = -ek(2:2:end);
 end
-if nargin < 3            % Default to Chebyshev nodes
-    xk = chebpts(n);
-end
-    
-warnstate = warning('off','MATLAB:divideByZero');
 
-if length(x) < length(xk)
-    fx = zeros(size(x)); % init return value
+% Evaluate the barycentric formula
+if length(x) < length(xk) % Loop over evaluation points   
+    fx = zeros(size(x));  % Initialise return value
     for i = 1:numel(x)
         xx = ek./(x(i)-xk);
         fx(i) = (xx.'*gvals)/sum(xx);
     end      
-else
-    num = zeros(size(x)); denom = num;
+else                      % Loop over barycentric nodes
+    num = zeros(size(x)); denom = num; % initialise 
     for i = 1:numel(xk)
         y = ek(i)./(x-xk(i));
         num = num+(gvals(i)*y);
@@ -52,12 +46,8 @@ else
     fx = num./denom;
 end
 
-warning(warnstate);
-
-% clean-up nans
-for i=find(isnan(fx(:)))'
+% Clean-up NaNs
+for i = find(isnan(fx(:)))'
     indx = find(x(i)==xk,1);
     fx(i) = gvals(indx);
 end
-
-
