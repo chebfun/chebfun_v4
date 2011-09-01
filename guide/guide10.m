@@ -341,9 +341,9 @@ u = N\1; plot(u,'m',LW,lw)
 %%
 % We get a different solution from the one we got before! This one is
 % correct too; the Carrier problem has many solutions.
-% If we multiply this solution by sin(x) and take the result as a new
+% If we multiply this solution by sin(x/2) and take the result as a new
 % initial guess, we converge to another new solution:
-N.init= u.*sin(x);
+N.init= u.*sin(x/2);
 [u,nrmdu] = N\1; plot(u,'m',LW,lw)
 
 %%
