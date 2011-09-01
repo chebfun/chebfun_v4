@@ -51,8 +51,7 @@ pass(7) = norm( g(xi) - fxi.^2 , inf ) < tol;
 
 % compute the power of a function
 g = cf.^pi;
-pass(8) = norm( g(xi) - fxi.^pi , inf ) < tol;
-
+pass(8) = norm( g(xi) - fxi.^pi , inf ) < 1e3*tol;
 
 % compute the exponential of a chebfun (exp)
 g = exp(cf);
