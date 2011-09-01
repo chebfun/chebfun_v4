@@ -46,10 +46,6 @@ function C = mldivide(A,B,tolerance)
   case 'chebfun'
     dom = domaincheck(A,B(:,1));
     m = A.blocksize(2);
-    if A.numbc ~= sum(max(A.difforder,[],2))    
-      warning('LINOP:mldivide:bcnum',...
-        'Operator may not have the correct number of boundary conditions.')
-    end
     
     % Grab the default settings.
     settings = chebopdefaults;
@@ -96,6 +92,16 @@ function C = mldivide(A,B,tolerance)
         end
         A = setbc(A,bc);
     end
+    
+    % Deal with parameter dependent problems
+    paridx = min(A.isdiag,[],1) == 1;
+    funidx = find(~paridx);     paridx = find(paridx);
+    nfun = numel(funidx);       npar = numel(paridx);
+    
+    if A.numbc-npar ~= sum(max(A.difforder,[],2))    
+      warning('LINOP:mldivide:bcnum',...
+        'Operator may not have the correct number of boundary conditions.')
+    end
 
     if isa(A.scale,'function_handle')
         A.scale = chebfun(A.scale,ends);
@@ -136,10 +142,10 @@ function C = mldivide(A,B,tolerance)
     % y is a cell array with the points for each function.
     % N is the number of points on each subinterval.
     % bks contains the ends of the subintervals.
-    N = N{:};   bks = bks{:};     % We allow only the same discretization
-    csN = [0 cumsum(N)];          %  size and breaks for each system.
-    maxdo = max(A.difforder(:));  % Maximum derivative order of the system.
-                        
+    N = N{:};   bks = bks{:};         % We allow only the same discretization
+    csN = [0 cumsum(N)]; sN = sum(N); %  size and breaks for each system.
+    maxdo = max(A.difforder(:));      % Maximum derivative order of the system.
+         
     % Error checking
     if sum(N) > maxdegree+1
       error('LINOP:mldivide:NoConverge',...
@@ -163,14 +169,10 @@ function C = mldivide(A,B,tolerance)
     if ~iscell(P), P = {P}; end
     
     % Deal with parameter dependent problems
-    paridx = min(A.isdiag,[],1) == 1;
-    funidx = find(~paridx);     paridx = find(paridx);
-    nfun = numel(funidx);       npar = numel(paridx); 
-    syssize = A.blocksize(1);
-    if ~isempty(paridx) % The are parameters in the problem
+    if ~isempty(paridx)
         ii = [];  nbc = numel(c); bc = zeros(nbc,npar); % initialise
         for kk = 1:npar                                 % cols to remove
-            iik = sum(N)*(paridx(kk)-1)+1:sum(N)*paridx(kk);
+            iik = sN*(paridx(kk)-1)+1:sN*paridx(kk);
             bc(:,kk) = sum(Amat(end-nbc+1:end,iik),2);
             ii = [ii iik];
         end
@@ -180,7 +182,7 @@ function C = mldivide(A,B,tolerance)
         if syssize == 1 && npar == 1 % Easy case
             Acol = P{1}*diag(Amat2);
         else                         % Tricker case (systems, #params > 1)
-            Acol = []; sN = sum(N); idx = 1:(syssize*sN+1):(syssize*sN^2);
+            Acol = []; idx = 1:(syssize*sN+1):(syssize*sN^2);
             for kk = 1:npar % Project the diagonals of each of the parameters subblocks
                 Acolkk = []; idxj = idx;
                 for jj = 1:syssize
@@ -193,16 +195,60 @@ function C = mldivide(A,B,tolerance)
         end
         Amat = [Amat [Acol ; bc]]; % Reform the big matrix with the new columns augmented
     end 
+        
+%     % Delta functions - Support to appear in V5.0
+%     if syssize ==  1
+%         imps = B.imps(2:end,2:end-1);
+%         counter = 0; 
+%         skip = numel(bks)-2;
+%         numbc = get(A,'numbc');
+%         while ~isempty(imps)
+%             idx = (1:skip) + numbc + counter*skip;
+%             if idx(end) > numel(c), break, end
+%             c(idx) = imps(1,:);
+%             imps(1,:) = [];
+%             counter = counter+1;
+%         end
+%     end
+%     %modify c to incorporate appropriate boundary conditions
+%     %for delta functions 
+%     if( size( B.imps, 1 ) >= 2 )      %if there are delta functions
+%         loc = B.imps(2,:) ~= 0;       %find location of delta functions.
+%         deltaLoc = B.ends( loc );
+%         deltaMag = B.imps( 2, loc );  %magnitude of delta functions
+%         if( ~isempty( deltaLoc ) )
+%             d = A.fundomain;
+%             n = A.difforder;
+%             if( deltaLoc(1) == d(1) || deltaLoc(end) == d(end) )
+%                 % delta at the boundary, what to do?
+%                 error( 'delta at domain boundary, not implemented yet!' );
+%             else
+%                 %evaluate the highest coefficient of A at delta locations
+%                 ndelta = length( deltaLoc );
+%                 anx = zeros( 1, ndelta );
+%                 for i = 1:ndelta
+%                     nthpoly = chebfun(@(u) (u-deltaLoc(i)).^n/factorial(n), d );
+%                     anx( i ) = feval( feval(A,nthpoly), deltaLoc(i) );
+%                 end
+%                 c(((1:ndelta)+1)*n) = deltaMag./anx; % jump conditions
+%             end
+%         end
+%     end
 
     % The RHS.
     f = [];
     % Project the RHS.
-    for jj = 1:syssize 
-        Bj = B(y{1},jj);
-        Bj(csN(2:end),:) = B(bks(2:end),jj,'left');
-        Bj(csN(1:end-1)+1,:) = B(bks(1:end-1),jj,'right');
-        f = [f ; P{jj}*Bj];
-    end  
+    if ~any(isinf(bks))
+        for jj = 1:syssize, f = [f ; B(P{jj}*y{1},jj)]; end
+    else
+        for jj = 1:syssize
+            Bj = B(y{1},jj);
+            Bj(csN(2:end),:) = B(bks(2:end),jj,'left');
+            Bj(csN(1:end-1)+1,:) = B(bks(1:end-1),jj,'right');
+            f = [f ; P{jj}*Bj];
+        end
+    end
+        
     % Add boundary conditions.
     f = [f ; c]; 
 
@@ -221,7 +267,7 @@ function C = mldivide(A,B,tolerance)
         V = mat2cell(v,repmat(N,1,A.blocksize(2)),1);
     end
     
-    v = reshape(v,[sum(N),numel(funidx)]);        % one variable per column
+    v = reshape(v,[sN,numel(funidx)]);        % one variable per column
     % Need to return a single function to test happiness. If you just sum
     % functions, you get weird results if v(:,1)=-v(:,2), as can happen in
     % very basic problems. We just use an arbitrary linear combination (but
@@ -240,6 +286,8 @@ function C = mldivide(A,B,tolerance)
 
 end
 
-function Amat = parremove(Amat,Amat2,P,A,N,c)
 
-end
+ 
+	
+	
+ 
