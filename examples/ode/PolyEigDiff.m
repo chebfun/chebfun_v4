@@ -28,14 +28,17 @@ end;
 % its roots on [0,100];
 alpha = 5;
 bessel5 = chebfun(@(x)besselj(alpha,x),dom);
-rts = roots(y);
+rts = roots(bessel5);
 
 %%
 % We may reformulate the above differential equation into a polynomial
 % eigenvalue problem: Between two of its roots, each Bessel function is (up
 % to scaling) an eigenvector with homogeneous Dirichlet boundary values
-% associated with the eigenvalue 1 of a polynomial eigenvalue problem.
+% associated with the eigenvalue 1 of the polynomial eigenvalue problem:
 %
+%   lambda^2*x^2*y'' + lambda*x*y' + (x^2-alpha^2)*y = 0
+
+%%
 % Using the newly implemented POLYEIGS command of Chebfun, we can verify
 % this assertion numerically on the domain given by the, say, 1st and 22nd
 % root of our Bessel function:
@@ -47,6 +50,8 @@ C = chebop(@(x,y) x.^2.*diff(y,2), dom);
 C.bc = 'dirichlet';
 
 [V,D] = polyeigs(A,B,C,1,1);
+
+D
 
 %% 
 % We may compare the exact Bessel function of order 5 with the computed
@@ -61,11 +66,20 @@ hold off
 
 norm(s*V-bessel5{dom(1),dom(2)})
 
+%%
+% We could also compute further eignmodes and eigenfunctions of this
+% operator (although we don't claim that they have much physical relevance
+% in this case!).
+
+[V,D] = polyeigs(A,B,C,3,1);
+D
+plot(V)
+
 %% Accuracy of polynomial eigenvalues
 % To check the accuracy of the polynomial eigensolver of Chebfun, we
 % consider the following linear ordinary differential equation
 %
-%  lambda^2*a*y''(x) + lambda*b*y'(x) + c*y(x) = 0,
+%  lambda^2*c*y''(x) + lambda*b*y'(x) + a*y(x) = 0,
 %  y(0) = y(1) = 0.
 %
 % We compute, say, 5 eigenvalues lambda closest to 1 of the associated
