@@ -10,20 +10,21 @@ n = length(xk);
 if isreal(xk)
     C = 4/(max(xk)-min(xk)); % Capacity of interval
 else
-    C = 1;  % Scaling by capacity doesn't apply if using complex nodes
+    C = 1;                   % Scaling by capacity doesn't apply for complex nodes
 end
-if n < 300 || ~isreal(xk)       % for small n using matrices is faster
-   XK = repmat(xk(:),1,n);
-   V = C*(XK-XK.');
+
+if n < 2001                  % For small n using matrices is faster
+   V = C*bsxfun(@minus,xk,xk.');
    V(logical(eye(n))) = 1;
    VV = exp(sum(log(abs(V))));
    w = 1./(prod(sign(V)).*VV).';
-else               % for large n use a loop
+else                         % For large n use a loop
    w = ones(n,1);
    for j = 1:n
        v = C*(xk(j)-xk);
-       v = v(logical(v));
-       vv = exp(sum(log(abs(v))));           
+       absv = abs(v);
+       v = v(logical(absv));
+       vv = exp(sum(log(absv)));           
        w(j) = 1./(prod(sign(v))*vv);
    end
 end
