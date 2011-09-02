@@ -49,6 +49,7 @@ if nargin == 1 && isnumeric(n) && numel(n) == 1 && n > 0
     if nargout > 2                      % Barycentric weights
         v = [.5 ; ones(n-1,1)]; v(2:2:end) = -1; v(end) = .5*v(end);
     end
+    return
 end
 
 % Parse the inputs
