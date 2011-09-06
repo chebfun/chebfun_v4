@@ -36,7 +36,7 @@ c = flipud(chebpoly(g)) / g.scl.v;
 % tail_max = max(chebfunpref('eps'),eps*min(1e12,mdiff));
 
 % Call the recursive rootsunit function
-r = rootsunit_coeffs( c , g.scl.h );
+r = rootsunit_coeffs( c , eps*max(g.scl.h,1.0) );
 
 % Prune the roots, if required
 if rootspref.prune && ~rootspref.recurse
@@ -61,15 +61,12 @@ end
 
 
 
-    function r = rootsunit_coeffs ( c , h  )
+    function r = rootsunit_coeffs ( c , htol  )
     % Computes the roots of the polynomial given by the coefficients
     % c on the unit interval.
 
         % Define these as persistent, need to compute only once.
         persistent Tleft Tright;
-
-        % horizontal tolerance
-        htol = 100 * h * eps;
 
         % Simplify the coefficients
         n = length(c);
@@ -134,9 +131,9 @@ end
                 % step = miniclenshaw( c_old , r ) ./ miniclenshaw( newcoeffs_der(c_old) , r );
                 % step( ~isfinite(step) ) = 0;
                 % r = r - step;
-                % c_old, [ sort(r) , miniclenshaw( c_old , sort(r) ) ]
+                [ sort(r) , miniclenshaw( c_old , sort(r) ) ]
                 
-                % keep roots inside [-1 1]   
+                % keep roots inside [-1 1]
                 r = sort( r(abs(r) <= 1+2*htol) );
                 
                 % Correct roots over ends
@@ -189,8 +186,8 @@ end
             % pause;
 
             % recurse
-            r = [ (emm-1)/2 + (emm+1)/2*rootsunit_coeffs( cleft , h/2 )
-                  (emm+1)/2 + (1-emm)/2*rootsunit_coeffs( cright , h/2 ) ];
+            r = [ (emm-1)/2 + (emm+1)/2*rootsunit_coeffs( cleft , 2*htol )
+                  (emm+1)/2 + (1-emm)/2*rootsunit_coeffs( cright , 2*htol ) ];
 
         % Otherwise, split using more traditional methods
         else
@@ -210,8 +207,8 @@ end
             cright = [ 0.5*cright(1) ; cright(2:n-1) ; 0.5*cright(n) ];
 
             % recurse
-            r = [ (emm-1)/2 + (emm+1)/2*rootsunit_coeffs( cleft , h/2 )
-                  (emm+1)/2 + (1-emm)/2*rootsunit_coeffs( cright , h/2 ) ];
+            r = [ (emm-1)/2 + (emm+1)/2*rootsunit_coeffs( cleft , 2*htol )
+                  (emm+1)/2 + (1-emm)/2*rootsunit_coeffs( cright , 2*htol ) ];
 
         end;
 
