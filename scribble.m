@@ -162,17 +162,23 @@ for j = 1:L
     
 end
 
-% rescale to [-1 1]
+% Rescale to [-1 1]
 ends = 2*(0:ends(1))/ends(1)-1;
-% adjust the maps accordingly
+% Adjust the maps accordingly
 for k = 1:numel(f0);
     m = maps(fun,{'linear'},ends(k:k+1));
     f0(k).map = m;
 end
 
+% Construct global chebfun on [-1 1]
 if isempty(f0), f = chebfun; return, end
-f = chebfun(0,ends);
-f.funs = f0;
+f = chebfun(0,ends([1 end]));
+imps = zeros(size(ends));
+for k = 1:numel(f0)
+    imps(1,k) = f0(k).vals(1);
+end
+imps(1,end) = f0(end).vals(end);
+f = set(f,'ends',ends,'funs',f0,'imps',imps);
 
     function cf = c(v)
         cf = [];
