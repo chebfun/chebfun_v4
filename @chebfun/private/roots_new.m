@@ -1,7 +1,26 @@
 function out = roots(g,varargin)
 % ROOTS	Roots in the interval [-1,1]
-% ROOTS(G) returns the roots of the FUN G in the interval [-1,1].
+%
+% ROOTS(G) returns the real roots of the FUN G in the interval [-1,1].
+%
 % ROOTS(G,'all') returns all the roots.
+%
+% ROOTS works by recursively bisecting the interval until the resulting
+% fun is of degree less than 50, at which point a companion matrix is
+% constructed to compute the roots.
+%
+% As opposed to the previous version, ROOTS performs all operations in
+% coefficient space as opposed to switching between the two
+% representations, value and coefficient.
+%
+% In this representation, two matrices Tleft and Tright are constructed
+% such that Tleft*c and Tright*c are the coefficients of the polynomials in
+% the left and right intervals respectively. This is faster than evaluating
+% the polynomial using barycentric interpolation in the respective intervals,
+% despite both computations requiring O(N^2) operations.
+%
+% For polynomials of degree larger than 512, the interval is bisected
+% by evaluating on the left and right intervals using the Clenshaw algorithm.
 %
 % See http://www.maths.ox.ac.uk/chebfun for chebfun information.
 
@@ -28,12 +47,8 @@ if nargin > 3
     rootspref.prune = varargin{3};
 end
 
-% Get stuff we'll need for the recursive call
+% Get coefficients for the recursive call
 c = flipud(chebpoly(g)) / g.scl.v;
-% xpts = g.map.for(chebpts(g.n));
-% df = max(diff(xpts),eps*g.scl.h);
-% mdiff =  (g.scl.h/g.scl.v)*norm(diff(g.vals)./df,inf);
-% tail_max = max(chebfunpref('eps'),eps*min(1e12,mdiff));
 
 % Call the recursive rootsunit function
 r = rootsunit_coeffs( c , eps*max(g.scl.h,1.0) );
@@ -73,7 +88,7 @@ end
         % subplot(2,1,1); semilogy(0:n-1,abs(c),'-b',[0;n],[tail_max,tail_max],'-r');
         % subplot(2,1,2); plot(linspace(-1,1,200),miniclenshaw(c,linspace(-1,1,200))); pause;
         % n = find( abs(c) > eps*norm(c,1) , 1 , 'last' );
-        tail_max = eps*norm(c,1);
+        tail_max = 10*eps*norm(c,1);
         while (n > 1) && (abs(c(n)) < tail_max), n = n - 1; end;
         
         % Wrap, don't just truncate.
@@ -191,17 +206,18 @@ end
 
         % Otherwise, split using more traditional methods
         else
+        
+            % evaluate the polynomial on both intervals
+            v = miniclenshaw( c , [ chebpts(n,[-1,emm]) ; chebpts(n,[emm,1]) ] );
 
             % get the coefficients on the left
-            x = chebpts(n,[-1,emm]);
-            cleft = miniclenshaw(c,x);
+            cleft = v(1:n);
             cleft = [ cleft(n:-1:2) ; cleft(1:n-1) ];
             cleft = real( fft( cleft ) / (n-1) );
             cleft = [ 0.5*cleft(1) ; cleft(2:n-1) ; 0.5*cleft(n) ];
 
             % get the coefficients on the right
-            x = chebpts(n,[emm,1]);
-            cright = miniclenshaw(c,x);
+            cright = v(n+1:end);
             cright = [ cright(n:-1:2) ; cright(1:n-1) ];
             cright = real( fft( cright ) / (n-1) );
             cright = [ 0.5*cright(1) ; cright(2:n-1) ; 0.5*cright(n) ];
