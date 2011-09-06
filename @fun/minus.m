@@ -87,7 +87,8 @@ if ~samemap(g1,g2) && ~any([exps1 exps2])
         ends = g2.map;
     end
     
-    [g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),ends,pref,scl);
+    g1 = fun(@(x) feval(g1,x)-feval(g2,x),ends,pref,scl);
+    ish = 1;
     if ~ish
         warning('FUN:minus:failtoconverge','Operation may have failed to converge');
     end
@@ -209,8 +210,8 @@ pref.exps = [newexps(1) newexps(2)];
 pref.sampletest = 0;
 
 % Call the fun constructor
-[g1,ish] = fun(@(x) feval(g1,x)-feval(g2,x),map,pref,scl);
-
+[g1] = fun(@(x) feval(g1,x)-feval(g2,x),map,pref,scl);
+ish = 1;
 if ~ish
     warning('FUN:minus:failtoconverge','Operation may have failed to converge');
 end
