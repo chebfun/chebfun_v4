@@ -6,7 +6,7 @@ function pass = arithtest
 
 
 % start with a function on [0,10]
-f = @(x) sin(x) .* sin(x.^2);
+f = @(x) sin(x) + sin(x.^2);
 cf = chebfun( f , [0,10] );
 
 % create random nodes on which to evaluate f
@@ -41,8 +41,8 @@ g = 2 * cf;
 pass(5) = norm( g(xi) - 2*fxi , inf ) < tol;
 
 % multiplication of a chebfun with another chebfun
-g = chebfun( @(x) sin(x) , [0,10] ) .* chebfun( @(x) sin(x.^2) , [0,10] );
-pass(6) = norm( g(xi) - fxi , inf ) < tol;
+g = cf .* cf;
+pass(6) = norm( g(xi) - fxi.^2 , inf ) < tol;
 
 
 % compute square of a function (power)
