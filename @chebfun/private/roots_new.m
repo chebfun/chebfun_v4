@@ -51,7 +51,7 @@ end
 c = flipud(chebpoly(g)) / g.scl.v;
 
 % Call the recursive rootsunit function
-r = rootsunit_coeffs( c , eps*max(g.scl.h,1.0) );
+r = rootsunit_coeffs( c , 100*eps*max(g.scl.h,1.0) );
 
 % Prune the roots, if required
 if rootspref.prune && ~rootspref.recurse
@@ -88,7 +88,7 @@ end
         % subplot(2,1,1); semilogy(0:n-1,abs(c),'-b',[0;n],[tail_max,tail_max],'-r');
         % subplot(2,1,2); plot(linspace(-1,1,200),miniclenshaw(c,linspace(-1,1,200))); pause;
         % n = find( abs(c) > eps*norm(c,1) , 1 , 'last' );
-        tail_max = 10*eps*norm(c,1);
+        tail_max = 1e-15*norm(c,1);
         while (n > 1) && (abs(c(n)) < tail_max), n = n - 1; end;
         
         % Wrap, don't just truncate.
@@ -146,7 +146,7 @@ end
                 % step = miniclenshaw( c_old , r ) ./ miniclenshaw( newcoeffs_der(c_old) , r );
                 % step( ~isfinite(step) ) = 0;
                 % r = r - step;
-                % [ sort(r) , miniclenshaw( c_old , sort(r) ) ]
+                % htol, [ sort(r) , miniclenshaw( c_old , sort(r) ) ]
                 
                 % keep roots inside [-1 1]
                 r = sort( r(abs(r) <= 1+2*htol) );
