@@ -131,7 +131,7 @@ end
                 % step = miniclenshaw( c_old , r ) ./ miniclenshaw( newcoeffs_der(c_old) , r );
                 % step( ~isfinite(step) ) = 0;
                 % r = r - step;
-                [ sort(r) , miniclenshaw( c_old , sort(r) ) ]
+                % [ sort(r) , miniclenshaw( c_old , sort(r) ) ]
                 
                 % keep roots inside [-1 1]
                 r = sort( r(abs(r) <= 1+2*htol) );
