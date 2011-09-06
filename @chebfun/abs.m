@@ -33,6 +33,20 @@ elseif isreal(F)             % Real case
     Fout = add_breaks_at_roots(F,[],r);
     % Loop through funs
     for k = 1:Fout.nfuns
+        vals = Fout.funs(k).vals;
+        % Fun will be entirely negative or entirely positive (as no breaks)
+        % We first check a point in the domain to determine if negative
+        nv = numel(vals);
+        if nv > 2
+            neg = vals(round(nv/2)) <= 0;
+        else
+            neg = max(vals) <= 0;
+        end
+        % If negative, then coefficients are negated
+        if neg
+            Fout.funs(k).coeffs = -Fout.funs(k).coeffs;
+        end
+        % We simply take the abs of the values
         Fout.funs(k).vals = abs(Fout.funs(k).vals);
     end
     

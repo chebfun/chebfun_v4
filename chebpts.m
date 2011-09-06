@@ -35,8 +35,7 @@ function [x w v] = chebpts(n,d,kind)
 %   quadrature rules", BIT Numerical Mathematics 43 (1), pp 1--18 (2004).
 
 % Intialise
-x = []; w = []; v = [];
-scale = false;
+x = []; w = []; v = []; scale = false;
 
 % Shortcut for simple input (2nd-kind points on [-1 1]).
 if nargin == 1 && isnumeric(n) && numel(n) == 1 && n > 0

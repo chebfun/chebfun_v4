@@ -43,14 +43,17 @@ if strcmp(g.map.name,'linear')
     if ~any(g.exps) % simple case, no map or exponents
         for i = 1:k                             % loop for higher derivatives
             if n == 1,
-                g = set(g,'vals',0); g.scl.v = 0;
+                g = set(g,'vals',0); g.scl.v = 0; g.coeffs = 0;
                 return
             end % derivative of constant is zero
             c = newcoeffs_der(c);
             n = n-1;
         end
         c = c/g.map.der(1).^k;
-        g = fun(chebpolyval(c), g.map.par(1:2));
+        g.vals = chebpolyval(c);
+        g.coeffs = c;
+        g.n = n;
+%         g = fun(chebpolyval(c), g.map.par(1:2));
                 
     else % function which blows up, need product rule
         
@@ -73,19 +76,18 @@ elseif norm(g.map.par(1:2),inf) == inf
     if ~any(g.exps) % old case with no exponents
         for i = 1:k                             % loop for higher derivatives
             if n == 1,
-                g = set(g,'vals',0); g.scl.v = 0;
+                g = set(g,'vals',0); g.scl.v = 0; g.coeffs = 0;
                 return
             end                                 % derivative of constant is zero
             % increase length because because degree increases with
             % derivatives (by 1);
             cout = newcoeffs_der([zeros(nz,1); c]);
             vals = chebpolyval(cout)./g.map.der(chebpts(n+nz-1));
+            n = length(vals);
+            g.n = n;
             g.vals = vals;
-            g.n = length(vals);
-            if i ~= k || nargout > 1
-                c = chebpoly(g);
-                n = g.n;
-            end
+            c = chebpoly(g,2,'force');
+            g.coeffs = c;
         end
         g.scl.v = max(g.scl.v,norm(vals,inf));
         if infboth

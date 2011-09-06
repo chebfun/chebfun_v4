@@ -85,7 +85,7 @@ if nargin == 2
         e = .5*(r*c+1./(r*c)); 
         plot(map.for(scale(e)),'--k'); 
     end
-    x = chebpts(16,[-1,1]);
+    x = chebpts(16);
     plot(map.for(scale(x)),0*x,'ok','markerfacecolor','k')
     if ~ish, hold off, end
     alpha

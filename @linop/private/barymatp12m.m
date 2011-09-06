@@ -47,7 +47,7 @@ if ~isempty(map)
         end
         if any(strcmp(mapk.name,{'unbounded','linear'})), continue, end
         iix = csNx(k)+(1:Nx(k));
-        x(iix) = mapk.for(chebpts(Nx,[-1 1],2));
+        x(iix) = mapk.for(chebpts(Nx));
         iiy = csNy(k)+(1:Ny(k));
         y(iiy) = mapk.for(chebpts(Ny,[-1 1],1));
     end

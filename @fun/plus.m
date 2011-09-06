@@ -6,4 +6,4 @@ function g1 = plus(g1,g2)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-g1 = minus(g1,-g2);
+g1 = minus(g1,uminus(g2));

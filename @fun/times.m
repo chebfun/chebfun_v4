@@ -59,11 +59,11 @@ scl.v = norm(vals,inf);
 g1.scl = scl;
 
 % Simplify:
-g1.vals = vals; g1.n = length(vals); g1.exps = exps;
+g1.vals = vals; g1.n = length(vals); g1.exps = exps; g1.coeffs = [];
 g1 = simplify(g1); 
 
 % Funs g1 and g2 are such that their product should be positive. Enforce
 % this on the values. (Simplify could have ruined this property).
-if pos,
+if pos
     g1.vals = abs(g1.vals);
 end

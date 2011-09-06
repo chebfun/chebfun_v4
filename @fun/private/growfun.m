@@ -17,6 +17,8 @@ function [g,ish] = growfun(op,g,pref,g1,g2)
 % Check preferences
 split = pref.splitting;
 resample = pref.resampling;
+tol = pref.eps;
+extrap = isfield(pref,'extrapolate') && pref.extrapolate;
 
 % Store scale in case not happy. (This is useful for functions which blowup 
 % when we don't catch the exponents correctly).
@@ -87,15 +89,16 @@ if kk(end)~=maxn, kk(end+1) = maxn; end
 if nargin > 3
     % This uses chebpts of 2nd kind!
     ish = false;
+    pref.sampletest = false;
     if ~resample % Single Sampling
         v = []; ind = 1;
         v1 = get(prolong(g1,kk(ind)),'vals');
         if nargin == 5
             v2 = get(prolong(g2,kk(ind)),'vals');
         end
-        if isfield(pref,'extrapolate') && pref.extrapolate && ~pref.splitting
+        if extrap && ~pref.splitting
         % Avoid evaluating at ends if is extrapolation is forced.
-        % Although we can't do this if splitting is on.
+        %  (Although we can't do this if splitting is on.)
             v1([1 end]) = v1([2 end-1]); 
             if nargin == 5
                 v2([1 end]) = v2([2 end-1]); 
@@ -117,11 +120,8 @@ if nargin > 3
             end
             g = set(g,'vals', v);               % Set the values (and vscl)
             g = extrapolate(g,pref);            % Extrapolate if need be
-            g = simplify(g, pref.eps);
-            if g.n < kk(ind)
-                ish = true;     % We're happy
-                break           % so quit.
-            end
+            [ish g] = ishappy(op,g,pref);       % Test happiness
+            if ish, break, end                  % We're happy. Quit.
             if ind == length(kk), break, end    % We've failed. Quit.
             
             % New vals
@@ -141,14 +141,14 @@ if nargin > 3
             v1 = get(prolong(g1,k),'vals');
             if nargin == 5
                 v2 = get(prolong(g2,k),'vals');
-                if isfield(pref,'extrapolate') && pref.extrapolate 
+                if extrap
                     v = op(v1(2:k-1),v2(2:k-1));
                     v = [NaN ; v(:) ; NaN];
                 else
                     v = op(v1,v2);
                 end
             else
-                if isfield(pref,'extrapolate') && pref.extrapolate 
+                if extrap
                     v = op(v1(2:k-1));
                     v = [NaN ; v(:) ; NaN];
                 else
@@ -157,11 +157,8 @@ if nargin > 3
             end
             g = set(g,'vals', v);               % Set the values (and vscl)
             g = extrapolate(g,pref);            % Extrapolate if need be       
-            g = simplify(g, pref.eps);          % Simplify
-            if g.n < k
-                ish = true;     % We're happy
-                break           % so quit.
-            end
+            [ish g] = ishappy(op,g,pref);       % Test happiness
+            if ish, break, end                  % We're happy. Quit.
         end
     end
             
@@ -176,18 +173,20 @@ if nargin > 3
 end
 % ---------------------------------------------------
 
+map = g.map;
 % Catch horizontal scale for unbounded intervals.
-a = g.map.par(1); b = g.map.par(2);  % The endpoints.
+ab = map.par(1:2);% The endpoints.
 adapt = false;
-if any(isinf([a b]))
+if any(isinf([ab]))
     adapt = mappref('adaptinf');
     if ~adapt
-        if all(isinf([a,b]))
-            g.scl.h = max(abs(diff(g.map.par(3:4))),abs(sum(g.map.par(3:4))));
+        a = ab(1); b = ab(2);
+        if all(isinf(ab))
+            g.scl.h = max(abs(diff(map.par(3:4))),abs(sum(map.par(3:4))));
         elseif a == -inf
-            g.scl.h = max(abs(b), abs(b - g.map.par(3)));
+            g.scl.h = max(abs(b), abs(b - map.par(3)));
         else
-            g.scl.h = max(abs(a), abs(a + g.map.par(3)));
+            g.scl.h = max(abs(a), abs(a + map.par(3)));
         end
     end
 end
@@ -195,8 +194,8 @@ end
 if ~resample && ~adapt     % SINGLE SAMPLING
     % Initialise
     ind = 1; v = [];
-    x = chebpts(kk(ind),2);
-    xvals = g.map.for(x);   
+    x = chebpts(kk(ind));
+    xvals = map.for(x);   
     if isfield(pref,'extrapolate') && pref.extrapolate && ~pref.splitting
     % Avoid evaluating at ends if is extrapolation is forced.
     % Although we can't do this if splitting is on.
@@ -214,18 +213,19 @@ if ~resample && ~adapt     % SINGLE SAMPLING
         end
         % Update g
         g = set(g,'vals', v);               % Set the values (and vscl)
+        g.coeffs = [];
         g = extrapolate(g,pref,x);          % Extrapolate if need be
         [ish, g] = ishappy(op,g,pref);      % Check for happiness
         if ish || ind == length(kk), break, end % Either happy, or failed.
         % New points and vals
         ind = ind + 1;
         x = chebpts(kk(ind),pref.chebkind);
-        xvals = g.map.for(x(2:2:end-1));
+        xvals = map.for(x(2:2:end-1));
         vnew = op(xvals);            
     end   
 
     % Original maxn was wasn't a power of 2, so trim g back.
-    if trimflag && g.n > oldmaxn
+    if trimflag && g.n > oldmaxn     % (This rarely happens)
         g = prolong(g,oldmaxn);
         if ish, [ish, g] = ishappy(op,g,pref); end  % Check happiness again
     end
@@ -241,8 +241,8 @@ else                      % DOUBLE SAMPLING
             g.scl.h = hscl;
         else     % Standard case
             x = chebpts(k,pref.chebkind);
-            xvals = g.map.for(x);
-            if isfield(pref,'extrapolate') && pref.extrapolate
+            xvals = map.for(x);
+            if extrap
                 vals = op(xvals(2:k-1));
                 g = set(g,'vals',[NaN ; vals(:) ; NaN]);
                 g = extrapolate(g,pref,x);
@@ -252,7 +252,7 @@ else                      % DOUBLE SAMPLING
             end
         end
         [ish, g] = ishappy(op,g,pref);
-        if ish, 
+        if ish
             if isfield(pref,'simplify') && ~pref.simplify
                 g = prolong(g,k);
             end
@@ -302,22 +302,24 @@ if isfield(pref,'scale')
     g.scl.v = max(g.scl.v,pref.scale);
 end
 
-n = g.n;                                    % Original length
-g = simplify(g,pref.eps,pref.chebkind);     % Attempt to simplify
-ish = g.n < n;                              % We're happy if this worked.
+g.coeffs = [];
+n = g.n;                                        % Original length
+[g ish] = simplify(g,pref.eps,pref.chebkind);   % Attempt to simplify
 
 % Antialiasing procedure ('sampletest')
 if ish && pref.sampletest 
     x = chebpts(g.n); % Points of 2nd kind (simplify returns vals at 2nd kind points)
+    vals = g.vals;
     if g.n == 1
         xeval = 0.61; % Pseduo-random test value
     else
         % Test a point where the (finite difference) gradient of g is largest
-        [ignored indx] = max(abs(diff(g.vals))./diff(x));
+        [ignored indx] = max(abs(diff(vals))./diff(x));
         xeval = (x(indx+1)+1.41*x(indx))/(2.41);
     end
-    v = op(g.map.for(xeval)); 
-    if norm(v-bary(xeval,g.vals,x),inf) > max(pref.eps,1e3*eps)*g.n*g.scl.v
+    map = g.map.for;
+    v = op(map(xeval)); 
+    if norm(v-bary(xeval,vals,x),inf) > max(pref.eps,1e3*eps)*g.n*g.scl.v
     % If the fun evaluation differs from the op evaluation, sample test failed.
         ish =  false;
     end

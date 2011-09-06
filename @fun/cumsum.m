@@ -49,6 +49,7 @@ if strcmp(g.map.name,'linear')
     
     if ~any(g.exps)
         g.vals = g.vals*g.map.der(0); % From change of variables to [-1,1]
+        g.coeffs = g.coeffs*g.map.der(0);
         g = cumsum_unit_interval(g);
         gsing = fun(0,g.map.par(1:2));
     elseif any(g.exps<=-1)
@@ -111,20 +112,23 @@ elseif any(isinf(ends))
     % constant case
     if g.n == 1
         if abs(g.vals) <= chebfunpref('eps')*10*g.scl.v
-            g.vals = 0; g.scl.v = 0;
+            g.vals = 0; g.scl.v = 0; g.coeffs = 0;
             return
         end
         s = g.map.par(3);
         if all(isinf(ends))
             rescl = (.5/(5*s))*.5;  % Why is this the right constant!?
-            g.vals = g.vals*rescl*[-1 ; 1];
             g.exps = [-1 -1];
+            g.vals = g.vals*rescl*[-1 ; 1];
+            g.coeffs = chebpoly(g,2,'force');
         elseif isinf(ends(1)),
             g.exps = [-1 0];
             g.vals = g.vals*[-1 ; 0];
+            g.coeffs = chebpoly(g,2,'force');
         elseif isinf(ends(2))
             g.exps = [0 -1];
             g.vals = g.vals*[0 ; 1];
+            g.coeffs = chebpoly(g,2,'force');
         end
         return
     end
@@ -264,6 +268,7 @@ cout(n,1) = c(end) - c(end-2)/2;              % compute C_1
 v = ones(1,n); v(end-1:-2:1) = -1;
 cout(n+1,1) = v*cout;                         % compute C_0
 g.vals = chebpolyval(cout);
+g.coeffs = cout;
 g.scl.v = max(g.scl.v, norm(g.vals,inf));
 g.n = n+1;
 
@@ -292,6 +297,7 @@ c = jac2cheb2(a+1,b+1,jhat);
 
 % Construct fun
 f.vals = chebpolyval(c);
+f.coeffs = c;
 f.n = length(f.vals);
 f.exps = f.exps + 1;
 f = f*diff(ends)/2;

@@ -54,65 +54,57 @@ end
 
 tol = 100*eps;
     
-if ~recurse || (g.n<101)                                    % for small length funs
-    coeffs = chebpoly(g);                              % compute Cheb coeffs
+if ~recurse || (g.n<101)                          % For small length funs
+    coeffs = chebpoly(g);                         % Compute Cheb coeffs
     c = coeffs;
-    if abs(c(1)) < 1e-14*norm(c,inf) || c(1) == 0
+    
+    if abs(c(1)) < 1e-14*norm(c,inf) || c(1) == 0 % Remove small coeffs
         ind = find(abs(c)>1e-14*norm(c,inf),1,'first');
         if isempty(ind), out = zeros(length(c),1);
             return
         end
-        c=c(ind:end);
+        c = c(ind:end);
         if length(c) < 5
             g.vals = chebpolyval(c);
+            g.coeffs = c;
             g.n = length(c);
         end
     end
-    if (g.n<=4)
-        r=roots(poly(g));
-    else
-        c=.5*c(end:-1:2)/(-c(1));               % assemble colleague matrix A
-        c(end-1)=c(end-1)+.5;
-        oh=.5*ones(length(c)-1,1);
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-       % Replace this with A(end:-1:1,end:-1:1)' (LNT's trick)
-       % to fix a bug in roots, e.g. p = fun( '(x-.1).*(x+.9).*x.*(x-.9) + 1e-15*x.^5' );
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        % Original colleague matrix:
-%        A=diag(oh,1)+diag(oh,-1);
-%        A(1,2)=1;
-%        A(end,:)=c;
-
+    
+    if (g.n<=4)   % Use built-in monoial code for small funs
+        r = roots(poly(g));
+    else          % Assemble colleague matrix A
+        c = .5*c(end:-1:2)/(-c(1));              
+        c(end-1) = c(end-1)+.5;
+        oh = .5*ones(length(c)-1,1);
         % Modified colleague matrix:
         A = diag(oh,1)+diag(oh,-1);
         A(end-1,end) = 1;
         A(:,1) = flipud(c);
 
-        r = eig(A);                               % compute roots as eig(A)
-
+        % Compute roots as eig(A)
+        r = eig(A);                               
     end
+       
     if ~all
-        mask=abs(imag(r))<tol*g.scl.h;           % filter imaginary roots
+        mask = abs(imag(r))<tol*g.scl.h;           % Filter imaginary roots
         r = real( r(mask) );
-        out = sort(r(abs(r) <= 1+2*tol*g.scl.h));  % keep roots inside [-1 1]   
-        % polish
+        out = sort(r(abs(r) <= 1+2*tol*g.scl.h));  % KKeep roots inside [-1 1]   
+        
+        % Polish
         if polish
             gout = feval(g,out);
-            step = gout./feval(diff(g,1,coeffs),out);
+            step = gout./feval(diff(g,1),out);
             step(isnan(step) | isinf(step)) = 0;
 %             outnew = out - step;
 %             mask = abs(gout) > abs(feval(g,outnew));
 %             out(mask) = outnew(mask);
             out = real(out-step);
-            
-            if any(isnan(out)), error, end
         end
         
         if ~isempty(out)
-            out(1) = max(out(1),-1);                % correct root -1
-            out(end) = min(out(end),1);             % correct root  1
+            out(1) = max(out(1),-1);                % Correct root -1
+            out(end) = min(out(end),1);             % Correct root  1
         end
         
     elseif prune
@@ -123,25 +115,11 @@ if ~recurse || (g.n<101)                                    % for small length f
     else
         out = r;
     end
-else
+else % Recurse
     
-    c = -0.004849834917525; % arbitrary splitting point to avoid a root at c
+    c = -0.004849834917525; % Arbitrary splitting point to avoid a root at c
     g1 = restrict(g,[-1 c]);
     g2 = restrict(g,[c,1]);
-    out = [-1+(rootsunit(g1,rootspref)+1)*.5*(1+c);...        % find roots recursively 
-        c+(rootsunit(g2,rootspref)+1)*.5*(1-c)];              % and rescale them
+    out = [-1+(rootsunit(g1,rootspref)+1)*.5*(1+c);... % Find roots recursively 
+        c+(rootsunit(g2,rootspref)+1)*.5*(1-c)];       %   and rescale them
 end
-
-
-
-function cout = newcoeffs_der(c)
-% C is the coefficients of a chebyshev polynomials (on [-1,1])
-% COUT are the coefficiets of its derivative
-
-n = length(c);
-cout = zeros(n+1,1);                % initialize vector {c_r}
-v = [0; 0; 2*(n-1:-1:1)'.*c(1:end-1)]; % temporal vector
-cout(1:2:end) = cumsum(v(1:2:end)); % compute c_{n-2}, c_{n-4},...
-cout(2:2:end) = cumsum(v(2:2:end)); % compute c_{n-3}, c_{n-5},...
-cout(end) = .5*cout(end);           % rectify the value for c_0
-cout = cout(3:end);

@@ -12,10 +12,12 @@ end
 switch propName
     case 'vals'
         if kind == 1
-            val = bary(chebpts(g.n,1), g.vals, g.map.for(chebpts(g.n,[-1 1])));
+            val = bary(chebpts(g.n,1), g.vals, g.map.for(chebpts(g.n)));
         else
             val = g.vals;
         end
+    case 'coeffs'
+            val = g.coeffs;       
     case {'points','pts'}
         % Returns mapped Chebyshev points (consistent with vals)
         val = g.map.for(chebpts(g.n,[-1 1],kind));
@@ -27,6 +29,8 @@ switch propName
         val = g.scl.v;
     case 'scl.h'
         val = g.scl.h;
+    case 'ish'
+        val = g.ish;        
     case 'map'
         val = g.map;
     case 'exps'

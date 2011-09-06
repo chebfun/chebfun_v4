@@ -171,8 +171,10 @@ elseif any(isinf(ends))
         
     % Chain rule and extrapolate
     g.vals = g.vals.*g.map.der(y);
+    g.coeffs = [];
     g = extrapolate(g,pref,y);    
     out = sum_unit_interval(g);
+    g = chebpoly(g,2,'force');
     
 % General map case
 else

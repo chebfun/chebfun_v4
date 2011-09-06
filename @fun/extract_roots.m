@@ -74,12 +74,16 @@ if strcmp(map.name,'linear') || strcmp(map.name,'unbounded')
         D(1,1) = 1;
         % The new coefficients
         c = rescl*sgn*flipud(D\c(2:end));
+        % The new values
+        vals = chebpolyval(c);
         % Construct new f
-        f = fun(chebpolyval(c),f.map);
-        f0 = abs(f.vals([1 end]));
+        f.vals = vals;
+        f.coeffs = c;
+        f.n = numel(c);
+        % Update f0
+        f0 = abs(vals([1 end]));
         f0(~sides) = inf;
         num = num+1;
-        tol = 10*tol;
     end
     
     f.exps = exps;
@@ -126,24 +130,24 @@ function y = newfun(x,f,d,sgn)
 %         y = global_extrapolate(y,sgn);
     end
     
-function y = global_extrapolate(fx,sgn)
-    n = length(fx);
-    if n <= 2, y = fx; return, end
-    e = .5*ones(n,1);
-    D = spdiags([e sgn*2*e e], 0:2, n, n); 
-    D(1,1) = 1;
-    b = D\[zeros(n-3,1) ; -.5 ; 0 ; .5 ];
-    
-    if sgn > 0
-        fx(1) = 0.0;           % step one
-    else
-        fx(end) = 0.0;           % step one
-    end
-    c = chebpoly(chebfun(fx));           % step two
-    alpha = c(1) / b(1);                 % step four
-
-    c_nm1 = c(2:end).' - alpha*b(2:end); % step five
-    y = chebpolyval([0 ; c_nm1]);
+% function y = global_extrapolate(fx,sgn)
+%     n = length(fx);
+%     if n <= 2, y = fx; return, end
+%     e = .5*ones(n,1);
+%     D = spdiags([e sgn*2*e e], 0:2, n, n); 
+%     D(1,1) = 1;
+%     b = D\[zeros(n-3,1) ; -.5 ; 0 ; .5 ];
+%     
+%     if sgn > 0
+%         fx(1) = 0.0;           % step one
+%     else
+%         fx(end) = 0.0;           % step one
+%     end
+%     c = chebpoly(chebfun(fx));           % step two
+%     alpha = c(1) / b(1);                 % step four
+% 
+%     c_nm1 = c(2:end).' - alpha*b(2:end); % step five
+%     y = chebpolyval([0 ; c_nm1]);
 
     
 

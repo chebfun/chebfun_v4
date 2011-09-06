@@ -23,12 +23,11 @@ n = size(A,2); R = zeros(n);
 
 % Set up target quasimatrix E with orthonormal columns: 
 [a,b] = domain(A);
-for k = 0:n-1
-   E(:,k+1) = legpoly(k,[a,b],'norm');
-end
+E = legpoly(0:n-1,[a,b],'norm');
+
+tol = chebfunpref('eps');
 
 % Householder triangularization:
-
 V = chebfun;                           % cols of V will store Househ. vectors
 for k = 1:n
    I = 1:k-1; J = k+1:n;               % convenient abbreviations
@@ -43,7 +42,11 @@ for k = 1:n
       v = v - E(:,I)*(E(:,I)'*v);      % improve orthogonality
    end
    nv = norm(v);
-   if nv==0, v=e; else v=v/nv; end
+   if nv < tol*max(x.scl,e.scl);
+       v = e; 
+   else
+       v = v/nv; 
+   end
    V(:,k) = v;                         % store this Householder vector
    if k<n
       A(:,J) = A(:,J)-2*v*(v'*A(:,J)); % apply the reflection to A

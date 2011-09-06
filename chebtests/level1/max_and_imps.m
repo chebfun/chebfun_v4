@@ -9,4 +9,5 @@ hat = 1-abs(x-5)/5;
 h = max(f,hat);
 m = h./sqrt(1+x)+sin(2*x)/10;
 mp = diff(m);
+
 pass = size(mp.imps,1) == 1;

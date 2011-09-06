@@ -81,7 +81,7 @@ function F = diffcol(f,n)
 
 if isempty(f.funs(1).vals), F=chebfun; return, end
 
-tol = max(chebfunpref('eps')*10, 1e-14) ;
+tol = max(chebfunpref('eps')*10, 1e-12) ;
 
 F = f;
 funs = f.funs;
@@ -89,16 +89,11 @@ ends = get(f,'ends');
 F.jacobian = anon('der1=diff(domain(f),n); [der2 nonConst] = diff(f,u,''linop''); der = der1*der2;',{'f' 'n'},{f n},1);
 F.ID = newIDnum;
 
-c = cell(1,f.nfuns);
-for i = 1:f.nfuns
-    c{i} = chebpoly(funs(i));
-end
-
-for j = 1:n % loop n times for nth derivative
+for j = 1:n % Loop n times for nth derivative
     
-    % differentiate every piece and rescale
+    % Differentiate every piece and rescale
     for i = 1:f.nfuns
-        [funs(i) c{i}] = diff(funs(i),1,c{i});
+        funs(i) = diff(funs(i));
         F.scl = max(F.scl, funs(i).scl.v);
     end
     F.funs = funs;
@@ -116,7 +111,7 @@ for j = 1:n % loop n times for nth derivative
         end
     end
     
-    % update imps
+    % Update imps
     if size(F.imps,1)>1
        F.imps = [F.imps(1,:); newimps; F.imps(2:end,:)];
     elseif any(newimps)
@@ -127,7 +122,7 @@ for j = 1:n % loop n times for nth derivative
     
 end
 
-% update scale in funs
+% Update scale in funs
 for k = 1:F.nfuns
     F.funs(k).scl.v = F.scl;
 end

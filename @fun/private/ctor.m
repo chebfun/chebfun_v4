@@ -79,10 +79,10 @@ function g = ctor(g,op,ends,varargin)
             g.n = length(op); g.vals = vals;
             if pref.chebkind == 1
                 % Place values back in chebpoints of second kind.
-                coeffs = chebpoly(g,1); 
+                coeffs = chebpoly(g,1,'force'); 
                 g.vals = chebpolyval(coeffs);
             else
-                coeffs = chebpoly(g,2);   
+                coeffs = chebpoly(g,2,'force');   
             end
             % Assign data to the fun.
             g.coeffs = coeffs; g.scl.v = max(g.scl.v, norm(op,inf));

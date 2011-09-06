@@ -74,13 +74,14 @@ for k = 1:f1.nfuns
     % Update vscale (horizontal scale remains the same)
     f1.funs(k).scl.v = vscl;
     if ~skip
-        % Attempt to generate funs using the fun constructor.
+        % Attaempt to generate funs using the fun constructor.
         if isempty(f2)
-            [newfun ish] = compfun(f1.funs(k),op,pref);
+            newfun = compfun(f1.funs(k),op,pref);
         else
-            [newfun ish] = compfun(f1.funs(k),op,f2.funs(k),pref);
+            newfun = compfun(f1.funs(k),op,f2.funs(k),pref);
         end
     end
+    ish = get(newfun,'ish');
     if ish || (~ish && ~pref.splitting && ~pref.blowup) 
     % If we're happy, or not allowed to split, this will do.
        if ~ish

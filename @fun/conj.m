@@ -6,3 +6,4 @@ function g = conj(g)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 g.vals = conj(g.vals);
+g.coeffs = conj(g.coeffs);

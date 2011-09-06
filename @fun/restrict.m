@@ -65,6 +65,7 @@ else % Linear case with no removed exps is simple
     map = linear(subint);
     xcheb = chebpts(g.n);
     g.vals = bary(map.for(xcheb),g.vals,g.map.for(xcheb))./(diff(g.map.par(1:2))./diff(subint))^sum(exps);
+    g.coeffs = []; g.coeffs = chebpoly(g);
     g.map = map;
     g = simplify(g);
 

@@ -51,7 +51,7 @@ switch propName
         val = f.nfuns;        
     case 'scl'
         val = f.scl;
-    case {'vals','exps','points','pts'}
+    case {'vals','exps','points','pts','coeffs'}
         funs = f(1).funs;
         for j = 1:f(1).nfuns
             val = [val;get(funs(j),propName)];

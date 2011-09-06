@@ -11,6 +11,7 @@ if isinf(ends(1)) ||isinf(ends(2))
     error('FUN:flipud:unbounded','FLIPUD cannot be used on unbounded domanins');
 end
 f.vals = flipud(f.vals);
+f.coeffs = chebpoly(f,2,'force');
 f.exps = fliplr(f.exps);
 
 

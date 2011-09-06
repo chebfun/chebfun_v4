@@ -18,6 +18,9 @@ while length(propertyArgIn) >= 2,
             g.vals = val;
             g.n = length(val);
             g.scl.v = max( g.scl.v, norm(val, inf) );
+            g.coeffs = [];
+        case 'coeffs'
+            g.coeffs = val;
         case 'n'
             g.n = val;
         case 'scl'

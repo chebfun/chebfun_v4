@@ -76,7 +76,7 @@ elseif nargin == 2
         end
         
         % Publish (to dirname/html/dirname.html)
-        mypublish([filename,'.m'],opts);           close all
+        mypublish([filename,'.m'],opts); 
         
         % Make the filename clickable
         cd html
@@ -104,7 +104,7 @@ elseif nargin == 2
     %%% PDF %%%
     if pdf
         % Publish (to dirname/pdf/dirname.pdf)
-        mypublish([filename,'.m'],optsPDF);        close all
+        mypublish([filename,'.m'],optsPDF);        
         if strcmp(optsPDF.format,'latex') && isunix
             try
                 cd pdf
@@ -440,7 +440,6 @@ for j = 1:numel(dirs)
     
     % Loop over the files
     for k = 1:numel(mfile)
-        close all
         filename = mfile{k}(1:end-2);
                
         % Grab the file description (again).
@@ -466,7 +465,7 @@ for j = 1:numel(dirs)
         %%% HTML %%%
         if html
             % Publish (to dirname/html/dirname.html)
-            mypublish([filename,'.m'],opts);           close all
+            mypublish([filename,'.m'],opts);           
             
             % Make the filename clickable
             cd html
@@ -505,7 +504,7 @@ for j = 1:numel(dirs)
         %%% PDF %%%
         if pdf
             % Publish (to dirname/pdf/dirname.pdf)
-            mypublish([filename,'.m'],optsPDF);        close all
+            mypublish([filename,'.m'],optsPDF);        
             if strcmp(optsPDF.format,'latex') && isunix
                 try
                     cd pdf
@@ -706,7 +705,9 @@ fclose(fid);
 
 
 function mypublish(varargin)
+close all
 publish(varargin{:});
+close all
 
 function txt = capitalize(txt)
 txt = lower(txt);

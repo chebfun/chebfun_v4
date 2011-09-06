@@ -17,6 +17,7 @@ ish = true; % We're usually happy!
 if isa(g1,'double') 
     if ~any(g2.exps)
         g2.vals = g1-g2.vals; g2.scl.v = max(g2.scl.v,norm(g2.vals,inf)); 
+        g2.coeffs = -g2.coeffs; g2.coeffs(end) = g2.coeffs(end) + g1;
         g1 = g2;
         return
     else
@@ -26,7 +27,8 @@ if isa(g1,'double')
 elseif isa(g2,'double') 
     if ~any(g1.exps)
         g1.vals = g1.vals-g2; g1.scl.v = max(g1.scl.v,norm(g1.vals,inf));
-        return;
+        g1.coeffs(end) = g1.coeffs(end)-g2;
+        return
     else
         if g2 == 0; return, end
         g2 = fun(g2,g1.map);
@@ -42,19 +44,22 @@ if samemap(g1,g2) && all(exps1==exps2);
     % use standard procedure:
     gn1 = g1.n;
     gn2 = g2.n;
-    if (gn1 > gn2)
+    if gn1 > gn2
         g2 = prolong(g2,gn1);
         vals = g1.vals - g2.vals;
+        coeffs = g1.coeffs - g2.coeffs;
     elseif gn1 < gn2
         g1 = prolong(g1,gn2);
         vals = g1.vals - g2.vals;
-    elseif (g1.vals == g2.vals)
-        vals = 0;
+        coeffs = g1.coeffs - g2.coeffs;
+    elseif g1.vals == g2.vals
+        vals = 0; coeffs = 0;
     else
         vals = g1.vals - g2.vals;
+        coeffs = g1.coeffs - g2.coeffs;
     end
     
-    g1.vals = vals;
+    g1.vals = vals; g1.coeffs = coeffs;
     g1.scl.h = max(g1.scl.h,g2.scl.h);
     g1.scl.v = max([g1.scl.v,g2.scl.v,norm(vals,inf)]);
     g1.n = length(vals);
@@ -88,8 +93,7 @@ if ~samemap(g1,g2) && ~any([exps1 exps2])
     end
     
     g1 = fun(@(x) feval(g1,x)-feval(g2,x),ends,pref,scl);
-    ish = 1;
-    if ~ish
+    if ~g1.ish
         warning('FUN:minus:failtoconverge','Operation may have failed to converge');
     end
     return
@@ -210,9 +214,8 @@ pref.exps = [newexps(1) newexps(2)];
 pref.sampletest = 0;
 
 % Call the fun constructor
-[g1] = fun(@(x) feval(g1,x)-feval(g2,x),map,pref,scl);
-ish = 1;
-if ~ish
+g1 = fun(@(x) feval(g1,x)-feval(g2,x),map,pref,scl);
+if ~g1.ish
     warning('FUN:minus:failtoconverge','Operation may have failed to converge');
 end
     
@@ -226,9 +229,13 @@ function g1 = checkzero(g1)
 % Same goes for unbounded domains.
 if all(abs(g1.vals) < 100*g1.scl.v*chebfunpref('eps'))
     g1.vals = 0;
+    g1.coeffs = 0;
     g1.n = 1; 
     g1.exps = [0 0];
     g1.scl.v = 0;
 end
+
+
+
 
 

@@ -71,7 +71,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     end
     if nargin < 6 || isempty( xi_type )
         xi_type = 'type2';
-        xi = chebpts( N+1 , 2 );
+        xi = chebpts( N+1 );
     elseif ~isstr(xi_type)
         if length(xi_type) ~= N+1
             error( 'CHEBFUN:ratinterp:InputLengthX' , 'The input vector xi is of the wrong length' );
@@ -80,9 +80,9 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
         xi_type = 'arbitrary';
     else
         if strcmpi( xi_type , 'TYPE2' )
-            xi = chebpts( N+1 , 2 );
+            xi = chebpts( N+1 );
         elseif strcmpi( xi_type , 'TYPE1' )
-            xi = chebpts( N+1 , 1 );
+            xi = chebpts( N+1 , [-1 1] , 1 );
         elseif strcmpi( xi_type , 'UNITROOTS' ) || strcmpi( xi_type , 'TYPE0' )
             xi_type = 'type0';
             xi = exp( 2i * pi * (0:N)' / (N+1) );

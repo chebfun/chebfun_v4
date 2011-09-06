@@ -13,7 +13,7 @@ if nfuns == 1 && isempty(funs), vals = []; return, end
 vals(1) = get(funs(1),'lval');
 vals(nfuns+1) = get(funs(nfuns),'rval');
 
-if nargin >2 
+if nargin > 2 
         
     if pref.chebkind == 2       
         for k = 2:nfuns
@@ -23,13 +23,12 @@ if nargin >2
                 vals(k) = feval(ops{k},ends(k));
             end
         end
-        
+       
     else
         
         % If first kind points were used in construction, make sure
         % representation is continuous.        
         tol = max(10*pref.eps,3e-12)*scl;
-        dbz_state = warning('off','MATLAB:divideByZero');   % turn off warning because of removable sings
         for k = 1:nfuns
             if isa(ops{k},'double')
                 vals(k) = get(funs(k),'lval');
@@ -42,9 +41,7 @@ if nargin >2
         else
             vals(k+1) = feval(ops{k},ends(k+1));
         end        
-        
-        warning(dbz_state);
-        
+                
         lval = get(funs(1),'lval'); % Check left endpoint of the domain
         if abs(lval-vals(1)) > tol || isnan(vals(1)) % if difference is large, use limit from interior
             vals(1) = lval;
@@ -52,7 +49,7 @@ if nargin >2
         for k = 2:nfuns
             rval = get(funs(k),'lval');
             lval = get(funs(k-1),'rval');
-            if abs(rval-lval) < tol        % is the function contiuous?
+            if abs(rval-lval) < tol        % is the function continuous?
                 if abs(vals(k)-lval) < tol || abs(vals(k)-rval) < tol  % use handle value if close enough
                     funs(k-1).vals(end) =  vals(k);
                     funs(k).vals(1) =  vals(k);

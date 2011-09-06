@@ -1,6 +1,6 @@
-		      Chebfun system, Version 4.1
+		      Chebfun system, Version 4.1+
 
-Chebfun Version 4.1 is compatible with MATLAB 7.4 (2007a) and above.
+Chebfun Version 4.1+ is compatible with MATLAB 7.6 (2008a) and above.
 
 Installation instructions:
 

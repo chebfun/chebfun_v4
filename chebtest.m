@@ -65,11 +65,11 @@ avgtimes = false; % If turning off, remember to remove line from help comments.
 nr_tests = 0;
 tests = struct('fun','','path','','funptr',[]);
 
-if verLessThan('matlab','7.4')
+if verLessThan('matlab','7.6')
     matlabver = ver('matlab');
     disp(['MATLAB version: ',matlabver.Version, ' ', matlabver.Release])
     error('CHEBFUN:chebtest:version',['Chebfun is compatible' ...
-        ' with MATLAB 7.4 (R2007a) or a more recent version.'])
+        ' with MATLAB 7.6 (R2008a) or above.'])
 end
 
 % Chebfun directory
