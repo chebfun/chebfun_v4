@@ -98,7 +98,10 @@ function C = mldivide(A,B,tolerance)
     funidx = find(~paridx);     paridx = find(paridx);
     nfun = numel(funidx);       npar = numel(paridx);
     
-    if A.numbc-npar ~= sum(max(A.difforder,[],2))    
+    if sum(max(A.difforder,[],1)) ~= sum(max(A.difforder,[],2))
+      warning('LINOP:mldivide:hell',...
+        'This equation may be solved incorrectly. See Trac #202.')
+    elseif A.numbc-npar ~= sum(max(A.difforder,[],2))    
       warning('LINOP:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
