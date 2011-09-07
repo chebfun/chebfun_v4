@@ -88,7 +88,7 @@ end
         % subplot(2,1,1); semilogy(0:n-1,abs(c),'-b',[0;n],[tail_max,tail_max],'-r');
         % subplot(2,1,2); plot(linspace(-1,1,200),miniclenshaw(c,linspace(-1,1,200))); pause;
         % n = find( abs(c) > eps*norm(c,1) , 1 , 'last' );
-        tail_max = 1e-15*norm(c,1);
+        tail_max = 1e-15*norm(c,inf);
         while (n > 1) && (abs(c(n)) < tail_max), n = n - 1; end;
         
         % Wrap, don't just truncate.
