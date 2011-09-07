@@ -116,8 +116,12 @@ end
 
             % is the root in [-1,1]?
             r = -c(1) / c(2);
-            if ( r < -(1+htol) ) || ( r > (1+htol) )
-                r = [];
+            if ~rootspref.all
+                if ( ( r < -(1+htol) ) || ( r > (1+htol) ) )
+                    r = [];
+                else
+                    r = max( min( r , 1 ) , -1 );
+                end
             end;
 
         % Is n small enough to compute the roots directly?
