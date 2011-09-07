@@ -117,12 +117,12 @@ end
             % is the root in [-1,1]?
             r = -c(1) / c(2);
             if ~rootspref.all
-                if ( ( r < -(1+htol) ) || ( r > (1+htol) ) )
+                if ( abs(imag(r)) > htol ) || ( r < -(1+htol) ) || ( r > (1+htol) )
                     r = [];
                 else
-                    r = max( min( r , 1 ) , -1 );
+                    r = max( min( real(r) , 1 ) , -1 );
                 end
-            end;
+            end
 
         % Is n small enough to compute the roots directly?
         elseif ~rootspref.recurse || ( n <= 50 )
