@@ -9,7 +9,7 @@ function g = ceil(f)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 for k = 1:numel(f)
-    if any(get(f(:,k),'exps')<0), error('CHEBFUN:ceil:inf',...
+    if any(get(f(k),'exps')<0), error('CHEBFUN:ceil:inf',...
         'Ceil is not defined for functions which diverge to infinity'); end
 end
 

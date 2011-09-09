@@ -5,7 +5,7 @@ function Fout = sin(F)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 for k = 1:numel(F)
-    if any(get(F(:,k),'exps')<0), error('CHEBFUN:sin:inf',...
+    if any(get(F(k),'exps')<0), error('CHEBFUN:sin:inf',...
         'SIN is not defined for functions which diverge to infinity'); end
 end
 

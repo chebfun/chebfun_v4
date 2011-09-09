@@ -5,7 +5,7 @@ function Fout = sind(F)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 for k = 1:numel(F)
-    if any(get(F(:,k),'exps')<0), error('CHEBFUN:sind:inf',...
+    if any(get(F(k),'exps')<0), error('CHEBFUN:sind:inf',...
         'SIND is not defined for functions which diverge to infinity'); 
     end
 end

@@ -26,8 +26,8 @@ while length(propertyArgIn) >= 2,
         F.funs = val;
         F.nfuns = numel(val);
         F = update_vscl(F);
-%     case 'nfuns'
-%         F.nfuns = val;    
+    case 'nfuns'
+        F.nfuns = val;    
     case 'ends'
         F.ends = reshape(val,1,numel(val));
     case 'imps'

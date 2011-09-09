@@ -5,7 +5,7 @@ function Fout = cosh(F)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 for k = 1:numel(F)
-    if any(get(F(:,k),'exps')), error('CHEBFUN:cosh:inf',...
+    if any(get(F(k),'exps')), error('CHEBFUN:cosh:inf',...
         'Chebfun cannot handle exponential blowups'); end
 end
 

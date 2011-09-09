@@ -5,7 +5,7 @@ function Fout = sec(F)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.am. 
 
 for k = 1:numel(F)
-    if any(get(F(:,k),'exps')<0), error('CHEBFUN:sec:inf',...
+    if any(get(F(k),'exps')<0), error('CHEBFUN:sec:inf',...
         'SEC is not defined for functions which diverge to infinity'); end
 end
 

@@ -5,7 +5,7 @@ function Fout = cot(F)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 for k = 1:numel(F)
-    if any(get(F(:,k),'exps')<0), error('CHEBFUN:cot:inf',...
+    if any(get(F(k),'exps')<0), error('CHEBFUN:cot:inf',...
         'COT is not defined for functions which diverge to infinity'); end
 end
 
