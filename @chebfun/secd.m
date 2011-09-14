@@ -2,7 +2,7 @@ function Fout = secd(F)
 % SECD   Secant of a chebfun in degrees.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
-% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.am. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 for k = 1:numel(F)
     if any(get(F(k),'exps')<0), error('CHEBFUN:secd:inf',...
