@@ -19,12 +19,15 @@ if nargin == 1 || isempty(u)
         error('CHEBFUN:chebop:linop:emptydomain', ...
             'Cannot linearise a chebop defined on an empty domain.');
     end
-    %   Create a chebfun to let the operator operate on. Using the findguess
-    %   method ensures that the guess is of the right (quasimatrix) dimension.
+    %   Create a chebfun to let the operator operate on. Using the
+    %   findguess method ensures that the guess is of the right
+    %   (quasimatrix) dimension.
     u = findguess(N,0); % Second argument 0 denotes we won't try to fit to BCs.
 end
 
-% Initialise
+% Initialise The flag variable is used to denote we only want to check for
+% linearity (i.e. we don't care about the derivative itself) so we return
+% immediately if we encounter nonlinearity and flag == 1.
 if nargin < 3, flag = 0; end
 isLin = 1;
 L = [];
@@ -34,16 +37,14 @@ cheb1 = chebfun('1',N.dom);
 nonLinFlag = 0;
 
 % Check whether we are working with anonymous functions which accept
-% quasimatrices or arguments such as @(u,v). In the former case,
-% no special measurements have to be taken, but in the latter, in
-% order to allow evaluation, we need to create a cell array with
-% entries equal to each column of the quasimatrix representing the
-% current solution.
+% quasimatrices or arguments such as @(u,v). In the former case, no special
+% measurements have to be taken, but in the latter, in order to allow
+% evaluation, we need to create a cell array with entries equal to each
+% column of the quasimatrix representing the current solution.
 numberOfInputVariables = nargin(N.op);
 % If we have a linop and more than one variable, the independent function x
 % is not one of them. In order for the code to work, we need to add 1 to
-% numberOfInputVariables
-% if isa(N.op,'linop') && numberOfInputVariables > 1
+% numberOfInputVariables if isa(N.op,'linop') && numberOfInputVariables > 1
 %     numberOfInputVariables = numberOfInputVariables
 
 if numberOfInputVariables > 1 % Load a cell, with the linear function x as the first entry
@@ -116,42 +117,19 @@ else
             else
                 guj = lbc{j}(u);
             end
-            % Compute the Frechet derivative, and look for terms on the
-            % form u.*v
-            if numel(u) == 1
-                for k = 1:numel(guj);
-                    [Dgujk nonConst] = diff(guj(:,k),u,'linop');
-                    if any(nonConst),  isLin = 0;   end
-                    if ~isLin && flag == 1, return, end
-                    linBC.left(l) = struct('op',Dgujk,'val',-guj(a,k));
-                    l = l+1;
+            
+            % Compute the Frechet derivative of the BCs. Populate the
+            % structure linBC with the linops arising.
+            for k = 1:numel(guj);
+                [Dgujk nonConst] = diff(guj(:,k),u,'linop');
+                if any(any(nonConst))
+                    isLin = 0; nonLinFlag = 1;
                 end
-            else
-                for k = 1:numel(guj);
-                    Dgujk = linop; nonConst = [];
-                    for uCounter = 1:numel(u)
-                        [DgujkColumn nonConstColumn] = diff(guj(:,k),u(:,uCounter),'linop');
-                        Dgujk = [Dgujk DgujkColumn];
-                        nonConst = [nonConst nonConstColumn];
-                        if any(nonConstColumn),  % If we have u.^2, we don't need to check for u*v
-                            isLin = 0; nonLinFlag = 1;
-                        end
-                        if ~isLin && flag == 1, return, end
-                        if ~nonLinFlag % Don't need to check if we've already encounterd u*v
-                            newFun = DgujkColumn*cheb1;
-                            for vCounter = uCounter+1:numel(u)
-                                Dgujktemp = diff(newFun,u(:,vCounter),'linop');
-                                if ~all(iszero(Dgujktemp))
-                                    nonLinFlag = 1;
-                                    break
-                                end
-                            end
-                        end
-                    end
-                    linBC.left(l) = struct('op',Dgujk,'val',-guj(a,k));
-                    l = l+1;
-                end
+                if ~isLin && flag == 1, return, end
+                linBC.left(l) = struct('op',Dgujk,'val',-guj(a,k));
+                l = l+1;
             end
+            
         end
     else
         linBC.left = struct([]);
@@ -207,41 +185,17 @@ else
             else
                 guj = rbc{j}(u);
             end
-            % Compute the Frechet derivative, and look for terms on the
-            % form u.*v
-            if numel(u) == 1
-                for k = 1:numel(guj);
-                    [Dgujk nonConst] = diff(guj(:,k),u,'linop');
-                    if any(nonConst),  isLin = 0;   end
-                    if ~isLin && flag == 1, return, end
-                    linBC.right(l) = struct('op',Dgujk,'val',-guj(b,k));
-                    l = l+1;
+            
+            % Compute the Frechet derivative of the BCs. Populate the
+            % structure linBC with the linops arising.
+            for k = 1:numel(guj);
+                [Dgujk nonConst] = diff(guj(:,k),u,'linop');
+                if any(any(nonConst))
+                    isLin = 0; nonLinFlag = 1;
                 end
-            else
-                for k = 1:numel(guj);
-                    Dgujk = linop; nonConst = [];
-                    for uCounter = 1:numel(u)
-                        [DgujkColumn nonConstColumn] = diff(guj(:,k),u(:,uCounter),'linop');
-                        Dgujk = [Dgujk DgujkColumn];
-                        nonConst = [nonConst nonConstColumn];
-                        if any(nonConstColumn),  % If we have u.^2, we don't need to check for u*v
-                            isLin = 0; nonLinFlag = 1;
-                        end
-                        if ~isLin && flag == 1, return, end
-                        if ~nonLinFlag % Don't need to check if we've already encounterd u*v
-                            newFun = DgujkColumn*cheb1;
-                            for vCounter = uCounter+1:numel(u)
-                                Dgujktemp = diff(newFun,u(:,vCounter),'linop');
-                                if ~all(iszero(Dgujktemp))
-                                    nonLinFlag = 1;
-                                    break
-                                end
-                            end
-                        end
-                    end
-                    linBC.right(l) = struct('op',Dgujk,'val',-guj(b,k));
-                    l = l+1;
-                end
+                if ~isLin && flag == 1, return, end
+                linBC.right(l) = struct('op',Dgujk,'val',-guj(b,k));
+                l = l+1;
             end
         end
     else
@@ -269,57 +223,12 @@ try
             uTemp = [{xDom} uCell];
             Nu = N.op(uTemp{:});
         end
-        % Must check whether we have terms on the form u*v, u*w, v*w etc.
-        % Construct each column of the Jacobian separately, let it operate
-        % on the function 1 on the domain, then linearize around next
-        % variable. If the resulting derivative is not zero, we must have
-        % nonlinear terms on the form above.
-        % At the same time, we accumulate the linop, one "block-column" at
-        % a time.
-        L = linop; nonConst = [];
-        for uCounter = 1:numel(u)
-            [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter),'linop');
-            L = [L Lcolumn];
-            nonConst = [nonConst nonConstColumn];
-            if any(nonConstColumn) % If we have u.^2, we don't need to check for u*v
-                nonLinFlag = 1;
-            % Don't go into this part if uCounter+1 == numel(u) as the
-            % for-loop won't be executed anyway.
-            elseif ~nonLinFlag && (uCounter+1)<= numel(u)% Don't need to check if we've already encountered u*v
-                newFun = Lcolumn*cheb1;
-                for vCounter = uCounter+1:numel(u)
-                    Ltemp = diff(newFun,u(:,vCounter),'linop');
-                    if ~all(iszero(Ltemp))
-                        nonLinFlag = 1;
-                        break
-                    end
-                end
-            end
-        end
+        % Obtain the Frechet derivative. nonConst contains information
+        % about nonlinearity, including terms of the kind u.*v.
+        [L nonConst] = diff(Nu,u,'linop');
     else
         Nu = N.op(u);
-        if numel(u) == 1
-            [L nonConst] = diff(Nu,u,'linop');
-        else % We have a quasimatrix, must to similar things as above
-            L = linop; nonConst = [];
-            for uCounter = 1:numel(u)
-                [Lcolumn nonConstColumn] = diff(Nu,u(:,uCounter),'linop');
-                L = [L Lcolumn];
-                nonConst = [nonConst nonConstColumn];
-                if any(nonConstColumn) % If we have u.^2, we don't need to check for u*v
-                    nonLinFlag = 1;
-                elseif ~nonLinFlag % Don't need to check if we've already encountered u*v
-                    newFun = Lcolumn*cheb1;
-                    for vCounter = uCounter+1:numel(u)
-                        Ltemp = diff(newFun,u(:,vCounter),'linop');
-                        if ~all(iszero(Ltemp))
-                            nonLinFlag = 1;
-                            break
-                        end
-                    end
-                end
-            end
-        end
+        [L nonConst] = diff(Nu,u,'linop');
     end
 catch
     ME = lasterror;
