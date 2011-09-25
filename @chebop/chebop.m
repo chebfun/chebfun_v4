@@ -14,9 +14,9 @@ function [N x] = chebop(varargin)
 %   @(u) [ diff(u(:,2))-u(:,1), diff(u(:,1)) ];  % no independent variable
 % 
 % The number of columns in the output quasimatrix should equal the number
-% of independent variables, whether specified as names or quasimatrix
+% of dependent variables, whether specified as names or quasimatrix
 % columns. For systems of equations not given in quasimatrix form, the
-% first input argument is always the dependent variable.
+% first input argument is always the independent variable.
 %
 % By default, the operator acts on chebfuns defined on the domain [-1,1]. 
 % CHEBOP(OP,D), for a domain or 2-vector D, gives a different domain.
@@ -72,7 +72,7 @@ function [N x] = chebop(varargin)
 %    N.bc = 'dirichlet';
 %    plot(N\1)
 %
-% There is some support for solving systems of equations containing unkown
+% There is some support for solving systems of equations containing unknown
 % parameters without the need to introduce extra equations into the system.
 % For example, y''+x.*y+p = 0, y(-1) = 1, y'(-1) = 1, y(1) = 1 can be
 % solved via

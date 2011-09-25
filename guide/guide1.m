@@ -40,7 +40,7 @@
 % figure, for example, was Bernstein in the 1910s.
 % Nevertheless it is hard to find the relevant material
 % collected in one place.  A new reference on this subject
-% will be the chebfun-based book [Trefethen 2012].
+% will be the Chebfun-based book [Trefethen 2012].
 
 %%
 % Chebfun was originally created by Zachary Battles
@@ -160,7 +160,7 @@
   clf, plot(f)
 
 %% 1.3  Operations on chebfuns
-% There are more than 150 commands that can be applied to
+% There are more than 200 commands that can be applied to
 % a chebfun.  For a list of many of them you can type "methods":
   methods chebfun
 %%
@@ -270,7 +270,7 @@
 % color for variety.
   plot(1./(1+f),'r')
 %% 
-% Some chebfun commands naturally introduce breakpoints in a chebfun.
+% Some Chebfun commands naturally introduce breakpoints in a chebfun.
 % For example, the "abs" command first finds zeros of a function
 % and introduces breakpoints there.  Here is 
 % a chebfun consisting of 6 funs:
