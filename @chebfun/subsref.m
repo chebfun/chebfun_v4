@@ -56,9 +56,9 @@ switch index(1).type
             if any(strcmpi(idx{2},{'left','right'}))
                 varin = {idx(2)};
             elseif get(f(1),'trans')
-                f = f(cat(2,idx{1}),:);
+                f = f(cat(2,idx{1}));
             else
-                f = f(:,cat(2,idx{2}));
+                f = f(cat(2,idx{2}));
             end 
         elseif length(idx) == 3
             if any(strcmpi(idx{3},{'left','right'}))
@@ -68,9 +68,9 @@ switch index(1).type
                 'Index exceeds chebfun dimensions.')
             end
             if get(f(1),'trans')
-                f = f(cat(2,idx{1}),:);
+                f = f(cat(2,idx{1}));
             else
-                f = f(:,cat(2,idx{2}));
+                f = f(cat(2,idx{2}));
             end             
         else
             error('CHEBFUN:subsref:dimensions',...
