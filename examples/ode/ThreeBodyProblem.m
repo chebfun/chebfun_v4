@@ -124,7 +124,9 @@ real(poles)*3/pi
 %%
 % We have found poles with real parts approximately
 % pi/3*[2,4,5,7,8,10], which agrees with the analysis. 
-% We do appear to have missed one singularity at pi/3 and 11pi/3, but thi
+% We do appear to have missed one singularity at pi/3 and 11pi/3, but it is
+% typical to expect only the singularities near the centre of the interval
+% to be found.
 
 %%
 % Let us plot the poles with blue dots and the zeros as black circles. The
@@ -195,16 +197,18 @@ title('Without Robustness');
 % based on the singular value decomposition.
 
 %% References
-% [1] A. Chenciner and R. Montgomery. A remarkable periodic solution of the
+% [1] Private communication with Divakar Viswanath, July 2011
+%
+% [2] A. Chenciner and R. Montgomery. A remarkable periodic solution of the
 % three-body problem in the case of equal masses. Annals of Mathematics-
 % Second Series, 152(3):881–902, 2000.
 %
-% [2] P. Gonnet, R. Pachón, and L.N. Trefethen. Robust rational 
+% [3] P. Gonnet, R. Pachón, and L.N. Trefethen. Robust rational 
 % interpolation and least-squares. Electronic Transactions on 
 % Numerical Analysis, 38:146–167, 2011.
 %
-% [3] Nick Trefethen. Rational Interpolation, Robust and Non-Robust
+% [4] Nick Trefethen. Rational Interpolation, Robust and Non-Robust
 % http://www2.maths.ox.ac.uk/chebfun/examples/approx/html/RationalInterp.shtml
 %
-% [4] Wikipedia article:
+% [5] Wikipedia article:
 % 'http://en.wikipedia.org/wiki/Three_body_problem'
