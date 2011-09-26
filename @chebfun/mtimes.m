@@ -29,8 +29,8 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
           'Domains must be identical for outer products.')
       end
       for i = 1:size(F1,2)
-        f = F1(:,i);
-        g = F2(i,:);
+        f = F1(i);
+        g = F2(i);
         op = @(u) f * (g*u);  % operational form
                     
         % Matrix form available only for unsplit functions.
@@ -97,7 +97,9 @@ if a==0
     % repmat, similarly, ensure nonConst is of correct size using zeros.
     f.jacobian = anon('der = repmat(zeros(domain(f)),1,numel(u)); nonConst = zeros(1,numel(u));',{'f'},{f},1);
 else
-    f.jacobian = anon('[tempDer nonConst] = diff(f,u,''linop''); der = a*tempDer;',{'a' 'f'},{a f},1);
+    an = anon('[tempDer nonConst] = diff(f,u,''linop''); der = a*tempDer;',{'a' 'f'},{a f},1);
+%     an = anon('[]','',[],1);
+    f.jacobian = an;
 end
 f.ID = newIDnum;
 end

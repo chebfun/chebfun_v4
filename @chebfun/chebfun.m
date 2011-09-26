@@ -92,7 +92,7 @@ classdef chebfun
         
         function f = chebfun(varargin)
             f = ctor(f,varargin{:});
-        end        
+        end 
         
     end
 end

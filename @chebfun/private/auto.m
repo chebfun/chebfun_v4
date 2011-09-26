@@ -28,7 +28,6 @@ lenf = 0;
 % In off mode, seek only one piece with length no greater than maxdegree (default is 2^16)
 if ~pref.splitting
      maxn = pref.maxdegree+1;
-     
      [funs,hpy,scl] = getfun(op,ends,pref,scl);
      if ~hpy
         warning('CHEBFUN:auto',['Function not resolved, using ' int2str(maxn) ...

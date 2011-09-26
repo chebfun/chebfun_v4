@@ -45,12 +45,12 @@ function Fout = define(F,subdom,G)
 
 Fout = F;
 
-if isa(subdom,'domain') || nargin == 4 || isa(G,'chebfun')
+if isa(subdom,'domain') || isa(G,'chebfun')
     % Define an interval
 
     % Deal with quasi-matrices.
     if numel(F)~=numel(G), 
-        error('CHEBFUN:cumsum:quasidim','Chebfun quasi-matrix dimensions must agree')
+        error('CHEBFUN:cumsum:quasidim','Chebfun quasi-matrix dimensions must agree.')
     end
     
     for k = 1:numel(F)
@@ -194,7 +194,7 @@ elseif length(s)~=size(vin,1) || length(col)~=size(vin,2)
     error('CHEBFUN:subsasgn:dimensions',...
             'Subscripted assignment dimension mismatch.')
 end
-ends = get(fcol(:,1),'ends'); a = ends(1); b = ends(end);
+ends = get(fcol(1),'ends'); a = ends(1); b = ends(end);
 if min(s) < a || max(s) > b
     error('CHEBFUN:subsasgn:outbounds',...
         'Cannot introduce endpoints outside domain.')
@@ -202,18 +202,18 @@ end
 stemp = s;    
 s = setdiff(s,ends); impsends = zeros(length(col),2);
 for k = 1:length(col)
-    impsends(k,:) = fcol(:,k).imps(1,[1 end]);
+    impsends(k,:) = fcol(k).imps(1,[1 end]);
 end
 for i = 1:length(s)
     fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
 end 
 for k = 1:length(col)
-    fcol(:,k).imps([1 end]) = impsends(k,:);
+    fcol(k).imps([1 end]) = impsends(k,:);
 end
 for i = 1:length(col)   
     [mem,loc] = ismember(stemp,fcol(i).ends);
    % fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
-    fcol(:,i).imps(1,loc) = vin(mem,i); 
+    fcol(i).imps(1,loc) = vin(mem,i); 
 end
 
 end

@@ -14,13 +14,12 @@ function [g, hpy, scl] = getfun(op, interval, pref, scl)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Initial setup
-a = interval(1); b = interval(2);
 htol = 1e-14*scl.h;
 
-% If the interval is very small skeep adaptation  and return a constant
-% This should never be happen, though!
-if (b-a) < 2*htol
-    g = fun(op((b+a)/2),[a b]);
+% If the interval is very small skip adaptation and return a constant
+% (This should never be happen, though!)
+if diff(interval) < 2*htol
+    g = fun(op(mean(interval)),interval);
     scl.v = max(scl.v,g.scl.v);
     g = set(g,'scl.v',scl.v);
     hpy = true;

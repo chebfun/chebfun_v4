@@ -31,15 +31,15 @@ tol = chebfunpref('eps');
 V = chebfun;                           % cols of V will store Househ. vectors
 for k = 1:n
    I = 1:k-1; J = k+1:n;               % convenient abbreviations
-   e = E(:,k);                         % target for this reflection
-   x = A(:,k);                         % vector to be mapped to s*r*e
+   e = E(k);                         % target for this reflection
+   x = A(k);                         % vector to be mapped to s*r*e
    ex = e'*x; aex = abs(ex);
    if aex==0, s=1; else s=-ex/aex; end
-   e = s*e; E(:,k) = e;                % adjust e by sign factor
+   e = s*e; E(k) = e;                % adjust e by sign factor
    r = norm(x); R(k,k) = r;            % diagonal entry r_kk
    v = r*e - x;                        % vector defining reflection
    if k>1                              
-      v = v - E(:,I)*(E(:,I)'*v);      % improve orthogonality
+      v = v - E(I)*(E(I)'*v);      % improve orthogonality
    end
    nv = norm(v);
    if nv < tol*max(x.scl,e.scl);
@@ -49,10 +49,11 @@ for k = 1:n
    end
    V(:,k) = v;                         % store this Householder vector
    if k<n
-      A(:,J) = A(:,J)-2*v*(v'*A(:,J)); % apply the reflection to A
-      rr = e'*A(:,J); R(k,J) = rr;     % kth row of R
-      A(:,J) = A(:,J) - e*rr;          % subtract components in direction e
+      A(J) = A(J)-2*v*(v'*A(J)); % apply the reflection to A
+      rr = e'*A(J); R(k,J) = rr;     % kth row of R
+      A(J) = A(J) - e*rr;          % subtract components in direction e
    end
+   A = jacreset(A);
 end
 
 % Form the quasimatrix Q from the Householder vectors:
@@ -61,6 +62,6 @@ Q = E;
 for k = n:-1:1
   v = V(:,k);
   J = k:n;
-  w = v'*Q(:,J);
-  Q(:,J) = Q(:,J) - 2*v*w;
+  w = v'*Q(J);
+  Q(J) = Q(J) - 2*v*w;
 end

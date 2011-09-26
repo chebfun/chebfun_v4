@@ -45,6 +45,7 @@ classdef fun
     methods
         
         function g = fun(varargin)
+            if nargin == 0, return, end
             g = ctor(g,varargin{:});
         end
         

@@ -55,16 +55,16 @@ switch index(1).type
             % f(s,col), where s can be domain, ':' or a vector
             % specifying the assigned columns.
             col = idx{2};
-            if ischar(col) && col==':'
+            if strcmp(col,':')
                 col = 1:n;
             elseif max(col) > n
                 % Create an empty chebfun if we're assigning to empty
                 if isempty(f), f = chebfun; end
                 % Domain check to make sure chebfuns have same domain
-                if isempty(f(:,1)) || all(f(:,1).ends([1,end]) == vin(:,1).ends([1,end]))
-                    f(:,n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);     
+                if isempty(f(1)) || all(f(1).ends([1,end]) == vin(1).ends([1,end]))
+                    f(n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);     
                 else
-                    error('CHEBFUN:subsasgn:domain','Inconsistent domains')
+                    error('CHEBFUN:subsasgn:domain','Inconsistent domains.')
                 end
                 
             end
@@ -84,17 +84,22 @@ switch index(1).type
             end
         end
             
-        fcol = f(:,col);        
+        fcol = f(col);        
         % ---- assign values/chebfuns at given points/domains --- 
-        if isa(s,'domain') || isnumeric(s)
+        if isa(s,'domain')
             fcol = define(fcol,s,vin);
-        elseif isequal(s,':')
+        elseif isnumeric(s)
+            if numel(s) == 1 && isa(vin,'chebfun')
+                error('CHEBFUN:subsassgn:index','Invalid subscript assignment.');
+            end
+            fcol = define(fcol,s,vin);
+        elseif strcmp(s,':')
             if isempty(fcol)
                 fcol = define(fcol,domain(vin),vin);
             elseif isempty(vin)               
                 indx = 1:numel(f); indx(col) = [];
                 if ~isempty(indx)
-                    f = f(:,indx);
+                    f = f(indx);
                     if trans, f = f.'; end
                 else
                     f(1) = chebfun;
@@ -112,11 +117,11 @@ switch index(1).type
         % --- assign modified column to original chebfun/quasimatrix --
         % Check orientation
         if fcol(1).trans ~= trans
-            error('CHEBFUN:subsasgn:trans','Inconsistent chebfun transpose fields')
+            error('CHEBFUN:subsasgn:trans','Inconsistent chebfun transpose fields.')
         elseif fcol(1).trans
             fcol = fcol.';
         end
-        f(:,col) = fcol;
+        f(col) = fcol;
         if trans, f = f.'; end
         varargout = { f };          
     case '{}'

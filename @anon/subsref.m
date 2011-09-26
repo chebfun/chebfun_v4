@@ -12,7 +12,7 @@ switch index(1).type
             case 'depth'
                 varargout = {an.depth};
             case 'function'
-                varargout = {an.function};
+                varargout = {an.func};
             case 'variablesName'
                 varargout = {an.variablesName};
             case 'workspace'
@@ -29,5 +29,5 @@ switch index(1).type
         end
     otherwise
         error('CHEBFUN:anon:subsref',['??? Unexpected index.type of ' index(1).type]);
-end
+    end
 end

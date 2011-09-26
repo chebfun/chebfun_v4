@@ -32,6 +32,8 @@ while length(propertyArgIn) >= 2,
         F.ends = reshape(val,1,numel(val));
     case 'imps'
         F.imps = val;
+    case 'jacobian'
+        F.jacobian = val;        
     case 'scl'
         F.scl = val; 
         for k = 1:F.nfuns
@@ -61,5 +63,5 @@ while length(propertyArgIn) >= 2,
 end
 
 if length(F.ends)~=F.nfuns+1 || size(F.imps,2) ~= length(F.ends)
-    error('CHEBFUN:set:Inconsistent','inconsistent chebfun') 
+    error('CHEBFUN:set:Inconsistent','Inconsistent chebfun.') 
 end

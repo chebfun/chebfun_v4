@@ -5,5 +5,8 @@ function F = transpose(F)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-for k = 1:numel(F), F(k).trans=not(F(k).trans); end
-F=builtin('transpose',F);
+if numel(F) > 0, trans = not(F(1).trans); end
+for k = 1:numel(F)
+    F(k).trans = trans; 
+end
+% F = builtin('transpose',F);

@@ -8,7 +8,7 @@ function val = get(a, propName)
 
 switch propName
     case 'function'
-        val = a.function;
+        val = a.func;
     case 'variablesName'
         val = a.variablesName;
     case 'workspace'

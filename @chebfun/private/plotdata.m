@@ -81,8 +81,8 @@ if isempty(f)
     ends = [];
     for k = 1:numel(g)
         % old
-        ends = [ends g(:,k).ends];
-        g(:,k).imps = g(:,k).imps(1,:);
+        ends = [ends g(k).ends];
+        g(k).imps = g(k).imps(1,:);
         % new
 %         endsk = g(:,k).ends;       
 %         endsk(endsk<a | endsk>b) = [];
@@ -107,12 +107,12 @@ if isempty(f)
 
     if fl(1) == a, 
         for k = 1:size(gl,2)
-            gl(1,k) = get(g(:,k).funs(1),'lval'); 
+            gl(1,k) = get(g(k).funs(1),'lval'); 
         end
     end
     if fl(end) == b, 
         for k = 1:size(gl,2)
-            gl(end,k) = get(g(:,k).funs(end),'rval'); 
+            gl(end,k) = get(g(k).funs(end),'rval'); 
         end
     end
     
@@ -122,7 +122,7 @@ if isempty(f)
     if b~=dg(end), gl(end,:) = feval(g,b);   end
     % deal with marks breakpoints
     for k = 1:numel(g)
-        gk = g(:,k);
+        gk = g(k);
         endsk = get(gk,'ends');
 
         % With markfuns we need to adjust the vals when getting marks

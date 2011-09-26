@@ -8,7 +8,7 @@ function varargout = feval(Fin,u,anonType)
 if nargin < 3
     anonType = 2;
 end
-if isempty(Fin.function)
+if isempty(Fin.func)
     error('Unable to evaluate AD derivative, maximum AD depth reached. Try increasing chebfunpref(''ADdepth''). Please contact the chebfun team at chebfun@maths.ox.ac.uk for more information.');
 elseif anonType == 1 && Fin.depth == 1 % Base variable, return []
     varargout{1} = []; varargout{2} = 0;
@@ -28,11 +28,11 @@ loadVariables(Fvar,Fwork)
 % variables of the feval function of anons.
 switch anonType
     case 1
-        eval(Fin.function); 
+        eval(Fin.func); 
         varargout{1} = der; varargout{2} = nonConst;
     case 2
         % Create a normal anonymous function handle that we can then evaluate
-        Ffun = eval(Fin.function);
+        Ffun = eval(Fin.func);
         varargout{1}= feval(Ffun,u);
 end
 end

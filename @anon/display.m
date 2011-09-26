@@ -11,7 +11,7 @@ if loose, disp(' '), end
 disp([inputname(1) ' = anon']);
 % if loose, disp(' '), end
 s = [];
-s = char(s,['Function = ' A.function],' ');
+s = char(s,['Function = ' A.func],' ');
 if length(A.variablesName)==1
   s = char(s,['Variable name = ' A.variablesName{1}],' ');
 else

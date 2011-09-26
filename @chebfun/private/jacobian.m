@@ -36,12 +36,12 @@ for k = 1:numel(F)
             blockRight = []; constInfoRight = [];
             %             switch % !!! Thurfum ad tekka a u.trans
             for uCounter = 1:idx-1
-                [blockTemp constInfoTemp] = jacobian(F(k),u(:,uCounter));
+                [blockTemp constInfoTemp] = jacobian(F(k),u(uCounter));
                 blockLeft = [blockLeft blockTemp];
                 constInfoLeft = [constInfoLeft constInfoTemp];
             end
             for uCounter = idx+1:numu
-                [blockTemp constInfoTemp] = jacobian(F(k),u(:,uCounter));
+                [blockTemp constInfoTemp] = jacobian(F(k),u(uCounter));
                 blockRight = [blockRight blockTemp];
                 constInfoRight = [constInfoRight constInfoTemp];
             end

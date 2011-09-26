@@ -67,7 +67,6 @@ function g = ctor(g,op,ends,varargin)
             return
         case 'double'   % Assigns value to the Chebyshev points
 
-            
             if min(size(op)) > 1
                 error('FUN:constructor:double','Only vector inputs are allowed.')
             end
@@ -118,14 +117,14 @@ function g = ctor(g,op,ends,varargin)
         % We check for infinite values, NaN's for very large x, and functions
         % with a positive (negative) gradient very near plus (minus) infinity.
         if infends(1) && ~isnan(pref.exps(1)) && ~pref.exps(1) && pref.blowup >=0
-            vends = op([-1 -1+2*eps -1+4*eps]);
+            vends = op([-1 ; -1+2*eps ; -1+4*eps]);
             if isinf(vends(1)) || any(isnan(vends(2:3))) || real(-sign(vends(3))*diff(vends(2:3))) > 1e4*pref.eps;
                 pref.blowup = blowup(NaN);
                 pref.exps(1) = NaN;
             end
         end
         if infends(2) && ~isnan(pref.exps(2)) && ~pref.exps(2) && pref.blowup >=0
-            vends = op([1-4*eps 1-2*eps 1]);
+            vends = op([1-4*eps ; 1-2*eps ; 1]);
             if isinf(vends(3)) || any(isnan(vends(1:2))) || real(sign(vends(1))*diff(vends(1:2))) > 1e4*pref.eps;
                 pref.blowup = blowup(NaN);
                 pref.exps(2) = NaN;
@@ -162,7 +161,7 @@ function g = ctor(g,op,ends,varargin)
         op = @(x) rescl*op(x)./((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2)); % New op
     end
 
-    % Scaling for funs on unbounded domain with exponents.
+    % Scaling for funs on unbounded domain (possibly with exponents.)
     if any(infends)
         s = g.map.par(3);
         if all(infends),           rescl = .5/(5*s);
@@ -172,7 +171,7 @@ function g = ctor(g,op,ends,varargin)
             op = @(x) rescl*op(x)./((g.map.inv(x)+1).^exps(1).*(1-g.map.inv(x)).^exps(2)); % New op
         end
     end
-
+    
     %% Call constructor
     if pref.n
         % Non-adaptive case (exact number of points provided).

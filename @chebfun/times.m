@@ -34,7 +34,8 @@ function f = timescol(f,g)
 ffuns = [];
 scl = 0;
 for k = 1:length(f.ends)-1
-    ffuns = [ffuns f.funs(k).*g.funs(k)];
+    tmp = f.funs(k).*g.funs(k);
+    ffuns = [ffuns tmp];
     scl = max(scl,ffuns(end).scl.v); % update scale variable
 end
 

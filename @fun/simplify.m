@@ -42,11 +42,7 @@ elseif any(isinf(scl.v))
 end
 
 % Get the coefficients
-if ~isempty(g.coeffs)
-    c = g.coeffs;                      % Coeffs already exist
-else
-    c = chebpoly(g,kind);              % Coeffs of Cheb expansion of g
-end
+c = chebpoly(g,kind);                  % Coeffs of Cheb expansion of g
 ac = abs(c)/scl.v;                     % Abs value relative to scale of g
 
 % NaNs are not allowed
