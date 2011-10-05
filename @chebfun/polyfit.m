@@ -8,7 +8,7 @@ function f = polyfit(y,n)
 %   in the least-squares sense.
 %
 %   Note chebfun/POLYFIT does not not support more than one output argument
-%   in the way that matlab/OLYFIT does.
+%   in the way that matlab/POLYFIT does.
 %
 %   See also polyfit, domain/polyfit
 
