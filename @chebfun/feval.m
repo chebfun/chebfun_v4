@@ -25,11 +25,14 @@ if isa(F,'function_handle')
 end  
 
 if isempty(F), Fx = []; return, end
+lr = '';
+forceval = 0;
 
 % Deal with feval(f,x,'left') and feval(f,x,'right')
 if nargin > 2
     lr = varargin{1};
-    if ~any(strcmpi(lr,{'left','right'}));
+    parse = strcmpi(lr,{'left','right','','force'});
+    if ~any(parse);
         if ischar(lr)
             msg = sprintf('Unknown input argument "%s".',lr);
             error('CHEBFUN:feval:leftrightchar',msg);
@@ -39,7 +42,7 @@ if nargin > 2
     end
     % We deal with this by reassigning imps to be left/right values.
     nchebs = numel(F);
-    if strcmpi(lr,'left')
+    if parse(1) % left
         for k = 1:nchebs
             F(k).imps(2:end,:) = []; % Level 2 imps are not needed here
             nfuns = F(k).nfuns;
@@ -47,7 +50,7 @@ if nargin > 2
                 F(k).imps(1,j+1) = get(F(k).funs(j),'rval');
             end
         end
-    else % right
+    elseif parse(2) % right
         for k = 1:nchebs
             F(k).imps(2:end,:) = []; % Level 2 imps are not needed here
             nfuns = F(k).nfuns;
@@ -55,6 +58,9 @@ if nargin > 2
                 F(k).imps(1,j) = get(F(k).funs(j),'lval');
             end
         end
+    elseif parse(4) % force value evaluation
+        forceval = 1;
+        lr = '';
     end
 end
 
@@ -65,18 +71,18 @@ if nchebs > 1,
     for k = 1:nchebs
         trans = F(1).trans;
         if trans
-            Fx = [Fx; fevalcolumn(F(k),x')];
+            Fx = [Fx; fevalcolumn(F(k),x',lr,forceval)];
         else
-            Fx = [Fx fevalcolumn(F(k),x)];
+            Fx = [Fx fevalcolumn(F(k),x,lr,forceval)];
         end
     end
 else
-    Fx = fevalcolumn(F,x);
+    Fx = fevalcolumn(F,x,lr,forceval);
 end
 
 % Evaluate a single chebfun
 % ------------------------------------------
-function fx = fevalcolumn(f,x)
+function fx = fevalcolumn(f,x,lr,forceval)
 
 fx = zeros(size(x));
 
@@ -142,6 +148,21 @@ elseif size(f.imps,1) > 1 && any(any(f.imps(2:end,:)))
         end
     end
     
+end
+
+if ~forceval && f.funreturn
+  % If length(x)>1, we will use a column quasimatrix, regardless of the
+  % shape of x. This is consistent with linop interpretation of
+  % quasimatrices.
+  funx = chebconst;
+  for j = 1:numel(fx)
+    newfun = chebconst(fx(j),domain(f)); 
+    newfun.jacobian = anon(['[der1,nonConst1]=diff(f,u,''linop''); ',...
+        'der = feval(domain(f),x,lr)*der1; nonConst = nonConst1;'],...
+        {'f','x','lr'},{f,x(j),lr},1);
+    funx(j) = newfun;
+  end
+  fx = funx;
 end
 
 

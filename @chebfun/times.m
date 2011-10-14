@@ -28,6 +28,8 @@ end
 % -------------------------------
 function f = timescol(f,g)
 
+funreturn = f.funreturn || g.funreturn;
+f.funreturn = 0; g.funreturn = 0;
 
 % product of two chebfuns
 [f,g] = overlap(f,g);
@@ -109,4 +111,4 @@ for k = 1:f.nfuns-1
     end
 end
 
-f.funs= ffuns; f.imps=imps; f.scl = scl;
+f.funs = ffuns; f.imps = imps; f.scl = scl; f.funreturn = funreturn;

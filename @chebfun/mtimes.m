@@ -47,13 +47,18 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
       chebfunpref('splitting',splitstate)
       chebfunpref('resampling',sampstate)
     else      % inner product
-      Fout = zeros(size(F1,1),size(F2,2));
+      funreturn = F1(1).funreturn || F2(1).funreturn;
+      if funreturn
+          Fout = chebconst;
+      else
+          Fout = zeros(size(F1,1),size(F2,2));
+      end
       for k = 1:size(F1,1)
         for j = 1:size(F2,2)
           if F1(k).trans && ~F2(j).trans
             Fout(k,j) = sum((F1(k).').*F2(j));
           else
-	    error('CHEBFUN:mtimes:dim','Chebfun dimensions must agree.')
+            error('CHEBFUN:mtimes:dim','Chebfun dimensions must agree.')
           end
         end
       end
@@ -98,13 +103,12 @@ if a==0
     f.jacobian = anon('der = repmat(zeros(domain(f)),1,numel(u)); nonConst = zeros(1,numel(u));',{'f'},{f},1);
 else
     an = anon('[tempDer nonConst] = diff(f,u,''linop''); der = a*tempDer;',{'a' 'f'},{a f},1);
-%     an = anon('[]','',[],1);
     f.jacobian = an;
 end
 f.ID = newIDnum;
 end
 
-
+% ------------------------------------
 function m = matfun(n,w,x,f,g)
     if iscell(n), n = n{1}; end
     m = feval(f,x(n)) * (w(n) .* feval(g,x(n)).');

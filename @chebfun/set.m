@@ -12,8 +12,13 @@ function F = set(F,varargin)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-if numel(F)>1
-    error('CHEBFUN:set:quasi', 'Set does not support quasi-matrices.')
+% Deal with quasimatrix input.
+if numel(F) > 1
+%     error('CHEBFUN:set:quasi', 'Set does not support quasi-matrices.')
+    for k = 1:numel(F)
+        F(k) = set(F(k),varargin{:});
+    end
+    return
 end
 
 propertyArgIn = varargin;
@@ -33,7 +38,9 @@ while length(propertyArgIn) >= 2,
     case 'imps'
         F.imps = val;
     case 'jacobian'
-        F.jacobian = val;        
+        F.jacobian = val;
+    case 'funreturn'
+        F.funreturn = val;        
     case 'scl'
         F.scl = val; 
         for k = 1:F.nfuns
@@ -65,3 +72,4 @@ end
 if length(F.ends)~=F.nfuns+1 || size(F.imps,2) ~= length(F.ends)
     error('CHEBFUN:set:Inconsistent','Inconsistent chebfun.') 
 end
+

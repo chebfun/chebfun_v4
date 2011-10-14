@@ -126,7 +126,7 @@ while ii < length(ops)
                 return
             end
             [fs,es,scl] = auto(op,es,scl,pref);
-        case 'chebfun'
+        case {'chebfun','chebconst'}
             if numel(op) > 1
                 error('CHEBFUN:ctor_adapt:onechebfun','Cannot construct from quasimatrices in this way.');
             end

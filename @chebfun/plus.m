@@ -54,7 +54,7 @@ elseif isa(f2,'double')
     h.scl = max(h.scl, abs(f2+h.scl));
 
 else    
-
+    funreturn = f1.funreturn || f2.funreturn;
     % chebfun + chebfun
     [f1,f2] = overlap(f1,f2);   
     h = f1;
@@ -73,7 +73,10 @@ else
 
     h.jacobian = anon('[der1 nonConst1] = diff(f1,u,''linop''); [der2 nonConst2] = diff(f2,u,''linop''); der = der1 + der2; nonConst = nonConst1 | nonConst2;',{'f1' 'f2'},{f1 f2},1);
     h.ID = newIDnum();
+    h.funreturn = funreturn;
     
 end
+
+
 
 

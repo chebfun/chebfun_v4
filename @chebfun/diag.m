@@ -10,6 +10,11 @@ function A = diag(f,d)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+% if f.funreturn && length(f) == 1 && f(1).nfuns == 1, 
+%     A = f(1).funs(1).vals(1); 
+%     return
+% end
+
 if nargin < 2, d = domain(f); else f = restrict(f,d); end
 
 A = diag(d, f); % Call domain/diag

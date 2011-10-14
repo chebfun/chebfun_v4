@@ -18,7 +18,7 @@ function out = sum(F,dim,b)
 %   sum(A,2)    % returns the chebfun for 1+x+x^2
 %   sum(A.',2)  % transpose of sum(A,1)
 %
-% See also sum (built-in).
+% See also sum.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -57,7 +57,11 @@ if F_trans
 end
 
 if dim==1
-  out = zeros(1,size(F,2));
+  if F(1).funreturn
+      out = chebconst;
+  else
+      out = zeros(1,size(F,2));
+  end
   for k = 1:size(F,2);
     out(k) = sumcol(F(k));
   end
@@ -84,7 +88,8 @@ for k = 1:f.nfuns
 end
 
 if any(any(exps<=-1)),
-   % get the sign at these blowups
+    
+   % Get the sign at these blowups
    expsl = find(exps(:,1)<=-1);
    expsr = find(exps(:,2)<=-1);
    sgn = zeros(length(expsl)+length(expsr),1);
@@ -102,20 +107,28 @@ if any(any(exps<=-1)),
        out = sgn(1).*inf;
    end
    
-   return
+else
+
+    out = 0;
+    % Sum on each fun
+    for i = 1:f.nfuns
+        out = out + sum(f.funs(i));
+        if isnan(out), break, end % This shouldn't happen, but if it does, bail out.
+    end
+
+    % Deal with impulses
+    if not(isempty(f.imps(2:end,:)))
+        out = out + sum(f.imps(end,:));
+    end
     
 end
 
-out = 0;
-% Sum on each fun
-for i = 1:f.nfuns
-    out = out + sum(f.funs(i));
-    if isnan(out), return, end % This shouldn't happen, but if it does, bail out.
-end
-
-% Deal with impulses
-if not(isempty(f.imps(2:end,:)))
-    out = out + sum(f.imps(end,:));
+if f.funreturn   % fun-output mode switch
+    out = chebconst(out,domain(f));
+    out.jacobian = anon(['[der1,nonConst] = diff(f,u,''linop''); '...
+                         'der = sum(domain(f))*der1;'],...
+                         {'f'},{f},1);
+    out.funreturn = 1;
 end
 
 % ------------------------------------------

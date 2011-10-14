@@ -58,7 +58,9 @@ switch propName
         end
     case 'trans'
         val = f(1).trans;
-    case {'jacobian','jac'}
+    case 'funreturn'
+        val = f(1).funreturn;        
+    case 'jacobian'
         val = f.jacobian;
     case 'depth'
         val = getdepth(f.jacobian);

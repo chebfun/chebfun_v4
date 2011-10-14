@@ -28,7 +28,7 @@ if nargin < 3 || isempty(dim)
     dim = 1+F(1).trans; 
 end
 if isnumeric(dim) && ~(dim == 1 || dim == 2)
-    error('CHEBFUN:diff:dim','Input DIM should take a value of 1 or 2');
+    error('CHEBFUN:diff:dim','Input DIM should take a value of 1 or 2.');
 end
 if nargin < 4 || isempty(RL)
     RL = 'RL';
@@ -36,6 +36,10 @@ end
 
 if isa(n,'chebfun')     
     % AD
+    if isnumeric(F)
+        error('CHEBFUN:diff:scalarAD',...
+            'Attempting to AD a double. Did you set the funreturn flag?')
+    end
     [F nonConst] = jacobian(F,n);
     if nargin == 3, return, end
     J = chebop(F.fundomain);
@@ -115,11 +119,9 @@ for j = 1:n % Loop n times for nth derivative
     if size(F.imps,1)>1
        F.imps = [F.imps(1,:); newimps; F.imps(2:end,:)];
     elseif any(newimps)
-      F.imps(2,:) = newimps;
+       F.imps(2,:) = newimps;
     end
-    
-    f = F;
-    
+
 end
 
 % Update scale in funs

@@ -88,6 +88,10 @@ classdef chebfun
         ID = [];
     end
     
+    properties ( GetAccess = 'public', SetAccess = 'private' )
+        funreturn = false;
+    end
+    
     methods
         
         function f = chebfun(varargin)

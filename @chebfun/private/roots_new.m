@@ -1,4 +1,4 @@
-function out = roots(g,varargin)
+function out = roots_new(g,varargin)
 % ROOTS	Roots in the interval [-1,1]
 %
 % ROOTS(G) returns the real roots of the FUN G in the interval [-1,1].

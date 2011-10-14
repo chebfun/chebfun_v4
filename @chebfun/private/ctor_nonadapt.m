@@ -109,7 +109,7 @@ while ii < length(ops)
                 g = fun(op, maps(pref.map,es), pref);
             end
             funs = [funs g];
-        case 'chebfun'
+        case {'chebfun','chebconst'}
             a = es(1); b = es(2);
             if op.ends(1) > a || op.ends(end) < b
                 error('CHEBFUN:ctor_nonadapt:domain','chebfun is not defined in the domain.')

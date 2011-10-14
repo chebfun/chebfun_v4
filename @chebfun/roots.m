@@ -35,6 +35,8 @@ if numel(f)>1
     error('CHEBFUN:roots:quasi','roots does not work with chebfun quasi-matrices')
 end
 
+f = set(f,'funreturn',0);
+
 % Default preferences
 rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots') , 'new' , false );
 zerofun = 1;

@@ -35,7 +35,7 @@ if nargin < 3 || isempty(F2)
 % Two chebfuns    
 else        
     if size(F1) ~= size(F2)
-        error('CHEBFUN:comp:QMdimensions','Quasimatrix dimensions must agree')
+        error('CHEBFUN:comp:QMdimensions','Quasimatrix dimensions must agree.')
     end
     for k = 1:min(size(F1))
         Fout(k) = compcol(F1(k), op, F2(k), pref);
