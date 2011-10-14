@@ -17,7 +17,9 @@ if round(m)~=m
         'Fractional derivatives are not yet supported as operators.');
 end
 
-if isempty(d)
+if m == 0
+    D = eye(d);
+elseif isempty(d)
     D = linop;
     return
 elseif all(isfinite(d.ends))
