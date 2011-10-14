@@ -1,4 +1,4 @@
-function varargout = svds(A,k,sigma)
+function varargout = svds(A,k,sigma,tol)
 %SVDS  Find some singular values and vectors of a compact linop.
 % S = SVDS(A) returns a vector of 6 nonzero singular values of the linear
 % compact chebop A, such as the FRED or VOLT operator. SVDS will attempt to
@@ -13,7 +13,7 @@ function varargout = svds(A,k,sigma)
 % errors and one must expect that the vectors in V are not accurate to
 % machine eps. However, the left sing. vectors U have fine accuracy.
 %
-% Example: 
+% Example:
 % [d,x] = domain(0,pi);
 % A = fred(@(x,y)sin(2*pi*(x-2*y)),d);
 % [U,S,V] = svds(A);
@@ -46,65 +46,146 @@ function varargout = svds(A,k,sigma)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-d = domain(A);
+dom = domain(A);
 nbc = A.numbc;
 if nargin < 2, k = 6; end;
-if nbc == 0 && (nargin < 3 || strcmp(sigma,'L')), sigma = inf; end;
-if nbc > 0 && (nargin < 3 || strcmp(sigma,'S')), sigma = 0; end;
+if nbc == 0 && (nargin < 3 || isempty(sigma) || strcmp(sigma,'L')), sigma = inf; end;
+if nbc > 0 && (nargin < 3 || isempty(sigma) || strcmp(sigma,'S')), sigma = 0; end;
 
-U = []; S = []; V = []; flag = 0; pts = [];  Minv = []; D = [];
-
-tol = 1e-10;
+% Setup
+if nargin < 4, tol = 1e-10; end
 pref = chebfunpref;
 pref.eps = tol;
 Sold = -inf;
-
-syssize = A.blocksize(1);
-if syssize > 1
-    error('CHEBFUN:svds:systems',...
-        'SVDS does not yet support systems of equations.');
-end
-breaks = A.fundomain.endsandbreaks;
-if numel(breaks) > 2,
-    error('CHEBFUN:svds:piecewise',...
-        'SVDS does not yet support piecewise operators.');
-end
+% split = chebfunpref('splitting');
+split = false;
 maxdegree = cheboppref('maxdegree');
+syssize = A.blocksize(1);
+m = A.blocksize(2);
+breaks = dom.endsandbreaks;
+numints = numel(breaks)-1;
+bcs = false;
+if numints > 1 || nbc > 1, bcs = true; end
+Nout = [];
 
-ignored = chebfun(@(x) drive(x),'splitting','off','sampletest','off',...
-    'vectorcheck','off','minsamples',129,'resampling','on','eps',tol);
+% if syssize > 1
+%     error('CHEBFUN:svds:systems',...
+%         'SVDS does not yet support systems of equations.');
+% end
+if m ~= A.blocksize(1)
+    error('LINOP:eigs:notsquare','Block size must be square.')
+end
 
-if nbc > 0
+% if numints > 1
+%     error('CHEBFUN:svds:piecewise',...
+%         'SVDS does not yet support piecewise operators.');
+% end
+
+% This shouldn't happen, but we might as well deal with it.
+if isnan(k) || isempty(k), k = 6; end
+
+% These assignments cause the nested function value() to overwrite them.
+U = []; S = []; V = []; flag = 0; pts = [];  Minv = []; D = [];
+
+% Default settings
+settings = chebopdefaults;
+settings.scale = A.scale;
+settings.eps = tol;
+settings.minsamples = 5;
+
+% Adaptively construct the sum of eigenfunctions.
+if numel(breaks) == 2 && ~split
+    chebfun( @(x) value(x), dom, settings);
+else
+    chebfun( @(x,N,bks) value_sys(x,N,bks), {breaks} , settings);
+end
+% Now U,S,V are already defined at the highest value of N used.
+
+if bcs
     % swap U and V, as we have computed singvecs of "inv(A)"
     tmp = U; U = V; V = tmp; clear('tmp');
 end
-    
-if syssize == 1
-    U = Minv*(spdiags(1./D,0,pts,pts)*U);
-    U = simplify(chebfun(U,d),tol);
-    V = Minv*(spdiags(1./D,0,pts,pts)*V);
-    V = simplify(chebfun(V,d),tol);
-else
-    MiD = Minv*spdiags(1./D,0,pts,pts);
-    UU = cell(syssize,1); VV = cell(syssize,1);
-    for k = 1:syssize
-        UU{k} = MiD*U((k-1)*pts+(1:pts),:);
-        UU{k} = chebfun(UU{k});
-        UU{k} = simplify(UU{k},tol);
-        VV{k} = MiD*V((k-1)*pts+(1:pts),:);
-        VV{k} = chebfun(VV{k});
-        VV{k} = simplify(VV{k},tol);
+
+if numel(breaks) == 2
+    if syssize == 1
+        U = Minv*(diag(1./D)*U);
+        U = simplify(chebfun(U,dom),tol);
+        V = Minv*(diag(1./D)*V);
+        V = simplify(chebfun(V,dom),tol);
+    else
+        MiD = Minv*spdiags(1./D,0,pts,pts);
+        UU = cell(syssize,1); VV = cell(syssize,1);
+        for k = 1:syssize
+            UU{k} = MiD*U((k-1)*pts+(1:pts),:);
+            UU{k} = chebfun(UU{k},dom);
+            UU{k} = simplify(UU{k},tol);
+            VV{k} = MiD*V((k-1)*pts+(1:pts),:);
+            VV{k} = chebfun(VV{k},dom);
+            VV{k} = simplify(VV{k},tol);
+        end
+        U = UU; V = VV;
     end
-end
+else
+    N = Nout;
+    V = MiD*V;
+    U = MiD*U;
+    V = mat2cell(V(:),repmat(N,1,m*k),1);
+    U = mat2cell(U(:),repmat(N,1,m*k),1);
+
+    Vfun = cell(1,m);
+    Ufun = cell(1,m);
+    for l = 1:m, 
+        Vfun{l} = chebfun; 
+        Ufun{l} = chebfun; 
+    end % initialise
+    settings.maxdegree = maxdegree;  settings.maxlength = maxdegree;
     
+    for kk = 1:k % Loop over each eigenvector
+        nrm2v = 0; nrm2u = 0;
+        for l = 1:m % Loop through the equations in the system
+            tmpv = chebfun; 
+            tmpu = chebfun; 
+            % Build a chebfun from the piecewise parts on each interval
+            for j = 1:numel(breaks)-1
+                funj = fun( filter(V{1},1e-8), breaks(j:j+1), settings);
+                tmpv = [tmpv ; set(chebfun,'funs',funj,'ends',breaks(j:j+1),...
+                    'imps',[funj.vals(1) funj.vals(end)],'trans',0)];
+                V(1) = [];
+                funj = fun( filter(U{1},1e-8), breaks(j:j+1), settings);
+                tmpu = [tmpu ; set(chebfun,'funs',funj,'ends',breaks(j:j+1),...
+                    'imps',[funj.vals(1) funj.vals(end)],'trans',0)];
+                U(1) = [];               
+            end
+            % Simplify it
+            tmpv = simplify(tmpv,settings.eps);
+            tmpu = simplify(tmpu,settings.eps);
+            Vfun{l}(:,kk) = tmpv;
+            Ufun{l}(:,kk) = tmpu;
+            nrm2v = nrm2v + norm(tmpv)^2;
+            nrm2u = nrm2v + norm(tmpu)^2;
+        end
+        for l = 1:m % Normalise
+            Vfun{l}(:,kk) = Vfun{l}(:,kk)/sqrt(nrm2v);
+            Ufun{l}(:,kk) = Ufun{l}(:,kk)/sqrt(nrm2u);
+        end
+    end
+    if m == 1, 
+        Vfun = Vfun{1}; 
+        Ufun = Ufun{1}; 
+    end % Return a quasimatrix in this case
+    V = Vfun;
+    U = Ufun;
+    
+end
+
 if nargout <= 1,
     varargout = { S };
 else
     varargout = { U,diag(S),V, flag };
 end
 
-    function u = drive(x)
-
+    function u = value(x)
+        
         if numel(x) > maxdegree/2+1,
             warning('chebfun:linop:svds','Left singular vectors not resolved to machine precision.');
             u = 0*x;
@@ -115,50 +196,53 @@ end
         % Size of current discretisation
         pts = numel(x);
         % Legendre to Chebyshev projection and quadrature matrices
-        [M,D,Minv] = getL2InnerProductMatrix(pts,d);
+        [M,D,Minv] = getL2InnerProductMatrix(pts,dom);
         
         % Get collocation matrix
         if nbc > 0 % Construct a rectangular matrix
-            [Apts ignored ignored ignored P] = feval(A,pts,'bc');
+            [Amat ignored ignored ignored P] = feval(A,pts,'bc');
         else       % a square matrix with no boundary conditions
-            [Apts ignored ignored ignored P] = feval(A,pts);
+            [Amat ignored ignored ignored P] = feval(A,pts);
         end
         
-        if diff(size(Apts)),
+        if diff(size(Amat)),
             error('chebfun:linop:svds','Nonsquare collocation currently not supported.')
         end
         
         if syssize == 1
+            
             if nbc > 0
                 B = [P ; zeros(nbc,size(P,2))];
-                Apts = full(full(spdiags(D,0,pts,pts)*M)*(Apts\B)*full(Minv*spdiags(1./D,0,pts,pts)));
-                [U,Sinv,V] = svd(Apts);
-                S = 1./diag(Sinv); 
+                Amat = full(spdiags(D,0,pts,pts)*M)*(Amat\B)*full(Minv*spdiags(1./D,0,pts,pts));
+                [U,Sinv,V] = svd(full(Amat));
+                S = 1./diag(Sinv);
             else
-                % SVD in L2 inner product
-                Apts = full(full(spdiags(D,0,pts,pts)*M)*Apts*full(Minv*spdiags(1./D,0,pts,pts)));
-                [U,S,V] = svd(Apts);
+                Amat = full(spdiags(D,0,pts,pts)*M)*Amat*full(Minv*spdiags(1./D,0,pts,pts));
+                [U,S,V] = svd(full(Amat));
                 S = diag(S);
             end
-%         else
-%             DM1 = spdiags(D,0,pts,pts)*M;
-%             MiD1 = Minv*spdiags(1./D,0,pts,pts);
-%             DM = []; MiD = [];
-%             for kk = 1:syssize
-%                 DM = blkdiag(DM,DM1);
-%                 MiD = blkdiag(MiD,MiD1);
-%             end
-%             if nbc > 0
-%                 P = blkdiag(P{:});
-%                 B = [P ; zeros(nbc,size(P,2))];
-%                 Apts = full(DM*(Apts\B)*MiD);
-%                 [U,S,V] = svd(Apts);
-%                 S = diag(S);
-%             else
-%                 Apts = full(DM*Apts*MiD);
-%                 [U,S,V] = svd(Apts);
-%                 S = diag(S);
-%             end
+            
+        else
+            
+            % Make block versions of the projection and quadrature matrices
+            DM1 = spdiags(D,0,pts,pts)*M;
+            DM = repmat({DM1},1,syssize);
+            DM = blkdiag(DM{:});
+            MiD1 = Minv*spdiags(1./D,0,pts,pts);
+            MiD = repmat({MiD1},1,syssize);
+            MiD = blkdiag(MiD{:});
+            
+            if nbc > 0
+                P = blkdiag(P{:});
+                B = [P ; zeros(nbc,size(P,2))];
+                Amat = DM*(Amat\B)*MiD;
+                [U,Sinv,V] = svd(full(Amat));
+                S = 1./diag(Sinv);
+            else
+                Amat = full(DM*Amat*MiD);
+                [U,S,V] = svd(Amat);
+                S = diag(S);
+            end
         end
         
         % Sort and truncate
@@ -168,8 +252,9 @@ end
         ind = sort(ind);
         V = V(:,ind);
         U = U(:,ind);
-        S = S(ind);    
+        S = S(ind);
         
+        % If S is not acceptable, then return sawtooth to increase N.
         if length(S) ~= length(Sold) || isempty(S)
             u = x; u(2:2:end) = -u(2:2:end);
             Sold = S;
@@ -178,8 +263,9 @@ end
             u = x; u(2:2:end) = -u(2:2:end);
             Sold = S;
             return
+        else
+            Sold = S;
         end
-        Sold = S;
         
         coef = [1, 2+sin(1:length(ind)-1)]';  % Form a linear combination of variables
         u = U*coef; % Collapse to one vector (See LINOP/MLDIVIDE for more details)
@@ -187,10 +273,106 @@ end
         u = MiD*u; % Convert to L2-orthonormal Chebyshev basis
         u = filter(u,100*tol);
         
-%         u = filter(u,1e-8);
+        %         u = filter(u,1e-8);
         
     end
+
+    function u = value_sys(x,N,bks)
+        % y is a cell array with the points for each function.
+        % N{j}(k) contains the # of pts for equation j on interval k.
+        % bks{j}(k:k+1) is the ends of the interval j for equation k.
+        x = x{:}; N = N{:}; bks = bks{:};
+        if numel(N) == 1, N = repmat(N,1,numints); end
+        
+        if numel(x) > maxdegree/2+1,
+            warning('chebfun:linop:svds','Left singular vectors not resolved to machine precision.');
+            u = 0*x;
+            flag = 1;
+            return;
+        end
+
+        % Evaluate the Matrix with boundary conditions attached
+        [Amat,ignored,c,ignored,P] = feval(A,N,'bc',[],bks);
+        
+        if m == 1
+            Pmat = [P ; zeros(numel(c),sum(N)*m)];
+        else
+            Pmat = zeros(sum(N)*m);
+            i1 = 0; i2 = 0;
+            for j = 1:A.blocksize(1)
+                ii1 = i1+(1:size(P{j},1));
+                ii2 = i2+(1:size(P{j},2));
+                Pmat(ii1,ii2) = P{j};
+                i1 = ii1(end); i2 = ii2(end);
+            end
+        end
+        
+        M = []; D = []; Minv = [];
+        for kk = 1:numel(N)
+            [Mk,Dk,Minvk] = getL2InnerProductMatrix(N(kk),bks(kk:kk+1));
+            M = blkdiag(M,Mk);
+            D = [D ; Dk];
+            Minv = blkdiag(Minv,Minvk);
+        end
+
+        % Make block versions of the projection and quadrature matrices
+        DM1 = diag(D)*M;
+        DM = repmat({DM1},1,syssize);
+        DM = blkdiag(DM{:});
+        MiD1 = Minv*diag(1./D);
+        MiD = repmat({MiD1},1,syssize);
+        MiD = blkdiag(MiD{:});
+            
+%         P = blkdiag(P{:});
+        B = [P ; zeros(size(Amat,1)-size(P,1),size(P,2))];
+        Amat = DM*(Amat\B)*MiD;
+        [U,Sinv,V] = svd(full(Amat));
+        S = 1./diag(Sinv);
+                
+        % Sort and truncate
+        S = S(S>tol/10*S(1)); % ignore these, as singular vectors are noisy
+        [dummy,ind] = sort(abs(sigma - S),'ascend'); % singvals closest to sigma
+        ind = ind(1:min(k,length(ind)));
+        ind = sort(ind);
+        V = V(:,ind);
+        U = U(:,ind);
+        S = S(ind);
+
+        
+        % If S is not acceptable, then return sawtooth to increase N.
+        if length(S) ~= length(Sold) || isempty(S)
+            u = x; u(2:2:end) = -u(2:2:end);
+            Sold = S;
+            return
+        elseif norm((S-Sold)./S(1),inf) > 1e7,
+            u = x; u(2:2:end) = -u(2:2:end);
+            Sold = S;
+            return
+        else
+            Sold = S;
+        end
+
+        u = sum(reshape(U,[sum(N),size(U,2),m]),3);  % Combine equations
+        u = sum(u,2);                        % Combine nodes
+
+        % Filter
+        csN = cumsum([0 N]);
+        for jj = 1:numel(N)
+          ii = csN(jj) + (1:N(jj));
+          u(ii) = filter(u(ii),1e-6);
+        end
+%         plot(x,MiD*U(:,1),'.-',x,MiD*V(:,1),'or')
+%         pause
+        
+        u = {u};  
+
+        % Store these to be used by the wrapper function
+        Nout = N;
+
+    end
 end
+
+
 
 
 
@@ -207,24 +389,6 @@ x = chebpts(pts,d);
 M = barymat(y,x);
 D = sqrt(w(:));
 Minv = barymat(x,y,v);
-end
-
-
-function M = getL2InnerProductMatrix_old(pts,d)
-
-x = chebpts(pts,d).';
-[y,w] = legpts(pts,d);
-n = ceil(pts/2);  % need only compute the upper half of M
-Y = [ repmat(y,1,n) ; x(1:n) ]; % evaluation points
-M = ones(pts+1,n); % will contain function values
-for j = 1:pts,  % evaluate Lagrange polynomials at Gauss notes
-    MM = Y - x(j);
-    if j <= n, MM(:,j) = 1; end;
-    M = M.*MM;
-end;
-M = full(M(1:pts,:)*spdiags(1./M(pts+1,:)',0,n,n)); % normalize
-M = full(spdiags(sqrt(w(:)),0,pts,pts)*M); % scale by Gauss weights
-M = [ M , M(pts:-1:1,floor(pts/2):-1:1) ];
 end
 
 
