@@ -112,13 +112,13 @@ if numints > 1
            x(idxk) = chebpts(n(k),d(k:k+1),kind);
         end
     elseif nargout == 2
-        w = zeros(csn(end),1);
+        w = zeros(1,csn(end));
         for k = 1:numints
            idxk = csn(k)+1:csn(k+1);
            [x(idxk) w(idxk)] = chebpts(n(k),d(k:k+1),kind);
         end
     else
-        w = zeros(csn(end),1); v = zeros(csn(end),1);
+        w = zeros(1,csn(end)); v = zeros(csn(end),1);
         for k = 1:numints
             idxk = csn(k)+1:csn(k+1);
             [x(idxk) w(idxk) v(idxk)] = chebpts(n(k),d(k:k+1),kind);
