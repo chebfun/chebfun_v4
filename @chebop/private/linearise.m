@@ -46,12 +46,14 @@ numberOfInputVariables = nargin(N.op);
 % is not one of them. In order for the code to work, we need to add 1 to
 % numberOfInputVariables if isa(N.op,'linop') && numberOfInputVariables > 1
 %     numberOfInputVariables = numberOfInputVariables
-
 if numberOfInputVariables > 1 % Load a cell, with the linear function x as the first entry
     uCell = cell(1,numel(u));
     for quasiCounter = 1:numel(u)
         uCell{quasiCounter} = u(:,quasiCounter);
     end
+else 
+    uCell = [];
+    tmp = [];
 end
 % Boundary conditions part
 ab = N.dom.ends;
@@ -59,148 +61,40 @@ a = ab(1); b = ab(end);
 xDom = chebfun('x',N.dom);
 
 % Check whether we have a mismatch between periodic BCs
-if xor(strcmpi(N.lbc,'periodic'),strcmpi(N.rbc,'periodic'))
+% if xor(strcmpi(N.lbc,'periodic'),strcmpi(N.rbc,'periodic'))
+%     error('CHEBOP:linearise:periodic', 'BC is periodic at one end but not at the other.');
+% end
+% Check whether we have a mismatch between periodic BCs
+if strcmpi(N.bc,'periodic') && (~isempty(N.lbc) || ~isempty(N.rbc))
     error('CHEBOP:linearise:periodic', 'BC is periodic at one end but not at the other.');
 end
 
 % Need to treat periodic BCs specially
-if strcmpi(N.lbc,'periodic')
+if strcmpi(N.bc,'periodic')
     linBC = 'periodic';
 else
     % Left BC
-    if ~isempty(N.lbc)
-        if ~iscell(N.lbc), lbc = {N.lbc};   % wrap singleton in cell
-        else lbc = N.lbc;
-        end
-        l = 1;
-        for j = 1:length(lbc)
-            % Evaluate the BC function
-            if nargin(lbc{j}) > 1 % Need to expand uCell in order to be able to evaluate
-                try
-                    % If errorString will not be empty below the second
-                    % next line (guj = ...), it means that that evaluation
-                    % has failed. We use that information to throw the
-                    % correct error in the catch statement.
-                    errorString = [];
-                    guj = lbc{j}(uCell{:});
-                    
-                    % If we have a system, and the user assigns BCs on the
-                    % form L.lbc = @(u,v) [u-1 ; v]; rather than L.lbc =
-                    % @(u,v) [u-1,v]; the domains of u and guj will not be
-                    % the same. Use that to throw an error.
-                    domu = domain(u);
-                    domguj = domain(guj);
-                    if domu(1) ~= domguj(1) || domu(end) ~= domguj(end)
-                        errorString = ['Incorrect form of left BCs. Did you use ', ...
-                            'BCs of the form @(u,v)[u;v] rather than @(u,v)[u,v]',...
-                            '(i.e. a semicolon rather than a comma)?',...
-                            '\n\nSee ''help chebop'' for details of allowed BC syntax.'];
-                        error('throw me to get to the catch-statement below')
-                    end
-                catch
-                    if ~isempty(errorString)
-                        error('CHEBFUN:chebop:linearise',errorString);
-                    else
-                        lbcshow = {N.lbcshow};
-                        lbcshow = lbcshow{j};
-                        % Convert function handles to strings
-                        if isa(lbcshow,'function_handle')
-                            lbcshow = char(lbcshow);
-                        elseif isnumeric(lbcshow)
-                            lbcshow = num2str(lbcshow);
-                        end
-                        s = sprintf(['''%s'' boundary condition is not valid for systems of equations.',...
-                            '\n\nSee ''help chebop'' for details of allowed syntax.'],lbcshow);
-                        error('CHEBFUN:chebop:linearise',s);
-                    end
-                end
-            else
-                guj = lbc{j}(u);
-            end
-            
-            % Compute the Frechet derivative of the BCs. Populate the
-            % structure linBC with the linops arising.
-            for k = 1:numel(guj);
-                [Dgujk nonConst] = diff(guj(:,k),u,'linop');
-                if any(any(nonConst))
-                    isLin = 0; nonLinFlag = 1;
-                end
-                if ~isLin && flag == 1, return, end
-                linBC.left(l) = struct('op',Dgujk,'val',-guj(a,k));
-                l = l+1;
-            end
-            
-        end
-    else
-        linBC.left = struct([]);
-    end
+    linBC.left = lineariseBC(N.lbc,N.lbcshow,'left',a,false);
     
     % Right BC
-    if ~isempty(N.rbc)
-        if ~iscell(N.rbc), rbc = {N.rbc};   % wrap singleton in cell
-        else rbc = N.rbc;
-        end
-        l = 1;
-        for j = 1:length(rbc)
-            % Evaluate the BC function
-            if nargin(rbc{j}) > 1
-                try
-                    % If errorString will not be empty below the second
-                    % next line (guj = ...), it means that that evaluation
-                    % has failed. We use that information to throw the
-                    % correct error in the catch statement.
-                    errorString = [];
-                    guj = rbc{j}(uCell{:});
-                    
-                    % If we have a system, and the user assigns BCs on the
-                    % form L.rbc = @(u,v) [u-1 ; v]; rather than L.lbc =
-                    % @(u,v) [u-1,v]; the domains of u and guj will not be
-                    % the same. Use that to throw an error.
-                    domu = domain(u);
-                    domguj = domain(guj);
-                    if domu(1) ~= domguj(1) || domu(end) ~= domguj(end)
-                        errorString = ['Incorrect form of right BCs. Did you use ', ...
-                            'BCs of the form @(u,v)[u;v] rather than @(u,v)[u,v]',...
-                            '(i.e. a semicolon rather than a comma)?',...
-                            '\n\nSee ''help chebop'' for details of allowed BC syntax.'];
-                        error('throw me to get to the catch-statement below')
-                    end
-                catch
-                    if ~isempty(errorString)
-                        error('CHEBFUN:chebop:linearise',errorString);
-                    else
-                        rbcshow = {N.rbcshow};
-                        rbcshow = rbcshow{j};
-                        % Convert function handles to strings
-                        if isa(rbcshow,'function_handle')
-                            rbcshow = char(rbcshow);
-                        elseif isnumeric(rbcshow)
-                            rbcshow = num2str(rbcshow);
-                        end
-                        s = sprintf(['''%s'' boundary condition is not valid for systems of equations.',...
-                            '\n\nSee ''help chebop'' for details of allowed syntax.'],rbcshow);
-                        error('CHEBFUN:chebop:linearise',s);
-                    end
-                end
-            else
-                guj = rbc{j}(u);
+    linBC.right = lineariseBC(N.rbc,N.rbcshow,'right',b,false);
+    
+    % Other BCs
+    if ~isempty(N.bc)
+        u = set(u,'funreturn',1);
+        if numberOfInputVariables > 1 % Load a cell, with the linear function x as the first entry
+            uCell2 = cell(1,numel(u));
+            for quasiCounter = 1:numel(u)
+                uCell2{quasiCounter} = u(:,quasiCounter);
             end
-            
-            % Compute the Frechet derivative of the BCs. Populate the
-            % structure linBC with the linops arising.
-            for k = 1:numel(guj);
-                [Dgujk nonConst] = diff(guj(:,k),u,'linop');
-                if any(any(nonConst))
-                    isLin = 0; nonLinFlag = 1;
-                end
-                if ~isLin && flag == 1, return, end
-                linBC.right(l) = struct('op',Dgujk,'val',-guj(b,k));
-                l = l+1;
-            end
+            tmp = uCell; uCell = uCell2;
         end
-    else
-        linBC.right = struct([]);
+        linBC.other = lineariseBC(N.bc,N.bcshow,'other',a,true);
+        uCell = tmp;
+    else 
+        linBC.other = struct([]);
     end
+
 end
 
 % If N.op is a linop, there's nothing to do here.
@@ -236,12 +130,14 @@ catch
 end
 if nonLinFlag || any(any(nonConst)),
     isLin = 0;
-    
     for lCounter = 1:numel(linBC.left)
         linBC.left(lCounter).val = -linBC.left(lCounter).val;
     end
     for rCounter = 1:numel(linBC.right)
         linBC.right(rCounter).val = -linBC.right(rCounter).val;
+    end
+    for oCounter = 1:numel(linBC.other)
+        linBC.other(oCounter).val = -linBC.other(oCounter).val;
     end
 else
     if nargout > 3 % Find the affine part
@@ -252,4 +148,84 @@ else
             affine = N.op(xDom,uZero{:});
         end
     end
+end
+
+
+
+    function linBC = lineariseBC(bc,bcshow,lr,ab,bcflag)
+        if ~isempty(bc)
+            if ~iscell(bc), bc = {bc}; end  % wrap singleton in cell
+            l = 1;
+            for j = 1:length(bc)
+                % Evaluate the BC function
+                if nargin(bc{j}) > 1 + bcflag % Need to expand uCell in order to be able to evaluate
+                    try
+                        % If errorString will not be empty below the second
+                        % next line (guj = ...), it means that that evaluation
+                        % has failed. We use that information to throw the
+                        % correct error in the catch statement.
+                        errorString = [];
+                        if ~bcflag
+                            guj = bc{j}(uCell{:});
+                        else
+                            guj = bc{j}(xDom,uCell{:});
+                        end
+
+                        % If we have a system, and the user assigns BCs on the
+                        % form L.lbc = @(u,v) [u-1 ; v]; rather than L.lbc =
+                        % @(u,v) [u-1,v]; the domains of u and guj will not be
+                        % the same. Use that to throw an error.
+                        domu = domain(u);
+                        domguj = domain(guj);
+                        if domu(1) ~= domguj(1) || domu(end) ~= domguj(end)
+                            errorString = ['Incorrect form of ' lr ' BCs. Did you use ', ...
+                                'BCs of the form @(u,v)[u;v] rather than @(u,v)[u,v]',...
+                                '(i.e. a semicolon rather than a comma)?',...
+                                '\n\nSee ''help chebop'' for details of allowed BC syntax.'];
+                            error('throw me to get to the catch-statement below')
+                        end
+                    catch
+                        if ~isempty(errorString)
+                            error('CHEBFUN:chebop:linearise',errorString);
+                        else
+                            bcshowj = {bcshow};
+                            bcshowj = bcshowj{j};
+                            % Convert function handles to strings
+                            if isa(bcshowj,'function_handle')
+                                bcshowj = char(bcshowj);
+                            elseif isnumeric(bcshowj)
+                                bcshowj = num2str(bcshowj);
+                            end
+                            s = sprintf(['''%s'' boundary condition is not valid for systems of equations.',...
+                                '\n\nSee ''help chebop'' for details of allowed syntax.'],bcshowj);
+                            error('CHEBFUN:chebop:linearise',s);
+                        end
+                    end
+                else
+                    if nargin(bc{j}) == 1
+                        guj = bc{j}(u);
+                    else
+                        guj = bc{j}(xDom,u);
+                    end
+                end
+
+                % Compute the Frechet derivative of the BCs. Populate the
+                % structure linBC with the linops arising.
+                gujvals = feval(guj,ab,'force');
+                for k = 1:numel(guj);
+                    [Dgujk nonConst] = diff(guj(:,k),u,'linop');
+                    if any(any(nonConst))
+                        isLin = 0; nonLinFlag = 1;
+                    end
+                    if ~isLin && flag == 1, linBC = struct([]); return, end
+                    linBC(l) = struct('op',Dgujk,'val',-gujvals(k));
+                    l = l+1;
+                end
+
+            end
+        else
+            linBC = struct([]);
+        end
+    end
+
 end

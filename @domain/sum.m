@@ -66,7 +66,7 @@ S = linop(@mat,@sum,d);
             end
             ii = csn(k)+(1:n(k));
             [x,Ak] = chebpts(n(k));
-            A(ii) = Ak.*mp.der(x');
+            A(1,ii) = Ak.*mp.der(x');
         end
     end
     

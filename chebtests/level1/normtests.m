@@ -14,11 +14,12 @@ pass(3) = (norm(dabsx,1)==2);
 pass(4) = (norm(dabsx,inf)==1);
 pass(5) = (norm(-dabsx,inf)==1);
 % 
-ddabsx = diff(dabsx);
+ddabsx = diff(diff(absx));
 pass(6) = (norm(ddabsx,1)==2);
 pass(7) = (norm(-ddabsx,1)==2);
 pass(8) = (norm(ddabsx,inf)==inf);
 pass(9) = (norm(-ddabsx,inf)==inf);
 pass(10) = (abs(norm([1 x])-sqrt(8/3)) < tol);
 pass(11) = (abs(norm([1 x],2)-sqrt(2)) < tol);
+
 

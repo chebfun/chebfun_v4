@@ -47,7 +47,7 @@ for s = 2.^(4:8:12)
     mappref('parinf',[1 s]);
     f2 = chebfun(@(x) exp(-(x-s).^2),[-inf,inf]);
     i2 = sum(f2);
-    pass(end+1) = (i1-i2)/s<tol*200;
+    pass(end+1) = abs(i1-i2)/s<tol*200;
 end
 
 mappref('adaptinf',adaptpref,'parinf',parpref)

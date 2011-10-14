@@ -23,7 +23,7 @@ pass(3) = (abs(e(3)+9.869604)<.1);
 
 [d,x,N] = domain(-1,1);
 N = chebop(d,@(u) diff(u,3) + sinh(u),1,@(u)[u+1,diff(u)]);
-bc = N.bc;  
+bc = N.bcs;  
 N.lbc = bc.right;
 N.rbc = bc.left;
 N.guess = x;

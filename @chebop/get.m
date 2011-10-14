@@ -9,12 +9,14 @@ switch propName
         val = N.dom;
     case 'op'
         val = N.op;
-    case 'bc'
-        val = struct('left',{N.lbcshow},'right',{N.rbcshow});
+    case 'bcs'
+        val = struct('left',{N.lbcshow},'right',{N.rbcshow},'bc',{N.bcshow});
     case 'lbc'
         val = N.lbc;
     case 'rbc'
         val = N.rbc;
+    case 'bc'
+        val = N.bc;        
     case {'guess','init'}
         val = N.init;
     case 'dim'

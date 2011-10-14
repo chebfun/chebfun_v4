@@ -34,13 +34,9 @@ else
       t = bc2char(A.lbcshow);
       if iscell(A.lbcshow) && length(A.lbcshow) > 1
         s = char(s, '   left boundary conditions:');
-      elseif strcmp(strtrim(t),'periodic')
-         s = char(s, '   with periodic boundary conditions.') ;
-         return
       else
          s = char(s, '   left boundary condition:');
-      end
-      
+      end      
       s = char(s,t{:});
     end
     
@@ -52,6 +48,20 @@ else
          s = char(s, '   right boundary condition:');
       end
       t = bc2char(A.rbcshow);
+      s = char(s,t{:});
+    end
+    
+    if ~isempty(A.bc)
+      s = char(s,' ');
+      t = bc2char(A.bcshow);
+      if iscell(A.lbcshow) && length(A.lbcshow) > 1
+        s = char(s, '   other boundary conditions:');
+      elseif strcmp(strtrim(t),'periodic')
+         s = char(s, '   with periodic boundary conditions.') ;
+         return
+      else
+         s = char(s, '   other constraints:');
+      end
       s = char(s,t{:});
     end
     

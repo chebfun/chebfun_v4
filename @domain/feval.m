@@ -28,10 +28,10 @@ function E = feval(d,s,lr)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin > 2
-    if ~any(strcmpi(lr,{'left','right'}));
+    if ~any(strcmpi(lr,{'left','right',''}));
         if ischar(lr)
-            msg = sprintf('Unknown input argument "%s".',lr);
-            error('CHEBFUN:feval:leftrightchar',msg);
+            error('CHEBFUN:feval:leftrightchar',...
+                'Unknown input argument "%s".',lr);
         else
             error('CHEBFUN:feval:leftright','Unknown input argument.');
         end

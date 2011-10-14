@@ -36,13 +36,15 @@ switch(class(B))
     if isempty(B), C = []; return, end  % linop*[] = []
     [m n] = size(B);
     if max(m,n) == 1
-      if isreal(B) && ~B % B = 0 is special
-          C = repmat(zeros(A.fundomain),A.blocksize(1),A.blocksize(2));
+      C = copy(A);
+      C.varmat = B*C.varmat;
+      C.oparray = B*C.oparray;
+      if isreal(B) && ~B% B = 0 is special
+%           C = repmat(zeros(A.fundomain),A.blocksize(1),A.blocksize(2));
           C.iszero = 1+0*C.iszero;
+          C.difforder = 0*C.difforder;
       else
-          C = copy(A);
-          C.varmat = B*C.varmat;
-          C.oparray = B*C.oparray;
+
       end
     elseif n == 1
       error('LINOP:mtimes:numericvector','Chebop-vector multiplication is not well defined.')
@@ -54,6 +56,24 @@ switch(class(B))
     if size(A,2) ~= size(B,1)
       error('LINOP:mtimes:size','Inner block dimensions must agree.')
     end
+    
+    if max(size(A)) == 1 && A.isdiag
+        A3 = feval(A,3); B3 = feval(B,3);
+        if size(B3,1) == 1 && ~any(diff(diag(A3)));
+            A3(1)
+            C = A3(1)*B;
+            return
+        end
+    end
+%     if max(size(B)) == 1 && B.isdiag
+%         A3 = feval(A,3); B3 = feval(B,3);
+%         A3, B3
+%         if size(A3,1) == 1 && ~any(diff(diag(B3)));
+%             C = B3(1)*A;
+%             return
+%         end
+%     end
+
     mat = A.varmat * B.varmat;
     op =  A.oparray * B.oparray;
 

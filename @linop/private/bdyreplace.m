@@ -45,7 +45,6 @@ for k = 1:length(A.lbc)
   q = q+1;
 end
 
-% elimnext = cumsum(n);  % in each variable, next row to eliminate
 for k = 1:length(A.rbc)
   op = A.rbc(k).op;
   if size(op,2)~=m && ~isa(op,'varmat')
@@ -71,6 +70,34 @@ for k = 1:length(A.rbc)
   end
   B(q,:) = T;
   c(q) = A.rbc(k).val;
+  q = q+1;
+end
+
+for k = 1:length(A.bc)
+  op = A.bc(k).op;
+  if size(op,2)~=m && ~isa(op,'varmat')
+    error('LINOP:bdyreplace:systemsize',...
+      'Boundary conditions not consistent with system size.')
+  end
+  if isa(op,'function_handle')
+      T = NaN(1,n*m);
+  else
+      T = [];
+      for l = 1:m
+        if isa(op,'varmat')
+            Tl = feval(op,{ns{l},map,breaks{l}});
+        else
+            Tl = feval(op,ns{l},0,map,breaks{l});
+        end
+        if size(Tl,1)>1, Tl = Tl(sum(ns{l}),:); end   % at right end only
+        nsl = ns{l}; snsl = sum(nsl);
+        blockcolindx = (l-1)*snsl+1:l*snsl;
+        Tl = Tl(blockcolindx);
+        T = [T Tl];
+      end
+  end
+  B(q,:) = T;
+  c(q) = A.bc(k).val;
   q = q+1;
 end
 end

@@ -17,6 +17,8 @@ if isa(f,'domain')
     tmp = f; f = d; d = tmp; 
 end
 
+f = set(f,'funreturn',0);
+
 % Define the oparray
 if isa(f,'chebfun')
     if numel(f) > 1

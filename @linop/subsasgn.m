@@ -27,11 +27,13 @@ switch s(1).type
         A.scale = B;
         valid = true;
 
-      case {'lbc','rbc'}           % DIRECT BC ASSIGNMENT
+      case {'lbc','rbc','other'}           % DIRECT BC ASSIGNMENT
         if isequal(name,'lbc')
           side = 'left';
-        else
+        elseif isequal(name,'rbc')
           side = 'right';
+        else
+          side = 'other';
         end
         bc = getbc(A);
         if length(s)==1  % no index specified, so clear old ones

@@ -4,6 +4,6 @@ function bc = getbc(A)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-bc = struct('left',A.lbc,'right',A.rbc);
+bc = struct('left',A.lbc,'right',A.rbc,'other',A.bc);
 
 end

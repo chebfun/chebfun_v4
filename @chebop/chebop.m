@@ -225,9 +225,10 @@ end
 if numel(varargin) == 2 && strcmpi(varargin{2},'periodic')
     N = set(N,'dom',varargin{1});
     if numel(varargin) == 2
-        N = set(N,'bc',createbc(varargin{2},N.numvar));
-        N.lbcshow = varargin{2};
-        N.rbcshow = varargin{2};
+%         N = set(N,'bc',createbc(varargin{2},N.numvar));
+        N = set(N,'bc',varargin{2});
+%         N.lbcshow = varargin{2};
+%         N.rbcshow = varargin{2};
     end
     if nargout > 1, x = chebfun('x',N.dom); end % Return x if asked for
     return
@@ -237,9 +238,10 @@ end
 if ~isnumeric(varargin{1}) || numel(varargin{1})<2 || any(sort(varargin{1})-varargin{1})
     % No
     if numel(varargin) == 1
-        N = set(N,'bc',createbc(varargin{1},N.numvar));
-        N.lbcshow = varargin{1};
-        N.rbcshow = varargin{1};
+%         N = set(N,'bc',createbc(varargin{1},N.numvar));
+        N = set(N,'bc',varargin{1});
+%         N.lbcshow = varargin{1};
+%         N.rbcshow = varargin{1};
     else
         N = set(N,'lbc',createbc(varargin{1},N.numvar));
         N.lbcshow = varargin{1};
@@ -253,9 +255,10 @@ else
     % Yes!
     N = set(N,'dom',varargin{1});
     if numel(varargin) == 2
-        N = set(N,'bc',createbc(varargin{2},N.numvar));
-        N.lbcshow = varargin{2};
-        N.rbcshow = varargin{2};
+%         N = set(N,'bc',createbc(varargin{2},N.numvar));
+        N = set(N,'bc',varargin{2});
+%         N.lbcshow = varargin{2};
+%         N.rbcshow = varargin{2};
     end
     if nargout > 1, x = chebfun('x',N.dom);  end % Return x if asked for
     return
@@ -273,6 +276,8 @@ function N = Nop_ini()
     N(1).lbcshow = [];
     N(1).rbc = [];
     N(1).rbcshow = [];
+    N(1).bc = [];
+    N(1).bcshow = [];    
     N(1).init = [];
     N(1).numvar = [];
     N(1).optype = [];

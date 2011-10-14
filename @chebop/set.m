@@ -21,26 +21,48 @@ while length(propertyArgIn) >= 2,
                 if isfield(val,'right')
                     N = set(N,'rbc',val.right);
                 end
-            else  % given same for both sides
-                N.lbc = createbc(val,N.numvar);
-                N.lbcshow = val;
-                N.rbc = N.lbc;
-                N.rbcshow = val;
+                if isfield(val,'bc')
+                    N = set(N,'bc',val.bc);
+                end                
+            elseif isa(val,'function_handle')  
+                N.bc = createbc(val,N.numvar);
+                N.bcshow = val;
+            else% given same for both sides
+                bc = createbc(val,N.numvar);
+                if strcmpi(val,'periodic')
+                    N.bc = createbc('periodic',N.numvar);
+                    N.bcshow = 'periodic';
+                    N.lbc = []; N.lbcshow = [];
+                    N.rbc = []; N.rbcshow = [];
+                else
+                    N.lbc = bc;
+                    N.lbcshow = val;
+                    N.rbc = bc;
+                    N.rbcshow = val;
+                    N.bc = [];
+                    N.bcshow = [];  
+                end
             end
         case 'lbc'
-            N.lbc = createbc(val,N.numvar);
-            N.lbcshow = val;
             if strcmpi(val,'periodic')
-                N.rbc = N.lbc;
-                N.rbcshow = val;
+                N.bc = createbc('periodic',N.numvar);
+                N.bcshow = 'periodic';
+                N.lbc = []; N.lbcshow = [];
+                N.rbc = []; N.rbcshow = [];
+            else
+                N.lbc = createbc(val,N.numvar);
+                N.lbcshow = val;
             end
         case 'rbc'
-            N.rbc = createbc(val,N.numvar);
-            N.rbcshow = val;
             if strcmpi(val,'periodic')
-                N.lbc = N.rbc;
-                N.lbcshow = val;
-            end 
+                N.bc = createbc('periodic',N.numvar);
+                N.bcshow = 'periodic';
+                N.lbc = []; N.lbcshow = [];
+                N.rbc = []; N.rbcshow = [];
+            else
+                N.rbc = createbc(val,N.numvar);
+                N.rbcshow = val;
+            end
         case 'op'
             if isa(val,'function_handle') || (iscell(val) && isa(val{1},'function_handle'))
                 N.optype = 'anon_fun';

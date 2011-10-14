@@ -32,7 +32,7 @@ if ~isstruct(bc)
   else
     error('LINOP:setbc:invalidtype','Unrecognized boundary condition mnemonic.')
   end
-  bc = struct('left',struct([]),'right',struct([]));
+  bc = struct('left',struct([]),'right',struct([]),'other',struct([]));
   switch(lower(type))
     case 'dirichlet'
       if A.difforder > 0
@@ -96,10 +96,13 @@ if ~isstruct(bc)
   end
 end
 
+if ~isfield(bc,'other'), bc.other = struct([]); end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Now, assign the BC structure, mapping dirichlet and neumann
 % strings into operators.
-A.lbc = bc.left;  A.rbc = bc.right;
+A.lbc = bc.left;  A.rbc = bc.right; 
+A.bc = bc.other;
 for k = length(A.lbc):-1:1  % backwards to allow deletions
   if isempty(A.lbc(k).op)
     A.lbc(k) = [];
@@ -119,7 +122,7 @@ for k = length(A.rbc):-1:1
   end
 end
 
-A.numbc = length(A.lbc) + length(A.rbc);
+A.numbc = length(A.lbc) + length(A.rbc) + length(A.bc);
 A.ID = newIDnum;
   
 end

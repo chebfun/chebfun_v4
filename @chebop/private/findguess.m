@@ -55,7 +55,7 @@ while ~success && counter < 10
     
     % Check whether we are successful in applying the operator to the
     % function.
-    try
+%     try
         if NopArgin == 1
             feval(N.op,guess);
         else
@@ -64,23 +64,23 @@ while ~success && counter < 10
         end
         success = 1;
         counter = counter+1;
-    catch
-        ME = lasterror;
-        if strcmp(ME.identifier,'CHEBFUN:mtimes:dim') || strcmp(ME.identifier,'MATLAB:badsubscript')
-            counter = counter + 1;
-        elseif strcmp(ME.identifier,'CHEBFUN:rdivide:DivisionByZeroChebfun')
-            error('CHEBOP:solve:findguess:DivisionByZeroChebfun', ...
-                ['Error in constructing initial guess. The the zero function ', ...
-                'on the domain is not a permitted initial guess as it causes ', ...
-                'division by zero. Please assign an initial guess using the ', ...
-                'N.init field.']);
-        else
-            error('CHEBOP:solve:findguess:ZeroFunctionNotPermitted', ...
-                ['Error in constructing initial guess. The zero function ', ...
-                'appears not to be valid as an argument to the operator. ', ....
-                'Please assign an initial guess using the N.init field.']);
-        end
-    end
+%     catch
+%         ME = lasterror;
+%         if strcmp(ME.identifier,'CHEBFUN:mtimes:dim') || strcmp(ME.identifier,'MATLAB:badsubscript')
+%             counter = counter + 1;
+%         elseif strcmp(ME.identifier,'CHEBFUN:rdivide:DivisionByZeroChebfun')
+%             error('CHEBOP:solve:findguess:DivisionByZeroChebfun', ...
+%                 ['Error in constructing initial guess. The the zero function ', ...
+%                 'on the domain is not a permitted initial guess as it causes ', ...
+%                 'division by zero. Please assign an initial guess using the ', ...
+%                 'N.init field.']);
+%         else
+%             error('CHEBOP:solve:findguess:ZeroFunctionNotPermitted', ...
+%                 ['Error in constructing initial guess. The zero function ', ...
+%                 'appears not to be valid as an argument to the operator. ', ....
+%                 'Please assign an initial guess using the N.init field.']);
+%         end
+%     end
 end
 
 if counter == 10
@@ -121,36 +121,32 @@ end
         ab = dom.ends;
         a = ab(1);  b = ab(end);
         
-        
-        % Get values of BCs at the endpoints
-        leftVals = zeros(length(bcFunLeft),1);
-        rightVals = zeros(length(bcFunRight),1);
-        
         % Create a cell variable, allows syntax like @(u,v)
         guessCell = cell(1,numel(guess));
+        guess = set(guess,'funreturn',1);
         for quasiCounter = 1:numel(guess)
             guessCell{quasiCounter} = guess(:,quasiCounter);
         end
         
+        % Get values of BCs at the endpoints
         if leftEmpty
             leftVals = 0;
         else
             if nargin(bcFunLeft) > 1, return, end
             v = bcFunLeft(guessCell{:});
-            leftVals = v(a,:);
+            leftVals = feval(v,a,'force');
         end
-        
         if rightEmpty
             rightVals = 0;
         else
             if nargin(bcFunRight) > 1, return, end
             v = bcFunRight(guessCell{:});
-            rightVals = v(b,:);
+            rightVals = feval(v,b,'force');
         end
-        % If we just have one column in our guess, perform a linear interpolation
-        leftY = leftVals(min(find(leftVals ~= 0)));
-        rightY = rightVals(min(find(rightVals ~= 0)));
         
+        % If we just have one column in our guess, perform a linear interpolation
+        leftY = leftVals(find(leftVals ~= 0, 1 ));
+        rightY = rightVals(find(rightVals ~= 0, 1 ));
         if isempty(leftY)
             leftY = 0;
         end

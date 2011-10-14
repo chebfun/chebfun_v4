@@ -21,11 +21,11 @@ lambda_minCounter = 0;
 
 % Check whether the operator is empty, or whether both BC are empty
 if isempty(N.op)
-    error('CHEBOP:solve_bvp_routines:OpEmpty','Operator empty');
+    error('CHEBOP:solve_bvp_routines:OpEmpty','Operator empty.');
 end
 
-if isempty(N.lbc) && isempty(N.rbc)
-    error('CHEBOP:solve_bvp_routines:BCEmpty''Both BC empty');
+if isempty(N.lbc) && isempty(N.rbc) && isempty(N.bc)
+    error('CHEBOP:solve_bvp_routines:BCEmpty''All BCs empty.');
 end
 
 % Check which type the operator is (anonymous function or a chebop).
@@ -95,15 +95,17 @@ currentGuessCell = [];
 % Extract BC functions
 bcFunLeft = N.lbc;
 bcFunRight = N.rbc;
+bcFunOther = N.bc;
 
-if xor(strcmpi(bcFunLeft,'periodic'),strcmpi(bcFunRight,'periodic'))
-    error('CHEBOP:solve_bvp_routines:findguess', 'BC is periodic at one end but not at the other.');
+if strcmpi(N.bc,'periodic') && (~isempty(N.lbc) || ~isempty(N.rbc))
+    error('CHEBOP:linearise:periodic', 'BC is periodic at one end but not at the other.');
 end
-
+    
 % Check whether either boundary has no BC attached, used later in the
 % iteration.
 leftEmpty = isempty(bcFunLeft);
 rightEmpty = isempty(bcFunRight);
+otherEmpty = isempty(bcFunOther);
 
 % Wrap the DE and BCs in a cell
 % if ~iscell(deFun), deFun = {deFun}; end
@@ -113,7 +115,7 @@ rightEmpty = isempty(bcFunRight);
 counter = 0;
 
 % Anon. fun. and linops now both work with N(u)
-[deResFun, lbcResFun, rbcResFun] = evalResFuns();
+[deResFun, lbcResFun, rbcResFun, bcResFun] = evalResFuns();
 
 nrmDeltaRel = Inf;
 nnormr = Inf;
@@ -169,7 +171,7 @@ if isLin % N is linear. Sweet!
         solve_display(pref,handles,'iter',u,norm(delta),nrmDeltaRel,nrmDeltaRelvec)
         solve_display(pref,handles,'final',u,[],nrmDeltaRel,0)
     end
-    
+   
     return
 else
     % Need to switch the signs of bc.left.vals and bc.right.vals for
@@ -246,7 +248,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     % Reset the currentGuessCell variable
     currentGuessCell = [];
 
-    [deResFun, lbcResFun, rbcResFun] = evalResFuns;
+    [deResFun, lbcResFun, rbcResFun, bcResFun] = evalResFuns;
     
     normu = norm(u,'fro');
     nrmDeltaRel = nrmDeltaAbs/normu;
@@ -314,7 +316,8 @@ if stagCounter == maxStag
 end
 
 % Function which returns all residual functions
-    function [deResFun, lbcResFun, rbcResFun] = evalResFuns()
+    function [deResFun, lbcResFun, rbcResFun, bcResFun] = evalResFuns()
+        
         deResFun = evalProblemFun('DE',u);
         if ~leftEmpty
             lbcResFun = evalProblemFun('LBC',u);
@@ -326,13 +329,19 @@ end
         else
             rbcResFun = 0;
         end
+        if ~otherEmpty
+            bcResFun = evalProblemFun('BC',set(u,'funreturn',1));
+        else
+            bcResFun = 0;
+        end        
+        
     end
 % Function that sets up the boundary conditions of the linearized operator
     function bcOut = setupBC()
         % If we have a periodic BC, simply let bc be 'periodic'. We have
         % already checked whether both left and right BCs are both periodic
         % or not, so no need to check both left and right.
-        if strcmpi(bcFunLeft,'periodic')
+        if strcmpi(bcFunOther,'periodic')
             bcOut = 'periodic';
         else
             % Check whether a boundary happens to have no BC attached
@@ -340,8 +349,9 @@ end
                 bcOut.left = [];
             else
                 v = lbcResFun;
+                va = feval(v,a);
                 for j = 1:numel(v);
-                    bcOut.left(j) = struct('op',diff(v(:,j),u,'linop'),'val',v(a,j));
+                    bcOut.left(j) = struct('op',diff(v(:,j),u,'linop'),'val',va(j));
                 end
             end
             % Check whether a boundary happens to have no BC attached
@@ -349,10 +359,22 @@ end
                 bcOut.right = [];
             else
                 v = rbcResFun;
+                vb = feval(v,b);
                 for j = 1:numel(v);
-                    bcOut.right(j) = struct('op',diff(v(:,j),u,'linop'),'val',v(b,j));
+                    bcOut.right(j) = struct('op',diff(v(:,j),u,'linop'),'val',vb(j));
                 end
             end
+            % Check whether a boundary happens to have no BC attached
+            if otherEmpty
+                bcOut.other = [];
+            else
+                v = bcResFun;
+                vb = feval(v,b,'force');
+                for j = 1:numel(v);
+                    bcOut.other(j) = struct('op',diff(v(:,j),u,'linop'),'val',vb(j));
+                end
+            end
+            
         end
     end
 
@@ -365,7 +387,7 @@ end
         % Need to check whether we satisfy BCs in a different way if we
         % have periodic BCs (i.e. we check for example whether u(0) = u(1),
         % u'(0) = u'(1) etc.).
-        if strcmpi(bcFunLeft,'periodic')
+        if strcmpi(bcFunOther,'periodic')
             sA = struct(A);
             diffOrderA =  sA.difforder;
             for orderCounter = 0:diffOrderA - 1
@@ -374,13 +396,18 @@ end
         else
             % Evaluate residuals of BCs
             if ~leftEmpty
-                v = lbcResFun;
-                sn(2) = sn(2) + v(a,:)*v(a,:)';
+                va = feval(lbcResFun,a,'force');
+                sn(2) = sn(2) + va*va';
             end
             
             if ~rightEmpty
-                v = rbcResFun;
-                sn(2) = sn(2) + v(b,:)*v(b,:)';
+                vb = feval(rbcResFun,b,'force');
+                sn(2) = sn(2) + vb*vb';
+            end
+            
+            if ~otherEmpty
+                vb = feval(bcResFun,b,'force');
+                sn(2) = sn(2) + vb*vb';
             end
         end
         
@@ -489,13 +516,7 @@ end
                     fOut = deFun(currentGuess);
                 case 'LBC'
                     if ~iscell(bcFunLeft)
-                        % We know how to linearize periodic BCs, so we
-                        % don't care about how the function evaluates.
-                        if strcmpi(bcFunLeft,'periodic')
-                            fOut = chebfun(0,dom);
-                        else
-                            fOut = bcFunLeft(currentGuess);
-                        end
+                        fOut = bcFunLeft(currentGuess);
                     else
                         fOut = chebfun;
                         for funCounter = 1:length(bcFunLeft)
@@ -504,33 +525,52 @@ end
                     end
                 case 'RBC'
                     if ~iscell(bcFunRight)
-                        if strcmpi(bcFunRight,'periodic')
-                            fOut = chebfun(0,dom);
-                        else
-                            fOut = bcFunRight(currentGuess);
-                        end
+                        fOut = bcFunRight(currentGuess);
                     else
                         fOut = chebfun;
                         for funCounter = 1:length(bcFunRight)
                             fOut(:,funCounter) = feval(bcFunRight{funCounter},currentGuess);
                         end
                     end
+                case 'BC'
+                    if ~iscell(bcFunOther)
+                        if strcmpi(bcFunOther,'periodic')
+                            fOut = chebfun(0,dom);
+                        elseif nargin(bcFunOther) == 1
+                            fOut = bcFunOther(currentGuess);
+                        else
+                            fOut = bcFunOther(set(xDom,'funreturn',1),currentGuess);
+                        end
+                    else
+                        fOut = chebfun;
+                        if nargin(bcFunOther) == 1
+                            for funCounter = 1:length(bcFunOther)
+                                fOut(:,funCounter) = feval(bcFunOther{funCounter},currentGuess);
+                            end
+                        else
+                            for funCounter = 1:length(bcFunOther)
+                                fOut(:,funCounter) = feval(bcFunOther{funCounter},set(xDom,'funreturn',1),currentGuess);
+                            end
+                        end
+                    end                    
             end
         elseif numberOfInputVariables == 2 % Now we're working with @(x,u) where u could be a single column or a quasimatrix
             switch type
                 case 'DE'
                     fOut = deFun(xDom,currentGuess);
                 case 'LBC'
-                    if strcmpi(bcFunRight,'periodic')
-                        fOut = chebfun(0,dom);
-                    else
-                        fOut = bcFunLeft(currentGuess);
-                    end
+                    fOut = bcFunLeft(currentGuess);
                 case 'RBC'
-                    if strcmpi(bcFunLeft,'periodic')
+                    fOut = bcFunRight(currentGuess);
+                case 'BC'
+                    if strcmpi(bcFunOther,'periodic')
                         fOut = chebfun(0,dom);
                     else
-                        fOut = bcFunRight(currentGuess);
+                        if nargin(bcFunOther) == 1
+                            fOut = bcFunOther(currentGuess);
+                        else
+                            fOut = bcFunOther(set(xDom,'funreturn',1),currentGuess);
+                        end
                     end
             end
         else % Now we're working with @(x,u,v)
@@ -542,21 +582,33 @@ end
                 end
             end
             
+            if strcmp(type,'BC')
+                for k = 1:numel(currentGuessCell)
+                    currentGuessCell{k} = set(currentGuessCell{k},'funreturn',1);
+                end
+            else
+                for k = 1:numel(currentGuessCell)
+                    currentGuessCell{k} = set(currentGuessCell{k},'funreturn',0);
+                end
+            end
+            
             switch type
                 case 'DE'
                     fOut = deFun(xDom,currentGuessCell{:});
                 case 'LBC'
-                    if strcmpi(bcFunRight,'periodic')
-                        fOut = chebfun(0,dom);
-                    else
-                        fOut = bcFunLeft(currentGuessCell{:});
-                    end
+                    fOut = bcFunLeft(currentGuessCell{:});
                 case 'RBC'
-                    if strcmpi(bcFunLeft,'periodic')
+                    fOut = bcFunRight(currentGuessCell{:});
+                case 'BC'
+                    if strcmpi(bcFunOther,'periodic')
                         fOut = chebfun(0,dom);
                     else
-                        fOut = bcFunRight(currentGuessCell{:});
-                    end
+                        if nargin(bcFunOther) == numel(currentGuessCell)
+                            fOut = bcFunOther(currentGuessCell{:});
+                        else
+                            fOut = bcFunOther(set(xDom,'funreturn',1),currentGuessCell{:});
+                        end
+                    end                    
             end
         end
     end
