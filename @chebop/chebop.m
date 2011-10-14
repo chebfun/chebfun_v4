@@ -54,8 +54,13 @@ function [N x] = chebop(varargin)
 % identical to the common understanding of Dirichlet or Neumann conditions
 % in every problem.
 %
-% When BC is given, the more specialized fields LBC and RBC are ignored.
-% Note that CHEBOP(OP,0) is not the same as CHEBOP(OP,0,[]). 
+% When BC is passed in the CHEBOP call, the more specialized fields LBC and
+% RBC are ignored. Note that CHEBOP(OP,0) is not the same as
+% CHEBOP(OP,0,[]). 
+%
+% If BC is given a function handle, then each condition must give points
+% explicitly or otherwise evaluate to a scalar
+%    @(x,u) [ u(1) - u(0), sum(x.*u) ]
 %
 % CHEBOP(OP,...,'init',U) provides a chebfun as a starting point for
 % nonlinear iterations or a PDE solution. See CHEBOP/SOLVEBVP and
@@ -67,7 +72,7 @@ function [N x] = chebop(varargin)
 % Note that many fields can be set after the chebop object N is created:
 % N.op, N.lbc, N.rbc, N.bc, N.init can all be assigned new values. For
 % example:
-%    N = chebop(-5,5);  % Constructs an empty chebop on the interval [-5, 5]
+%    N = chebop(-5,5);  % Constructs an empty chebop on the interval [-5,5]
 %    N.op = @(x,u) 0.01*diff(u,2) - x.*u;
 %    N.bc = 'dirichlet';
 %    plot(N\1)
