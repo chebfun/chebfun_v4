@@ -40,6 +40,20 @@ classdef chebconst < chebfun
             if f(1).trans, g = transpose(g); end
         end
         
+        function L = diag(f,d)
+            if nargin == 1, d = domain(f); end
+            if numel(f) > 1,
+                error('CHEBFUN:chebconst:diag:quasi',...
+                    'Quasimatrix input not allowed.');
+            end
+            if isempty(f),
+                error('CHEBFUN:chebconst:diag:empty',...
+                    'Enpty chebfun input not allowed.');
+            end
+            v = get(f(1),'vals');
+            L = v(1)*eye(d);
+        end
+        
         function g = sum(f)
             g = constfun(0,domain(f));
             for k = 1:numel(f)

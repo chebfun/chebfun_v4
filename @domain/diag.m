@@ -35,6 +35,7 @@ A.isdiag = 1;
     % Define the mat
     function m = mat(n)
     breaks = []; map = [];
+
     if iscell(n)
         if numel(n) > 1, map = n{2}; end
         if numel(n) > 2, breaks = n{3}; end
@@ -99,10 +100,7 @@ A.isdiag = 1;
         fx(dxloc) = feval(f, xpts(dxloc), 'left');
         fx(dxloc+1) = feval(f, xpts(dxloc), 'right');
     end  
-    
     m = spdiags( fx ,0,sum(n),sum(n));
-    
-    
     end
 
     function y = trim(x)
