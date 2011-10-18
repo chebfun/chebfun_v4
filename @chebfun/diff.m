@@ -121,6 +121,8 @@ for j = 1:n % Loop n times for nth derivative
     elseif any(newimps)
        F.imps(2,:) = newimps;
     end
+    
+    f = F;
 
 end
 
