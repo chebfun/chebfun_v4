@@ -30,7 +30,7 @@ if isempty(F), Fx = []; return, end
 lr = '';
 forceval = 0;
 
-if F.funreturn && nargin > 2
+if F(1).funreturn && nargin > 2
     store_x = [store_x x];
 end
 xout = store_x;
