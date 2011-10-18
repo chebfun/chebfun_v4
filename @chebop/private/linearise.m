@@ -33,6 +33,7 @@ isLin = 1;
 L = [];
 linBC = [];
 affine = [];
+jumplocs = [];
 cheb1 = chebfun('1',N.dom);
 nonLinFlag = 0;
 
@@ -103,6 +104,7 @@ if isa(N.op,'linop')
     if nargout > 3
         affine = repmat(0*xDom,1,numberOfInputVariables-1);
     end
+    L = set(L,'jumplocs',jumplocs);
     return
 end
 
@@ -150,6 +152,12 @@ else
     end
 end
 
+jumplocs = unique([jumplocs, N.jumplocs]);
+L = set(L,'jumplocs',jumplocs);
+Ndom = N.dom; Ldom = get(L,'fundomain');
+% dom = unique([Ndom.endsandbreaks, Ldom.endsandbreaks]);
+dom = unique([Ndom.endsandbreaks, Ldom.endsandbreaks, jumplocs]);
+L = set(L,'fundomain',domain(dom));
 
 
     function linBC = lineariseBC(bc,bcshow,lr,ab,bcflag)
@@ -165,10 +173,16 @@ end
                         % has failed. We use that information to throw the
                         % correct error in the catch statement.
                         errorString = [];
+                        feval(uCell{1},[]); % Clear persistent variables starage in feval
                         if ~bcflag
                             guj = bc{j}(uCell{:});
                         else
                             guj = bc{j}(xDom,uCell{:});
+                        end
+                        % Feval points have been stored in feval. Recover these and reset.
+                        if strcmp(lr,'other')
+                            [ignored jumplocsj] = feval(uCell{1},[]);
+                            jumplocs = [jumplocs jumplocsj];
                         end
 
                         % If we have a system, and the user assigns BCs on the
@@ -202,11 +216,18 @@ end
                         end
                     end
                 else
+                    feval(u,[]); % Clear persistent variables starage in feval
                     if nargin(bc{j}) == 1
                         guj = bc{j}(u);
                     else
                         guj = bc{j}(xDom,u);
                     end
+                    % Feval points have been stored in feval. Recover these and reset.
+                    if strcmp(lr,'other')
+                        [ignored jumplocsj] = feval(u,[]);
+                        jumplocs = [jumplocs jumplocsj];
+                    end
+                    
                 end
 
                 % Compute the Frechet derivative of the BCs. Populate the

@@ -80,7 +80,7 @@ switch s(1).type
         end
       case 'scale'
         A = A.scale;
-        case 'blocksize'
+      case 'blocksize'
         A = A.blocksize;
       case 'numbc'
         A = A.numbc;
@@ -93,7 +93,9 @@ switch s(1).type
       case 'iszero'
         A = A.iszero;
       case 'isdiag'
-        A = A.isdiag;        
+        A = A.isdiag; 
+      case 'jumplocs'
+        A = A.jumplocs; 
       case {'domain','fundomain'}
         A = A.fundomain;
       otherwise 

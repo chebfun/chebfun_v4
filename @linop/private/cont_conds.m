@@ -1,4 +1,4 @@
-function [Cmat,c] = cont_conds_sys(A,Nsys,map,breaks)
+function [Cmat,c] = cont_conds(A,Nsys,map,breaks,jumplocs)
 % Retrieve continuity conditions for a piecewise linop
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
@@ -16,22 +16,28 @@ function [Cmat,c] = cont_conds_sys(A,Nsys,map,breaks)
     for kk = 1:syssize
         dok = max(Adifforder(:,kk));    % Difforder for this equation
         numfunsk = numel(bks{kk})-1; % # of intervals in this variable
+        bkk = bks{kk};
         if numfunsk > 1
             Nsysk = Nsys{kk};           % # of points in each interval
             % Make the differentiation matrices for piecewise boundary conditions.
             if dok > 1
                 D = zeros(sum(Nsysk),sum(Nsysk),dok-1);
-                bkk = bks{kk}([1 end]);
-                D(:,:,1) = feval(diff(domain(bkk)),Nsysk,map,bks{kk});
+                D(:,:,1) = feval(diff(domain(bkk([1 end]))),Nsysk,map,bkk);
                 for ll = 2:dok-1
                   D(:,:,ll) = D(:,:,1)*D(:,:,ll-1);
                 end
             end
-
             csNsysk = cumsum([0 Nsysk]);
             % Extract the right rows
             for jj = 1:numfunsk-1
                 % Continuity condition
+                
+                % Skip if a jum is being enforced here.
+                if any(bkk(jj+1)==jumplocs), 
+                    intnum = intnum + 1;
+                    continue
+                end
+                
                 Cmat(bcrownum,csN(intnum)+Nsysk(jj)+(0:1)) = [-1 1];
                 bcrownum = bcrownum + 1;
                 % Derivative conditions

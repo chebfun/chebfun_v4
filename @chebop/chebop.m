@@ -287,4 +287,5 @@ function N = Nop_ini()
     N(1).numvar = [];
     N(1).optype = [];
     N(1).dim = [];
+    N(1).jumplocs = [];
 end

@@ -1,4 +1,4 @@
-function Fx = feval(F,x,varargin)
+function [Fx xout] = feval(F,x,varargin)
 % FEVAL   Evaluate a chebfun at one or more points.
 % FEVAL(F,X) evaluates the chebfun F at the point(s) in X.
 % FEVAL(F,X,'LEFT') or FEVAL(F,X,'RIGHT') when the chebfun F has a jump
@@ -16,6 +16,8 @@ function Fx = feval(F,x,varargin)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+persistent store_x
+
 % Because chebfuns are superior to function_handle, this call can result
 % when f is function_handle and x is chebfun. In that case, revert to the
 % built-in behavior.
@@ -27,6 +29,17 @@ end
 if isempty(F), Fx = []; return, end
 lr = '';
 forceval = 0;
+
+if F.funreturn && nargin > 2
+    store_x = [store_x x];
+end
+xout = store_x;
+if isempty(x)
+    Fx = [];
+    store_x = [];
+    return
+end
+
 
 % Deal with feval(f,x,'left') and feval(f,x,'right')
 if nargin > 2

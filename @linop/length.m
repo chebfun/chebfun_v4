@@ -10,7 +10,9 @@ function l = length(L)
 if isempty(L), l = 0; return, end
 
 LL = feval(L,5,'nobc');
-if size(LL,1) > 1
+bsize = L.blocksize;
+
+if size(LL,1) > bsize(1)
     l = inf;
 else
     l = 1;

@@ -11,6 +11,9 @@ classdef chebconst < chebfun
             if nargin > 1 && isa(varargin{2},'chebfun')
                 [L nonConst] = diff@chebfun(varargin{:});
                 if ~isfinite(length(L)) % L is inf x inf
+                    L
+                    keyboard
+                    feval(L,1)
                     L = full(diag(feval(L,1)));
                 end
             else
@@ -55,9 +58,33 @@ classdef chebconst < chebfun
         end
         
         function g = sum(f)
-            g = constfun(0,domain(f));
+            if isempty(f), g = []; return, end
+            g = 0*f(1);
             for k = 1:numel(f)
                 g = plus(g,f(:,k));
+            end
+            g.trans = f(1).trans;
+        end
+        
+        function h = mtimes(f,g)
+            if isempty(f), h = f; return, elseif isempty(g), h = g; return, end
+            if isnumeric(f) || isnumeric(g), h = mtimes@chebfun(f,g); return, end
+            [mf nf] = size(f); [mg ng] = size(g);
+            if ~isfinite(mf) || ~isfinite(ng)
+                error('CHEBFUN:chebconst:mtimes:outerp',...
+                    'Outer products not yet implemented for chebconsts.');
+            end
+            if (mf == 1 || ng == 1) && (f(1).funreturn || g(1).funreturn)
+                h = chebconst;
+                for j = 1:mf
+                    for k = 1:ng
+                        h(j,k) = times(f(j)',g(k));
+                    end
+                end
+            else
+                if isa(f,'chebconst'), f = double(f); end
+                if isa(g,'chebconst'), g = double(g); end
+                h = mtimes(f,g);
             end
         end
         

@@ -24,6 +24,8 @@ switch propName
         val = L.blocksize;
     case 'ID'
         val = L.ID;
+    case 'jumplocs'
+        val = L.jumplocs;
     case 'chebop'
         val = L.chebop;        
     otherwise

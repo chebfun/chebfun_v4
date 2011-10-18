@@ -71,6 +71,10 @@ switch s(1).type
         A = setbc(A,B);
         valid = true;
         
+      case 'jumplocs'                    % CONTINUITY AT BREAKS
+        A.jumplocs = B;
+        valid = true;
+        
       case 'oparray'               % REASSIGN OPARRAY
         A.oparray = B;
         valid = true;

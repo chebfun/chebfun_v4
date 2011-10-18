@@ -168,9 +168,12 @@ else
           M = P*M;
           % Compute boundary conditions and apply (if required)
           if usebc == 1
-              [B c1] = bdyreplace(A,{n},map,{breaks});
-              [C c2] = cont_conds(A,{n},map,{breaks});
-              B = [B ; C];  M = [M ; B]; c = [c1 ; c2];
+              [B c] = bdyreplace(A,{n},map,{breaks});
+%               if isempty(A.jumplocs)
+                  [C c2] = cont_conds(A,{n},map,{breaks},A.jumplocs);
+                  B = [B ; C];  c = [c ; c2];
+%               end 
+              M = [M ; B]; 
               rowreplace = sum(n)-(size(B,1)-1:-1:0);
           end
       end
@@ -208,9 +211,12 @@ else
       if usebc == 1
           breaks = repmat({breaks},1,A.blocksize(2));
           n = repmat({n},1,A.blocksize(2));
-          [B c1] = bdyreplace(A,n,map,breaks);
-          [C c2] = cont_conds(A,n,map,breaks);
-          B = [B ; C]; M = [M ; B]; c = [c1 ; c2];
+          [B c] = bdyreplace(A,n,map,breaks);
+%           if isempty(A.jumplocs)
+              [C c2] = cont_conds(A,n,map,breaks,A.jumplocs);
+              B = [B ; C]; c = [c ; c2];
+%           end
+          M = [M ; B]; 
           rowreplace = sizeM-nbc+(1:nbc);          
       end
   end

@@ -101,8 +101,8 @@ function C = mldivide(A,B,tolerance)
     if sum(max(A.difforder,[],1)) ~= sum(max(A.difforder,[],2))
       warning('LINOP:mldivide:hell',...
         'This equation may be solved incorrectly. See Trac #202.')
-    elseif A.numbc-npar ~= sum(max(A.difforder,[],2))    
-      warning('LINOP:mldivide:bcnum',...
+    elseif A.numbc-npar ~= (1+numel(A.jumplocs))*sum(max(A.difforder,[],2)) 
+        warning('LINOP:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
 

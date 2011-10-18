@@ -111,6 +111,7 @@ A.rbc = struct([]);
 A.bc = struct([]);
 A.numbc = 0;
 A.scale = 0;
+A.jumplocs = [];
 A.blocksize = [0 0];  % for block linops
 A.ID = newIDnum();    % for storage of realizations/factorizations
 
