@@ -104,10 +104,19 @@ axis square
 chebsnake;
 
 %%
-% If this is too easy for you, you may try the equispaced
-% nodes option:
+% If this is too easy for you, you may try to play this game
+% with a polynomial interpolant through equispaced nodes:
 
 chebsnake('equi');
+
+%% 
+% You may also try barycentric rational interpolation as described 
+% by Floater and Hormann (Numerische Mathematik, 2007), an option
+% implemented by Georges Klein. Because this is a rational interpolant, 
+% it can remain close to our piecewise linear f(x) even when the 
+% interpolation nodes are equispaced:
+
+chebsnake('fh');
 
 %%
 % Have (Cheb)fun!
