@@ -8,7 +8,7 @@ function varargout = why(f,r)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-N = 9;  % Number of Chebfun languages
+N = 10;  % Number of Chebfun languages
 if nargin == 1
     r = ceil(N*rand);
 end
@@ -66,7 +66,10 @@ switch r
     case 9,         s = 'Kiyon ke Nick Trefethen ne kaha tha!'; 
         % Urdu:
         % Mohsin Javed
-    
+    case 10,        s = 'Well den Nick Trefethen et gesot huet!';
+        % Luxembourgish:
+        % Georges Klein
+
     otherwise,      s = 'Good question!';
 end
 
