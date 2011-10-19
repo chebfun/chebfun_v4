@@ -47,6 +47,16 @@ if nargin > 3
     rootspref.prune = varargin{3};
 end
 
+% Trivial case for length(g)==1
+if g.n == 1
+    if ( g.vals(1) == 0 )
+        out = 0.5*(g.ends(1) + g.ends(end));
+    else
+        out = [];
+    end;
+    return;
+end
+
 % Get coefficients for the recursive call
 c = flipud(chebpoly(g)) / g.scl.v;
 
