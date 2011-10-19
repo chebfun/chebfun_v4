@@ -1,5 +1,5 @@
 function varargout = cheboppref(varargin)
-% CHEBOPPREF Settings for chebops.  (Highly subject to change in the future!)
+% CHEBOPPREF Settings for chebops.
 %
 % By itself, CHEBOPPREF returns a structure with current preferences as
 % fields/values. Use it to find out what preferences are available.
@@ -14,7 +14,7 @@ function varargout = cheboppref(varargin)
 % PREFVAL. S = CHEBOPPREF(PREFNAME,PREFVAL) stores the current state of
 % cheboppref in the structure S before PREFNAME is changed.
 %
-% CHEBOP PREFERENCES (case sensitive)
+% CHEBOP PREFERENCES
 %
 % maxdegree - maximum matrix size used in linear chebop calculations
 %
@@ -31,9 +31,9 @@ function varargout = cheboppref(varargin)
 % plotting - controls whether the most current solution and update of the
 %     iteratation are plotted
 %     'off' - no plotting (default)
-%     'on'  - plots and pauses for the default time (0.5 s)
+%     'on'  - plots and pauses for the default time (0.5s)
 %     time  - current iteration and update are plotted for a value of time,
-%           i.e. cheboppref('plotting',1) shows the plots for 1 s.
+%             i.e., cheboppref('plotting',1) shows the plots for 1s.
 %     'pause' - pauses the run of the program after plots are shown to wait
 %               for user action.
 %
@@ -44,7 +44,7 @@ function varargout = cheboppref(varargin)
 %          (Convergence occurs if either of the above two norms are below tolerance)
 %
 % damped - controls method of nonlinear solution
-%     'off'  - pure Newton iteration (perhaps less robust, more interesting!)
+%     'off'  - pure Newton iteration (perhaps less robust; more interesting!)
 %     'on'   - damped Newton iteration (perhaps more robust; default)
 %
 % maxiter - maximum number of iterations allowed in nonlinear iteration
@@ -59,7 +59,7 @@ function varargout = cheboppref(varargin)
 
 persistent prefs
 
-if isempty(prefs)  % first call, default values
+if isempty(prefs)  % First call; get default values
     prefs = initPrefs();
 end
 
@@ -67,36 +67,41 @@ if nargout == 1
     varargout = {prefs};
 end
 
-% Probably should use some nicer error catching...
-if nargin==0  % return structure
+if nargin == 0      % Return structure
     varargout = { prefs };
-elseif nargin==1  % return value
+elseif nargin == 1  % Return value
     if isstruct(varargin{1})
         % Assign prefs from structure input
         prefs = varargin{1};
         return
     end
-    if strcmp(varargin{1},'factory')
+    prop = varargin{1};
+    if strcmpi(prop,'factory')
         prefs = initPrefs;
+    elseif ~isfield(prefs,prop)
+         error('CHEBFUN:cheboppref:unknown','Unknown property %s', prop);
     else
         varargout = { prefs.(varargin{1}) };
     end
-else  % set value
-    prop = lower(varargin{1});
-    newVal = varargin{2};
-    switch prop
-        case 'tol'
-            prefs.restol = newVal;
-            prefs.deltol = newVal;
-        case 'plotting'
-            if strcmp(newVal,'on')
-                prefs.plotting = 0.5;
-            else
-                prefs.plotting = newVal;
-            end
-        otherwise
-            prefs.(prop) = newVal;
-            
+else                % Set value
+    while ~isempty(varargin) % Loop to allow setting of multiple properties
+        prop = lower(varargin{1}); newVal = varargin{2}; varargin(1:2) = [];
+        switch prop
+            case 'tol'
+                prefs.restol = newVal;
+                prefs.deltol = newVal;
+            case 'plotting'
+                if strcmp(newVal,'on')
+                    prefs.plotting = 0.5;
+                else
+                    prefs.plotting = newVal;
+                end
+            otherwise
+                if ~isfield(prefs,prop)
+                    error('CHEBFUN:cheboppref:unknown','Unknown property %s', prop);
+                end
+                prefs.(prop) = newVal;       
+        end
     end
 end
 

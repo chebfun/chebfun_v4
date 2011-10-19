@@ -13,8 +13,6 @@ function L = lagpoly(n)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-if nargin == 0, n = 10; end
-
 L = chebfun; % Empty chebfun
 L(:,1) = chebfun(1,[0 inf],'exps',[0 0]);
 L(:,2) = chebfun(@(x) 1-x,[0 inf],'exps',[0 1]);

@@ -202,13 +202,6 @@ for n = 1:N
     f = [f+1i*h tmp];
 end
 
-% for n = size(f,2)-1:-1:1
-%     imfun = imag(f(:,n+1));
-%     maxh = max(imfun);
-%     minh = min(imfun);
-%     f(:,n) = f(:,n) + maxh*1i + .2*(maxh-minh)*1i;
-% end
-
 end
 
 function sCell = splitIntoNStrings(sStr,N)

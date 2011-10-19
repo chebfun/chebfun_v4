@@ -73,7 +73,7 @@ if nargin == 1 && ischar(varargin{1}) && exist('aitoff','file')
             curDir = pwd;
             cd(fileparts(which('aitoff')));
             builtin_maps = @maps;
-            cd(pwd);
+            cd(curDir);
             varargout = {builtin_maps(varargin{:})};
             return
         catch
