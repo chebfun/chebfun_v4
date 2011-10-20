@@ -12,7 +12,11 @@ if nargin == 1
     if F1(1).trans
         Fout = transpose(mean(transpose(F1)));
     else
-        Fout = zeros(1,size(F1,2));
+        if ~F1(1).funreturn
+            Fout = zeros(1,size(F1,2));
+        else
+            Fout = chebconst;
+        end
         for k = 1:size(F1,2)
             infends = isinf(F1(:,k).ends([1 end]));
             if infends == [1 0]
