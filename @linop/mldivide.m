@@ -93,15 +93,25 @@ function C = mldivide(A,B,tolerance)
         A = setbc(A,bc);
     end
     
+    % Diagonal problem --> Division operator.
+    if ~any(any(A.difforder))
+        if A.numbc > 0 
+            warning('LINOP:mldivide:bcnum',...
+            'Operator may not have the correct number of boundary conditions.')
+        end
+        C = B./diag(A);
+        return
+    end
+    
     % Deal with parameter dependent problems
     paridx = min(A.isdiag,[],1) == 1;
     funidx = find(~paridx);     paridx = find(paridx);
     nfun = numel(funidx);       npar = numel(paridx);
-    
+
     if sum(max(A.difforder,[],1)) ~= sum(max(A.difforder,[],2))
       warning('LINOP:mldivide:hell',...
         'This equation may be solved incorrectly. See Trac #202.')
-    elseif A.numbc-npar ~= (1+numel(A.jumplocs))*sum(max(A.difforder,[],2)) 
+    elseif A.numbc-npar ~= (1+numel(A.jumplocs))*sum(max(A.difforder,[],2))  
         warning('LINOP:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
@@ -256,7 +266,7 @@ function C = mldivide(A,B,tolerance)
     f = [f ; c]; 
 
     % Solve the system.
-    v = Amat\f ;
+    v = Amat\f;
 
     % Store V for output.
     if any(paridx)

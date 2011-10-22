@@ -13,7 +13,6 @@ if isempty(L), fout = chebfun; return, end
 
 d = domain(L);
 cheb1 = chebfun(1,d);
-
 s = size(feval(L,3));
 
 if s(1) > 1
@@ -22,7 +21,7 @@ if s(1) > 1
         warning('LINOP:diag',['Taking the diagonal of a nondiagonal ' ...
         'linop is not well defined.']);
     end
-    fout = L*cheb1;
+    fout = L*repmat(cheb1,1,L.blocksize(2));
 else
     fout = linop( @(n) diag(feval(L,n{:})), L.oparray, L.fundomain, 0);
     fout.isdiag = 1;
