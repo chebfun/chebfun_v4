@@ -12,7 +12,7 @@ if (isempty(F1) || isempty(F2)), Fout = chebfun; return; end
 if isnumeric(F1) || isnumeric(F2)
     [m1 n1] = size(F1);
     [m2 n2] = size(F2);
-    if n1~=n2 % Allow pointwise muliplication via scalrs and scalar chebfuns
+    if (n1~=n2 && m1~=m2) % Allow pointwise muliplication via scalars and scalar chebfuns
         if all([m2 n2] == 1)     % F2 is a scalar
             for k = 1:n1
                 Fout(k) = mtimes(F1(k),F2);
@@ -25,7 +25,7 @@ if isnumeric(F1) || isnumeric(F2)
             error('CHEBFUN:times:quasi','Quasimatrix dimensions must agree.')
         end
     else      % Standard pointwise multiplication (domainesions add up)
-        for k = 1:n1
+        for k = 1:min(max(m1,n1),max(m2,n2))
             Fout(k) = mtimes(F1(k),F2(k));
         end
     end
