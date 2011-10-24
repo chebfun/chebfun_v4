@@ -8,21 +8,35 @@ function Fout = times(F1,F2)
         
 if (isempty(F1) || isempty(F2)), Fout = chebfun; return; end
 
-% scalar times chebfun
-if isa(F1,'double') || isa(F2,'double')
-    Fout = F1 * F2;
-else 
-% product of two chebfuns
-
-    if any(size(F1)~=size(F2))
-        error('CHEBFUN:times:quasi','Quasimatrix dimensions must agree')
+% Double times chebfun
+if isnumeric(F1) || isnumeric(F2)
+    [m1 n1] = size(F1);
+    [m2 n2] = size(F2);
+    if n1~=n2 % Allow pointwise muliplication via scalrs and scalar chebfuns
+        if all([m2 n2] == 1)     % F2 is a scalar
+            for k = 1:n1
+                Fout(k) = mtimes(F1(k),F2);
+            end
+        elseif all([m1 n1] == 1) % F1 is a scalar
+            for k = 1:n1
+                Fout(k) = mtimes(F1,F2(k));
+            end
+        else
+            error('CHEBFUN:times:quasi','Quasimatrix dimensions must agree.')
+        end
+    else      % Standard pointwise multiplication (domainesions add up)
+        for k = 1:n1
+            Fout(k) = mtimes(F1(k),F2(k));
+        end
     end
-      
-    Fout = F1;
+else 
+% Product of two chebfuns
+    if any(size(F1)~=size(F2))
+        error('CHEBFUN:times:quasi','Quasimatrix dimensions must agree.')
+    end
     for k = 1:numel(F1)
         Fout(k) = timescol(F1(k),F2(k));
     end
-
 end
 
 % -------------------------------
