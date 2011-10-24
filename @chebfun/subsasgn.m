@@ -60,6 +60,18 @@ switch index(1).type
             elseif max(col) > n
                 % Create an empty chebfun if we're assigning to empty
                 if isempty(f), f = chebfun; end
+                % Convert doubles to constant chebfuns
+                if isnumeric(vin)
+                    if numel(col) ~= numel(vin)
+                        error('CHEBFUN:subsassgn:double',...
+                            'Quasimatrix dimensions do not agree.');
+                    end
+                    v = chebfun(vin(1),f(1).ends([1,end]));
+                    for k = 2:numel(vin);
+                        v(k) = chebfun(vin(k),f(1).ends([1,end]));
+                    end
+                    vin = v;
+                end
                 % Domain check to make sure chebfuns have same domain
                 if isempty(f(1)) || all(f(1).ends([1,end]) == vin(1).ends([1,end]))
                     f(n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);     
@@ -68,7 +80,6 @@ switch index(1).type
                 end
                 
             end
-            
         else
             error('CHEBFUN:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')
@@ -83,8 +94,8 @@ switch index(1).type
                     'Subscript indices must either be real positive integers or logicals.');
             end
         end
-            
         fcol = f(col);        
+        
         % ---- assign values/chebfuns at given points/domains --- 
         if isa(s,'domain')
             fcol = define(fcol,s,vin);
@@ -115,10 +126,11 @@ switch index(1).type
               'Cannot evaluate chebfun for non-numeric type.')
         end
         % --- assign modified column to original chebfun/quasimatrix --
-        % Check orientation
-        if fcol(1).trans ~= trans
-            error('CHEBFUN:subsasgn:trans','Inconsistent chebfun transpose fields.')
-        elseif fcol(1).trans
+        % Check orientation - MATLAB supports this, so should we. NH Oct '11
+%         if fcol(1).trans ~= trans
+%             error('CHEBFUN:subsasgn:trans','Inconsistent chebfun transpose fields.')
+%         else
+        if fcol(1).trans
             fcol = fcol.';
         end
         f(col) = fcol;
