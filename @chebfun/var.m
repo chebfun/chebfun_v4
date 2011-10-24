@@ -8,10 +8,17 @@ function out = var(F)
 if F(1).trans
     out = transpose(var(transpose(F)));
 else
-    out = zeros(1,size(F,2));
+    if ~isempty(F) && F(1).funreturn
+        out = chebconst;
+    else
+        out = zeros(1,size(F,2));
+    end
     for k = 1:size(F,2)
-        Y = F(:,k)-mean(F(:,k));
-        out(k) = mean(Y.*conj(Y));
+%         Y = F(:,k)-mean(F(:,k));
+%         out(k) = mean(Y.*conj(Y));
+        Y = F(:,k);
+        m = mean(Y);
+        out(k) = mean(Y.*conj(Y)) - m.*conj(m);
     end
 end
 
