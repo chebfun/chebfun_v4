@@ -11,9 +11,6 @@ classdef chebconst < chebfun
             if nargin > 1 && isa(varargin{2},'chebfun')
                 [L nonConst] = diff@chebfun(varargin{:});
                 if ~isfinite(length(L)) % L is inf x inf
-                    L
-                    keyboard
-                    feval(L,1)
                     L = full(diag(feval(L,1)));
                 end
             else

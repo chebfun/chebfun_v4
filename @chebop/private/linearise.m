@@ -104,7 +104,7 @@ if isa(N.op,'linop')
     if nargout > 3
         affine = repmat(0*xDom,1,numberOfInputVariables-1);
     end
-    L = set(L,'jumplocs',jumplocs);
+    L = set(L,'jumplocs',unique(jumplocs));
     return
 end
 

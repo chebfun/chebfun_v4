@@ -18,7 +18,7 @@ lines = plotdata([],f,[],numpts);
 
 % Remove NaNs from jumps
 x = lines{1}; y = lines{2};
-mask = find(isnan(y ));
+mask = find(isnan(y));
 y(mask) = (y(mask+1)+y(mask-1))/2;
 
 % Call built-in area.m

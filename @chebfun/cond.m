@@ -9,5 +9,5 @@ s = svd(f,0);
 if any(s==0)
   out = inf;
 else
-  out=s(1)/s(end);
+  out = s(1)/s(end);
 end

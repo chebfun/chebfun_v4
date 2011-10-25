@@ -94,7 +94,7 @@ function C = mldivide(A,B,tolerance)
     end
     
     % Diagonal problem --> Division operator.
-    if ~any(any(A.difforder))
+    if ~any(any(A.difforder)) && all(all(A.isdiag))
         if A.numbc > 0 
             warning('LINOP:mldivide:bcnum',...
             'Operator may not have the correct number of boundary conditions.')
