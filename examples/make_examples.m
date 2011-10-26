@@ -435,7 +435,7 @@ for j = 1:numel(dirs)
         end
         desc{k} = txt;
     end
-    [desc indx] = sort(desc);
+    [desc indx] = sort(lower(desc));
     mfile = mfile(indx);
     
     % Loop over the files

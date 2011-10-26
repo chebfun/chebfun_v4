@@ -1,4 +1,4 @@
-%% STABILITY REGIONS OF ODE FORMULAS
+%% Stability Regions of ODE Formulas
 % Nick Trefethen, February 2011
 
 %%
