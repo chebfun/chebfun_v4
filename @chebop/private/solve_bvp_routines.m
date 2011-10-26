@@ -132,6 +132,7 @@ stagCounter = 0;
 % If it's not, the linop will return the linearisation about the initial
 % guess (plus the identity?).
 [A bc isLin] = linearise(N,u);
+jumplocs = get(A,'jumplocs');
 if isLin % N is linear. Sweet!
     
     % Correct for bc vals.
@@ -212,6 +213,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
             % but rather a size related to the tolerance requested).
         else
             A = diff(deResFun,u,'linop') & bc;
+            A = set(A,'jumplocs',jumplocs);
             A = subsasgn(A,struct('type','.','subs','scale'), normu);
             % Linop backslash with the third argument added
             delta = -(A\deResFun);
