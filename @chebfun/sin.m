@@ -12,6 +12,6 @@ end
 Fout = comp(F, @(x) sin(x));
 for k = 1:numel(F)
     Fout(k).jacobian = anon(['diag1 = diag(cos(F)); der2 = diff(F,u,''linop'');' ...
-        'der = diag1*der2; nonConst = ~der2.iszero;'],{'F'},{F(k)},1);
+        'der = diag1*der2; nonConst = ~der2.iszero;'],{'F'},{F(k)},1,'sin');
     Fout(k).ID = newIDnum;
 end

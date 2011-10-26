@@ -26,6 +26,6 @@ end
 
 Fout = comp(F, @(x) exp(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('diag1 = diag(exp(F)); [der2 nonConst2] = diff(F,u,''linop''); der = diag1*der2; nonConst = (~diag1.iszero) & ~der2.iszero;',{'F'},{F(k)},1);
+    Fout(k).jacobian = anon('diag1 = diag(exp(F)); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1,'exp');
     Fout(k).ID = newIDnum();
 end

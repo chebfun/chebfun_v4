@@ -100,9 +100,9 @@ f.scl = abs(a)*f.scl;
 if a==0
     % Make sure to create a zero linop of a correct blocksize by using
     % repmat, similarly, ensure nonConst is of correct size using zeros.
-    f.jacobian = anon('der = repmat(zeros(domain(f)),1,numel(u)); nonConst = zeros(1,numel(u));',{'f'},{f},1);
+    f.jacobian = anon('der = repmat(zeros(domain(f)),1,numel(u)); nonConst = zeros(1,numel(u));',{'f'},{f},1,'mtimes');
 else
-    an = anon('[tempDer nonConst] = diff(f,u,''linop''); der = a*tempDer;',{'a' 'f'},{a f},1);
+    an = anon('[tempDer nonConst] = diff(f,u,''linop''); der = a*tempDer;',{'a' 'f'},{a f},1,'mtimes');
     f.jacobian = an;
 end
 f.ID = newIDnum;

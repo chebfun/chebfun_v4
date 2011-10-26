@@ -17,7 +17,7 @@ function [F nonConst] = diff(F,n,dim,RL)
 % DIFF(U,N,DIM) is the Nth difference function along dimension DIM. 
 %      If N >= size(U,DIM), DIFF returns an empty chebfun.
 %
-% See also diff, chebfun/private/fracdiff
+% See also diff
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -90,7 +90,7 @@ tol = max(chebfunpref('eps')*10, 1e-12) ;
 F = f;
 funs = f.funs;
 ends = get(f,'ends');
-F.jacobian = anon('der1=diff(domain(f),n); [der2 nonConst] = diff(f,u,''linop''); der = der1*der2;',{'f' 'n'},{f n},1);
+F.jacobian = anon('der1=diff(domain(f),n); [der2 nonConst] = diff(f,u,''linop''); der = der1*der2;',{'f' 'n'},{f n},1,'diff');
 F.ID = newIDnum;
 
 for j = 1:n % Loop n times for nth derivative

@@ -6,6 +6,7 @@ classdef anon < handle
         workspace = [];
         type  = 1;  % Type of anon. 1 for AD, 2 for regular @(u) anons.
         depth = [];
+        parent = [];
     end
     
     methods
@@ -15,7 +16,7 @@ classdef anon < handle
             % Begin by checking whether we will be exceeding the maxdepth
             if nargin == 0 || ~maxdepth
                 return
-            elseif nargin > 4
+            elseif nargin > 4 && isnumeric(varargin{5})
                 newdepth = varargin{5};
             else
                 currdepth = 0;
@@ -43,6 +44,10 @@ classdef anon < handle
             a.workspace = varargin{3};
             a.type  = varargin{4};
             a.depth = newdepth;
+            
+            if nargin > 4 && ischar(varargin{5})
+                a.parent = varargin{5};
+            end
 
         end
 
