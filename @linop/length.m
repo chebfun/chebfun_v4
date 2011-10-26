@@ -12,7 +12,7 @@ if isempty(L), l = 0; return, end
 LL = feval(L,5,'nobc');
 bsize = L.blocksize;
 
-if size(LL,1) > bsize(1)
+if size(LL,1) > bsize(1) && any(any(diff(LL)))
     l = inf;
 else
     l = 1;

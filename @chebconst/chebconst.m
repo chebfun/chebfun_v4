@@ -67,15 +67,15 @@ classdef chebconst < chebfun
             if isempty(f), h = f; return, elseif isempty(g), h = g; return, end
             if isnumeric(f) || isnumeric(g), h = mtimes@chebfun(f,g); return, end
             [mf nf] = size(f); [mg ng] = size(g);
-            if ~isfinite(mf) || ~isfinite(ng)
-                error('CHEBFUN:chebconst:mtimes:outerp',...
-                    'Outer products not yet implemented for chebconsts.');
-            end
+%             if ~isfinite(mf) || ~isfinite(ng)
+%                 error('CHEBFUN:chebconst:mtimes:outerp',...
+%                     'Outer products not yet implemented for chebconsts.');
+%             end
             if (mf == 1 || ng == 1) && (f(1).funreturn || g(1).funreturn)
                 h = chebconst;
-                for j = 1:mf
-                    for k = 1:ng
-                        h(j,k) = times(f(j)',g(k));
+                for j = 1:numel(f)
+                    for k = 1:numel(g)
+                        h(j,k) = times(f(j),g(k));
                     end
                 end
             else

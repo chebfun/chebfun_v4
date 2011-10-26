@@ -1,4 +1,4 @@
-function [H nonConst] = plus(F1,F2,nonConst1,nonConst2)
+function H = plus(F1,F2)
 % +	  Plus.
 % F + G adds chebfuns F and G, or a scalar to a chebfun if either F or G is 
 % a scalar.
@@ -25,7 +25,11 @@ else
     if any(size(F1)~=size(F2))
         error('CHEBFUN:plus:size','Quasimatrix dimensions must agree.')
     end
-    H = F2;
+    if isa(F2,'chebconst')
+        H = F1;
+    else
+        H = F2;
+    end
     for k = 1:numel(F2)
         H(k) = pluscol(F1(k),F2(k));
     end
@@ -70,8 +74,16 @@ else
         h.funs(k).scl.v = scl;
     end
     h.scl = scl;
+    
+    if isa(f1,'chebconst') && ~isa(f2,'chebconst')
+        f1.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f1},1,f1.jacobian.parent);
+        f1.ID = newIDnum();
+    elseif isa(f2,'chebconst') && ~isa(f1,'chebconst')
+        f2.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f2},1,f2.jacobian.parent);
+        f2.ID = newIDnum();
+    end
 
-    h.jacobian = anon('[der1 nonConst1] = diff(f1,u,''linop''); [der2 nonConst2] = diff(f2,u,''linop''); der = der1 + der2; nonConst = nonConst1 | nonConst2;',{'f1' 'f2'},{f1 f2},1);
+    h.jacobian = anon('[der1 nonConst1] = diff(f1,u,''linop''); [der2 nonConst2] = diff(f2,u,''linop''); der = der1 + der2; nonConst = nonConst1 | nonConst2;',{'f1' 'f2'},{f1 f2},1,'plus');
     h.ID = newIDnum();
     h.funreturn = funreturn;
     

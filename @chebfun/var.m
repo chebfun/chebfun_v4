@@ -14,11 +14,8 @@ else
         out = zeros(1,size(F,2));
     end
     for k = 1:size(F,2)
-%         Y = F(:,k)-mean(F(:,k));
-%         out(k) = mean(Y.*conj(Y));
-        Y = F(:,k);
-        m = mean(Y);
-        out(k) = mean(Y.*conj(Y)) - m.*conj(m);
+        Y = F(:,k)-mean(F(:,k));
+        out(k) = mean(Y.*conj(Y));
     end
 end
 
