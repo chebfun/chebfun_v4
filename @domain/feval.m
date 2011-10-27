@@ -54,9 +54,10 @@ end
         if iscell(n)
             if numel(n) > 1, map = n{2}; end
             if numel(n) > 2, breaks = n{3}; end
+            if isa(breaks,'domain'), breaks = breaks.ends; end
             n = n{1};
         end
-        
+
         % Force a default map for unbounded domains.
         if any(isinf(d)) && isempty(map), map = maps(d); end
         % Inherit the breakpoints from the domain.
@@ -82,10 +83,10 @@ end
             P = barymat(x,map(chebpts(n)));
         elseif isempty(map)
             % Breaks / no map
-            P = barymatp(x,n,breaks,[],lr);
+            P = barymatp(s,n,breaks,[],lr);
         else
             % Breaks and maps
-            P = barymatp(x,n,breaks,map,lr);
+            P = barymatp(s,n,breaks,map,lr);
         end   
     end
 

@@ -41,18 +41,21 @@ if curdepth == 1
 end
 
 varNamesStr = [];
-vars = A.variablesName;
-for k = 1:numel(vars)
+varsNames = A.variablesName;
+for k = 1:numel(varsNames)
 %     if ~isa(A.workspace{k},'chebfun'), continue, end
     if isempty(varNamesStr)
-        varNamesStr = vars{k};
+        varNamesStr = varsNames{k};
     else
-        varNamesStr = [varNamesStr,',',vars{k}];
+        varNamesStr = [varNamesStr,',',varsNames{k}];
     end
-    if isnumeric(A.workspace{k})
-        classk = num2str(A.workspace{k});
+    vark = A.workspace{k};
+    if isnumeric(vark)
+        classk = num2str(vark);
+    elseif ischar(A.workspace{k})
+        classk = ['''' vark ''''];
     else
-        classk = class(A.workspace{k});
+        classk = class(vark);
     end
     varNamesStr = [varNamesStr '=' classk];
 end
@@ -106,7 +109,7 @@ for k = 1:numel(A.workspace)
     fk = A.workspace{k};
     % Uncomment below to prevent showing empty anons
     if isa(fk,'chebfun') %&& ~isempty(fk.jacobian.variablesName)
-        fprintf('\n%s     diff(%s,u) = ',ws,vars{k});
+        fprintf('\n%s     diff(%s,u) = ',ws,varsNames{k});
         display(fk.jacobian,maxdepth,curdepth+1)
     end
 end    

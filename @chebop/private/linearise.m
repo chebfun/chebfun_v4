@@ -104,6 +104,11 @@ if isa(N.op,'linop')
     if nargout > 3
         affine = repmat(0*xDom,1,numberOfInputVariables-1);
     end
+    if any(jumplocs==a) || any(jumplocs==b)
+        error('CHEBOP:linearise:jumpbcs',...
+        ['Jump conditions cannot be enforced at the boundary of the domain.\n',...
+         '(Do not use ''left'' or ''right'' flags at boundaries in .bc field.)'])
+    end
     L = set(L,'jumplocs',unique(jumplocs));
     return
 end
@@ -153,6 +158,11 @@ else
 end
 
 jumplocs = unique([jumplocs, N.jumplocs]);
+if any(jumplocs==a) || any(jumplocs==b)
+    error('CHEBOP:linearise:jumpbcs',...
+    ['Jump conditions cannot be enforced at the boundary of the domain.\n',...
+     '(Do not use ''left'' or ''right'' flags at boundaries in .bc field.)'])
+end
 L = set(L,'jumplocs',jumplocs);
 Ndom = N.dom; Ldom = get(L,'fundomain');
 % dom = unique([Ndom.endsandbreaks, Ldom.endsandbreaks]);

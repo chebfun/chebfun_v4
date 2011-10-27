@@ -32,7 +32,7 @@ end
 Ny = numel(y);
 
 % Construct the Chebyshev points
-x = chebpts(Nx,dom,2);    
+x = chebpts(Nx,dom,2); x = sort(x);
 
 % Check the map
 if nargin > 3 && ~isempty(map)
@@ -85,26 +85,25 @@ if isempty(lr)
     end
     
 else
-    
     if strcmp(lr,'left')
     % Left evaluation
         for k = 1:numel(Nx)                         % Loop over blocks.
             iix = csNx(k)+(1:Nx(k));                % x indices of this block.
-            iiy = find(min(x(iix))<y & y<=max(x(iix)));
+            iiy = find(min(x(iix))<y & y<=max(x(iix))+2*eps);
             P(iiy,iix) = barymat(y(iiy),x(iix));
         end
         
     else
-        
+
     % Right evaluation
         for k = 1:numel(Nx)                         % Loop over blocks.
             iix = csNx(k)+(1:Nx(k));                % x indices of this block.
-            iiy = find(min(x(iix))<=y & y<max(x(iix)));
+            iiy = find(min(x(iix))<=y+2*eps & y<max(x(iix)));
             P(iiy,iix) = barymat(y(iiy),x(iix));
         end
         
     end
-    
+
 end
     
 

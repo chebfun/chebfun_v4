@@ -170,9 +170,9 @@ if ~forceval && f.funreturn
   funx = chebconst;
   for j = 1:numel(fx)
     newfun = chebconst(fx(j),domain(f)); 
-    newfun.jacobian = anon(['[der1,nonConst1]=diff(f,u,''linop''); ',...
+    newfun.jacobian = anon(['[der1,nonConst1] = diff(f,u,''linop''); ',...
         'der = feval(domain(f),x,lr)*der1; nonConst = nonConst1;'],...
-        {'f','x','lr'},{f,x(j),lr},1);
+        {'f','x','lr'},{f,x(j),lr},1,'feval');
     funx(j) = newfun;
   end
   fx = funx;
