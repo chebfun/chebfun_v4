@@ -1,4 +1,4 @@
-function display(A,maxdepth,curdepth)
+function display(A,maxdepth,curdepth,ws)
 % DISPLAY Pretty-print an anon
 % DISPLAY is called automatically when a statement that results in an anon
 % output is not terminated with a semicolon.
@@ -17,7 +17,11 @@ if nargin < 3, curdepth = 1; end
 if curdepth > maxdepth, return, end
 
 % Initialise whitespace
-ws = ['   ' repmat('     ',1,curdepth-1)];
+if nargin < 4
+    ws = ['   ' repmat('     ',1,curdepth-1)];
+elseif isempty(ws)
+    ws = '   ';
+end
 
 % Initialise string to print
 s = [];
@@ -95,7 +99,7 @@ end
 % Print each function string on a new line
 for k = 1:numel(funcStrClean)
     s = [s,sprintf('\n%s%s',ws,funcStrClean{k})];
-%     s = [s,sprintf('%s',funcStrClean{k})];
+%     s = [s,sprintf(' %s',funcStrClean{k})];
 end
 
 % Print the output
@@ -105,13 +109,34 @@ disp(s)
 if curdepth == maxdepth, return, end
 
 % Recurse down the tree
+wsnew1 = [ws '|     '];
+wsnew2 = [ws '|---- '];
+wsnew3 = [ws '      '];
+
+% Get the indicies of the variables which have extra levels to display
+mask = zeros(numel(A.workspace),1);
 for k = 1:numel(A.workspace)
     fk = A.workspace{k};
     % Uncomment below to prevent showing empty anons
     if isa(fk,'chebfun') %&& ~isempty(fk.jacobian.variablesName)
-        fprintf('\n%s     diff(%s,u) = ',ws,varsNames{k});
-        display(fk.jacobian,maxdepth,curdepth+1)
+        mask(k) = 1;
     end
-end    
+end   
+idx = find(mask);
+
+% If there are no more levels, then quit
+if isempty(idx), return, end
+
+% Display the next levels for each bvariable in turn
+for k = idx(1:end-1)
+    fk = A.workspace{k};
+    fprintf('%s\n%sdiff(%s,u) = ',wsnew1,wsnew2,varsNames{k});
+    display(fk.jacobian,maxdepth,curdepth+1,wsnew1)
+end   
+% The last variable is treated specially (to get lines correct).
+k = idx(end);
+fk = A.workspace{k};
+fprintf('%s\n%sdiff(%s,u) = ',wsnew1,wsnew2,varsNames{k});
+display(fk.jacobian,maxdepth,curdepth+1,wsnew3)
 
 end
