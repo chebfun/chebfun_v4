@@ -15,6 +15,8 @@ switch propName
         val = a.workspace;
     case 'depth'
         val = a.depth;
+    case 'parent'
+        val = a.parent;        
     otherwise
         error('ANON:get:propnam',[propName,' is not a valid anon property.'])
 end

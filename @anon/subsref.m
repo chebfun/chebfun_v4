@@ -17,6 +17,8 @@ switch index(1).type
                 varargout = {an.variablesName};
             case 'workspace'
                 varargout = {an.workspace};
+            case 'parent'
+                varargout = {an.parent};
             otherwise
                 error('ANON:get:propnam',[propName,' is not a varargoutid anon property.'])
         end
