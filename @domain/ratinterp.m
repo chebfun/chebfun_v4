@@ -17,7 +17,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 %   [P,Q,R_HANDLE] = RATINTERP(F,M,N,NN,XI) computes a (M,N) rational
 %   interpolant or approximant of F over the NN nodes XI. XI can also be one
 %   of the strings 'type1', 'type2', 'unitroots' or 'equidistant', in which
-%   case NN of the respective nodes are created on the respective interval.
+%   case NN of the respective nodes are created on the interval [-1,1].
 %
 %   [P,Q,R_HANDLE,MU,NU] = RATINTERP(F,M,N,NN,XI,TOL) computes a robustified
 %   (M,N) rational interpolant or approximant of F over the NN+1 nodes XI, in
@@ -50,11 +50,6 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 %   See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
     % Check the inputs
-    d = [ d.ends(1) , d.ends(end) ];
-    md = 0.5 * sum(d); ihd = 2.0 / diff(d);
-    if isa( f , 'chebfun' ) && ~(domain(f) == domain(d))
-        f = f{d(1),d(2)};
-    end
     if nargin < 5 || isempty(NN)
         if nargin > 6 && ~isempty(xi_type) && ~isstr(xi_type)
             N = length( xi_type ) - 1;
@@ -71,18 +66,19 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     end
     if nargin < 6 || isempty( xi_type )
         xi_type = 'type2';
-        xi = chebpts( N+1 );
+        xi = chebpts( N+1 , 2 );
     elseif ~isstr(xi_type)
         if length(xi_type) ~= N+1
             error( 'CHEBFUN:ratinterp:InputLengthX' , 'The input vector xi is of the wrong length' );
         end
-        xi = ( xi_type - md ) * ihd;
+        df = [ f.ends(1) , f.ends(end) ];
+        xi = 2.0 * ( xi_type - 0.5*sum(df) ) / diff(df);
         xi_type = 'arbitrary';
     else
         if strcmpi( xi_type , 'TYPE2' )
-            xi = chebpts( N+1 );
+            xi = chebpts( N+1 , 2 );
         elseif strcmpi( xi_type , 'TYPE1' )
-            xi = chebpts( N+1 , [-1 1] , 1 );
+            xi = chebpts( N+1 , 1 );
         elseif strcmpi( xi_type , 'UNITROOTS' ) || strcmpi( xi_type , 'TYPE0' )
             xi_type = 'type0';
             xi = exp( 2i * pi * (0:N)' / (N+1) );
@@ -93,12 +89,15 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
         end
     end
     if nargin < 7, tol = 1.0e-14; end
+    d = [ d.ends(1) , d.ends(end) ];
+    df = [ f.ends(1) , f.ends(end) ];
+    if isa( f , 'chebfun' ) && ~all(df == d)
+        f = f{d(1),d(2)};
+    end
     if ~isfloat(f)
         f = f( 0.5*sum(d) + 0.5*diff(d)*xi );
     elseif length(f) ~= N+1
         error( 'CHEBFUN:ratinterp:InputLengthF' , 'The input vector f is of the wrong length' );
-    else
-        f = f(:);
     end
     
     % Init some values that we will use often
@@ -249,6 +248,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     mu = length(a)-1; nu = length(b)-1;          % exact numer, denom degrees
 
     % Assemble the anonymous function for r
+    md = 0.5 * sum(d); ihd = 2.0 / diff(d);
     if strncmpi( xi_type , 'type' , 4 )
         if xi_type(5) == '0'
             % For speed, compute px and qx using Horner's scheme and convert
@@ -262,18 +262,20 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
             r = @(x) polyval( a(mu+1:-1:1) , ihd*(x-md) ) ./ polyval( b(nu+1:-1:1) , ihd*(x-md) );
         elseif xi_type(5) == '1'
             w = (-1).^(0:N)' .* sin((2*(0:N)+1)*pi/(2*N1))';
-            px = idct1( [ a ; zeros( N-mu , 1 ) ] );
-            qx = idct1( [ b ; zeros( N-nu , 1 ) ] );
             p = chebfun( idct1( a ) , d , 'chebkind' , 1 );
             q = chebfun( idct1( b ) , d , 'chebkind' , 1 );
-            r = @(x) bary( ihd*(x-md) , px./qx , xi , qx.*w );
+            M = max(mu,nu);
+            px = idct1( [ a ; zeros( M-mu , 1 ) ] );
+            qx = idct1( [ b ; zeros( M-nu , 1 ) ] );
+            r = @(x) ratbary( ihd*(x-md) , px , qx , chebpts(M+1,1) );
         else
             w = (-1).^(0:N)'; w(1) = 0.5; w(end) = w(end)/2;
             p = chebfun( a(end:-1:1) , 'coeffs' , d );
             q = chebfun( b(end:-1:1) , 'coeffs' , d );
-            px = idct2( [ a ; zeros( N-mu , 1 ) ] );
-            qx = idct2( [ b ; zeros( N-nu , 1 ) ] );
-            r = @(x) bary( ihd*(x-md) , px./qx , xi , qx.*w );
+            M = max(mu,nu);
+            px = idct2( [ a ; zeros( M-mu , 1 ) ] );
+            qx = idct2( [ b ; zeros( M-nu , 1 ) ] );
+            r = @(x) ratbary( ihd*(x-md) , px , qx , chebpts(M+1,2) );
         end
     else
         % Compute the basis C at the mu+1 and nu+1 Chebyshev points and
@@ -324,6 +326,30 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     
 end
 
+% Compact implementation of the barycentric interpolation formula
+function y = bary ( x , fx , xi , w )
+    y = zeros(size(x)); fxw = fx(:).*w(:);
+    for i=1:length(x),
+        dxinv = 1.0 ./ ( x(i) - xi(:) ); ind = find( ~isfinite(dxinv) );
+        if length(ind)>0, y(i)=fx(ind);
+        else, y(i)=(fxw.'* dxinv)/(w(:).'* dxinv); end
+    end
+end
+
+% Rational barycentric formula, stable.
+function y = ratbary ( x , fp , fq , xi )
+    n = length(fp);
+    w = ones(n,1); w(2:2:end) = -1; w(1) = 0.5; w(end) = 0.5*w(end);
+    y = zeros(size(x));
+    for k=1:numel(y)
+        v = ( w ./ (xi - x(k)) )';
+        y(k) = (v*fp) / (v*fq);
+        if ~isfinite(y(k))
+            ind = find( xi == x(k) );
+            y(k) = fp(ind) / fq(ind);
+        end
+    end
+end
 
 % Compact implementation of the DCT for Chebyshev points of the first kind.
 function y = dct1(x)
