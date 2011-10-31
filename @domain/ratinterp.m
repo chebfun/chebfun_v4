@@ -90,9 +90,11 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
     end
     if nargin < 7, tol = 1.0e-14; end
     d = [ d.ends(1) , d.ends(end) ];
-    df = [ f.ends(1) , f.ends(end) ];
-    if isa( f , 'chebfun' ) && ~all(df == d)
-        f = f{d(1),d(2)};
+    if isa( f , 'chebfun' )
+        df = [ f.ends(1) , f.ends(end) ];
+        if ~all(df == d)
+            f = f{d(1),d(2)};
+        end
     end
     if ~isfloat(f)
         f = f( 0.5*sum(d) + 0.5*diff(d)*xi );
