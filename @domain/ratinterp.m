@@ -71,7 +71,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
         if length(xi_type) ~= N+1
             error( 'CHEBFUN:ratinterp:InputLengthX' , 'The input vector xi is of the wrong length' );
         end
-        df = [ f.ends(1) , f.ends(end) ];
+        df = [ d.ends(1) , d.ends(end) ];
         xi = 2.0 * ( xi_type - 0.5*sum(df) ) / diff(df);
         xi_type = 'arbitrary';
     else
