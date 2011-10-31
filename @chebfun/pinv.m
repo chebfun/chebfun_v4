@@ -10,7 +10,7 @@ function X = pinv(A,tol)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information. 
 
 if A(1).trans
-   error('CHEBFUN:pinv:row','PINV only defined for column quasimatrices')
+   error('CHEBFUN:pinv:row','PINV only defined for column quasimatrices.')
 end
 
 [U,S,V] = svd(A,0);

@@ -10,19 +10,16 @@ if (isempty(F1) || isempty(F2)), Fout = chebfun; return; end
 
 if isa(F1,'chebfun')&&isa(F2,'chebfun')
     if size(F1)~=size(F2)
-        error('CHEBFUN:rdivide:quasi','Quasi-matrix dimensions must agree')
+        error('CHEBFUN:rdivide:quasi','Quasi-matrix dimensions must agree.')
     end
-    Fout = F1;
     for k = 1:numel(F1)
         Fout(k) = rdividecol(F1(k),F2(k));
     end
 elseif isa(F1,'chebfun')
-    Fout = F1;
     for k = 1:numel(F1)
         Fout(k) = rdividecol(F1(k),F2);
     end
 else
-    Fout = F2;
     for k = 1:numel(F2)
         Fout(k) = rdividecol(F1,F2(k));
     end
@@ -76,7 +73,7 @@ if ~isempty(newbkpts)
 elseif isa(f1,'double')    
     if f1 == 0
 		fout = chebfun(0, f2.ends([1,end])); 
-      	fout.jacobian = anon('der = 0*diff(f2,u,''linop''); nonConst = 0;',{'f2'},{f2},1);
+      	fout.jacobian = anon('der = 0*diff(f2,u,''linop''); nonConst = 0;',{'f2'},{f2},1,'rdivide');
       	fout.ID = newIDnum();
     else   
         exps = get(f2,'exps');
@@ -106,7 +103,7 @@ elseif isa(f1,'double')
         if fout.nfuns == f2.nfuns
             fout.imps = f1./f2.imps;
         end
-        fout.jacobian = anon('diag1 = diag(-f1./f2.^2); der2 = diff(f2,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'f1','f2'},{f1 f2},1);
+        fout.jacobian = anon('diag1 = diag(-f1./f2.^2); der2 = diff(f2,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'f1','f2'},{f1 f2},1,'rdivide');
         fout.ID = newIDnum();
     end
 else
@@ -139,11 +136,19 @@ else
         end
     end
     if fout.nfuns == f2.nfuns
-        f1imps = feval(f1,fout.ends);
+        f1imps = feval(f1,fout.ends,'force');
         fout.imps = f1imps./f2.imps;
     end
     
-    fout.jacobian = anon('[Jf1u constJf1u] = diff(f1,u,''linop'');  [Jf2u constJf2u] = diff(f2,u,''linop''); der = diag(1./f2)*Jf1u - diag(f1./f2.^2)*Jf2u; nonConst = ~Jf2u.iszero | (~Jf1u.iszero & (constJf2u | constJf1u));',{'f1','f2'},{f1 f2},1);
+    if isa(f1,'chebconst') && ~isa(f2,'chebconst')
+        f1.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f1},1,f1.jacobian.parent);
+        f1.ID = newIDnum();
+    elseif isa(f2,'chebconst') && ~isa(f1,'chebconst')
+        f2.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f2},1,f2.jacobian.parent);
+        f2.ID = newIDnum();
+    end
+    
+    fout.jacobian = anon('[Jf1u constJf1u] = diff(f1,u,''linop'');  [Jf2u constJf2u] = diff(f2,u,''linop''); der = diag(1./f2)*Jf1u - diag(f1./f2.^2)*Jf2u; nonConst = ~Jf2u.iszero | (~Jf1u.iszero & (constJf2u | constJf1u));',{'f1','f2'},{f1 f2},1,'rdivide');
     fout.ID = newIDnum();
 end
 

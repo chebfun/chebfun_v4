@@ -6,6 +6,6 @@ function Fout = erf(F)
 
 Fout = comp(F, @(x) erf(x));
 for k = 1:numel(F)
-  Fout(k).jacobian = anon('diag1 = diag(2*exp(-F.^2)/sqrt(pi)); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1);
+  Fout(k).jacobian = anon('diag1 = diag(2*exp(-F.^2)/sqrt(pi)); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1,'erf');
   Fout(k).ID = newIDnum();
 end

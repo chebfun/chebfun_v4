@@ -7,7 +7,7 @@ function Fout = log(F)
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = logcol(F(k));
-    Fout(k).jacobian = anon('diag1 = diag(1./F); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1);
+    Fout(k).jacobian = anon('diag1 = diag(1./F); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1,'log');
     Fout(k).ID = newIDnum();
 end
 

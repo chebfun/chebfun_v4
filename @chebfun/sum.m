@@ -127,7 +127,7 @@ if f.funreturn   % fun-output mode switch
     out = chebconst(out,domain(f));
     out.jacobian = anon(['[der1,nonConst] = diff(f,u,''linop''); '...
                          'der = sum(domain(f))*der1;'],...
-                         {'f'},{f},1);
+                         {'f'},{f},1,'sum');
     out.funreturn = 1;
 end
 

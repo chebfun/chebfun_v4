@@ -40,7 +40,7 @@ else
 end
 
 % -------------------------------
-function f = timescol(f,g)
+function h = timescol(f,g)
 
 funreturn = f.funreturn || g.funreturn;
 f.funreturn = 0; g.funreturn = 0;
@@ -112,18 +112,6 @@ imps(1,:) = tmp;
 %     end
 % end
 
-    if isa(f,'chebconst') && ~isa(g,'chebconst')
-        f.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f},1);
-        f.ID = newIDnum();
-    elseif isa(g,'chebconst') && ~isa(f,'chebconst')
-        g.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{g},1);
-        g.ID = newIDnum();
-    end
-
-% Set chebfun: (use f)
-f.jacobian = anon('[Jfu nonConstJfu] = diff(f,u,''linop''); [Jgu nonConstJgu] = diff(g,u,''linop''); der = diag(f)*Jgu + diag(g)*Jfu; nonConst = (nonConstJgu | nonConstJfu) | ((~all(Jfu.iszero) && ~all(Jgu.iszero)) & (~Jfu.iszero | ~Jgu.iszero));',{'f' 'g'},{f g},1,'times');
-f.ID = newIDnum();
-
 % update scales in funs:
 for k = 1:f.nfuns-1
     funscl = ffuns(k).scl.v;
@@ -133,4 +121,21 @@ for k = 1:f.nfuns-1
     end
 end
 
-f.funs = ffuns; f.imps = imps; f.scl = scl; f.funreturn = funreturn;
+% Set chebfun:
+h = f;
+% Promote jacobian info for chebconsts
+if isa(f,'chebconst') && ~isa(g,'chebconst')
+    f.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f},1,f.jacobian.parent);
+    f.ID = newIDnum();
+    h = g;
+elseif isa(g,'chebconst') && ~isa(f,'chebconst')
+    g.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{g},1,g.jacobian.parent);
+    g.ID = newIDnum();
+end
+
+% Set the jacobian
+h.jacobian = anon('[Jfu nonConstJfu] = diff(f,u,''linop''); [Jgu nonConstJgu] = diff(g,u,''linop''); der = diag(f)*Jgu + diag(g)*Jfu; nonConst = (nonConstJgu | nonConstJfu) | ((~all(Jfu.iszero) && ~all(Jgu.iszero)) & (~Jfu.iszero | ~Jgu.iszero));',{'f' 'g'},{f g},1,'times');
+h.ID = newIDnum();
+
+% Assign the funs, scale, etc
+h.funs = ffuns; h.imps = imps; h.scl = scl; h.funreturn = funreturn;

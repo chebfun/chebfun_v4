@@ -11,6 +11,6 @@ function p = angle(h)
 p = atan2(imag(h), real(h));
 
 for k = 1:numel(h)
-    p(k).jacobian = anon('error; der = error; nonConst = ~der2.iszero;',{'p'},{p(k)},1);
+    p(k).jacobian = anon('error; der = error; nonConst = ~der2.iszero;',{'p'},{p(k)},1,'angle');
     p(k).ID = newIDnum();
 end

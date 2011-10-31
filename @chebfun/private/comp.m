@@ -18,6 +18,7 @@ function Fout = comp(F1, op, F2, pref)
 
 %-------------------------------------------------------
 % Deal with quasimatrices.
+
 Fout = F1;
 
 if nargin > 2 && isstruct(F2)
@@ -37,6 +38,7 @@ else
     if size(F1) ~= size(F2)
         error('CHEBFUN:comp:QMdimensions','Quasimatrix dimensions must agree.')
     end
+    if isa(Fout,'chebconst'), Fout = F2; end
     for k = 1:min(size(F1))
         Fout(k) = compcol(F1(k), op, F2(k), pref);
     end

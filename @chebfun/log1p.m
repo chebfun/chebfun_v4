@@ -10,7 +10,7 @@ function Fout = log1p(F)
 Fout = F;
 for k = 1:numel(F)
     Fout(k) = logcol(F(k));
-    Fout(k).jacobian = anon('diag1 = diag(1./(F+1)); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1);
+    Fout(k).jacobian = anon('diag1 = diag(1./(F+1)); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1,'log1p');
     Fout(k).ID = newIDnum();
 end
 

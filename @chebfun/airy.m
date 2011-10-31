@@ -14,6 +14,6 @@ end
 
 Fout = comp(F, @(x) real(airy(K,x)));  
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('diag1=diag(airy(K+1,F));der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F' 'K'},{F(k) K},1);
+    Fout(k).jacobian = anon('diag1=diag(airy(K+1,F));der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F' 'K'},{F(k) K},1,'airy');
     Fout(k).ID = newIDnum();
 end

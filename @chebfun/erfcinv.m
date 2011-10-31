@@ -6,7 +6,7 @@ function Fout = erfcinv(F)
 
 Fout = comp(F, @(x) erfcinv(x));
 for k = 1:numel(F)
-  Fout(k).jacobian = anon('diag1 = -diag(exp(Fout.^2)*sqrt(pi)/2); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F' 'Fout'},{F(k) Fout(k)},1);
+  Fout(k).jacobian = anon('diag1 = -diag(exp(Fout.^2)*sqrt(pi)/2); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F' 'Fout'},{F(k) Fout(k)},1,'erfcinv');
   Fout(k).ID = newIDnum();
 end
 

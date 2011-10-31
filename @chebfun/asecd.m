@@ -6,6 +6,6 @@ function Fout = asecd(F)
 
 Fout = comp(F, @(x) asecd(x));
 for k = 1:numel(F)
-    Fout(k).jacobian = anon('diag1 = diag((180/pi)./(abs(F).*sqrt(F.^2-1))); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1);
+    Fout(k).jacobian = anon('diag1 = diag((180/pi)./(abs(F).*sqrt(F.^2-1))); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1,'asecd');
     Fout(k).ID = newIDnum();  
 end

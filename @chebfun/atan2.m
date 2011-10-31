@@ -29,7 +29,7 @@ end
 
 for k = 1:max(nX,nY)
 %     Z(k).jacobian = anon('diag1 = diag(1./(1+F.^2)); der2 = diff(F,u,''linop''); der = diag1*der2; nonConst = ~der2.iszero;',{'F'},{F(k)},1);
-    Z(k).jacobian = anon('error; der = error; nonConst = ~der2.iszero;',{'Z'},{Z(k)},1);
+    Z(k).jacobian = anon('error; der = error; nonConst = ~der2.iszero;',{'Z'},{Z(k)},1,'atan2');
     Z(k).ID = newIDnum();
 end
 
