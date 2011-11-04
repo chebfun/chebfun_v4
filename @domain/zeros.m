@@ -32,9 +32,9 @@ else            % return chebfun
   end
 end
 
-end
+    function s = makesparse(n)
+        [n map breaks numints] = tidyInputs(n,d,mfilename);
+        s = sparse(sum(n),sum(n));
+    end
 
-function s = makesparse(n)
-[n map breaks numints] = tidyInputs(n,d,mfilename);
-s = sparse(sum(n),sum(n));
 end
