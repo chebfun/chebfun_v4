@@ -20,28 +20,7 @@ else
 end
 
     function C = mat(n)
-        breaks = []; map = [];
-        if iscell(n)
-            if numel(n) > 1, map = n{2}; end
-            if numel(n) > 2, breaks = n{3}; end
-            n = n{1};
-        end
-        
-        % Force a default map for unbounded domains.
-        if any(isinf(d)) && isempty(map), map = maps(d); end
-        % Inherit the breakpoints from the domain.
-        breaks = union(breaks, d.ends);
-        if isa(breaks,'domain'), breaks = breaks.ends; end
-        if numel(breaks) == 2
-            % Breaks are the same as the domain ends. Set to [] to simplify.
-            breaks = [];
-        elseif numel(breaks) > 2
-            numints = numel(breaks)-1;
-            if numel(n) == 1, n = repmat(n,1,numints); end
-            if numel(n) ~= numints
-                error('DOMAIN:cumsum:numints','Vector N does not match domain D.');
-            end
-        end
+        [n map breaks numints] = tidyInputs(n,d,mfilename);
 
         if isempty(map) && isempty(breaks)
             % Standard case

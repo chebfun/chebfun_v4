@@ -31,37 +31,7 @@ end
 
 %%
     function D = mat(n,m)
-        breaks = []; map = [];
-        if iscell(n)
-            if numel(n) > 1, map = n{2}; end
-            if numel(n) > 2, breaks = n{3}; end
-            if isa(breaks,'domain'), breaks = breaks.ends; end
-            n = n{1};
-        end
-        
-        % Inherit the breakpoints from the domain.
-        breaks = union(breaks, d.ends);
-        if isa(breaks,'domain'), breaks = breaks.ends; end
-        % Force a map for an unbounded domain
-        if isempty(map) && any(isinf(breaks))
-            map = maps(domain(breaks)); 
-        end
-        
-        if numel(breaks) == 2 && ~any(isinf(d))
-            % Breaks are the same as the domain ends. Set to [] to simplify.
-            breaks = [];
-        elseif ~isempty(breaks)
-            numints = numel(breaks)-1;
-            if numel(n) == 1, n = repmat(n,1,numints); end
-            if numel(n) ~= numints
-                error('DOMAIN:diff:numints','Vector N does not match domain D.');
-            end
-        end
-        
-        % Force a default map for unbounded domains.
-        if any(isinf(d)) && isempty(map)
-            if isempty(breaks), map = maps(d); end
-        end            
+        [n map breaks numints] = tidyInputs(n,d,mfilename);      
 
         if isempty(map) && isempty(breaks)
             % Standard case
@@ -87,6 +57,7 @@ end
             end
         else
             % Breaks and maps
+            numints = numel(breaks)-1;
             csn = [0 cumsum(n)];
             D = zeros(csn(end));
             if iscell(map) && numel(map) == 1
@@ -171,6 +142,5 @@ for j = 3:k
 end
 
 end
-    
 
 

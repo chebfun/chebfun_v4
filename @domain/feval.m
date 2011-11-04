@@ -43,36 +43,14 @@ end
 a = d.ends(1);  b = d.ends(end);
 x = 2*(s(:)-a)/(b-a) - 1;
 if isempty(lr)
-    E = linop(@mat2,@(u) feval(u,s(:)),d);
+    E = linop(@mat,@(u) feval(u,s(:)),d);
     E.isdiag = 1;
 else
-    E = linop(@mat2,@(u) feval(u,s(:),lr),d);
+    E = linop(@mat,@(u) feval(u,s(:),lr),d);
 end
 
-    function P = mat2(n)
-        breaks = []; map = [];
-        if iscell(n)
-            if numel(n) > 1, map = n{2}; end
-            if numel(n) > 2, breaks = n{3}; end
-            if isa(breaks,'domain'), breaks = breaks.ends; end
-            n = n{1};
-        end
-
-        % Force a default map for unbounded domains.
-        if any(isinf(d)) && isempty(map), map = maps(d); end
-        % Inherit the breakpoints from the domain.
-        breaks = union(breaks, d.ends);
-        if isa(breaks,'domain'), breaks = breaks.ends; end
-        if numel(breaks) == 2 && all(breaks==d.ends([1 end]))
-            % Breaks are the same as the domain ends. Set to [] to simplify.
-            breaks = [];
-        elseif numel(breaks) > 2
-            numints = numel(breaks)-1;
-            if numel(n) == 1, n = repmat(n,1,numints); end
-            if numel(n) ~= numints
-                error('DOMAIN:feval:numints','Vector N does not match domain D.');
-            end
-        end
+    function P = mat(n)
+        [n map breaks numints] = tidyInputs(n,d,mfilename); 
         
         if isempty(map) && isempty(breaks)
             % Standard case
