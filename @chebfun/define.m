@@ -207,6 +207,7 @@ end
 for i = 1:length(s)
     fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
 end 
+
 for k = 1:length(col)
     fcol(k).imps([1 end]) = impsends(k,:);
 end
@@ -215,5 +216,13 @@ for i = 1:length(col)
    % fcol(:,i).imps(1,loc(find(loc))) = vin(find(mem),i); 
     fcol(i).imps(1,loc) = vin(mem,i); 
 end
+
+% Introduce jumps in the jacobian, but ignore changes introduced by restrict.
+for k = 1:numel(f)
+    fcol(k).jacobian = anon(['[der2 nonConst] = diff(f,u,''linop'');' ...
+        'd = domain(union(f.ends,s)); der = eye(d)*der2;'],{'f','s'},{f(k),s},1,'define');
+    fcol(k).ID = newIDnum;
+end
+
 
 end
