@@ -1,16 +1,15 @@
-%% Exotic (Boundary) Conditions
+%% Nonstandard 'Boundary' Conditions
 % Asgeir Birkisson, 18th October 2011
 
 %%
-% (Chebfun example ode/ExoticBCs.m)
+% (Chebfun example ode/Nonstandard.m)
 
 %%
-% With the advances of automatic differentiation of scalars in Chebfun, as
-% is discussed in [Insert link to AD of functionals example!!!], it is now
-% possible to solve ODEs in Chebfun with more exotic constraints than
-% simply conditions at the endpoints of the domain. These include interior
-% point conditions, as well as conditions on the function over the whole
-% domain.
+% With the advances of automatic differentiation of scalars in Chebfun it
+% is now possible to solve ODEs in Chebfun with more exotic constraints
+% than simply conditions at the endpoints of the domain. These include
+% interior point conditions, as well as conditions on the function over the
+% whole domain.
 %
 % This example describes how to solve problems of this kind. All the ODEs
 % here are linear, but the approach extends to nonlinear problems too.

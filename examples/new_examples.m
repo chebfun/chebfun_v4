@@ -3,7 +3,8 @@ function new_examples(examples)
 
 % examples = {'geom','Ellipses'};
 
-fid = fopen('newexamples.html','w+');
+examplesdir = '/chebfun/examples/';
+webdir = '/common/htdocs/www/maintainers/hale/chebfun/';
 
 % color = {'#d9e3e5'
 %          '#e4ecef'
@@ -14,27 +15,80 @@ color = {'#d9e3e5'
      '#e4ecef'
      '#eff2f2'};
      
+if ischar(examples) || numel(examples) == 1 % Copy to the new exmaples page
+    htmlfiles = dir(fullfile([webdir 'examples/newexamples/'],'*.html'));
+    newfilename = ['newexamples', int2str(numel(htmlfiles)+1), '.html'];
+    cmd = ['!cp ',webdir, 'includes/newexamples.html ',webdir,'examples/newexamples/',newfilename];
+    eval(cmd)
+    fid = fopen('newexamples.html','w+');
+    
+    text = fileread([webdir,'/examples/newexamples/',newfilename]);
+    text = strrep(text,'<h3>New Examples:</h3>','');
+    text = strrep(text,'exampleImage',['exampleImage' int2str(numel(htmlfiles)+1)]);
+    text = strrep(text,'imageLink',['imageLink' int2str(numel(htmlfiles)+1)]);
+    fprintf(fid,text);
+    fprintf(fid,'\n\n</br>\n\n');
+    j = 1;
+    for k = numel(htmlfiles):-1:1
+        if strcmp(htmlfiles(k).name,'newexamples.html'), continue, end
+        name = strrep(htmlfiles(k).name,'newexamples',''); name = strrep(name,'.html','');
+
+        text = fileread([webdir,'/examples/newexamples/',htmlfiles(k).name]);
+        text = strrep(text,'<h3>New Examples:</h3>','');
+        text = strrep(text,'exampleImage',['exampleImage' name]);
+        text = strrep(text,'imageLink',['imageLink' name]);
+        
+        j = j+1;
+        if ~mod(j,2) % flip left and right
+            text = strrep(text,'style="float:right;','tempOX26Le');
+            text = strrep(text,'style="float:left;','style="float:right;');
+            text = strrep(text,'tempOX26Le','style="float:left;');
+            text = strrep(text,'thumbnail','thumbnailleft');
+        end
+        
+        fprintf(fid,text);
+        fprintf(fid,'\n\n</br>\n\n');
+        
+    end
+    fclose(fid);
+    cmd = ['!mv newexamples.html ',webdir,'examples/newexamples/'];
+    eval(cmd)
+    return
+end
+
+fid = fopen('newexamples.html','w+');
+dir1 = examples{1}; file1 = examples{2};
+
 newline = '\n'     ;
-str1 = '        <h3>New Examples:</h3>';
+% str1 = '        <h3>New Examples:</h3>';
+str1 = '';
 str2 = '        <div style="background:#fff; color:#000; height:170px;">';
 str3 = '            <div style="float:left; background:#fff; width:410px; padding:1px 0px; height:160px">';
 str = [str1,newline,str2,newline,str3];
 fprintf(fid,str);
 
-examplesdir = '/chebfun/examples/';
-webdir = '/common/htdocs/www/maintainers/hale/chebfun/';
-dir1 = examples{1}; file1 = examples{2};
-
+defaultimage = [];
 k = 0;
 while ~isempty(examples)
     k = k+1;
-    dir = examples{1};
+    dirk = examples{1};
     file = examples{2};
-    examples(1:2) = [];
-    filedir = [examplesdir, dir, '/html/'];
+    if numel(examples) > 2 && ~ischar(examples{3})
+        imageno = examples{3};
+        if isempty(imageno), imageno = 1; end
+        imageno = int2str(imageno); 
+        if length(imageno) == 1, imageno = ['0' imageno]; end
+        examples(1:3) = [];
+    else
+        imageno = '01';
+        examples(1:2) = [];
+    end
+    if isempty(defaultimage), defaultimage = imageno; end
+
+    filedir = [examplesdir, dirk, '/html/'];
     STYLE = ['style="background:',color{k},';"'];
     
-    fidk = fopen([dir,'/',file,'.m']);
+    fidk = fopen([dirk,'/',file,'.m']);
     title = fgetl(fidk);
     title = title(4:end);
     nameanddate = fgetl(fidk);
@@ -49,7 +103,11 @@ while ~isempty(examples)
     str2 = '<div style="margin:0px; padding:4px; padding-left:20px; background:';
     fprintf(fid,[newline,ws,str2,color{k},';">']);
     
-    str3 = ['<a href="',filedir,file,'.shtml" onmouseover="document.images[''exampleImage''].src=''',filedir,file,'_01.png''">',title,'</a>'];
+    str3 = ['<a href="',filedir,file,'.shtml" ',...
+            'onmouseover="document.images[''exampleImage''].src=''',filedir,file,'_',imageno,'.png'';',...
+                         'document.images[''exampleImageB''].src=''',filedir,file,'_',imageno,'.png'';',...
+                          'document.links[''imageLink''].href=''',filedir,file,'.shtml''"',...
+                         '>',title,'</a>'];
     str3b = ['<p style="font-size:11px; margin:0px; padding:0px;">',nameanddate,'</p>'];
     fprintf(fid,[newline, ws,'   ',str3,newline, ws,'   ',str3b,newline,ws,'</div>']);
     
@@ -63,7 +121,9 @@ str{1} = '            </div>';
 str{2} = '            <div style="float:right; width:220px; padding-left:10px; padding-right:16px;">';
 str{3} = '                <b class="rtop2"><b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b></b>';
 str{4} = ['                <div style="float:right; background:',color{1},'; width:190; height:160px; padding-left:10px; padding-right:10px; align:center;">'];
-str{5} = ['                    <img src="',examplesdir,dir1,'/html/',file1,'_01.png" height="150px" name="exampleImage" style="margin-top:5px;">'];
+str{5} = ['                    <a class="thumbnail" name="imageLink" href="',examplesdir,dir1,'/html/',file1,'.shtml">',...
+                              '<img src="',examplesdir,dir1,'/html/',file1,'_',defaultimage,'.png" height="150px" name="exampleImage" style="margin-top:5px;" border="0px">',...
+                              '<span><br/><img src="',examplesdir,dir1,'/html/',file1,'_',defaultimage,'.png" name="exampleImageB"/></span></a>'];
 str{6} = '                </div>';
 str{7} = '                <b class="rbottom2"><b class="r4"></b><b class="r3"></b><b class="r2"></b><b class="r1"></b></b>';
 str{8} = '            </div>';

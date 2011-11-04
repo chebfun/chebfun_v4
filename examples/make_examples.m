@@ -96,6 +96,43 @@ elseif nargin == 2
 %             filetext = strrep(filetext,'<a href="http://creativecommons.org/licenses/by/3.0/">http://creativecommons.org/licenses/by/3.0/</a>','');
 %             filetext = strrep(filetext,'by the author above.</p>','');
 %         end
+        
+        % Try to insert hyperlinks for references
+        try
+            refloc = strfind(lower(filetext),'reference');
+            sourceloc = strfind(filetext,'SOURCE BEGIN');
+            if isempty(sourceloc)
+                reftext = filetext(refloc:end);
+                sourcetext = [];
+            else
+                refloc(refloc>sourceloc) = [];
+                refloc = refloc(end);
+                reftext = filetext(refloc:sourceloc);
+                sourcetext = filetext(sourceloc+1:end);
+            end
+            linklocs1 = strfind(reftext,'<a href'); 
+            linklocs2 = strfind(reftext,'>');
+            k = 1;
+            while 1
+                refk = ['[' int2str(k) ']'];
+                idxk = strfind(reftext,refk);
+                if isempty(idxk), break, end
+                idx(k) = idxk;
+                k = k+1;
+            end
+            bodytext = filetext(1:refloc-1);
+            idx(k) = inf;
+            for k = 1:numel(idx)-1
+                startk = linklocs1(linklocs1>idx(k) & linklocs1<idx(k+1));
+                endk = linklocs2(linklocs2>idx(k) & linklocs2<idx(k+1));
+                if isempty(startk) || isempty(endk), continue, end
+                strk = reftext(startk:endk);
+                refk = ['[' int2str(k) ']'];
+                bodytext = strrep(bodytext,refk,[strk,refk,'</a>']);
+            end
+            filetext = [bodytext reftext sourcetext];
+        end
+
         fidhtml = fopen([filename,'.html'],'w+');
         fprintf(fidhtml,'%s',filetext);
         fclose(fidhtml);
@@ -576,6 +613,7 @@ if shtml
             copyfile(fullfile(curdir,dirs{j},'html','*.shtml'),'html');
             if html
                 if isunix
+                    'hello'
                     eval(['!cp ',fullfile(curdir,dirs{j},'html','*.html') ' html']); 
                     eval(['!cp ',fullfile(curdir,dirs{j},'html','*.png') ' html']);
                 else
@@ -597,7 +635,7 @@ if shtml
         end
         cd ..
         if isunix
-            eval(['!chmod -R 775 *']);
+            eval(['!chmod 775 *']);
             eval(['!chmod -R 775 ',dirs{j}]);
             eval(['!chgrp -R chebfun ',[dirs{j},'/*']]);
         end  
