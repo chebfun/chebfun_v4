@@ -98,3 +98,11 @@ if f.ends(k+1) ~= subint(2)
     g.imps(:,end) = [imp2 ; zeros(size(g.imps,1)-1,1)];
 end
 
+% Update jacobian info. (use restriction operator)
+g.jacobian = anon(['[der2 nonConst] = diff(f,u,''linop'');',...
+                   'der = restrict(domain(f),domain(a,b))*der2;'], ...
+                   {'f','a','b'},{f,subint(1),subint(2)},1,'restrict');
+
+g.ID = newIDnum;
+
+
