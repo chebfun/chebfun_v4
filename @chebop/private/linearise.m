@@ -36,6 +36,7 @@ affine = [];
 jumplocs = [];
 cheb1 = chebfun('1',N.dom);
 nonLinFlag = 0;
+dom = [];
 
 % Check whether we are working with anonymous functions which accept
 % quasimatrices or arguments such as @(u,v). In the former case, no special
@@ -166,7 +167,7 @@ end
 L = set(L,'jumplocs',jumplocs);
 Ndom = N.dom; Ldom = get(L,'fundomain');
 % dom = unique([Ndom.endsandbreaks, Ldom.endsandbreaks]);
-dom = unique([Ndom.endsandbreaks, Ldom.endsandbreaks, jumplocs]);
+dom = unique([Ndom.endsandbreaks, Ldom.endsandbreaks, jumplocs, dom]);
 L = set(L,'fundomain',domain(dom));
 
 
@@ -251,6 +252,8 @@ L = set(L,'fundomain',domain(dom));
                     if ~isLin && flag == 1, linBC = struct([]); return, end
                     linBC(l) = struct('op',Dgujk,'val',-gujvals(k));
                     l = l+1;
+                    domk = get(Dgujk,'fundomain');
+                    dom = union(dom,domk.endsandbreaks);
                 end
 
             end
