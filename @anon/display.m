@@ -128,7 +128,8 @@ idx = find(mask);
 if isempty(idx), return, end
 
 % Display the next levels for each bvariable in turn
-for k = idx(1:end-1)
+for k = idx(1:end-1)'
+    if isempty(k), continue, end
     fk = A.workspace{k};
     fprintf('%s\n%sdiff(%s,u) = ',wsnew1,wsnew2,varsNames{k});
     display(fk.jacobian,maxdepth,curdepth+1,wsnew1)
