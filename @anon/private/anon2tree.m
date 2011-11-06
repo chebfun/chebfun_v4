@@ -19,7 +19,23 @@ else
     if isempty(name), name = 'ans'; end
 end
 
-t.info = func2str(an,name);
+% Store string displayed as information
+t.info = {func2str(an,name)};
+% Store parent information
+if isempty(an.parent)
+    parent = 'x';
+else
+    parent = an.parent;
+    if strcmp(parent,'plus'), parent = '+';
+    elseif strcmp(parent,'minus'), parent = '-';
+    elseif strcmp(parent,'times'), parent = '*';
+    elseif strcmp(parent,'rdivide'), parent = '/';
+    elseif strcmp(parent,'mdivide'), parent = '/';
+    elseif strcmp(parent,'power'), parent = '^';
+    end
+end
+t.parent = parent;
+
 
 % Go through workspace to detect what variables are chebfuns, and which are
 % scalars/strings
@@ -36,16 +52,33 @@ end
 % first one.
 numVariables = length(variablesVec);
 if numVariables == 0 % End recursion
-    % Do nothing
+    % Store the height and width of the leave, do nothing else
+    t.height = 0;
+    t.width = 1;
+    t.numleaves = 0;
+    %     t.x = 0.5;
 elseif numVariables == 1
     t.center = anon2tree(workspace{variablesVec(1)}.jacobian,varNames{variablesVec(1)});
+    t.height = t.center.height + 1;
+    t.width = t.center.width;
+    t.numleaves = 1;
+    % Don't need to worry about scaling x coordinate
 elseif numVariables == 2
     t.left = anon2tree(workspace{variablesVec(1)}.jacobian,varNames{variablesVec(1)});
     t.right = anon2tree(workspace{variablesVec(2)}.jacobian,varNames{variablesVec(2)});
+    t.height = max(t.left.height,t.right.height) + 1;
+    t.width = t.left.width + t.right.width;
+    t.numleaves = 2;
+    % Scale x coordinates
+    %     t.x = 0.5;
+    %     t.left.x
 elseif numVariables == 3
     t.left = anon2tree(workspace{variablesVec(1)}.jacobian,varNames{variablesVec(1)});
     t.center = anon2tree(workspace{variablesVec(2)}.jacobian,varNames{variablesVec(2)});
     t.right = anon2tree(workspace{variablesVec(3)}.jacobian,varNames{variablesVec(3)});
+    t.height = max(max(t.left.height,t.right.height),t.center.height) + 1;
+    t.width = t.left.width + t.center.width + t.right.width;
+    t.numleaves = 3;
 end
 
 
