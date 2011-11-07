@@ -85,19 +85,26 @@ end
 % Grab the main function string
 funcStr = A.func;
 
-% Clean out 'linop' flags and break at seicolons for prettyprint
+% Clean out 'linop' flags and break at semicolons for prettyprint
 idx = [0 strfind(funcStr,';')];
+idx = sort([idx [strfind(funcStr,'&&') strfind(funcStr,'||')]+1]);
 funcStrClean = {};
 for k = 1:numel(idx)-1;
     funcStrClean{k} = funcStr(idx(k)+1:idx(k+1));
-    while numel(funcStrClean{k})>1 && isspace(funcStrClean{k}(1)) 
+    while numel(funcStrClean{k})>1 && isspace(funcStrClean{k}(1))
         funcStrClean{k}(1) = [];
     end
     funcStrClean{k} = strrep(funcStrClean{k},',''linop''','');
+    funcStrClean{k} = strrep(funcStrClean{k},'&&','&& ...');
+    funcStrClean{k} = strrep(funcStrClean{k},'||','|| ...');
+    if k > 1 && strcmp(funcStrClean{k-1}(end-2:end),'...')
+        funcStrClean{k} = ['      ' funcStrClean{k}]; 
+    end
 end
 
 % Print each function string on a new line
 for k = 1:numel(funcStrClean)
+    if isempty(funcStrClean{k}), continue, end
     s = [s,sprintf('\n%s%s',ws,funcStrClean{k})];
 %     s = [s,sprintf(' %s',funcStrClean{k})];
 end
