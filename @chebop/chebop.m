@@ -285,6 +285,7 @@ function N = Nop_ini()
     N(1).bcshow = [];    
     N(1).init = [];
     N(1).numvar = [];
+    N(1).scale = [];
     N(1).optype = [];
     N(1).dim = [];
     N(1).jumplocs = [];

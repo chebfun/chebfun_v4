@@ -34,7 +34,6 @@ L = [];
 linBC = [];
 affine = [];
 jumplocs = [];
-cheb1 = chebfun('1',N.dom);
 nonLinFlag = 0;
 dom = [];
 
@@ -261,5 +260,11 @@ L = set(L,'fundomain',domain(dom));
             linBC = struct([]);
         end
     end
+
+% Assign the scale to the chebop if it's not empty
+if ~isempty(N.scale)
+%     L.scale = N.scale;
+    L = subsasgn(L,struct('type','.','subs','scale'), N.scale);
+end
 
 end

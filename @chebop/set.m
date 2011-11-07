@@ -93,6 +93,9 @@ while length(propertyArgIn) >= 2,
             else
                 N.init = val;
             end
+        case 'scale'
+            % Sets the dimension of the quasimatrices N operates on
+            N.scale = val;
         case 'dim'
             % Sets the dimension of the quasimatrices N operates on
             N.dim = val;
