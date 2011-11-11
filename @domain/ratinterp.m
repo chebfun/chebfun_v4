@@ -51,7 +51,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 
     % Check the inputs
     if nargin < 5 || isempty(NN)
-        if nargin > 6 && ~isempty(xi_type) && ~isstr(xi_type)
+        if nargin >= 6 && ~isempty(xi_type) && ~isstr(xi_type)
             N = length( xi_type ) - 1;
         elseif isfloat( f )
             N = length( f ) - 1;
@@ -72,7 +72,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
             error( 'CHEBFUN:ratinterp:InputLengthX' , 'The input vector xi is of the wrong length' );
         end
         df = [ d.ends(1) , d.ends(end) ];
-        xi = 2.0 * ( xi_type - 0.5*sum(df) ) / diff(df);
+        xi = 2.0 * ( xi_type(:) - 0.5*sum(df) ) / diff(df);
         xi_type = 'arbitrary';
     else
         if strcmpi( xi_type , 'TYPE2' )
