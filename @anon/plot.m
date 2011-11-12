@@ -52,6 +52,9 @@ datacursormode on
 xlim([0 1])
 ylim([0 1])
 hold off
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+title('Function evaluation tree')
 end
 
 

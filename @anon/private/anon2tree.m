@@ -29,6 +29,7 @@ else
     if strcmp(parent,'plus'), parent = '+';
     elseif strcmp(parent,'minus'), parent = '-';
     elseif strcmp(parent,'times'), parent = '*';
+    elseif strcmp(parent,'mtimes'), parent = '*';
     elseif strcmp(parent,'rdivide'), parent = '/';
     elseif strcmp(parent,'mdivide'), parent = '/';
     elseif strcmp(parent,'power'), parent = '^';
