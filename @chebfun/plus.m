@@ -76,10 +76,10 @@ else
     h.scl = scl;
     
     if isa(f1,'chebconst') && ~isa(f2,'chebconst')
-        f1.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f1},1,f1.jacobian.parent);
+        f1.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f1},1,'promote');
         f1.ID = newIDnum();
     elseif isa(f2,'chebconst') && ~isa(f1,'chebconst')
-        f2.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f2},1,f2.jacobian.parent);
+        f2.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f2},1,'promote');
         f2.ID = newIDnum();
     end
 

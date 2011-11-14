@@ -125,11 +125,11 @@ end
 h = f;
 % Promote jacobian info for chebconsts
 if isa(f,'chebconst') && ~isa(g,'chebconst')
-    f.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f},1,f.jacobian.parent);
+    f.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f},1,'promote');
     f.ID = newIDnum();
     h = g;
 elseif isa(g,'chebconst') && ~isa(f,'chebconst')
-    g.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{g},1,g.jacobian.parent);
+    g.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{g},1,'promote');
     g.ID = newIDnum();
 end
 
