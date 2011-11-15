@@ -92,7 +92,7 @@ if strcmpi(method,'GW')
         v = [v ; v(end:-1:1)];
    end
    v(2:2:n) = -v(2:2:end);
-elseif (n < 128 && ~strcmpi(method,'fast')) || strcmpi(method,'fastsmall')
+elseif (n < 256 && ~strcmpi(method,'fast')) || strcmpi(method,'fastsmall')
 % Fastsmall    
    [x ders] = fastsmall(n);              % Nodes and P_n'(x)
    w = 2./((1-x.^2).*ders.^2)';          % Quadrature weights
