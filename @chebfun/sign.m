@@ -27,6 +27,8 @@ end
 function fout = signcol(f)
 
 if isempty(f), fout = chebfun; return, end
+f.funreturn = 0;
+funreturn = f.funreturn;
 
 % If f is not real, sign returns f.
 if ~isreal(get(f,'vals'))
@@ -102,3 +104,4 @@ fout = set(f,'funs',ff,'ends',r,'scl',1,'imps',zeros(1,nr));
 % fout.imps(1,1) = sign(feval(f,ends(1)));
 % fout.imps(1,end) = sign(feval(f,ends(end)));
 fout.imps(1,idx2) = sign(double(feval(f,r(idx2))));
+fout.funreturn = funreturn;

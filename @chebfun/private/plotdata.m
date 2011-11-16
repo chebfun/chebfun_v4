@@ -61,6 +61,7 @@ end
 
 if isempty(f)
     % one real chebfun (or quasimatrix) input
+    g = set(g,'funreturn',0);
     
     % is g real?
     greal = isreal(g);
@@ -295,6 +296,8 @@ if isempty(f)
     misc = [infy bot top];
     
 elseif isempty(h) % Two quasimatrices case
+    f = set(f,'funreturn',0);
+    g = set(g,'funreturn',0);
     
     % f and g are both chebfuns/quasimatrices
     nf = numel(f);
@@ -373,6 +376,9 @@ elseif isempty(h) % Two quasimatrices case
     end
     
 else % Case of 3 quasimatrices (used in plot3)
+    f = set(f,'funreturn',0);
+    g = set(g,'funreturn',0);
+    h = set(g,'funreturn',0);
     
     nf = numel(f); ng = numel(g); nh = numel(h);
     if  nf~=ng && nf~=1 && ng~=1 && nh~=1
@@ -480,15 +486,25 @@ else
     isjump(1) = true;
 end
 
+ffuns = f.funs;
+
 for j = 2:length(ends)-1
     [MN loc] = min(abs(f.ends-ends(j)));
     if MN < 1e4*eps*hs
-        lval = get(f.funs(loc-1),'rval');%*(ends(loc)-ends(loc-1)).^sum(f.funs(loc-1).exps);
-        if f.funs(loc-1).exps(2) < 0, lval = sign(lval)/eps; end  % 1/eps should be inf or realmax, but this doesn't work?
-        if f.funs(loc-1).exps(2) > 0, lval = 0; end  % This is a hack?
-        rval = get(f.funs(loc),'lval');%*(ends(loc+1)-ends(loc)).^sum(f.funs(loc).exps);
-        if f.funs(loc).exps(1) < 0, rval = sign(rval)/eps; end    % 1/eps should be inf or realmax, but this doesn't work?
-        if f.funs(loc).exps(1) > 0, rval = 0; end    % This is a hack?  
+        lval = get(ffuns(loc-1),'rval');%*(ends(loc)-ends(loc-1)).^sum(f.funs(loc-1).exps);
+        expl = ffuns(loc-1).exps(2);
+        if expl < 0, 
+            lval = sign(lval)/eps; % 1/eps should be inf or realmax, but this doesn't work?
+        elseif expl > 0, 
+            lval = 0;   % This is a hack?
+        end
+        rval = get(ffuns(loc),'lval');%*(ends(loc+1)-ends(loc)).^sum(f.funs(loc).exps);
+        expr = ffuns(loc).exps(1);
+        if expr < 0, 
+            rval = sign(rval)/eps; % 1/eps should be inf or realmax, but this doesn't work?
+        elseif expr > 0
+            rval = 0;  % This is a hack?  
+        end    
 
         fjump(3*j-(5:-1:3)) = [lval; rval; NaN];
         jval(j) = f.imps(1,loc);
@@ -506,7 +522,7 @@ for j = 2:length(ends)-1
 end
 
 jval(end) = f.imps(1,end);
-if abs(jval(end)-f.funs(end).vals(end)) < tol
+if abs(jval(end)-ffuns(end).vals(end)) < tol
     isjump(end) = false;
 else
     isjump(end) = true;

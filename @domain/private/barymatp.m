@@ -57,8 +57,6 @@ if ~isempty(map)
     end
 end
 
-P = zeros(Ny,numel(x));               % initialise P
-
 % The non-piecewise case simply calls barymat.m
 if numints == 1
     P = zeros(numel(y),numel(x));
@@ -66,6 +64,8 @@ if numints == 1
     P(idx,:) = barymat(y(idx),x);
     return
 end
+
+P = zeros(Ny,numel(x));               % initialise P
 
 % Construct the global matrix
 if isempty(lr)
@@ -80,22 +80,32 @@ if isempty(lr)
     %     P(iiy,iix) = barymat(y(iiy),x(iix));    % Local barymat on each block.
     end
 
-    for k = 1:Ny
+    for k = 1:Ny % average out values which appear on either side
         P(k,:) = P(k,:)/s(k);
     end
     
 else
+    
     if strcmp(lr,'left')
     % Left evaluation
+        for j = 1:numel(y) % Align y with x if it's really close
+            idx = find(abs(x-y(j)) < 1e-14*(x(end)-x(1)),1,'first');
+            if ~isempty(idx), y(j) = x(idx); end
+        end
         for k = 1:numel(Nx)                         % Loop over blocks.
             iix = csNx(k)+(1:Nx(k));                % x indices of this block.
             iiy = find(min(x(iix))<y & y<=max(x(iix))+2*eps);
+%             iiy = find(min(x(iix))<y & y<=max(x(iix))+2*eps);
+%             iiy(y(iiy) > x(idx(iiy))) = []
             P(iiy,iix) = barymat(y(iiy),x(iix));
         end
-        
     else
 
     % Right evaluation
+        for j = 1:numel(y) % Align y with x if it's really close
+            idx = find(abs(x-y(j)) < 1e-14*(x(end)-x(1)),1,'last');
+            if ~isempty(idx), y(j) = x(idx); end
+        end
         for k = 1:numel(Nx)                         % Loop over blocks.
             iix = csNx(k)+(1:Nx(k));                % x indices of this block.
             iiy = find(min(x(iix))<=y+2*eps & y<max(x(iix)));
@@ -103,7 +113,7 @@ else
         end
         
     end
-
+    
 end
     
 
