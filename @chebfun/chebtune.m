@@ -1,4 +1,4 @@
-function chebtune(f,d)
+function varargout = chebtune(f,d)
 %CHEBTUNE   Chebfun or quasi-matrix melody player.
 %   CHEBTUNE(F) plays melodies with varying pitch corresponding to the real
 %   part of the function values of each chebfun in F. The function value 0
@@ -55,4 +55,6 @@ function chebtune(f,d)
         s = [ s , s ];
     end
     sound(s,Fc);
+    if nargout > 0, varargout(1) = {s}; end
+    if nargout > 1, varargout(2) = {Fc}; end
 end
