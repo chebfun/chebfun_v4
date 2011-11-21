@@ -16,13 +16,13 @@ color = {'#d9e3e5'
      '#eff2f2'};
      
 if ischar(examples) || numel(examples) == 1 % Copy to the new exmaples page
-    htmlfiles = dir(fullfile([webdir 'examples/newexamples/'],'*.html'));
+    htmlfiles = dir(fullfile([webdir 'examples/new/'],'*.html'));
     newfilename = ['newexamples', int2str(numel(htmlfiles)+1), '.html'];
-    cmd = ['!cp ',webdir, 'includes/newexamples.html ',webdir,'examples/newexamples/',newfilename];
+    cmd = ['!cp ',webdir, 'includes/newexamples.html ',webdir,'examples/new/',newfilename];
     eval(cmd)
     fid = fopen('newexamples.html','w+');
     
-    text = fileread([webdir,'/examples/newexamples/',newfilename]);
+    text = fileread([webdir,'examples/new/',newfilename]);
     text = strrep(text,'<h3>New Examples:</h3>','');
     text = strrep(text,'exampleImage',['exampleImage' int2str(numel(htmlfiles)+1)]);
     text = strrep(text,'imageLink',['imageLink' int2str(numel(htmlfiles)+1)]);
@@ -33,7 +33,7 @@ if ischar(examples) || numel(examples) == 1 % Copy to the new exmaples page
         if strcmp(htmlfiles(k).name,'newexamples.html'), continue, end
         name = strrep(htmlfiles(k).name,'newexamples',''); name = strrep(name,'.html','');
 
-        text = fileread([webdir,'/examples/newexamples/',htmlfiles(k).name]);
+        text = fileread([webdir,'examples/new/',htmlfiles(k).name]);
         text = strrep(text,'<h3>New Examples:</h3>','');
         text = strrep(text,'exampleImage',['exampleImage' name]);
         text = strrep(text,'imageLink',['imageLink' name]);
@@ -51,7 +51,7 @@ if ischar(examples) || numel(examples) == 1 % Copy to the new exmaples page
         
     end
     fclose(fid);
-    cmd = ['!mv newexamples.html ',webdir,'examples/newexamples/'];
+    cmd = ['!mv newexamples.html ',webdir,'examples/new/'];
     eval(cmd)
     return
 end

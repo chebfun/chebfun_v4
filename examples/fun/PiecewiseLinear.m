@@ -1,8 +1,8 @@
 %% Approximation of piecewise linear functions (& chebsnake!)
-% Stefan Guettel, 11 July 2011
+% Stefan Güttel, 11 July 2011
 
 %%
-% (Chebfun example approx/PiecewiseLinear.m)
+% (Chebfun example fun/PiecewiseLinear.m)
 
 %% 
 % One ingredient that makes Chebyshev interpolation so powerful

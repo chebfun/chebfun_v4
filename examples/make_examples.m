@@ -43,6 +43,12 @@ end
 optsPDF.outputDir = 'pdf'; 
 optsPDF.catchError = false;
 
+% These exampels are special because they produce output from the
+% anon/display field, which, because java is running will attempt to pipe
+% hyperlinks to the command window. This results in a massive mess, which
+% we clean up by filtering the html and tex files.
+javalist = {'ChebfunAD'};
+
 if nargin == 0 || listing || clean || exampleshtml
     % Find all the directories (except some exclusions).
     dirlist = struct2cell(dir(fullfile(pwd)));
@@ -96,6 +102,27 @@ elseif nargin == 2
 %             filetext = strrep(filetext,'<a href="http://creativecommons.org/licenses/by/3.0/">http://creativecommons.org/licenses/by/3.0/</a>','');
 %             filetext = strrep(filetext,'by the author above.</p>','');
 %         end
+
+        if any(strcmp(filename,javalist))
+%             filetext = strrep(filetext,'&lt;','<');
+%             filetext = strrep(filetext,'&gt;','>');
+                starts = strfind(filetext,'%&lt;a href="matlab: edit');
+                for k = numel(starts):-1:1
+                    endsk = strfind(filetext(starts(k):starts(k)+100),'&lt;/a');
+                    strk = filetext(starts(k)+(0:endsk(1)+2));
+                    idx1 = strfind(strk,'&gt;'); idx2 = strfind(strk,'&lt;');
+                    newstr = strk(idx1(1)+4:idx2(2)-1);
+                    filetext(starts(k)+(1:numel(newstr))) = newstr;
+                    filetext(starts(k)+((numel(newstr)+1):endsk(1)+8)) = [];
+%                         filetext(starts(k)+(0:endsk(1)+2)) = newstr;
+                end
+        end
+        
+        if strcmp(filename,'Writing3D')
+            png = 'Writing3D_04.png';
+            gif = 'Writing3D_04.gif';
+            filetext = strrep(filetext,png,gif);
+        end
         
         % Try to insert hyperlinks for references
         try
@@ -155,6 +182,20 @@ elseif nargin == 2
                 filetext = strrep(filetext,'ő','\H{o}');
                 filetext = strrep(filetext,'Ő','\H{O}');  
                 filetext = strrep(filetext,'é','\''{e}');  
+
+                if any(strcmp(filename,javalist))
+                    starts = strfind(filetext,'%<a href="matlab: edit');
+                    for k = numel(starts):-1:1
+                        endsk = strfind(filetext(starts(k):starts(k)+100),'</a>');
+                        strk = filetext(starts(k)+(0:endsk(1)+2));
+                        idx1 = strfind(strk,'>'); idx2 = strfind(strk,'<');
+                        newstr = strk(idx1(1)+1:idx2(2)-1);
+                        filetext(starts(k)+(1:numel(newstr))) = newstr;
+                        filetext(starts(k)+((numel(newstr)+1):endsk(1)+2)) = [];;
+%                         filetext(starts(k)+(0:endsk(1)+2)) = newstr;
+                    end
+                end
+                
                 fidpdf = fopen([filename,'.tex'],'w+');
                 fprintf(fidpdf,'%s',filetext);
                 fclose(fidpdf);

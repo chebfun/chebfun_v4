@@ -2,7 +2,7 @@
 % Nick Trefethen, November 2010 
 
 %%
-% (Chebfun example geom/Writing3D.m)
+% (Chebfun example fun/Writing3D.m)
 
 %%
 % The SCRIBBLE command produces a chebfun defined on the 
@@ -46,4 +46,3 @@ axis([-1 1 -1 1 -1 1]), axis off
 set(gca,'cameraviewanglemode','manual')
 view(-540,20), pause(1)
 for j = 1:720, camorbit(1,0), drawnow, end
-

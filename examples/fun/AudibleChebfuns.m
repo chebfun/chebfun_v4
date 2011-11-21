@@ -2,7 +2,7 @@
 % Stefan Güttel, 9th November 2011
 
 %%
-% (Chebfun example approx/AudibleChebfuns.m)
+% (Chebfun example fun/AudibleChebfuns.m)
 
 %%
 % NOTE: THIS EXAMPLE PRODUCES NOISE (provided your sound card is properly
@@ -88,7 +88,7 @@ chebtune(Y,4)
 % 
 % [1] <https://svn.maths.ox.ac.uk/trac/chebfun/browser/trunk/%40chebfun/chebtune.m>
 %
-% [2] http://www2.maths.ox.ac.uk/chebfun/examples/approx/audio/
+% [2] http://www2.maths.ox.ac.uk/chebfun/examples/fun/audio/
 
 
 
