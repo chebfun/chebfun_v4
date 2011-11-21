@@ -378,7 +378,7 @@ elseif isempty(h) % Two quasimatrices case
 else % Case of 3 quasimatrices (used in plot3)
     f = set(f,'funreturn',0);
     g = set(g,'funreturn',0);
-    h = set(g,'funreturn',0);
+    h = set(h,'funreturn',0);
     
     nf = numel(f); ng = numel(g); nh = numel(h);
     if  nf~=ng && nf~=1 && ng~=1 && nh~=1
