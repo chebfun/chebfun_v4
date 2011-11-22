@@ -8,7 +8,7 @@ function varargout = why(f,r)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-N = 10;  % Number of Chebfun languages
+N = 11;  % Number of Chebfun languages
 if nargin == 1
     r = ceil(N*rand);
 end
@@ -69,6 +69,9 @@ switch r
     case 10,        s = 'Well den Nick Trefethen et gesot huet!';
         % Luxembourgish:
         % Georges Klein
+    case 11,        s = 'Weil es Nick Trefethen so gesagt hat!';
+        % German:
+        % Stefan Güttel
 
     otherwise,      s = 'Good question!';
 end
