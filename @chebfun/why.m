@@ -71,7 +71,7 @@ switch r
         % Georges Klein
     case 11,        s = 'Weil es Nick Trefethen so gesagt hat!';
         % German:
-        % Stefan Güttel
+        % Stefan Guettel
 
     otherwise,      s = 'Good question!';
 end
