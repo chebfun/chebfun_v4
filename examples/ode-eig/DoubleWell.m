@@ -2,7 +2,7 @@
 % Nick Trefethen, November 2010
 
 %%
-% (Chebfun Example ode/DoubleWell.m)
+% (Chebfun Example ode-eig/DoubleWell.m)
 %%
 
 %%

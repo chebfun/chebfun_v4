@@ -2,7 +2,7 @@
 % Stefan Güttel, 30 August 2011
 
 %%
-% (Chebfun example ode/PolyEigDiff.m)
+% (Chebfun example ode-eig/PolyEigDiff.m)
 
 %% Bessel functions as eigenvectors of polynomial eigenvalue problems
 % The eigenfunctions of polynomial eigenvalue problems with differential

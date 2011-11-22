@@ -2,7 +2,7 @@
 % Toby Driscoll, May 7, 2011
 
 %%
-% (Chebfun example ode/SolarQDA.m)
+% (Chebfun example ode-eig/SolarQDA.m)
 
 %% 
 % Researchers at the University of Delaware are exploring the use of

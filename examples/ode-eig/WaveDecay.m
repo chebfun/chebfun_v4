@@ -2,7 +2,7 @@
 % Nick Trefethen, November 2010
 
 %%
-% (Chebfun example ode/WaveDecay.m)
+% (Chebfun example ode-eig/WaveDecay.m)
 
 %%
 % Here are eigenmodes 1, 2, 10, 20 of the wave equation on [-pi/2,pi/2]:

@@ -2,7 +2,7 @@
 % Toby Driscoll and Nick Trefethen, October 2010
 
 %%
-% (Chebfun example ode/OrrSommerfeld.m)
+% (Chebfun example ode-eig/OrrSommerfeld.m)
 
 %%
 % The Orr-Sommerfield problem is a classic problem from

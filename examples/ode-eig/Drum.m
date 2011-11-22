@@ -2,7 +2,7 @@
 % Toby Driscoll, November 2010
 
 %%
-% (Chebfun example ode/Drum.m)
+% (Chebfun example ode-eig/Drum.m)
 
 function Drum
 

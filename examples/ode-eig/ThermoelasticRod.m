@@ -2,7 +2,7 @@
 % Toby Driscoll, 8th November 2011
 
 %%
-% (Chebfun example ode/ThermoelasticRod.m)
+% (Chebfun example ode-eig/ThermoelasticRod.m)
 
 %%
 % Suppose a thermoelastic rod is fixed to a wall at one end and may expand

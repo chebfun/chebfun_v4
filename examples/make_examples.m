@@ -441,7 +441,7 @@ for j = 1:numel(dirs)
     fidc = fopen('contents.txt','r+');
     prevdir = [];
     titletxt = fgetl(fidc);
-    while ~strncmp(dirs{j},titletxt,3)
+    while ~strncmp(dirs{j},titletxt,numel(dirs{j}))
         prevdir = titletxt;
         titletxt = fgetl(fidc);
         if titletxt < 0, 
