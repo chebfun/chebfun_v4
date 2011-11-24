@@ -55,22 +55,42 @@ else
          error('CHEBFUN:vertcat:inargs','Incorrect input arguments.')  % Cannot Tobycat doubles with chebfuns
     end
     
+    % check number of rows is same for each input
+    s = cellfun(@(f) size(f,2),varargin);
+    s(s==0) = [];
+    if any(diff(s)),
+          error('CHEBFUN:vertcat:argsorrows','CAT arguments dimensions are not consistent or number of rows>1. Try horzcat?')
+    end
+    
     % TOBYCAT!
     % Deal with Quasi-matrices:
-    for k = i+1:nargin
-        f2 = varargin{k};
-        if isa(f2,'chebfun')
-            if size(Fout,2) ~= size(f2,2)
-                error('CHEBFUN:vertcat:argsorrows','CAT arguments dimensions are not consistent or number of rows>1. Try horzcat?')
-            else
-                for j = 1:numel(f2)
-                    Fout(j) = vertcatcol(Fout(j),f2(j));
-                end
-            end
-        else
-            error('CHEBFUN:vertcat:numinargs','Incorrect input arguments.')  % Cannot Tobycat doubles with chebfuns
+    for j = 1:size(Fout,2)
+        l = 1; columnj = {}; % initialise
+        for k = i:nargin
+            vk = varargin{k};
+            if isempty(vk), continue, end
+            columnj{l} = varargin{k}(j);
+            l = l+1;
         end
+        Fout(j) = vertcatcol(columnj{:});
     end
+ 
+%     for k = i+1:nargin
+%         f2 = varargin{k};
+%         if isa(f2,'chebfun')
+%             if size(Fout,2) ~= size(f2,2)
+%                 error('CHEBFUN:vertcat:argsorrows','CAT arguments dimensions are not consistent or number of rows>1. Try horzcat?')
+%             else
+%                 for j = 1:numel(f2)
+%                     Fout(j) = vertcatcol(Fout(j),f2(j));
+%                 end
+%             end
+%         elseif isempty(f2)
+%             continue
+%         else
+%             error('CHEBFUN:vertcat:numinargs','Incorrect input arguments.')  % Cannot Tobycat doubles with chebfuns
+%         end
+%     end
     
 end
 
@@ -88,6 +108,10 @@ f = chebfun;
 for k = 1:nargin
   newf = varargin{k};
   if ~isempty(newf)
+    if ~isa(newf, 'chebfun')
+        error('CHEBFUN:vertcat:numinargs','Incorrect input arguments.')  % Cannot Tobycat doubles with chebfuns
+    end
+      
     if isempty(f)           % found the first nonempty case
       f = newf;
     else                    % append to current f
@@ -99,7 +123,27 @@ for k = 1:nargin
       f.ends = [f.ends newends(2:end)];    % translate domain
       f.funs = [f.funs, newf.funs];
       f.imps = [f.imps(1:end-1) newf.imps(1:end)];
+      
+%       f.jacobian = anon(['[der1,nonConst1] = diff(f,u,''linop''); '...
+%                    '[der2,nonConst2] = diff(g,u,''linop''); ',...
+%                    'der = vertcat2(der1,der2); ',...
+%                    'nonConst = nonConst1 | nonConst2'],...
+%                     {'f','g'},{f,newf},1,'vertcat');
+
     end
   end
 end
 f.nfuns = numel(f.funs);
+f.jacobian = anon(['for k = 1:numel(f);',...
+                   '     [ders{k},nonConsts{k}] = diff(f{k},u,''linop''); ',...
+                   'end; ',...                   
+                   'der = vertcat2(ders{:}); ',...
+                   'nonConst = any([nonConsts{:}]);'],...
+                   {'f','ignored'},{varargin,chebfun},1,'vertcat');
+               
+%  f.jacobian = anon(['[der1,nonConst1] = diff(f,u,''linop''); '...
+%    '[der2,nonConst2] = diff(g,u,''linop''); ',...
+%    'ders = {der1,der2};',...
+%    'der = vertcat2(linop,ders{:}); ',...
+%    'nonConst = nonConst1 | nonConst2;'],...
+%     {'f','g'},{f,newf},1,'vertcat');

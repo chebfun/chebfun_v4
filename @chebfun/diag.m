@@ -15,6 +15,12 @@ function A = diag(f,d)
 %     return
 % end
 
-if nargin < 2, d = domain(f); else f = restrict(f,d); end
+% if nargin < 2, d = domain(f); end
 
-A = diag(d, f); % Call domain/diag
+if nargin < 2, 
+    d = domain(f);
+% elseif f.ends(1) <= d(1) && f.ends(end) >= d(end)
+%     f = restrict(f,d);  % This is now dealt with in domain/diag
+end
+
+A = diag(d,f); % Call domain/diag

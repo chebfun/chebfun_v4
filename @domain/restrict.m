@@ -8,14 +8,14 @@ if nargin < 2
     error('CHEBFUN:domain:restrict:nargin','Two inputs required to domain/restrict.');
 end
 
-% Define the oparray
-oper = @(u) restrict(u,d2);
-
 % Nothing to do here
-if d1(1)==d2(1) && d1(end) == d2(end)
+if d1(1) == d2(1) && d1(end) == d2(end)
     A = eye(d1);
     return
 end
+
+% Define the oparray
+oper = @(u) restrict(u,d2);
 
 % inherit interior breaks from both domains
 d = union(d1.ends,d2.ends);
@@ -32,14 +32,9 @@ A.isdiag = 1;
     breaks = [];
     % Unwrap the input
     if iscell(n)
-        if numel(n) > 2, 
-            breaks = n{3}; 
-            if isa(breaks,'domain'), breaks = breaks.ends; end
-        end
+        breaks = n{3}; 
+        if isa(breaks,'domain'), breaks = breaks.ends; end
         n = n{1};
-    else
-        m = speye(sum(n));
-        return
     end
 
     % Inherit the breakpoints from the domain.

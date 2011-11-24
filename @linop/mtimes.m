@@ -52,7 +52,9 @@ switch(class(B))
       error('LINOP:mtimes:numericmatrix','Chebop-matrix multiplication is not well defined.')
     end
   case 'linop'     % linop * linop
-    dom = domaincheck(A,B);
+%     dom = domaincheck(A,B);
+    dom = domain(union(A.fundomain.endsandbreaks,B.fundomain.endsandbreaks));
+    
     if size(A,2) ~= size(B,1)
       error('LINOP:mtimes:size','Inner block dimensions must agree.')
     end

@@ -127,6 +127,8 @@ for k = 1:numel(A.workspace)
     % Uncomment below to prevent showing empty anons
     if isa(fk,'chebfun') %&& ~isempty(fk.jacobian.variablesName)
         mask(k) = 1;
+    elseif iscell(fk) && ~isempty(fk) && isa(fk{1},'chebfun') %&& ~isempty(fk.jacobian.variablesName)
+        mask(k) = 1;
     end
 end   
 idx = find(mask);
@@ -138,8 +140,15 @@ if isempty(idx), return, end
 for k = idx(1:end-1)'
     if isempty(k), continue, end
     fk = A.workspace{k};
-    fprintf('%s\n%sdiff(%s,u) = ',wsnew1,wsnew2,varsNames{k});
-    display(fk.jacobian,maxdepth,curdepth+1,wsnew1)
+    if iscell(fk)
+        for j = 1:numel(fk)
+            fprintf('%s\n%sdiff(%s{%d},u) = ',wsnew1,wsnew2,varsNames{k},j);
+            display(fk{j}.jacobian,maxdepth,curdepth+1,wsnew1)
+        end
+    else
+        fprintf('%s\n%sdiff(%s,u) = ',wsnew1,wsnew2,varsNames{k});
+        display(fk.jacobian,maxdepth,curdepth+1,wsnew1)
+    end
 end   
 % The last variable is treated specially (to get lines correct).
 k = idx(end);

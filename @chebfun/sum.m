@@ -144,6 +144,12 @@ if isnumeric(a) && isnumeric(b)
     end
     out = cumsum(F);
     out = feval(out,b)-feval(out,a);
+    if F.funreturn
+        out.jacobian = anon(['[der1,nonConst] = diff(f,u,''linop''); '...
+            'der = sum(domain(a,b))*restrict(domain(f),domain(a,b))*der1;'],...
+            {'f','a','b'},{F,a,b},1,'sum');
+        out.funreturn = 1;
+     end
 elseif isa(a,'chebfun') && isa(b,'chebfun')
     out = cumsum(F);
     out = compose(out,b)-compose(out,a);

@@ -10,9 +10,9 @@ classdef chebconst < chebfun
         function [L nonConst] = diff(varargin)
             if nargin > 1 && isa(varargin{2},'chebfun')
                 [L nonConst] = diff@chebfun(varargin{:});
-                if ~isfinite(length(L)) % L is inf x inf
-                    L = full(diag(feval(L,1)));
-                end
+%                 if ~isfinite(length(L)) % L is inf x inf
+%                     L = full(diag(feval(L,1)));
+%                 end
             else
                 f = varargin{1}; 
                 N = 1; dim = 1;
@@ -50,8 +50,9 @@ classdef chebconst < chebfun
                 error('CHEBFUN:chebconst:diag:empty',...
                     'Enpty chebfun input not allowed.');
             end
-            v = get(f(1),'vals');
-            L = v(1)*eye(d);
+            v = get(f(1),'vals'); const = v(1);
+%             L = v(1)*eye(d);
+            L = linop(@(n) const, @(u) times(const,u), d);
         end
         
         function g = sum(f)
@@ -61,6 +62,29 @@ classdef chebconst < chebfun
                 g = plus(g,f(:,k));
             end
             g.trans = f(1).trans;
+        end
+        
+        function g = mean(f)
+            if isempty(f), g = []; return, end
+            g = sum(f)./numel(f);
+        end
+        
+        function h = plus(f,g)
+            if isa(f,'chebconst') && isa(g,'chebconst')
+                df = domain(f); dg = domain(g);
+                dom = [min(df(1),dg(1)), max(df(end),dg(end))];
+                f = newdomain(f,dom); g = newdomain(g,dom);
+            end
+            h = plus@chebfun(f,g);
+        end
+        
+        function h = minus(f,g)
+            if isa(f,'chebconst') && isa(g,'chebconst')
+                df = domain(f); dg = domain(g);
+                dom = [min(df(1),dg(1)), max(df(end),dg(end))];
+                f = newdomain(f,dom); g = newdomain(g,dom);
+            end
+            h = minus@chebfun(f,g);
         end
         
         function h = mtimes(f,g)
