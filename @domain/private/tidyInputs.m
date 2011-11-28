@@ -12,11 +12,6 @@ if iscell(n)
     n = n{1};
 end
 
-% Force a default map for unbounded domains.
-if any(isinf(d)) && isempty(map)
-    if isempty(breaks), map = maps(d); end
-end   
-
 % Inherit the breakpoints from the domain.
 breaks = union(breaks, d.ends);
 % Throw away breaks (and corresponding n) outside the domain.
@@ -24,6 +19,11 @@ maskr = breaks > d.ends(end);     maskl = breaks < d.ends(1);
 if numel(n) > 1,  n(maskr) = [];  n(maskl) = []; end
 breaks(maskl|maskr) = [];
 numints = numel(breaks)-1;
+
+% Force a default map for unbounded domains.
+if any(isinf(breaks)) && isempty(map)
+    map = maps(domain(breaks));
+end  
 
 % Tidy up breaks and n.
 if numints == 1
