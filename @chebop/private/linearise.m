@@ -137,14 +137,16 @@ catch
 end
 if nonLinFlag || any(any(nonConst)),
     isLin = 0;
-    for lCounter = 1:numel(linBC.left)
-        linBC.left(lCounter).val = -linBC.left(lCounter).val;
-    end
-    for rCounter = 1:numel(linBC.right)
-        linBC.right(rCounter).val = -linBC.right(rCounter).val;
-    end
-    for oCounter = 1:numel(linBC.other)
-        linBC.other(oCounter).val = -linBC.other(oCounter).val;
+    if isstruct(linBC)
+        for lCounter = 1:numel(linBC.left)
+            linBC.left(lCounter).val = -linBC.left(lCounter).val;
+        end
+        for rCounter = 1:numel(linBC.right)
+            linBC.right(rCounter).val = -linBC.right(rCounter).val;
+        end
+        for oCounter = 1:numel(linBC.other)
+            linBC.other(oCounter).val = -linBC.other(oCounter).val;
+        end
     end
 else
     if nargout > 3 % Find the affine part
@@ -168,7 +170,6 @@ Ndom = N.dom; Ldom = get(L,'fundomain');
 % dom = unique([Ndom.endsandbreaks, Ldom.endsandbreaks]);
 dom = unique([Ndom.endsandbreaks, Ldom.endsandbreaks, jumplocs, dom]);
 L = set(L,'fundomain',domain(dom));
-
 
     function linBC = lineariseBC(bc,bcshow,lr,ab,bcflag)
         if ~isempty(bc)

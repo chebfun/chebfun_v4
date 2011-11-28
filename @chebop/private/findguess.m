@@ -98,8 +98,10 @@ if fitBC
     % Extract BC functions
     bcFunLeft = N.lbc;
     bcFunRight = N.rbc;
+    bcFun = N.bc;
     
-    if success && ~any(strcmpi(bcFunLeft,'periodic')) && ~any(strcmpi(bcFunRight,'periodic'))
+    if success && ~any(strcmpi(bcFun,'periodic')) && ...
+            ~any(strcmpi(bcFunLeft,'periodic')) && ~any(strcmpi(bcFunRight,'periodic'))
         guess = tryInterpGuess();
     elseif xor(strcmpi(bcFunLeft,'periodic'),strcmpi(bcFunRight,'periodic'))
         error('CHEBOP:mldivide:findguess: BC is periodic at one end but not at the other.');
