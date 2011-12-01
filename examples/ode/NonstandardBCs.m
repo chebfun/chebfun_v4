@@ -2,7 +2,7 @@
 % Asgeir Birkisson, 18th October 2011
 
 %%
-% (Chebfun example ode/Nonstandard.m)
+% (Chebfun example ode/NonstandardBCs.m)
 
 %%
 % With the advances of automatic differentiation of scalars in Chebfun it
