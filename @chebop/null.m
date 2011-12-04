@@ -11,8 +11,7 @@ function V = null(N,varargin)
 %  norm(L*V)
 %
 % Example 2:
-%  [d x] = domain(-1,1);
-%  L = chebop(@(x,u) 0.2*diff(d,3) - diag(sin(3*x))*diff(d));
+%  L = chebop(@(x,u) 0.2*diff(u,3) - diag(sin(3*x))*diff(u));
 %  L.rbc = 1;
 %  V = null(L)
 %
