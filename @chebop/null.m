@@ -2,7 +2,7 @@ function V = null(N,varargin)
 %NULL  Find null-functions of a linear chebop.
 % Z = NULL(A) is a chebfun quasimatrix orthonormal basis for the null space
 % of the linop A. That is, A*Z has negligible elements, size(Z,2) is the
-% nullity of A, and Z'*Z = I. A may contain linar boundary conditions, but
+% nullity of A, and Z'*Z = I. A may contain linear boundary conditions, but
 % they will be treated as homogenous.
 %
 % Example 1:
@@ -15,12 +15,13 @@ function V = null(N,varargin)
 %  L.rbc = 1;
 %  V = null(L)
 %
+% For systems of equations, NULL(S) returns a cell array of quasimatrices, 
+% where the kth element in the cell, Z{k}, corresponds to the kth variable.
+%
 % See also chebop/svds, linop/null, chebop/eigs
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers.
-% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
-% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
-% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information..
 
 % Linearize and check whether the chebop is linear
 try

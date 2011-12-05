@@ -1,8 +1,8 @@
-function Vfun = null(A,varargin)
+function [Vfun S] = null(A,varargin)
 %NULL   Null space.
 % Z = NULL(A) is a chebfun quasimatrix orthonormal basis for the null space
 % of the linop A. That is, A*Z has negligible elements, size(Z,2) is the
-% nullity of A, and Z'*Z = I. A may contain linar boundary conditions, but
+% nullity of A, and Z'*Z = I. A may contain linear boundary conditions, but
 % they will be treated as homogenous.
 %
 % Example 1:
@@ -17,7 +17,10 @@ function Vfun = null(A,varargin)
 %  L.rbc = 1;
 %  V = null(L)
 %
-% See also linop/svds, linop/eigs.
+% For systems of equations, NULL(S) returns a cell array of quasimatrices, 
+% where the kth element in the cell, Z{k}, corresponds to the kth variable.
+%
+% See also linop/svds, linop/eigs, null.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -27,53 +30,57 @@ if nargin > 1
         '"rational" null space basis is not yet supported.');
 end
 
-dom = domain(A);
-breaks = dom.endsandbreaks;
-nullity = [];
-
-m = A.blocksize(2);             % Number of variabes in system
-V = [];  % Initialise V so that the nested function overwrites it.
-
 % Grab the default settings.
 maxdegree = cheboppref('maxdegree');
 settings = chebopdefaults;
 settings.minsamples = 33;
 tol = 100*settings.eps;
 
+% Grab some info from A
+dom = domain(A);  breaks = dom.endsandbreaks;
+syssize = A.blocksize(2);  % Number of variabes in system
+
+% Initialise
+V = [];         % Initialise V so that the nested function overwrites it.
+nullity = [];   % Also initialise nullity.
+S = [];
+
 % Call the constructor
 ignored = chebfun( @(x,N,bks) value(x,N,bks), {breaks}, settings);
 
-N = Nout;
-V = mat2cell(V(:),repmat(N,1,m*nullity),1);
+if size(V,2) == 0
+    Vfun = chebfun;
+    if syssize > 1, Vfun = repmat({Vfun},1,syssize); end
+    return
+end
 
-Vfun = cell(1,m);
-for l = 1:m, Vfun{l} = chebfun; end % initialise
+% Clean and format the output (stored in V)
+Vfun = cell(1,syssize);
+for l = 1:syssize, Vfun{l} = chebfun; end % initialise
+V = mat2cell(V(:),repmat(Nout,1,syssize*size(V,2)),1);
 settings.maxdegree = maxdegree;  settings.maxlength = maxdegree;
-
-for kk = 1:nullity % Loop over each eigenvector
-    nrm2 = 0;
-    for l = 1:m % Loop through the equations in the system
+for k = 1:nullity % Loop over each eigenvector
+    for l = 1:syssize % Loop through the equations in the system
         tmp = chebfun; 
         % Build a chebfun from the piecewise parts on each interval
         for j = 1:numel(breaks)-1
-            funj = fun( filter(V{1},1e-8), breaks(j:j+1), settings);
+            funj = fun( V{1}, breaks(j:j+1), settings);
             tmp = [tmp ; set(chebfun,'funs',funj,'ends',breaks(j:j+1),...
                 'imps',[funj.vals(1) funj.vals(end)],'trans',0)];
             V(1) = [];
         end
-        % Simplify it
-        tmp = simplify(tmp,settings.eps);
-        Vfun{l}(:,kk) = tmp;
-        nrm2 = nrm2 + norm(tmp)^2;
-    end
-    for l = 1:m % Normalise
-        Vfun{l}(:,kk) = Vfun{l}(:,kk)/sqrt(nrm2);
+        Vfun{l}(:,k) = simplify(tmp,tol);
     end
 end
-if m == 1, Vfun = Vfun{1}; end % Return a quasimatrix in this case
-
-% Orthogonalise
-Vfun = qr(Vfun);
+if syssize == 1
+    Vfun = Vfun{1};     % Return a quasimatrix in this case
+    Vfun = qr(Vfun);    % Orthogonalise
+else 
+    [Q R] = qr(vertcat(Vfun{:}));   % Orthogonalise
+    for l = 1:syssize
+        Vfun{l} = Vfun{l}/R;        % Orthogonalise and return a cell array
+    end
+end
 
  function v = value(y,N,bks)
     % y is a cell array with the points for each function.
@@ -109,31 +116,28 @@ Vfun = qr(Vfun);
             'Nonsquare collocation currently not supported.')
     end
 
+    % Cmppute the discrete SVD
     [U,S,v] = svd(Amat);                    % Built-in SVD
     S = diag(S);
-    tol = 1e-14;
     nullity = length(find(S/S(1) < tol));   % Numerical nullity
     v = v(:,end+1-nullity:end);             % Numerical nullvectors
-    v = reshape(v,[sN,nullity]);            % one variable per column
     
     % Enforce additional boundary conditions and store for output
     V = v*null(B*v);
-
+    % Reshape v to have one variable per column
+    v = sum(reshape(v,[sN,nullity,syssize]),3);   
     % Need to return a single function to test happiness. If you just sum
     % functions, you get weird results if v(:,1)=-v(:,2), as can happen in
     % very basic problems. We just use an arbitrary linear combination (but
     % the same one each time!). 
-    coef = [1, 2 + sin(1:nullity-1)];  % For a linear combination of variables
+    coef = [1, 2 + sin(1:nullity-1)]; % Form linear combination of variables
     v = v*coef.';
     % Filter
     for jj = 1:numel(N)
         ii = csN(jj) + (1:N(jj));
         v(ii) = filter(v(ii),1e-8);
     end
-    v = {v};                                % Output as cell array.
-    
-    % Some outputs
-    nullity = size(V,2);
+    v = {v};                  % Output as cell array for sytems constructor
     Nout = N;
 
     end

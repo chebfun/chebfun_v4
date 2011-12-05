@@ -202,7 +202,7 @@ end
         if nbc > 0 % Construct a rectangular matrix
             [Amat ignored ignored ignored P] = feval(A,pts,'bc');
         else       % a square matrix with no boundary conditions
-            [Amat ignored ignored ignored P] = feval(A,pts);
+            [Amat ignored ignored ignored P] = feval(A,pts,'nobc');
         end
         
         if diff(size(Amat)),
