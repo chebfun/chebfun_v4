@@ -59,14 +59,14 @@ switch(class(B))
       error('LINOP:mtimes:size','Inner block dimensions must agree.')
     end
     
-    % Hack for constant diagonal check
-    if max(size(A)) == 1 && A.isdiag
-        A3 = feval(A,3); B3 = feval(B,3);
-        if size(B3,1) == 1 && ~any(diff(diag(A3)));
-            C = A3(1)*B;
-            return
-        end
-    end
+%     % Hack for constant diagonal check
+%     if max(size(A)) == 1 && A.isdiag
+%         A3 = feval(A,3,'nobc'); B3 = feval(B,3,'nobc');
+%         if size(B3,1) == 1 && ~any(diff(diag(A3)));
+%             C = A3(1)*B;
+%             return
+%         end
+%     end
 
     mat = A.varmat * B.varmat;
     op =  A.oparray * B.oparray;

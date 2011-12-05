@@ -26,6 +26,8 @@ if isa(n,'chebfun')  % Apply to chebfun
   return
 end
 
+default_usebc = 1;
+
 % Parse the inputs.
 if nargin < 5, breaks = []; end
 if nargin < 4, map = []; end
@@ -35,7 +37,11 @@ if nargin > 2 % Determine input sequence
             if nargin == 4, breaks = map; end % A,n,map,breaks
             if nargin < 5,  map = usebc;  end % A,n,map
         end
-        usebc = 0;
+        if isempty(A.bc) && isempty(A.lbc) && isempty(A.rbc)
+            usebc = 0;
+        else
+            usebc = default_usebc;
+        end
     elseif nargin == 3 && ((isnumeric(usebc) && numel(usebc) > 1) || isa(usebc,'domain'))
         % A,n,breaks
         breaks = usebc; map = []; usebc = 0;
@@ -44,8 +50,12 @@ if nargin > 2 % Determine input sequence
         usebc = .5*strcmpi(usebc,'rect') + 1.0*strcmpi(usebc,'bc') + ...
             1.5*any(strcmpi(usebc,{'oldschool','rowrep'}));
     end
-else
-    usebc = 0; % A,n
+else % A,n
+    if isempty(A.bc) && isempty(A.lbc) && isempty(A.rbc)
+        usebc = 0;
+    else
+        usebc = default_usebc;
+    end
 end
 if nargin < 5 && ~isempty(map) && (isnumeric(map) || isa(map,'domain'))
     breaks = map; map = []; % A,n,usebc,breaks
