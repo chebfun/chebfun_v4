@@ -7,7 +7,20 @@ function s = char(A)
 if isempty(A)
     s = '   (empty chebop)';
 else
-    s = '   operating on chebfuns defined on:';
+    % Check whether the chebop is linear in order to be able to display
+    % linearity information. If we get an error, that's a indicator that
+    % the operator is nonlinear, as it means that it can't operate on any
+    % initial guess (i.e. it could be @(u) diff(u,2) + 1./u)
+    try
+        islA = islinear(A);
+    catch ME
+        islA = 0;
+    end
+    if islA
+        s ='   Linear operator operating on chebfuns defined on:';
+    else
+        s ='   Nonlinear operator operating on chebfuns defined on:';
+    end
     s = char(s,['  ' char(A.dom)]);
     if ~isempty(A.op) && ~isempty(A.opshow) && size(A.opshow{1},1) == 1%&& ~isa(A.op,'linop')
       s = char(s, '   representing the operator:');
