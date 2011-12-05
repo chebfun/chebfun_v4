@@ -175,10 +175,8 @@ end
 function fcol = definecolpoint(f,s,vin)
 % Deal with a single chebfun.
 
-fcol = f;     
 col = 1:numel(f);
-
-if isempty(s), return, end
+if isempty(s), fcol = f; return, end
 
 if ~isa(vin,'numeric')
     error('CHEBFUN:subsasgn:conversion',...
@@ -194,7 +192,7 @@ elseif length(s)~=size(vin,1) || length(col)~=size(vin,2)
     error('CHEBFUN:subsasgn:dimensions',...
             'Subscripted assignment dimension mismatch.')
 end
-ends = get(fcol(1),'ends'); a = ends(1); b = ends(end);
+ends = get(f(1),'ends'); a = ends(1); b = ends(end);
 if min(s) < a || max(s) > b
     error('CHEBFUN:subsasgn:outbounds',...
         'Cannot introduce endpoints outside domain.')
@@ -202,11 +200,19 @@ end
 stemp = s;    
 s = setdiff(s,ends); impsends = zeros(length(col),2);
 for k = 1:length(col)
-    impsends(k,:) = fcol(k).imps(1,[1 end]);
+    impsends(k,:) = f(k).imps(1,[1 end]);
 end
-for i = 1:length(s)
-    fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
-end 
+
+% fcol = f;
+% for i = 1:length(s)
+%     fcol = [restrict(fcol,[a,s(i)]); restrict(fcol,[s(i),b])];
+% end 
+
+ss = [a ; s(:) ; b];
+fcol = chebfun;
+for i = 1:length(ss)-1
+    fcol = [fcol ; restrict(f,[ss(i),ss(i+1)])];
+end
 
 for k = 1:length(col)
     fcol(k).imps([1 end]) = impsends(k,:);
