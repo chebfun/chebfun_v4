@@ -83,14 +83,17 @@ end
 function F = diffcol(f,n)
 % Differentiate column along continuous variable to an integer order 
 
-if isempty(f.funs(1).vals), F=chebfun; return, end
+if isempty(f) || isempty(f.funs(1).vals)
+    F = chebfun; 
+    return
+end
 
 tol = max(chebfunpref('eps')*10, 1e-12) ;
 
 F = f;
 funs = f.funs;
 ends = get(f,'ends');
-F.jacobian = anon('der1=diff(domain(f),n); [der2 nonConst] = diff(f,u,''linop''); der = der1*der2;',{'f' 'n'},{f n},1,'diff');
+F.jacobian = anon('der1 = diff(domain(f),n); [der2 nonConst] = diff(f,u,''linop''); der = der1*der2;',{'f' 'n'},{f n},1,'diff');
 F.ID = newIDnum;
 
 for j = 1:n % Loop n times for nth derivative
