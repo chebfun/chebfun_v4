@@ -51,6 +51,20 @@ switch index(1).type
                error('CHEBFUN:subsasgn:dimensions',...
                    'Index missing for quasi-matrix assignment.')
             end
+            if strcmp(idx,':') 
+                if n == 1 || get(f(1), 'trans')
+                    varargout{1} = f;
+                    return
+                end
+                % f(:) -> vertcat
+                str = 'varargout{1} = vertcat(f(1)';
+                for k = 2:numel(f)
+                    str = [str ',f(' int2str(k) ')'];
+                end
+                str = [str ');'];
+                eval(str);
+                return
+            end
         elseif length(idx) == 2
             % f(s,:), f(:,s), or, 
             if any(strcmpi(idx{2},{'left','right'}))
