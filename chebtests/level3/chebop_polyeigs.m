@@ -20,14 +20,19 @@ A = diff(d,2); A.lbc = 0; A.rbc = 0;
 B = -diag(x)*diff(d);
 C = eye(d);
 [V D] = polyeigs(A,B,C,6,0);
-
-pass(1) = norm(D-precomp,inf) < tol;
+err(1) = norm(D-precomp,inf);
+err(2) = norm((A+D(1,1)*B+D(1,1)^2*C)*V(:,1));
 
 %% With chebops
 A = chebop(@(x,u) diff(u,2),[-1 1],'dirichlet');
 B = chebop(@(x,u) -x.*diff(u));
 C = chebop(@(x,u) u);
 [V D] = polyeigs(A,B,C,6,0);
+err(3) = norm(D-precomp,inf);
+v = V(:,1);
+err(4) = norm((A(x,v)+D(1,1)*B(x,v)+D(1,1)^2*C(x,v)));
 
-pass(2) = norm(D-precomp,inf) < tol;
+%% Pass?
+pass = err < tol*[1 100 1 100];
+
 

@@ -67,7 +67,7 @@ end
 defreal = max(2,ceil(defreal/(numints-1)));
 s1 = ['   with n = ',int2str(defreal),' realization:'];
 % Evaluate the linop
-if print_bc
+if print_bc && ~isempty(V,'bcs')
     Vmat = feval(V,defreal,'bc',dom);
 else
     Vmat = feval(V,defreal,'nobc',dom);
