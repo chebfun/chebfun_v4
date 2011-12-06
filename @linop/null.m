@@ -48,7 +48,7 @@ S = [];
 % Call the constructor
 ignored = chebfun( @(x,N,bks) value(x,N,bks), {breaks}, settings);
 
-if size(V,2) == 0
+if nullity == 0 || size(V,2) == 0
     Vfun = chebfun;
     if syssize > 1, Vfun = repmat({Vfun},1,syssize); end
     return
@@ -73,12 +73,14 @@ for k = 1:nullity % Loop over each eigenvector
     end
 end
 if syssize == 1
-    Vfun = Vfun{1};     % Return a quasimatrix in this case
-    Vfun = qr(Vfun);    % Orthogonalise
+    Vfun = Vfun{1};         % Return a quasimatrix in this case
+    Vfun = qr(Vfun);        % Orthogonalise
+    Vfun = simplify(Vfun);  % Simplify
 else 
-    [Q R] = qr(vertcat(Vfun{:}));   % Orthogonalise
+    [Q R] = qr(vertcat(Vfun{:}));       % Orthogonalise
     for l = 1:syssize
-        Vfun{l} = Vfun{l}/R;        % Orthogonalise and return a cell array
+        Vfun{l} = Vfun{l}/R;            % Orthogonalise and return a cell array
+        Vfun{l} = simplify(Vfun{l});    % Simplify
     end
 end
 
@@ -120,12 +122,19 @@ end
     [U,S,v] = svd(Amat);                    % Built-in SVD
     S = diag(S);
     nullity = length(find(S/S(1) < tol));   % Numerical nullity
-    v = v(:,end+1-nullity:end);             % Numerical nullvectors
     
-    % Enforce additional boundary conditions and store for output
-    V = v*null(B*v);
+    % Extract null vectors
+    if nullity~=0
+        v = v(:,end+1-nullity:end);         % Numerical nullvectors
+        % Enforce additional boundary conditions and store for output
+        V = v*null(B*v);                    % Store output in V
+    else
+        v = v(:,end); % Check for convergence in smallest singular value
+        V = [];       % No output to store as no null vectors found
+    end
+        
     % Reshape v to have one variable per column
-    v = sum(reshape(v,[sN,nullity,syssize]),3);   
+    v = sum(reshape(v,[sN,max(nullity,1),syssize]),3);   
     % Need to return a single function to test happiness. If you just sum
     % functions, you get weird results if v(:,1)=-v(:,2), as can happen in
     % very basic problems. We just use an arbitrary linear combination (but
@@ -139,6 +148,7 @@ end
     end
     v = {v};                  % Output as cell array for sytems constructor
     Nout = N;
+    nullity = size(V,2);
 
     end
 end
