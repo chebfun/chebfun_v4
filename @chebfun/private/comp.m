@@ -82,8 +82,11 @@ for k = 1:f1.nfuns
         else
             newfun = compfun(f1.funs(k),op,f2.funs(k),pref);
         end
+        ish = get(newfun,'ish');
+    else
+        ish = 0;
     end
-    ish = get(newfun,'ish');
+
     if ish || (~ish && ~pref.splitting && ~pref.blowup) 
     % If we're happy, or not allowed to split, this will do.
        if ~ish
