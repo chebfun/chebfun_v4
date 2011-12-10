@@ -135,7 +135,11 @@ end
 if isreal(Vmat)
     s2 = num2str(Vmat,'  %8.4f');
     for k = 1:size(s2,1)
-        s2(k,:) = strrep(s2(k,:),'0.0000','     0');
+        s2(k,:) = strrep(s2(k,:),' 0.0000','      0');
+        if numel(s2(k,:)) > 5,
+            s2(k,1:6) = strrep(s2(k,1:6),'0.0000','     0'); 
+        end
+        s2(k,:) = strrep(s2(k,:),'-0.0000','     0');
     end
 else
     s2 = num2str(Vmat,'%8.2f');
