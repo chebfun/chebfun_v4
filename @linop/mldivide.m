@@ -116,6 +116,19 @@ function C = mldivide(A,B,tolerance)
         'Operator may not have the correct number of boundary conditions.')
     end
 
+    % Look for ill conditioning that may indicate an ill posed problem.
+    Amat = feval(A,20);  % keep it small
+    warnstate = warning('query','all');
+    warning('off','MATLAB:singularMatrix');
+    warning('off','MATLAB:nearlySingularMatrix');
+    if length(Amat) < 300  
+      if(size(Amat,1)~=size(Amat,2)) || (cond(Amat,1) > 0.01/eps)
+        warning('linop:mldivide:illposed',...
+          'Problem may be ill-posed. Check the boundary conditions.')
+      end
+    end      
+    warning(warnstate);  % restore old warning state
+        
     if isa(A.scale,'function_handle')
         A.scale = chebfun(A.scale,ends);
     end
@@ -264,8 +277,8 @@ function C = mldivide(A,B,tolerance)
         
     % Add boundary conditions.
     f = [f ; c]; 
-
-    % Solve the system.
+    
+   % Solve the system.
     v = Amat\f;
 
     % Store V for output.
