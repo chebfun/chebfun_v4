@@ -2,7 +2,7 @@
 % Nick Trefethen, September 2011
 
 %%
-% (Chebfun example roots/ComplexRoots)
+% (Chebfun example roots/ComplexRoots.m)
 function ComplexRoots
 
 %%
@@ -39,7 +39,8 @@ s1 = sum(z.*diff(f)./f)/(2i*pi)
 %%
 % There is nothing in this computation that depends on
 % the use of the unit disk.  Other contours are equally tracatable
-% in Chebfun, as illustrated in the Example complex/KeyholeContour. 
+% in Chebfun, as illustrated in the Example complex/KeyholeContour and
+% in Chapter 5 of the Chebfun Guide.
 
 %%
 % This method of finding a single root goes back at least

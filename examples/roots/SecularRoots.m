@@ -46,4 +46,4 @@ hold on, plot(r,f(r),'.r','markersize',24)
 % [1] J. J. M. Cuppen, A divide and conquer method for the symmetric
 % tridiagonal eigenproblem, Numerische Mathematik 36 (1980/81), 177-195.
 %
-% [2] L. N. Trefethen and D Bau, III, Numerical Linear Algebra, SIAM, 1997.
+% [2] L. N. Trefethen and D. Bau, III, Numerical Linear Algebra, SIAM, 1997.

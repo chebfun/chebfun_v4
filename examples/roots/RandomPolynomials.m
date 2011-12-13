@@ -8,7 +8,7 @@
 % If p(z) = a_0 + a_1 z + ... + a_n z^n is a polynomial with random
 % coefficients, its roots tend to lie near the unit circle [1,2].
 % To be specific, suppose a_0,...,a_(n-1) are independent real
-% numbers from the standard normal distribution, with a_0=1.
+% numbers from the standard normal distribution, with a_n=1.
 % Here are typical pictures for n = 50 and 200, based on Matlab's
 % ROOTS command.  Incidentally, such computations are numerically
 % stable [4];
@@ -69,7 +69,7 @@ end
 %%
 % References:
 %
-% [1] J. Hammersley, The zeros of a random polynomials,
+% [1] J. Hammersley, The zeros of a random polynomial,
 % Proceedings of the Third Berkeley Symposium on Mathematical
 % Statistics and Probability, 1954-1955, U. California Press,
 % 1956, pp. 89-111.

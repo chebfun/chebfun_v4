@@ -15,7 +15,7 @@ plot(chebpoly(1:30),'b-')
 hold on
 
 %%
-% The white curves are regions in the graph with only a few intersection
+% The white curves are regions in the graph with exceptionally many intersection
 % points of Chebyshev polynomials. Ortiz and Rivlin show that if 
 % 0 < m <= n and T_m(x) = T_n(x) = y, then 
 % 
@@ -69,5 +69,5 @@ end
 %%
 % References:
 %
-% E. L. Ortiz and T.J. Rivlin, Another Look at the Chebyshev Polynomials,
-% The American Mathematical Monthly, pp. 3-10, Jan., 1983.
+% E. L. Ortiz and T. J. Rivlin, Another look at the Chebyshev polynomials,
+% American Mathematical Monthly 90 (1983), 3-10.
