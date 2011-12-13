@@ -10,11 +10,13 @@
 % Computing week 0 MATLAB 'Crash Course' using Chebfun. (And also how easy 
 % it is to make a Chebfun Example!).
 
-%% Question
+%%
+% PROBLEM.
 % For what values of a does
 %    I(a) = int_{-1}^{1} sin(x) + sin(a x^2) dx = 1 ?
 
-%% Answer:
+%%
+% SOLUTION.
 % Define the integrand as a function of x and a.
 F = @(x,a) sin(x) + sin(a*x.^2);
 
@@ -31,18 +33,19 @@ Ia = chebfun(@(a) I(a),'vectorize',[0 100]);
 % vector.
 
 %%
-% We use Chebfun's ROOTS command to find where Ia equals 1
+% We use Chebfun's ROOTS command to find where Ia equals 1.
 r = roots(Ia-1)
 
-% and plot this, to make sure it looks sensible
+%%
+% We plot this, to make sure it looks sensible.
 plot(Ia,'linewidth',2), hold on
 plot(r,Ia(r),'xr','linewidth',2);
 
 %%
 % Since we have Ia as a chebfun, we can do other things, like find where
-% I(a) = .25
+% I(a) = 0.25
 
-r = roots(Ia-.25)
+r = roots(Ia-0.25)
 plot(r,Ia(r),'xm','linewidth',2); hold off
 
 %%
@@ -50,7 +53,8 @@ plot(r,Ia(r),'xm','linewidth',2); hold off
 m = max(Ia)
 
 %%
-% or the variation in frequency between local minima for a between [0 100].
+% or the standard deviation of the gaps
+% between the local minima for a between [0 100].
 [y x] = min(Ia,'local');
 f = std(diff(x(2:end-1)))
 

@@ -7,15 +7,13 @@
 %% 1. The Rosenbrock function
 % Chebfun can often do quite a good job of minimizing
 % or maximizing a function defined on a 2D rectangle.
-% A famous challenging example is the
-% following "Rosenbrock function":
+% A famous challenging example is the "Rosenbrock function":
 f = @(x,y) (1-x).^2 + 100*(y-x.^2).^2;
 
 %%
 % First let's plot it to get an idea:
 x = linspace(-1.5,1.5); y = linspace(-1,3);
-[xx,yy] = meshgrid(x,y);
-ff = f(xx,yy);
+[xx,yy] = meshgrid(x,y); ff = f(xx,yy);
 levels = 10:10:300;
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
 figure, contour(x,y,ff,levels,LW,1.2), colorbar
@@ -61,8 +59,7 @@ close, plot(minx,miny,'.k',MS,20)
 % For example, consider this function defined on the square [-1,1]x[-1,1]:
 f = @(x,y) exp(x-2*x.^2-y.^2).*sin(6*(x+y+x.*y.^2));
 x = linspace(-1,1); y = linspace(-1,1);
-[xx,yy] = meshgrid(x,y);
-ff = f(xx,yy);
+[xx,yy] = meshgrid(x,y); ff = f(xx,yy);
 figure, contour(x,y,ff,30,LW,1.2), colorbar
 axis([-1 1 -1 1]), axis square, hold on
 

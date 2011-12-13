@@ -5,7 +5,7 @@
 % (Chebfun example opt/ExtremeExtrema.m)
 
 %%
-% Here is a function cos(x)*sin(exp(x)) on the interval [0,6]:
+% Here is the function cos(x)*sin(exp(x)) on the interval [0,6]:
 tic, x = chebfun('x',[0 6]);
 f = cos(x).*sin(exp(x));
 length(f)
@@ -35,7 +35,7 @@ title('Global maximum',FS,14)
 % Let's add all the local extrema to the plot:
 hp = diff(h);
 extrema = roots(hp);
-plot(extrema,h(extrema),'.k')
+plot(extrema,h(extrema),'.k','markersize',6)
 title('Local extrema',FS,14)
 
 %%
@@ -54,5 +54,5 @@ title('Local extrema',FS,14)
 % or vice versa.
 
 %%
-% Time for this whole sequence of computations:
+% The time for this whole sequence of computations:
 Total_time = toc

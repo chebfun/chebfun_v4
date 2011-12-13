@@ -1,4 +1,4 @@
-%% The Dixon-Szegő function in 2D optimisation
+%% The Dixon-Szego function in 2D optimisation
 % Jari Fowkes and Nick Trefethen, November 2010
 
 %%
@@ -6,17 +6,16 @@
 
 %%
 % The Chebfun example opt/Rosenbrock.m
-% showed how Chebfun can be used to minimize a function of two variables
-% over a rectangle.  This example is adapted from that one, and simply
-% considers a new function due to Dixon and Szegő in 1975:
+% shows how Chebfun can be used to minimize a function of two variables
+% over a rectangle.  The present example is adapted from that one, and simply
+% considers another function investigated by Dixon and Szego in 1975:
 f = @(x,y) (4-2.1*x.^2+ x.^4/3).*x.^2 + x.*y + 4*(y.^2-1).*y.^2;
 
 %%
 % Over the rectangle [-2,2] x [-1.25,1.25], the function looks like this:
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
 x = linspace(-2,2); y = linspace(-1.25,1.25);
-[xx,yy] = meshgrid(x,y);
-ff = f(xx,yy);
+[xx,yy] = meshgrid(x,y); ff = f(xx,yy);
 figure, contour(x,y,ff,30,LW,1.2), colorbar
 axis([-2 2 -1.25 1.25]), hold on
 
@@ -35,8 +34,8 @@ plot(minx,miny,'.k',MS,20)
 %%
 % Reference:
 %
-% [1] L.C.W. Dixon and G.P. Szegő,
+% [1] L. C. W. Dixon and G. P. Szego,
 % The global optimization problem: an introduction, in
-% L.C.W. Dixon and G.P. Szegő (eds.),
+% L. C. W. Dixon and G. P. Szego (eds.),
 % Towards Global Optimisation 2, North-Holland, Amsterdam 1978,
 % pp. 1-15.
