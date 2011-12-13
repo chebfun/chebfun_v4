@@ -29,6 +29,10 @@ $Revision: 1.1.6.7 $  $Date: 2008/02/29 12:45:30 $
 \definecolor{lightgray}{gray}{0.5}
 \setlength{\parindent}{0pt}
 
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\setlength{\textwidth}{6in}
+
 \begin{document}
 
 <!-- Insert Chebfun logo -->
