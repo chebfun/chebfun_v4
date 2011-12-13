@@ -65,7 +65,6 @@ function varargout = chebtune(f,d)
         catch exception
             throw(exception);
         end
-        return;
     else
         warning('MATLAB:sound:unsupportedoption', ...
             'This platform does not support specifing FS or BITS when not using Java.');
