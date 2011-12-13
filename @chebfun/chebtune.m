@@ -54,7 +54,23 @@ function varargout = chebtune(f,d)
     else
         s = [ s , s ];
     end
-    sound(s,Fc);
+    %sound(s,Fc); % this function is using playblocking
+    
+    % Use the java audio player to play back our sound.
+    if usejava('jvm')
+        try
+            persistent ap
+            ap = audioplayer(s, Fc);
+            play(ap);
+        catch exception
+            throw(exception);
+        end
+        return;
+    else
+        warning('MATLAB:sound:unsupportedoption', ...
+            'This platform does not support specifing FS or BITS when not using Java.');
+    end
+
     if nargout > 0, varargout(1) = {s}; end
     if nargout > 1, varargout(2) = {Fc}; end
 end
