@@ -62,6 +62,8 @@ switch propName
         val = f(1).funreturn;        
     case 'jacobian'
         val = f.jacobian;
+    case 'ID'
+        val = f.ID;        
     case 'depth'
         val = getdepth(f.jacobian);
     otherwise

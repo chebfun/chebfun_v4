@@ -48,6 +48,8 @@ while length(propertyArgIn) >= 2,
         end
     case 'trans'
         F.trans = val;
+    case 'ID'
+        F.ID = val;
     case 'domain'
         old = get(F,'ends');
         if isa(val,'domain'), val = val.ends; end

@@ -1,8 +1,21 @@
-function plot(an)
+function plot(an,varargin)
 % PLOT Plot the AD tree of an anon
 
+% parse the input
+if nargin == 1 || ~isa(varargin{1},'chebfun')
+    f = [];
+else
+    f = varargin{1}; 
+    varargin(1) = [];
+end
+
 % Obtain the anon tree of the input anon
-at = anon2tree(an,'ans');
+if ~isa(f,'chebfun')
+    at = anon2tree(an,'ans');
+else
+    ID = get(f,'ID');
+    at = anon2tree(an,'ans',ID(1));
+end
 
 % Starting values for plotting
 startx = .5;
@@ -43,9 +56,7 @@ function txt = textfun(obj,event_obj)
     end
 end
 
-
-
-plottree(at,h);
+plottree(at,h,varargin{:});
 
 datacursormode on
 
@@ -88,35 +99,45 @@ switch tree.numleaves
 end
 end
 
-function plottree(at,h)
+function plottree(at,h,varargin)
+
+for k = 1:3
+    if at.found(k)
+        col{k} = 'r';
+    else
+        col{k} = 'b';
+    end
+end
+
+varargin{:}
 
 switch at.numleaves
     case 0
         % Do nothing
     case 1
         plot(at.center.x,at.center.y,'bo');
-        plot([at.x at.center.x],[at.y at.center.y],'b-')
-        plottree(at.center,h)
+        plot([at.x at.center.x],[at.y at.center.y],'-','color',col{2},varargin{:})
+        plottree(at.center,h,varargin{:})
     case 2
         plot(at.left.x,at.left.y,'bo');
-        plot([at.x at.left.x],[at.y at.left.y],'b-')
-        plottree(at.left,h)
+        plot([at.x at.left.x],[at.y at.left.y],'-','color',col{1},varargin{:})
+        plottree(at.left,h,varargin{:})
         plot(at.right.x,at.right.y,'bo');
-        plot([at.x at.right.x],[at.y at.right.y],'b-')
-        plottree(at.right,h)
+        plot([at.x at.right.x],[at.y at.right.y],'-','color',col{3},varargin{:})
+        plottree(at.right,h,varargin{:})
         
         % Here we could do some adjustments if we're not using the full
         % width. Store minx, maxx?
     case 3
         plot(h,at.left.x,at.left.y,'bo');
-        plot([at.x at.left.x],[at.y at.left.y],'b-')
-        plottree(at.left,h)
+        plot([at.x at.left.x],[at.y at.left.y],'-','color',col{1},varargin{:})
+        plottree(at.left,h,varargin{:})
         plot(h,at.center.x,at.center.y,'bo');
-        plot([at.x at.center.x],[at.y at.center.y],'b-')
-        plottree(at.center,h)
+        plot([at.x at.center.x],[at.y at.center.y],'-','color',col{2},varargin{:})
+        plottree(at.center,h,varargin{:})
         plot(h,at.right.x,at.right.y,'bo');
-        plot([at.x at.right.x],[at.y at.right.y],'b-')
-        plottree(at.right,h)
+        plot([at.x at.right.x],[at.y at.right.y],'-','color',col{3},varargin{:})
+        plottree(at.right,h,varargin{:})
 end
 text(at.x+0.02,at.y-0.01,at.parent,'Interpreter','none')
 end
