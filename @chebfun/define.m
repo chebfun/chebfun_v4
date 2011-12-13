@@ -209,10 +209,16 @@ end
 % end 
 
 ss = [a ; s(:) ; b];
-fcol = chebfun;
+% fcol = chebfun;
+% for i = 1:length(ss)-1
+%     fcol = [fcol ; restrict(f,[ss(i),ss(i+1)])];
+% end
+
+fcol = cell(1,length(ss)-1);
 for i = 1:length(ss)-1
-    fcol = [fcol ; restrict(f,[ss(i),ss(i+1)])];
+    fcol{i} = restrict(f,[ss(i),ss(i+1)]);
 end
+fcol = vertcat(fcol{:});
 
 for k = 1:length(col)
     fcol(k).imps([1 end]) = impsends(k,:);
