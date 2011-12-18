@@ -39,7 +39,7 @@ rts = roots(bessel5);
 %   lambda^2*x^2*y'' + lambda*x*y' + (x^2-alpha^2)*y = 0
 
 %%
-% Using the newly implemented POLYEIGS command of Chebfun, we can verify
+% Using the POLYEIGS command of Chebfun, we can verify
 % this assertion numerically on the domain given by the, say, 1st and 22nd
 % root of our Bessel function:
 
@@ -57,11 +57,12 @@ D
 % We may compare the exact Bessel function of order 5 with the computed
 % eigenvector V (after rescaling):
 
-plot(bessel5)
+LW = 'linewidth'; lw = 1.6;
+plot(bessel5,LW,lw)
 dd = diff(dom);
 s = bessel5(dd)/V(dd);
 hold on
-plot(s*V,'r--');
+plot(s*V,'r--',LW,lw);
 hold off
 
 norm(s*V-bessel5{dom(1),dom(2)})
@@ -73,7 +74,7 @@ norm(s*V-bessel5{dom(1),dom(2)})
 
 [V,D] = polyeigs(A,B,C,3,1);
 D
-plot(V)
+plot(V,LW,lw)
 
 %% Accuracy of polynomial eigenvalues
 % To check the accuracy of the polynomial eigensolver of Chebfun, we
@@ -93,10 +94,10 @@ C.bc = 'dirichlet';
 [V,D] = polyeigs(A,B,C,5,1);
 
 %%
-% This is how the eigenvectors look like:
+% This is what the eigenvectors look like:
 
 figure
-plot(V)
+plot(V,LW,lw)
 
 %%
 % and here is the norm of the quasimatrix whose columns are the residuals

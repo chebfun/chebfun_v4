@@ -1,4 +1,4 @@
-%% Stability of a Thermoelastic Rod
+%% Stability of a thermoelastic rod
 % Toby Driscoll, 8th November 2011
 
 %%
@@ -31,7 +31,7 @@
 
 %%
 %  
-LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
+LW = 'linewidth';
 format
 
 %%
@@ -57,10 +57,10 @@ diag(Lu)
 % Here we see the perturbation which is least stable in the first case, or 
 % unstable in the second case. 
 subplot(1,2,1)
-plot(Vs(:,1),LW,1)
+plot(Vs(:,1),LW,1.6)
 title(sprintf('Stable, \\lambda = %.3f',Ls(1,1)))
 subplot(1,2,2)
-plot(Vu(:,1),LW,1)
+plot(Vu(:,1),LW,1.6)
 title(sprintf('Unstable, \\lambda = %.3f',Lu(1,1)))
 
 %%
@@ -84,7 +84,7 @@ stability = chebfun(maxlam,[0.5,2],'eps',1e-11,'vectorize')
 % Finally, the transition in stability occurs when the eigenvalue passes
 % through zero. 
 format long, dstar = find(stability==0)
-clf, plot(stability,LW,1), hold on, plot(dstar,0,'r*')
+clf, plot(stability,LW,1.6), hold on, plot(dstar,0,'r*')
 xlabel('\delta'), ylabel('max \lambda'), grid on
 
 

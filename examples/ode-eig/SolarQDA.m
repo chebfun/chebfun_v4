@@ -12,7 +12,7 @@
 %
 %    -(hbar^2/2m) psi'' + U(x) psi = E psi,
 %
-% where psi(x) is the wavefunction, hbar is Planck's constant over 2 pi, 
+% where psi(x) is the wavefunction, hbar is Planck's constant divided by 2 pi, 
 % m is an effective mass, E is an allowed energy, and U(x) is a potential
 % with wells representing the quantum dots. We will take psi=0 far from 
 % the wells to supply boundary conditions.
@@ -37,10 +37,11 @@ x = [ -10*spacing, x(1:end-1), x(end)+9*spacing ];
 % Now we create the potential U as a piecewise constant function. We use a
 % syntax that is compact but opaque: create a cell array of the constant
 % values, one per subinterval.
+LW = 'linewidth'; lw = 1.6;
 vals = [repmat([depth 0],1,numwell) depth];  % [ 0 -depth 0 ... -depth 0 ]
 vals = mat2cell(vals,1,ones(1,2*numwell+1));  % convert to cell
 U = chebfun(vals,x);
-plot(U), ylabel('potential')
+plot(U,LW,lw), ylabel('potential')
 xlim(x([1 end]))
 
 %%
@@ -62,16 +63,16 @@ N.lbc = 0; N.rbc = 0;
 [Psi,E] = eigs(N,numwell,0);  
 energies = diag(E)
 subplot(2,1,1)
-plot(U), ylabel('potential'), xlim(x([1 end]))
+plot(U,LW,lw), ylabel('potential'), xlim(x([1 end]))
 subplot(2,1,2)
-plot(Psi), ylabel('wavefunction'), xlim(x([1 end]))
+plot(Psi,LW,lw), ylabel('wavefunction'), xlim(x([1 end]))
 
 %% 
 % If we look at probability, we find that the first four modes extend
 % significantly over all wells. This is "delocalization" or quantum 
 % tunnelling, and it means the device can conduct electricity. 
 clf
-semilogy(Psi.^2), ylabel('probability'), 
+semilogy(Psi.^2,LW,lw), ylabel('probability'), 
 axis( [x([2 end-1]) 1e-3 1e-1]  )
 
 %%
@@ -93,7 +94,7 @@ U = chebfun(vals,x);
 N.op = @(psi) -hbar^2./(2*emass).*diff(psi,2) + U.*psi;
 [Psi,E] = eigs(N,numwell,0);  
 energies = diag(E)
-semilogy(Psi.^2), ylabel('probability'), 
+semilogy(Psi.^2,LW,lw), ylabel('probability'), 
 axis( [x([2 end-1]) 1e-3 1e-0]  )
 
 %% 
