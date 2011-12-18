@@ -72,8 +72,8 @@ u = [E0,-E0];
 for n = 2:length(t), u=Phi*u; E(:,n) = u(:,1); B(:,n) = u(:,2); end
 
 %%
-% For linear propagation, expm is far more accurate, as a check of energy
-% conservation confirms.
+% For linear propagation, expm is far more accurate than
+% pde15s, as a check of energy conservation confirms.
 energy = sum( E.^2 + B.^2, 1 );  % integrate E^2 + B^2 in space 
 plot(t,energy-energy(1),'.-')
 

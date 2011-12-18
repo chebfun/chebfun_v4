@@ -35,7 +35,7 @@ f = @(u,v,w,D) [ 0.1*D(u,2) - 100*u.*v  ...
                  0.2*D(v,2) - 100*u.*v ...
                 .001*D(w,2) + 200*u.*v ];  
 %%
-% (Here the fourth input, D, points f to the differential operator.)
+% (Here the fourth input, D, points f to the derivative operator.)
             
 %%
 % We solve the system and plot the result:
@@ -50,6 +50,7 @@ FS = 'fontsize';
 xlabel('x',FS,14), ylabel('t',FS,14), grid on, hold off
 
 %%
-% This example can also be found as the "Diffusion and
+% This example, which comes from Pedro Gonnet,
+% can also be found as the "Diffusion and
 % reaction of three chemicals" demo
 % among the PDE-Systems demos of CHEBGUI.

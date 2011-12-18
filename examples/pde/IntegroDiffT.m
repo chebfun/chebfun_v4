@@ -25,7 +25,7 @@ f = @(u,t,x,diff,sum,cumsum) 0.02*diff(u,2) + cumsum(u)*sum(u);
 
 %%
 % The 4th, 5th, and 6th arguments define the differential, integral 
-% (sum), and indefinite integral (cumsum) operators respectively. 
+% (sum), and indefinite integral (cumsum) operators, respectively. 
 % See 'help pde15s' for more details.
 
 %%

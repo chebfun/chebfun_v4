@@ -41,7 +41,8 @@ ax = [0 6 -1.2 1.2]; axis(ax)
 % this kind.
 L = chebop(d);          % operator on domain [0,6]
 L.op = @(u) diff(u,2);  % 2nd-derivative operator
-L.bc = @(u) diff(u);    % Neumann boundary conditions
+L.lbc = @(u) diff(u);   % Neumann BC at left
+L.rbc = @(u) diff(u);   % Neumann BC at right
 dt = 0.01;
 expmL = expm(dt*L);     % exponential of the operator
 u = expmL*u0;
