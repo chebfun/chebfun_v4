@@ -91,6 +91,7 @@ else % Chebop + chebop. Combine the output in a nice way
         if ~strcmp(funArgs1,funArgs2)
             error('CHEBOP:plus:arguments','Arguments of chebops do not match.');
         end
+        s = [funArgs1,fun1,'+',fun2];
     end
 end
 end
