@@ -1,4 +1,4 @@
-%% Using Chebfun as an integrator
+%% Battery test of Chebfun as an integrator
 % Pedro Gonnet, September 2010
 
 %%
@@ -6,7 +6,7 @@
 
 %%
 % This Example gives an idea of how Chebfun performs as a general-purpose
-% integrator.  We apply it to the set of test functions used by
+% integrator.  We apply it to the set of test functions considered by
 % Kahaner [1], Gander & Gautschi [2], and Gonnet [3]:
 
 funs = {
@@ -62,12 +62,12 @@ f_exact = [ 1.7182818284590452354 , 0.7 , 2/3 , 0.4794282266888016674 , ...
 clf
 for i = 1:length(funs)
     xx = linspace( ranges(i,1) , ranges(i,2) , 200 );
-    subplot(5,5,i); plot( xx , funs{i}(xx) );
-end;
+    subplot(5,5,i), plot( xx , funs{i}(xx) )
+end
 
 %%
 % We now create and fill two arrays with the relative errors and times used 
-% for each quadrature routine and each function to a relative tolerance 
+% for each quadrature routine and each function integrated to a relative tolerance 
 % of 1e-10.  We create the chebfuns with splitting and blowup on to 
 % account for difficult and singular integrands. (For more accurate timing results 
 % one could perform each integration, say, 10 times by setting runs=10.)
@@ -116,12 +116,14 @@ end
 % and the achieved accuracies in bar charts.
 % First, consider the execution times.  The chart scales these 
 % relative to the time required by quadgk.  What we see here is that
-% quadl and quadgk are typically about 10 times slower than quadgk,
-% and Chebfun is typically about 10 times slower than quadl and quadgk.
+% quad and quadl are typically about 10 times slower than quadgk,
+% and Chebfun is typically about 10 times slower than quad and quadl.
 clf
-barh( time ./ (time(:,4)*ones(1,4) ) ); title('Execution time relative to quadgk');
-legend('chebfun','quad','quadl'); axis tight;
-set(gca,'XScale','log','YDir','reverse');
+barh( time ./ (time(:,4)*ones(1,4) ) )
+FS = 'fontsize';
+title('Execution time relative to quadgk',FS,14)
+legend('chebfun','quad','quadl'), axis tight
+set(gca,'XScale','log','YDir','reverse')
 
 scrsz = get(0,'ScreenSize');
 set(gcf,'position',[0 0 600 scrsz(4)])
@@ -135,11 +137,14 @@ set(gcf,'position',[0 0 600 scrsz(4)])
 % gets close to machine precision.
 %%
 clf
-barh( errs / 1e-10 ); title('Relative error (lower is better)');
-legend('chebfun','quad','quadl','quadgk');
-axis([1e-8 1e12 0 26]);
-set(gca,'XScale','log','YDir','reverse');
+barh( errs / 1e-10 )
+title('Error',FS,14)
+legend('chebfun','quad','quadl','quadgk')
+axis([1e-8 1e12 0 26])
+set(gca,'XScale','log','YDir','reverse')
 set(gcf,'position',[0 0 600 scrsz(4)])
+set(gca,'xtick',10.^(-5:5:10))
+set(gca,'xticklabel',{'1e-15','1e-10','1e-5','1'})
 
 %%
 % Chebfun fails in one case: the 21st
@@ -147,9 +152,9 @@ set(gcf,'position',[0 0 600 scrsz(4)])
 % its chebfun:
 close
 xx = linspace(ranges(21,1),ranges(21,2),1023)';
-plot( xx , funs{21}(xx) , '-r' );
-hold on; plot( chebfun( funs{21} , ranges(21,:) , ...
-    'splitting' , 'on' , 'blowup' , 'on' ) ); hold off;
+plot( xx , funs{21}(xx) , '-r' )
+hold on, plot( chebfun( funs{21} , ranges(21,:) , ...
+    'splitting' , 'on' , 'blowup' , 'on' ) ), hold off
 
 %%
 % Evidently Chebfun missed the third spike at x=0.6.

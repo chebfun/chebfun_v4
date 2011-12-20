@@ -7,7 +7,7 @@
 %%
 % Suppose you have a function f on an interval:
 x = chebfun('x');
-f = @(x) x.*sin(2*exp(2*sin(2*exp(2*x))))
+f = @(x) x.*sin(2*exp(2*sin(2*exp(2*x))));
 fc = chebfun(f);
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
 figure, plot(fc,LW,1.2)
@@ -21,7 +21,7 @@ Ichebfun = sum(fc)
 %%
 % Chebfun's method is Clenshaw-Curtis quadrature, i.e., the
 % integration of the polynomial representing f by interpolation
-% or piecewise interpolation Chebyshev points.  Here is the
+% or piecewise interpolation in Chebyshev points.  Here is the
 % number of quadrature points:
 Npts = length(fc)
 
@@ -41,8 +41,8 @@ Igauss = w*f(s)
 %% 
 % Though this value of Npts is in the hundreds, Chebfun can
 % handle values in the millions without difficulty.  This is
-% achieved by the algorithm of Glaser-Liu-Rokhlin algorithm as
-% implemented by Nick Hale.
+% achieved by the algorithm of Glaser, Liu and Rokhlin [1] as
+% implemented by Nick Hale.  See Examples quad/GaussQuad.m.
 
 %%
 % Let's take a look at the accuracy as a function of Npts.
@@ -77,14 +77,19 @@ legend('Gauss','Clenshaw-Curtis','location','southwest'), toc
 % up to twice as fast as C-C, with respect to Npts, but as
 % this example suggests, the two formulas are often closer than
 % that.  The computer time is often faster with C-C.
+% For details of the cmoparison, see [2] and Chapter 19 of [3].
 
 %%
 % References:
 %
-% A. Glaser, X. Liu and V. Rokhlin, A fast algorithm for the
+% [1] A. Glaser, X. Liu and V. Rokhlin, A fast algorithm for the
 % calculation of the roots of special functions, SIAM J. Sci. Comp.
 % 29 (2007), 1420-1438. 
 %
-% L. N. Trefethen, Is Gauss quadrature better than
+% [2] L. N. Trefethen, Is Gauss quadrature better than
 % Clenshaw-Curtis?, SIAM Review 50 (2008), 67-87.
+%
+% [3] L. N. Trefethen, Approximation Theory and Approximation
+% Practice, draft textbook available at
+% http://www.maths.ox.ac.uk/chebfun/ATAP.
 

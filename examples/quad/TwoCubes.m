@@ -25,7 +25,7 @@ set(gcf,'position',[560 427 332 214])
 %%
 % It's easy to write F as a 6-dimensional integral, but it's
 % a hard integral to evaluate because of the dimensionality and
-% the weak singularity associated with the faces in contact.
+% the singularity associated with the faces in contact.
 % However, one can reduce the problem to a succession of three 
 % integrals corresponding to going up from 0 to 2 dimensions, 
 % then to 4, and finally to 6. Each of these integrals can be
@@ -50,7 +50,7 @@ tic
 % masses. With gravitational constant 1, this is simply
 F_Point = @(r) 1./r.^2;
 %%
-% where r is the euclidean distance between two points s and y.
+% where r is the Euclidean distance between two points s and y.
 r = @(s,y) sqrt(s.^2+y.^2);
 
 %%
@@ -68,7 +68,7 @@ F_Line = chebfun(@(y) F_Line(y), [0 sqrt(18)], ...
 %%
 % Note that here we actually construct a chebfun of F_Line. Since
 % the integral of IL is quite costly to evaluate but simple enough 
-% to be represented with a low-degree cebfun, this turns out to be more 
+% to be represented with a low-degree chebfun, this turns out to be more 
 % efficient. (Note also that sqrt(18) is the maximum separation of two 
 % points within the cubes).
 
@@ -93,21 +93,22 @@ ICa = @(y) y*F_Plane(y);
 ICb = @(y) (4-y)*F_Plane(y);
 
 %%
-% Now we do the actual computation -- integrating wrt y.  Experiments 
+% Now we do the actual computation -- integrating with respect
+% to y.  Experiments 
 % show we need to weaken the tolerance a little here, though the final 
 % effect is minimal since the results are then integrated.
 F_CubeA = sum(chebfun(ICa,[0 2],'vectorize','singmap',[0.25 0],'eps',1e-12));
 F_CubeB = sum(chebfun(ICb,[2 4],'vectorize'));
 
 %%
-% Adding these results (and dividing by 16 to return to the posed 
-% unit cube case) we arrive at the solution:
+% Adding these results, and dividing by 16 to return to the original
+% unit cube case, we arrive at the solution:
 format long
 F = (F_CubeA + F_CubeB)/16
 toc
 
 %%
-% For comparison Fornberg has also found the exact solution analytically:
+% For comparison Fornberg has also found the exact solution analytically [1]:
 exact = (26*pi/3 - 14 + 2*sqrt(2) - 4*sqrt(3) + 10*sqrt(5) - ...
     2*sqrt(6) + 26*log(2) - log(25) + 10*log(1+sqrt(2)) + ...
     20*log(1+sqrt(3)) - 35*log(1+sqrt(5)) + 6*log(1+sqrt(6)) - ...
@@ -120,5 +121,6 @@ error = abs(F-exact)
 %%
 % Reference:
 %
-% L. N. Trefethen, Ten digit problems, in Invitation to Mathematics,
-% Springer, to appear.
+% [1] L. N. Trefethen, Ten digit problems, in D. Schleicher
+% and M. Lackmann, eds., Invitation to Mathematics: From Competitions
+% to Research, Springer, 2011.
