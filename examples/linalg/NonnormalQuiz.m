@@ -43,9 +43,9 @@ title('Which curve is which?',FS,16)
 % This is a natural problem for Chebfun because Chebfun is good at
 % working with functions that don't have a representation by
 % an explicit formula.  Here the function we are concerned with is
-% norm(expm(t*A)), a function of time t.  Chebfun is happy to sample
+% norm(expm(tA)), a function of time t.  Chebfun is happy to sample
 % that function at various values of t and construct a corresponding
-% chebfun.  Since norm(expm(t*A)) will not work when t is a vector,
+% chebfun.  Since norm(expm(tA)) will not work when t is a vector,
 % the 'vectorize' flag is included to avoid a warning message.
 
 %%

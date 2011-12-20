@@ -16,7 +16,6 @@ tic
 N = 11;
 A = chebpoly(0:N);
 plot(A)
-disp('Condition numbers of various sets of nine functions on [-1,1]')
 fprintf('Condition no. for Chebyshev polynomials: %8.3f\n',cond(A))
 
 %%

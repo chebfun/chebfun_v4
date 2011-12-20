@@ -8,18 +8,18 @@
 % If A is a square matrix, the resolvent of A for a particular complex
 % number z is the matrix inv(z*I-A).  The 2-norm of the resolvent is a
 % quantity of interest in many applications.  For example, if
-% norm(inv(z*I-A)) = 1/eps for some quantity eps, then there is a matrix E
+% norm(inv(zI-A)) = 1/eps for some quantity eps, then there is a matrix E
 % with norm norm(E)=eps such that z is an eigenvalue of A+E.  This is
 % the starting point of the theory of pseudospectra [1].
 
 %%
 % In particular, suppose all the eigenvalues of A are in the left half
 % of the complex plane, so that A is stable in the sense that all
-% solutions to the differential equation du/dt = A*u decay to zero
+% solutions of the differential equation du/dt = Au decay to zero
 % as t -> infinity.  How small a perturbation matrix
 % E might make A unstable?
 % The answer is norm(E)=eps, where 1/eps is the maximum of
-% norm(inv(z*I-A)) as z ranges over the imaginary axis.  Therefore
+% norm(inv(zI-A)) as z ranges over the imaginary axis.  Therefore
 % in a number of fields such as control theory, there is special 
 % interest in the values taken by the norm of the resolvent on
 % the imaginary axis.
@@ -35,11 +35,11 @@ format short, eig(A)
 
 %%
 % Suppose z=x+iy.  It takes Chebfun a fraction of a second to compute
-% a chebfun representating norm(inv(z*I-A)) as a function of y, with
+% a chebfun representating norm(inv(zI-A)) as a function of y, with
 % x=0.  Here is that calculation and a plot of the result:
 I = eye(size(A));
 nr = @(y) 1/min(svd(1i*y*I-A));
-f = chebfun(nr,[-25,25]);
+f = chebfun(nr,[-25,25],'vectorize');
 LW = 'linewidth';
 plot(f,LW,1.6), grid on
 
@@ -55,7 +55,8 @@ dist_sing = 1/maxf
 %%
 % Let us consider another example matrix, and this time, let's
 % make an anonymous function to construct the chebfun.
-normfun = @(A) chebfun(@(y) 1/min(svd(1i*y*eye(size(A))-A)),1.5*norm(A)*[-1,1]);
+normfun = @(A) chebfun(@(y) 1/min(svd(1i*y*eye(size(A))-A)),...
+   1.5*norm(A)*[-1,1],'vectorize');
 
 %%
 % Here is a 5x5 which we take to be complex, to break

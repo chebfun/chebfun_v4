@@ -7,10 +7,10 @@
 %%
 % If A is a matrix whose eigenvalues are in the open left
 % half of the complex plane, then the corresponding dynamical system
-% defined by the equation du/dt = A*u is asymptotically stable, with
+% defined by the equation du/dt = Au is asymptotically stable, with
 % all solutions decaying to zero as t->infinity.  Since the solution
-% is u(t) = exp(t*A)*u(0), another way to say this is that the
-% quantities norm(expm(t*A)) decay to zero as t->infty.
+% is u(t) = exp(tA)*u(0), another way to say this is that the
+% quantities norm(expm(tA)) decay to zero as t->infty.
 
 %%
 % Along the way, however, there may be transient growth, and this is
@@ -24,17 +24,16 @@ A = [-1 0 0 0 0 0 -625; 0 -1 -30 400 0 0 250; -2 0 -1 0 0 0 30;
 
 %%
 % Here (adapted from linalg/NonnormalQuiz.m) is a code to compute and
-% plot norm(expm(t*A)) as a function of t:
+% plot norm(expm(tA)) as a function of t:
  
 e = chebfun(@(t) norm(expm(t*A)),[0 2.5],...
        'vectorize','splitting','on','eps',1e-14);
-LW = 'linewidth'; FS = 'fontsize';
-plot(e,'b',LW,2)
+LW = 'linewidth'; FS = 'fontsize'; plot(e,'b',LW,2)
 xlabel('t',FS,14), ylabel('||e^{tA}||',FS,14)
 title('amplitude',FS,16)
 
 %%
-% Actually Whidborne and Amar prefer to plot the square of this function.
+% Actually Whidborne and Amar plot the square of this function.
 % The following figure matches their Figure 1.
 e2 = e.^2;
 plot(e2,'b',LW,2)
