@@ -69,8 +69,12 @@ function c = str2tune(str)
     %STR2TUNE   Converts string of notes to a Chebfun
     %   which can be played as a melody by CHEBTUNE.
     %
-    %   Example:
+    %   Example 1:
     %      c = str2tune('0245--5420');
+    %      chebtune(c);
+    %
+    %   Example 2:
+    %      c = str2tune('0123456789abcdef');
     %      chebtune(c);
     %
     %   See also chebtune. 
@@ -78,11 +82,11 @@ function c = str2tune(str)
     c = chebfun('NaN',[0,1]);
     lgth = length(str);
     left  = 0;
-    t_old = str2double(str(1));
+    t_old = myhex2dec(str(1));
 
     for j = 2:lgth,
         right = (j-1)/lgth;
-        t = str2double(str(j));
+        t = myhex2dec(str(j));
         if t == t_old,
             continue;
         end;
@@ -95,6 +99,14 @@ function c = str2tune(str)
 
     if ~isempty(t_old),
         c(domain([left,1])) = t_old;
+    end
+    
+    function s = myhex2dec(s)
+        if ~strcmp(s,'-')
+            s = hex2dec(s);
+        else
+            s = [];
+        end
     end
 end
 
