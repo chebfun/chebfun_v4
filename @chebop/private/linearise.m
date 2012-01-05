@@ -19,10 +19,14 @@ if nargin == 1 || isempty(u)
         error('CHEBFUN:chebop:linop:emptydomain', ...
             'Cannot linearise a chebop defined on an empty domain.');
     end
-    %   Create a chebfun to let the operator operate on. Using the
-    %   findguess method ensures that the guess is of the right
-    %   (quasimatrix) dimension.
-    u = findguess(N,0); % Second argument 0 denotes we won't try to fit to BCs.
+    if isempty(N.init)
+        %   Create a chebfun to let the operator operate on. Using the
+        %   findguess method ensures that the guess is of the right
+        %   (quasimatrix) dimension.
+        u = findguess(N,0); % Second argument 0 denotes we won't try to fit to BCs.
+    else
+        u = N.init;
+    end
 end
 
 % Initialise The flag variable is used to denote we only want to check for
