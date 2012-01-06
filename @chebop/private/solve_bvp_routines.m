@@ -24,10 +24,6 @@ if isempty(N.op)
     error('CHEBOP:solve_bvp_routines:OpEmpty','Operator empty.');
 end
 
-if isempty(N.lbc) && isempty(N.rbc) && isempty(N.bc)
-    error('CHEBOP:solve_bvp_routines:BCEmpty''All BCs empty.');
-end
-
 % Check which type the operator is (anonymous function or a chebop).
 % If it's an anonymous function, opType = 1. Else, opType = 2.
 if strcmp(N.optype,'anon_fun')
@@ -133,6 +129,13 @@ stagCounter = 0;
 % guess (plus the identity?).
 [A bc isLin] = linearise(N,u);
 jumplocs = get(A,'jumplocs');
+
+maxdo = max(max(get(A,'difforder')));
+if maxdo > 0 && isempty(N.lbc) && isempty(N.rbc) && isempty(N.bc)
+    % Differential equations need boundary conditions (but integral eqns are OK).
+    error('CHEBOP:solve_bvp_routines:BCEmpty''All BCs empty.');
+end
+
 if isLin % N is linear. Sweet!
     
     % Correct for bc vals.

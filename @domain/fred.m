@@ -44,24 +44,17 @@ function F = fred(k,d,onevar)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-F = linop(@matrix,@op,d);
+% Default onevar to false
+if nargin==2, onevar=false; end    
 
-% Functional form. At each x, do an adaptive quadrature.
-  function v = op(z)
-    % Result can be resolved relative to norm(u). (For instance, if the
-    % kernel is nearly zero by cancellation on the interval, don't try to
-    % resolve it relative to its own scale.) 
-    nrmf = norm(z);
-    opt = {'resampling',false,'splitting',true,'exps',[0 0],'scale',nrmf};
-    int = @(x) sum(z.* (chebfun(@(y) k(x,y),d,opt{:})));
-    v = chebfun( int, d,'sampletest',false,'resampling',false,'exps',[0 0],'vectorize','scale',nrmf);
-    newjac =  anon('[Jzu nonConstJzu] = diff(z,u); der = F*diff(z,u); nonConst = nonConstJzu | (~F.iszero & ~Jzu.iszero);',{'F','z'},{F,z},1);
-    v = jacreset(v,newjac);
-  end
+% Operator form - call the chebfun method.
+op = @(u) fred(k,u,onevar);
+
+% Construct the linop
+F = linop(@matrix,op,d);
 
 % Matrix form. At given n, multiply function values by CC quadrature
 % weights, then apply kernel as inner products. 
-if nargin==2, onevar=false; end
   function A = matrix(n)
     [n map breaks numints] = tidyInputs(n,d,mfilename);
 

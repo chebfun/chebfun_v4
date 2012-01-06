@@ -29,30 +29,19 @@ function V = volt(k,d,onevar)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-C = cumsum(d);
-V = linop(@matrix,@op,d,-1);
+% Default onevar to false
+if nargin==2, onevar=false; end    
 
-% Functional form. At each x, do an adaptive quadrature.
-  function v = op(z)
-    % Result can be resolved relative to norm(u). (For instance, if the
-    % kernel is nearly zero by cancellation on the interval, don't try to
-    % resolve it relative to its own scale.) 
-    opt = {'resampling',false,'splitting',true,'blowup','off'};
-    % Return a chebfun for integrand at any x
-    dom = domain(z);  brk = dom.ends(2:end-1); 
-    nrm = norm(z);
-    h = @(x) chebfun(@(y) z(y).*k(x,y),[dom.ends(1) brk(brk<x) x], ...
-        opt{:},'scale',nrm,'exps',[0 0]);    
-    v = chebfun(@(x) sum(h(x)), [d.ends(1) brk d.ends(2)], ...
-        'exps',[0 0],'vectorize','scale',nrm);
-    newjac =  anon('[Jzu nonConstJzu] = diff(z,u); der = V*diff(z,u); nonConst = nonConstJzu | (~V.iszero & ~Jzu.iszero);',{'V','z'},{V,z},1);
-    v = jacreset(v,newjac);
-  end
+% Operator form - call the chebfun method.
+op = @(u) volt(k,u,onevar);
+
+% Construct the linop
+V = linop(@matrix,op,d,-1);
 
 % Matrix form. Each row of the result, when taken as an inner product with
 % function values, does the proper quadrature. Note that while C(n) would
 % be triangular for low-order quadrature, for spectral methods it is not.
-if nargin==2, onevar=false; end
+C = cumsum(d);
   function A = matrix(n)
     [n map breaks numints] = tidyInputs(n,d,mfilename);
    
