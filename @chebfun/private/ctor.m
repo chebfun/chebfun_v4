@@ -36,6 +36,21 @@ else
             if strcmpi('factory',varargin{k})
                 pref = chebfunpref('factory');
                 k = k+1;
+            elseif any(strcmpi({'chebkind','kind'},varargin{k}))
+                if      strncmpi(value,'1st',1), value = 1;
+                elseif  strncmpi(value,'2nd',1), value = 2; end
+                if isfield(pref,'coeffs'), 
+                    pref.coeffkind = value;
+                    pref.chebkind = 2;
+                else
+                    pref.chebkind = value;
+                end
+                if value == 1 && ~pref.resampling
+                    pref.resampling = 1;
+%                     warning('CHEBFUN:chebfun:resampling',...
+%                         'Switching to RESAMPLING ON mode, (Chebyshev points of 1st-kind requested)');
+                end
+                k = k+2; 
             elseif  any(strcmp(fieldnames(pref),varargin{k}))
                 % Is the argument a preference name?
                 if ischar(value)
@@ -83,17 +98,7 @@ else
                 k = k+2;
             elseif strcmpi('scale',varargin{k}) || strcmpi('scl',varargin{k})
                 pref.scale = value;
-                k = k+2;    
-            elseif strcmpi('chebkind',varargin{k}) || strcmpi('kind',varargin{k})
-                if      strncmpi(value,'1st',1), value = 1;
-                elseif  strncmpi(value,'2nd',1), value = 2; end
-                if isfield(pref,'coeffs'), 
-                    pref.coeffkind = value;
-                    pref.chebkind = 2;
-                else
-                    pref.chebkind = value;
-                end
-                k = k+2;                    
+                k = k+2;                       
             elseif strcmpi('singmap',varargin{k})
                 pref.sings = value;
                 k = k+2;               
