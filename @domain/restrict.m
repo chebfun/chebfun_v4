@@ -8,9 +8,12 @@ if nargin < 2
     error('CHEBFUN:domain:restrict:nargin','Two inputs required to domain/restrict.');
 end
 
+if isa(d1,'domain'), d1 = d1.ends; end
+if isa(d2,'domain'), d2 = d2.ends; end
+
 % Nothing to do here
 if d1(1) == d2(1) && d1(end) == d2(end)
-    A = eye(d1);
+    A = eye(domain(d1));
     return
 end
 
@@ -18,9 +21,9 @@ end
 oper = @(u) restrict(u,d2);
 
 % inherit interior breaks from both domains
-d = union(d1.ends,d2.ends);
+d = union(d1,d2);
 d1 = domain(d);
-d(d < d2.ends(1) | d > d2.ends(end)) = [];
+d(d < d2(1) | d > d2(end)) = [];
 d = domain(d);
 
 % Construct the linop
