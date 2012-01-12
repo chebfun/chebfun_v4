@@ -1,4 +1,4 @@
-function C = mldivide(A,B,tolerance)
+function C = mldivide(A,B,varargin)
 % \  Solve a linear operator equation.
 % U = A\F solves the linear system A*U=F, where U and F are chebfuns and A
 % is a linop. If A is a differential operator of order M, a warning will
@@ -28,6 +28,7 @@ function C = mldivide(A,B,tolerance)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
  maxdegree = cheboppref('maxdegree');
+ if nargin >2, tolerance = varargin{1}; end
 
  switch(class(B))
   case 'linop'
@@ -37,11 +38,14 @@ function C = mldivide(A,B,tolerance)
 
   case 'double'
     if length(B)==1  % scalar expansion
-      B = repmat(chebfun(B,domain(A),chebopdefaults),1,A.blocksize(1));
-      C = mldivide(A,B);
-    else
-      error('LINOP:mldivide:operand','Use scalar or chebfun with backslash.')
+      B = repmat(B,1,A.blocksize(1));
+%     else
+%       error('LINOP:mldivide:operand','Use scalar or chebfun with backslash.')
     end
+    for k = 1:numel(B) 
+      Bcheb(:,k) = chebfun(B(k),domain(A),chebopdefaults);
+    end
+    C = mldivide(A,Bcheb,varargin{:});
 
   case 'chebfun'
     dom = domaincheck(A,B(:,1));
