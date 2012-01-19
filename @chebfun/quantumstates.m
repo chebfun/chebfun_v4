@@ -19,13 +19,14 @@ function varargout = quantumstates(varargin)
 % 
 % D = QUANTUMSTATES(...) returns a vector D of eigenvalues
 % [U,D] = QUANTUMSTATES(...) returns a quasimatrix U of eigenfunctions
-%                            and a diagonal matrix of eitgenvalues
+%                            and a diagonal matrix of eigenvalues
 %
 % Examples:
 %
 % x = chebfun('x',[-3,3]):
 % V = x.^2;                 % harmonic oscillator, or
-% V = x.^2 - 1.5*abs(x);    % double well
+% V = abs(x);               % absolute value, or
+% V = (x.^2-1).^4;          % double well
 %   <more examples will be added shortly>
 % quantumstates(V)
 
@@ -71,35 +72,33 @@ end
 
 if ~noplot
   LW = 'linewidth';
-  figure, plot(V,'k',LW,3), hold on                % plot potential function
+  figure, plot(V,'k',LW,2.5), hold on              % plot potential function
   s = sprintf('h = %4g      %d eigenstates',h,n);
   title(s,'fontsize',14)                           % label the plot
   ymax = max(d); ymin = min(V); ydiff = ymax-ymin; 
   ymax = ymax+.2*ydiff; ymin = ymin-0*ydiff;       % vertical limits
   Vxmin = feval(V,xmin); Vxmax = feval(V,xmax);    % V values at endpoints
   if ymax>Vxmin                                    % The potential 
-      plot(xmin*[1 1],[ymax Vxmin],'k',LW,3)       %   V(x) effectively
+      plot(xmin*[1 1],[ymax Vxmin],'k',LW,2.5)     %   V(x) effectively
   end                                              %   goes to infinity
   if ymax>Vxmax                                    %   at the endpoints,
-      plot(xmax*[1 1],[ymax Vxmax],'k',LW,3)       %   so we make the
+      plot(xmax*[1 1],[ymax Vxmax],'k',LW,2.5)     %   so we make the
   end                                              %   plot show this.
   dx = .05*(xmax-xmin); 
-  dy = .3*ydiff/max(5,n);
+  dy = .25*ydiff/max(5,n);
   axis([xmin-dx xmax+dx ymin-dy ymax]), drawnow
-  colors = [1 0 0; 0 .8 0; .9 .9 0
-            0 0 1; 1  0 1;  0 .8 1];               % colors for efuns
+  W = dy*U;
   for j = 1:n
-      u = dy*U(:,j);
-      if max(u)<-min(u), u = -u; end
-      c = colors(1+mod(j-1,6),:);
-      plot(d(j)+u,LW,2,'color',c)                  % plot jth efun
+      umm = minandmax(W(:,j));
+      if umm(2)<-umm(1), W(:,j) = -W(:,j); end
+      W(:,j) = W(:,j) + d(j);
   end
-  plot(V,'k',LW,3)                                 % Plot V(x) again
+  plot(W,LW,1.5)
+  plot(V,'k',LW,2.5)                               % Plot V(x) again
   if ymax>Vxmin                                    %   so that black ends 
-      plot(xmin*[1 1],[ymax Vxmin],'k',LW,3)       %   up on top.
+      plot(xmin*[1 1],[ymax Vxmin],'k',LW,2.5)     %   up on top.
   end                                          
   if ymax>Vxmax                           
-      plot(xmax*[1 1],[ymax Vxmax],'k',LW,3)    
+      plot(xmax*[1 1],[ymax Vxmax],'k',LW,2.5)    
   end
 end                                            
-
