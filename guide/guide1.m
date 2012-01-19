@@ -40,7 +40,7 @@
 % figure, for example, was Bernstein in the 1910s.
 % Nevertheless it is hard to find the relevant material
 % collected in one place.  A new reference on this subject
-% will be the Chebfun-based book [Trefethen 2012].
+% will be the Chebfun-based book [Trefethen 2013].
 
 %%
 % Chebfun was originally created by Zachary Battles
@@ -421,5 +421,5 @@ sum(h)
 % with functions instead of numbers", Mathematics in Computer
 % Science 1 (2007), 9-19.
 %
-% [Trefethen 2012] L. N. Trefethen, Approximation Theory and
-% Approximation Practice, book in preparation.
+% [Trefethen 201£] L. N. Trefethen, Approximation Theory and
+% Approximation Practice, SIAM, publication expected in 2013.

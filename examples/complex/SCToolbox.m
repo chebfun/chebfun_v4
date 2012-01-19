@@ -7,7 +7,7 @@
 %%
 % Chebfun's SCRIBBLE command is good for illustrating conformal maps in the
 % complex plane. These maps can distort distances greatly but preserve all
-% angles, as we can demonstrate by by mapping English text.
+% angles, as we can demonstrate by mapping English text.
 
 %% Tanh map
 % The hyperbolic tangent function maps infinite
@@ -44,7 +44,7 @@ plot(g(bndry),'k'), axis equal, axis([-1.4 1.4 -1 1])
 
 %%
 % The tanh map is the basis of numerical methods based on sinc functions, discussed
-% in books and papers by F. Stenger [3,4].  
+% in books and papers by F. Stenger [4,5]; see also [3].
 
 %% Schwarz-Christoffel maps
 % More generally, suppose we want to map the original infinite strip not to 
@@ -103,8 +103,12 @@ hold on, plot(vp,'k'), xlim(1.5*[-1 1])
 % [2] T. A. Driscoll and L. N. Trefethen, Schwarz-Christoffel Mapping,
 % Cambridge U. Press, 2002.
 %
-% [3] F. Stenger, Numerical Methods Based on Sinc and
+% [3] M. Richardson and L. N. Trefethen,
+% A sinc function analogue of Chebfun, SIAM Journal on
+% Scientific Computing 33 (2011), 2519-2535.
+%
+% [4] F. Stenger, Numerical Methods Based on Sinc and
 % Analytic Functions, Springer, 1993.  
 %
-% [4] F. Stenger, Handbook of Sinc Numerical Methods,
+% [5] F. Stenger, Handbook of Sinc Numerical Methods,
 % CRC Press, 2010.

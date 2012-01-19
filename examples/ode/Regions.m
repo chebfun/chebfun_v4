@@ -7,7 +7,7 @@
 %%
 % Stability regions are a standard tool in the analysis of numerical formulas for
 % ODE initial-value problems.
-% Given a formula -- 2nd-order Adams Basforth, say, or 3rd-order
+% Given a formula -- 2nd-order Adams-Bashforth, say, or 3rd-order
 % backward differentiation -- the stability region is
 % the region of the complex lambda*dt - plane where the associated
 % scalar constant-coefficient recurrence relation is stable.
