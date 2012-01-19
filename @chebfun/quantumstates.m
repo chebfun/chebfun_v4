@@ -56,7 +56,7 @@ end
 [xmin xmax] = domain(V);                           % domain of problem
 L = chebop([xmin xmax]); L.lbc = 0; L.rbc = 0;     % Dirichlet BCs
 L.op = @(x,u) -h^2*diff(u,2) + V.*u;               % Schroedinger operator
-[U,D] = eigs(L,n);                                 % compute evals/efuns
+[U,D] = eigs(L,n,'sm');                            % compute evals/efuns
 d = diag(D);                                       % vector of evals
 [d,ii] = sort(d); U = U(:,ii);                     % sort them
 
