@@ -1,8 +1,8 @@
 'A cross of eigenvalues'
 'scalar'
-a= '0'; b = '2*pi';
+a = '0'; b = '2*pi';
 DE = '-u" = lambda*(u+u'')';
-LBC = '0'; RBC = '0';
+BC = {'u(0) = 0'; 'u(2*pi) = 0'};
 tol = '1e-10';
 sigmatemp = '';
 type = 'eig';

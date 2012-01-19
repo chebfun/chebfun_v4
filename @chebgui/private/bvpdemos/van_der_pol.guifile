@@ -3,7 +3,7 @@
 a = '0'; b = '15';
 DE = 'u" - (1-u^2)*u'' + u = 0';
 DErhs = '0';
-LBC = {'u = 2';'u'' = 0'}; RBC = '';
+BC = {'u(0) = 2';'u''(0) = 0'};
 init = ''; tol = '1e-10';
 damping = '1'; plotting = '0.1';
 type = 'bvp';

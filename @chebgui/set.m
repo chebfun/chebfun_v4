@@ -31,6 +31,8 @@ switch lower(propName)
         cg.LBC = vin;
     case 'rbc'
         cg.RBC = vin;
+    case 'bc'
+        cg.BC = vin;
     case 'tol'
         cg.tol = vin;
     case 'init'

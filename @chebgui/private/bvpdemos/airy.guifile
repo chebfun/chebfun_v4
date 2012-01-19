@@ -1,10 +1,8 @@
 'Airy equation'
 'bvp'
-a = '-5';
-b = '5';
+a = '-5'; b = '5';
 DE = '0.01*u'''' - x*u = 1';
-LBC = 'u = 0';
-RBC = 'u = 0';
+BC = {'u(-5) = 0', 'u(5) = 0'};
 init = '';
 tol = '1e-10';
 damping = '0';

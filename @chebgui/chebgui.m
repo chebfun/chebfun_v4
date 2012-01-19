@@ -129,7 +129,7 @@ else
     
     c.type = '';
     c.DomLeft = ''; c.DomRight = '';
-    c.DE = ''; c.LBC = ''; c.RBC = '';
+    c.DE = ''; c.LBC = ''; c.RBC = ''; c.BC = '';
     c.timedomain = ''; c.sigma = '';
     c.init = ''; c.tol = [];
     c.options = struct('damping','1','plotting','0.5','grid',1,...
@@ -165,6 +165,8 @@ else
                 c.LBC = value;
             case 'rbc'
                 c.RBC = value;
+            case 'bc'
+                c.BC = value;                
             case 'init'
                 c.init = value;
             case 'sigma'

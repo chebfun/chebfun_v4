@@ -4,7 +4,10 @@ function handles = callbackBCs(guifile, handles, inputString, type)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % For systems we check a row at a time
-flag = false; flag2 = false;
+
+flag = false;  % dirichlet/neumann flag
+flag2 = false; % periodic flag
+
 if ~iscell(inputString)
     for stringCounter = 1:size(inputString,1)
         newString{stringCounter,:} = inputString(stringCounter,:);
@@ -36,7 +39,7 @@ if strcmp(type,'lbc')
             set(handles.input_RBC,'String','');
         end
     end
-else
+elseif strcmp(type,'rbc') 
     if flag2
         set(handles.input_LBC,'String','periodic');
         handles.guifile.LBC = 'periodic';
@@ -50,4 +53,25 @@ else
             set(handles.input_LBC,'String','');
         end
     end
+elseif strcmp(type,'bc') 
+    if flag2
+        set(handles.input_LBC,'String','periodic');
+        handles.guifile.LBC = 'periodic';
+        set(handles.input_LBC,'Enable','off');
+        set(handles.input_RBC,'String','periodic');
+        handles.guifile.RBC = 'periodic';
+        set(handles.input_RBC,'Enable','off');
+    else
+        if strcmp(get(handles.input_LBC,'String'),'periodic');
+            handles.guifile.LBC = '';
+            set(handles.input_LBC,'String','');
+        end
+        set(handles.input_LBC,'Enable','on');
+        if strcmp(get(handles.input_RBC,'String'),'periodic');
+            handles.guifile.RBC = '';
+            set(handles.input_RBC,'String','');
+        end
+        set(handles.input_RBC,'Enable','on');
+    end
 end
+    

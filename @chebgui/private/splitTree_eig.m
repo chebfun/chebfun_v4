@@ -1,4 +1,5 @@
 function [newTree lambdaTree lambdaSign] = splitTree_eig(guifile,treeIn)
+% SPLITTREE_BVP Split a syntax tree (replace = with -) for a EIG problem
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -7,12 +8,8 @@ function [newTree lambdaTree lambdaSign] = splitTree_eig(guifile,treeIn)
 
 [newTree lambdaTree lambdaSign] = findLambda(treeIn,1);
 
-% If the top-center entry is a =, we need to convert that into a -.
-% Otherwise, do nothing.
-treeCenter = newTree.center;
-if strcmp(treeCenter{2},'OP=')
-    newTree.center = {'-', 'OP-'};
-end
+% Do the basic splitting (converting = into -) in newTree
+newTree = splitTree_commas_equalSigns(guifile,newTree);
 
 end
 
@@ -21,8 +18,11 @@ function [newTree lambdaTree lambdaSign] = findLambda(treeIn,lambdaSign)
 newTree = treeIn;
 leftEmpty = 1; rightEmpty = 1;
 lambdaTree = []; lambdaTreeLeft = []; lambdaTreeRight = [];
+try
 treeCenter = treeIn.center;
-
+catch
+    keyboard
+end
 if isfield(treeIn,'left')
     [newLeft lambdaTreeLeft lambdaSign] = findLambda(treeIn.left,lambdaSign);
     newTree.left = newLeft;

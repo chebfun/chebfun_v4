@@ -2,8 +2,7 @@
 'system'
 a= '0'; b = 'pi';
 DE = {'u'' = lambda*v';'v'' = -lambda*u'};
-LBC = 'u = 0';
-RBC = 'u = 0';
+BC = {'u(0) = 0'; 'u(pi) = 0'};
 tol = '1e-10';
 sigmatemp = '';
 type = 'eig';

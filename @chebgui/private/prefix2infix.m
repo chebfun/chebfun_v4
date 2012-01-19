@@ -1,10 +1,12 @@
-function infixOut = prefix2infix(guifile,prefIn)
+function [infixOut notaVAR] = prefix2infix(guifile,prefIn)
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 prefixIn = prefIn; prefCounter = 1; %#ok<NASGU> Disable warning message
+NOTAVAROUT = [];
 infixOut = getInfix();
+notaVAR = NOTAVAROUT; NOTAVAROUT = [];
 
 function infixOut = getInfix()
 next = char(prefixIn(prefCounter,2));
@@ -78,9 +80,22 @@ elseif strcmp(next,'FUNC2')
     funcArg2 = getInfix();
     if (strcmp(nextFun,'diff') || strcmp(nextFun,'cumsum')) && strcmp(funcArg2,'1')
         infixOut = [nextFun, '(', funcArg1, ')'];
+    elseif any(strcmp(nextFun,{'fred','volt'}))
+        guifiletmp = chebgui('type','bvp');
+        [ignored yFredVar ignored ignored xFredVar] = lexer(guifiletmp,funcArg1);        
+        anonStr = ['@(' xFredVar{1} ',' yFredVar{1} ')'];
+        infixOut = [nextFun, '(', anonStr funcArg1 , ',', funcArg2 ,  ')'];
+        NOTAVAROUT = [NOTAVAROUT ;  yFredVar];
     else
         infixOut = [nextFun, '(', funcArg1 , ',', funcArg2 ,  ')'];
     end
+elseif strcmp(next,'FUNC3')
+    nextFun = char(prefixIn(prefCounter,1));
+    prefCounter = prefCounter + 1;
+    funcArg1 = getInfix();
+    funcArg2 = getInfix();
+    funcArg3 = getInfix();
+    infixOut = [nextFun, '(', funcArg1 , ',', funcArg2, ',' , funcArg3 ')'];
 elseif strcmp(next(1:end-1),'DER')
     prefCounter = prefCounter + 1;
     derivArg = getInfix();
@@ -100,6 +115,11 @@ elseif ~isempty(strmatch('UN',next))
      else
          infixOut = unaryArg;
      end
+elseif strmatch(next,'COMMA')
+    prefCounter = prefCounter + 1;
+    exp1 = getInfix();
+    exp2 = getInfix();
+    infixOut = ['(',exp1, ',', exp2,')'];
 else
     infixOut = char(prefixIn(prefCounter,1));
     prefCounter = prefCounter + 1;

@@ -1192,7 +1192,7 @@ baseVarNames = {variables.name};
 % Create a list dialog
 [selection,OK] = listdlg('PromptString','Select variable(s) to import:',...
     'ListString',baseVarNames,'Name','Import variables to GUI',...
-    'OKString','Import','ListSize',[160 200]);
+    'OKString','Import','ListSize',[160 200],'ListString',baseVarNames);
 if ~OK, return, end % User pressed cancel
 
 % Store all the selected variables in the handles
@@ -1366,4 +1366,20 @@ if errUsingLoc
     idx = find(msg==char(10),1);
     % Take only what's after the 2nd
     msg = msg(idx+1:end);
+end
+
+
+
+function input_BC_Callback(hObject, eventdata, handles)
+newString = cellstr(get(hObject,'String'));
+newString = removeTabs(newString); % Remove tabs
+set(hObject,'String',newString);
+handles = callbackBCs(handles.guifile,handles,newString,'bc');
+handles.guifile.BC = newString;
+guidata(hObject, handles);
+
+
+function input_BC_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end

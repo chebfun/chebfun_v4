@@ -1,4 +1,5 @@
 function [newTree pdeSign] = splitTree_pde(guifile,treeIn)
+% SPLITTREE_PDE Split a syntax tree (replace = with -) for a PDE
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -7,12 +8,8 @@ function [newTree pdeSign] = splitTree_pde(guifile,treeIn)
 
 [newTree pdeTree pdeSign] = findPDE(treeIn,1);
 
-% If the top-center entry is a =, we need to convert that into a -.
-% Otherwise, do nothing.
-treeCenter = newTree.center;
-if strcmp(treeCenter{2},'OP=')
-    newTree.center = {'-', 'OP-'};
-end
+% Do the basic splitting (converting = into -) in newTree
+newTree = splitTree_commas_equalSigns(guifile,newTree);
 
 end
 

@@ -20,29 +20,22 @@ fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 a = guifile.DomLeft;
 b = guifile.DomRight;
 deInput = guifile.DE;
-lbcInput = guifile.LBC;
-rbcInput = guifile.RBC;
+bcInput = guifile.BC;
 initInput = guifile.init;
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
-if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
-if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
+if isa(bcInput,'char'), bcInput = cellstr(bcInput); end
 if isa(initInput,'char'), initInput = cellstr(initInput); end
 
-deRHSInput = cellstr(repmat('0',numel(deInput),1));
-lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
-rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
-initRHSInput = cellstr(repmat('0',numel(initInput),1));
-
-[deString allVarString indVarNameDE ignored ignored allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarNameDE ignored ignored allVarNames] = setupFields(guifile,deInput,'DE');
 
 % Do some error checking before we do further printing. Check that
 % independent variable name match.
 % Obtain the independent variable name appearing in the initial condition
 useLatest = strcmpi(initInput{1},'Using latest solution');
 if ~isempty(initInput{1}) && ~useLatest
-    [initString ignored indVarNameInit] = setupFields(guifile,initInput,initRHSInput,'BC',allVarString);
+    [initString ignored indVarNameInit] = setupFields(guifile,initInput,'BC',allVarString);
 else
     indVarNameInit = {''};
 end
@@ -64,11 +57,11 @@ end
 
 % Replace the 'DUMMYSPACE' variable in the DE field
 deString = strrep(deString,'DUMMYSPACE',indVarNameSpace);
+deString = prettyprintfevalstring(deString,allVarNames);
 
 % Support for periodic boundary conditions
-if (~isempty(lbcInput{1}) && strcmpi(lbcInput{1},'periodic')) || ...
-        (~isempty(rbcInput{1}) && strcmpi(rbcInput{1},'periodic'))
-    lbcInput{1} = []; rbcInput{1} = []; periodic = true;
+if (~isempty(bcInput{1}) && strcmpi(bcInput{1},'periodic'))
+    bcInput{1} = []; periodic = true;
 else
     periodic = false;
 end
@@ -79,49 +72,20 @@ for k = 1:numel(deInput)
     fprintf(fid,'%%   %s,\n',deInput{k});
 end
 fprintf(fid,'%% for %s in [%s,%s]',indVarNameSpace,a,b);
-if ~isempty(lbcInput{1}) || ~isempty(rbcInput{1})
+if ~isempty(bcInput{1})
     fprintf(fid,', subject to\n%%');
-    if  ~isempty(lbcInput{1})
-        if numel(lbcInput)==1 && ~any(lbcInput{1}=='=') && ~any(strcmpi(lbcInput{1},{'dirichlet','neumann'}))
-            % Sort out when just function values are passed as bcs.
-            lbcInput{1} = sprintf('%s = %s',allVarString,lbcInput{1});
-        end
-        fprintf(fid,'   ');
-        for k = 1:numel(lbcInput)
-            fprintf(fid,'%s',lbcInput{k});
-            if k~=numel(lbcInput) && numel(lbcInput)>1, fprintf(fid,', '); end
-        end
-        fprintf(fid,' at %s = % s\n',indVarNameSpace,a);
+    for k = 1:numel(bcInput)
+        fprintf(fid,'   %s',bcInput{k});
+        if k~=numel(bcInput) && numel(bcInput)>1, fprintf(fid,',\n%%'); end
     end
-    if  ~isempty(lbcInput{1}) && ~isempty(rbcInput{1})
-        fprintf(fid,'%% and\n%%',indVarNameSpace,a);
-    end
-    if ~isempty(rbcInput{1})
-        if numel(rbcInput)==1 && ~any(rbcInput{1}=='=') && ~any(strcmpi(rbcInput{1},{'dirichlet','neumann'}))
-            % Sort out when just function values are passed as bcs.
-            rbcInput{1} = sprintf('%s = %s',allVarString,rbcInput{1});
-        end
-        fprintf(fid,'   ');
-        for k = 1:numel(rbcInput)
-            fprintf(fid,'%s',rbcInput{k});
-            if k~=numel(rbcInput) && numel(rbcInput)>1, fprintf(fid,', '); end
-        end
-        fprintf(fid,' at %s = % s\n',indVarNameSpace,b);
-    end
-    fprintf(fid,'\n');
+    fprintf(fid,'.\n');
 elseif periodic
     fprintf(fid,', subject to periodic boundary conditions.\n\n');
 else
     fprintf(fid,'.\n');
 end
 
-% fprintf(fid,'%% Create the linear chebfun on the specified domain.\n');
-% fprintf(fid,['%% Create a chebop on the specified domain.\n']);
-% fprintf(fid,'N = chebop(%s,%s);\n',a,b);
-% fprintf(fid,'\n%% Make an assignment to the differential eq. of the chebop.\n');
-% fprintf(fid,'N.op = %s;\n',deString);
-
-fprintf(fid,'%% Define the domain.\n');
+fprintf(fid,'\n%% Define the domain.\n');
 fprintf(fid,'dom = [%s, %s];\n',a,b);
 
 fprintf(fid,'\n%% Assign the differential equation to a chebop on that domain.\n');
@@ -131,27 +95,25 @@ fprintf(fid,'N = chebop(%s,dom);\n',deString);
 fprintf(fid,'\n%% Set up the rhs of the differential equation so that N(%s) = rhs.\n',allVarString);
 
 % If we have a coupled system, we need create a array of the inputs
-if size(deRHSInput,1) > 1
+if size(deInput,1) > 1
     deRHSprint = ['['];
-    for deRHScounter = 1:size(deRHSInput,1)
-        deRHSprint = [deRHSprint char(deRHSInput{deRHScounter}) ','];
+    for counter = 1:size(deInput,1)
+        deRHSprint = [deRHSprint num2str(0) ','];
     end
     deRHSprint(end) = []; % Remove the last comma
     deRHSprint = [deRHSprint,']'];
 else
-    deRHSprint = char(deRHSInput);
+    deRHSprint = num2str(0);
 end
 fprintf(fid,'rhs = %s;\n',deRHSprint);
 
-% Make assignments for left and right BCs.
+% Make assignments for BCs.
 fprintf(fid,'\n%% Assign boundary conditions to the chebop.\n');
-if ~isempty(lbcInput{1})
-    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString );
-    fprintf(fid,'N.lbc = %s;\n',lbcString);
-end
-if ~isempty(rbcInput{1})
-    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString );
-    fprintf(fid,'N.rbc = %s;\n',rbcString);
+if ~isempty(bcInput{1})
+    bcString = setupFields(guifile,bcInput,'BCnew',allVarString );
+    bcString = strrep(bcString,'DUMMYSPACE',indVarNameSpace);
+    bcString = prettyprintfevalstring(bcString,allVarNames);
+    fprintf(fid,'N.bc = %s;\n',bcString);
 end
 if periodic
     fprintf(fid,'N.bc = ''periodic'';\n');
@@ -246,15 +208,13 @@ else
     fprintf(fid,'options.plotting = ''off'';\n');
 end
 
-
-
 fprintf(fid,['\n%% Solve the problem using solvebvp (a routine which ' ...
     'offers the same\n%% functionality as nonlinear backslash, but with more '...
     'customizability).\n']);
 % fprintf(fid,'[u normVec] = solvebvp(N,rhs,''options'',options);\n');
 fprintf(fid,'u = solvebvp(N,rhs,''options'',options);\n');
 
-fprintf(fid,'\n%% Create plot of the solution and the norm of the updates.\n');
+fprintf(fid,'\n%% Create a plot of the solution.\n');
 
 
 fprintf(fid,['figure\nplot(u,''LineWidth'',2)\ntitle(''Final solution''), ',...
@@ -270,4 +230,25 @@ else
     fprintf(fid,', legend(%s)\n',leg);
 end
 fclose(fid);
+end
+
+
+function str = prettyprintfevalstring(str,varnames)
+for k = 1:numel(varnames)
+    oldstr = ['feval(' varnames{k} ','];
+    newstr = [varnames{k} '('];
+    str = strrep(str,oldstr,newstr);
+    oldstr = [varnames{k} '(''end'''];
+    newstr = [varnames{k} '(end'];
+    str = strrep(str,oldstr,newstr);
+    oldstr = [varnames{k} '(''right'''];
+    newstr = [varnames{k} '(end'];
+    str = strrep(str,oldstr,newstr);
+    oldstr = [varnames{k} '(''start'''];
+    newstr = [varnames{k} '(' varnames{k} '.ends(1)'];
+    str = strrep(str,oldstr,newstr);
+    oldstr = [varnames{k} '(''left'''];
+    newstr = [varnames{k} '(' varnames{k} '.ends(1)'];
+    str = strrep(str,oldstr,newstr);
+end
 end

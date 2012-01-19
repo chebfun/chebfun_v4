@@ -33,16 +33,15 @@ if length(pdeVarNames) > 1
 end
 % Parse the output from the lexer, looking for syntax errors.
 syntaxTree = parse(guifile,lexOut);
-% pdesign
 
 
 if strcmp(guifile.type,'bvp')
-    % Convert a potential at the top of the tree = to a -.
+    % Convert a potential = at the top of the tree to a -.
     syntaxTree = splitTree_bvp(guifile,syntaxTree);
     % Obtain the prefix form.
     prefixOut = tree2prefix(guifile,syntaxTree);
 elseif strcmp(guifile.type,'pde')
-    % Convert a potential at the top of the tree = to a -.
+    % Convert a potential = at the top of the tree to a -.
     [syntaxTree pdeSign] = splitTree_pde(guifile,syntaxTree);
     % Obtain the prefix form.
     prefixOut = tree2prefix(guifile,syntaxTree);
@@ -80,11 +79,25 @@ elseif strcmp(guifile.type,'eig')
         anFunLambda = parSimp(guifile,infixOutLambda);
     end
 end
-% Return the derivative on infix form
-infixOut = prefix2infix(guifile,prefixOut);
 
+% Return the derivative on infix form
+% infixOut = prefix2infix(guifile,prefixOut);
 % Finally, remove unneeded parenthesis.
+% anFun = parSimp(guifile,infixOut);
+
+% Check whether we have equations divided by commas. This will only have
+% happened if we have any commas left in the prefix expression
+commaSeparated = any(strcmp(prefixOut(:,2),'COMMA'));
+
+[infixOut notaVAR] = prefix2infix(guifile,prefixOut);
 anFun = parSimp(guifile,infixOut);
+
+% Remove misinterpreted VARs (from Fred, Volt, etc)
+for k = numel(varNames):-1:1
+    if any(strcmp(varNames{k},notaVAR))
+        varNames(k) = [];
+    end
+end 
  
 % Convert the cell array varNames into one string
 varString = varNames{1};
@@ -115,5 +128,11 @@ switch nargout
         varargout{2} = indVarNames;
         varargout{3} = varNames;
         varargout{4} = pdeVarNames;
+    case 5
+        varargout{1} = anFun;
+        varargout{2} = indVarNames;
+        varargout{3} = varNames;
+        varargout{4} = pdeVarNames;
+        varargout{5} = commaSeparated;
 end
 end

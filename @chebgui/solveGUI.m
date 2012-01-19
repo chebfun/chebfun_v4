@@ -15,7 +15,7 @@ if isempty(guifile.DE)
     resetComponents(handles);
     return
 end
-if isempty(guifile.LBC) && isempty(guifile.RBC)
+if isempty(guifile.LBC) && isempty(guifile.RBC) && isempty(guifile.BC)
     errordlg('Boundary conditions must be defined.', 'Chebgui error', 'modal');
     resetComponents(handles);
     return

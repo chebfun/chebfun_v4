@@ -44,14 +44,9 @@ if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
 if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
 if isa(initInput,'char'), initInput = cellstr(initInput); end
 
-deRHSInput = cellstr(repmat('',numel(deInput),1));
-lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
-rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
-initRHSInput = cellstr(repmat('0',numel(initInput),1));
-
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString allVarString indVarNameDE pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarNameDE pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,'DE');
 handles.varnames = allVarNames;
 if ~any(pdeflag)
     s = ['Input does not appear to be a PDE, ', ...
@@ -62,7 +57,7 @@ idx = strfind(deString, ')');
 
 % Obtain the independent variable name appearing in the initial condition
 if ~isempty(initInput{1})
-    [initString ignored indVarNameInit] = setupFields(guifile,initInput,initRHSInput,'BC',allVarString);
+    [initString ignored indVarNameInit] = setupFields(guifile,initInput,'BC',allVarString);
 else
     indVarNameInit = {''};
 end
@@ -124,7 +119,7 @@ else
 end
 
 if ~isempty(lbcInput{1})
-    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
+    lbcString = setupFields(guifile,lbcInput,'BC',allVarString);
     idx = strfind(lbcString, ')');
     if ~isempty(idx)
         
@@ -145,7 +140,7 @@ else
     LBC = [];
 end
 if ~isempty(rbcInput{1})
-    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
+    rbcString = setupFields(guifile,rbcInput,'BC',allVarString);
     idx = strfind(rbcString, ')');
     if ~isempty(idx)
         

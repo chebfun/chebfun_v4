@@ -74,14 +74,14 @@ if strcmp(problemType,'bvp')
                 '*.*',  'All Files (*.*)'}, ...
                 'Save as', [problemType,'.m']);
             if filename     % User did not press cancel
-                try
+%                 try
                     exportbvp2mfile(guifile,pathname,filename)
                     % Open the new file in the editor
                     open([pathname,filename])
-                catch
-                    ME = lasterror;
-                    error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
-                end
+%                 catch
+%                     ME = lasterror;
+%                     error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
+%                 end
             end
         case '.mat'
             varnames = handles.varnames;
@@ -157,14 +157,14 @@ elseif strcmp(problemType,'pde')
                 '*.*',  'All Files (*.*)'}, ...
                 'Save as', [problemType,'.m']);
             if filename     % User did not press cancel
-                try
+%                 try
                     exportpde2mfile(guifile,pathname,filename)
                     % Open the new file in the editor
                     open([pathname,filename])
-                catch
-                    ME = lasterror;
-                    error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
-                end
+%                 catch
+%                     ME = lasterror;
+%                     error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
+%             end
             end
         case '.mat'
             varnames = handles.varnames;
@@ -219,13 +219,13 @@ else
                 '*.*',  'All Files (*.*)'}, ...
                 'Save as', 'bvpeig.m');
             if filename     % User did not press cancel
-                try
+%                 try
                     exporteig2mfile(guifile,pathname,filename,handles)
                     % Open the new file in the editor
                     open([pathname,filename])
-                catch
-                    error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
-                end
+%                 catch
+%                     error('Chebgui:Export','Error in exporting to .m file. Please make sure there are no syntax errors.');
+%                 end
             end
         case '.mat'
             D = diag(handles.latest.solution); %#ok<NASGU>

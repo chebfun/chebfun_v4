@@ -26,10 +26,17 @@ strfun1 = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...     % Trigonometric
 % A string array containing all functions which take two arguments which 
 % we are interested in differentiating
 strfun2 = char('airy','besselj','cumsum','diff','power',...
-        'eq','ne','ge','gt','le','lt');                             % Relational functions
+        'eq','ne','ge','gt','le','lt','jump');          % Relational functions
+    
+strfun3 = char('feval','fred','volt');    
+    
+strarg = char('left','right','onevar','start','end');    
 
 % Remove all whitespace
 str = strrep(str,' ','');
+
+% Remove trailing commas
+if strcmp(str(end),','), str(end) = []; end
 
 % Change quotes (") to two apostrophes ('')
 str = strrep(str,'"','''''');
@@ -61,8 +68,20 @@ end
 % Vectorize the string
 str = vectorize(str);
 
-% Obtain the name of possible variables
-varNames = symvar(str);
+% Obtain the name of possible variables:
+% List of excluded variable names
+excludedNames = char(strfun1,strfun2,strfun3,strarg,'true','false');
+% We temporarily replace parentheses with '-' as SYMVAR will not consider
+% u to be a vriable in u(1).
+strtmp = strrep(str,'(','+'); strtmp = strrep(strtmp,')','+');
+strtmp = strrep(strtmp,'''', '');
+varNames = symvar(strtmp);
+for k = numel(varNames):-1:1
+    if ismember(varNames{k},{excludedNames})
+        varNames(k) = [];
+    end
+end
+varNames = unique(varNames);
 
 % Create a cell for potential pdeVarNames and lambdaVariables
 pdeVarNames = {};
@@ -108,7 +127,7 @@ while ~strcmp(str,'$')
             nextnum = char(m(1));
             expr_end = e(1);
             nextChar = str(e(1)+1);
-            if nextnum(end) == '.' && ~isempty(regexp(nextChar,'[\+\-\*\/\^]'))
+            if nextnum(end) == '.' && ~isempty(regexp(nextChar,'[\+\-\*\/\^]', 'once'))
                 nextnum(end) = []; % Throw away the .
                 expr_end = e(1) - 1; % Lower the number of which we clear the string before
             end
@@ -246,16 +265,23 @@ while ~strcmp(str,'$')
             % Check if this string is one of the function defined in
             % strfun1 (functions with one argument)
             elseif strmatch(nextstring,strfun1,'exact')
-                out = [out; {nextstring, 'FUNC1'}];
+                out = [out; {nextstring, 'FUNC1'}];     
+            % Check if this string is 'left' or 'right', which are args for FEVAL.
+            elseif strmatch(nextstring,strarg,'exact')
+                out = [out; {['''' nextstring ''''], 'STR'}];
             % Check if this string is one of the function defined in
             % strfun2 (functions with two arguments)
             elseif strmatch(nextstring,strfun2,'exact')
                 out = [out; {nextstring, 'FUNC2'}];
+            % Check if this string is one of the function defined in
+            % strfun2 (functions with two arguments)
+            elseif strmatch(nextstring,strfun3,'exact')
+                out = [out; {nextstring, 'FUNC3'}];                
             % If not a function nor the variable we are interested in
             % differentiating with respect to, we treat this variable just
             % as number (this enables us e.g. to be able to differentiate w.r.t.
             % x and y seperately)
-            else    
+            else
                 out = [out; {nextstring, 'INDVAR'}];
             end
         case 'comma'
@@ -301,7 +327,7 @@ function type = myfindtype(str,prevtype)
 if regexp(str, '[0-9]') % Change to floating point format?  [+-]?(([0-9]+(.[0-9]*)?|.[0-9]+)([eE][+-]?[0-9]+)?)
     type = 'num';
 % If we want to treat unary operators especially
-elseif (strcmp(prevtype,'operator') || strcmp(prevtype,'unary')) && ~isempty(regexp(str, '[+-]'))
+elseif (strcmp(prevtype,'operator') || strcmp(prevtype,'unary')) && ~isempty(regexp(str, '[+-]', 'once'))
     type = 'unary';
 elseif regexp(str,'[A-Za-z_]')
     type = 'char';

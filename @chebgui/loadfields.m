@@ -9,6 +9,7 @@ set(handles.dom_right,'String',guifile.DomRight);
 set(handles.input_DE,'String',guifile.DE);
 set(handles.input_LBC,'String',guifile.LBC);
 set(handles.input_RBC,'String',guifile.RBC);
+set(handles.input_BC,'String',guifile.BC);
 set(handles.input_GUESS,'String',guifile.init);
 
 if strcmpi(guifile.type,'pde')

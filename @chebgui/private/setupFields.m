@@ -1,7 +1,12 @@
-function [field allVarString indVarName pdeVarNames pdeflag allVarNames]  = setupFields(guifile,input,rhs,type,allVarString)
+function [field allVarString indVarName pdeVarNames pdeflag allVarNames]  = setupFields(guifile,input,type,allVarString)
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
+
+% For BCs, we need to check whether varNames contains anything not found in
+% varNames of the DE. Should we make the varNames of the DE as parameters?
+% Setja DE varNames sem parametra? Also check for indVarName in deRHS.
 
 numOfRows = max(size(input));%numel(input,1);
 pdeflag = zeros(1,numOfRows); % Binary flag for PDE detection.
@@ -10,15 +15,9 @@ pdeVarNames = '';
 dummys = 'DUMMYSPACE';
 dummyt = 'DUMMYTIME';
 
-% For BCs, we need to check whether varNames contains anything not found in
-% varNames of the DE. Should we make the varNames of the DE as parameters?
-% Setja DE varNames sem parametra? Also check for indVarName in deRHS.
 
-% [field indVarName]  = setupLine(input,rhs,type)
-
-if numOfRows == 1 % Not a system, can call convert2anon with two output arguments
-    [anFun indVarName allVarNames pdeVarNames] = setupLine(guifile,input{1},rhs{1},type);
-%     idx = strfind(rhs{1}, '_');
+if numOfRows == 1 % Not a system, can call convert2anon with two output argument    
+    [anFun indVarName allVarNames pdeVarNames commaSeparated] = setupLine(guifile,input{1},type);
     % Check whether we have too many variables (this is a singl
     if ~isempty(pdeVarNames), % it's not a PDE (or we can't do this type yet!)
         pdeflag = true;
@@ -33,7 +32,6 @@ if numOfRows == 1 % Not a system, can call convert2anon with two output argument
             error('Chebgui:setupFields:VariableNames',...
                 'Inconsistent variable names.');
         end
-%         allVarNames = {rhs{1}(1:idx-1)};
     end
     
     % Only need to convert the cell to a string for DE -- information has
@@ -58,7 +56,14 @@ if numOfRows == 1 % Not a system, can call convert2anon with two output argument
     % functions. This is not needed for 'dirichlet','neumann',etc... This
     % can only happen in BCs, and in that case, allVarNames will be empty
     elseif ~isempty(allVarNames)
-        field = ['@(', allVarString ') ' anFun,''];
+        if commaSeparated
+            anFun = ['[',anFun,']'];
+        end
+        if strcmp(type,'BCnew')
+            field = ['@(',dummys,',', allVarString ') ' anFun];
+        else
+            field = ['@(', allVarString ') ' anFun,''];
+        end
     else
         field = anFun;
     end
@@ -67,9 +72,11 @@ else % Have a system, go through each row
     allVarNames = {};
     allPdeVarNames = {};
     indVarName = [];
-    if numel(rhs) == 1, rhs = repmat(rhs,numOfRows,1); end
     for k = 1:numOfRows
-        [anFun{k} indVarNameTemp varNames pdeVarNames] = setupLine(guifile,input{k},rhs{k},type);
+        [anFun{k} indVarNameTemp varNames pdeVarNames commaSeparated] = setupLine(guifile,input{k},type);
+        if strcmp(anFun{k}([1 end]),'[]')
+            anFun{k}([1 end]) = [];
+        end
         allVarNames = [allVarNames;varNames];
         if length(pdeVarNames) > 1 % Only allow one time derivative in each line
             error('Chebgui:setupField:TooManyTimeDerivatives',...
@@ -139,7 +146,7 @@ else % Have a system, go through each row
     % as well. However, we don't want that variable in allVarString as we
     % use that information when setting up BCs. Create the string that goes
     % at the start of the final string.
-    if ~strcmp(guifile.type,'pde') && strcmp(type,'DE')
+    if (~strcmp(guifile.type,'pde') && strcmp(type,'DE')) || strcmp(type,'BCnew') 
         fieldStart = ['@(',dummys,',', allVarString ') '];%[' allAnFun,']'];
     else
         fieldStart = ['@(', allVarString ') '];% [' allAnFun,']'];
@@ -171,9 +178,10 @@ else % Have a system, go through each row
     
 end
 
-function [field indVarName varNames pdeVarNames]  = setupLine(guifile,input,rhs,type)
-convertBCtoAnon  = 0;
+function [field indVarName varNames pdeVarNames commaSeparated]  = setupLine(guifile,input,type)
+convertBCtoAnon = 0;
 
+commaSeparated = 0; % Default value
 % Create the variables x and t (corresponding to the linear function on the
 % domain).
 % x = xt; t = xt;
@@ -184,14 +192,11 @@ if ~isempty(strfind(input,'@')) % User supplied anon. function
     firstRPloc = strfind(input,')');
     trimmedInput = input(firstRPloc+1:end);
     
-    [field indVarName varNames pdeVarNames] = convertToAnon(guifile,trimmedInput);
+    [field indVarName varNames pdeVarNames commaSeparated] = convertToAnon(guifile,trimmedInput);
     
     return
-elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
+elseif any(strcmp(type,{'BC','BCnew'}))        % Allow more types of syntax for BCs
     bcNum = str2num(input);
-    rhsNum = str2num(rhs);
-    if isempty(rhsNum) && ~isempty(strfind(rhs,'t')), rhsNum = 1; end
-    
     % Check whether we have a number (OK), allowed strings (OK) or whether
     % we will have to convert the string to anon. function (i.e. the input
     % is on the form u' +1 = 0).
@@ -207,18 +212,16 @@ elseif strcmp(type,'BC')        % Allow more types of syntax for BCs
         varNames = [];
         pdeVarNames = [];
     else
-        if ~isempty(rhsNum) && rhsNum % If rhs = 0, don't make a subtraction
-            input = [input ,'-(',rhs,')'];
-        end
         convertBCtoAnon = 1;
+        guifile.type = 'bvp';
     end
 end
 
-if  strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
+if strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
 %     if nargout == 2
 %         [field indVarName] = convertToAnon(guifile,input);
 %     else % Three output arguments -- Multiple rows
-        [field indVarName varNames pdeVarNames] = convertToAnon(guifile,input);
+        [field indVarName varNames pdeVarNames commaSeparated] = convertToAnon(guifile,input);
 %     end
 end
 

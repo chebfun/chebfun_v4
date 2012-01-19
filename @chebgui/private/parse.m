@@ -1,43 +1,94 @@
-function stackout = parse(guifiles,lexOutArg)
-% PARSE - This function parses the output from the lexer.
+function parseOut = parse(guifile,LEXin)
+% PARSE - LL(1) parser for mathematical expressions, building up a syntax
+% tree of the expression so that it can be converted to a format Chebfun is
+% able to work with.
 %
-% As it is now, it only checks the validity of the syntax. My plan is to
-% modify the code so it returns a syntax tree.
+% This function parses the output from the lexer.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Initialize all global variables
-global NEXT; global NEXTCOUNTER; global LEXOUT; global pStack;
-pStack = [];
-NEXTCOUNTER = 1;
-LEXOUT = lexOutArg;
-NEXT = char(LEXOUT(NEXTCOUNTER,2));
-success = parseSst;
+global NEXT; global COUNTER; global LEX; global STACK;
+COUNTER = 1;
+LEX = LEXin;
+NEXT = char(LEX(1,2));
+STACK = [];
+% OUT = [];
+% Enter the main routine
+parseSst();
 
-% Return the one tree that is left on the stack
-stackout = pStack;
+% Return the stored stack
+parseOut = STACK;
 
 % Clear all global variables
-NEXT = []; NEXTCOUNTER = []; LEXOUT = []; pStack = [];
+NEXT = []; COUNTER = []; LEX = []; STACK = [];
 end
 
-function success = parseSst
-global NEXT;
+function parseSst
+global NEXT; global STACK; global LEX; global COUNTER;
 % Our expression can only start with certain labels, make sure we are
 % starting with one of them.
-if ~isempty(strmatch(NEXT,char('NUM','VAR','INDVAR','PDEVAR','LAMBDA',...
-        'FUNC1','FUNC2','UN-','UN+','LPAR')))
-    parseExp0();
+validTypes = {'NUM','VAR','INDVAR','PDEVAR','LAMBDA',...
+            'FUNC1','FUNC2','FUNC3','UN-','UN+','LPAR'};
+if any(strcmp(NEXT,validTypes))
+    
+    % Enter the recursion and check for successful termination.
+    parseExpA();
+    
+    % We've put a $ at the end of the lexer output. Hence, we have only
+    % successfully parsed our string if the only remaining token left is a
+    % $ sign.
     success = match('$');
     
     if ~success
         reportError('Parse:end','Input expression ended in unexpected manner');
     end
 else
-    success = 0;
     reportError('Parse:start','Input field started with unaccepted symbol.');
 end
+end
+
+% The following is the allowed grammar of mathematical expressions in the
+% chebgui (¬ denotes an empty symbol):
+%
+%   ExpA    -> ExpA   COMMA  Exp0
+%   ExpA    -> Exp0
+%   Exp0    -> Exp0   OP=    Exp05
+%   Exp0    -> Exp05
+%   Exp05   -> Exp05  OPREL  Exp1       where OPREL can be OP>, OP>=, OP<, OP<=
+%   Exp05   -> Exp1
+%   Exp1    -> Exp1   OP+    Exp2
+%   Exp1    -> Exp1   OP-    Exp2
+%   Exp1    -> Exp2
+%   Exp2    -> Exp2   OP*    Exp3
+%   Exp2    -> Exp2   OP/    Exp3
+%   Exp2    -> Exp3
+%   Exp3    -> Exp3   OP^    Exp4
+%   Exp3    -> Exp4
+%   Exp4    ->        UN+    Exp4
+%   Exp4    ->        UN-    Exp4
+%   Exp4    -> Exp5
+%   Exp5    -> NUM
+%   Exp5    -> INDVAR
+%   Exp5    -> PDEVAR
+%   Exp5    -> LAMBDA
+%   Exp5    -> VAR
+%   Exp5    -> VAR ExpDer
+%   Exp5    -> VAR LPAR ExpList RPAR
+%   Exp5    -> VAR ExpDer LPAR ExpList RPAR
+%   Exp5    -> FUNC1 LPAR Exp1 RPAR
+%   Exp5    -> FUNC2 LPAR Exp1 COMMA Exp1 RPAR]
+%   Exp5    -> FUNC3 LPAR Exp1 COMMA Exp1 COMMA Exp1 RPAR
+%   Exp5    -> LPAR Exp1 RPAR
+%   ExpDer  -> DER
+%   ExpDer  -> ¬
+%   ExpList -> Exp1
+%   ExpList -> Exp1 COMMA STR
+
+function parseExpA()
+parseExp0();
+parseExpApr();
 end
 
 function parseExp0()
@@ -67,26 +118,44 @@ end
 
 function parseExp4()
 parseExp5();
-parseExp4pr();
+% parseExp4pr();
 end
 
 
 function parseExp5()
-global NEXT; global NEXTCOUNTER; global LEXOUT;
+global NEXT; global COUNTER; global LEX;
 % We begin by checking whether we have hit a terminal case. In that case,
 % we push that into the stack. We need to treat variables with _ in the
 % names separately, as we only allow certain operators around the time
 % derivative.
-if strcmp(NEXT,'NUM') || strcmp(NEXT,'VAR') || strcmp(NEXT,'INDVAR') || strcmp(NEXT,'LAMBDA')
-    newLeaf = struct('center',{{char(LEXOUT(NEXTCOUNTER)), char(NEXT)}},'pdeflag',0);
+if strcmp(NEXT,'VAR')
+    % Create a new tree for later use, corresponding to the dependent
+    % variable
+    tempLeaf = struct('center',{{char(LEX(COUNTER)), char(NEXT)}},'pdeflag',0);
+    
+    % Push the variable onto the stack so that we can take the correct
+    % actions if we have derivatives or expressions on the form u(...)
+    % involved. If not, we'll simply pop it later.
+    push(tempLeaf);
+    % Begin by advancing as usual
+    advance();
+    
+    % If there follows a derivative symbol, ', we parse that
+    parseExpDer();
+    
+    % If we then have a u(3) or u(3,left) situation (or u'(3) etc.), we
+    % parse that as required
+    parseExpList();
+elseif any(strcmp(NEXT,{'NUM','INDVAR','LAMBDA','STR'}))
+    newLeaf = struct('center',{{char(LEX(COUNTER)), char(NEXT)}},'pdeflag',0);
     push(newLeaf);
     advance();
 elseif strcmp(NEXT,'PDEVAR')
-    newLeaf = struct('center',{{char(LEXOUT(NEXTCOUNTER)), char(NEXT)}},'pdeflag',1);
+    newLeaf = struct('center',{{char(LEX(COUNTER)), char(NEXT)}},'pdeflag',1);
     push(newLeaf);
     advance();
 elseif strcmp(NEXT,'FUNC1') % Functions which take one argument
-    functionName = char(LEXOUT(NEXTCOUNTER));
+    functionName = char(LEX(COUNTER));
     advance();
     parseFunction1();
     rightArg =  pop();
@@ -97,27 +166,48 @@ elseif strcmp(NEXT,'FUNC1') % Functions which take one argument
         'right',rightArg,'pdeflag',0); % Can assume no pde if we reach here
     push(newTree);
 elseif strcmp(NEXT,'FUNC2') % Functions which take two arguments
-    functionName = char(LEXOUT(NEXTCOUNTER));
+    functionName = char(LEX(COUNTER));
     advance();
     parseFunction2();
     secondArg =  pop();
-    % Diff can either take one or two argument. Need a fix if user just
-    % passed one argument to diff (e.g. diff(u) instead of diff(u,1)). If
-    % that's the case, the stack will be empty at this point, so we create
-    % a pseudo argument for diff. Similar for Airy.
-    if (strcmp(functionName,'diff') || strcmp(functionName,'cumsum')) && ~stackRows
-        firstArg = secondArg;
-        secondArg = struct('center',{{'1','NUM'}},'pdeflag',0);
-    elseif strcmp(functionName,'airy') && ~stackRows
-        firstArg = struct('center',{{'0','NUM'}},'pdeflag',0);
-    else
-        firstArg =  pop();
-    end
-    if firstArg.pdeflag || secondArg.pdeflag
+    if secondArg.pdeflag
         error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
     end    
-    newTree = struct('left',firstArg,'center', {{functionName, 'FUNC2'}},...
-        'right', secondArg,'pdeflag',0); % Can assume no pde if we reach here
+
+    % Diff can either take one or two argument. Need a fix if user just
+    % passed one argument to diff (e.g. diff(u) instead of diff(u,1)). If
+    % that's the case, the stack will be empty at this point, so we convert
+    % to a FUNC1. Similar for Airy.
+    if any(strcmp(functionName,{'diff','cumsum','airy'})) && ~stackRows
+        % Convert to a FUNC1
+        newTree = struct('center', {{functionName, 'FUNC1'}},...
+            'right', secondArg,'pdeflag',0); % Can assume no pde if we reach here
+        push(newTree);
+    else
+        firstArg =  pop();
+        if firstArg.pdeflag
+            error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
+        end    
+        newTree = struct('left',firstArg,'center', {{functionName, 'FUNC2'}},...
+            'right', secondArg,'pdeflag',0); % Can assume no pde if we reach here
+        push(newTree);
+    end   
+    
+elseif strcmp(NEXT,'FUNC3') % Functions which take two arguments
+    functionName = char(LEX(COUNTER));
+    advance();
+    parseFunction2();
+    thirdArg =  pop();
+    secondArg = pop();
+    if any(strcmp(functionName,{'feval','fred','volt'})) && ~stackRows
+        newTree = struct('left',secondArg,'center', {{functionName, 'FUNC2'}},...
+        'right',thirdArg,'pdeflag',0);  
+    else
+        firstArg = pop();
+        newTree = struct('left',firstArg,'center', {{functionName, 'FUNC3'}},...
+        'right',secondArg,'arg',thirdArg,'pdeflag',0);
+    end  
+     % Can assume no pde if we reach here
     push(newTree);
 elseif strcmp(NEXT,'LPAR')
     advance();
@@ -131,7 +221,7 @@ elseif strcmp(NEXT,'LPAR')
 elseif  strcmp(NEXT,'UN-') || strcmp(NEXT,'UN+') || strcmp(NEXT,'OP-') || strcmp(NEXT,'OP+') 
     % If + or - reaches this far, we have an unary operator.
     % ['UN', char(NEXT(3))] determines whether we have UN+ or UN-.
-    newCenterNode = {{char(LEXOUT(NEXTCOUNTER)), ['UN', char(NEXT(3))]}};
+    newCenterNode = {{char(LEX(COUNTER)), ['UN', char(NEXT(3))]}};
     advance();
     parseExp4();
     
@@ -143,7 +233,7 @@ elseif  strcmp(NEXT,'UN-') || strcmp(NEXT,'UN+') || strcmp(NEXT,'OP-') || strcmp
         'pdeflag',pdeflag);
     push(newTree);
 else
-    reportError('Parse:terminal','Unrecognized character in input field')
+    reportError('Parse:terminal',['Unrecognized character in input field:', NEXT]);
 end
 end
 
@@ -178,7 +268,7 @@ end
 end
 
 function parseExp1pr()
-global NEXT; global  pStack;
+global NEXT;
 if strcmp(NEXT,'OP+')
 
     advance();
@@ -203,10 +293,6 @@ elseif(strcmp(NEXT,'OP-'))
         'right',rightArg,'pdeflag',pdeflag);
     push(newTree);
     parseExp1pr();
-elseif strcmp(NEXT,'COMMA')
-    advance();
-    parseExp1();
-	% Do nothing
 elseif strcmp(NEXT,'RPAR') || strcmp(NEXT,'$') || strcmp(NEXT,'OP=')
 	% Do nothing
 else % If we don't have ) or the end symbol now something has gone wrong.
@@ -216,7 +302,7 @@ end
 
 
 function parseExp2pr()
-global NEXT; global pStack;
+global NEXT;
 if strcmp(NEXT,'OP*')
     leftArg  = pop();   % Pop from the stack the left argument
     advance();          % Advance in the input
@@ -278,7 +364,9 @@ else
 end
 end
 
-function parseExp4pr()
+function parseExpDer()
+% parseExpDer deals with ' denoting derivatives on the dependent variables
+% in the problem.
 global NEXT;
 if ~isempty(strfind(NEXT,'DER'))
     leftArg  = pop();
@@ -289,33 +377,113 @@ if ~isempty(strfind(NEXT,'DER'))
     newTree = struct('center',{{'D',NEXT}},'right',leftArg,'pdeflag',0);
     push(newTree);
     advance();
-    parseExp3pr();
 else
     % Do nothing
 end
 end
 
+function parseExpList()
+% parseExpList deals with potential arguments to the dependent variables in
+% the problem, e.g. u(3,left).
+global NEXT; global COUNTER; global LEX;
+if match('LPAR') % We are in a u(3) or u(3,left) situation
+    % The first argument expression can only be of type EXP05 or higher
+    % (no = or comma-dividers are allowed)
+    parseExp1();
+    % Check whether we are in in u(3) or u(3,left) situation. If we
+    % have a match with ), we must have a feval with two arguments. If
+    % we have a match with a comma, we must have a feval with three
+    % arguments, but if there is no match, we have parenthesis
+    % imbalance.
+    if match('RPAR')
+        % Here we only had one argument in u(...), so we create a feval of type
+        % FUNC2 (since the feval method has two input arguments)
+        secondArg = pop();
+        firstArg = pop();
+        
+        newTree = struct('left',firstArg,'center', {{'feval', 'FUNC2'}},...
+            'right', secondArg,'pdeflag',0); % Can assume no pde if we reach here
+        push(newTree);
+    elseif match('COMMA')
+        % Here we only had two arguments in u(...), so we create a
+        % feval of type FUNC3 (since the feval method has three input
+        % arguments)
+        
+        % Check whether we have any of the allowed option type as the
+        % second argument. If not, throw an error.
+        if strcmp(NEXT,'STR')
+            % We got a match! But we also need to check for parenthesis
+            % balance. Store the option as a temporary leaf
+            optLeaf = struct('center',{{char(LEX(COUNTER)), char(NEXT)}},'pdeflag',0);
+            % Advance and check for parenth. balance
+            advance();
+            if match('RPAR')
+                % Create a feval of type FUNC3 (since the feval method
+                % has three input arguments)
+                secondArg = pop();
+                firstArg = pop();
+                thirdArg = optLeaf;
+                
+                newTree = struct('left',firstArg,'center', {{'feval', 'FUNC3'}},...
+                    'right', secondArg,'arg',thirdArg,'pdeflag',0); % Can assume no pde if we reach here
+                push(newTree);
+            else
+                reportError('Parse:parenths', 'Parenthesis imbalance in input fields.')
+            end
+        else
+            reportError('Parse:secondArg', 'Invalid second argument to u(0,...) type of expression.')
+        end
+    else % There must be a parenth. imbalance
+        reportError('Parse:parenths', 'Parenthesis imbalance in input fields.')
+    end
+else % We reach here for the default behaviour, e.g. u' = 1, no parentheses involved
+    % Do nothing, since we've already pushed the variable onto the
+    % stack.
+end
+end
+
 function parseExp0pr()
-global NEXT; global  pStack;
+global NEXT;
+
 if strcmp(NEXT,'OP=')
+    
     leftArg  = pop();
     advance();
     parseExp05();
+
+    rightArg = pop();
+    pdeflag = leftArg.pdeflag || rightArg.pdeflag;    
+    newTree = struct('left',leftArg,'center',{{'=', 'OP='}},...
+        'right',rightArg,'pdeflag',pdeflag);
+    push(newTree);   
+else
+	% Do nothing
+end
+end
+
+function parseExpApr()
+global NEXT;
+if strcmp(NEXT,'COMMA')
+    tempOpType = NEXT;
+    tempOpLabel = tempOpType(3:end);
+    
+    advance();
+    leftArg  = pop();
+    parseExp0();
     rightArg = pop();
     
     pdeflag = leftArg.pdeflag || rightArg.pdeflag;
     
-    newTree = struct('left',leftArg,'center',{{'=', 'OP='}},...
+    newTree = struct('left',leftArg,'center',{{',', 'COMMA'}},...
         'right',rightArg,'pdeflag',pdeflag);
     push(newTree);
-%     parseExp4pr();
 else
 	% Do nothing
 end
 end
 
 function parseExp05pr()
-global NEXT; global  pStack;
+global NEXT;
 if any(strcmp(NEXT,{'OP>','OP>=','OP<','OP<='}))
     tempOpType = NEXT;
     tempOpLabel = tempOpType(3:end);
@@ -325,22 +493,20 @@ if any(strcmp(NEXT,{'OP>','OP>=','OP<','OP<='}))
     parseExp1();
     rightArg = pop();
     
-        
     pdeflag = leftArg.pdeflag || rightArg.pdeflag;
     
     newTree = struct('left',leftArg,'center',{{tempOpLabel, tempOpType}},...
         'right',rightArg,'pdeflag',pdeflag);
     push(newTree);
-%     parseExp4pr();
 else
 	% Do nothing
 end
 end
 
 function advance()
-global NEXT; global NEXTCOUNTER; global LEXOUT;
-NEXTCOUNTER = NEXTCOUNTER +1;
-NEXT = char(LEXOUT(NEXTCOUNTER,2));
+global NEXT; global COUNTER; global LEX;
+COUNTER = COUNTER +1;
+NEXT = char(LEX(COUNTER,2));
 end
 
 
@@ -357,28 +523,52 @@ end
 
 
 function push(new)
-global pStack;
+global STACK;
 if ~stackRows()
-    pStack = new;
+    STACK = new;
 else
-    pStack = [pStack ;new];
+    % Ensure number of fields matches
+    [STACK new] = mergeFields(STACK,new);
+    % Update the Stack
+    STACK = [STACK ; new];
+
 end
 end
 
 
 function p = pop()
-global pStack;
-p = pStack(end,:);
-pStack(end,:) = [];
+global STACK;
+% Throw a sensible error if we have an empty stack
+if isempty(STACK)
+    reportError('Parse:end','Syntax error in input expression (Empty stack)');
+end
+p = STACK(end,:);
+STACK(end,:) = [];
 end
 
 function m = stackRows()
-global pStack;
-[m n] = size(pStack);
+global STACK;
+[m n] = size(STACK);
 end
 
 function reportError(id,msg)
 error(['CHEBFUN:', id],msg);
 % ME = MException(id,msg);
 % throw(ME);
+end
+
+
+function [a b] = mergeFields(a,b)
+aFields = fieldnames(a); 
+bFields = fieldnames(b);
+for k = 1:numel(aFields)
+    if ~isfield(b,aFields{k})
+        b.(aFields{k}) = [];
+    end
+end
+for k = 1:numel(bFields)
+    if ~isfield(a,bFields{k})
+        a.(bFields{k}) = [];
+    end
+end
 end

@@ -2,7 +2,7 @@
 'bvp'
 a = '0'; b = '1';
 DE = '0.02*u'''' + sign(x-.5)*u'' + u = 0';
-LBC = 'u = 0.5'; RBC = 'u = 1';
+BC = {'u(0) = 0.5'; 'u(1) = 1'};
 init = ''; tol = '1e-10';
 damping = '0'; plotting = '0.1';
 type = 'bvp';

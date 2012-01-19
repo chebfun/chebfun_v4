@@ -21,52 +21,29 @@ b = str2num(guifile.DomRight);
 
 % Extract information from the GUI fields
 deInput = guifile.DE;
-lbcInput = guifile.LBC;
-rbcInput = guifile.RBC;
+bcInput = guifile.BC;
 initInput = guifile.init;
+
+% if isempty(bcInput)
+%     error('Chebgui:bvpgui','No boundary conditions specified');
+% end
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
-if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
-if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
+if isa(bcInput,'char'), bcInput = cellstr(bcInput); end
 if isa(initInput,'char'), initInput = cellstr(initInput); end
-
-deRHSInput = cellstr(repmat('0',numel(deInput),1));
-lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
-rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
-initRHSInput = cellstr(repmat('0',numel(initInput),1));
-
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString allVarString indVarNameDE ignored ignored allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarNameDE ignored ignored allVarNames] = setupFields(guifile,deInput,'DE');
 handles.varnames = allVarNames;
 
-if ~isempty(lbcInput{1})
-    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
-    LBC = eval(lbcString);
+if ~isempty(bcInput{1})
+    bcString = setupFields(guifile,bcInput,'BCnew',allVarString);
+%     BC = eval(bcString);
 else
-    LBC = [];
-end
-if ~isempty(rbcInput{1})
-    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
-    RBC = eval(rbcString);
-else
-    RBC = [];
-end
-
-if isempty(lbcInput) && isempty(rbcInput)
-    error('Chebgui:bvpgui','No boundary conditions specified');
-end
-
-
-DErhsNum = str2num(char(deRHSInput));
-if isempty(DErhsNum)
-    % RHS is a string representing a function -- convert to chebfun
-    DE_RHS = chebfun(deRHSInput,d);
-else
-    % RHS is a number - Don't need to construct chebfun
-    DE_RHS = DErhsNum;
+    bcString = '';
+    BC = [];
 end
 
 % Set up the initial guesses
@@ -82,11 +59,10 @@ end
 
 % Obtain the independent variable name appearing in the initial condition
 if ~isempty(initInput{1}) && isempty(guess)
-    [initString ignored indVarNameInit] = setupFields(guifile,initInput,initRHSInput,'BC',allVarString);
+    [initString ignored indVarNameInit] = setupFields(guifile,initInput,'BC',allVarString);
 else
     indVarNameInit = {''};
 end
-
 
 % Assign r, x or t as the linear function on the domain if indVarName is
 % not empty
@@ -111,7 +87,13 @@ eval([indVarNameSpace, '=xt;']);
 % Replace the 'DUMMYSPACE' variable in the DE field
 deString = strrep(deString,'DUMMYSPACE',indVarNameSpace);
 % Convert the string to proper anon. function using eval
-DE  = eval(deString);
+DE = eval(deString);
+
+% Do the same in the .BC field if it isn't empty
+if ~isempty(bcString)
+    bcString = strrep(bcString,'DUMMYSPACE',indVarNameSpace);
+    BC = eval(bcString);
+end
 
 if ~isempty(initInput{1}) && isempty(guess)
     if iscellstr(initInput)
@@ -147,18 +129,10 @@ end
 
 % Create the chebop
 if ~isempty(guess)
-    N = chebop(d,DE,LBC,RBC,guess);   
+    N = chebop(d,DE,BC,guess);   
 else
-    N = chebop(d,DE,LBC,RBC);
+    N = chebop(d,DE,BC);
 end
-% if guiMode && useLatest
-% 
-% elseif ~isempty(handles.init)
-%     guess = handles.init;
-%     N = chebop(d,DE,LBC,RBC,guess);
-% elseif ~isempty(initInput)
-% 
-% end
 
 tolInput = guifile.tol;
 if isempty(tolInput)
@@ -211,7 +185,7 @@ if guiMode
     set(handles.iter_text,'Visible','On');
     set(handles.iter_list,'Visible','On');
     
-    xLimit = [str2num(guifile.DomLeft) str2num(guifile.DomRight)];
+    xLimit = [a b];
     handles.xLim = xLimit;
     set(handles.fig_sol,'Visible','On');
     set(handles.fig_norm,'Visible','On');
@@ -220,7 +194,7 @@ end
 % Call solvebvp with different arguments depending on whether we're in GUI
 % or not. If we're not in GUI mode, we can finish here.
 if guiMode
-    [u vec isLinear] = solvebvp(N,DE_RHS,'options',options,'guihandles',handles);
+    [u vec isLinear] = solvebvp(N,0,'options',options,'guihandles',handles);
 else
     [u vec] = solvebvp(N,DE_RHS,'options',options);
     varargout{1} = u;
@@ -235,7 +209,6 @@ if guiMode
     handles.latest.solution = u;
     handles.latest.norms = vec;
     handles.latest.chebop = N;
-    handles.latest.RHS = DE_RHS;
     handles.latest.options = options;
     handles.latest.type = 'bvp';
     % Notify the GUI we have a solution available

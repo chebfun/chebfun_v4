@@ -2,8 +2,7 @@
 'system'
 a= '-2'; b = '2';
 DE = {'u" + u*x+v = lambda*u';'v"+sin(x)*u = lambda*v'};
-LBC = {'u = 0';'v = 0'};
-RBC = {'u = 0';'v = 0'};
+BC = {'u(-2) = 0';'v(-2) = 0' ; 'u(2) = 0';'v(2) = 0'};
 tol = '1e-10';
 sigmatemp = '';
 type = 'eig';

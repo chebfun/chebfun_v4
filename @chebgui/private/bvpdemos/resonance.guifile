@@ -2,7 +2,7 @@
 'ivp'
 a = '0'; b = '20';
 DE = 'u" + 25*u = 10*cos(5*t)';
-LBC = {'u = 1';'u'' = 0'}; RBC = '';
+BC = {'u(0) = 1';'u''(0) = 0'};
 init = ''; tol = '1e-10';
 damping = '1'; plotting = '0.03';
 type = 'bvp';

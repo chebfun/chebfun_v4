@@ -2,7 +2,7 @@
 'scalar'
 a= '-5'; b = '5';
 DE = '-.1*u'''' + 4*(sign(x+1)-sign(x-.9))*u = lambda*u';
-LBC = 'u = 0'; RBC = 'u = 0';
+BC = {'u(-5) = 0'; 'u(5) = 0'};
 tol = '1e-12';
 sigmatemp = '';
 type = 'eig';

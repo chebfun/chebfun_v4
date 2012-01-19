@@ -89,7 +89,8 @@ if counter == 10
         'initial guess using N.init.']);
 end
 
-if fitBC
+% Try to fit BC. Do so only if there is only one unknown function
+if fitBC && NopArgin < 2
     % Once we have found the correct dimensions of the initial guess, try to
     % find a linear function that fulfills (potentially) the Dirichlet BC
     % imposed.

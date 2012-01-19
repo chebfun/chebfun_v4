@@ -44,6 +44,14 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     
     pdeplotopts(handles,0)
     
+    % Switch from LBC and RBC fields to BC
+    set(handles.input_LBC,'Visible','Off')
+    set(handles.text_LBCs,'Visible','Off')
+    set(handles.input_RBC,'Visible','Off')
+    set(handles.text_RBCs,'Visible','Off')
+    set(handles.input_BC,'Visible','On')
+    set(handles.text_BCs,'Visible','On')
+    
     % Change the list of available options.
     % Enable ODE menu options
     set(handles.menu_odedampednewton,'Enable','On')
@@ -89,6 +97,14 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.button_envelope,'Visible','off')
     
     set(handles.panel_eigopts,'Visible','Off')
+    
+    % Switch from BC to LBC and RBC fields
+    set(handles.input_LBC,'Visible','On')
+    set(handles.text_LBCs,'Visible','On')
+    set(handles.input_RBC,'Visible','On')
+    set(handles.text_RBCs,'Visible','On')
+    set(handles.input_BC,'Visible','Off')
+    set(handles.text_BCs,'Visible','Off')
     
     % Change the list of available options
     % Disable ODE menu options
@@ -158,6 +174,14 @@ else % Going into EIG mode
     set(handles.iter_text,'String','')
     
     pdeplotopts(handles,0)
+    
+        % Switch from LBC and RBC fields to BC
+    set(handles.input_LBC,'Visible','Off')
+    set(handles.text_LBCs,'Visible','Off')
+    set(handles.input_RBC,'Visible','Off')
+    set(handles.text_RBCs,'Visible','Off')
+    set(handles.input_BC,'Visible','On')
+    set(handles.text_BCs,'Visible','On')
     
     % Change the list of available options.
     % Disable ODE options

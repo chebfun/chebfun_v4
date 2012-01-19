@@ -40,7 +40,18 @@ if isempty(x)
     return
 end
 
-
+if ischar(x)
+    dom = domain(F);
+    if any(strcmpi(x,{'left','start'}))
+        x = dom(1);
+    elseif any(strcmpi(x,{'right','end'}))
+        x = dom(end);
+    else
+        msg = sprintf('Unknown input argument "%s".',x);
+        error('CHEBFUN:feval:strinput',msg);
+    end
+end
+    
 % Deal with feval(f,x,'left') and feval(f,x,'right')
 if nargin > 2
     lr = varargin{1};

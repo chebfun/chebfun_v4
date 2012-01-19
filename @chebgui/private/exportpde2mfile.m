@@ -39,7 +39,7 @@ rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 initRHSInput = cellstr(repmat('0',numel(initInput),1));
 
 % [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
-[deString allVarString indVarNameDE pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+[deString allVarString indVarNameDE pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,'DE');
 if ~any(pdeflag)
     error('Chebgui:chebpde:notapde',['Input does not appear to be a PDE, ', ...
         'or at least is not a supported type.']);
@@ -47,7 +47,7 @@ end
 
 % Obtain the independent variable name appearing in the initial condition
 if ~isempty(initInput{1})
-    [initString ignored indVarNameInit] = setupFields(guifile,initInput,initRHSInput,'BC',allVarString);
+    [initString ignored indVarNameInit] = setupFields(guifile,initInput,'BC',allVarString);
 else
     indVarNameInit = {''};
 end
@@ -167,7 +167,7 @@ fprintf(fid,'pdefun = %s;\n',deString);
 % Make assignments for left and right BCs.
 fprintf(fid,'\n%% Assign boundary conditions.\n');
 if ~isempty(lbcInput{1})
-    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
+    lbcString = setupFields(guifile,lbcInput,'BC',allVarString);
     idx = strfind(lbcString, ')');
     if ~isempty(idx)
         % Support for sum and cumsum
@@ -185,7 +185,7 @@ if ~isempty(lbcInput{1})
 end
 
 if ~isempty(rbcInput{1})
-    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
+    rbcString = setupFields(guifile,rbcInput,'BC',allVarString);
     idx = strfind(rbcString, ')');
     if ~isempty(idx)
         % Support for sum and cumsum

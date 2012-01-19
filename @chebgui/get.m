@@ -23,6 +23,8 @@ switch lower(propName)
         val = cg.RBC;
     case 'rbcrhs'
         val = cg.RBCrhs;
+    case 'bc'
+        val = cg.BC;        
     case 'tol'
         val = cg.tol;
     case 'init'

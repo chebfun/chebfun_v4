@@ -12,6 +12,7 @@ t = '';
 DE = '';
 LBC = '';
 RBC = '';
+BC = '';
 init = '';
 tol = '';
 damping = '';
@@ -42,5 +43,5 @@ options = struct('damping',damping,'plotting',plotting,'numeigs',numeigs, ...
 
 % Build the chebguifile
 cg = chebgui('type',type,'domleft',a,'domright',b,'timedomain',t,'de',DE,...
-    'lbc',LBC,'rbc',RBC,'init',init,'tol',tol,...
+    'lbc',LBC,'rbc',RBC,'bc',BC,'init',init,'tol',tol,...
     'options',options);

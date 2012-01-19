@@ -26,7 +26,7 @@ opVec = (str=='-')+(str=='+')+2*((str=='*')+(str=='/'))+3*(str=='^');
 % operator locations
 opLoc = find(opVec);
 % Location of characters and numbers
-charLoc = regexp(str,'[A-Za-z0-9]');
+charLoc = regexp(str,'[A-Za-z0-9@]');
 ltgtLoc = regexp(str,'[\<\>]');
 
 % Error if the number of ( and ) are not equal

@@ -21,8 +21,8 @@ b = str2num(guifile.DomRight);
 
 % Extract information from the GUI fields
 deInput = guifile.DE;
-lbcInput = guifile.LBC;
-rbcInput = guifile.RBC;
+bcInput = guifile.BC;
+
 sigma = [];
 if ~isempty(guifile.sigma)
     sigma = guifile.sigma;
@@ -36,22 +36,20 @@ end
 
 % Wrap all input strings in a cell (if they're not a cell already)
 if isa(deInput,'char'), deInput = cellstr(deInput); end
-if isa(lbcInput,'char'), lbcInput = cellstr(lbcInput); end
-if isa(rbcInput,'char'), rbcInput = cellstr(rbcInput); end
+if isa(bcInput,'char'), bcInput = cellstr(bcInput); end
 
-deRHSInput = cellstr(repmat('0',numel(deInput),1));
-lbcRHSInput = cellstr(repmat('0',numel(lbcInput),1));
-rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
-
-
-[allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,deRHSInput,'DE');
+[allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,'DE');
+handles.varnames = allVarNames;
 
 % If indVarName is empty, use the default value
 if isempty(indVarName{1})
-    indVarName{1} = {'x'};
+    indVarName{1} = 'x';
 end
 % Replace 'DUMMYSPACE' by the correct independent variable name
 allStrings = strrep(allStrings,'DUMMYSPACE',indVarName{1});
+% Pretty print feval statements
+allStrings = prettyprintfevalstring(allStrings,allVarNames);
+
 % If allStrings return a cell, we have both a LHS and a RHS string. Else,
 % we only have a LHS string, so we need to create the LHS linop manually.
 if iscell(allStrings)
@@ -61,35 +59,19 @@ else
     lhsString = allStrings;
     rhsString = '';
 end
-
 % Convert the strings to proper anon. function using eval
 LHS  = eval(lhsString);
 
-if ~isempty(lbcInput{1})
-    lbcString = setupFields(guifile,lbcInput,lbcRHSInput,'BC',allVarString);
-    LBC = eval(lbcString);
-else
-    LBC = [];
-end
-if ~isempty(rbcInput{1})
-    rbcString = setupFields(guifile,rbcInput,rbcRHSInput,'BC',allVarString);
-    RBC = eval(rbcString);
-else
-    RBC = [];
-end
-
-if isempty(lbcInput) && isempty(rbcInput)
-    error('Chebgui:bvpgui','No boundary conditions specified');
-end
-
-
-DErhsNum = str2num(char(deRHSInput));
-if isempty(DErhsNum)
-    % RHS is a string representing a function -- convert to chebfun
-    DE_RHS = chebfun(deRHSInput,d);
-else
-    % RHS is a number - Don't need to construct chebfun
-    DE_RHS = DErhsNum;
+% Support for periodic boundary conditions
+BC = [];
+if ~isempty(bcInput{1})
+    if strcmpi(bcInput{1},'periodic')
+        bcInput{1} = []; BC = 'periodic';
+    else
+        bcString = setupFields(guifile,bcInput,'BCnew',allVarString );
+        bcString = strrep(bcString,'DUMMYSPACE',indVarName{1});
+        BC = eval(bcString);
+    end
 end
 
 % Variable which determines whether it's a generalized problem. If
@@ -99,7 +81,7 @@ generalized = 1;
 % Create the chebops, and try to linearise them.
 % We will always have a string for the LHS, if the one for RHS is empty, we
 % know we have a non-generalised problem.
-N_LHS = chebop(d,LHS,LBC,RBC);
+N_LHS = chebop(d,LHS,BC);
 try
     A = linop(N_LHS);
 catch
@@ -148,7 +130,7 @@ tolInput = guifile.tol;
 if isempty(tolInput)
     tolNum = defaultTol;
 else
-    tolNum = str2num(tolInput);
+    tolNum = str2double(tolInput);
 end
 
 if tolNum < chebfunpref('eps')
@@ -233,4 +215,24 @@ if guiMode
     varargout{1} = handles;
 end
 
+end
+
+function str = prettyprintfevalstring(str,varnames)
+for k = 1:numel(varnames)
+    oldstr = ['feval(' varnames{k} ','];
+    newstr = [varnames{k} '('];
+    str = strrep(str,oldstr,newstr);
+    oldstr = [varnames{k} '(''end'''];
+    newstr = [varnames{k} '(end'];
+    str = strrep(str,oldstr,newstr);
+    oldstr = [varnames{k} '(''right'''];
+    newstr = [varnames{k} '(end'];
+    str = strrep(str,oldstr,newstr);
+    oldstr = [varnames{k} '(''start'''];
+    newstr = [varnames{k} '(' varnames{k} '.ends(1)'];
+    str = strrep(str,oldstr,newstr);
+    oldstr = [varnames{k} '(''left'''];
+    newstr = [varnames{k} '(' varnames{k} '.ends(1)'];
+    str = strrep(str,oldstr,newstr);
+end
 end

@@ -2,7 +2,7 @@
 'scalar'
 a= '-pi'; b = 'pi';
 DE = '-u'' = lambda*u';
-LBC = 'periodic'; RBC = 'periodic';
+BC = 'periodic';
 tol = '1e-10';
 sigmatemp = '';
 type = 'eig';
