@@ -22,25 +22,12 @@ function varargout = svds(A,k,sigma,tol)
 %
 % SVDS(A,K,SIGMA) tries to compute K singular values closest to a scalar
 % shift SIGMA. (Note, for compact operators there are infinitely many
-% singular values close to or at zero!). This calling sequence can be used
-% to compute singular values of unbounded operators.
-%
-% Example:
-% L = chebop(@(u) diff(u),[0 pi]);
-% [U S V] = svds(L,6,0)
-%
-% There is also some support for including (homgeneous)  boundary
-% conditions on the unbounded operators.
-%
-% Example:
-% L = chebop(@(u) diff(u),[0 pi]);
-% L.lbc = 0;
-% [U S V] = svds(L,6,0)
+% singular values close to or at zero!).
 %
 % See also linop/eigs, linop/null.
 %
 % Please note that SVDS is considered experimental. As such, it does not
-% yet supoprt systems of equations, or those containing piecewise operators
+% yet support systems of equations, or those containing piecewise operators
 % or breakpoints.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers.
@@ -51,6 +38,8 @@ nbc = A.numbc;
 if nargin < 2, k = 6; end;
 if nbc == 0 && (nargin < 3 || isempty(sigma) || strcmp(sigma,'L')), sigma = inf; end;
 if nbc > 0 && (nargin < 3 || isempty(sigma) || strcmp(sigma,'S')), sigma = 0; end;
+svds_nargout = nargout; % to be available in nested function
+
 
 % Setup
 if nargin < 4, tol = 1e-10; end
@@ -73,7 +62,7 @@ Nout = [];
 %         'SVDS does not yet support systems of equations.');
 % end
 if m ~= A.blocksize(1)
-    error('LINOP:eigs:notsquare','Block size must be square.')
+    error('LINOP:svds:notsquare','Block size must be square.')
 end
 
 % if numints > 1
@@ -101,10 +90,7 @@ else
 end
 % Now U,S,V are already defined at the highest value of N used.
 
-if bcs
-    % swap U and V, as we have computed singvecs of "inv(A)"
-    tmp = U; U = V; V = tmp; clear('tmp');
-end
+
 
 if numel(breaks) == 2
     if syssize == 1
@@ -140,7 +126,7 @@ else
     end % initialise
     settings.maxdegree = maxdegree;  settings.maxlength = maxdegree;
     
-    for kk = 1:k % Loop over each eigenvector
+    for kk = 1:k % Loop over each pair of singvecs
         nrm2v = 0; nrm2u = 0;
         for l = 1:m % Loop through the equations in the system
             tmpv = chebfun; 
@@ -187,9 +173,11 @@ end
     function u = value(x)
         
         if numel(x) > maxdegree/2+1,
-            warning('chebfun:linop:svds','Left singular vectors not resolved to machine precision.');
-            u = 0*x;
+            if svds_nargout < 4,
+                warning('chebfun:linop:svds','Left singular vectors not resolved to machine precision.');
+            end
             flag = 1;
+            u = 0*x;
             return;
         end
         
@@ -199,8 +187,10 @@ end
         [M,D,Minv] = getL2InnerProductMatrix(pts,dom);
         
         % Get collocation matrix
-        if nbc > 0 % Construct a rectangular matrix
-            [Amat ignored ignored ignored P] = feval(A,pts,'bc');
+        if nbc > 0 % Construct a square matrix with bc's
+            %[Amat ignored ignored ignored P] = feval(A,pts,'bc');
+            %[ignored,B,ignored,ignored,ignored,Amat] = feval(A,pts,'bc',[],bks);
+            [ignored,B,ignored,ignored,ignored,Amat] = feval(A,pts,'bc');
         else       % a square matrix with no boundary conditions
             [Amat ignored ignored ignored P] = feval(A,pts,'nobc');
         end
@@ -211,16 +201,11 @@ end
         
         if syssize == 1
             
-            if nbc > 0
-                B = [P ; zeros(nbc,size(P,2))];
-                Amat = full(spdiags(D,0,pts,pts)*M)*(Amat\B)*full(Minv*spdiags(1./D,0,pts,pts));
-                [U,Sinv,V] = svd(full(Amat));
-                S = 1./diag(Sinv);
-            else
+
                 Amat = full(spdiags(D,0,pts,pts)*M)*Amat*full(Minv*spdiags(1./D,0,pts,pts));
                 [U,S,V] = svd(full(Amat));
                 S = diag(S);
-            end
+
             
         else
             
@@ -232,17 +217,11 @@ end
             MiD = repmat({MiD1},1,syssize);
             MiD = blkdiag(MiD{:});
             
-            if nbc > 0
-                P = blkdiag(P{:});
-                B = [P ; zeros(nbc,size(P,2))];
-                Amat = DM*(Amat\B)*MiD;
-                [U,Sinv,V] = svd(full(Amat));
-                S = 1./diag(Sinv);
-            else
+
                 Amat = full(DM*Amat*MiD);
                 [U,S,V] = svd(Amat);
                 S = diag(S);
-            end
+
         end
         
         % Sort and truncate
@@ -285,7 +264,9 @@ end
         if numel(N) == 1, N = repmat(N,1,numints); end
         
         if numel(x) > maxdegree/2+1,
-            warning('chebfun:linop:svds','Left singular vectors not resolved to machine precision.');
+            if svds_nargout < 4,
+                warning('chebfun:linop:svds','Left singular vectors not resolved to machine precision.');
+            end
             u = 0*x;
             flag = 1;
             return;

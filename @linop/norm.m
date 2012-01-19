@@ -13,6 +13,10 @@ nrm = inf;
 [U,S,V,flag] = svds(A,1);
 if ~flag,
     nrm = S(1,1);
-end;
+end
+if flag && isfinite(S(1,1)) && get(A,'difforder') < 1,
+    nrm = S(1,1);
+    warning('chebfun:linop:norm','Operator is difficult to resolve, result may be inaccurate.');
+end
 
 end

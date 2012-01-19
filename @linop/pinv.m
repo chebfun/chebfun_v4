@@ -12,7 +12,12 @@ r = inf;
 n = 21;
 % compute smallest n singular values
 [U,S,V,flag] = svds(A,n,0); 
-if length(S) < n && ~flag, % that's fine: finite rank and all svals found
+if length(S) < n && ~flag,  % that's fine: finite rank and all svals found
+    P = V*inv(S)*U';
+    return
+end
+if length(S) < n && flag,   % finite rank but svals inaccurate
+    warning('chebfun:linop:pinv','Operator is difficult to resolve, result may be inaccurate.');
     P = V*inv(S)*U';
     return
 end;

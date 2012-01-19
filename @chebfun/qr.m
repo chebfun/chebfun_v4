@@ -7,8 +7,9 @@ function [Q,R] = qr(A,econ)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-% This algorithm was developed by Nick Trefethen, June 2008: see
-% Trefethen, "Householder triangularization of a quasimatrix", to appear.
+% This algorithm is described in L.N. Trefethen, "Householder 
+% triangularization of a quasimatrix", IMA J. Numer. Anal. (30),
+% 887-897 (2010).
 
 if (nargin>2) || ((nargin==2) && (econ~=0))
     error('CHEBFUN:qr:twoargs',...
