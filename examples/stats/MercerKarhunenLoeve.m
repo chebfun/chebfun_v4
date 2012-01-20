@@ -30,7 +30,7 @@ LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
 
 %%
 % For example, suppose we have an exponentially decaying kernel:
-K = @(s,t) exp(-2*abs(s-t));
+K = @(s,t) exp(-abs(s-t));
 
 %% 
 % We can create the integral operator and find the leading terms of its
@@ -53,7 +53,7 @@ Psi(0.95,:)*Lambda*Psi(0.95,:)'
 %%
 % In fact, the eigenvalues decrease only like O(1/n^2), which makes the
 % pointwise convergence in the number of terms rather slow.
-diff(log(diag(Lambda))) ./ diff(log((1:20)'))
+diff(log(diag(Lambda)))' ./ diff(log((1:20)))
 
 
 %% Karhunen-Loeve expansion
@@ -78,11 +78,15 @@ diff(log(diag(Lambda))) ./ diff(log((1:20)'))
 % the eigenvalues are arranged in nonincreasing order.
 
 %%
-% For example, suppose the process X has the exponential covariance in K
-% above. The eigenvalues suggest that 95% of the variance in the process is
-% captured by the first 10 modes:
+% Because the Z_j in the expansion are uncorrelated, the variance of X is
+% just the sum of the eigenvalues. This is the trace of K, which is the
+% integral of K(s,s); in this case, the result is 2. But we can also
+% calculuate the variance in a truncation of the expansion by summing only
+% some of the eigenvalues. For example, suppose the process X has the
+% exponential covariance in K above. The eigenvalues show that 95% of the
+% variance in the process is captured by the first 10 K-L modes:
 lambda = diag(Lambda); 
-sum(lambda(1:10)) / sum(lambda)
+sum(lambda(1:10)) / 2
 
 %%
 % We can find realizations of X by selecting the random parameters Z_j in
@@ -102,13 +106,13 @@ clf, mesh(S,T,C)
 hold on, plot3(S,T,K(S,T),'k.',MS,10)
 
 %% 
-% However, due to truncation, we do underestimate it, particularly along
-% the diagonal s=t. The shorter the correlation length relative to the
-% domain (i.e., more randomness), the worse we will do. 
-K = @(s,t) exp(-8*abs(s-t));       % decrease correlation faster...
+% If we shorten the correlation length of the process relative to the
+% domain (i.e., more randomness), the amount of variance captured by the
+% first 10 modes will decrease.
+K = @(s,t) exp(-4*abs(s-t));       % decrease correlation faster, then...
 F = fred( K, domain([-1,1]) );
 lambda = eigs(F,24,'lm');
-sum(lambda(1:10)) / sum(lambda)    % ... a smaller fraction is captured
+sum(lambda(1:10)) / 2          % ... a smaller fraction is captured
 
 %%
 % References:

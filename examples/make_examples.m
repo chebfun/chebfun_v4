@@ -298,7 +298,12 @@ if listing
             txt = txt(5:end);
         end
         desc{k} = txt;
-        origdesc{k} = origtxt(4:end);
+        origtxt = origtxt(4:end);
+        if numel(origtxt) > 50
+            idx = strfind(origtxt,':');
+            if ~isempty(idx), origtxt = origtxt(1:idx(1)-1); end
+        end
+        origdesc{k} = origtxt;
         cd ..
     end
     [desc indx] = sort(desc);
@@ -529,6 +534,10 @@ for j = 1:numel(dirs)
         else
             continue % This mfile will be ignored
 %             txt = [filename,'.m'];
+        end
+        if numel(txt) > 50
+            idx = strfind(txt,':');
+            if ~isempty(idx), txt = txt(1:idx(1)-1); end
         end
 %         fprintf(fid,['<span>',txt, '</span>     (']);
         fprintf(fid,['<span style="text-transform:uppercase;">',txt, '</span>     (']);

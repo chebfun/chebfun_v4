@@ -1,5 +1,5 @@
 %% Stochastic collocation for Burgers' equation
-% Toby Driscoll, December 14th 2011
+% Toby Driscoll, 14th December 2011
 
 %%
 % (Chebfun example stats/StochasticCollocationBurgers.m)

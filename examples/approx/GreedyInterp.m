@@ -30,12 +30,12 @@ f = abs(x);
 % Here is a loop to compute the first few polynomial interpolants and plot
 % their errors:
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
-s = []; [maxval,maxpos] = max(abs(f));
+s = []; [maxval, maxpos] = norm(f,inf);
 for n = 0:4
    s = [s; maxpos];
    p = interp1(s,f);
    err = f-p;
-   [maxval,maxpos] = max(abs(err));
+   [maxval, maxpos] = norm(err,inf);
    hold off, plot(err,LW,2), ylim(1.2*maxval*[-1 1]), grid on
    hold on, plot(maxpos,err(maxpos),'.r','markersize',24)
    title(['n = ' int2str(n)  '    error = ' num2str(maxval)],FS,16), snapnow
