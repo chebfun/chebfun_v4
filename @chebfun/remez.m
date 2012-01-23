@@ -91,16 +91,7 @@ delta = normf; deltamin = inf;
 diffx = 1;
 disp_iter = 0;
 draw_option = 0;
-% set tolerances according
-if N < 15
-    tol = 1e-15; 
-elseif N <= 100,
-    tol = 1e-13; 
-elseif N <= 1000
-    tol = 1e-13; 
-elseif N > 1000
-    tol = 2e-10;
-end
+tol = 1e-16*(N^2+10);   % tolerance
 % read optional input arguments
 for k = 1:2:length(varargin)
     if strcmpi('tol',varargin{k})
