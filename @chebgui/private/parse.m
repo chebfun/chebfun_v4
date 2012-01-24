@@ -155,44 +155,9 @@ elseif strcmp(NEXT,'PDEVAR')
     push(newLeaf);
     advance();
 elseif strcmp(NEXT,'FUNC1') % Functions which take one argument
-    functionName = char(LEX(COUNTER));
-    advance();
     parseFunction1();
-    rightArg =  pop();
-    if rightArg.pdeflag
-        error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
-    end
-    newTree = struct('center',{{functionName, 'FUNC1'}},...
-        'right',rightArg,'pdeflag',0); % Can assume no pde if we reach here
-    push(newTree);
 elseif strcmp(NEXT,'FUNC2') % Functions which take two arguments
-    functionName = char(LEX(COUNTER));
-    advance();
     parseFunction2();
-    secondArg =  pop();
-    if secondArg.pdeflag
-        error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
-    end    
-
-    % Diff can either take one or two argument. Need a fix if user just
-    % passed one argument to diff (e.g. diff(u) instead of diff(u,1)). If
-    % that's the case, the stack will be empty at this point, so we convert
-    % to a FUNC1. Similar for Airy.
-    if any(strcmp(functionName,{'diff','cumsum','airy'})) && ~stackRows
-        % Convert to a FUNC1
-        newTree = struct('center', {{functionName, 'FUNC1'}},...
-            'right', secondArg,'pdeflag',0); % Can assume no pde if we reach here
-        push(newTree);
-    else
-        firstArg =  pop();
-        if firstArg.pdeflag
-            error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
-        end    
-        newTree = struct('left',firstArg,'center', {{functionName, 'FUNC2'}},...
-            'right', secondArg,'pdeflag',0); % Can assume no pde if we reach here
-        push(newTree);
-    end   
-    
 elseif strcmp(NEXT,'FUNC3') % Functions which take two arguments
     functionName = char(LEX(COUNTER));
     advance();
@@ -238,28 +203,74 @@ end
 end
 
 function parseFunction1()
-global NEXT;
-if strcmp(NEXT,'LPAR')
-    advance();
+global NEXT; global COUNTER; global LEX
+functionName = char(LEX(COUNTER));
+advance();
+if match('LPAR')
     parseExp1();
     
-    m = match('RPAR');
-    if ~m
+    if match('COMMA')
+        reportError('Parse:func1', ['Method ''', functionName, ''' only takes one input argument.']);
+    elseif ~match('RPAR')
         reportError('Parse:parenths', 'Parenthesis imbalance in input fields.')
     end
+    
+    rightArg =  pop();
+    if rightArg.pdeflag
+        error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
+    end
+    newTree = struct('center',{{functionName, 'FUNC1'}},...
+        'right',rightArg,'pdeflag',0); % Can assume no pde if we reach here
+    push(newTree);
 else
     reportError('Parse:parenths', 'Need parenthesis when using functions in input fields.')
 end
 end
 
 function parseFunction2()
-global NEXT;
+global NEXT; global COUNTER; global LEX
+% Function which allow one or two arguments
+oneArgAllowed = {'diff','cumsum','airy','mean'};
+functionName = char(LEX(COUNTER));
+advance();
+
+% Here we need ( as the next symbol
 if strcmp(NEXT,'LPAR')
     advance();
     parseExp1();
     
-    m = match('RPAR');
-    if ~m
+    firstArg =  pop();
+    if firstArg.pdeflag
+        error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
+    end
+    
+    % Check whether we have a comma, if so, continue as normal
+    if match('COMMA')
+        parseExp1();
+        m = match('RPAR');
+        if ~m
+            reportError('Parse:parenths', 'Parenthesis imbalance in input fields.')
+        end
+        
+        secondArg =  pop();
+        if secondArg.pdeflag
+            error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
+        end
+        
+        newTree = struct('left',firstArg,'center', {{functionName, 'FUNC2'}},...
+            'right', secondArg,'pdeflag',0); % Can assume no pde if we reach here
+        push(newTree);
+    elseif match('RPAR')
+        if any(strcmp(functionName,oneArgAllowed)) % Have hit a function which allow one or two args
+            % If we only had one argument, we convert the function to type
+            % FUNC1
+            newTree = struct('center', {{functionName, 'FUNC1'}},...
+                'right', firstArg,'pdeflag',0); % Can assume no pde if we reach here
+            push(newTree);
+        else % Here we tried to call a method which requires two arguments with only one
+            reportError('Parse:func2', ['Method ''', functionName, ''' requires two input arguments.']);
+        end
+    else
         reportError('Parse:parenths', 'Parenthesis imbalance in input fields.')
     end
 else
