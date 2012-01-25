@@ -18,8 +18,7 @@ fprintf(fid,'%% Automatically created from chebfun/chebgui by user %s\n',userNam
 fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 % Extract information from the GUI fields
-a = guifile.DomLeft;
-b = guifile.DomRight;
+dom = guifile.domain;
 deInput = guifile.DE;
 bcInput = guifile.BC;
 
@@ -56,7 +55,7 @@ else
     rhsString = '';
 end
 % Assign x or t as the linear function on the domain
-[d,xt] = domain(str2num(a),str2num(b));
+[d,xt] = domain(str2num(dom));
 eval([indVarName{1}, '=xt;']);
 % Convert the strings to proper anon. function using eval
 LHS  = eval(lhsString);
@@ -141,7 +140,7 @@ else
         fprintf(fid,'%%   %s,\n',deInput{k});
     end
 end
-fprintf(fid,'%% for %s in [%s,%s]',indVarName{1},a,b);
+fprintf(fid,'%% for %s in %s',indVarName{1},dom);
 if ~isempty(bcInput{1})
     fprintf(fid,', subject to\n%%');
     for k = 1:numel(bcInput)
@@ -156,7 +155,7 @@ else
 end
 
 fprintf(fid,'%% Define the domain we''re working on.\n');
-fprintf(fid,'dom = [%s,%s];\n',a,b);
+fprintf(fid,'dom = %s;\n',dom);
 if ~generalized
     fprintf(fid,['\n%% Assign the equation to a chebop N such that' ...
         ' N(u) = %s*u.\n'],lname);

@@ -19,10 +19,8 @@ switch lower(propName)
         else
             cg.type = vin;
         end
-    case 'domleft'
-        cg.DomLeft = vin;
-    case 'domright'
-        cg.DomRight = vin;
+    case 'domain'
+        cg.domain = vin;
     case 'timedomain'
         cg.timedomain = vin;
     case 'de'

@@ -15,9 +15,8 @@ if nargin < 2
 else
     guiMode = 1;
 end
-a = str2num(guifile.DomLeft);
-b = str2num(guifile.DomRight);
-[d,xt] = domain(a,b);
+dom = str2num(guifile.domain);
+[d,xt] = domain(dom);
 
 % Extract information from the GUI fields
 deInput = guifile.DE;
@@ -185,7 +184,7 @@ if guiMode
     set(handles.iter_text,'Visible','On');
     set(handles.iter_list,'Visible','On');
     
-    xLimit = [a b];
+    xLimit = dom([1 end]);
     handles.xLim = xLimit;
     set(handles.fig_sol,'Visible','On');
     set(handles.fig_norm,'Visible','On');

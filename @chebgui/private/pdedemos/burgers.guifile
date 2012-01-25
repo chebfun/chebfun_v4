@@ -1,6 +1,7 @@
 'Burgers equation'
 'scalar'
-a = '-1'; b = '1'; t = '0:.04:6';
+domain = '[-1 1]';
+t = '0:.04:6';
 DE = 'u_t = -(u^2)'' + .02*u"';
 LBC = 'periodic'; RBC = 'periodic';
 init = 'u = (1-x^2)*exp(-30*(x+.5)^2)';

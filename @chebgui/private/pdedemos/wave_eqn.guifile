@@ -1,6 +1,6 @@
 'Wave equation'
 'system'
-a =   '-2'; b = '2';
+domain = '[-2 2]';
 t = '0:.1:8';
 DE = {'u_t = v''','v_t = u'''};
 LBC = 'u = 0';

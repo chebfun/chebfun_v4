@@ -1,6 +1,7 @@
 'Fisher-KPP equation'
 'scalar'
-a =  '0'; b = '50'; t = '0:0.5:20';
+domain = '[-0 50]';
+t = '0:0.5:20';
 DE = 'u_t = u''''+u-u^2';
 LBC = 'u = 1'; RBC = 'u = 0';
 init = 'u = exp(-x)';

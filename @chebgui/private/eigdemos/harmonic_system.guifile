@@ -1,6 +1,6 @@
 'Harmonic oscillator as 1st-order system'
 'system'
-a= '0'; b = 'pi';
+domain = '[0 pi]';
 DE = {'u'' = lambda*v';'v'' = -lambda*u'};
 BC = {'u(0) = 0'; 'u(pi) = 0'};
 tol = '1e-10';

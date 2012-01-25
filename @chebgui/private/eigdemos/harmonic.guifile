@@ -1,6 +1,6 @@
 'Harmonic oscillator'
 'scalar'
-a= '-8'; b = '8';
+domain = '[-8 8]';
 DE = '-u'''' + x^2*u = lambda*u';
 BC = {'u(-8) = 0' ; 'u(8) = 0'};
 tol = '1e-10';

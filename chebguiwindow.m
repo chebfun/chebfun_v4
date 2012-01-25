@@ -213,6 +213,35 @@ handles.guifile.DomRight = get(hObject,'String');
 guidata(hObject, handles);
 
 
+function input_domain_Callback(hObject, eventdata, handles)
+in = get(hObject,'String');
+input = str2num(in);
+% Checks to see if input is not numeric or empty. If so, default left end
+% of the domain is taken to be -1.
+if isempty(input) || any(isnan(input)) || length(input)<2
+    warndlg('Domain unrecognized. Default value [-1,1] used.')
+    in = '[-1,1]';
+    set(hObject,'String',in);
+elseif ~any(strfind(in,'['))
+    in = ['[' in ']'];
+    set(hObject,'String',in);
+end
+
+set(handles.input_GUESS,'Enable','on');
+set(handles.toggle_useLatest,'Value',0);
+set(handles.toggle_useLatest,'Enable','off');
+
+handles.guifile.domain = in;
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function input_domain_CreateFcn(hObject, eventdata, handles)
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
 
 
 % -------------------------------------------------------------------------
@@ -237,8 +266,7 @@ end
 
 loadVariables(handles.importedVar)
 
-xtTemp = chebfun('x',[str2num(handles.guifile.DomLeft) ...
-    str2num(handles.guifile.DomRight)]);
+xtTemp = chebfun('x',str2num(handles.guifile.domain));
 % handles.init
 if ~exist('r','var'), r = xtTemp; end
 if ~exist('x','var'), x = xtTemp; end

@@ -89,7 +89,7 @@ function varargout = chebgui(varargin)
 % starting point for more serious explorations.
 %
 % CHEBGUI is also the constructor for chebgui objects. For example
-%    chebg = chebgui('type','bvp','domleft','-1','domright','1', ...
+%    chebg = chebgui('type','bvp','domain','[-1,1]', ...
 %                    'de','u" = sin(u)','lbc','u = 1','rbc','u = 0')
 %    show(chebg)
 %
@@ -128,7 +128,7 @@ else
     end
     
     c.type = '';
-    c.DomLeft = ''; c.DomRight = '';
+    c.domain = '';
     c.DE = ''; c.LBC = ''; c.RBC = ''; c.BC = '';
     c.timedomain = ''; c.sigma = '';
     c.init = ''; c.tol = [];
@@ -150,13 +150,8 @@ else
                 else
                     c.type = value;
                 end
-            case 'domleft'
-                c.DomLeft = value;
-            case 'domright'
-                c.DomRight = value;
             case 'domain'
-                c.DomLeft =   num2str(varargin{k+1}(1));
-                c.DomRight =  num2str(varargin{k+1}(2));
+                c.domain = value;
             case 'timedomain'
                 c.timedomain = value;
             case 'de'

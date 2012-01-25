@@ -1,6 +1,7 @@
 'Diffusion and reaction of three chemicals'
 'system'
-a =   '-1'; b = '1'; t = '0:.1:3';
+domain = '[-1 1]';
+t = '0:.1:3';
 DE = {'u_t = 0.1*u" - 100*u*v';'v_t = .2*v" - 100*u*v';'w_t = 0.001*w" + 200*u*v'};
 LBC = {'neumann'}; RBC = {'neumann'};
 init = {'u = 1 - erf(10*(x+0.7))' ; 'v = 1 + erf(10*(x-0.7))' ; 'w = 0'};

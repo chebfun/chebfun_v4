@@ -17,8 +17,7 @@ fprintf(fid,'%% Automatically created from chebfun/chebgui by user %s\n',userNam
 fprintf(fid,'%% at %s on %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 % Extract information from the GUI fields
-a = guifile.DomLeft;
-b = guifile.DomRight;
+dom = guifile.domain;
 deInput = guifile.DE;
 bcInput = guifile.BC;
 initInput = guifile.init;
@@ -71,7 +70,7 @@ fprintf(fid,'%% Solving\n');
 for k = 1:numel(deInput)
     fprintf(fid,'%%   %s,\n',deInput{k});
 end
-fprintf(fid,'%% for %s in [%s,%s]',indVarNameSpace,a,b);
+fprintf(fid,'%% for %s in %s',indVarNameSpace,dom);
 if ~isempty(bcInput{1})
     fprintf(fid,', subject to\n%%');
     for k = 1:numel(bcInput)
@@ -86,7 +85,7 @@ else
 end
 
 fprintf(fid,'\n%% Define the domain.\n');
-fprintf(fid,'dom = [%s, %s];\n',a,b);
+fprintf(fid,'dom = %s;\n',dom);
 
 fprintf(fid,'\n%% Assign the differential equation to a chebop on that domain.\n');
 fprintf(fid,'N = chebop(%s,dom);\n',deString);

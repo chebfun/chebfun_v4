@@ -1,6 +1,6 @@
 'Coupled PDE-BVP'
 'system'
-a =   '-1'; b = '1';
+domain = '[-1 1]';
 t = '0:.1:2';
 DE = {'u_t = u" - v' ; 'v" - u = 0'};
 LBC = {'u = 1'; 'v = 1'};

@@ -6,8 +6,7 @@ function cg = loaddemos(guifile,guifilepath)
 
 % Defaults
 type = '';
-a = '';
-b = '';
+domain = '';
 t = '';
 DE = '';
 LBC = '';
@@ -42,6 +41,6 @@ options = struct('damping',damping,'plotting',plotting,'numeigs',numeigs, ...
     'fixYaxisLower', fixYaxisLower,'fixYaxisUpper', fixYaxisUpper,'sigma',sigmatemp);
 
 % Build the chebguifile
-cg = chebgui('type',type,'domleft',a,'domright',b,'timedomain',t,'de',DE,...
+cg = chebgui('type',type,'domain',domain,'timedomain',t,'de',DE,...
     'lbc',LBC,'rbc',RBC,'bc',BC,'init',init,'tol',tol,...
     'options',options);

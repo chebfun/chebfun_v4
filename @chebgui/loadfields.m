@@ -4,8 +4,7 @@ function initSuccess = loadfields(guifile,handles)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Fill the String fields of the handles
-set(handles.dom_left,'String',guifile.DomLeft);
-set(handles.dom_right,'String',guifile.DomRight);
+set(handles.input_domain,'String',guifile.domain);
 set(handles.input_DE,'String',guifile.DE);
 set(handles.input_LBC,'String',guifile.LBC);
 set(handles.input_RBC,'String',guifile.RBC);
@@ -117,7 +116,7 @@ if ~isempty(guifile.init)
         indVar = symvar(allString);
         
         % Create a domain and a temporary independent variable
-        [dom,xTemp] = domain(str2num(guifile.DomLeft),str2num(guifile.DomRight));
+        [dom,xTemp] = domain(str2num(guifile.domain));
         % Only support one independent variable for initial
         % guesses/condition.
         if length(indVar) > 1

@@ -15,9 +15,8 @@ if nargin < 2
 else
     guiMode = 1;
 end
-a = str2num(guifile.DomLeft);
-b = str2num(guifile.DomRight);
-[d,xt] = domain(a,b);
+dom = str2num(guifile.domain);
+[d,xt] = domain(dom);
 
 % Extract information from the GUI fields
 deInput = guifile.DE;

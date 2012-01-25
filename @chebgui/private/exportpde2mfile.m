@@ -17,8 +17,9 @@ fprintf(fid,'%% Automatically created from chebfun/chebgui by user %s\n',userNam
 fprintf(fid,'%% %s, %s.\n\n',datestr(rem(now,1),13),datestr(floor(now)));
 
 % Extract information from the GUI fields
-a = guifile.DomLeft;
-b = guifile.DomRight;
+dom = guifile.domain;
+domNum = str2num(dom);
+a = num2str(domNum(1)); b = num2str(domNum(end));
 deInput = guifile.DE;
 lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
@@ -157,7 +158,7 @@ end
 % fprintf(fid,'t = %s;\n',tt);
 
 fprintf(fid, '%% Create an interval of the space domain,\n');
-fprintf(fid,'dom = [%s,%s];\n',a,b);
+fprintf(fid,'dom = %s;\n',dom);
 fprintf(fid,'%% and a discretisation of the time domain.\n');
 fprintf(fid,'%s = %s;\n',tName,tt);
 
@@ -207,7 +208,7 @@ if periodic
 end
 
 % Set up the initial condition
-fprintf(fid,'\n%% Construct a linear chebfun on the domain,\n');
+fprintf(fid,'\n%% Construct a chebfun of the space variable on the domain,\n');
 fprintf(fid,'%s = chebfun(@(%s) %s, dom);\n',xName,xName,xName);
 if iscell(initInput) && numel(initInput) > 1
     fprintf(fid,'%% and of the initial conditions.\n');

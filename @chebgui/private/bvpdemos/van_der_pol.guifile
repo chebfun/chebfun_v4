@@ -1,6 +1,6 @@
 'Van der Pol equation'
 'ivp'
-a = '0'; b = '15';
+domain = '[0 15]';
 DE = 'u" - (1-u^2)*u'' + u = 0';
 DErhs = '0';
 BC = {'u(0) = 2';'u''(0) = 0'};

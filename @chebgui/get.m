@@ -7,10 +7,8 @@ function val = get(cg, propName,propName2)
 switch lower(propName)
     case 'type'
         val = cg.type;
-    case 'domleft'
-        val = cg.DomLeft;
-    case 'domright'
-        val = cg.DomRight;
+    case 'domain'
+        val = cg.domain;
     case 'de'
         val = cg.DE;
     case 'derhs'

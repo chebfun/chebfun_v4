@@ -1,6 +1,6 @@
 'Bessel equation'
 'bvp'
-a = '0'; b = '30';
+domain = '[0 30]';
 DE = 'x^2*u'''' + x*u'' + (x^2-3^2)*u = 0';
 BC = {'u(0) = 0', 'u(30) = 1'};
 init = ''; tol = '1e-10';

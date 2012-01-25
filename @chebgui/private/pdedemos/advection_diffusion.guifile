@@ -1,6 +1,7 @@
 'Advection-diffusion equation 1'
 'scalar'
-a = '-3'; b = '3'; t = '0:.1:6';
+domain = '[-3 3]';
+t = '0:.1:6';
 DE = 'u_t = 0.1*u" + u''';
 LBC = 'neumann'; RBC = 'dirichlet';
 init = 'u = sin(2*x)';

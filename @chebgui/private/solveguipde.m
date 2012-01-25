@@ -33,8 +33,12 @@ deInput = guifile.DE;
 lbcInput = guifile.LBC;
 rbcInput = guifile.RBC;
 initInput = guifile.init;
-a = str2num(guifile.DomLeft);
-b = str2num(guifile.DomRight);
+dom = str2num(guifile.domain);
+if length(dom) > 2
+    warning('Chebgui:SolveGUIpde',...
+        'PDE solver does not accept domains with breakpoints. Breakpoints are being ignored.');
+    dom = dom([1 end]);
+end
 tolInput = guifile.tol;
 tt = str2num(guifile.timedomain);
 
@@ -206,7 +210,7 @@ if iscellstr(initInput)
     for k = 1:length(inits)
         initLoc = find(order == k);
         init_k = vectorize(inits{initLoc});
-        u0k = chebfun(init_k,[a b]);
+        u0k = chebfun(init_k,dom);
         u0k = simplify(u0k,tol);
         u0(:,k) =  u0k;
         lenu0 = max(lenu0,length(u0k));
@@ -216,7 +220,7 @@ else
     equalSign = find(initInput=='=');
     if isempty(equalSign), equalSign = 0; end
     initInput = initInput(equalSign+1:end);
-    u0 =  chebfun(initInput,[a b]);
+    u0 =  chebfun(initInput,dom);
     u0 = simplify(u0,tol);
     lenu0 = length(u0);
 end

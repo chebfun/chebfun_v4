@@ -1,6 +1,6 @@
 'Linear wave equation'
 'ivp'
-a = '0'; b = '10*pi';
+domain = '[0 10*pi]';
 DE = 'u" = -u';
 DErhs = '0';
 BC = {'u(0) = 2', 'u''(0) = 0'};

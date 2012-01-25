@@ -5,8 +5,8 @@ function handles = solveGUI(guifile,handles)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Check whether some input is missing
-if isempty(guifile.DomLeft) || isempty(guifile.DomRight)
-    errordlg('The endpoints of the domain must be defined.', 'Chebgui error', 'modal');
+if isempty(guifile.domain)
+    errordlg('The domain must be defined.', 'Chebgui error', 'modal');
     resetComponents(handles);
     return
 end
@@ -24,10 +24,10 @@ end
 if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     
     % Some basic checking of the inputs.
-    a = str2num(guifile.DomLeft);
-    b = str2num(guifile.DomRight);
+    dom = guifile.domain;
+    a = dom(1); b = dom(end);
     if b <= a
-        s = sprintf('Error in constructing domain. [%s,%s] is not valid.',guifile.DomLeft,guifile.DomRight);
+        s = sprintf('Error in constructing domain. %s is not valid.',dom);
         errordlg(s, 'Chebgui error', 'modal');
         return
     end
