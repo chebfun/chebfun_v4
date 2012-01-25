@@ -63,7 +63,7 @@ d = diag(D);                                       % vector of evals
 % Outputs:
 
 if nargout==2
-    varargout = {U,D};
+    varargout = {U,diag(d)};
 else
     varargout = {d};
 end
