@@ -72,17 +72,18 @@ end
 
 if ~noplot
   LW = 'linewidth';
-  figure, plot(V,'k',LW,2.5), hold on              % plot potential function
+  figure, plot(V,'k',LW,2,'jumpline','-k')         % plot potential function
+  hold on
   s = sprintf('h = %4g      %d eigenstates',h,n);
-  title(s,'fontsize',14)                           % label the plot
+  title(s,'fontsize',12)                           % label the plot
   ymax = max(d); ymin = min(V); ydiff = ymax-ymin; 
   ymax = ymax+.2*ydiff; ymin = ymin-0*ydiff;       % vertical limits
   Vxmin = feval(V,xmin); Vxmax = feval(V,xmax);    % V values at endpoints
   if ymax>Vxmin                                    % The potential 
-      plot(xmin*[1 1],[ymax Vxmin],'k',LW,2.5)     %   V(x) effectively
+      plot(xmin*[1 1],[ymax Vxmin],'k',LW,2)       %   V(x) effectively
   end                                              %   goes to infinity
   if ymax>Vxmax                                    %   at the endpoints,
-      plot(xmax*[1 1],[ymax Vxmax],'k',LW,2.5)     %   so we make the
+      plot(xmax*[1 1],[ymax Vxmax],'k',LW,2)       %   so we make the
   end                                              %   plot show this.
   dx = .05*(xmax-xmin); 
   dy = .25*ydiff/max(5,n);
@@ -93,12 +94,12 @@ if ~noplot
       if umm(2)<-umm(1), W(:,j) = -W(:,j); end
       W(:,j) = W(:,j) + d(j);
   end
-  plot(W,LW,1.5)
-  plot(V,'k',LW,2.5)                               % Plot V(x) again
+  plot(W,LW,1.2)
+  plot(V,'k',LW,2,'jumpline','-k')                 % Plot V(x) again
   if ymax>Vxmin                                    %   so that black ends 
-      plot(xmin*[1 1],[ymax Vxmin],'k',LW,2.5)     %   up on top.
+      plot(xmin*[1 1],[ymax Vxmin],'k',LW,2)       %   up on top.
   end                                          
   if ymax>Vxmax                           
-      plot(xmax*[1 1],[ymax Vxmax],'k',LW,2.5)    
+      plot(xmax*[1 1],[ymax Vxmax],'k',LW,2)    
   end
 end                                            
