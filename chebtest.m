@@ -170,7 +170,7 @@ t = failed;                        % Vector to store times
 report = fullfile(chbfundir,'chebtests','chebtest_report.txt');
 [fid message] = fopen(report,'w+');
 if fid < 0
-    warning('CHEBFUB:chebtest:fopenfail', ...
+    warning('CHEBFUN:chebtest:fopenfail', ...
         ['Cannot create chebtest report: ', message]);
     createreport = false;
     avgtimes = false;
