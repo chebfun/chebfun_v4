@@ -68,6 +68,16 @@ if strcmp(problemType,'bvp')
                 assignin('base',answer{nv+3},handles.latest.options);
 %                 assignin('base',answer{nv+4},handles.guifile);
             end
+        case 'WorkspaceJustVars'                
+            varnames = handles.varnames;
+            nv = numel(varnames);
+            
+            sol = handles.latest.solution;
+            for k = 1:nv
+                assignin('base',varnames{k},sol(:,k));
+                evalin('base',varnames{k});
+            end
+         
         case '.m'            
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
@@ -151,6 +161,16 @@ elseif strcmp(problemType,'pde')
             else
 %                 msgbox('Exported variables named u and t to workspace.','Chebgui export','modal')
             end
+        case 'WorkspaceJustVars'                
+            varnames = handles.varnames;
+            nv = numel(varnames);
+            sol = handles.latest.solution;
+            if ~iscell(sol), sol = {sol}; end
+            for k = 1:nv
+                assignin('base',varnames{k},sol{k});
+                evalin('base',varnames{k});
+            end
+
         case '.m'           
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
@@ -213,6 +233,21 @@ else
             else
 %                 msgbox('Exported variables named D and V to workspace.','Chebgui export','modal')
             end
+        case 'WorkspaceJustVars'     
+            varnames = handles.varnames;
+            lambdaName = handles.eigVarName;
+            if iscell(lambdaName), lambdaName = lambdaName{:}; end
+            nv = numel(varnames);
+            d = handles.latest.solution;
+            V = handles.latest.solutionT;
+            if ~iscell(V), V = {V}; end
+            for k = 1:nv
+                assignin('base',varnames{k},V{k});
+%                 evalin('base',varnames{k});
+            end
+            assignin('base',lambdaName,d);
+            evalin('base',lambdaName);
+            
         case '.m'           
             [filename, pathname, filterindex] = uiputfile( ...
                 {'*.m','M-files (*.m)'; ...
@@ -234,8 +269,4 @@ else
         case 'Cancel'
             return;
     end
-    
-
-
 end
-

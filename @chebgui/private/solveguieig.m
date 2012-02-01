@@ -37,7 +37,7 @@ end
 if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(bcInput,'char'), bcInput = cellstr(bcInput); end
 
-[allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,'DE');
+[allStrings allVarString indVarName ignored ignored eigVarName allVarNames] = setupFields(guifile,deInput,'DE');
 handles.varnames = allVarNames;
 
 % If indVarName is empty, use the default value
@@ -198,6 +198,7 @@ if guiMode
     % Notify the GUI we have a solution available
     handles.hasSolution = 1;
     handles.varnames = allVarNames;
+    handles.eigVarName = eigVarName;
     handles.indVarName = indVarName{1};
     
     ploteigenmodes(handles.guifile,handles,0,handles.fig_sol,handles.fig_norm);

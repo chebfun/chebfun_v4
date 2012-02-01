@@ -120,6 +120,9 @@ initSuccess = loadfields(handles.guifile,handles);
 if initSuccess, switchModeCM = 'demo'; else switchModeCM = 'notdemo'; end
 % Swith the mode of the GUI according to the type of the problem.
 switchmode(handles.guifile,handles,handles.guifile.type,switchModeCM);
+% We no longer have a solutuion
+handles.hasSolution = 0;
+set(handles.button_exportsoln,'Enable','off');
 % Update handle structure
 guidata(hObject, handles);
 

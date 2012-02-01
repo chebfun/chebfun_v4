@@ -12,7 +12,7 @@ set(handles.input_BC,'String',guifile.BC);
 set(handles.input_GUESS,'String',guifile.init);
 
 if strcmpi(guifile.type,'pde')
-    set(handles.timedomain,'String',guifile.timedomain);
+    set(handles.input_timedomain,'String',guifile.timedomain);
 elseif strcmpi(guifile.type,'eig')
     sigma = guifile.sigma;
     switch sigma
@@ -34,7 +34,7 @@ set(handles.menu_tolerance,'UserData',guifile.tol);
 
 % Change the checking of menu options
 if strcmpi(guifile.type,'pde')
-    set(handles.timedomain,'String',guifile.timedomain);
+    set(handles.input_timedomain,'String',guifile.timedomain);
     
     if ~strcmp(guifile.options.plotting,'off')
         set(handles.menu_pdeplottingon,'Checked','On');
@@ -167,38 +167,3 @@ elseif strcmpi(guifile.RBC,'periodic')
         handles.guifile.RBC = '';
         set(handles.input_RBC,'Enable','off');
 end
-
-%
-% % If input for BCs is a number, anon. func. or dirichlet/neumann,
-% % disable BC rhs input
-% lflag = false;
-% if ~iscell(LBC), LBC = {LBC}; end
-% for k = 1:numel(LBC)
-%     if ~isempty(strfind(LBC{k},'@')) || strcmpi(LBC{k},'dirichlet') ...
-%         || strcmpi(LBC{k},'neumann') || ~isempty(str2num(LBC{k}))
-%         lflag = true; break
-%     end
-% end
-% if lflag
-%     set(handles.input_LBC_RHS,'Enable','off');
-%     set(handles.text_eq2,'Enable','off');
-% else
-%     set(handles.input_LBC_RHS,'Enable','on');
-%     set(handles.text_eq2,'Enable','on');
-% end
-%
-% rflag = false;
-% if ~iscell(RBC), RBC = {RBC}; end
-% for k = 1:numel(RBC)
-%     if ~isempty(strfind(RBC{k},'@')) || strcmpi(RBC{k},'dirichlet') ...
-%         || strcmpi(RBC{k},'neumann') || ~isempty(str2num(RBC{k}))
-%         rflag = true; break
-%     end
-% end
-% if rflag
-%     set(handles.input_RBC_RHS,'Enable','off');
-%     set(handles.text_eq3,'Enable','off');
-% else
-%     set(handles.input_RBC_RHS,'Enable','on');
-%     set(handles.text_eq3,'Enable','on');
-% end

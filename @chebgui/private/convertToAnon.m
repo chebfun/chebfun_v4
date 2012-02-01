@@ -40,6 +40,7 @@ if strcmp(guifile.type,'bvp')
     syntaxTree = splitTree_bvp(guifile,syntaxTree);
     % Obtain the prefix form.
     prefixOut = tree2prefix(guifile,syntaxTree);
+    
 elseif strcmp(guifile.type,'pde')
     % Convert a potential = at the top of the tree to a -.
     [syntaxTree pdeSign] = splitTree_pde(guifile,syntaxTree);
@@ -50,6 +51,7 @@ elseif strcmp(guifile.type,'pde')
     if pdeSign == 1
         prefixOut = [{'-', 'UN-'}; prefixOut];
     end
+    
 elseif strcmp(guifile.type,'eig')
     anFunLambda = '';
     % Convert a potential at the top of the tree = to a -.
@@ -78,6 +80,7 @@ elseif strcmp(guifile.type,'eig')
         infixOutLambda = prefix2infix(guifile,prefixOutLambda);
         anFunLambda = parSimp(guifile,infixOutLambda);
     end
+    
 end
 
 % Return the derivative on infix form
@@ -133,6 +136,13 @@ switch nargout
         varargout{2} = indVarNames;
         varargout{3} = varNames;
         varargout{4} = pdeVarNames;
-        varargout{5} = commaSeparated;
+        varargout{5} = eigVarNames;
+    case 6
+        varargout{1} = anFun;
+        varargout{2} = indVarNames;
+        varargout{3} = varNames;
+        varargout{4} = pdeVarNames;
+        varargout{5} = eigVarNames;
+        varargout{6} = commaSeparated;
 end
 end

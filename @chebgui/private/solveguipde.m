@@ -50,7 +50,7 @@ if isa(initInput,'char'), initInput = cellstr(initInput); end
 
 % Convert the input to the an. func. format, get information about the
 % linear function in the problem.
-[deString allVarString indVarNameDE pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,'DE');
+[deString allVarString indVarNameDE pdeVarName pdeflag ignored allVarNames] = setupFields(guifile,deInput,'DE');
 handles.varnames = allVarNames;
 if ~any(pdeflag)
     s = ['Input does not appear to be a PDE, ', ...

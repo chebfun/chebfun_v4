@@ -4,14 +4,13 @@ function [newGUI handles] = cleargui(guifile, handles)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Clear the input fields
-set(handles.dom_left,'String','');
-set(handles.dom_right,'String','');
-set(handles.timedomain,'String','');
+set(handles.input_domain,'String','');
+set(handles.input_timedomain,'String','');
+set(handles.input_DE,'String','');
 set(handles.input_DE,'String','');
 set(handles.input_LBC,'String','');
 set(handles.input_RBC,'String','');
 set(handles.input_GUESS,'String','');
-set(handles.timedomain,'String','');
 set(handles.menu_tolerance,'UserData','1e-10'); % The default tolerance
 
 
@@ -40,6 +39,7 @@ set(handles.popupmenu_sigma,'Value',1)
 
 % We don't have a solution available anymore
 handles.hasSolution = 0;
+set(handles.button_exportsoln,'Value',0);
 
 % Clear information from the guifile as well
 newGUI = chebgui('type',guifile.type);

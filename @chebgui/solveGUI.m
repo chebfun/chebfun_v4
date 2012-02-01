@@ -69,6 +69,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     
     % Disable buttons, figures, etc.
     set(handles.toggle_useLatest,'Enable','off');
+    set(handles.button_exportsoln,'Enable','off');
     set(handles.button_figsol,'Enable','off');
     set(handles.button_fignorm,'Enable','off');
     if ~get(handles.button_eig,'Value') % STOP and PAUSE don't work in EIGS mode.
@@ -112,12 +113,14 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     end
     resetComponents(handles);
     set(handles.toggle_useLatest,'Enable','on');
+    set(handles.button_exportsoln,'Enable','on');
 else   % In stop mode
     set(handles.button_clear,'String','Clear all');
     set(handles.button_clear,'BackgroundColor',get(handles.button_export,'BackgroundColor'));
     set(handles.button_solve,'String','Solve');
     set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
     set(handles.menu_demos,'Enable','on');
+    set(handles.button_exportsoln,'Enable','off');
     drawnow
 end
 
@@ -129,6 +132,7 @@ set(handles.button_clear,'String','Clear all');
 set(handles.button_clear,'BackgroundColor',get(handles.button_export,'BackgroundColor'));
 set(handles.button_figsol,'Enable','on');
 set(handles.button_fignorm,'Enable','on');
+set(handles.button_exportsoln,'Enable','off');
 set(handles.menu_demos,'Enable','on');
 
 function msg = cleanErrorMsg(msg)

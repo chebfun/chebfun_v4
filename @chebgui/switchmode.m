@@ -22,7 +22,7 @@ if strcmp(newMode,'bvp') % Going into BVP mode
     set(handles.toggle_useLatest,'Visible','on')
     
     set(handles.text_timedomain,'Visible','off')
-    set(handles.timedomain,'Visible','off')
+    set(handles.input_timedomain,'Visible','off')
     
     set(handles.button_realplot,'Visible','off')
     set(handles.button_imagplot,'Visible','off')
@@ -90,7 +90,7 @@ elseif strcmp(newMode,'pde') % Going into PDE mode
     set(handles.toggle_useLatest,'Enable','off')
     
     set(handles.text_timedomain,'Visible','on')
-    set(handles.timedomain,'Visible','on')
+    set(handles.input_timedomain,'Visible','on')
     
     set(handles.button_realplot,'Visible','off')
     set(handles.button_imagplot,'Visible','off')
@@ -139,7 +139,7 @@ else % Going into EIG mode
     set(handles.toggle_useLatest,'Enable','off')
     
     set(handles.text_timedomain,'Visible','off')
-    set(handles.timedomain,'Visible','off')
+    set(handles.input_timedomain,'Visible','off')
     
     set(handles.button_realplot,'Visible','on')
     set(handles.button_realplot,'Value',1)

@@ -109,6 +109,10 @@ set(handles.tempedit,'FontSize',fs);
 
 % set(handles.check_uselatest,'String',{'Use latest';'solution'}); 
 
+% Set the solve button to green
+set(handles.button_solve,'String','Solve');
+set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
+    
 % Update handles structure
 guidata(hObject, handles);
 
@@ -349,9 +353,9 @@ function input_DE_KeyPressFcn(hObject, eventdata, handles)
 if strcmp(eventdata.Key,'tab'), 
     if strcmp(eventdata.Modifier,'shift')
         if get(handles.button_pde,'value')
-            uicontrol(handles.timedomain); 
+            uicontrol(handles.input_timedomain); 
         else
-            uicontrol(handles.dom_right); 
+            uicontrol(handles.domain); 
         end
     else
         uicontrol(handles.input_LBC); 
@@ -396,7 +400,7 @@ end
 
 
 
-function timedomain_Callback(hObject, eventdata, handles)
+function input_timedomain_Callback(hObject, eventdata, handles)
 str = get(hObject,'String');
 if iscell(str), str = str{:}; end
 num = str2num(str);
@@ -410,7 +414,7 @@ while ~isempty(str) && numel(num) < 3;
     str = str{:};
     num = str2num(str);
 end
-set(handles.timedomain,'String',str);   
+set(handles.input_timedomain,'String',str);   
 handles.guifile.timedomain = str;
 guidata(hObject, handles);
 
@@ -674,7 +678,7 @@ function fig_norm_CreateFcn(hObject, eventdata, handles)
 % Hint: place code in OpeningFcn to populate fig_norm
 
 
-function timedomain_CreateFcn(hObject, eventdata, handles)
+function input_timedomain_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
@@ -751,7 +755,7 @@ else
 end
 a = get(handles.dom_left,'string');
 b = get(handles.dom_right,'string');
-t = get(handles.timedomain,'string');
+t = get(handles.input_timedomain,'string');
 DE = get(handles.input_DE,'string');
 LBC = get(handles.input_LBC,'string');
 RBC = get(handles.input_RBC,'string');
@@ -1411,3 +1415,17 @@ function input_BC_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in button_exportsoln.
+function button_exportsoln_Callback(hObject, eventdata, handles)
+export(handles.guifile,handles,'WorkspaceJustVars')
+
+
+% --- Executes on button press in togglebutton4.
+function togglebutton4_Callback(hObject, eventdata, handles)
+% hObject    handle to togglebutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of togglebutton4

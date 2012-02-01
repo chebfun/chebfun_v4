@@ -1,4 +1,4 @@
-function [field allVarString indVarName pdeVarNames pdeflag allVarNames]  = setupFields(guifile,input,type,allVarString)
+function [field allVarString indVarName pdeVarNames pdeflag eigVarNames allVarNames]  = setupFields(guifile,input,type,allVarString)
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -17,7 +17,7 @@ dummyt = 'DUMMYTIME';
 
 
 if numOfRows == 1 % Not a system, can call convert2anon with two output argument    
-    [anFun indVarName allVarNames pdeVarNames commaSeparated] = setupLine(guifile,input{1},type);
+    [anFun indVarName allVarNames pdeVarNames eigVarNames commaSeparated] = setupLine(guifile,input{1},type);
     % Check whether we have too many variables (this is a singl
     if ~isempty(pdeVarNames), % it's not a PDE (or we can't do this type yet!)
         pdeflag = true;
@@ -73,7 +73,7 @@ else % Have a system, go through each row
     allPdeVarNames = {};
     indVarName = [];
     for k = 1:numOfRows
-        [anFun{k} indVarNameTemp varNames pdeVarNames commaSeparated] = setupLine(guifile,input{k},type);
+        [anFun{k} indVarNameTemp varNames pdeVarNames eigVarNames commaSeparated] = setupLine(guifile,input{k},type);
         if strcmp(anFun{k}([1 end]),'[]')
             anFun{k}([1 end]) = [];
         end
@@ -98,21 +98,7 @@ else % Have a system, go through each row
     end
     % Remove duplicate variable names
     allVarNames = unique(allVarNames); 
-    
-%     [allPdeVarNames I J] = unique(allPdeVarNames);
-%     emptyPdeVarNames = strcmp(allPdeVarNames,'|');
-%     allPdeVarNames(emptyPdeVarNames) = [];
-%     pdeVarNames = allPdeVarNames;
-%     if ~isempty(allPdeVarNames) && ~all(emptyPdeVarNames)
-%          For this, we use the
-%         % indices returned from the unique method above. !!! Temporarily
-%         % experimental.
-%         indx = J;
-%         pdeflag = pdeflag(J);
-%     else
-%         indx = (1:numOfRows)';
-%     end
-    
+
     % Construct the handle part. For the DE field, we need to collect all
     % the variable names in one string. If we are working with BCs, we have
     % already passed that string in (as the parameter allVarString).
@@ -178,7 +164,7 @@ else % Have a system, go through each row
     
 end
 
-function [field indVarName varNames pdeVarNames commaSeparated]  = setupLine(guifile,input,type)
+function [field indVarName varNames pdeVarNames eigVarNames commaSeparated]  = setupLine(guifile,input,type)
 convertBCtoAnon = 0;
 
 commaSeparated = 0; % Default value
@@ -192,7 +178,7 @@ if ~isempty(strfind(input,'@')) % User supplied anon. function
     firstRPloc = strfind(input,')');
     trimmedInput = input(firstRPloc+1:end);
     
-    [field indVarName varNames pdeVarNames commaSeparated] = convertToAnon(guifile,trimmedInput);
+    [field indVarName varNames pdeVarNames eigVarNames commaSeparated] = convertToAnon(guifile,trimmedInput);
     
     return
 elseif any(strcmp(type,{'BC','BCnew'}))        % Allow more types of syntax for BCs
@@ -205,12 +191,14 @@ elseif any(strcmp(type,{'BC','BCnew'}))        % Allow more types of syntax for 
         indVarName = []; % Don't need to worry about lin. func. in this case
         varNames = [];
         pdeVarNames = [];
+        eigVarNames = [];
     elseif strcmpi(input,'dirichlet') || strcmpi(input,'neumann') || strcmpi(input,'periodic')
         % Add extra 's to allow evaluation of the string
         field = ['''',input,''''];
         indVarName = []; % Don't need to worry about lin. func. in this case
         varNames = [];
         pdeVarNames = [];
+        eigVarNames = [];
     else
         convertBCtoAnon = 1;
         guifile.type = 'bvp';
@@ -218,11 +206,7 @@ elseif any(strcmp(type,{'BC','BCnew'}))        % Allow more types of syntax for 
 end
 
 if strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
-%     if nargout == 2
-%         [field indVarName] = convertToAnon(guifile,input);
-%     else % Three output arguments -- Multiple rows
-        [field indVarName varNames pdeVarNames commaSeparated] = convertToAnon(guifile,input);
-%     end
+        [field indVarName varNames pdeVarNames eigVarNames commaSeparated] = convertToAnon(guifile,input);
 end
 
 % Modified strcmp, if we compare with an empty string, give a match
