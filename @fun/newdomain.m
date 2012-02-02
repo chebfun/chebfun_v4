@@ -21,8 +21,21 @@ elseif d < c
 end
 
 if strcmp(map.name,'linear')
-    % composition of linear maps is linear (because they're, umm, linear!)
-    map = linear(ends);
+    if ~any(isinf([c d]))
+        % composition of linear maps is linear (because they're, umm, linear!)
+        map = linear(ends);
+    else
+        map = maps(domain(c,d));
+        if ~all([a b]==[-1 1])
+            error('FUN:newdomain:suck', ...
+                'No support for this finite to unbounded domain change');
+            % IDEA! First combine with linear map from [a b] to [-1 1].
+        end
+        if g.n > 1
+            warning('FUN:newdomain:nonlin',...
+                'using a nonlinear map for a nonlinear function.');
+        end
+    end
 elseif any(isinf([a b]))
     if any(isinf([a b]-[c d]))
         error('FUN:newdomain:infdom','Inconsistent unbounded domains.');
