@@ -267,6 +267,14 @@ cout(1:n-1) = (c(3:end-1)-c(1:end-3))./...    % compute C_(n+1) ... C_2
 cout(n,1) = c(end) - c(end-2)/2;              % compute C_1
 v = ones(1,n); v(end-1:-2:1) = -1;
 cout(n+1,1) = v*cout;                         % compute C_0
+
+% Trim small coeffs, as suggested in #128
+tol = chebfunpref('eps')/norm(cout,inf);
+idx = find(abs(cout)>tol,1);
+cout(1:idx-1) = [];
+n = n-idx+1;
+
+% Recover vals and return the new fun
 g.vals = chebpolyval(cout);
 g.coeffs = cout;
 g.scl.v = max(g.scl.v, norm(g.vals,inf));
