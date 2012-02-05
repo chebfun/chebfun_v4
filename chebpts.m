@@ -32,7 +32,7 @@ function [x w v] = chebpts(n,d,kind)
 %   See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 %   [1] Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis
-%   quadrature rules", BIT Numerical Mathematics 43 (1), pp 1--18 (2004).
+%   quadrature rules", BIT Numerical Mathematics 46 (2006), pp 195-202.
 
 % Intialise
 x = []; w = []; v = []; scale = false;
