@@ -1429,3 +1429,64 @@ function togglebutton4_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of togglebutton4
+
+
+% --- Executes on button press in button_fontinc.
+function button_fontinc_Callback(hObject, eventdata, handles)
+% hObject    handle to button_fontinc (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get a list of all the names in the handles
+names = fieldnames(handles);
+textLocs = strfind(names,'text_');
+inputLocs = strfind(names,'input_');
+buttonLocs = strfind(names,'button_');
+panelLocs = strfind(names,'panel_');
+toggleLocs = strfind(names,'toggle_');
+
+% Combine all the locations of elements whose font we wish to change
+allLocs = strcat(textLocs,inputLocs,buttonLocs,panelLocs,toggleLocs);
+
+for fieldCounter = 1:length(textLocs)
+    if ~isempty(allLocs{fieldCounter})
+        % Access the field values dynamically using the .( ) call. We
+        % access the font size of each element separately as they can have
+        % different relative font sizes.
+        currFontSize = get(handles.(names{fieldCounter}),'FontSize');
+        newFontSize = currFontSize + 1;
+        % Update the fontsize, again using the dynamic access
+        set(handles.(names{fieldCounter}),'FontSize',newFontSize)     
+    end
+end
+guidata(hObject, handles);
+
+
+% --- Executes on button press in button_fontdec.
+function button_fontdec_Callback(hObject, eventdata, handles)
+% hObject    handle to button_fontdec (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Get a list of all the names in the handles
+names = fieldnames(handles);
+textLocs = strfind(names,'text_');
+inputLocs = strfind(names,'input_');
+buttonLocs = strfind(names,'button_');
+panelLocs = strfind(names,'panel_');
+toggleLocs = strfind(names,'toggle_');
+
+% Combine all the locations of elements whose font we wish to change
+allLocs = strcat(textLocs,inputLocs,buttonLocs,panelLocs,toggleLocs);
+
+
+
+for fieldCounter = 1:length(textLocs)
+    if ~isempty(allLocs{fieldCounter})
+        % Access the field values dynamically using the .( ) call
+        currFontSize = get(handles.(names{fieldCounter}),'FontSize');
+        newFontSize = currFontSize - 1;
+        % Update the fontsize, again using the dynamic access
+        set(handles.(names{fieldCounter}),'FontSize',newFontSize)     
+    end
+end
+guidata(hObject, handles);
