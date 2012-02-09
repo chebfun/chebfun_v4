@@ -98,6 +98,12 @@ function g = ctor(g,op,ends,varargin)
             % Convert string input to anonymous function.
             op = str2op(op);
     end
+    
+    %% Deal with empty intervals
+    if ends(1) == ends(end)
+        g = ctor(g,op(ends(1)),ends,varargin{:});
+        return
+    end
 
     %% Deal with unbounded functions on infinite intervals
     infends = isinf(ends);
