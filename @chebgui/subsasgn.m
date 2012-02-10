@@ -5,17 +5,15 @@ function varargout = subsasgn(cg,index,varargin)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Allow calls on the form guifile.options.plotting
-idx1 = index(1).subs;
-if size(index,2) > 1
-    idx2 = index(2).subs;
-else
-    idx2 = [];
+idx = index(1).subs;
+if size(index,2) > 1 && strcmp(idx1m,'options')
+    idx = index(2).subs;
 end
 
 vin = varargin{:};
 switch index(1).type
     case '.'
-        varargout = {set(cg,idx1,idx2,vin) };
+        varargout = {set(cg,idx,vin) };
     otherwise
         error('CHEBGUI:subsasgn:indexType',['Unexpected index.type of ' index(1).type]);
 end
