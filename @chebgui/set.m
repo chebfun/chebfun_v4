@@ -1,71 +1,87 @@
-function cg = set(cg, propName,propName2,vin)
+function cg = set(cg,propName,val)
 % SET   Set chebgui properties.
+%
+%    'type' - 'bvp','pde','eig'
+%    'domain' - spatial domain of BVP/PDE
+%    'timedomain' - time domain of PDE
+%    'de' - the differential operator or RHS F in u_t = F(x,t,u)
+%    'lbc' - left boundary conditions
+%    'rbc' - right boundary conditions
+%    'bc' - general boundary conditions
+%    'tol' - tolerance
+%    'init' - intial condition/guess for nonlinear BVPs/PDEs
+%    'sigma' - desired eigenvalues: 'LM','SM','LA','SA','LR','SR','LI','SI'
+%    'options' - a structure containing the below
+%      'numeigs' - number of desired eigenvalues
+%      'damping' - damping in newton iteration [true/false]
+%      'plotting' - plotting in nonlinear solves/PDEs [true/false]
+%      'grid' - display a grid on these plots [true/false]
+%      'pdeholdplot' - 
+%      'fixn' - fixed spatial discretisation for PDEs (experimental)
+%      'fixyaxislower' - fix y axis on plots (lower)
+%      'fixyaxisupper' - fix y axis on plots (upper)
 
-% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Avoid storing {''} in fields, rather store ''
-if iscell(vin) && isempty(vin{1})
-    vin = '';
-end
+if iscell(val) && isempty(val{1}), val = ''; end
+% Store strings, not numbers.
+if isnumeric(val), val = num2str(val); end
 
 switch lower(propName)
     case 'type'
-        if ~strcmpi(vin,'bvp') && ~strcmpi(vin,'ivp') && ~strcmpi(vin,'pde') && ~strcmpi(vin,'eig')
-            error('CHEBGUI:set:type',[vin,' is not a valid type of problem.'])
-        elseif strcmpi(vin,'ivp')
-            warning('CHEBGUI:set:type Type of problem changed from IVP to BVP');
+        if ~any(strcmpi(val,{'bvp','ivp','pde','eig'}))
+            error('CHEBGUI:set:type',...
+                [val,' is not a valid type of problem.'])
+        elseif strcmpi(val,'ivp')
+            warning('CHEBGUI:set:type',...
+                'Type of problem changed from IVP to BVP');
             cg.type = 'bvp';
         else
-            cg.type = vin;
+            cg.type = val;
         end
     case 'domain'
-        cg.domain = vin;
+        cg.domain = val;
     case 'timedomain'
-        cg.timedomain = vin;
+        cg.timedomain = val;
     case 'de'
-        cg.DE = vin;
+        cg.DE = val;
     case 'lbc'
-        cg.LBC = vin;
+        cg.LBC = val;
     case 'rbc'
-        cg.RBC = vin;
+        cg.RBC = val;
     case 'bc'
-        cg.BC = vin;
+        cg.BC = val;
     case 'tol'
-        cg.tol = vin;
+        cg.tol = val;
     case 'init'
-        cg.init= vin;
+        cg.init = val;
     case 'sigma'
-        cg.sigma= vin;        
+        cg.sigma = val;
     case 'options'
-        if isempty(propName2)
-            cg.options = vin;
-        else
-            switch lower(propName2)
-                case 'damping'
-                    cg.options.damping = vin;
-                case 'plotting'
-                    if isnumeric(vin)
-                        vin = num2str(vin);
-                    end
-                    cg.options.plotting = vin;
-                case 'grid'
-                    cg.options.grid = vin;
-                case 'pdeholdplot'
-                    cg.options.pdeholdplot = vin;
-                case 'fixn'
-                    cg.options.fixN = vin;
-                case 'fixyaxislower'
-                    cg.options.fixYaxisLower = vin;
-                case 'fixyaxisupper'
-                    cg.options.fixYaxisUpper = vin;
-                case 'numeigs'
-                    cg.options.numeigs = vin;
-                otherwise
-                    error('CHEBGUI:set:options:propanem',...
-                        [propName2,' is not a valid chebgui option.'])
-            end
+        cg.options = val;
+    case 'damping'
+        cg.options.damping = val;
+    case 'plotting'
+        if isnumeric(val)
+      val = num2str(val);
         end
+        cg.options.plotting = val;
+    case 'grid'
+        cg.options.grid = val;
+    case 'pdeholdplot'
+        cg.options.pdeholdplot = val;
+    case 'fixn'
+        cg.options.fixN = val;
+    case 'fixyaxislower'
+        cg.options.fixYaxisLower = val;
+    case 'fixyaxisupper'
+        cg.options.fixYaxisUpper = val;
+    case 'numeigs'
+        cg.options.numeigs = val;
     otherwise
-        error('CHEBGUI:set:propname',[propName,' is not a valid chebgui property'])
+        error('CHEBGUI:set:propname',...
+      [propName,' is not a valid chebgui property.'])
 end
