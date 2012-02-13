@@ -6,7 +6,7 @@ function varargout = subsref(cg,index)
 
 % Allow calls on the form guifile.options.plotting
 idx = index(1).subs;
-if size(index,2) > 1 && strcmp(idx1m,'options')
+if size(index,2) > 1 && strcmp(idx,'options')
     idx = index(2).subs;
 end
 

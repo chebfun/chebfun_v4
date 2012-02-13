@@ -40,7 +40,7 @@ rbcRHSInput = cellstr(repmat('0',numel(rbcInput),1));
 initRHSInput = cellstr(repmat('0',numel(initInput),1));
 
 % [deString indVarName] = setupFields(deInput,deRHSInput,'DE');
-[deString allVarString indVarNameDE pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,'DE');
+[deString allVarString indVarNameDE pdeVarName pdeflag ignored allVarNames] = setupFields(guifile,deInput,'DE');
 if ~any(pdeflag)
     error('Chebgui:chebpde:notapde',['Input does not appear to be a PDE, ', ...
         'or at least is not a supported type.']);
