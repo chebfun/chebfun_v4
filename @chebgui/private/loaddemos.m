@@ -23,6 +23,12 @@ while ~inputEnded
 end
 fclose(fid);
 
+% timedomain is entered as 't' in .guifiles. Sort this out:
+if exist('t','var')
+    timedomain = t; %#ok<NASGU>
+    clear t
+end
+
 % Clear these variables that we're finished with
 clear inputEnded fid tline ans
 
