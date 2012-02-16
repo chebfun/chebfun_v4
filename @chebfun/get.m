@@ -7,7 +7,7 @@ function val = get(f, propName)
 %   'DOMAIN' - Endpoints of F.
 %   'ENDS'   - Endpoints and breakpoints of F.
 %   'IMPS'   - Values F takes at the F.ENDS.
-%   'VALS'   - Values of F at Chebyshev points (see F.POINTS).
+%   'VALS'   - Values of F at Chebyshev points.
 %   'POINTS' - Points at which F.VALS are stored.
 %   'SCL'    - Vertical scale of F.
 %   'TRANS'  - Orientation of F (i.e., column or row chebfun).

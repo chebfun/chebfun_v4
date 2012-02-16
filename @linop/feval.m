@@ -72,10 +72,10 @@ M = []; B = []; c = []; rowreplace = []; P = [];
 % Sort out the breaks
 if isa(breaks,'domain'), breaks = breaks.endsandbreaks; end
 breaks = sort(breaks);
-if ~isempty(breaks) && (breaks(1) < A.fundomain(1) || breaks(end) > A.fundomain(end))
+if ~isempty(breaks) && (breaks(1) < A.domain(1) || breaks(end) > A.domain(end))
     error('CHEBFUN:linop:breaksdomain','Breaks must be within domain of linop');
 end
-breaks = union(breaks,A.fundomain.endsandbreaks);
+breaks = union(breaks,A.domain.endsandbreaks);
 
 % We set trivial maps and breaks to empty
 if numel(breaks) == 2 && ~any(isempty(breaks)), breaks = []; end
@@ -87,8 +87,8 @@ if numel(n) == 1 && ~isempty(breaks)
 end
 
 % Force maps for unbounded domains
-if isempty(map) && (any(isinf(breaks)) || any(isinf(A.fundomain([1 end]))))
-    domA = A.fundomain([1 end]);
+if isempty(map) && (any(isinf(breaks)) || any(isinf(A.domain([1 end]))))
+    domA = A.domain([1 end]);
     mapdomain = domain(union(breaks,domA.endsandbreaks));
     map = maps(mapdomain);
 end
@@ -188,10 +188,8 @@ else
           % Compute boundary conditions and apply (if required)
           if usebc == 1
               [B c] = bdyreplace(A,{n},map,{breaks});
-%               if isempty(A.jumplocs)
-                  [C c2] = cont_conds(A,{n},map,{breaks},A.jumplocs);
-                  B = [B ; C];  c = [c ; c2];
-%               end 
+              [C c2] = cont_conds(A,{n},map,{breaks});
+              B = [B ; C];  c = [c ; c2];
               M = [M ; B]; 
               rowreplace = sum(n)-(size(B,1)-1:-1:0);
           end
@@ -205,12 +203,14 @@ else
       P = cell(A.blocksize(1),1);
       for k = 1:A.blocksize(1)
           nk = n-do(k);
-          if any(nk<1), error('CHEBFUN:linop:feval:fevalsize', ...
-                  'feval size is not large enough for linop.difforder.');
+%           if any(nk<1), error('CHEBFUN:linop:feval:fevalsize', ...
+%                   'feval size is not large enough for linop.difforder.');
+%           end
+          if nk > 0
+              Pk = barymatp12m(nk,n,breaks,map);
+              ii = ((k-1)*sn+1):k*sn;
+              MM = [MM ; Pk*M(ii,:)];
           end
-          Pk = barymatp12m(nk,n,breaks,map);
-          ii = ((k-1)*sn+1):k*sn;
-          MM = [MM ; Pk*M(ii,:)];
           if nargout >= 5, P{k} = Pk; end % Store P
           nbc = nbc - sum(nk);
       end
@@ -231,10 +231,8 @@ else
           breaks = repmat({breaks},1,A.blocksize(2));
           n = repmat({n},1,A.blocksize(2));
           [B c] = bdyreplace(A,n,map,breaks);
-%           if isempty(A.jumplocs)
-              [C c2] = cont_conds(A,n,map,breaks,A.jumplocs);
-              B = [B ; C]; c = [c ; c2];
-%           end
+          [C c2] = cont_conds(A,n,map,breaks);
+          B = [B ; C]; c = [c ; c2];
           M = [M ; B]; 
           rowreplace = sizeM-nbc+(1:nbc);          
       end

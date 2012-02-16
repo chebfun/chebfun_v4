@@ -1,4 +1,4 @@
-function [Fx xout] = feval(F,x,varargin)
+function [Fx jumpInfoOut] = feval(F,x,varargin)
 % FEVAL   Evaluate a chebfun at one or more points.
 % FEVAL(F,X) evaluates the chebfun F at the point(s) in X.
 % FEVAL(F,X,'LEFT') or FEVAL(F,X,'RIGHT') when the chebfun F has a jump
@@ -16,7 +16,7 @@ function [Fx xout] = feval(F,x,varargin)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-persistent store_x
+persistent jumpInfo
 
 % Because chebfuns are superior to function_handle, this call can result
 % when f is function_handle and x is chebfun. In that case, revert to the
@@ -26,19 +26,39 @@ if isa(F,'function_handle')
     return
 end  
 
-if isempty(F), Fx = []; return, end
 lr = '';
 forceval = 0;
 
-if F(1).funreturn && nargin > 2
-    store_x = [store_x x];
+%%
+% This block deals with returning jump information from bc evaluations.
+if ~isempty(F) && F(1).funreturn && nargin > 2 && varargin{1}(1) ~= 'f'
+    for k = 1:numel(F)
+        FkJ = F(k).jacobian; % Use AD to find parentID & difforder
+        if ~isempty(FkJ)
+            if FkJ.depth > 2 || ~strcmp(FkJ.parent,'diff')
+                error('CHEBFUN:feval:jumplocfail',...
+                    'Invalid jump conditions. (See ''help chebop'')');
+            end
+            ws = FkJ.workspace;
+            ID = ws{1}.ID; 
+            order = ws{2}; % There is a parent
+        else
+            ID = F(k).ID; order = 0;               % This is a base var
+        end
+        jumpInfo = [jumpInfo struct('loc',x,'ID',ID,'Ord',order)]; %#ok<AGROW>
+    end
 end
-xout = store_x;
+jumpInfoOut = jumpInfo;
 if isempty(x)
     Fx = [];
-    store_x = [];
+    jumpInfo = [];
     return
 end
+
+%%
+
+% If F is empty, there's nothing to do.
+if isempty(F), Fx = []; return, end
 
 if ischar(x)
     dom = domain(F);

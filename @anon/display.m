@@ -33,7 +33,7 @@ if curdepth == 1
     disp([name ' ='])
     
     % Deal with empty anons
-    if isempty(A.variablesName)
+    if isempty(A)
         disp([ws, 'empty anon']);    
         return
     end

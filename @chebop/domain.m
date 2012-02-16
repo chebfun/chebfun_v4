@@ -4,6 +4,6 @@ function dom = domain(A)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-dom = A.dom;
+dom = A.domain;
 
 end

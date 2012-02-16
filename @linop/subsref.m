@@ -39,12 +39,12 @@ switch s(1).type
       firstrow = t{1}==1;
       lastrow = isinf(t{1}) & real(t{1})==0;
       pts = [];
-      if any(firstrow), pts = [pts; A.fundomain(1)]; end
-      if any(lastrow), pts = [pts; A.fundomain(2)]; end
+      if any(firstrow), pts = [pts; A.domain(1)]; end
+      if any(lastrow), pts = [pts; A.domain(2)]; end
       if isequal(t{2},':') && ~isempty(pts)
         mat = subsref(A.varmat,s);
         op = @(u) feval(A*u,pts);
-        A = linop(mat,op,A.fundomain );
+        A = linop(mat,op,A.domain );
         valid = true;
       end
     elseif isnumeric(t{1}) % return a realization (feval)
@@ -97,7 +97,7 @@ switch s(1).type
       case 'jumplocs'
         A = A.jumplocs; 
       case {'domain','fundomain'}
-        A = A.fundomain;
+        A = A.domain;
       otherwise 
         valid = false;
     end

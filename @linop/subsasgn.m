@@ -80,8 +80,8 @@ switch s(1).type
         valid = true;
         
       case {'domain','fundomain'}               % REASSIGN DOMAIN
-          if isnumeric(B), B = domain(B); end
-        A.fundomain = B;
+        if isnumeric(B), B = domain(B); end
+        A.domain = B;
         valid = true; 
         
       case 'iszero'                    % BC MNEMONICS OR STRUCT

@@ -16,7 +16,7 @@ if s(1)~=s(2)
 end
 
 if (m > 0) 
-  C = linop(A.varmat^m, A.oparray^m, A.fundomain );
+  C = linop(A.varmat^m, A.oparray^m, A.domain );
   
   % Find the zeros
   isz = ~double(~A.iszero)^m;
@@ -57,7 +57,7 @@ if (m > 0)
       end
     
 else
-  C = blockeye(A.fundomain,s(1));
+  C = blockeye(A.domain,s(1));
 end
 
 end

@@ -19,7 +19,7 @@ function B = barymat(M,N,map,w) %BARYMAT(Y,X,W)
 %  Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 %  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-if length(M) == 1 && length(M) == length(N)
+if length(M) == 1 && length(M) == length(N) 
 % Size of matrix is given.
     if M == N    % Nothing to do here.
         B = eye(M); 

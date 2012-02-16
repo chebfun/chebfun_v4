@@ -30,7 +30,7 @@ if ~isa(Nin.op,'cell')
     end
     
     numberOfInputVariables = nargin(Nin.op);
-    xDom = {chebfun('x',Nin.dom)};
+    xDom = {chebfun('x',Nin.domain.endsandbreaks)};
     
     if numberOfInputVariables == 1
         xDom = {};

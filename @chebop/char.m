@@ -12,7 +12,6 @@ else
     % the operator is nonlinear, as it means that it can't operate on any
     % initial guess (i.e. it could be @(u) diff(u,2) + 1./u)
     try
-%         islA = islinear(A);
         L = linop(A);
         islA = 1;
     catch ME
@@ -23,29 +22,15 @@ else
     else
         s ='   Nonlinear operator operating on chebfuns defined on:';
     end
-    s = char(s,['  ' char(A.dom)]);
+    s = char(s,['  ' char(A.domain)]);
     if ~isempty(A.op) && ~isempty(A.opshow) && size(A.opshow{1},1) == 1%&& ~isa(A.op,'linop')
       s = char(s, '   representing the operator:');
       for j = 1:length(A.opshow)
           s = char(s,['     ',A.opshow{j}]);
       end
-         
-%       % Need to treat the cell case differently from the an. fun. case
-%       if isa(A.op,'function_handle')
-%         opchar = char(A.op);
-%         ,...
-%           ['     ' opchar ' = 0 ']);
-%       else
-%         s = char(s, '   representing the operator:');
-%         for funCounter =1:length(A.op)
-%           opchar = char(A.op{funCounter});
-%           s = char(s, ...
-%             ['     ' opchar ' = 0']);
-%         end
-%       end
     end
     
-    if ~isempty(A.lbc)
+    if ~isempty(A.lbc) && ~isempty(A.lbcshow)
       s = char(s,' ');
       t = bc2char(A.lbcshow);
       if iscell(A.lbcshow) && length(A.lbcshow) > 1
@@ -56,7 +41,7 @@ else
       s = char(s,t{:});
     end
     
-    if ~isempty(A.rbc)
+    if ~isempty(A.rbc) && ~isempty(A.rbcshow)
       s = char(s,' ');
       if iscell(A.rbcshow) && length(A.rbcshow) > 1
         s = char(s, '   right boundary conditions:');
@@ -67,7 +52,7 @@ else
       s = char(s,t{:});
     end
     
-    if ~isempty(A.bc)
+    if ~isempty(A.bc) && ~isempty(A.bcshow)
       s = char(s,' ');
       t = bc2char(A.bcshow);
       if iscell(A.lbcshow) && length(A.lbcshow) > 1
@@ -112,7 +97,7 @@ function s = mat2char(V)
 
 print_bc = true; % Print BCs or not
 defreal = 6;  % Size of matrix to display
-dom = get(V,'fundomain');
+dom = get(V,'domain');
 numints = numel(dom.endsandbreaks);
 if numints == 1 && isempty(V,'bcs')
     print_bc = false;

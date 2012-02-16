@@ -1,64 +1,80 @@
-function [Cmat,c] = cont_conds(A,Nsys,map,breaks,jumplocs)
+function [Cmat,c] = cont_conds(A,Nsys,map,bks)
 % Retrieve continuity conditions for a piecewise linop
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-    Adifforder = A.difforder;
-    maxdo = max(Adifforder,[],2); % maxdo(j) is the difforder of eqn j
-    bks = breaks;
-    N = [Nsys{:}];
-    syssize = numel(Nsys);
-    
-    Cmat = zeros(1,sum(N));        % Continuituty bcs for pw intervals.    
-    bcrownum = 1; intnum = 1; csN = cumsum([0 N]);  
-    % Apply continuity conditions for piecewise intervals
-    for kk = 1:syssize
-        dok = max(Adifforder(:,kk));    % Difforder for this equation
-        numfunsk = numel(bks{kk})-1; % # of intervals in this variable
-        bkk = bks{kk};
-        if numfunsk > 1
-            Nsysk = Nsys{kk};           % # of points in each interval
-            % Make the differentiation matrices for piecewise boundary conditions.
-            if dok > 1
-                D = zeros(sum(Nsysk),sum(Nsysk),dok-1);
-                D(:,:,1) = feval(diff(domain(bkk([1 end]))),Nsysk,map,bkk);
-                for ll = 2:dok-1
-                  D(:,:,ll) = D(:,:,1)*D(:,:,ll-1);
-                end
-            end
-            csNsysk = cumsum([0 Nsysk]);
-            % Extract the right rows
-            for jj = 1:numfunsk-1
-                % Continuity condition
-                
-                % Skip if a jum is being enforced here.
-                if any(bkk(jj+1)==jumplocs), 
-                    intnum = intnum + 1;
-                    continue
-                end
-                
-                Cmat(bcrownum,csN(intnum)+Nsysk(jj)+(0:1)) = [-1 1];
-                bcrownum = bcrownum + 1;
-                % Derivative conditions
-                indxl = csNsysk(jj)+(1:Nsysk(jj));
-                indxr = csNsysk(jj+1)+(1:Nsysk(jj+1));
-                len = indxr(end)-indxl(1)+1;
-                for ll = 1:dok-1   
-                    Dl = D(csNsysk(jj+1),indxl,ll);
-                    Dr = D(csNsysk(jj+1)+1,indxr,ll);
-                    Cmat(bcrownum,csN(intnum)+(1:len)) = [-Dl Dr];
-                    bcrownum = bcrownum + 1;
-                end
-                intnum = intnum + 1;
-            end
-            intnum = intnum + 1;
-        else
-            intnum = intnum + 1;
+jumpinfo = A.jumpinfo;
+difforder = A.difforder;
+N = [Nsys{:}];
+syssize = numel(Nsys);
+
+% Initialise
+Cmat = zeros(1,sum(N)); bcrownum = 1; intnum = 1; csN = cumsum([0 N]);  
+% Apply continuity conditions for piecewise intervals
+for k = 1:syssize
+
+    % Setup 
+    bk = bks{k};
+    numfunsk = numel(bk)-1;   % # of intervals in this variable
+    if numfunsk <= 1           % Nothing to do here (no breaks)
+        intnum = intnum + 1;    
+        continue
+    end
+    dok = max(difforder(:,k)); % Difforder for this variable
+    Nsysk = Nsys{k};           % # of points in each interval
+    csNsysk = cumsum([0 Nsysk]);
+
+    % Make the diffmats for piecewise boundary conditions.
+    if dok > 1
+        D = zeros(sum(Nsysk),sum(Nsysk),dok-1);
+        domk = domain(bk([1 end]));
+        D(:,:,1) = feval(diff(domk),Nsysk,map,bk);
+        for l = 2:dok-1
+%               D(:,:,ll) = D(:,:,1)*D(:,:,ll-1);
+          D(:,:,l) = feval(diff(domk,l),Nsysk,map,bk);
         end
     end
-    c = zeros(size(Cmat,1),1); % RHS of continuity conditions
-    
-    if numel(c) == 1 && ~any(Cmat)
-        Cmat = []; c = []; return
+
+    % Extract the right rows
+    for j = 1:numfunsk-1 % Continuity conditions
+
+        % Enforce continuity if there's no jump here
+        if ~ismember([bk(j+1) k 0],jumpinfo,'rows')
+            idx = csN(intnum)+Nsysk(j)+(0:1);
+            Cmat(bcrownum,idx) = [-1 1];
+            bcrownum = bcrownum + 1;
+        end
+
+        % Get correct indices
+        indxl = csNsysk(j)+(1:Nsysk(j));
+        indxr = csNsysk(j+1)+(1:Nsysk(j+1));
+        len = indxr(end)-indxl(1)+1;
+
+        % Derivative conditions
+        for l = 1:dok-1   
+            % Jump condition is being enforced here, so ignore
+            if ismember([bk(j+1) k l],jumpinfo,'rows'), continue, end
+            % No jump, enforce continuity
+            Dl = D(csNsysk(j+1),indxl,l);     % Left of break jj
+            Dr = D(csNsysk(j+1)+1,indxr,l);   % Right of break jj
+            idx = csN(intnum)+(1:len);        % Global row index
+            Cmat(bcrownum,idx) = [-Dl Dr];    % Add to output
+            bcrownum = bcrownum + 1;          % +1 bc counter
+        end
+        intnum = intnum + 1;                  % +1 interval counter
+
     end
+
+    intnum = intnum + 1;                      % +1 interval counter
+
+end
+
+c = zeros(size(Cmat,1),1); % RHS of continuity conditions (no jumps)
+
+% Why would this happen??
+if numel(c) == 1 && ~any(Cmat)
+    Cmat = []; c = []; return
+end
+
+end

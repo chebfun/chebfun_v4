@@ -7,21 +7,60 @@ function s = char(A)
 if isempty(A)
   s = '   (empty linop)';
 else
-  s = '   operating on chebfuns defined on:';
+  s = '   Linear operator operating on chebfuns defined on:';
   s = char(s,' ');
-  s = char(s,['  ' char(A.fundomain)],' ');
+  s = char(s,['  ' char(A.domain)],' ');
 
   if all(A.blocksize==[1 1])
-    if ~isempty(A.varmat)
-%       s = char(s,char(A.varmat,A.fundomain),' ');
-      s = char(s,mat2char(A),' ');
-    end
-    if ~isempty(A.oparray)
+    if ~isempty(A.opshow)
+        s = char(s, '   with functional representation:',' ',...
+            ['     ' A.opshow{:}], ' ');
+    elseif ~isempty(A.oparray)
         oparrayStr = char(A.oparray);
         if isempty(strfind(oparrayStr,'innersum'))
           s = char(s, '   with functional representation:',' ',...
             ['     ' oparrayStr], ' ');
         end
+    end
+    
+        if ~isempty(A.lbc)
+      s = char(s,' ');
+      t = bc2char(A.lbcshow);
+      if iscell(A.lbcshow) && length(A.lbcshow) > 1
+        s = char(s, '   left boundary conditions:');
+      else
+         s = char(s, '   left boundary condition:');
+      end      
+      s = char(s,t{:});
+    end
+    
+    if ~isempty(A.rbc)
+      s = char(s,' ');
+      if iscell(A.rbcshow) && length(A.rbcshow) > 1
+        s = char(s, '   right boundary conditions:');
+      else
+         s = char(s, '   right boundary condition:');
+      end
+      t = bc2char(A.rbcshow);
+      s = char(s,t{:});
+    end
+    
+    if ~isempty(A.bc)
+      s = char(s,' ');
+      t = bc2char(A.bcshow);
+      if iscell(A.lbcshow) && length(A.lbcshow) > 1
+        s = char(s, '   other boundary conditions:');
+      elseif strcmp(strtrim(t),'periodic')
+         s = char(s, '   with periodic boundary conditions.') ;
+         return
+      else
+         s = char(s, '   other constraints:');
+      end
+      s = char(s,t{:});
+    end
+    
+    if ~isempty(A.varmat)
+      s = char(s,mat2char(A),' ');
     end
   else
     s = char(s,sprintf('   with %ix%i block definitions',A.blocksize),' ');
@@ -55,6 +94,22 @@ end
 
 end
 
+function s = bc2char(b)
+
+if ~iscell(b), b = {b}; end
+
+s = repmat({'     '},1,length(b));
+for k = 1:length(b)
+  if isnumeric(b{k})  % number
+    s{k} = [s{k}, num2str(b{k})];
+  elseif ischar(b{k})  % string
+    s{k} = [s{k}, b{k}];
+  else  % function
+    s{k} = [s{k},char(b{k}),' = 0'];
+  end
+end
+
+end
 
 function s = mat2char(V)
 % MAT2CHAR  Convert the varmat to pretty-print string (incl. BCs)
@@ -62,7 +117,7 @@ function s = mat2char(V)
 print_bc = true; % Print BCs or not
 defreal = 6;  % Size of matrix to display
 
-dom = V.fundomain;
+dom = V.domain;
 numints = numel(dom.endsandbreaks);
 if numints == 1 && isempty(V,'bcs')
     print_bc = false;

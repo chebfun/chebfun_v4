@@ -42,7 +42,7 @@ if isa(n,'chebfun')
     end
     [F nonConst] = jacobian(F,n);
     if nargin == 3, return, end
-    J = chebop(F.fundomain);
+    J = chebop(F.domain);
     J.op = F; 
     if ~isempty(inputname(1)) && ~isempty(inputname(2))
         s = ['diff(' inputname(1) ',' inputname(2) ')'];

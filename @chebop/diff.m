@@ -1,11 +1,9 @@
-function [J linbc] = diff(N,u,flag)
+function [N isLin] = diff(N,u)
 %DIFF    Jacobian (Frechet derivative) of nonlinear operator.
 %
-% Please note this method is experimental in Chebfun version 4.0.
-%
-% J = DIFF(N,U) for a chebop N and chebfun U, returns a linop
-% representing the Jacobian (i.e., the Frechet derivative) of N evaluated at
-% U. More specifically, J is the operator such that
+% J = DIFF(N,U) for a chebop N and chebfun U, returns a linop representing
+% the Jacobian (i.e., the Frechet derivative) of N evaluated at U. More
+% specifically, J is the operator such that
 %
 %   || N(u+delta) - N(u) - J*delta || / ||delta|| -> 0
 %
@@ -24,7 +22,7 @@ function [J linbc] = diff(N,u,flag)
 %   [d,x] = domain(0,1);
 %   u = 1-x;
 %   lbc = @(u) u-1;  rbc = @(u) u.*diff(u)-1;
-%   N = chebop(d,@(u)diff(u,2)-exp(u),lbc,rbc);
+%   N = chebop(d,@(u) diff(u,2)-exp(u),lbc,rbc);
 %   for k = 1:6
 %     r = N(u);  J = diff(N,u);
 %     delta = -J\r;  u = u+delta;
@@ -36,32 +34,30 @@ function [J linbc] = diff(N,u,flag)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-% Initialise
-if nargin < 3, flag = 0; end
+[J BC isLin] = linearise(N,u);
 
-[J linbc isLin affine] = linearise(N,u,flag);
+% if nargout == 1
+%     J = J & BC;
+% end
 
-if nargout == 1
-    J = J & linbc;
+N.op = J;
+N.jumplocs = N.jumplocs;
+N.domain = get(J,'domain');
+if ~isempty(BC)
+    N.lbc = BC.left;
+    N.rbc = BC.right;
+    N.bc = BC.other;
 end
 
-% No flag, so return a chebop
-% F = J;
-% J = chebop(get(L,'fundomain'));
-% J.op = L;
-% 
-% if ~isempty(inputname(1)) && ~isempty(inputname(2))
-%     s = ['diff(' inputname(1) ',' inputname(2) ')'];
-% else
-%     s = '';
-% end
-% J = set(J,'opshow',s);
-% 
-% if ~isempty(linBC.left)
-%     J.lbc = linBC.left;
-%     J.lbcshow = 'Linear operator';
-% end
-% if ~isempty(linBC.right)
-%     J.rbc = linBC.right;
-%     J.rbcshow = 'Linear operator';
-% end
+if ~isLin(1)
+    N.opshow = [];
+end
+if ~isLin(2)
+    N.lbcshow = [];
+end
+if ~isLin(3)
+    N.rbcshow = [];
+end
+if ~isLin(4)
+    N.bcshow = [];
+end

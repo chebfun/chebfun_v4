@@ -36,7 +36,7 @@ if subint(1)>subint(2)
 end
 
 g = f;
-dom = domain(f);
+dom = f.ends([1 end]);
 
 tol = 10*chebfunpref('eps')*diff(f.ends([1 end]));
 if subint(1) < dom(1) && subint(1) > dom(1) - tol

@@ -82,7 +82,7 @@ end
 if ~isa(N.init,'chebfun')
     init = [];
     for k = 1:numel(init)
-        init = chebfun(N.init(k),N.dom);
+        init = chebfun(N.init(k),N.domain);
     end
     N.init = init;
 end

@@ -5,15 +5,13 @@ function Nout = plus(N1,N2)
 
 if isnumeric(N1)
     N1show = cellstr(repmat(mat2str(N1),size(N2.opshow)));
-    mode = num2cell(repmat(1,size(N2.opshow)));
-    if strcmp(N2.optype,'anon_fun')
-        Nout = chebop(N2.dom, @(u) N1+N2.op(u));
-        Nout.optype = 'anon_fun';
+    mode = num2cell(ones(size(N2.opshow)));
+    if optype(N2) == 1
+        Nout = chebop(N2.domain, @(u) N1+N2.op(u));
         Nout.opshow = cellfun(@combineshow,N1show,N2.opshow,mode,'uniform',false);
     else
         N2show = cellstr(repmat('chebop',size(N2.opshow)));
-        Nout = chebop(N2.dom, @(u) N1+ feval(N2.op,u));
-        Nout.optype = 'anon_fun';
+        Nout = chebop(N2.domain, @(u) N1+ feval(N2.op,u));
         Nout.opshow = cellfun(@combineshow,N1show,N2show,mode,'uniform',false);
     end
     return
@@ -22,35 +20,32 @@ end
 if isnumeric(N2)
     N2show = cellstr(repmat(mat2str(N2),size(N1.opshow)));
     mode = num2cell(repmat(2,size(N1.opshow)));
-    if strcmp(N1.optype,'anon_fun')
-        Nout = chebop(N1.dom, @(u) N1.op(u)+N2);
-        Nout.optype = 'anon_fun';
+    if optype(N1) == 1
+        Nout = chebop(N1.domain, @(u) N1.op(u)+N2);
         Nout.opshow = cellfun(@combineshow,N1.opshow,N2show,mode,'uniform',false);
     else
         N1show = cellstr(repmat('chebop',size(N1.opshow)));
-        Nout = chebop(N1.dom, @(u) feval(N1.op,u)+N2);
-        Nout.optype = 'anon_fun';
+        Nout = chebop(N1.domain, @(u) feval(N1.op,u)+N2);
         Nout.opshow = cellfun(@combineshow,N1show,N2show,mode,'uniform',false);
     end
     return
 end
 
-if ~(N1.dom == N2.dom)
+if ~all(N1.domain.ends == N2.domain.ends)
     error('CHEBOP:plus:domain','Domains of operators do not match');
 end
 
-if ~strcmp(N1.optype,N2.optype)
+if ~optype(N1)==optype(N2)
     error('CHEBOP:plus:opType','Operators must be of same type (handle or linop)');
 end
 
 mode = num2cell(repmat(3,size(N1.opshow)));
-if strcmp(N1.optype,'anon_fun')
-    Nout = chebop(N1.dom, @(u) N1.op(u)+N2.op(u));
-    Nout.optype = 'anon_fun';
+dom = union(N1.domain,N2.domain);
+if optype(N1) == 1
+    Nout = chebop(dom, @(u) N1.op(u)+N2.op(u));
     Nout.opshow = cellfun(@combineshow,N1.opshow,N2.opshow,mode,'uniform',false);
 else
-    Nout = chebop(N1.dom, N1.op+N2.op);
-    Nout.optype = 'linop';
+    Nout = chebop(dom, N1.op+N2.op);
     Nout.opshow = cellfun(@combineshow,N1.opshow,N2.opshow,mode,'uniform',false);
 end
 

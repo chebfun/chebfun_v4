@@ -55,6 +55,7 @@ function F = volt_col(k,v,onevar)
     % resolve it relative to its own scale.) 
     opt = {'resampling',false,'splitting',true,'blowup','off'};
     % Return a chebfun for integrand at any x
+    v = set(v,'funreturn',0);
     dom = domain(v); d = dom.endsandbreaks; brk = d(2:end-1); 
     nrm = norm(v);
     h = @(x) chebfun(@(y) feval(v,y).*k(x,y),[d(1) brk(brk<x) x], ...
@@ -66,25 +67,6 @@ function F = volt_col(k,v,onevar)
                         {'k','v','d'},{k,v,dom},1,'volt');
     F.ID = newIDnum;
 end
-  
-  
-%     function v = volt_col(k,z,onevar)
-%     % Result can be resolved relative to norm(u). (For instance, if the
-%     % kernel is nearly zero by cancellation on the interval, don't try to
-%     % resolve it relative to its own scale.) 
-%     opt = {'resampling',false,'splitting',true,'blowup','off'};
-%     % Return a chebfun for integrand at any x
-%     dom = domain(z)
-%     d = dom.endsandbreaks
-%     brk = d(2:end-1)
-%     nrm = norm(z);
-%     
-%     h = @(x) chebfun(@(y) feval(z,y).*k(x,y),[d(1) brk(brk<x) x], ...
-%         opt{:},'scale',nrm,'exps',[0 0]);
-%     v = chebfun(@(x) sum(h(x)), [d(1) brk d(end)], ...
-%         'exps',[0 0],'vectorize','scale',nrm);
-% 
-%     end
   
     
   

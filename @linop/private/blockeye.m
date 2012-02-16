@@ -6,10 +6,10 @@ function B = blockeye(dom,m)
 
 Z = zeros(dom);  
 I = eye(dom);
-B = linop([],[],dom,0);
+B = linop();
 
 for i = 1:m
-  G = linop([],[],dom,0);
+  G = linop();
   for j = 1:i-1
     G = [G Z];
   end

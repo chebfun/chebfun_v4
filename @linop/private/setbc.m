@@ -17,8 +17,8 @@ function A = setbc(A,bc)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-I = eye(A.fundomain);
-D = diff(A.fundomain);
+I = eye(A.domain);
+D = diff(A.domain);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First, turn a mnemonic call into a bc struct.
@@ -72,7 +72,7 @@ if ~isstruct(bc)
           end
       else      % Systems case
           order = max(A.difforder,[],1);
-           Z = zeros(A.fundomain); Z = Z.varmat;
+           Z = zeros(A.domain); Z = Z.varmat;
           for j = 1:numel(order)
               B = I.varmat;
               Zl = repmat(Z,1,j-1);

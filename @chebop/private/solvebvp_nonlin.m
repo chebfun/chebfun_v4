@@ -1,9 +1,12 @@
-function [u nrmDeltaRelvec isLin] = solve_bvp_routines(N,rhs,pref,handles)
+function [u nrmDeltaRelvec isLin] = solvebvp_nonlin(N,rhs,u,pref,handles)
 % SOLVE_BVP_ROUTINES Private function of the chebop class.
 %
 % This function gets called by nonlinear backslash and solvebvp. It both
 % treates the cases where the user requests damped Newton iteration and
 % pure Newton iteration.
+%
+% We can safely assume we have a u0 when we enter this method -- solvebvp.m
+% takes care of obtaining the initial guess
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -19,46 +22,20 @@ dampedOn = strcmpi(pref.damped,'on');
 plotMode = lower(pref.plotting);
 lambda_minCounter = 0;
 
-% Check whether the operator is empty, or whether both BC are empty
-if isempty(N.op)
-    error('CHEBOP:solve_bvp_routines:OpEmpty','Operator empty.');
-end
-
-% Check which type the operator is (anonymous function or a chebop).
-% If it's an anonymous function, opType = 1. Else, opType = 2.
-if strcmp(N.optype,'anon_fun')
-    opType = 1;
-else
-    opType = 2;
-end
-
-% Construct initial guess if missing
-if isempty(N.init) % No initial guess given
-    if isempty(N.dom)
-        error('CHEBOP:solve_bvp_routines:noGuess','Neither domain nor initial guess is given.')
-    else
-        dom = N.dom;
-        N.dom = domain(N.dom.ends([1 end]));
-        u = findguess(N); % Initial quasimatrix guess of linear chebfuns
-        N.dom = dom;
-    end
-else
-    N.init = 1*N.init; % This is weird, but for some reason need. AB?
-    u = N.init;
-    dom = domain(u);
-end
-
+% Store the domain we're working with, and the endpoints of the domain
+dom = N.domain;
 ab = dom.ends;
 a = ab(1);  b = ab(end);
 
 % Create the linear function on the domain
 xDom = chebfun('x',dom);
 
+% !!! This should be done in solvebvp
 % If RHS of the \ is 0, keep the original DE. If not, update it. Also check
 % whether we have a chebop, if so, perform subtraction in a different way.
 % The variable numberOfInputVariables is a flag that's used to evaluate
 % functions in the function evalProblemFun.
-if opType == 2  % Operator is a linop. RHS is treated later
+if optype(N) == 2  % Operator is a linop. RHS is treated later
     deFun = N.op;
     numberOfInputVariables = 1;
 elseif isnumeric(rhs) && all(rhs == 0)
@@ -93,9 +70,7 @@ bcFunLeft = N.lbc;
 bcFunRight = N.rbc;
 bcFunOther = N.bc;
 
-if strcmpi(N.bc,'periodic') && (~isempty(N.lbc) || ~isempty(N.rbc))
-    error('CHEBOP:linearise:periodic', 'BC is periodic at one end but not at the other.');
-end
+
     
 % Check whether either boundary has no BC attached, used later in the
 % iteration.
@@ -108,15 +83,16 @@ otherEmpty = isempty(bcFunOther);
 % if ~iscell(bcFunLeft), bcFunLeft = {bcFunLeft}; end
 % if ~iscell(bcFunRight), bcFunRight = {bcFunRight}; end
 
-counter = 0;
 
 % Anon. fun. and linops now both work with N(u)
 [deResFun, lbcResFun, rbcResFun, bcResFun] = evalResFuns();
 
 nrmDeltaRel = Inf;
 nnormr = Inf;
-nrmDeltaRelvec = zeros(10,1);
-normrvec = zeros(10,1);
+nrmDeltaRelvec = zeros(maxIter,1);
+normrvec = zeros(maxIter,1);
+contraFactor = zeros(maxIter,1);
+nrmDeltaAbsVec = zeros(maxIter,1);
 normu = norm(u,'fro');
 
 lambdas = zeros(10,1);
@@ -124,65 +100,15 @@ lambdas = zeros(10,1);
 % Newton iteration, this counter will remain 0.
 stagCounter = 0;
 
-% Check to see if N is linear. If it is, we can solve without iterations.
-% If it's not, the linop will return the linearisation about the initial
-% guess (plus the identity?).
+% Linearise N around the initial guess of the solution (which should
+% satisfy linear BCs imposed). If we're in this method, we know that the
+% problem is nonlinear, so we don't care about linearity information. Also,
+% the affine part was already obtained in solvebvp (but do we need to take that into account in the differential equation?)
 [A bc isLin] = linearise(N,u);
-jumplocs = get(A,'jumplocs');
+A = A & bc;
+jumpinfo = get(A,'jumpinfo');
 
-maxdo = max(max(get(A,'difforder')));
-if maxdo > 0 && isempty(N.lbc) && isempty(N.rbc) && isempty(N.bc)
-    % Differential equations need boundary conditions (but integral eqns are OK).
-    error('CHEBOP:solve_bvp_routines:BCEmpty''All BCs empty.');
-end
-
-if isLin % N is linear. Sweet!
-    
-    % Correct for bc vals.
-    Nfeval = feval(N,0*u);   
-    if isnumeric(rhs)
-        if numel(rhs) == 1
-            bs = get(A,'blocksize');
-            rhs = repmat(rhs,1,bs(2));
-        end
-    end
-    for rhsCounter = 1:numel(Nfeval)
-        newRhs(:,rhsCounter) = rhs(:,rhsCounter) - Nfeval(:,rhsCounter);
-    end
-    N.op = A;
-    A = linop(N,0*u); % Linearise around the zero chebfun
-    
-    % Solve the linear system
-    uguess = u;
-    u = A\newRhs;
-    delta = uguess-u;
-
-    if nargout == 2
-        if numberOfInputVariables == 1
-            nrmDeltaRelvec = norm(feval(N,u)-newRhs);
-        else
-            uCell = cell(1,numel(u));
-            for quasiCounter = 1:numel(u)
-                uCell{quasiCounter} = u(:,quasiCounter);
-            end
-            nrmDeltaRelvec = norm(deFun(xDom,currentGuessCell{:})-newRhs);
-        end
-    end
-    if isempty(handles) && any(strcmpi(pref.display,{'iter','display'}))
-        fprintf('Converged in one step. (Chebop is linear).\n');
-    elseif ~isempty(handles)
-        solve_display(pref,handles,'init',u);
-        solve_display(pref,handles,'iter',u,norm(delta),nrmDeltaRel,nrmDeltaRelvec)
-        solve_display(pref,handles,'final',u,[],nrmDeltaRel,0)
-    end
-   
-    return
-else
-    % Need to switch the signs of bc.left.vals and bc.right.vals for
-    % nonlinear problems. Why is that??? [!!!]
-    A = A & bc;
-end
-
+% Display information depending on whether we're in damped mode or not
 if dampedOn
     solve_display(pref,handles,'initNewton',u);
 else
@@ -196,19 +122,25 @@ elseif ~strcmp(plotMode,'off')
     pause(plotMode)
 end
 
-while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounter < maxStag
-    counter = counter + 1;
+% Counter for the Newton iteration to monitor the process
+newtonCounter = 0;
+while nrmDeltaRel > deltol && nnormr > restol && newtonCounter < maxIter && stagCounter < maxStag
+    newtonCounter = newtonCounter + 1;
     
-    if counter > 1 % (Has already been done above for counter = 1)
+    % Obtain a struct including information for the BCs. Don't need to do
+    % this at the first iteration as we already have the BCs from the
+    % linearise method.
+    if newtonCounter > 1
         bc = setupBC();
     end
-    % If the operator is a chebop, we don't need to linearize. Else, do the
-    % linearization using diff. Note that if the operator is a chebop, we
+    
+    % If the operator is a linop, we don't need to linearize. Else, do the
+    % linearization using diff. Note that if the operator is a linop, we
     % need to handle the rhs differently.
-    if opType == 1
+    if optype(N) == 1
         % Using A.scale if we are in the first iteration - Handles linear
         % problems better
-        if counter == 1
+        if newtonCounter == 1
             A = subsasgn(A,struct('type','.','subs','scale'), normu);
             delta = -(A\deResFun);
             % After the first iteration, we lower the tolerance of the chebfun
@@ -216,7 +148,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
             % but rather a size related to the tolerance requested).
         else
             A = diff(deResFun,u,'linop') & bc;
-            A = set(A,'jumplocs',jumplocs);
+            A = set(A,'jumpinfo',jumpinfo);
             A = subsasgn(A,struct('type','.','subs','scale'), normu);
             % Linop backslash with the third argument added
             delta = -(A\deResFun);
@@ -226,7 +158,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
         A = deFun & bc; % deFun is a LINOP
         
         % Do similar tricks as above for the tolerances.
-        if counter == 1
+        if newtonCounter == 1
             A = subsasgn(A,struct('type','.','subs','scale'), normu);
             delta = -(A\(r-rhs));
         else
@@ -234,13 +166,13 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
         end
     end
     
-    % Find the optimal stepsize of the dampe Newton iteration. Only use
-    % damped if contraction factor is greater than 1
+    % Find the optimal stepsize of the damped Newton iteration. Only use
+    % damping if contraction factor is greater than 1
     nrmDeltaAbs = norm(delta,'fro');
-    if counter > 1
-        contraFactor(counter-1) = nrmDeltaAbs/nrmDeltaAbsVec(counter-1);
+    if newtonCounter > 1
+        contraFactor(newtonCounter-1) = nrmDeltaAbs/nrmDeltaAbsVec(newtonCounter-1);
     end
-    if dampedOn && (counter > 1 && contraFactor(counter-1) > 1)
+    if dampedOn && (newtonCounter > 1 && contraFactor(newtonCounter-1) > 1)
         lambda = optStep();
     else
         lambda = 1;
@@ -268,16 +200,16 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     % columnwise and use the sum of those inner products as an estimate for
     % the residuals (this is certainly correct if the preferred norm is
     % be the Frobenius norm).
-    nrmDeltaAbsVec(counter) = nrmDeltaAbs;
-    nrmDeltaRelvec(counter) = nrmDeltaRel;
-    normrvec(counter) = nnormr/normu;
+    nrmDeltaAbsVec(newtonCounter) = nrmDeltaAbs;
+    nrmDeltaRelvec(newtonCounter) = nrmDeltaRel;
+    normrvec(newtonCounter) = nnormr/normu;
     %     contraFactor =
-    lambdas(counter) = lambda;
+    lambdas(newtonCounter) = lambda;
     
     if ~strcmp(plotMode,'off')
         if strcmp(plotMode,'pause')
             pause
-        elseif counter > 1
+        elseif newtonCounter > 1
             % Measure how long it is since we plotted last iteration
             iterationTimeToc = toc(iterationTimeTic);
             if plotMode - iterationTimeToc > 0
@@ -297,7 +229,7 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     % If the user has pressed the stop button on the GUI, we stop and
     % return the latest solution
     if ~isempty(handles) && strcmpi(get(handles.button_solve,'String'),'Solve')
-        nrmDeltaRelvec(counter+1:end) = [];
+        nrmDeltaRelvec(newtonCounter+1:end) = [];
         solve_display(pref,handles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
         return
     end
@@ -305,8 +237,8 @@ while nrmDeltaRel > deltol && nnormr > restol && counter < maxIter && stagCounte
     % Start a timer from the end of this iteration
     iterationTimeTic = tic;
 end
-% Clear up norm vector
-nrmDeltaRelvec(counter+1:end) = [];
+% Clear up norm vectors 
+nrmDeltaRelvec(newtonCounter+1:end) = [];
 solve_display(pref,handles,'final',u,[],nrmDeltaRel,normr,nrmDeltaRelvec)
 
 % Issue a warning message if stagnated. Should this in output argument
@@ -416,7 +348,7 @@ end
             end
         end
         
-        if opType == 1
+        if optype(N) == 1
             sn(1) = sn(1) + norm(deResFun,'fro').^2;
         else
             sn(1) = sn(1) + norm(r-rhs,'fro').^2;
@@ -496,7 +428,7 @@ end
 
 % Function used in the stagnation check for damped Newton iteration.
     function updatedStagCounter = checkForStagnation(currStagCounter)
-        if nrmDeltaRel > min(nrmDeltaRelvec(1:counter)) && norm(normr)/normu > min(normrvec(1:counter))
+        if nrmDeltaRel > min(nrmDeltaRelvec(1:newtonCounter)) && norm(normr)/normu > min(normrvec(1:newtonCounter))
             updatedStagCounter = currStagCounter+1;
         else
             updatedStagCounter = max(0,currStagCounter-1);

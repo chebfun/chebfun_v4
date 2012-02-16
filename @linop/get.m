@@ -10,12 +10,14 @@ switch propName
         val = L.oparray;
     case 'difforder'
         val = L.difforder;
-    case 'fundomain'
-        val = L.fundomain;
+    case {'domain','fundomain'}
+        val = L.domain;
     case 'lbc'
         val = L.lbc;        
     case 'rbc'
         val = L.rbc;
+    case 'bc'
+        val = L.bc;        
     case 'numbc'
         val = L.numbc;
     case 'scale'
@@ -24,10 +26,8 @@ switch propName
         val = L.blocksize;
     case 'ID'
         val = L.ID;
-    case 'jumplocs'
-        val = L.jumplocs;
-    case 'chebop'
-        val = L.chebop;        
+    case 'jumpinfo'
+        val = L.jumpinfo;    
     otherwise
-        error('CHEBFUN:get:propnam',[propName,' is not a valid chebfun property.'])
+        error('CHEBFUN:linop:get:propnam',[propName,' is not a valid linop property.'])
 end

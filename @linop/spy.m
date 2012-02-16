@@ -11,7 +11,7 @@ function spy(A,c)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-ends = A.fundomain.endsandbreaks;
+ends = A.domain.endsandbreaks;
 de = ends(end)-ends(1);
 LW = 'linewidth'; lw = 3;
 C = 'color'; EC = 'EdgeColor';

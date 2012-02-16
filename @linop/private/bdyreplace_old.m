@@ -9,7 +9,7 @@ function [B,c,rowidx] = bdyreplace_old(A,n,map,breaks)
 if nargin < 3, map = []; end
 if nargin < 4, breaks = []; end
 
-breaks = union(breaks,A.fundomain.endsandbreaks);
+breaks = union(breaks,A.domain.endsandbreaks);
 if ~isempty(breaks) && numel(breaks) > 2
     numints = numel(breaks)-1;
     if numel(n) == 1, n = repmat(n,1,numints); end

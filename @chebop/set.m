@@ -10,9 +10,9 @@ while length(propertyArgIn) >= 2,
     val = propertyArgIn{2};
     propertyArgIn = propertyArgIn(3:end);
     switch prop
-        case 'dom'
+        case {'dom','domain'}
             if ~isa(val,'domain'), val = domain(val); end
-            N.dom = val;
+            N.domain = val;
         case 'bc'
             if isa(val,'struct')  % given .left and .right
                 if isfield(val,'left')
@@ -64,10 +64,9 @@ while length(propertyArgIn) >= 2,
                 N.rbcshow = val;
             end
         case 'op'
-            if isa(val,'function_handle') || (iscell(val) && isa(val{1},'function_handle'))
-                N.optype = 'anon_fun';
-            elseif isa(val,'linop') || (isa(val,'cell') && isa(val{1},'linop'))
-                N.optype = 'linop';
+            if isa(val,'function_handle') || (iscell(val) && isa(val{1},'function_handle')) ...
+                    || isa(val,'linop') || (isa(val,'cell') && isa(val{1},'linop'))
+                % Do nothing
             else
                 error('CHEBOP:set:opType','Operator must by a function handle or linop.')
             end
@@ -87,7 +86,7 @@ while length(propertyArgIn) >= 2,
             if isnumeric(val)
                 u = chebfun;
                 for k = 1:size(val,2)
-                    u(:,k) = chebfun(val(:,k),N.dom);
+                    u(:,k) = chebfun(val(:,k),N.domain);
                 end
                 N.init = u;
             else

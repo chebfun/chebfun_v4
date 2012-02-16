@@ -78,15 +78,15 @@
 classdef chebfun
     
     properties ( GetAccess = 'public', SetAccess = 'public' )
-        funs = [];
-        nfuns = 0;
-        ends = []
-        scl = 0;
-        imps = [];
-        trans = false;
-        jacobian = anon('[]','',[],1);
-        ID = [];
-        funreturn = false;
+        funs = [];         % An array of the funs in the chebfun
+        nfuns = 0;         % Number of funs 
+        ends = [];         % List of breakpoints
+        scl = 0;           % Indication of the vertical scale
+        imps = [];         % Impulse (delta funciton) info
+        trans = false;     % Row-chebfun flag
+        jacobian = anon('[]','',[],1); % AD (i.e., jacobian) information
+        ID = [];           % Individual ID number of chebfun - for AD
+        funreturn = false; % Force functionals to return chebconsts
     end
     
     methods

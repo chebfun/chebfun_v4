@@ -78,13 +78,13 @@ if m~=A{1}.blocksize(1)
   error('LINOP:eigs:notsquare','Block size must be square.')
 end
 
-dom = A{1}.fundomain;
+dom = A{1}.domain;
 for j = 1:numel(A)
-    domB = A{j}.fundomain;
+    domB = A{j}.domain;
     dom = union(dom,domB);
 end
 for j = 1:numel(A)
-    A{j}.fundomain = dom;
+    A{j}.domain = dom;
 end
 breaks = dom.endsandbreaks;
 numints = numel(breaks)-1;
@@ -295,7 +295,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [V,D] = bc_eig_old(A,N,k,sigma,map,breaks)
-breaks = union(breaks,A.fundomain.endsandbreaks);
+breaks = union(breaks,A.domain.endsandbreaks);
 if (numel(N) == 1 && numel(breaks) > 2)
     N = repmat(N,1,numel(breaks)-1);
 end

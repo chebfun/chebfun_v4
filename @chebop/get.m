@@ -5,8 +5,8 @@ function val = get(N, propName)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 switch propName
-    case 'dom'
-        val = N.dom;
+    case {'dom','domain'}
+        val = N.domain;
     case 'op'
         val = N.op;
     case 'bcs'

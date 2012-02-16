@@ -9,8 +9,8 @@ function L = set(L,propName,val)
             L.oparray = val;
         case 'difforder'
             L.difforder = val;
-        case 'fundomain'
-            L.fundomain = val;
+        case {'domain','fundomain'}
+            L.domain = val;
         case 'lbc'
             L.lbc = val;        
         case 'rbc'
@@ -23,11 +23,11 @@ function L = set(L,propName,val)
             L.blocksize = val;
         case 'ID'
             L.ID = val;
-        case 'jumplocs'
-            L.jumplocs = val;        
-        case 'chebop'
-            L.chebop = val;        
+        case 'jumpinfo'
+            L.jumpinfo = val;        
+        case {'opshow','lbcshow','rbcshow','bcshow'}
+            L.(propName) = val; 
         otherwise
-            error('CHEBFUN:get:propnam',[propName,' is not a valid chebfun property.'])
+            error('CHEBFUN:get:propnam',[propName,' is not a valid linop property.'])
     end
 end

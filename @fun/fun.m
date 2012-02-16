@@ -16,10 +16,6 @@
 % array to PREF.EXPS, and a non-adaptive call can be forced by setting
 % PREF.N to be a positive integer.
 %
-% [G,ISH] = FUN(...) returns the constructed fun G and the boolean ISH,
-% which is true if the construction is believed to have converged and false
-% otherwise.
-%
 % FUN creates an empty fun.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
@@ -28,18 +24,17 @@
 classdef fun
     
     properties ( GetAccess = 'public' , SetAccess = 'public' )
-        n = 0;
-        vals = [];
-        coeffs = [];
-        points = [];
-        ends = [-1 1];
-        exps = [0 0];
-        scl = struct('h',[],'v',[]);
-        map = struct('for',[],'inv',[],'der',[],'name',[],'par',[]);
+        n = 0;         % The length of the fun
+        vals = [];     % Fun values at Chebyshev points
+        coeffs = [];   % Chebyshev coeffs of fun
+        ends = [-1 1]; % Domain of the fun
+        exps = [0 0];  % Exponents: f(x)=(x-a)^exps(1)*(b-x)*exps(b)*p(x)
+        scl = struct('h',[],'v',[]); % Scale info (horizontal and vertical)
+        map = struct('for',[],'inv',[],'der',[],'name',[],'par',[]); % map 
     end
     
     properties ( GetAccess = 'private' , SetAccess = 'private' )
-        ish = true;
+        ish = true;    % Happiness indicator. Did fun converege happily?
     end
     
     methods

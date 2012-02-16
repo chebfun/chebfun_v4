@@ -52,6 +52,22 @@ end
     function P = mat(n)
         [n map breaks numints] = tidyInputs(n,d,mfilename); 
         
+        % If n == 1, interpolation is easy!!
+        if all(n == 1)
+            if numints == 1
+                P = ones(length(x),1);
+            else
+                P = zeros(length(x),numints);
+                for k = 1:numel(x)
+                    P(k,:) = x(k) >= breaks(1:end-1) & x(k) <= breaks(2:end);
+                    P(k,:) = P(k,:)/sum(P(k,:));
+                end
+            end   
+            return
+        elseif any(n == 1)
+            error('CHEBFUN:domain:feval:n1','Expansion with n = 1 is not supported.')
+        end
+        
         if isempty(map) && isempty(breaks)
             % Standard case
             P = barymat(x,chebpts(n));

@@ -24,7 +24,7 @@ lamcorrect = [
 
 pass(1) = norm( lam-lamcorrect, inf ) < 1e-12;
 
-A.fundomain = domain(0,pi/2,pi);
+A.domain = domain(0,pi/2,pi);
 [V D] = eigs(A,5);
 lam_pw = diag(D);
 pass(2) = norm( lam_pw-lamcorrect, inf ) < 1e-12;

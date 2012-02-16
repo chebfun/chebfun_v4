@@ -41,22 +41,22 @@ elseif isnumeric(A) || isnumeric(B)
 
     C.opshow = cellfun(@(s) [num2str(A),' * (',s,')'],B.opshow,'uniform',false);
 elseif isa(A,'chebop') && isa(B,'chebop')
-    if ~(A.dom == B.dom)
+    if ~all(A.domain.ends == B.domain.ends)
         error('CHEBOP:mtimes:domain','Domains of operators do not match');
     end
     
     % When L*u is allowed, these checks will not be necessary anymore
-    if strcmp(A.optype,'anon_fun')
-        if strcmp(B.optype,'anon_fun')
-            C = chebop(A.dom, @(u) A.op(B.op(u)));
+    if optype(A) == 1
+        if optype(B) == 1
+            C = chebop(A.domain, @(u) A.op(B.op(u)));
         else
-            C = chebop(A.dom, @(u) A.op(B.op*u));
+            C = chebop(A.domain, @(u) A.op(B.op*u));
         end
     else
-        if strcmp(B.optype,'anon_fun')
-            C = chebop(A.dom, @(u) A.op*(B.op(u)));
+        if optype(B) == 1
+            C = chebop(A.domain, @(u) A.op*(B.op(u)));
         else
-            C = chebop(A.dom, A.op*B.op);
+            C = chebop(A.domain, A.op*B.op);
         end        
     end
     

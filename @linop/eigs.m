@@ -77,12 +77,12 @@ if m ~= A.blocksize(1)
     error('LINOP:eigs:notsquare','Block size must be square.')
 end
 
-domA = A.fundomain;
+domA = A.domain;
 if ~isempty(B)
-    domB = B.fundomain;
+    domB = B.domain;
     dom = union(domA,domB);
-    A.fundomain = dom;
-    B.fundomain = dom;
+    A.domain = dom;
+    B.domain = dom;
 else
     dom = domA;
 end

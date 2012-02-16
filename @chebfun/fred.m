@@ -46,6 +46,7 @@ function F = fred_col(k,v,onevar)
     % Result can be resolved relative to norm(u). (For instance, if the
     % kernel is nearly zero by cancellation on the interval, don't try to
     % resolve it relative to its own scale.) 
+    v = set(v,'funreturn',0);
     nrmf = norm(v);
     d = domain(v);
     opt = {'resampling',false,'splitting',true,'exps',[0 0],'scale',nrmf};

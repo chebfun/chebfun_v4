@@ -118,7 +118,7 @@ function C = mldivide(A,B,varargin)
     if sum(max(A.difforder,[],1)) ~= sum(max(A.difforder,[],2))
       warning('LINOP:mldivide:hell',...
         'This equation may be solved incorrectly. See Trac #202.')
-    elseif A.numbc-npar ~= (1+numel(A.jumplocs))*sum(max(A.difforder,[],2))  
+    elseif A.numbc-npar-size(A.jumpinfo,1) ~= sum(max(A.difforder,[],2))  
         warning('LINOP:mldivide:bcnum',...
         'Operator may not have the correct number of boundary conditions.')
     end
@@ -129,7 +129,8 @@ function C = mldivide(A,B,varargin)
     warning('off','MATLAB:singularMatrix');
     warning('off','MATLAB:nearlySingularMatrix');
     if length(Amat) < 300  
-      if(size(Amat,1)~=size(Amat,2)) || (cond(Amat,1) > 0.01/eps)
+      if (npar == 0 && (size(Amat,1)~=size(Amat,2) || cond(Amat,1) > 0.01/eps)) || ...
+          (npar>0 && cond(Amat,2) > 0.01/eps)
         warning('linop:mldivide:illposed',...
           'Problem may be ill-posed. Check the boundary conditions.')
       end

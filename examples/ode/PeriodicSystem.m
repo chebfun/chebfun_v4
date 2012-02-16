@@ -31,13 +31,13 @@ plot(u,LW,lw), title('Solutions u and v',FS,fs), legend('u','v');
 % For this problem, the solution can actually be computed
 % analytically.  How close were we?
 true = [cos(x+3*pi/4) cos(x+pi/4)]/sqrt(2);
-err = norm(u-true,inf)
+err = norm(u-true,inf);
 
 %%
 % We show this also works for piecewise problems by artificially
 % introducing a breakpoint at the origin.
 
-A.dom = domain(-pi,0,pi);
+A.domain = [-pi,0,pi];
 u = A\f;
 plot(u,LW,lw), title('Solutions u and v',FS,fs), legend('u','v');
-err = norm(u-true,inf)
+err = norm(u-true,inf);

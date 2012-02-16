@@ -17,7 +17,6 @@ function [g,ish] = growfun(op,g,pref,g1,g2)
 % Check preferences
 split = pref.splitting;
 resample = pref.resampling;
-tol = pref.eps;
 extrap = isfield(pref,'extrapolate') && pref.extrapolate;
 
 % Store scale in case not happy. (This is useful for functions which blowup 

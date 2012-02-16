@@ -23,6 +23,6 @@ if s(1) > 1
     end
     fout = L*repmat(cheb1,1,L.blocksize(2));
 else
-    fout = linop( @(n) diag(feval(L,n{:})), L.oparray, L.fundomain, 0);
+    fout = linop( @(n) diag(feval(L,n{:})), L.oparray, L.domain, 0);
     fout.isdiag = 1;
 end
