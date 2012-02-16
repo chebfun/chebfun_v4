@@ -368,29 +368,30 @@ tenPercent = ceil(N/10); % We are the 10%
 iif10 = 1:tenPercent;    % Indices of first 10%
 ii90 = tenPercent:N;     % Indicies of last 90%
 ii10 = (N-tenPercent):N; % Indicies of last 10%
-% First an arbitray linear combination of the allowed vectors
-VV = V(:,idx)*[1 ; 2 + sin(1:size(idx,2)-1).']; % Form linear combination
-if numel(N) == 1
-    vc = cd2cp(VV);
-else
-    vc = zeros(max(N),1);
-    csN = cumsum([0 N]);
-    for jj = 1:numel(N)
-        % We can save time (and FFTs) by combining intervals which
-        % have the same discretisation length (say, N(i) = N(j)). TODO.
-        ii = csN(jj) + (1:N(jj)).';
-        tmp = cd2cp(V(ii));
-        vc(1:N(jj)) = vc(1:N(jj))+tmp(end:-1:1);
-    end
-    vc = vc(end:-1:1);
-end
-norm90 = norm(vc(ii90)); % Norm of last 90%
-norm10 = norm(vc(ii10)); % Norm of last 10%
-if norm10 <= 0.5*norm90    
-    % We don't need to bother checking each of the vectors for high energy
-    % as their sum passes OK!
-    idx = idx( keeper ); % Return the keepers.
-end
+
+% % First an arbitray linear combination of the allowed vectors
+% VV = V(:,idx)*[1 ; 2 + sin(1:size(idx,2)-1).']; % Form linear combination
+% if numel(N) == 1
+%     vc = cd2cp(VV);
+% else
+%     vc = zeros(max(N),1);
+%     csN = cumsum([0 N]);
+%     for jj = 1:numel(N)
+%         % We can save time (and FFTs) by combining intervals which
+%         % have the same discretisation length (say, N(i) = N(j)). TODO.
+%         ii = csN(jj) + (1:N(jj)).';
+%         tmp = cd2cp(V(ii));
+%         vc(1:N(jj)) = vc(1:N(jj))+tmp(end:-1:1);
+%     end
+%     vc = vc(end:-1:1);
+% end
+% norm90 = norm(vc(ii90)); % Norm of last 90%
+% norm10 = norm(vc(ii10)); % Norm of last 10%
+% if norm10 <= 0.5*norm90    
+%     % We don't need to bother checking each of the vectors for high energy
+%     % as their sum passes OK!
+%     idx = idx( keeper ); % Return the keepers.
+% end
 
 % Check for high frequency energy (indicative of spurious eigenvalues) in
 % each of the remaining valid eigenfunctions.
