@@ -26,9 +26,8 @@ else
     try
         gui_mainfcn(gui_State, varargin{:});
         warning(warnstate);
-    catch
+    catch ME
         warning(warnstate)
-        ME = lasterror;
         MEID = ME.identifier;
         if ~isempty(strfind(MEID,'Chebgui:'))
             % These are expected GUI errors. We only show the dialog
@@ -355,36 +354,24 @@ if strcmp(eventdata.Key,'tab'),
         if get(handles.button_pde,'value')
             uicontrol(handles.input_timedomain); 
         else
-            uicontrol(handles.domain); 
+            uicontrol(handles.input_domain); 
         end
     else
-        uicontrol(handles.input_LBC); 
+        uicontrol(handles.input_BC); 
     end
 end
-function input_LBC_KeyPressFcn(hObject, eventdata, handles)
+function input_BC_KeyPressFcn(hObject, eventdata, handles)
 if strcmp(eventdata.Key,'tab')
     if strcmp(eventdata.Modifier,'shift')
         uicontrol(handles.input_DE); 
     else
-        uicontrol(handles.input_RBC); 
-    end
-end
-function input_RBC_KeyPressFcn(hObject, eventdata, handles)
-if strcmp(eventdata.Key,'tab')
-    if strcmp(eventdata.Modifier,'shift')
-        uicontrol(handles.input_LBC); 
-    else
-        if get(handles.button_eig,'value')
-            uicontrol(handles.edit_eigN); 
-        else
-            uicontrol(handles.input_GUESS); 
-        end
+        uicontrol(handles.input_GUESS); 
     end
 end
 function input_GUESS_KeyPressFcn(hObject, eventdata, handles)
 if strcmp(eventdata.Key,'tab')
     if strcmp(eventdata.Modifier,'shift')
-        uicontrol(handles.input_RBC); 
+        uicontrol(handles.input_BC); 
     else
         uicontrol(handles.button_solve); 
     end
