@@ -38,7 +38,7 @@ end
 f = set(f,'funreturn',0);
 
 % Default preferences
-rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots') , 'new' , false );
+rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots') , 'old' , false );
 zerofun = 1;
 for k = 1:nargin-1
     argin = varargin{k};
@@ -57,8 +57,8 @@ for k = 1:nargin-1
             zerofun = 1;  
         case 'nozerofun'
             zerofun = 0;              
-        case 'new'
-            rootspref.new = true;              
+        case 'old'
+            rootspref.old = true;              
         otherwise
             if strncmpi(argin,'rec',3),       % recursion
                 rootspref.recurse = 1;
@@ -84,15 +84,15 @@ for i = 1:f.nfuns
     if ~zerofun
         % Do not return midpoint of zero funs.
         if any(lfun.vals)
-            if rootspref.new
-                rs = roots_new(lfun,rootspref); % Get the roots of the current fun
+            if rootspref.old
+                rs = roots_old(lfun,rootspref); % Get the roots of the current fun
             else
                 rs = roots(lfun,rootspref); % Get the roots of the current fun
             end;
         end
     else
-        if rootspref.new
-            rs = roots_new(lfun,rootspref); % Get the roots of the current fun
+        if rootspref.old
+            rs = roots_old(lfun,rootspref); % Get the roots of the current fun
         else
             rs = roots(lfun,rootspref); % Get the roots of the current fun
         end
