@@ -29,6 +29,9 @@ function C = mldivide(A,B,varargin)
 
  maxdegree = cheboppref('maxdegree');
  if nargin >2, tolerance = varargin{1}; end
+ persistent storage
+ if isempty(storage), storage = struct('L',[],'U',[],'P',[],'c',[],'p',[]); end
+ use_store = cheboppref('storage');
 
  switch(class(B))
   case 'linop'
@@ -194,10 +197,45 @@ function C = mldivide(A,B,varargin)
       return
     end 
     
-    % Evaluate the matrix with boundary conditions attached.
-    [Amat,ignored,c,ignored,P,Amat2] = feval(A,N,'bc',map,bks);
-    if ~iscell(P), P = {P}; end
+    % We don't use storage in these situations
+    if numel(N) > 1 || N <=4 || ~isempty(map) || (~isempty(bks)&&length(bks)~=2) || ~isempty(paridx)
+        use_store = 0; 
+    end
     
+    haveLU = false;
+    % Check to see if the matrix has LU factors stored in cache
+    if use_store && length(storage)>=A.ID && length(storage(A.ID).L)>=N && ~isempty(storage(A.ID).L{N})
+        % It does!
+        L = storage(A.ID).L{N};
+        U = storage(A.ID).U{N};
+        P = storage(A.ID).P{N};
+        c = storage(A.ID).c{N};
+        p = storage(A.ID).p{N};
+        haveLU = true;
+        
+    else% If not, then make it.
+        
+        % Evaluate the matrix with boundary conditions attached.
+        [Amat,ignored,c,ignored,P,Amat2] = feval(A,N,'bc',map,bks);
+        if ~iscell(P), P = {P}; end
+        
+        if use_store
+            % This is very crude garbage collection!
+            % If size is exceeded, wipe out everything.
+            ssize = whos('storage');
+            if ssize.bytes > cheboppref('maxstorage')
+                storage = struct([]);
+            end
+            [L U p] = lu(Amat,'vector');
+            storage(A.ID).L{N} = L;
+            storage(A.ID).U{N} = U;
+            storage(A.ID).P{N} = P;
+            storage(A.ID).c{N} = c;
+            storage(A.ID).p{N} = p;
+            haveLU = true;
+        end
+    end
+
     % Deal with parameter dependent problems
     if ~isempty(paridx)
         ii = [];  nbc = numel(c); bc = zeros(nbc,npar); % initialise
@@ -225,45 +263,6 @@ function C = mldivide(A,B,varargin)
         end
         Amat = [Amat [Acol ; bc]]; % Reform the big matrix with the new columns augmented
     end 
-        
-%     % Delta functions - Support to appear in V5.0
-%     if syssize ==  1
-%         imps = B.imps(2:end,2:end-1);
-%         counter = 0; 
-%         skip = numel(bks)-2;
-%         numbc = get(A,'numbc');
-%         while ~isempty(imps)
-%             idx = (1:skip) + numbc + counter*skip;
-%             if idx(end) > numel(c), break, end
-%             c(idx) = imps(1,:);
-%             imps(1,:) = [];
-%             counter = counter+1;
-%         end
-%     end
-%     %modify c to incorporate appropriate boundary conditions
-%     %for delta functions 
-%     if( size( B.imps, 1 ) >= 2 )      %if there are delta functions
-%         loc = B.imps(2,:) ~= 0;       %find location of delta functions.
-%         deltaLoc = B.ends( loc );
-%         deltaMag = B.imps( 2, loc );  %magnitude of delta functions
-%         if( ~isempty( deltaLoc ) )
-%             d = A.fundomain;
-%             n = A.difforder;
-%             if( deltaLoc(1) == d(1) || deltaLoc(end) == d(end) )
-%                 % delta at the boundary, what to do?
-%                 error( 'delta at domain boundary, not implemented yet!' );
-%             else
-%                 %evaluate the highest coefficient of A at delta locations
-%                 ndelta = length( deltaLoc );
-%                 anx = zeros( 1, ndelta );
-%                 for i = 1:ndelta
-%                     nthpoly = chebfun(@(u) (u-deltaLoc(i)).^n/factorial(n), d );
-%                     anx( i ) = feval( feval(A,nthpoly), deltaLoc(i) );
-%                 end
-%                 c(((1:ndelta)+1)*n) = deltaMag./anx; % jump conditions
-%             end
-%         end
-%     end
 
     % The RHS.
     f = [];
@@ -283,7 +282,11 @@ function C = mldivide(A,B,varargin)
     f = [f ; c]; 
     
    % Solve the system.
-    v = Amat\f;
+   if ~haveLU
+       v = Amat\f;
+   else
+       v = U\(L\f(p));
+   end
 
     % Store V for output.
     if any(paridx)

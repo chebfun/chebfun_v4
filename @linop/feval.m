@@ -81,13 +81,6 @@ breaks = union(breaks,A.fundomain.endsandbreaks);
 if numel(breaks) == 2 && ~any(isempty(breaks)), breaks = []; end
 if isstruct(map) && strcmp(map(1).name,'linear'), map = []; end
 
-% We don't use storage if there's a nontrivial map 
-if ~isempty(map), use_store = 0; end
-% Nor if numel(n) > 1
-if numel(n) > 1, use_store = 0; end
-% Or if we have a non-trivial domain
-if ~isempty(breaks), use_store = 0; end
-
 % Repeat N if the user has been lazy
 if numel(n) == 1 && ~isempty(breaks)
   n = repmat(n,1,numel(breaks)-1);
@@ -115,7 +108,15 @@ if any(isinf(n))
 
 else
 % %%%%%%%%%%%%%%%%%%%% matrix representation %%%%%%%%%%%%%%%%%%%%%
-  % Is the matrix already exists in storage?
+  
+  % We don't use storage if there's a nontrivial map 
+  if ~isempty(map), use_store = 0; end
+  % Nor if numel(n) > 1
+  if numel(n) > 1, use_store = 0; end
+  % Or if we have a non-trivial domain
+  if ~isempty(breaks), use_store = 0; end
+  
+    % Is the matrix already exists in storage?
   if use_store && n > 4 && length(storage)>=A.ID ...
       && length(storage(A.ID).mat)>=n && ~isempty(storage(A.ID).mat{n})
     M = storage(A.ID).mat{n};
@@ -165,7 +166,11 @@ else
       if isempty(breaks)     % No breakpoints
           % Project
           P = barymatp12m(n-abs(A.difforder),n,[-1 1],map);
-          M = P*M;
+          if isempty(P)
+              M = [];
+          else
+              M = P*M;
+          end
           % Compute boundary conditions and apply (if required)
           if usebc == 1
               [B,c] = bdyreplace(A,{n},map,{breaks});
@@ -175,7 +180,11 @@ else
       else                   % Break points
           % Project
           P = barymatp12m(n-abs(A.difforder),n,breaks,map);
-          M = P*M;
+          if isempty(P)
+              M = [];
+          else
+              M = P*M;
+          end
           % Compute boundary conditions and apply (if required)
           if usebc == 1
               [B c] = bdyreplace(A,{n},map,{breaks});

@@ -45,7 +45,7 @@ function varargout = eigs(A,varargin)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Parsing inputs.
-B = [];  k = 6;  sigma = []; map = []; breaks = [];
+B = [];  k = 6;  sigma = []; map = [];
 gotk = false;
 j = 1;
 while (nargin > j)
@@ -68,6 +68,7 @@ while (nargin > j)
 end
 
 % This shouldn't happen, but we might as well deal with it.
+if ischar(k), sigma = k; k = []; end
 if isnan(k) || isempty(k), k = 6; end
 
 maxdegree = cheboppref('maxdegree');

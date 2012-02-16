@@ -52,8 +52,10 @@ if ~isempty(cache{N}{1})
 else
     D = Dw .* Dxi;
     D(ii) = 0; D(ii) = - sum(D,2);              % negative sum trick
-%     cache{N}{1} = D;                            % store in cache    
+    cache{N}{1} = D;                            % store in cache    
 end
+
+if k == 1, return, end
 
 % k = 2
 if k > 1 && ~isempty(cache{N}{2})
@@ -61,7 +63,7 @@ if k > 1 && ~isempty(cache{N}{2})
 elseif k > 1
     D = 2*D .* (repmat(D(ii),1,N) - Dxi);
     D(ii) = 0; D(ii) = - sum(D,2);              % negative sum trick
-%     cache{N}{2} = D;                            % store in cache    
+    cache{N}{2} = D;                            % store in cache    
 end
 
 % higher orders
@@ -71,7 +73,7 @@ for n = 3:k
     else
         D = n*Dxi .* (Dw.*repmat(D(ii),1,N) - D);
         D(ii) = 0; D(ii) = - sum(D,2);          % negative sum trick
-%         cache{N}{n} = D;                        % store in cache    
+        cache{N}{n} = D;                        % store in cache    
     end
 end
 
