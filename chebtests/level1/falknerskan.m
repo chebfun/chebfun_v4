@@ -33,6 +33,5 @@ while normdu>1e-10*(tol/eps) && niter < 11
 end
 
 upp0 = 0.927680043004878;
-%upp0 = 0.925610907564427;
 
 pass = abs( feval(diff(u,2),0) -upp0) < 2e8*tol;

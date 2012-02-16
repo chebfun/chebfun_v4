@@ -173,6 +173,29 @@ if isnan(optN)
 end
 opt.AbsTol = atol; opt.RelTol = rtol;
 
+% Check for (and try to remove) piecewise initial conditions
+u0trans = get(u0,'trans');
+% Get u0trans as a cell if u0 is a quasimatrx
+if numel(u0trans) > 1, u0trans = u0trans{1}; end
+if u0trans, u0 = transpose(u0); end
+for k = 1:numel(u0)
+    if u0(:,k).nfuns > 1
+        u0(:,k) = merge(u0(:,k),'all',1025,tol);
+        if u0(:,k).nfuns > 1
+            error('CHEBFUN:pde15s:piecewise',...
+                'piecewise initial conditions are not supported'); 
+        end
+    end
+end
+% Simplify initial condition to tolerance or fixed size in optN
+if isnan(optN)
+    u0 = simplify(u0,tol);
+else
+    for k = 1:numel(u0)
+        u0(:,k).funs(1) = prolong(u0(:,k).funs(1),optN);
+    end
+end
+
 % Get the domain and the independent variable 'x'
 d = domain(u0);
 xd = chebfun(@(x) x,d);
@@ -413,28 +436,6 @@ if syssize > 1
     diffop = repmat(diffop,syssize,syssize);
 end
 
-% Check for (and try to remove) piecewise initial conditions
-u0trans = get(u0,'trans');
-% Get u0trans as a cell if u0 is a quasimatrx
-if numel(u0trans) > 1, u0trans = u0trans{1}; end
-if u0trans, u0 = transpose(u0); end
-for k = 1:numel(u0)
-    if u0(:,k).nfuns > 1
-        u0(:,k) = merge(u0(:,k),tol);
-        if u0(:,k).nfuns > 1
-            error('CHEBFUN:pde15s:piecewise',...
-                'piecewise initial conditions are not supported'); 
-        end
-    end
-end
-% simplify initial condition to tolerance or fixed size in optN
-if isnan(optN)
-    u0 = simplify(u0,tol);
-else
-    for k = 1:numel(u0)
-        u0(:,k).funs(1) = prolong(u0(:,k).funs(1),optN);
-    end
-end
 
 % The vertical scale of the intial condition
 vscl = u0.scl;

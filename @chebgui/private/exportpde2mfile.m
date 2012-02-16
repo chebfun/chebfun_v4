@@ -217,14 +217,6 @@ else
 end
 if numel(deInput)==1 && ~ischar(deInput)
     % Get the strings of the dependant variable. Just use allVarNames.
-%     idx = strfind(deString,')');
-%     tmp = deString(3:idx(1)-10);
-%     idx = strfind(tmp,',');
-%     if isempty(idx)
-%         s = tmp;
-%     else
-%         s = tmp(1:idx(1)-1);
-%     end 
     s = allVarNames;
     sol = s{1}; sol0 = [sol '0'];
     findx = strfind(initInput{1},xName);
@@ -239,21 +231,7 @@ if numel(deInput)==1 && ~ischar(deInput)
         fprintf(fid,'%s = %s;\n',sol0,vectorize(initInput));
     end        
 else
-    % Get the strings of the dependant variables. Just use allVarNames
-%     idx = strfind(deString,')');
-%     tmp = deString(3:idx(1)-10);
-%     idx = strfind(tmp,',');
-%     if isempty(idx)
-%         s = {tmp};
-%     else
-%         s = cell(1,length(idx)+1);
-%         s{1} = tmp(1:idx(1)-1);
-%         for k = 2:length(idx)
-%             s{k} = tmp(idx(k-1)+1:idx(k)-1);
-%         end
-%         if isempty(k), k = 1; end
-%         s{k+1} = tmp(idx(k)+1:end);
-%     end    
+    % Get the strings of the dependant variables. Just use allVarNames   
     s = allVarNames;
     % To deal with 'u = ...' etc in intial guesses
     order = []; guesses = []; inits = [];
@@ -294,29 +272,7 @@ else
         fprintf(fid,' %s%s,',inits{order(k)},initText);
     end
     fprintf(fid,' %s%s];\n',inits{order(end)},initText);
-    
-%     % If the initial guesses are all constants, we need to wrap them in a
-%     % chebfun call.
-%     for k = 1:numel(initInput)
-%         findx = strfind(initInput{k},'x');
-%         if ~isempty(findx), break, end
-%     end
-%     % Print the conditions.
-%     catstr = [];
-%     for k = 1:numel(initInput)
-%         if ~isempty(findx)
-%             fprintf(fid,'%s = %s;\n',s{k},vectorize(initInput{k}));
-%         else
-%             fprintf(fid,'%s = chebfun(%s,dom);\n',s{k},initInput{k});
-%         end
-%         catstr = [catstr ', ' s{k}];
-%     end
-%     sol0 = 'sol0'; sol = 'sol';
-%     fprintf(fid,'%s = [%s];',sol0,catstr(3:end));
-%     if isempty(catstr(3:end)),
-%         fprintf(fid,'\t%% An initial condition is required!');
-%     end
-%     fprintf(fid,'\n');
+
 end
 
 % Option for tolerance

@@ -30,7 +30,7 @@ if length(W) == 1
 else
     [G Gp Gi rho] = mpinchmap(scaleinv(W),plotflag);
 end
-m.par = [a b W(:).' rho];
+m.par = [a b W(:).'];
 m.name = 'mpinch';
 
 m.for = @(y) scale(G(y));
@@ -200,7 +200,7 @@ function w = newt(s,a,ginv,ginvp,wk)
     catch no_fsolve
         % ode45 and Newton
 %         w = nsold(s,@(ww) Ginv(ww,a,ginv)-s,[tol tol],[40, 1, 1, 1, 1 1]);  
-        tol2 = min([1e-7 ; abs(imag(wk))]);
+        tol2 = min([1e-7 ; max(abs(imag(wk)),eps)])
         opts = odeset('abstol',tol,'reltol',tol2,'vectorized',1);
         [ignored w] = ode45(@(t,ww) 1./Ginvp(ww,a,ginvp),s,-1,opts);
         norm(Ginv(w,a,ginv)-s,inf)

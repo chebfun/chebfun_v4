@@ -2,7 +2,8 @@ function varargout = polyfit(x,y,n,d)
 %POLYFIT Fit polynomial to a chebfun.
 %   F = POLYFIT(X,Y,N,D) returns a chebfun F on the domain D which 
 %   corresponds to the polynomial of degree N that fits the data (X,Y) 
-%   in the least-squares sense.
+%   in the least-squares sense. If N is not given, it is assumed to be
+%   length(Y)-1, and F will interpolate the data.
 %
 %   See also polyfit, chebfun/polyfit
 
@@ -27,8 +28,14 @@ if nargout > 2
 end
 
 if isa(n,'domain')
-    d = n;
-    n = length(y);
+    if nargin == 4 && isnumeric(d)
+        tmp = n;
+        n = d;
+        d = tmp;
+    else
+        d = n;
+        n = length(y)-1;
+    end
 end
 
 %% ----------------- method 1 -------------------
@@ -52,4 +59,28 @@ return
 % Qx = Q(x,:);
 % 
 % varargout{1} = Q*(Qx\y);
+
+%% ----------------- method 3 -------------------
+
+% w = bary_weights(x);
+% xcheb = chebpts(n);
+% ycheb = bary(xcheb,y,x,w);
+% varargout{1} = chebfun(ycheb,d);
+
+%% ----------------- method 4 -------------------
+
+% ends = d.ends;
+% if numel(ends) == 1
+%     p = polyfit(x,y,n);
+%     varargout{1} = chebfun(@(x) polyval(p,x),d,length(p));
+% else
+%     f = chebfun;
+%     for k = 2:numel(ends)
+%         idx = find(x<ends(k));
+%         p = polyfit(x(idx),y(indx),length(idx));
+%         fk = chebfun(@(x) polyval(p,x),ends(k-1:k),length(p));
+%         f = [f ; fk]; x(idx) = []; y(idx) = [];
+%     end
+% end
+% varargout{1} = f;
 

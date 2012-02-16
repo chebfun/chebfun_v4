@@ -252,7 +252,7 @@ end
         u = MiD*u; % Convert to L2-orthonormal Chebyshev basis
         u = filter(u,100*tol);
         
-        %         u = filter(u,1e-8);
+        u = filter(u,1e-8);
         
     end
 

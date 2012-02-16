@@ -95,7 +95,8 @@ function h = minfun(f,g,ignored)
 % If one is complex, use abs(f) and abs(g) to determine which function
 % values to keep. (experimental feature)
 if isreal(f) && isreal(g) && nargin<3
-  Fs = sign(f-g);
+  [f g] = overlap(f,g);
+  Fs = sign(f-g,1);
 else
   Fs = sign(abs(f)-abs(g));
 end

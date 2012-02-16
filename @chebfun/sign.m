@@ -1,4 +1,4 @@
-function Fout = sign(F)
+function Fout = sign(F,varargin)
 % SIGN   Sign function.
 % G = SIGN(F) returns a piecewise constant chebfun G such that G(x) = 1 in
 % the interval where F(x)>0, G(x) = -1 in the interval where F(x)<0 and
@@ -10,7 +10,7 @@ function Fout = sign(F)
 
 Fout = F;
 for k = 1:numel(F)
-    Fout(k) = signcol(F(k));
+    Fout(k) = signcol(F(k),varargin{:});
 end
 
 for k = 1:numel(F)
@@ -24,7 +24,7 @@ end
 
 
 % ----------------------------------
-function fout = signcol(f)
+function fout = signcol(f,varagin)
 
 if isempty(f), fout = chebfun; return, end
 f.funreturn = 0;
@@ -80,14 +80,18 @@ r(end) = ends(end);
 r(1) = ends(1);
 %---------------------------------------------
 
-% Non-trivial impulses should not be removed
-lvals = feval(f,f.ends,'left');
-rvals = feval(f,f.ends,'right');
-idxl = abs(f.imps(1,:) - lvals) > 100*tol;
-idxr = abs(f.imps(1,:) - rvals) > 100*tol;
-idx = idxl | idxr; idx([1 end]) = 1;
-r = sort(unique([r ; ends(idx).']));
-[ignored idx2] = intersect(r,ends(idx));
+if nargin == 1
+    % Non-trivial impulses should not be removed
+    lvals = feval(f,f.ends,'left');
+    rvals = feval(f,f.ends,'right');
+    idxl = abs(f.imps(1,:) - lvals) > 100*tol;
+    idxr = abs(f.imps(1,:) - rvals) > 100*tol;
+    idx = idxl | idxr; idx([1 end]) = 1;
+    r = sort(unique([r ; ends(idx).']));
+    [ignored idx2] = intersect(r,ends(idx));
+else
+    idx2 = 1:length(r);
+end
 
 % Build new chebfun
 nr = length(r);

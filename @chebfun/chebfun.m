@@ -86,9 +86,6 @@ classdef chebfun
         trans = false;
         jacobian = anon('[]','',[],1);
         ID = [];
-    end
-    
-    properties ( GetAccess = 'public', SetAccess = 'private' )
         funreturn = false;
     end
     
