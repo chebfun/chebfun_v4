@@ -48,13 +48,10 @@ end
 kfun = k(:)';
 
 for j = 1:numel(u)
-    
-    if isempty(k)
-        kfun = 1:u(j).nfuns;
-    end
-    
-    for kk = kfun
-        u(j).funs(kk) = simplify(u(j).funs(kk),tol,[],force);
+
+    % If there are any funs, simplify them.
+    if ~isempty( u(j).funs )
+        u(j).funs = simplify( u(j).funs , tol , [] , force );
     end
     
 end
