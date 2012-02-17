@@ -5,6 +5,23 @@ function [g ish] = simplify(g,tol,kind,force)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+
+% Recurse?
+if numel(g) > 1
+    for k=1:numel(g)
+        if nargin < 2
+            g(k) = simplify(g(k));
+        elseif nargin < 3
+            g(k) = simplify(g(k),tol);
+        elseif nargin < 4
+            g(k) = simplify(g(k),tol,kind);
+        else
+            g(k) = simplify(g(k),tol,kind,force);
+        end
+    end
+    return;
+end
+
 % Assume we're happy!
 ish = true;
 
