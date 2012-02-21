@@ -34,6 +34,7 @@ if ~f.trans
     % Reverse the order of funs, 
     f.funs = fliplr(f.funs);
     % and the funs themselves.
+    dfun = fun;
     for k = 1:f.nfuns, 
         f.funs(k) = flipud(f.funs(k)); 
         f.funs(k).map = maps(fun,f.funs(k).map.name,f.funs(k).map.par);
