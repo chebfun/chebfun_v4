@@ -36,6 +36,6 @@ if ~f.trans
     % and the funs themselves.
     for k = 1:f.nfuns, 
         f.funs(k) = flipud(f.funs(k)); 
-        f.funs(k).map = maps(fun,f.funs(k).map.name,f.ends(k:k+1));
+        f.funs(k).map = maps(fun,f.funs(k).map.name,f.funs(k).map.par);
     end
 end
