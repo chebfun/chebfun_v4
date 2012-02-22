@@ -82,7 +82,7 @@ function C = mldivide(A,B,varargin)
     
     V = [];  % Initialise V so that the nested function overwrites it.
     syssize = A.blocksize(1);     % Number of eqns in system.
-    coef = [1, 2 + sin(1:A.blocksize(2)-1)];  % for a linear combination of variables
+    coef = [1, 1 + .5*sin(1:A.blocksize(2)-1)];  % for a linear combination of variables
     
     % Enforce required conditions on an unbounded integro-equation
     infdom = isinf(isinf(ends));

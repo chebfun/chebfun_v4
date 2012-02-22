@@ -83,11 +83,13 @@ varargout{1} = y;
     % The Jacobian has diagonal blocks. The user gives the entire J(x) for
     % a single value of x. What we need is J_{i,j} at all values of x to be
     % encapsulated in a chebfun. To minmize calls to the jacfun, we do a
-    % construction of a random linear combination of all elements, storing
+    % construction of an arbitrary linear combination of all elements, storing
     % results in a 3D array. Then we go back and convert each slice to a
     % chebfun.
 
-    randvec = rand(m^2,1);  A = [];
+%     randvec = rand(m^2,1);  
+    randvec = [1+.5*sin(1:m^2)].';  % arbitrary combination of variables
+    A = [];
     function v = value(x)
       N = length(x);
       A = zeros(m,m,N);

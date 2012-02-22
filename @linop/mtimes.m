@@ -125,7 +125,7 @@ switch(class(B))
             else
                 V = [];  % force nested function overwrite
                 % For adaptation, combine solution components randomly.
-                combine = randn(A.blocksize(2),1);
+                combine = [1, 1 + .5*sin(1:A.blocksize(2)-1)].';  % for a linear combination of variables
                 c = chebfun( @(x) value(x,B), dom, chebopdefaults );  % adapt
                 % Now V is defined with values of each component at cheb points.
                 for k = 1:size(B,2)

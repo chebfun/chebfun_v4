@@ -54,7 +54,6 @@ elseif iscell(map)
             m(k) = map{k};
         elseif isa(map{k},'function_handle')
             m(k).for = map{k};
-%             m(k).name = char(64+round(26*rand(1,10))); % Assign a random name
         end
     end
 end
