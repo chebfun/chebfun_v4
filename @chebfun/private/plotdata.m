@@ -360,13 +360,17 @@ elseif isempty(h) % Two quasimatrices case
         fm = []; gm = [];
         for j = 1:fk.nfuns
             if fk.funs(j).n > gk.funs(j).n
-                fm = [fm; fk.funs(j).vals];
-                gkf = prolong(gk.funs(j), fk.funs(j).n);
-                gm = [gm; gkf.vals];
+                xgrid = chebpts(fk.funs(j).n,gk.funs(j).map.par(1:2));
+                fkf = feval(fk.funs(j),xgrid);
+                gkf = feval(gk.funs(j),xgrid);
+                fm = [fm; fkf];
+                gm = [gm; gkf];
             else
-                gm = [gm; gk.funs(j).vals];
-                fkf = prolong(fk.funs(j), gk.funs(j).n);
-                fm = [fm; fkf.vals];
+                xgrid = chebpts(gk.funs(j).n,fk.funs(j).map.par(1:2));
+                fkf = feval(fk.funs(j),xgrid);
+                gkf = feval(gk.funs(j),xgrid);
+                fm = [fm; fkf];
+                gm = [gm; gkf];
             end
         end
         mask = fm < interval(1) | fm > interval(2);
