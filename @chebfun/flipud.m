@@ -32,11 +32,12 @@ if ~f.trans
     f.ends = -fliplr(f.ends) + sum(f.ends([1 end]));
     f.imps = fliplr(f.imps);
     % Reverse the order of funs, 
-    f.funs = fliplr(f.funs);
+    f.funs = f.funs(end:-1:1);
     % and the funs themselves.
-    dfun = fun;
+%     dfun = fun; % dummy fun
     for k = 1:f.nfuns, 
-        f.funs(k) = flipud(f.funs(k)); 
-        f.funs(k).map = maps(fun,f.funs(k).map.name,f.funs(k).map.par);
+        f.funs(k) = flipud(f.funs(k),f.ends(k:k+1)); 
+%         pars = f.funs(k).map.par; pars(1:2) = [];
+%         f.funs(k).map = maps(dfun,f.funs(k).map.name,f.ends(k:k+1),pars);
     end
 end
