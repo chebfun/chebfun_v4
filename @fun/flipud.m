@@ -52,6 +52,6 @@ else
         lininv = @(x) ((b-a)*x+a*(d-c)-c*(b-a))/(d-c); % inverse
         m.inv = @(x) m.inv(lininv(x));
     end  
-    m.par(1:2) = newends;                     % update the ends 
+    m.par(1:2) = [c d];                       % update the ends 
 end
 f.map = m;                                    % update the map
