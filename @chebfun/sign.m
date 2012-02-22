@@ -89,22 +89,23 @@ function fout = signcol(f,varagin)
         idx = idxl | idxr; idx([1 end]) = 1;
         r = sort(unique([r ; ends(idx).']));
         [ignored idx2] = intersect(r,ends(idx));
-    else
-        idx2 = 1:length(r);
     end
 
     % Build new chebfun
     nr = length(r);
     ff = {};
     c = 0.5912; % evaluate at an arbitrary point in [a,b]
-    vals = sign(feval(f,c*r(1:nr-1)+(1-c)*r(2:nr)));
+    vals = sign( feval( f , c*r(1:nr-1) + (1-c)*r(2:nr) ) );
     for i = 1:nr-1
         ff{end+1} = { vals(i) , r(i:i+1) };
     end
     fout = set( f , 'funs' , fun( ff ) , 'ends' , r , 'scl' , 1 , 'imps' , zeros(1,nr) );
 
     % Reassign impulses
-    % fout.imps(1,1) = sign(feval(f,ends(1)));
-    % fout.imps(1,end) = sign(feval(f,ends(end)));
-    fout.imps(1,idx2) = sign(double(feval(f,r(idx2))));
-    fout.funreturn = funreturn;
+    if nargin == 1
+        fout.imps(1,idx2) = sign( f.imps(idx) );
+    else
+        fout.imps(1,:) = sign( double( feval( f , r ) ) );
+    end
+    fout.funreturn = funreturn;
+    
