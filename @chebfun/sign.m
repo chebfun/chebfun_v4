@@ -1,4 +1,4 @@
-function Fout = sign(F)
+function Fout = sign(F,varargin)
 % SIGN   Sign function.
 % G = SIGN(F) returns a piecewise constant chebfun G such that G(x) = 1 in
 % the interval where F(x)>0, G(x) = -1 in the interval where F(x)<0 and
@@ -10,7 +10,7 @@ function Fout = sign(F)
 
     Fout = F;
     for k = 1:numel(F)
-        Fout(k) = signcol(F(k));
+        Fout(k) = signcol(F(k),varargin{:});
     end
 
     for k = 1:numel(F)
@@ -24,7 +24,7 @@ function Fout = sign(F)
 
 
 % ----------------------------------
-function fout = signcol(f)
+function fout = signcol(f,varagin)
 
     if isempty(f), fout = chebfun; return, end
     f.funreturn = 0;
@@ -80,14 +80,18 @@ function fout = signcol(f)
     r(1) = ends(1);
     %---------------------------------------------
 
-    % Non-trivial impulses should not be removed
-    lvals = ends; for k=1:length(ends)-1, lvals(k) = f.funs(k).vals(1); end; lvals(end) = f.funs(end).vals(end);
-    rvals = ends; for k=2:length(ends), rvals(k) = f.funs(k-1).vals(end); end; rvals(1) = f.funs(1).vals(1);
-    idxl = abs(f.imps(1,:) - lvals) > 100*tol;
-    idxr = abs(f.imps(1,:) - rvals) > 100*tol;
-    idx = idxl | idxr; idx([1 end]) = 1;
-    r = sort(unique([r ; ends(idx).']));
-    [ignored idx2] = intersect(r,ends(idx));
+    if nargin == 1
+        % Non-trivial impulses should not be removed
+        lvals = ends; for k=1:length(ends)-1, lvals(k) = f.funs(k).vals(1); end; lvals(end) = f.funs(end).vals(end);
+        rvals = ends; for k=2:length(ends), rvals(k) = f.funs(k-1).vals(end); end; rvals(1) = f.funs(1).vals(1);
+        idxl = abs(f.imps(1,:) - lvals) > 100*tol;
+        idxr = abs(f.imps(1,:) - rvals) > 100*tol;
+        idx = idxl | idxr; idx([1 end]) = 1;
+        r = sort(unique([r ; ends(idx).']));
+        [ignored idx2] = intersect(r,ends(idx));
+    else
+        idx2 = 1:length(r);
+    end
 
     % Build new chebfun
     nr = length(r);
@@ -103,4 +107,4 @@ function fout = signcol(f)
     % fout.imps(1,1) = sign(feval(f,ends(1)));
     % fout.imps(1,end) = sign(feval(f,ends(end)));
     fout.imps(1,idx2) = sign(double(feval(f,r(idx2))));
-    fout.funreturn = funreturn;
+    fout.funreturn = funreturn;
