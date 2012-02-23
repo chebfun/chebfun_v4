@@ -68,11 +68,9 @@ function varargout = plot(varargin)
 numpts = chebfunpref('plot_numpts');
 
 % Plot to a given axes
-if ishandle(varargin{1})
-    ax = varargin{1};
-    varargin(1) = [];
-else
-    ax = [];
+[cax,varargin] = axescheck(varargin{:});
+if ~isempty(cax)
+    axes(cax); %#ok<MAXES>
 end
 
 % Get jumpline style and jumpval markers
@@ -107,7 +105,7 @@ for k = length(varargin):-1:1
     end
 end
 
-linedata = {}; markdata = {}; jumpdata = {}; dummydata = {}; jvaldata = {};
+linedata = {}; markdata = {}; jumpdata = {}; dummydata = {}; jvaldata = {}; LW = [];
 bot = inf; top = -inf;
 while ~isempty(varargin)
     % grab the chebfuns
@@ -199,14 +197,17 @@ if isempty(linedata), linedata = {[]}; end
 if isempty(jumpdata), jumpdata = {[]}; end
 if isempty(jvaldata), jvaldata = {[]}; end
 
+% Are we holding the current axis?
 h = ishold;
 
-% getting current axes
+% Get current axes limits
 if h && all(~isinf([bot top])) && infy
     try
         yl = get(gca,'ylim');
         bot = min(yl(1),bot);
         top = max(yl(2),top);
+    catch ME %#ok<NASGU>
+        % do nothing
     end
 end
 
@@ -215,13 +216,9 @@ if isempty(jlinestyle) || (ischar(jlinestyle) && strcmpi(jlinestyle,'none'))
     jumpdata = {NaN, NaN};
 end
 
-% Plot to axes ax
-if ~isempty(ax)
-    axes(ax)
-end
-
-% dummy plot for legends
+% Dummy plot for legends
 hdummy = plot(dummydata{:}); hold on
+% Plot lines, marks, jumplines, and jumpvals
 h1 = plot(linedata{:},'handlevis','off');
 h2 = plot(markdata{:},'linestyle','none','handlevis','off');
 h3 = plot(jumpdata{:},'handlevis','off');
@@ -231,19 +228,22 @@ else
     h4 = NaN(size(h1));
 end
 
+% Colours of jumplines and val
 defjlcol = true;
+colours = {'b','g','r','c','m','y','k','w'};
 for k = 1:length(jlinestyle)
-    if ~isempty(strmatch(jlinestyle(k),'bgrcmykw'.'))
+    if ~isempty(strncmp(jlinestyle(k),colours,1))
         defjlcol = false; break
     end
 end
 defjmcol = true;
 for k = 1:length(jmarker)
-    if ~isempty(strmatch(jmarker(k),'bgrcmykw'.'))
+    if ~isempty(strncmp(jlinestyle(k),colours,1))
         defjmcol = false; break
     end
 end
 
+% Enforce colours
 if numel(h2) == numel(h1)  % This should always be the case??
     for k = 1:length(h1)
         h1color = get(h1(k),'color');
@@ -269,16 +269,21 @@ end
 %     set(gca,'xlim',interval)
 % end
 
+% Set the axis limits
 if length(interval) == 4
-    set(gca,'ylim',interval(3:4))
+    set(ax,'ylim',interval(3:4))
 elseif all(~isinf([bot top])) && infy
     try
-        set(gca,'ylim',[bot top])
+        set(ax,'ylim',[bot top])
+    catch ME  %#ok<NASGU>
+        % do nothing
     end
 end
 
+% Reset hold
 if ~h, hold off; end
 
+% Output handles
 if nargout == 1
     varargout = {[h1 h2 h3 h4 hdummy]};
 end

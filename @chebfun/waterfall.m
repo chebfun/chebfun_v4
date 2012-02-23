@@ -1,4 +1,4 @@
-function varargout = waterfall(u,varargin)
+function varargout = waterfall(varargin)
 % WATERFALL Waterfall plot for quasimatrices.
 %
 %  WATERFALL(U), or WATERFALL(U,T) where LENGTH(T) = MIN(SIZE(U)), plots a
@@ -15,8 +15,19 @@ function varargout = waterfall(u,varargin)
 
 % numpts = chebfunpref('plot_numpts');
 
+% Defaults
 numpts = 0; numptsmax = inf; numptsmin = 200;
 simple = true;
+
+% First input might be a figure handle
+[cax,varargin] = axescheck(varargin{:});
+if ~isempty(cax)
+    axes(cax); %#ok<MAXES>
+end
+
+% First input is now the chebfun
+u = varargin{1};
+varargin(1) = [];
 
 k = 1;
 while k <= numel(varargin)
@@ -44,7 +55,7 @@ t = 1:n;
 
 if nargin > 1 && isnumeric(varargin{1}) && length(varargin{1}) == size(u,2)
     t = varargin{1}; t = t(:).';
-    varargin = {varargin{2:end}};
+    varargin(1) = [];
 end
 
 if length(t)~=n
@@ -93,37 +104,22 @@ tt = repmat(t,length(xx(:,1)),1);
 % mask the NaNs
 mm = find(isnan(uu));
 uu(mm) = uu(mm+1);
-
-minuu = min(uu(:));
-
-
 uu(1) = uu(1)+eps;
+
+if min(size(uu)) == 1
+    xx = [xx xx]; tt = [tt tt]; uu = [uu uu]; t = [1 2];
+end
 
 if simple
     ish = ishold;
-    mesh(xx.',tt.',uu.','edgecolor','none','facealpha',.75); hold on,
+    mesh(xx.',tt.',uu.','edgecolor','none','facealpha',.75); hold on
     % Intersperse with NaNs
     xx = repmat(xx,1,4);
     mid = repmat((t(1:end-1)+t(2:end))/2,size(tt,1),1);
     tt = reshape([tt ; tt+eps ; [mid NaN*tt(:,end)] ; [tt(:,2:end)-eps NaN*tt(:,end)]],size(xx));
-%     uu1 = reshape([uu ; minuu + 0*uu ; NaN*uu ; minuu + 0*[uu(:,2:end) uu(:,end)]],size(xx));
-%     hold off,  mesh(xx.',tt.',uu1.','edgecolor','none'); hold on
     uu = reshape([uu ; uu ; NaN*uu ; [uu(:,2:end) uu(:,end)]],size(xx));
     mesh(xx.',tt.',uu.',varargin{:});
     if ~ish, hold off; end
-    
-    % old way (using plot3)
-%     varargin = [varargin, {'numpts',numpts}]; 
-%     x = chebfun('x',domain(u));
-%     ish = ishold; h = {};
-%     if u(1).trans, u = u.'; end
-%     for k = 1:numel(u)
-%         tk = t(k) + 0*x;
-%         h{k} = plot3(x,tk,u(:,k),varargin{:}); hold on
-%     end
-%     if ~ish, hold off, end
-%     if nargout > 0, varargout{1} = h; end
-%     return
 end
 
 % plot the waterfall

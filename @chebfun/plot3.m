@@ -14,11 +14,9 @@ function varargout = plot3(varargin)
 numpts = chebfunpref('plot_numpts');
 
 % Plot to a given axes
-if ishandle(varargin{1})
-    ax = varargin{1};
-    varargin(1) = [];
-else
-    ax = gca;
+[cax,varargin] = axescheck(varargin{:});
+if ~isempty(cax)
+    axes(cax); %#ok<MAXES>
 end
 
 % get jumpline style and jumpval markers
@@ -118,9 +116,6 @@ h = ishold;
 if isempty(jlinestyle) || strcmpi(jlinestyle,'none')
     jumpdata = {NaN, NaN, NaN};
 end
-
-% Plot to axes ax
-axes(ax)
     
 % dummy plot for legends
 hdummy = plot3(dummydata{:}); hold on

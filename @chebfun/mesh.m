@@ -1,4 +1,4 @@
-function varargout = mesh(u,varargin)
+function varargout = mesh(varargin)
 %MESH Waterfall plot for quasimatrices.
 %
 %  MESH(U) or MESH(U,T) where LENGTH(T) = MIN(SIZE(U))
@@ -9,7 +9,18 @@ function varargout = mesh(u,varargin)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+% Defaults
 numpts = 201;
+
+% First input might be a figure handle
+[cax,varargin] = axescheck(varargin{:});
+if ~isempty(cax)
+    axes(cax); %#ok<MAXES>
+end
+
+% First input is now the chebfun
+u = varargin{1};
+varargin(1) = [];
 
 trans = u(:,1).trans;
 if trans
@@ -18,9 +29,9 @@ end
 n = min(size(u,2));
 t = 1:n;
 
-if nargin > 1 && isnumeric(varargin{1}) && length(varargin{1}) == size(u,2)
+if ~isempty(varargin) && isnumeric(varargin{1}) && length(varargin{1}) == size(u,2)
     t = varargin{1}; t = t(:).';
-    varargin = {varargin{2:end}};
+    varargin(1) = [];
 end
 
 if numel(varargin) > 1 && strcmpi(varargin{1},'numpts')
