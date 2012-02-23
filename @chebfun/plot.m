@@ -136,6 +136,8 @@ while ~isempty(varargin)
     end
     if pos > 0
         s = {varargin{1:pos}};
+        idx = find(strcmp(s,'linewidth'),1);
+        if any(idx), LW = {'linewidth',s{idx+1}}; else LW = []; end
     else
         s = [];
     end
@@ -181,7 +183,7 @@ while ~isempty(varargin)
     if ~isempty(marks)
         markdata = [markdata, marks,s];
     end
-    jumpdata = [jumpdata, jumps];
+    jumpdata = [jumpdata, jumps, LW];
     jvaldata = [jvaldata, jumpval];
     if ~isempty(lines)
         dummydata = [dummydata, lines{1}(1), NaN*ones(size(lines{2},2),1), s];
