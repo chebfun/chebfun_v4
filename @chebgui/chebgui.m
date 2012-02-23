@@ -142,7 +142,9 @@ classdef chebgui
                     % Load the existing demp
                     c = loaddemos(chebgui('type','bvp'),v1);
                 end
-                show(c); % Open the GUI
+                if nargout == 0
+                    show(c); % Open the GUI
+                end
                 return
             end
             

@@ -195,7 +195,7 @@ end
 if guiMode
     [u vec isLinear] = solvebvp(N,0,'options',options,'guihandles',handles);
 else
-    [u vec] = solvebvp(N,DE_RHS,'options',options);
+    [u vec isLinear] = solvebvp(N,0,'options',options);
     varargout{1} = u;
     varargout{2} = vec;
 end
