@@ -23,7 +23,6 @@ pass(3) = err < tol;
 
 gam = chebfun(@gamma,[-4:4],'blowup',1);
 gami = 1./gam;
-xx = linspace(domain(gam));
 I = gami.*gam;
 err = norm(abs(I-1),inf);
 pass(4) = err < 10*tol;

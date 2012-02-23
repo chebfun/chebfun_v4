@@ -3,7 +3,7 @@ function pass = grammatrix
 % compare it to Hilbert matrix.
 
 A = chebfun;
-x = chebfun(@(x) x,domain(0,1));
+x = chebfun(@(x) x,[0,1]);
 for n=1:4
   A(:,n) = x.^(n-1);
 end

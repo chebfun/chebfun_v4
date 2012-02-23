@@ -5,7 +5,8 @@ function pass = linop_feval_lr
 % A tolerance to check to
 tol = 100*chebfunpref('eps');
 
-[d x] = domain(-1,1);
+d = domain(-1,1);
+x = chebfun(@(x) x, d);
 s = cos(x+pi/4).*sign(x)+.5;
 
 % Create the linops

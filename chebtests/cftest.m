@@ -11,7 +11,7 @@ f = chebfun('exp(-1+x/2)',[0 4]);
 [p,q,r,lam] = cf(f,2);
 pass(2) = (abs(lam-0.045017)<1e-4);
 
-[d,x] = domain(-1,1);
+x = chebfun(@(x) x, [-1 1]);
 f = cos(x);
 [p,q] = cf(f,1,1);
 pass(3) = abs(p(.3)-.77015046914)<1e-4;

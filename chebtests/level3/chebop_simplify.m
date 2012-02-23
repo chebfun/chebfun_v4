@@ -7,7 +7,9 @@ function pass = chebop_simplify
 % Nick T. & Asgeir B., 4 December 2009.
 
 %%
-[d,x,N] = domain(-1,1);
+d = [-1 1];
+x = chebfun(@(x) x, d);
+N = chebop(d);
 N.bc = 1;
 N.op = @(u) diff(u,2);
 u1 = N\2;                    % this should be a parabola

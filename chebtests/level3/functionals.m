@@ -4,7 +4,8 @@ function pass = functionals
 % 
 %  Toby Driscoll
 
-[d,x] = domain(-1,2);
+d = domain(-1,2);
+x = chebfun(@(x) x, d);
 f = cos(x)./(1+x.^2);
 S = sum(d);
 A = [S; -2*S];

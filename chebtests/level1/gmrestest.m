@@ -6,7 +6,8 @@ function pass = gmrestest
 
 tol = chebfunpref('eps');
 
-[d x] = domain(-1,1);
+d = domain(-1,1);
+x = chebfun('x',d);
 f = exp(x);
 w = 100;
 D = diff(d);

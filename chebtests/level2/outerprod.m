@@ -5,7 +5,8 @@ function pass = outerprod
 
 tol = chebfunpref('eps');
 
-[d,x] = domain(0,1);
+d = [0,1];
+x = chebfun(@(x) x, d); 
 f = [ exp(x), tanh(x) ];
 g = [ exp(x), x./(1+x.^2) ];
 u = x;

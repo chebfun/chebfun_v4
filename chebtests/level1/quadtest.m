@@ -5,7 +5,6 @@ function pass = quadtest
 
 % (A Level 1 chebtest)
 
-
 tol = chebfunpref('eps');
 f = chebfun( @cos , [0,10] );
 

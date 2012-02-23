@@ -9,12 +9,14 @@ tol = cheboppref('restol');
 % Elliptic parameter
 m = .1;
 K = ellipke(m);
-[d,x,N] = domain(0,K);
+d = [0,K];
+x = chebfun(@(x) x, d);
 
 % jacobi elliptic functions
 [sn cn dn] = ellipj(x,m); 
 
 % SN is the solution of an ODE
+N = chebop(d);
 N.op = @(u) diff(u,2) + (1+m)*u - 2*m*u.^3;
 N.lbc = @(u) u;
 N.rbc = @(u) u - 1 ;

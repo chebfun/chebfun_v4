@@ -8,7 +8,7 @@ beta = 0.5;
 
 I = eye(dom); D = diff(dom);
 
-f = @(u) D^3*u + u.*(D^2*u) + beta*(1-(D*u).^2);
+f = @(u) diff(u,3) + u.*diff(u,2) + beta*(1-diff(u).^2);
 dfdu = @(u) D^3 + diag(D^2*u) + diag(u)*D^2 - 2*beta*diag(D*u)*D;
 
 % Initial guess satisfies u(0)=u'(0)=0, u'(dom(2))=1

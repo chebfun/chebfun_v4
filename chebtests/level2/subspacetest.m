@@ -4,7 +4,8 @@ function pass = subspacetest
 % (A Level 2 Chebtest)
 
 pass = true;
-[d,theta] = domain(0,2*pi);
+d = [0,2*pi];
+theta = chebfun(@(theta) theta, d);
 A = [1/sqrt(2) cos(theta) sin(2*theta) sin(3*theta)]/sqrt(pi); % orthonormal quasimatrix
 f = sin(10*theta)/sqrt(pi);
 alpha = [1e-10 pi/5 pi/2-1e-10];

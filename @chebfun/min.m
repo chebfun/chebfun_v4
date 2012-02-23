@@ -96,7 +96,7 @@ function h = minfun(f,g,ignored)
 % values to keep. (experimental feature)
 if isreal(f) && isreal(g) && nargin<3
   [f g] = overlap(f,g);
-  Fs = sign(f-g,1);
+  Fs = sign(f-g);
 else
   Fs = sign(abs(f)-abs(g));
 end

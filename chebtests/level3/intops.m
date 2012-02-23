@@ -7,7 +7,8 @@ function pass = intops
 tol = chebfunpref('eps');
 
 % Fredholm
-[d,x] = domain(0,1); 
+d = domain(0,1); 
+x = chebfun(@(x) x, d);
 F = fred(@(x,y) sin(2*pi*(x-y)),d);
 A = eye(d)+F;
 u = x.*exp(x);
@@ -15,7 +16,8 @@ f = A*u;
 pass(1) = norm(u-A\f) < 1e6*tol;
 
 % Volterra
-[d,x] = domain(0,pi);
+d = domain(0,pi);
+x = chebfun(@(x) x, d);
 V = volt( @(x,y) x.*y, d );
 f = x.^2.*cos(x) + (1-x).*sin(x);
 u = (1-V)\f;
@@ -26,7 +28,8 @@ pass(3) = norm( (1-V)*u - f ) < 1e4*tol;
 %% Now available as chebops!
 
 % Fredholm
-[d,x] = domain(0,1); 
+d = [0,1];
+x = chebfun(@(x) x, d);
 K = @(x,y) sin(2*pi*(x-y));
 A = chebop(@(u) u + fred(K,u), d);
 u = x.*exp(x);
@@ -34,7 +37,8 @@ f = A*u;
 pass(4) = norm(u-A\f) < 1e6*tol;
 
 % Volterra
-[d,x] = domain(0,pi);
+d = [0,pi];
+x = chebfun(@(x) x, d);
 K = @(x,y) x.*y;
 A = chebop(@(u) u - volt(K,u), d);
 f = x.^2.*cos(x) + (1-x).*sin(x);

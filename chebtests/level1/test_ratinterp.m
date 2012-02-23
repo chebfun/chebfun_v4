@@ -6,7 +6,8 @@ function pass = test_ratinterp ( )
 
 % create the input function
 f = @(x) ( x.^4 - 3 ) ./ ( (x+0.2) .* (x-2.2) );
-[d,x] = domain( 0 , 2 );
+d = domain( 0 , 2 );
+x = chebfun(@(x) x, d);
 cf = ( x.^4 - 3 ) ./ ( (x+0.2) .* (x-2.2) );
 N = 100;
 

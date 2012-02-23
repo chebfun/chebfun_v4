@@ -5,7 +5,8 @@ function pass = chebop_svds
 tol = 1e-9;
 
 %% SVD of a Fredholm operator
-[d x] = domain(0,pi);
+d = domain(0,pi);
+x = chebfun(@(x) x, d);
 F = fred(@(x,y) sin(x-y),d);
 S = svds(F);
 

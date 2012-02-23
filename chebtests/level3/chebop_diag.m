@@ -4,7 +4,7 @@ function pass = chebop_diag
 
 tol = chebfunpref('eps');
 
-d = domain(0,2);
+d = [0,2];
 x = chebfun('x',d);
 f = sin(exp(2*x));
 g = x.^3-cos(x);

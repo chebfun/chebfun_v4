@@ -9,7 +9,8 @@ function pass = ad_basic
 tol = max(10*chebfunpref('eps'),1e-13);
 
 %% Initialize domain, x and the chebfun 1
-[d,x] = domain(1,3);
+d = [1,3];
+x = chebfun(@(x) x, d);
 one = chebfun(1,d);
 %% Plus, minus, scalar times, power
 u = 2 + 10*x - x.^3;
@@ -29,6 +30,7 @@ pass(3) = norm( diff(y) - J*one ) < 10*tol;
 
 %% diff and cumsum
 u = sin(exp(x));
+d = domain(d);
 D = diff(d);  C = cumsum(d);
 z = u.*(D*u) - C*(u.^2);
 J = diff(z,u);

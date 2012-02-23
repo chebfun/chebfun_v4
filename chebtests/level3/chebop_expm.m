@@ -13,7 +13,8 @@ for tCounter = 1:length(t);
 end
 
 %% With chebops
-[d,x,N] = domain(-1,1);
+d = [-1,1];  x = chebfun('x',d);
+N = chebop(d);
 N.op = @(u) diff(u,2);
 N.bc = 'dirichlet';
 for tCounter = 1:length(t);

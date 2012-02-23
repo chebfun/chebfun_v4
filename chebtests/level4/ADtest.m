@@ -5,7 +5,8 @@ function pass = ADtest
 
 tol = 10*chebfunpref('eps');
 
-[d,x] = domain([1 3]);
+d = [1 3];
+x = chebfun(@(x) x, d);
 one = chebfun(1,d);
 y = 2*x;
 g = y.^2;

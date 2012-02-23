@@ -3,7 +3,8 @@ function pass = ratinterptest
 % Check a few basics with ratinterp
 % A Level 1 Chebtest.
 
-[d,x] = domain(1,3);
+d = [1,3];
+x = chebfun(@(x) x, d);
 f = abs(exp(x)-5);
 [p,q,r] = ratinterp(f,2,3,[],chebpts(6,[1,3],2));
 pass(1) = ( (length(p)==3) & (length(q)==4) );

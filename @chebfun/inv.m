@@ -83,7 +83,8 @@ if monocheck
 end
 
 % compute the inverse
-[domaing x] = domain(minandmax(f));
+domaing = domain(minandmax(f));
+x = chebfun(@(x) x, domaing);
 g = chebfun(@(x) op(f,x), domaing, 'resampling', 0,'splitting',split_yn,'eps',tol);
 
 % Scale so that the range of g is the domain of f

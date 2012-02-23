@@ -2,7 +2,8 @@ function pass = ad_qmdiff
 % Check if automatic differentiation of a quasimatrix with respect
 % to the columns of another quasimatrix works.
 
-[d,x] = domain(-1,1);
+d = [-1,1];
+x = chebfun(@(x) x, d);
 u = [ chebfun('x')  chebfun('x') ];
 f = [ u(:,1)  x.*u(:,2) ];
 A = diff(f,u);

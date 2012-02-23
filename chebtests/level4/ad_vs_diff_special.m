@@ -4,7 +4,8 @@ function pass = ad_vs_diff_special
 % More specifically, tests special functions such as bessel, airy, ellipj,
 % erf*, logarithmic/exponential and powers.
 
-[d,x] = domain(0.1,0.9);
+d = [0.1,0.9];
+x = chebfun(@(x) x, d);
 cheb1 = chebfun(1,d);
 norms = zeros(1,20);
 

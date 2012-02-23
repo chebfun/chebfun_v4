@@ -5,7 +5,8 @@ function pass = ad_vs_diff_trig_deg
 % functions are differentiated correctly.
 % This test works with trigonometric functions where the chebfuns are in degrees.
 
-[d,x] = domain(0.1,0.9);
+d = [0.1,0.9];
+x = chebfun(@(x) x, d);
 cheb1 = chebfun(1,d);
 norms = zeros(1,12);
 

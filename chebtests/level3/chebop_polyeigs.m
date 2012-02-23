@@ -15,7 +15,8 @@ precomp = [
   -5.186237295747643];
 
 %% With linops
-[d x] = domain(-1,1);
+d = domain(-1,1);
+x = chebfun(@(x) x, d);
 A = diff(d,2); A.lbc = 0; A.rbc = 0;
 B = -diag(x)*diff(d);
 C = eye(d);
