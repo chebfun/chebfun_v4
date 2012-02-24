@@ -69,7 +69,7 @@ handles.importedVar = struct;
 if ~isempty(varargin)
     handles.guifile = varargin{1};
 else
-    cgTemp = chebgui('dummy');
+    cgTemp = chebgui('type','bvp');
     handles.guifile = loadexample(cgTemp,-1); % Load a random example
 end
 % Create a new structure which contains information about the latest
@@ -126,7 +126,13 @@ function varargout = chebguiwindow_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-% varargout{1} = handles.output;
+if nargout > 0,
+    varargout{1} = handles.output;
+end
+% If nargout == 2, return the fll set of handles
+if nargout > 1,
+    varargout{2} = handles;
+end
 
 % -------------------------------------------------------------------------
 % ---------- Callback functions for the objects of the GUI ----------------
@@ -1476,4 +1482,12 @@ for fieldCounter = 1:length(textLocs)
         set(handles.(names{fieldCounter}),'FontSize',newFontSize)     
     end
 end
+guidata(hObject, handles);
+
+function keypress(hObject, eventdata, handles)
+newString = cellstr(get(hObject,'String'));
+newString = removeTabs(newString); % Remove tabs
+set(hObject,'String',newString);
+handles = callbackBCs(handles.guifile,handles,newString,'rbc');
+handles.guifile.RBC = newString;
 guidata(hObject, handles);
