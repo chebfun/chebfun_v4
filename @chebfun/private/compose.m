@@ -18,11 +18,11 @@ end
 if numel(g) == 1
     % Avoid composing with independant variable.
     if isa(g,'chebfun')
-        xg = chebfun('x',domain(g),2);
+        xg = chebfun('x',g.ends,2);
         if norm(g-xg,2) == 0,h = f; return, end
     end
     if isa(f,'chebfun')
-        xf = chebfun('x',domain(f),2);
+        xf = chebfun('x',f.ends,2);
         if norm(f-xf,2) == 0,h = chebfun(g); return, end
     end
     
@@ -36,7 +36,7 @@ elseif numel(f) == 1
     
     % Avoid composing with independant variable.
     if isa(f,'chebfun')
-        x = chebfun('x',domain(f),2);
+        x = chebfun('x',f.ends,2);
         if norm(f-x,2) == 0,h = g; return, end
     end
     

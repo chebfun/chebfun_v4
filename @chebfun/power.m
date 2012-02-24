@@ -19,7 +19,7 @@ elseif isa(F1,'chebfun')
     % chebfun.^double
     Fout = F1;
     if F2 == 0
-        dom = domain(F1);
+        dom = F1.ends([1 end]);
         for k = 1:numel(F1)
             Fout(k) = chebfun(1,dom);
             Fout(k).jacobian = anon('der = zeros(dom); nonConst = 0;',{'dom'},{dom},1);

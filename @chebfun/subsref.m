@@ -120,7 +120,7 @@ switch index(1).type
                     'Invalid domain syntax.')
             end
         elseif length(idx) == 2
-            s = domain(cat(2,idx{:}));
+            s = cat(2,idx{:});
         else
             error('CHEBFUN:subsasgn:dimensions',...
                 'Index exceeds chebfun dimensions.')

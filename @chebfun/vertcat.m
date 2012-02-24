@@ -24,22 +24,23 @@ end
 
 if Fout(1).trans
 
-    d = domain(Fout(1));
+    ends = Fout.ends;
+    dom = ends([1 end]);
     
     % Check for doubles, empty and whether chebfuns are consistent.
-    kk =[];
+    kk = [];
     for k = 1:nargin
         v = varargin{k};
         if ~isempty(v)
-            kk =[kk k];
+            kk = [kk k];
             if isa(v,'double') && ~isempty(v)
-                f = chebfun(v,d.ends);
+                f = chebfun(v,dom);
                 f.trans = true;
                 varargin{k} = f;
             elseif isa(v,'chebfun')
                 if ~v(1).trans
                     error('CHEBFUN:vertcat:dims','CAT arguments dimensions are not consistent.')
-                elseif  ~(domain(v(1))==d)
+                elseif  ~all(v(1).ends([1 end])==dom)
                     error('CHEBFUN:vertcat:doms','Domains are not consistent.');
                 end
             end

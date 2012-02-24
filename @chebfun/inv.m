@@ -83,7 +83,7 @@ if monocheck
 end
 
 % compute the inverse
-domaing = domain(minandmax(f));
+domaing = minandmax(f);
 x = chebfun(@(x) x, domaing);
 g = chebfun(@(x) op(f,x), domaing, 'resampling', 0,'splitting',split_yn,'eps',tol);
 

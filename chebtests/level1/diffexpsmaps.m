@@ -19,7 +19,7 @@ g2 = diff(f2);
 pass(1) = norm(g2-restrict(g,d2));
 
 % right
-d = domain(-2,1);
+d = [-2,1];
 F = @(x) 1./sqrt(1-x).*sin(x);
 f = chebfun(@(x) F(x),d,'exps',[0 -.5],'map',map);
 g = diff(f);
@@ -29,7 +29,7 @@ g2 = diff(f2);
 pass(2) = norm(g2-restrict(g,d2));
 
 % both
-d = domain(-2,2);
+d = [-2,2];
 F = @(x) 1./sqrt(4-x.^2).*sin(x+1);
 f = chebfun(@(x) F(x),d,'exps',[-.5 -.5],'map',map);
 g = diff(f);

@@ -30,7 +30,7 @@ if nargin == 1
                     Fout(k) = NaN;
                 end
             else
-                Fout(k) = sum(F1(:,k))/length(domain(F1(:,k)));
+                Fout(k) = sum(F1(:,k))/diff(F1(:,k).ends([1 end]));
             end
         end
     end
