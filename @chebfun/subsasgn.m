@@ -73,8 +73,9 @@ switch index(1).type
                     vin = v;
                 end
                 % Domain check to make sure chebfuns have same domain
-                if isempty(f(1)) || all(f(1).ends([1,end]) == vin(1).ends([1,end]))
-                    f(n+1:max(col)) = repmat(chebfun(0,domain(vin)),1,max(col)-n);     
+                vdom = vin(1).ends([1,end]);
+                if isempty(f(1)) || all(f(1).ends([1,end]) == vdom)
+                    f(n+1:max(col)) = repmat(chebfun(0,vdom),1,max(col)-n);     
                 else
                     error('CHEBFUN:subsasgn:domain','Inconsistent domains.')
                 end
@@ -119,7 +120,7 @@ switch index(1).type
                 return
             else
                 %fcol = define(fcol,domain(fcol),vin);
-                fcol = restrict(vin,domain(fcol));
+                fcol = restrict(vin,fcol.ends([1 end]));
             end
         else
             error('CHEBFUN:subsasgn:nonnumeric',...
