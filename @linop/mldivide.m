@@ -56,7 +56,7 @@ function C = mldivide(A,B,varargin)
     
     % Grab the default settings.
     settings = chebopdefaults;
-    if nargin == 3
+    if nargin > 2
         settings.eps = tolerance;
     end
 
