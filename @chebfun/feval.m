@@ -28,6 +28,7 @@ end
 
 lr = '';
 forceval = 0;
+Fx = [];
 
 %%
 % This block deals with returning jump information from bc evaluations.
@@ -49,17 +50,20 @@ if ~isempty(F) && F(1).funreturn && nargin > 2 && varargin{1}(1) ~= 'f'
     end
 end
 jumpInfoOut = jumpInfo;
-if isempty(x)
-    Fx = [];
+if nargin > 2 && strcmp(varargin{1},'reset');
     jumpInfo = [];
     return
 end
 
 %%
 
-% If F is empty, there's nothing to do.
-if isempty(F), Fx = []; return, end
+% If F or x are empty, there's nothing to do. (Fx defined above)
+if isempty(F) || isempty(x), return, end
 
+% Quasimatrix?
+nchebs = numel(F);
+
+% Support for feval(f,'left') and feval(f,'end'), etc.
 if ischar(x)
     dom = domain(F);
     if any(strcmpi(x,{'left','start'}))
@@ -67,8 +71,7 @@ if ischar(x)
     elseif any(strcmpi(x,{'right','end'}))
         x = dom(end);
     else
-        msg = sprintf('Unknown input argument "%s".',x);
-        error('CHEBFUN:feval:strinput',msg);
+        error('CHEBFUN:feval:strinput','Unknown input argument "%s".',x);
     end
 end
     
@@ -78,14 +81,13 @@ if nargin > 2
     parse = strcmpi(lr,{'left','right','','force'});
     if ~any(parse);
         if ischar(lr)
-            msg = sprintf('Unknown input argument "%s".',lr);
-            error('CHEBFUN:feval:leftrightchar',msg);
+            error('CHEBFUN:feval:leftrightchar',...
+                'Unknown input argument "%s".',lr);
         else
             error('CHEBFUN:feval:leftright','Unknown input argument.');
         end
     end
     % We deal with this by reassigning imps to be left/right values.
-    nchebs = numel(F);
     if parse(1) % left
         for k = 1:nchebs
             F(k).imps(2:end,:) = []; % Level 2 imps are not needed here
@@ -109,15 +111,17 @@ if nargin > 2
 end
 
 % Deal with quasimatrices.
-nchebs = numel(F);
 if nchebs > 1,
-    x = x(:); Fx = [];
-    for k = 1:nchebs
-        trans = F(1).trans;
-        if trans
-            Fx = [Fx; fevalcolumn(F(k),x',lr,forceval)];
-        else
-            Fx = [Fx fevalcolumn(F(k),x,lr,forceval)];
+    x = x(:); lenx = length(x);
+    if F(1).trans
+        Fx = zeros(nchebs,lenx);
+        for k = 1:nchebs
+            Fx(k,:) = fevalcolumn(F(k),transpose(x),lr,forceval);
+        end
+    else
+        Fx = zeros(lenx,nchebs);
+        for k = 1:nchebs
+            Fx(:,k) = fevalcolumn(F(k),x,lr,forceval);
         end
     end
 else
@@ -132,7 +136,6 @@ fx = zeros(size(x));
 
 funs = f.funs;
 ends = f.ends;
-xin = x(:).';
 
 I = x < ends(1);
 if any(I(:))
@@ -149,7 +152,6 @@ if any(I(:))
     fx(I) =  feval(funs(f.nfuns),x(I));
 end
 
-
 % DEALING WITH IMPS
 % If the evaluation point corresponds to a breakpoint, we get the value
 % from imps. If there is only one row, the value is given by the corresponding
@@ -161,13 +163,12 @@ end
 if (size(f.imps,1) == 1 || ~any(any(f.imps(2:end,:)))) %&& any(f.imps(1,:))
     % RodP and NickH used this to fix the problem
     % when repeated values of x intersect with ends.
-    x = xin;
     if f.nfuns < 10
         for k = 1:f.nfuns+1
             fx( x==ends(k) ) = f.imps(1,k);
         end
     else
-        [val,loc,pos] = intersect(x,ends);
+        [ignored,ignored,pos] = intersect(x,ends); %#ok<ASGLU>
         for k = 1:length(pos)
             fx( x == ends(pos(k)) ) = f.imps(1,pos(k));
         end
@@ -175,10 +176,10 @@ if (size(f.imps,1) == 1 || ~any(any(f.imps(2:end,:)))) %&& any(f.imps(1,:))
     
     % NickH fixed this also for the case when there imps has two rows.
 elseif size(f.imps,1) > 1 && any(any(f.imps(2:end,:)))
-    [val,loc,pos] = intersect(xin,ends);
+    [ignored,ignored,pos] = intersect(x,ends); %#ok<ASGLU>
     for k = 1:length(pos)
         % We take the sign of the largest degree impulse?
-        [I J sgn] = find(f.imps(2:end,pos(k)),1,'last');
+        [I ignored sgn] = find(f.imps(2:end,pos(k)),1,'last'); %#ok<ASGLU>
         if isempty(I)
             fx( x == ends(pos(k)) ) = f.imps(1,pos(k));
         elseif I == 1

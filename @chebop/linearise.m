@@ -192,6 +192,7 @@ end
         dom = [];
         jumpinfo = []; jumplocs = [];
         isLin = true;
+        dummy = chebfun; % Make a dumy chebfun for fake feval calls
         
         if isempty(bc)
             linBC = struct([]); % Nothing to do here
@@ -231,8 +232,8 @@ end
             elseif nargin(bc{j}) > 1 + strcmp(bctype,'other')
                 % @(x,u,v,w,...) format. Need to expand uCell to evaluate
 
-                % Clear persistent variables storage in FEVAL.
-                feval(chebfun(),[]); 
+                % Reset persistent variables storage in FEVAL.
+                feval(dummy,[],'reset'); 
 
                 % Evaluate the BC function
                 if ~strcmp(bctype,'other')
@@ -243,7 +244,7 @@ end
                 end
                 
                 % Recover info from FEVAL and reset.
-                [ignored jumpinfoj] = feval(chebfun(),[]); %#ok<ASGLU>
+                [ignored jumpinfoj] = feval(dummy,[],'reset'); %#ok<ASGLU>
 
                 % If the user assigns BCs of the form
                 %   L.lbc = @(u,v) [u-1 ; v]; 
@@ -278,8 +279,8 @@ end
             else
                 % Quasimatrix format
                 
-                % Clear persistent variables storage in FEVAL.
-                feval(chebfun(),[]); 
+                % Reset persistent variables storage in FEVAL.
+                feval(dummy,[],'reset'); 
                 
                 % Evaluate the BC function
                 if nargin(bc{j}) == 1
@@ -289,7 +290,7 @@ end
                 end
                 
                 % Recover info from FEVAL and reset.
-                [ignored jumpinfoj] = feval(chebfun(),[]); %#ok<ASGLU>
+                [ignored jumpinfoj] = feval(dummy,[],'reset'); %#ok<ASGLU>
                 
                 % Deal with jump info.
                 if strcmp(bctype,'other') && ~isempty(jumpinfoj)
