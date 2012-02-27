@@ -38,13 +38,15 @@ function Fout = abscol(F)
         sizes = zeros( m , 1 );
         inds = zeros( m , 1 );
         for j=1:m
-            ind(j) = find( F.ends > (ends(j)+ends(j+1))/2 , 1 ) - 1;
-            if isempty(ind)
+            i = find( F.ends > (ends(j)+ends(j+1))/2 , 1 ) - 1;
+            if isempty(i)
                 if isinf(ends(j))
                     ind(j) = 1;
                 elseif isinf(ends(j+1))
                     ind(j) = F.nfuns;
                 end
+            else
+                ind(j) = i;
             end
             sizes(j) = F.funs( ind(j) ).n;
         end
