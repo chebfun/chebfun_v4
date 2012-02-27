@@ -33,11 +33,12 @@ function [L,Lconst] = lebesgue(x,varargin)
 %  There is a companion code in @domain.
 
 if nargin==1
-  d = domain(-1,1);
+  d = [-1,1];
 elseif nargin==2
-  d = domain(varargin{1});
+  d = varargin{1};
+  if isa(d,'domain'), d = d.ends; end
 elseif nargin==3
-  d = domain(varargin{1},varargin{2}); 
+  d = [varargin{1},varargin{2}]; 
 else
   error('CHEBFUN:lebesgue:inputs','Wrong number of arguments in lebesgue');
 end
@@ -50,7 +51,7 @@ pref.minsamples = min(pref.minsamples,pref.maxdegree);
 % ill-conditioned computations may prevent convergence to high accuracy.
 warnstate = warning('off','CHEBFUN:auto');
 % Lebesgue function (breakpoints at interpolation nodes)
-L = chebfun(@(t) lebfun(t,x(:),w), unique([x(:);d.ends.']), pref);
+L = chebfun(@(t) lebfun(t,x(:),w), unique([x(:);d.']), pref);
 warning(warnstate)
 
 % Lebesgue constant

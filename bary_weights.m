@@ -13,7 +13,7 @@ else
     C = 1;                   % Scaling by capacity doesn't apply for complex nodes
 end
 
-if n < 2001                  % For small n using matrices is faster
+if n < 2001    && 0               % For small n using matrices is faster
    V = C*bsxfun(@minus,xk,xk.');
    V(logical(eye(n))) = 1;
    VV = exp(sum(log(abs(V))));
@@ -21,10 +21,8 @@ if n < 2001                  % For small n using matrices is faster
 else                         % For large n use a loop
    w = ones(n,1);
    for j = 1:n
-       v = C*(xk(j)-xk);
-       absv = abs(v);
-       v = v(logical(absv));
-       vv = exp(sum(log(absv)));           
+       v = C*(xk(j)-xk); v(j) = 1;
+       vv = exp(sum(log(abs(v))));
        w(j) = 1./(prod(sign(v))*vv);
    end
 end

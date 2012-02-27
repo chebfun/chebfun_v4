@@ -138,7 +138,7 @@ elseif any(isinf(ends))
         else
             g.vals(end) = 0;
             if abs(gtmp.vals(end)) > tol
-                warning('FUN:sum:slowdecay','Result is likely inaccurate')
+                warning('FUN:sum:slowdecay','Result is likely inaccurate. (Slow decay).')
             end
         end
     end
@@ -150,7 +150,7 @@ elseif any(isinf(ends))
         else
             g.vals(1) = 0;
             if abs(gtmp.vals(1)) > tol
-                warning('FUN:sum:slowdecay','Result is likely inaccurate')
+                warning('FUN:sum:slowdecay','Result is likely inaccurate. (Slow decay).')
             end
         end
 
