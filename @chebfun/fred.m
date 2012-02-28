@@ -22,22 +22,22 @@ function F = fred(k,v,onevar)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-% Require two inputs.
-if nargin == 1
-    error('CHEBFUN:FRED:nargin','Not enough input arguments.');
-end
+    % Require two inputs.
+    if nargin == 1
+        error('CHEBFUN:FRED:nargin','Not enough input arguments.');
+    end
 
-% Inputs in correct order. let this slide...
-if isa(k,'chebfun'),  tmp = v; v = k; k = tmp; end
+    % Inputs in correct order. let this slide...
+    if isa(k,'chebfun'),  tmp = v; v = k; k = tmp; end
 
-% Default onevar to false
-if nargin==2, onevar=false; end     
+    % Default onevar to false
+    if nargin==2, onevar=false; end     
 
-% Loop for qasimatrix support
-F = chebfun;
-for j = 1:numel(v)
-    F(j) = fred_col(k,v(j),onevar);
-end
+    % Loop for quasimatrix support
+    F = chebfun;
+    for j = 1:numel(v)
+        F(j) = fred_col(k,v(j),onevar);
+    end
 
 end
 
@@ -53,7 +53,7 @@ function F = fred_col(k,v,onevar)
     int = @(x) sum(chebfun(@(y) feval(v,y).*k(x,y),d,opt{:}));
     F = chebfun( int, d,'sampletest',false,'resampling',false,'exps',[0 0],'vectorize','scale',nrmf);
     F.jacobian = anon(['[Jvu nonConst] = diff(v,u,''linop'');',...
-                       'der = fred(k,d)*Jvu;'],...
-                        {'k','v','d'},{k,v,d},1,'fred');
+                       'der = fred(k,d,onevar)*Jvu;'],...
+                        {'k','v','d','onevar'},{k,v,d,onevar},1,'fred');
     F.ID = newIDnum;
-end
+end % fred_col

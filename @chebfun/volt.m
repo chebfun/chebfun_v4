@@ -64,7 +64,7 @@ function F = volt_col(k,v,onevar)
         'exps',[0 0],'vectorize','scale',nrm);
     F.jacobian =  anon(['[Jvu nonConst] = diff(v,u,''linop'');',...
                         'der = volt(k,d)*Jvu;'],...
-                        {'k','v','d'},{k,v,dom},1,'volt');
+                        {'k','v','d','onevar'},{k,v,dom,onevar},1,'volt');
     F.ID = newIDnum;
 end
   
