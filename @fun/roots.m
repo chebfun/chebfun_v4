@@ -50,7 +50,7 @@ end
 % Trivial case for length(g)==1
 if g.n == 1
     if ( g.vals(1) == 0 )
-        out = 0.5*(g.ends(1) + g.ends(end));
+        out = 0.5*sum(g.map.par(1:2));
     else
         out = [];
     end;

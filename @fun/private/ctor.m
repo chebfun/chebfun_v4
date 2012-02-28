@@ -225,7 +225,8 @@ function op = str2op(op)
 % This is here as it's a clean function with no other variables hanging around in the scope.
     depvar = symvar(op);
     if numel(depvar) ~= 1,
-        error('CHEBFUN:fun:depvars','Incorrect number of dependent variables in string input.');
+        error('CHEBFUN:fun:depvars',...
+            'Incorrect number of dependent variables in string input.');
     end
     op = eval(['@(' depvar{:} ')' op]);
 end

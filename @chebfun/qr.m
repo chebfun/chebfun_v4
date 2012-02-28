@@ -171,8 +171,8 @@ function [Q,R] = qr(A,econ)
 
         
         % Make a quasimatrix out of the discrete Q
+        g = chebfun; % Dummy chebfun
         for k=1:n
-            g = chebfun;
             g.nfuns = m;
             g.ends = ends;
             g.scl = norm( dQ( : , k ) , inf );

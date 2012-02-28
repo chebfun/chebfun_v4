@@ -115,7 +115,7 @@ classdef chebop
         
         function N = chebop(varargin)
             [N d] = ctor(N,varargin{:});
-            N = set(N,'dom',d);
+            N.domain = domain(d); %#ok<CPROP,PROP>
         end
         
     end
