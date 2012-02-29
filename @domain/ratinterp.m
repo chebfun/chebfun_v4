@@ -263,21 +263,21 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
             q = chebfun( qx , d );
             r = @(x) polyval( a(mu+1:-1:1) , ihd*(x-md) ) ./ polyval( b(nu+1:-1:1) , ihd*(x-md) );
         elseif xi_type(5) == '1'
-            w = (-1).^(0:N)' .* sin((2*(0:N)+1)*pi/(2*N1))';
-            p = chebfun( idct1( a ) , d , 'chebkind' , 1 );
-            q = chebfun( idct1( b ) , d , 'chebkind' , 1 );
-            M = max(mu,nu);
-            px = idct1( [ a ; zeros( M-mu , 1 ) ] );
-            qx = idct1( [ b ; zeros( M-nu , 1 ) ] );
-            r = @(x) ratbary( ihd*(x-md) , px , qx , chebpts(M+1,1) );
+            px = idct1( a ); qx = idct1( b );
+            wp = sin((2*(0:mu)+1)*pi/(2*(mu+1))); wp(2:2:end) = -wp(2:2:end);
+            wq = sin((2*(0:nu)+1)*pi/(2*(nu+1))); wq(2:2:end) = -wq(2:2:end);
+            wp = wp * 2^(mu-nu)/(mu+1)*(nu+1);
+            p = chebfun( px , d , 'chebkind' , 1 );
+            q = chebfun( qx , d , 'chebkind' , 1 );
+            r = @(x) bary( ihd*(x-md) , px , qx , chebpts(mu+1,1) , chebpts(nu+1,1) , wp , wq );
         else
-            w = (-1).^(0:N)'; w(1) = 0.5; w(end) = w(end)/2;
             p = chebfun( a(end:-1:1) , 'coeffs' , d );
             q = chebfun( b(end:-1:1) , 'coeffs' , d );
-            M = max(mu,nu);
-            px = idct2( [ a ; zeros( M-mu , 1 ) ] );
-            qx = idct2( [ b ; zeros( M-nu , 1 ) ] );
-            r = @(x) ratbary( ihd*(x-md) , px , qx , chebpts(M+1,2) );
+            px = idct2( a ); qx = idct2( b );
+            wp = ones(1,mu+1); wp(2:2:end) = -1; wp(1) = 0.5; wp(end) = 0.5*wp(end);
+            wq = ones(1,nu+1); wq(2:2:end) = -1; wq(1) = 0.5; wq(end) = 0.5*wq(end);
+            wp = wp * (-2)^(mu-nu) / mu * nu;
+            r = @(x) bary( ihd*(x-md) , px , qx , chebpts(mu+1,2) , chebpts(nu+1,2) , wp , wq );
         end
     else
         % Compute the basis C at the mu+1 and nu+1 Chebyshev points and
@@ -329,13 +329,24 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 end
 
 % Compact implementation of the barycentric interpolation formula
-function y = bary ( x , fx , xi , w )
-    y = zeros(size(x)); fxw = fx(:).*w(:);
+% of the first type.
+function y = bary ( x , px , qx , xp , xq , wp , wq )
+    np = length(px); nq = length(qx);
+    pxw = px.' .* wp; qxw = qx.' .* wq;
+    y = zeros(size(x));
     for i=1:length(x),
-        dxinv = 1.0 ./ ( x(i) - xi(:) ); ind = find( ~isfinite(dxinv) );
-        if length(ind)>0, y(i)=fx(ind);
-        else, y(i)=(fxw.'* dxinv)/(w(:).'* dxinv); end
+        dxpinv = 1.0 ./ ( x(i) - xp(:) ); ind = find( ~isfinite(dxpinv) );
+        if length(ind)>0, y(i)=px(ind);
+        else, y(i) = (pxw * dxpinv); end
+        dxqinv = 1.0 ./ ( x(i) - xq(:) ); ind = find( ~isfinite(dxqinv) );
+        if length(ind)>0, y(i)=y(i)/qx(ind);
+        else, y(i) = y(i) / (qxw * dxqinv); end
     end
+    llp = repmat( x(:) , 1 , np ) - repmat( xp' , length(x) , 1 );
+    lp = prod( llp , 2 ); if ~isfinite(lp), lp = exp( sum( log( llp ) , 2 ) ); end;
+    llq = repmat( x(:) , 1 , nq ) - repmat( xq' , length(x) , 1 );
+    lq = prod( llq , 2 ); if ~isfinite(lq), lq = exp( sum( log( llq ) , 2 ) ); end;
+    y = reshape( y(:) .* lp ./ lq , size(x) );
 end
 
 % Rational barycentric formula, stable.
@@ -356,7 +367,7 @@ end
 % Compact implementation of the DCT for Chebyshev points of the first kind.
 function y = dct1(x)
     n = size(x,1);
-    w = (exp(-1i*(0:n-1)*pi/(2*n))/sqrt(2*n)).'; w(1) = w(1)/sqrt(2);
+    w = (2/n)*(exp(-1i*(0:n-1)*pi/(2*n))).'; w(1) = w(1)/sqrt(2);
     if mod(n,2) == 1 || ~isreal(x),
     y = fft([x;x(n:-1:1,:)]); y = diag(w)*y(1:n,:);
     else y = fft([x(1:2:n,:); x(n:-2:2,:)]); y = diag(2*w)*y; end;
@@ -365,7 +376,7 @@ end
 
 % Compact implementation of the iDCT for Chebyshev points of the first kind.
 function x = idct1(y)
-    n = size(y,1); w = (exp(1i*(0:n-1)*pi/(2*n)) * sqrt(2*n)).';
+    n = size(y,1); w = (n/2)*(exp(1i*(0:n-1)*pi/(2*n))).';
     if mod(n,2) == 1 || ~isreal(y), w(1) = w(1)*sqrt(2);
     x = ifft([diag(w)*y;zeros(1,size(y,2));-1i*diag(w(2:n))*y(n:-1:2,:)]);
     x = x(1:n,:); else w(1) = w(1)/sqrt(2);
