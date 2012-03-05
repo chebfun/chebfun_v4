@@ -1438,6 +1438,14 @@ buttonLocs = strfind(names,'button_');
 panelLocs = strfind(names,'panel_');
 toggleLocs = strfind(names,'toggle_');
 
+% Deal with variable maximum for input and noninput-type handles
+fontsizediff = []; flag = 0;
+tmp = strfind(names,'fontsizediff');
+if any([tmp{:}])
+    fontsizediff = handles.fontsizediff;
+end
+if isempty(fontsizediff), fontsizediff = 0; end
+
 % Combine all the locations of elements whose font we wish to change
 allLocs = strcat(textLocs,inputLocs,buttonLocs,panelLocs,toggleLocs);
 
@@ -1447,11 +1455,23 @@ for fieldCounter = 1:length(textLocs)
         % access the font size of each element separately as they can have
         % different relative font sizes.
         currFontSize = get(handles.(names{fieldCounter}),'FontSize');
-        newFontSize = currFontSize + 1;
-        % Update the fontsize, again using the dynamic access
-        set(handles.(names{fieldCounter}),'FontSize',newFontSize)     
+        if currFontSize >= 30
+            % Do nothing (global max)
+        elseif (isempty(inputLocs{fieldCounter})&&currFontSize >= 16)
+            % Size of non input-type handles is further limited
+            if ~flag
+                % Record this, so a difference doesn't develop
+                fontsizediff = min(fontsizediff+1,13); % 13 = 30-16-1
+                flag = true; % but only do this once!
+            end
+        else
+            newFontSize = currFontSize + 1;        
+            % Update the fontsize, again using the dynamic access
+            set(handles.(names{fieldCounter}),'FontSize',newFontSize)     
+        end
     end
 end
+handles.fontsizediff = fontsizediff;  
 guidata(hObject, handles);
 
 
@@ -1471,17 +1491,41 @@ toggleLocs = strfind(names,'toggle_');
 % Combine all the locations of elements whose font we wish to change
 allLocs = strcat(textLocs,inputLocs,buttonLocs,panelLocs,toggleLocs);
 
-
+% Deal with variable maximum for input and noninput-type handles
+fontsizediff = []; flag = 0;
+tmp = strfind(names,'fontsizediff');
+if any([tmp{:}])
+    fontsizediff = handles.fontsizediff;
+end
+if isempty(fontsizediff), fontsizediff = 0; end
 
 for fieldCounter = 1:length(textLocs)
     if ~isempty(allLocs{fieldCounter})
         % Access the field values dynamically using the .( ) call
         currFontSize = get(handles.(names{fieldCounter}),'FontSize');
-        newFontSize = currFontSize - 1;
+        newFontSize = currFontSize;
+        if isempty(inputLocs{fieldCounter})
+            % Deal with non input-type handles
+            if flag
+                % We only want update the diff once, so continue 
+                continue
+            elseif fontsizediff > 0
+                % Update the diff and set flag
+                fontsizediff = fontsizediff - 1;
+                flag = 1;
+                continue
+            elseif currFontSize > 5
+                newFontSize = currFontSize - 1; 
+            end
+        elseif currFontSize > 5
+            % Input-type handles are easier
+            newFontSize = currFontSize - 1;   
+        end
         % Update the fontsize, again using the dynamic access
-        set(handles.(names{fieldCounter}),'FontSize',newFontSize)     
+        set(handles.(names{fieldCounter}),'FontSize',newFontSize)  
     end
 end
+handles.fontsizediff = fontsizediff;
 guidata(hObject, handles);
 
 function keypress(hObject, eventdata, handles)
