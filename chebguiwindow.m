@@ -1250,8 +1250,15 @@ if ~isempty(edata.Modifier) && strcmp(edata.Modifier{1},'control')
             button_solve_Callback(hObject, eventdata, handles);
         case 'e'
             button_export_Callback(hObject, eventdata, handles);
+        case {'+','equal'}
+            button_fontinc_Callback(hObject, eventdata, handles);
+        case {'-','hyphen'}
+            button_fontdec_Callback(hObject, eventdata, handles);
+        case 'p'
+            if any(strcmp(get(handles.button_clear,'String'),{'Pause','Continue'}))
+                button_clear_Callback(hObject, eventdata, handles);
+            end
     end
-    
 end
 % PressedKeyNo = double(get(gcbo,'CurrentCharacter'))
 
