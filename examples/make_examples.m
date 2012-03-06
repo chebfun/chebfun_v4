@@ -182,6 +182,9 @@ elseif nargin == 2
                 filetext = strrep(filetext,'ő','\H{o}');
                 filetext = strrep(filetext,'Ő','\H{O}');  
                 filetext = strrep(filetext,'é','\''{e}');  
+                
+                % Fix a MATLAB bug!
+                filetext = strrep(filetext,'$\$','$$');  
 
                 if any(strcmp(filename,javalist))
                     starts = strfind(filetext,'%<a href="matlab: edit');
@@ -231,7 +234,11 @@ elseif nargin == 2
         fprintf('Complete.\n')
         fprintf('Uploading pdf.\n')
         copyfile(fullfile(curdir,dirs,'pdf',[filename,'.pdf']),fullfile('pdf',[filename,'.pdf']));
+        fprintf('Complete.\n')
+        fprintf('Uploading m files.\n')
         copyfile(fullfile(curdir,dirs,[filename,'.m']),[filename,'.m']);
+        fprintf('Complete.\n')
+        fprintf('Setting file permissions.\n')
         if isunix, cd pdf, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
         if isunix, eval('!chgrp chebfun *'), eval('!chmod 775 *'), end
         fprintf('Complete.\n')

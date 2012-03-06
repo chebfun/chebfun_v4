@@ -67,7 +67,7 @@ switch index(1).type
             end
         elseif length(idx) == 2
             % f(s,:), f(:,s), or, 
-            if any(strcmpi(idx{2},{'left','right'}))
+            if any(strcmpi(idx{2},{'left','right','-','+'}))
                 varin = {idx(2)};
             elseif get(f(1),'trans')
                 f = f(cat(2,idx{1}));

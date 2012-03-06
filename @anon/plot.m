@@ -109,8 +109,6 @@ for k = 1:3
     end
 end
 
-varargin{:}
-
 switch at.numleaves
     case 0
         % Do nothing

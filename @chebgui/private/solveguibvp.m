@@ -16,7 +16,8 @@ else
     guiMode = 1;
 end
 dom = str2num(guifile.domain);
-[d,xt] = domain(dom);
+d = domain(dom);
+xt = chebfun('x',d);
 
 % Extract information from the GUI fields
 deInput = guifile.DE;

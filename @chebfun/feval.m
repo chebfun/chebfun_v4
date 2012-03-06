@@ -66,9 +66,9 @@ nchebs = numel(F);
 % Support for feval(f,'left') and feval(f,'end'), etc.
 if ischar(x)
     dom = domain(F);
-    if any(strcmpi(x,{'left','start'}))
+    if any(strcmpi(x,{'left','start','-'}))
         x = dom(1);
-    elseif any(strcmpi(x,{'right','end'}))
+    elseif any(strcmpi(x,{'right','end','+'}))
         x = dom(end);
     else
         error('CHEBFUN:feval:strinput','Unknown input argument "%s".',x);
@@ -78,7 +78,7 @@ end
 % Deal with feval(f,x,'left') and feval(f,x,'right')
 if nargin > 2
     lr = varargin{1};
-    parse = strcmpi(lr,{'left','right','','force'});
+    parse = strcmpi(lr,{'left','right','','force','-','+'});
     if ~any(parse);
         if ischar(lr)
             error('CHEBFUN:feval:leftrightchar',...
@@ -88,7 +88,7 @@ if nargin > 2
         end
     end
     % We deal with this by reassigning imps to be left/right values.
-    if parse(1) % left
+    if parse(1) || parse(5)% left
         for k = 1:nchebs
             F(k).imps(2:end,:) = []; % Level 2 imps are not needed here
             nfuns = F(k).nfuns;
@@ -96,7 +96,7 @@ if nargin > 2
                 F(k).imps(1,j+1) = get(F(k).funs(j),'rval');
             end
         end
-    elseif parse(2) % right
+    elseif parse(2) || parse(6) % right
         for k = 1:nchebs
             F(k).imps(2:end,:) = []; % Level 2 imps are not needed here
             nfuns = F(k).nfuns;

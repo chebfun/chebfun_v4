@@ -29,37 +29,17 @@ $Revision: 1.1.6.23 $  $Date: 2010/03/31 18:23:33 $
 
 
 <xsl:template match="mscript">
-
-
-<!-- remove
-<html>
-  <head>
-<xsl:comment>
-This HTML was auto-generated from MATLAB code.
-To make changes, update the MATLAB code and republish this document.
-      </xsl:comment>
-
-    <title><xsl:value-of select="$title"/></title>
-
-    <meta name="generator">
-      <xsl:attribute name="content">MATLAB <xsl:value-of select="version"/></xsl:attribute>
-    </meta>
-    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
-    <meta name="DC.date">
-      <xsl:attribute name="content"><xsl:value-of select="date"/></xsl:attribute>
-    </meta>
-    <meta name="DC.source">
-      <xsl:attribute name="content"><xsl:value-of select="m-file"/>.m</xsl:attribute>
-    </meta>
-
-    <xsl:call-template name="stylesheet"/>
-
-  </head>
-
-  <body>
- -->
     
+    <!-- Include Matlab's header (is empty) -->
     <xsl:call-template name="header"/>
+    
+    <!-- Add MathJax script 
+    <script type="text/javascript" src="https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js">
+      MathJax.Hub.Config({
+        jax: ["input/TeX","output/HTML-CSS"],
+      });
+    </script>
+    -->
 
     <div class="content">
 
@@ -117,70 +97,7 @@ To make changes, update the MATLAB code and republish this document.
     </div>
     
     <xsl:apply-templates select="originalCode"/>
-<!-- remove
-  </body>
-</html>
--->
-</xsl:template>
 
-<xsl:template name="stylesheet">
-  <style type="text/css">
-
-body {
-  background-color: white;
-  margin:10px;
-}
-
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
-
-h2 {
-  color: #990000;
-  font-size: medium;
-}
-
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
-
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
-
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
-
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
-
-pre.error {
-  color: red;
-}
-
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
-
-  </style>
 </xsl:template>
 
 <!-- Header -->
@@ -280,7 +197,7 @@ p.footer {
   </img>
 </xsl:template>
 - End original -->
-<!-- MathJax -->
+<!-- MathJax -
 <xsl:template match="img[@class='equation']">
   <span class="MathJax_Preview">
       <img>
@@ -304,11 +221,16 @@ p.footer {
         <xsl:value-of select="substring($string,2,string-length($string)-2)"/>
       </xsl:when>
       <xsl:otherwise>
-        T<xsl:value-of select="$string"/>
+        <xsl:value-of select="$string"/>
       </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
-<!-- End MathJax -->
+- End MathJax -->
+<!-- Nick Hale -->
+<xsl:template match="img[@class='equation']">
+  <xsl:value-of select="@alt"/>
+</xsl:template>
+<!-- End Nick Hale -->
 
 <xsl:template match="img">
   <img vspace="5" hspace="5">
