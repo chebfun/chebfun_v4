@@ -1,15 +1,18 @@
 function a = any(F,dim)
-%ANY    True if any element of a chebfun is a nonzero number. ANY ignores 
-%   entries that are NaN (Not a Number).
+% ANY    True if any element of a chebfun is a nonzero number. 
+%        ANY ignores entries that are NaN (Not a Number).
 %
-%   ANY(X,DIM), where X is a quasimatrix, works down the dimension DIM.
-%   If DIM is the chebfun (continuous) dimension, then ANY returns a
-%   logical column vector (or row) in which the Jth element is TRUE if 
-%   any element of the Jth column (or row) is nonzero. Otherwise, ANY
-%   returns a chebfun which takes the value 1 whereever any of the columns
-%   (or rows) of X are nonzero, and zero everywhere else.
+% ANY(X,DIM), where X is a quasimatrix, works down the dimension DIM.
+% If DIM is the chebfun (continuous) dimension, then ANY returns a
+% logical column vector (or row) in which the Jth element is TRUE if 
+% any element of the Jth column (or row) is nonzero. Otherwise, ANY
+% returns a chebfun which takes the value 1 whereever any of the columns
+% (or rows) of X are nonzero, and zero everywhere else.
 %
-%   See also CHEBFUN/ALL.
+% See also CHEBFUN/ALL.
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information
 
 % Get the dimension if non is passed
 if isempty(F), trans = 0; else trans = get(F(1),'trans'); end

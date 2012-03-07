@@ -1,5 +1,6 @@
 function C = complex(A,B)
 % COMPLEX   Construct complex chebfun from real and imaginary parts.
+% 
 % C = COMPLEX(A,B) returns the complex result A + Bi, where A and B are
 % chebfuns with the same number of columns on the same domain.
 

@@ -1,5 +1,6 @@
 function out = cov(F,G)
 % COV   Covariance.
+% 
 % COV(F) returns the covariance matrix of the quasi-matrix F. 
 % COV(F) is the same as VAR(F) if F is a single chebfun.
 % COV(F,G) returns the covariance matrix of the columns of F and G.

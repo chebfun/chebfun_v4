@@ -1,5 +1,6 @@
 function Fout = conv(F1,F2)
 % CONV   Convolution of chebfuns.
+% 
 % H = CONV(F,G) produces the convolution of chebfuns F and G:
 % 
 %                   - 

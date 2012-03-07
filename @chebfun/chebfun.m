@@ -1,4 +1,5 @@
 % CHEBFUN   Constructor for chebfuns.
+% 
 % CHEBFUN(F) constructs a chebfun object for the function F on the interval 
 % [-1,1]. F can be a string, e.g 'sin(x)', a function handle, e.g 
 % @(x) x.^2 + 2*x +1, or a vector of numbers. For the first two, F should 

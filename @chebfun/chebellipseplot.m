@@ -1,29 +1,30 @@
 function varargout = chebellipseplot(u,varargin)
 % CHEBELLIPSEPLOT    Plot the Bernstein (aka Chebyshev) ellipses.
-%   CHEBELLIPSEPLOT(U,EPS) plots ellipses in the complex plane for each 
-%   piecewise part of U, with foci at the U.ends and semi-minor and major 
-%   axes summing to rho(k) = C*exp(abs(log(EPS))/N(k)), where C is the 
-%   appropriate scaling for the interval [U.ends(k) U.ends(k+1)].
+% 
+% CHEBELLIPSEPLOT(U,EPS) plots ellipses in the complex plane for each 
+% piecewise part of U, with foci at the U.ends and semi-minor and major 
+% axes summing to rho(k) = C*exp(abs(log(EPS))/N(k)), where C is the 
+% appropriate scaling for the interval [U.ends(k) U.ends(k+1)].
 %
-%   If EPS is not supplied, then it is taken from chebfunpref('eps').
+% If EPS is not supplied, then it is taken from chebfunpref('eps').
 %   
-%   CHEBELLIPSEPLOT(U,EPS,K) plots the coefficients of the funs indexed 
-%   by the vector K. If U is a quasimatrix, only the first column / row
-%   is considered.
+% CHEBELLIPSEPLOT(U,EPS,K) plots the coefficients of the funs indexed 
+% by the vector K. If U is a quasimatrix, only the first column / row
+% is considered.
 %
-%   CHEBELLIPSEPLOT(U,EPS,S) and CHEBPOLYPLOT(U,EPS,K,S) allow further plotting 
-%   options, such as linestyle, linecolor, etc. If K is a vector, then
-%   use CHEBPOLYPLOT(U,EPS,K,'.r'), etc to alter plot styles for all of the 
-%   funs given by K. 
+% CHEBELLIPSEPLOT(U,EPS,S) and CHEBPOLYPLOT(U,EPS,K,S) allow further plotting 
+% options, such as linestyle, linecolor, etc. If K is a vector, then
+% use CHEBPOLYPLOT(U,EPS,K,'.r'), etc to alter plot styles for all of the 
+% funs given by K. 
 %
-%   CHEBELLIPSEPLOT(U,...,'legends',0) will prevent the legends being
-%   displayed on the plot.
+% CHEBELLIPSEPLOT(U,...,'legends',0) will prevent the legends being
+% displayed on the plot.
 %
-%   H = CHEBELLIPSEPLOT(U) returns a handle H to the figure.
+% H = CHEBELLIPSEPLOT(U) returns a handle H to the figure.
 %
-%   Example
-%     u = chebfun({@sin @cos @tan @cot},[-2,-1,0,1,2]);
-%     chebellipseplot(u,sqrt(eps),'--');
+% Example
+% u = chebfun({@sin @cos @tan @cot},[-2,-1,0,1,2]);
+% chebellipseplot(u,sqrt(eps),'--');
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

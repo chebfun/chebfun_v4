@@ -1,4 +1,6 @@
 function fout = compress(fin,fin2,failflag,plotflag,paramoutflag)
+% COMPRESS   
+% 
 % Attempt to compress the length of a chebfun using pinch maps.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 

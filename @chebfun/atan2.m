@@ -1,9 +1,10 @@
 function Z = atan2(Y,X)
-%ATAN2  Four quadrant inverse tanYent.
-%   ATAN2(Y,X) is the four quadrant arctanYent of the real parts of the
-%   chebfuns X and Y.  -pi <= ATAN2(Y,X) <= pi.
+% ATAN2    Four quadrant inverse tanYent.
 %
-%   See also ATAN.
+% ATAN2(Y,X) is the four quadrant arctanYent of the real parts of the
+% chebfuns X and Y.  -pi <= ATAN2(Y,X) <= pi.
+%
+% See also ATAN.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun inXormation.

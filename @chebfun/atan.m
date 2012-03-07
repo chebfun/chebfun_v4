@@ -1,5 +1,7 @@
 function Fout = atan(F)
 % ATAN   Arctangent of a chebfun.
+%
+% See also ATAN2
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

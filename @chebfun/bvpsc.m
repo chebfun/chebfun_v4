@@ -1,5 +1,5 @@
 function varargout = bvpsc(odefun,jacfun,bcmat,y0)
-%BVPSC  Spectral collocation solution to a boundary-value problem.
+% BVPSC  Spectral collocation solution to a boundary-value problem.
 %
 % Y = BVPSC(ODEFUN,JACFUN,BCMATS,Y0) solves a nonlinear boundary-value
 % problem using a spectral collocation method. 

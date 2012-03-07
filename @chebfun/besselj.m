@@ -1,6 +1,7 @@
 function Fout = besselj(nu,F)
 % BESSELJ   Bessel function of first kind of a chebfun.
-%  BESSELJ(NU,F)
+%
+% BESSELJ(NU,F)
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

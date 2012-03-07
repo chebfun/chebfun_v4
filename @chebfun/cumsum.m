@@ -1,5 +1,6 @@
 function F = cumsum(F,n)
-%CUMSUM   Indefinite integral.
+% CUMSUM   Indefinite integral.
+%
 % G = CUMSUM(F) is the indefinite integral of the chebfun F. Dirac deltas 
 % already existing in F will decrease their degree. G will typically be 
 % normalised so that G(F.ends(1)) = 0. The exception to this is when

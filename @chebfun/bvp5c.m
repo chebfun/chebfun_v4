@@ -1,5 +1,6 @@
 function varargout = bvp5c(fun1,fun2,y0,varargin)
-%BVP5C  Represent boundary-value problem solution using chebfuns.
+% BVP5C  Represent boundary-value problem solution using chebfuns.
+%
 % Y = BVP5C(ODEFUN,BCFUN,Y0) applies the standard BVP5C method to solve a
 % boundary-value problem. ODEFUN and BCFUN are as in BVP5C. The Y0 argument
 % is a chebfun that represents the initial guess to the solution Y. Its

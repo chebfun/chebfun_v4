@@ -1,5 +1,5 @@
 function Fout = atand(F)
-% ATAND   Inverse tangent of a chebfun, result in degrees.
+% ATAND    Inverse tangent of a chebfun, result in degrees.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

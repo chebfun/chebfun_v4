@@ -1,27 +1,28 @@
 function varargout = chebpolyplot(u,varargin)
 % CHEBPOLYPLOT    Display Chebyshev coefficients graphically.
-%   CHEBPOLYPLOT(U) plots the Chebyshev coefficients of a chebfun U 
-%   on a semilogy scale. 
 %
-%   If U is a quasimatrix, the coefficients of the first fun in each row 
-%   (or column) are plotted. CHEBPOLYPLOT(U,K) plots only the coefficients 
-%   of the row indexed by the vector K. If U is a single chebfun but is 
-%   composed of more than one fun, then CHEBPOLYPLOT(U,K) plots only the 
-%   coefficients of the funs indexed by  K.
+% CHEBPOLYPLOT(U) plots the Chebyshev coefficients of a chebfun U 
+% on a semilogy scale. 
 %
-%   H = CHEBPOLYPLOT(U) returns a handle H to the figure.
+% If U is a quasimatrix, the coefficients of the first fun in each row 
+% (or column) are plotted. CHEBPOLYPLOT(U,K) plots only the coefficients 
+% of the row indexed by the vector K. If U is a single chebfun but is 
+% composed of more than one fun, then CHEBPOLYPLOT(U,K) plots only the 
+% coefficients of the funs indexed by  K.
 %
-%   CHEBPOLYPLOT(U,S) and CHEBPOLYPLOT(U,K,S) allow further plotting 
-%   options, such as linestyle, linecolor, etc. If K is a vector, then
-%   use CHEBPOLYPLOT(U,K,'.r'), etc to alter plot styles for all of the 
-%   funs given by K. If S contains a string 'LOGLOG', the coefficients
-%   will be displayed on a log-log scale.
+% H = CHEBPOLYPLOT(U) returns a handle H to the figure.
 %
-%   Example
+% CHEBPOLYPLOT(U,S) and CHEBPOLYPLOT(U,K,S) allow further plotting 
+% options, such as linestyle, linecolor, etc. If K is a vector, then
+% use CHEBPOLYPLOT(U,K,'.r'), etc to alter plot styles for all of the 
+% funs given by K. If S contains a string 'LOGLOG', the coefficients
+% will be displayed on a log-log scale.
+%
+% Example
 %     u = chebfun({@sin @cos @tan @cot},[-2,-1,0,1,2]);
 %     chebpolyplot(u,'--ok');
 %
-%   See also chebfun/chebpoly, plot
+% See also chebfun/chebpoly, plot
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

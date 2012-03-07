@@ -1,5 +1,6 @@
 function out = chebpoly(f,varargin)
-% CHEBPOLY   Chebyshev polynomial coefficients.
+% CHEBPOLY   Chebyshev polynomial coefficients
+% 
 % A = CHEBPOLY(F) returns the vector of coefficients such that
 % F_1 = A(1) T_M(x) + ... + A(M) T_1(x) + A(M+1) T_0(x), where T_M(x) denotes 
 % the M-th Chebyshev polynomial and F_1 denotes the first fun of chebfun F.

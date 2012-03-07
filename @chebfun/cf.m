@@ -1,5 +1,5 @@
 function [p,q,r,s] = cf(f,m,n,M)
-% Caratheodory-Fejer approximation
+% CF    Caratheodory-Fejer approximation
 %
 % [P,Q,R_HANDLE] = CF(F,M,N): type (M,N) rational CF approximant to chebfun F
 %         defined in [a b] (which must consist of just a single fun);

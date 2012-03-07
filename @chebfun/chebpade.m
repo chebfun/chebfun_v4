@@ -1,5 +1,5 @@
 function [p, q, r_handle] = chebpade(F,m,n,varargin) 
-% Chebyshev-Pade approximation
+% CHEBPADE    Chebyshev-Pade approximation
 %
 % [P,Q,R_HANDLE] = CHEBPADE(F,M,N) constructs R_HANDLE = P/Q, where P and
 % Q are chebfuns corresponding to the [M/N] Chebyshev-Pade approximation 
