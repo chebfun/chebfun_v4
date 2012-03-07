@@ -1,5 +1,8 @@
 function plot(an,varargin)
-% PLOT Plot the AD tree of an anon
+% PLOT Plot the AD tree of an anon (done recursively).
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % parse the input
 if nargin == 1 || ~isa(varargin{1},'chebfun')

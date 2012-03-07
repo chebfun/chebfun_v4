@@ -1,4 +1,9 @@
 function [t found] = anon2tree(an,varName,ID)
+% ANON2TREE Convert anon to a recursively defined tree (used for plotting
+% an displaying anon).
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Access variables (and the number of them) in the workspace of the input
 % anon

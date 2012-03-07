@@ -2,6 +2,9 @@ function s = func2str(A,name)
 %FUNC2STR Convert the function field in anons to a pretty string for a
 %   single anon (i.e. don't do anything recursive).
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Find variable name if possible. Don't need to do that if we have two
 % input arguments
 if nargin < 2

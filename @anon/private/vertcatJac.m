@@ -4,6 +4,9 @@ function L = vertcatJac(L,varargin)
 % VERTCATJAC(DERS{:}) is called by the jacobian info in chebfun/vertcat and 
 % returns the vertically concatenated jacobians of the input chebfuns DERS.
 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 while ~isempty(varargin)
     A = L;
     B = varargin{1}; varargin(1) = [];
