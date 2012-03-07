@@ -3,25 +3,21 @@ function pass = circplate
 
 tol = chebfunpref('eps');
 
-d = domain(0,1);
-f = chebfun('exp(-50*r)',d);  % loading function
-
+d = [0 1];
 r = chebfun('r',d);
-D = diff(d);  I = eye(d);
-B = diag(r.^3)*D^4 + diag(2*r.^2)*D^3 - diag(r)*D^2 + D;  % r^3*(biharm)
+f = exp(-50*r);                    % loading function
 
-B.lbc(1)=D; B.lbc(2)=D^3;   % symmetry at origin
-B.rbc(1)=I; B.rbc(2)=D;     % clamped at boundary
+B = chebop(d);                     % r^3*(biharm)
+B.op = @(r,u) r.^3.*diff(u,4) + 2*r.^2.*diff(u,3) - r.*diff(u,2) + diff(u);
+B.lbc = @(u) [diff(u), diff(u,3)]; % symmetry at origin
+B.rbc = @(u) [u, diff(u,1)];       % clamped at boundary
 
 u1 = B\(r.^3.*f);
 u2 = chebfun(solution,d);
 
-% chebpolyplot(u1); hold on
-% chebpolyplot(u2,'--r'); hold off
 pass = norm(u1-u2) < 2e-9*(tol/eps);
 
-
-function y = solution
+function vals = solution
 % Previously computed solution!
 vals = 1.0e-04 * [0.492425828933118
    0.492420508896867
@@ -67,4 +63,3 @@ vals = 1.0e-04 * [0.492425828933118
    0.000028272198672
    0.000001774114372
   -0.000000000000000];
-y = chebfun(vals,[0,1]);

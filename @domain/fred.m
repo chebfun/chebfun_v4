@@ -51,51 +51,51 @@ if nargin==2, onevar=false; end
 op = @(u) fred(k,u,onevar);
 
 % Construct the linop
-F = linop(@matrix,op,d);
+F = linop(@(n)mat(d,k,onevar,n),op,d);
+
+end
 
 % Matrix form. At given n, multiply function values by CC quadrature
-% weights, then apply kernel as inner products. 
-  function A = matrix(n)
-    [n map breaks numints] = tidyInputs(n,d,mfilename);
+% weights, then apply kernel as inner products.
+function A = mat(d,k,onevar,n)
+[n map breaks numints] = tidyInputs(n,d,mfilename);
 
-    if isempty(breaks) || isempty(map)
-        % Not both maps and breaks
-        if ~isempty(map)
-            [x s] = chebpts(n);
-            s = map.der(x.').*s;
-            x = map.for(x);
-        else
-            if isempty(breaks), breaks = d.ends; end
-            [x s] = chebpts(n,breaks);
-            n = sum(n);
-        end
+if isempty(breaks) || isempty(map)
+    % Not both maps and breaks
+    if ~isempty(map)
+        [x s] = chebpts(n);
+        s = map.der(x.').*s;
+        x = map.for(x);
     else
-        % Maps and breaks
-        csn = [0 cumsum(n)];
-        x = zeros(csn(end),1);
-        s = zeros(1,csn(end));
-        if iscell(map) && numel(map) == 1, map = map{1}; end
-        mp = map;
-        for j = 1:numints
-            if numel(map) > 1
-                if iscell(map), mp = map{j}; end
-                if isstruct(map), mp = map(j); end
-            end
-            ii = csn(j)+(1:n(j));
-            [xj sj] = chebpts(n(j));
-            s(ii) = mp.der(xj.').*sj;
-            x(ii) = mp.for(xj);
-        end
+        if isempty(breaks), breaks = d.ends; end
+        [x s] = chebpts(n,breaks);
         n = sum(n);
     end
-    
-    if onevar  % experimental
-      A = k(x)*spdiags(s',0,n,n);
-    else
-      [X,Y] = ndgrid(x);
-      A = k(X,Y) * spdiags(s',0,n,n);
+else
+    % Maps and breaks
+    csn = [0 cumsum(n)];
+    x = zeros(csn(end),1);
+    s = zeros(1,csn(end));
+    if iscell(map) && numel(map) == 1, map = map{1}; end
+    mp = map;
+    for j = 1:numints
+        if numel(map) > 1
+            if iscell(map), mp = map{j}; end
+            if isstruct(map), mp = map(j); end
+        end
+        ii = csn(j)+(1:n(j));
+        [xj sj] = chebpts(n(j));
+        s(ii) = mp.der(xj.').*sj;
+        x(ii) = mp.for(xj);
     end
+    n = sum(n);
+end
 
-  end
+if onevar  % experimental
+    A = k(x)*spdiags(s',0,n,n);
+else
+    [X,Y] = ndgrid(x);
+    A = k(X,Y) * spdiags(s',0,n,n);
+end
 
 end

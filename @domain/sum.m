@@ -19,36 +19,35 @@ function S = sum(d)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-S = linop(@mat,@sum,d);
+S = linop(@(n)mat(d,n),@sum,d);
+end
 
-  function A = mat(n)
-    [n map breaks numints] = tidyInputs(n,d,mfilename); 
+function A = mat(d,n)
+[n map breaks numints] = tidyInputs(n,d,mfilename);
 
-    if isempty(map)
-        % No map
-        if isempty(breaks), breaks = d.ends([1 end]); end
-        [x,A] = chebpts(n,breaks);
-    elseif isempty(breaks) && ~isempty(map)
-        % Map / No breaks
-        [x,A] = chebpts(n);
-        A = A.*map.der(x');
-    else
-        % Breaks and maps
-        csn = [0 cumsum(n)];
-        A = zeros(1,csn(end));
-        if iscell(map) && numel(map) == 1, map = map{1}; end
-        mp = map;
-        for k = 1:numints
-            if numel(map) > 1
-                if iscell(map), mp = map{k}; end
-                if isstruct(map), mp = map(k); end
-            end
-            ii = csn(k)+(1:n(k));
-            [x,Ak] = chebpts(n(k));
-            A(1,ii) = Ak.*mp.der(x');
+if isempty(map)
+    % No map
+    if isempty(breaks), breaks = d.ends([1 end]); end
+    [ignored,A] = chebpts(n,breaks);
+elseif isempty(breaks) && ~isempty(map)
+    % Map / No breaks
+    [x,A] = chebpts(n);
+    A = A.*map.der(x');
+else
+    % Breaks and maps
+    csn = [0 cumsum(n)];
+    A = zeros(1,csn(end));
+    if iscell(map) && numel(map) == 1, map = map{1}; end
+    mp = map;
+    for k = 1:numints
+        if numel(map) > 1
+            if iscell(map), mp = map{k}; end
+            if isstruct(map), mp = map(k); end
         end
+        ii = csn(k)+(1:n(k));
+        [x,Ak] = chebpts(n(k));
+        A(1,ii) = Ak.*mp.der(x');
     end
-    
-  end
+end
 
 end

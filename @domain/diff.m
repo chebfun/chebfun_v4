@@ -23,63 +23,63 @@ elseif isempty(d)
     D = linop;
     return
 elseif all(isfinite(d.ends))
-    D = linop( @(n) mat(n,m), @(u) diff(u,m), d, m );   
+    D = linop( @(n) mat(d,n,m), @(u) diff(u,m), d, m );   
 else
-    D = linop( @(n) mat(n,1), @(u) diff(u), d, 1 );
+    D = linop( @(n) mat(d,n,1), @(u) diff(u), d, 1 );
     if m > 1, D = mpower(D,m); end
 end
 
-%%
-    function D = mat(n,m)
-        [n map breaks numints] = tidyInputs(n,d,mfilename);      
-
-        if isempty(map) && isempty(breaks)
-            % Standard case
-            D = diffmat(n,m)*(2/length(d))^m;
-        elseif isempty(breaks)
-            % Map / no breakpoints
-            if isstruct(map) 
-                if m == 1 && isfield(map,'der') && ~isempty(map.der)
-                    D = diag(1./map.der(chebpts(n)))*diffmat(n);
-                else
-                    D = barydiffmat(map.for(chebpts(n)),[],m);
-                end 
-            else
-                D = barydiffmat(map(chebpts(n)),[],m);
-            end
-        elseif isempty(map)
-            % Breakpoints / no maps 
-            csn = [0 cumsum(n)];
-            D = zeros(csn(end));
-            for k = 1:numints
-                ii = csn(k)+(1:n(k));
-                D(ii,ii) = diffmat(n(k),m)*(2/diff(breaks(k:k+1)))^m;
-            end
-        else
-            % Breaks and maps
-            numints = numel(breaks)-1;
-            csn = [0 cumsum(n)];
-            D = zeros(csn(end));
-            if iscell(map) && numel(map) == 1
-                map = map{1};
-            end
-            mp = map;
-            for k = 1:numints
-                if numel(map) > 1
-                    if iscell(map), mp = map{k}; end
-                    if isstruct(map), mp = map(k); end
-                end
-                ii = csn(k)+(1:n(k));
-                if m == 1 && isfield(mp,'der') && ~isempty(mp.der)
-                    D(ii,ii) = diag(1./mp.der(chebpts(n(k))))*diffmat(n(k));
-                else
-                    D(ii,ii) = barydiffmat(mp.for(chebpts(n(k))),[],m);
-                end 
-            end
-        end    
-    end
-
 end
+
+function D = mat(d,n,m)
+[n map breaks numints] = tidyInputs(n,d,mfilename);
+
+if isempty(map) && isempty(breaks)
+    % Standard case
+    D = diffmat(n,m)*(2/length(d))^m;
+elseif isempty(breaks)
+    % Map / no breakpoints
+    if isstruct(map)
+        if m == 1 && isfield(map,'der') && ~isempty(map.der)
+            D = diag(1./map.der(chebpts(n)))*diffmat(n);
+        else
+            D = barydiffmat(map.for(chebpts(n)),[],m);
+        end
+    else
+        D = barydiffmat(map(chebpts(n)),[],m);
+    end
+elseif isempty(map)
+    % Breakpoints / no maps
+    csn = [0 cumsum(n)];
+    D = zeros(csn(end));
+    for k = 1:numints
+        ii = csn(k)+(1:n(k));
+        D(ii,ii) = diffmat(n(k),m)*(2/diff(breaks(k:k+1)))^m;
+    end
+else
+    % Breaks and maps
+    numints = numel(breaks)-1;
+    csn = [0 cumsum(n)];
+    D = zeros(csn(end));
+    if iscell(map) && numel(map) == 1
+        map = map{1};
+    end
+    mp = map;
+    for k = 1:numints
+        if numel(map) > 1
+            if iscell(map), mp = map{k}; end
+            if isstruct(map), mp = map(k); end
+        end
+        ii = csn(k)+(1:n(k));
+        if m == 1 && isfield(mp,'der') && ~isempty(mp.der)
+            D(ii,ii) = diag(1./mp.der(chebpts(n(k))))*diffmat(n(k));
+        else
+            D(ii,ii) = barydiffmat(mp.for(chebpts(n(k))),[],m);
+        end
+    end
+end
+end
+
 
 function Dk = barydiffmat(x,w,k)  
 % BARYDIFFMAT  Barycentric differentiation matrix with arbitrary weights/nodes.

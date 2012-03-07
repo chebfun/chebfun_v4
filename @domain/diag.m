@@ -1,11 +1,11 @@
 function A = diag(f,d)
-% DIAG   Pointwise multiplication operator. 
-% A = DIAG(F,D) produces a chebop that stands for pointwise multiplication 
-% by the function F on the domain D. 
+% DIAG   Pointwise multiplication operator.
+% A = DIAG(F,D) produces a chebop that stands for pointwise multiplication
+% by the function F on the domain D.
 %
 % See also chebfun/diag, chebop, linop/mtimes
 
-% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin < 2
@@ -14,14 +14,13 @@ end
 
 % Switch f and d (as in a call from chebfun/diag)
 if isa(f,'domain')
-    tmp = f; f = d; d = tmp; 
+    tmp = f; f = d; d = tmp;
 end
 
 % Unset funreturn flag, as we want to evaluate f and get back doubles
 f = set(f,'funreturn',0);
 
 % Sort out the domain
-a = f.ends(1); b = f.ends(end);
 fends = f.ends; fends(fends<d.ends(1) | fends>d.ends(end)) = [];
 d = domain(union(d.ends,fends));
 
@@ -36,62 +35,63 @@ else
 end
 
 % Construct the linop
-A = linop( @(n) mat(n), oper, d  );
+A = linop( @(n) mat(d,f,n), oper, d  );
 A.isdiag = 1; % Which is obviously diagonal
 
-    % Define the mat
-        function m = mat(n)
-        [n map breaks numints] = tidyInputs(n,d,mfilename);
+end
 
-        if isempty(breaks) && isempty(map)
-            % No breaks or map
-            xpts = chebpts(n,d.ends([1 end]));
-            xpts = trim(xpts);
-            fx = feval( f, xpts );
-        elseif isempty(breaks)
-            % No breaks
-            if isstruct(map), map = map.for; end
-            xpts = map(chebpts(n));
-            xpts = trim(xpts);
-            fx = feval( f, xpts );
-        elseif isempty(map)
-            % No maps
-            xpts = chebpts(n,breaks);
-            xpts = trim(xpts);
-            fx = feval( f, xpts );
-            dxloc = cumsum(n(1:end-1));
-            fx(dxloc) = feval(f, xpts(dxloc), 'left');
-            fx(dxloc+1) = feval(f, xpts(dxloc), 'right');
-        else
-            % Breaks and maps
-            csn = [0 cumsum(n)];
-            xpts = zeros(csn(end),1);
-            if iscell(map) && numel(map) == 1
-                map = map{1};
-            end
-            mp = map.for;
-            for k = 1:numints
-                if numel(map) > 1
-                    if iscell(map), mp = map{k}.for; end
-                    if isstruct(map), mp = map(k).for; end
-                end
-                if isstruct(mp), mp = mp.for; end
-                ii = csn(k)+(1:n(k));
-                xpts(ii) = mp(chebpts(n(k)));
-            end
-            fx = feval( f, xpts );
-            dxloc = csn(2:end-1);
-            fx(dxloc) = feval(f, xpts(dxloc), 'left');
-            fx(dxloc+1) = feval(f, xpts(dxloc), 'right');
-        end  
-        fx(xpts<a | xpts>b) = 0; % Zero out entries outside domain of f.
-        m = spdiags(fx,0,sum(n),sum(n)); % Construct the diagonal matrix.
+% Define the mat
+function m = mat(d,f,n)
+[n map breaks numints] = tidyInputs(n,d,mfilename);
+
+if isempty(breaks) && isempty(map)
+    % No breaks or map
+    xpts = chebpts(n,d.ends([1 end]));
+    xpts = trim(xpts);
+    fx = feval( f, xpts );
+elseif isempty(breaks)
+    % No breaks
+    if isstruct(map), map = map.for; end
+    xpts = map(chebpts(n));
+    xpts = trim(xpts);
+    fx = feval( f, xpts );
+elseif isempty(map)
+    % No maps
+    xpts = chebpts(n,breaks);
+    xpts = trim(xpts);
+    fx = feval( f, xpts );
+    dxloc = cumsum(n(1:end-1));
+    fx(dxloc) = feval(f, xpts(dxloc), 'left');
+    fx(dxloc+1) = feval(f, xpts(dxloc), 'right');
+else
+    % Breaks and maps
+    csn = [0 cumsum(n)];
+    xpts = zeros(csn(end),1);
+    if iscell(map) && numel(map) == 1
+        map = map{1};
     end
-
-    function x = trim(x)
-        % This function forces x to be in [-10^16,10^16]
-        x(x==inf) = 1e18;
-        x(x==-inf) = -1e18;
+    mp = map.for;
+    for k = 1:numints
+        if numel(map) > 1
+            if iscell(map), mp = map{k}.for; end
+            if isstruct(map), mp = map(k).for; end
+        end
+        if isstruct(mp), mp = mp.for; end
+        ii = csn(k)+(1:n(k));
+        xpts(ii) = mp(chebpts(n(k)));
     end
+    fx = feval( f, xpts );
+    dxloc = csn(2:end-1);
+    fx(dxloc) = feval(f, xpts(dxloc), 'left');
+    fx(dxloc+1) = feval(f, xpts(dxloc), 'right');
+end
+a = f.ends(1); b = f.ends(end);
+fx(xpts<a | xpts>b) = 0; % Zero out entries outside domain of f.
+m = spdiags(fx,0,sum(n),sum(n)); % Construct the diagonal matrix.
+end
 
+function x = trim(x)
+% This function forces x to be in [-10^16,10^16]
+x(x==inf) = 1e18;
+x(x==-inf) = -1e18;
 end

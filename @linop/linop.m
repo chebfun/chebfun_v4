@@ -26,7 +26,7 @@ classdef (InferiorClasses = {?double}) linop
     
     %Default properties.
     properties
-        domain = domain(chebfunpref('domain'));
+        domain = [];            % Domain of the operator
         varmat = [];            % Matrix form of the operator
         oparray = oparray;      % inf-dim representation
         opshow = [];            % Pretty-print string (if available)
@@ -64,19 +64,19 @@ classdef (InferiorClasses = {?double}) linop
                 
             % First argument defines the matrix part.
             if isa(varargin{1},'function_handle')
-                A.varmat = varmat( varargin{1} );  %#ok<PROP>
+                A.varmat = varmat( varargin{1} );  %#ok<CPROP,PROP>
             elseif isa(varargin{1},'varmat')
                 A.varmat = varargin{1};
             end
 
             % Second argument defines the operator.
             if nargin >= 2
-                A.oparray = oparray(varargin{2});  %#ok<PROP>
+                A.oparray = oparray(varargin{2});  %#ok<CPROP,PROP>
             end
 
             % Third argument supplies the function domain.
             if nargin >= 3
-                A.domain = domain( [varargin{3}] );
+                A.domain = domain( [varargin{3}] ); %#ok<CPROP,PROP>
             end
 
             % 4th argument is differential order
@@ -130,7 +130,7 @@ end
 % A.difforder = 0;
 % A.iszero = 0;
 % A.isdiag = 0;
-% A.domain = domain(chebfunpref('domain'));
+% A.domain = [];
 % A.numbc = 0;
 % A.scale = 0;
 % A.jumplocs = [];

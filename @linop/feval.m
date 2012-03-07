@@ -121,15 +121,15 @@ else
       && length(storage(A.ID).mat)>=n && ~isempty(storage(A.ID).mat{n})
     M = storage(A.ID).mat{n};
   else % If not,m then make it.
-    try
+%     try
         M = feval(A.varmat,{n,map,breaks});
-    catch
-        if ~isempty(map) || ~isempty(breaks)
-            error('CHEBFUN:linop:feval:cellin',...
-                'This linop definition does not allow maps or breaks.');
-        end
-        M = feval(A.varmat,n);
-    end
+%     catch
+%         if ~isempty(map) || ~isempty(breaks)
+%             error('CHEBFUN:linop:feval:cellin',...
+%                 'This linop definition does not allow maps or breaks.');
+%         end
+%         M = feval(A.varmat,n);
+%     end
     if use_store && n > 4
       % This is very crude garbage collection! 
       % If size is exceeded, wipe out everything.

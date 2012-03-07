@@ -5,7 +5,6 @@ function pass = chebpadetest
 
 tol = chebfunpref('eps');
 
-
 M = 4;
 N = 4;
 d = [-1, 3];

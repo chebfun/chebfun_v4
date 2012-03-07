@@ -40,48 +40,51 @@ else
     lr = [];
 end
 
-a = d.ends(1);  b = d.ends(end);
-x = 2*(s(:)-a)/(b-a) - 1;
+
 if isempty(lr)
-    E = linop(@mat,@(u) feval(u,s(:)),d);
+    E = linop(@(n) mat(d,s,lr,n), @(u) feval(u,s(:)),d);
     E.isdiag = 1;
 else
-    E = linop(@mat,@(u) feval(u,s(:),lr),d);
+    E = linop(@(n) mat(d,s,lr,n), @(u) feval(u,s(:),lr), d);
 end
 
-    function P = mat(n)
-        [n map breaks numints] = tidyInputs(n,d,mfilename); 
-        
-        % If n == 1, interpolation is easy!!
-        if all(n == 1)
-            if numints == 1
-                P = ones(length(x),1);
-            else
-                P = zeros(length(x),numints);
-                for k = 1:numel(x)
-                    P(k,:) = x(k) >= breaks(1:end-1) & x(k) <= breaks(2:end);
-                    P(k,:) = P(k,:)/sum(P(k,:));
-                end
-            end   
-            return
-        elseif any(n == 1)
-            error('CHEBFUN:domain:feval:n1','Expansion with n = 1 is not supported.')
-        end
-        
-        if isempty(map) && isempty(breaks)
-            % Standard case
-            P = barymat(x,chebpts(n));
-        elseif isempty(breaks)
-            % Map / no breaks
-            if isstruct(map), map = map.for; end
-            P = barymat(x,map(chebpts(n)));
-        elseif isempty(map)
-            % Breaks / no map
-            P = barymatp(s,n,breaks,[],lr);
+end
+
+function P = mat(d,s,lr,n)
+    [n map breaks numints] = tidyInputs(n,d,mfilename); 
+
+    a = d.ends(1);  b = d.ends(end);
+    x = 2*(s(:)-a)/(b-a) - 1;
+
+    % If n == 1, interpolation is easy!!
+    if all(n == 1)
+        if numints == 1
+            P = ones(length(x),1);
         else
-            % Breaks and maps
-            P = barymatp(s,n,breaks,map,lr);
+            P = zeros(length(x),numints);
+            for k = 1:numel(x)
+                P(k,:) = x(k) >= breaks(1:end-1) & x(k) <= breaks(2:end);
+                P(k,:) = P(k,:)/sum(P(k,:));
+            end
         end   
+        return
+    elseif any(n == 1)
+        error('CHEBFUN:domain:feval:n1',...
+            'Expansion with n = 1 is not supported.')
     end
 
+    if isempty(map) && isempty(breaks)
+        % Standard case
+        P = barymat(x,chebpts(n));
+    elseif isempty(breaks)
+        % Map / no breaks
+        if isstruct(map), map = map.for; end
+        P = barymat(x,map(chebpts(n)));
+    elseif isempty(map)
+        % Breaks / no map
+        P = barymatp(s,n,breaks,[],lr);
+    else
+        % Breaks and maps
+        P = barymatp(s,n,breaks,map,lr);
+    end   
 end
