@@ -1,4 +1,4 @@
-function pass = pw_fredvolt
+function pass = chebop_pwintops
 % This test checks the construction of the piecewise fred and volt
 % matrices. It also checks that map with mapping kte is working. 
 
@@ -6,9 +6,9 @@ pass = true(1,4);
 tol = 1e3*chebfunpref('eps');
 
 %% Fred
-d = domain([-1 0.5 1]);
+d = [-1 0.5 1];
 K = @(x,y) sin(x-y);
-V = fred(K,domain(-1,1));
+V = chebop(@(u) fred(K,u), d);
 
 % % With breaks
 % f = chebfun({@cos,@sin},d);
@@ -40,9 +40,10 @@ err = norm(vf(f.pts) - vNf,inf);
 pass(2) = err < tol;
 
 %% VOLT
-d = domain([-1 0.5 1]);
+d = [-1 0.5 1];
 K = @(x,y) sin(x-y);
 V = volt(K,domain(-1,1));
+V = chebop(@(u) volt(K,u), d);
 
 % With breaks
 f = chebfun({@cos,@sin},d);

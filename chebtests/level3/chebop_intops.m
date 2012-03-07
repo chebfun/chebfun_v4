@@ -1,4 +1,4 @@
-function pass = intops
+function pass = chebop_intops
 % Test integral operators
 % 
 % Toby Driscoll 28 May 2009

@@ -1,32 +1,26 @@
-function pass = systemexpm
-
+function pass = chebop_systemexpm
 % Exponential test, inspired by Maxwell's equation
 % (A Level 3 Chebtest)
 % Toby Driscoll
 
 d = domain(-1,1);
 dt = 0.6;
-sigma = 0.75;  % conductive attenuation
+sigma = 0.75;  % Conductive attenuation
 
-D = diff(d); I = eye(d); Z = zeros(d);
-A = [ -sigma*I D;D Z ];
-A.lbc = [I Z];
-A.rbc = [I Z];
+d = [-1 1];
+A = chebop(@(x,u,v) [-sigma*u + diff(v), diff(u)], d);
+A.lbc = @(u,v) u;
+A.rbc = @(u,v) u;
 
-x = d(:);
+x = chebfun('x',d);
 f = exp(-20*x.^2) .* sin(30*x);
 EH = [ f -f ];
 
-% for n = 0:5
-%   subplot(2,3,n+1)
-%   plot( expm(n*dt*A & A.bc)*EH ), 
-%   axis([-1 1 -1.25 1.25])
-%   title(['t = ' num2str(n*dt)])
-% end
+B = dt*A; 
+B.lbc = A.lbc;
+B.rbc = A.rbc;
+u = expm(B)*EH;
 
-u = expm(dt*A & A.bc)*EH;
-
-% This is just taken from a stable version of chebops. Verify?
 ucorrect = [
   -0.003493712804296   0.003507424266860
    0.017400438776808  -0.017569666673771

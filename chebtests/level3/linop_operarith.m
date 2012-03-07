@@ -1,6 +1,5 @@
-function pass = operarith
-% This test checks basic arithmetric operations of linear and non-linear
-% chebops. 
+function pass = linop_operarith
+% This test checks basic arithmetric operations of linops
 
 d = domain(-1,4);
 Q = cumsum(d);

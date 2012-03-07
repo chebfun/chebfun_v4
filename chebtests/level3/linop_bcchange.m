@@ -1,4 +1,4 @@
-function pass = bcchange
+function pass = linop_bcchange
 % Check if changing the boundary conditions of a chebop that has already
 % been evaluated works.
 

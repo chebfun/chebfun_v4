@@ -1,19 +1,16 @@
-function pass = systemsolve1
-
+function pass = chebop_systemsolve1
 % Test 2x2 system (sin/cos)
 % Toby Driscoll
 % (A Level 3 Chebtest)
+
 tol = chebfunpref('eps');
 
-d = domain(-pi,pi);
-D = diff(d);
-I = eye(d);
-Z = zeros(d);
-A = [I -D; D I];
-x = d(:);
+d = [-pi pi];
+A = chebop(@(x,u,v) [u - diff(v), diff(u) + v],d);
+A.lbc = @(u,v) u + 1;
+A.rbc = @(u,v) v;
+x = chebfun('x',d);
 f = [ 0*x 0*x ];
-A.lbc = {[I Z],-1};
-A.rbc = [Z I];
 u = A\f;
 
 u1 = u(:,1); u2 = u(:,2);

@@ -1,6 +1,6 @@
 function pass = linopzerotest
-% Checks whether iszero information for linear chebops is being passed and worked
-% with properly.
+% Checks whether iszero information for linear chebops is being passed and
+% worked with properly.
 
 % AB, 21/11/2010
 
@@ -13,7 +13,6 @@ Z = zeros(d);
 % Concatenations
 A = [I D; I Z];
 pass(1) = all(all(A.iszero == [0 0; 0 1]));
-
 
 % Plus
 B1 = I+Z;

@@ -1,4 +1,4 @@
-function pass = ADtest
+function pass = ad_basic2
 % This test checks that Automatic Differentiation is working.
 
 % Nick Trefethen, 5 November 2009

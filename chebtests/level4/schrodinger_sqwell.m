@@ -5,15 +5,17 @@ function pass = schrodinger_sqwell
 % mathematica for these well parameters (unbounded domain). 
 
 % piecewise constant potential function
-d = [-40 0 6 46];         % domain with breakpoints 
-U = chebfun({2,0,2},d);
+d = [-40 0 6 46];         	% Domain with breakpoints 
+V = chebfun({2,0,2},d);     % Potential function (square well)
 
-N = chebop(@(psi) -diff(psi,2) + U.*psi, d, 0, 0);  % Schrodinger operator
+% Schrodinger operator
+N = chebop(@(psi) -diff(psi,2) + V.*psi, d, 0, 0);  
 
 [Psi,E] = eigs(N,2,0);   
 energies = diag(E);
 
+% Exact on unbounded domain
 lambdaMMA = [ 0.422476214321786465165559636043; 
-  0.836288791108712929906950164520];   % exact on unbounded domain
+              0.836288791108712929906950164520];   
 
 pass = norm( sqrt(energies) - lambdaMMA ) < 1e-11;

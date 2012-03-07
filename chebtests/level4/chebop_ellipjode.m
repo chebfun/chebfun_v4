@@ -1,4 +1,4 @@
-function pass = ellipj_ode
+function pass = chebop_ellipjode
 % Test to check that the chebfun command for
 % Jacobi elliptic functions ELLIPJ produces a similar 
 % result to the solution of the nonlinear differential 

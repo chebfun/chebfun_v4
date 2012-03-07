@@ -1,4 +1,4 @@
-function pass = realize_eye
+function pass = linop_eye
 
 % Checks the 10 by 10 realization of the identity operator.
 % (A Level 3 chebtest)

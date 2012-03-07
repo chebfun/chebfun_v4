@@ -1,19 +1,19 @@
-function pass = systemapply
-
-tol = chebfunpref('eps');
-
+function pass = linop_systemapply
 % Test 2x2 systems applied to functions.
 % (A Level 3 chebtest.)
 % Toby Driscoll
+tol = chebfunpref('eps');
 
-d=domain(-pi,pi);
-D=diff(d);
-I=eye(d);
-Z=zeros(d);
-A=[I+2*D^2 -D; D Z];
+
+
+d = domain(-pi,pi);
+D = diff(d);
+I = eye(d);
+Z = zeros(d);
+A = [I+2*D^2 -D; D Z];
 B = A^2;
-x=d(:);
-u=[ sin(x) exp(x) ];
+x = d(:);
+u = [ sin(x) exp(x) ];
 
 v = A*u;
 w = A*v;

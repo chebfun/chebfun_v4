@@ -1,4 +1,4 @@
-function pass = ivptestcomplex
+function pass = ivp_testcomplex
 
 % Nick Trefethen March 2009
 % This routine tests ode45, ode113, ode15s on a complex ode to

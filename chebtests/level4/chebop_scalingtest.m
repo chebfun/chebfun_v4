@@ -1,4 +1,4 @@
-function pass = scalingtest
+function pass = chebop_scalingtest
 % This tests solves a nonlinear pendulum BVP with 
 % huge amplitude, to make sure scaling is working ok.
 % Nick Trefethen, February 2011.   A Level 4 chebtest.

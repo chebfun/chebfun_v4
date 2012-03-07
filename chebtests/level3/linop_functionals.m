@@ -1,4 +1,4 @@
-function pass = functionals
+function pass = linop_functionals
 % Tests the construction and applciation of the Chebfun/Chebop 
 % definite integration operator over a domain 
 % 

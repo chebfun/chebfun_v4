@@ -2,6 +2,8 @@ function pass = chebop_expm
 % Test the chebop expm method.
 % Asgeir Birkisson, December 2010
 
+tol = 1e-13;
+
 %% With linops
 d = domain(-1,1);  x = chebfun('x',d);
 D = diff(d);  A = D^2 & 'dirichlet';
@@ -22,4 +24,14 @@ for tCounter = 1:length(t);
     Ef2(:,tCounter) = E*f;
 end
 
-pass = norm(Ef1-Ef2) < 1e-13;
+%% Check
+
+stored_solution = [ 0.000000866635654
+                    0.000175829930783
+                    0.062297897248372
+                    0.060717569924507
+                    0.018248085802290].';
+
+pass(1) = norm(stored_solution-Ef1(.567,:)) < tol;
+pass(2) = norm(stored_solution-Ef2(.567,:)) < tol;
+pass(3) = norm(Ef1-Ef2) < tol;

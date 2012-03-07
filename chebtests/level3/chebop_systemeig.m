@@ -1,15 +1,14 @@
-function pass = systemeig
-
+function pass = chebop_systemeig
 % Eigenvalue test, inspired by Maxwell's equation.
 % The eigenvalues are computed first on a global
 % domain, then on a piecewise domain.
 % (A level 3 Chebtest)
 
-d = domain(0,pi);
-D = diff(d); I = eye(d); Z = zeros(d);
-A = [ -I D;D Z ];
-A.lbc = [I Z];
-A.rbc = [I Z];
+%% Smooth domain
+d = [0 pi];
+A = chebop(@(x,u,v) [-u + diff(v), diff(u)], d);
+A.lbc = @(u,v) u;
+A.rbc = @(u,v) u;
 
 [V D] = eigs(A,5);
 lam = diag(D);
@@ -24,6 +23,7 @@ lamcorrect = [
 
 pass(1) = norm( lam-lamcorrect, inf ) < 1e-12;
 
+%% Piecewise domain
 A.domain = domain(0,pi/2,pi);
 [V D] = eigs(A,5);
 lam_pw = diag(D);

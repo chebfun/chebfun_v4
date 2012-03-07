@@ -1,4 +1,4 @@
-function pass = chebop_diag
+function pass = linop_diag
 % Check if multiplication with a pointwise multiplication operator
 % is identical to a pointwise multiplication of two chebfuns.
 
