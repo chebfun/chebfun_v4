@@ -129,7 +129,7 @@ if isreal(Vmat)
 else
     s2 = num2str(Vmat,'%8.2f');
     for k = 1:size(s2,1)
-        s2(k,:) = strrep(s2(k,:),'0.00','   0');
+        s2(k,:) = strrep(s2(k,:),'0.00 ','   0 ');
     end
 end
 % Pad with appropriate spaces

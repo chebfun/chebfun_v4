@@ -92,7 +92,7 @@
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 
-classdef chebop
+classdef (InferiorClasses = {?double}) chebop
     
     properties ( GetAccess = 'public', SetAccess = 'public' )
         domain = [];    % Domain of the operator
@@ -115,7 +115,7 @@ classdef chebop
         
         function N = chebop(varargin)
             [N d] = ctor(N,varargin{:});
-            N.domain = domain(d); %#ok<CPROP,PROP>
+            N.domain = domain(d); %#ok<CPROP>
         end
         
     end
