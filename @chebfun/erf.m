@@ -1,5 +1,5 @@
 function Fout = erf(F)
-% ERF   Error function of a chebfun.
+% ERF  Error function of a chebfun.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

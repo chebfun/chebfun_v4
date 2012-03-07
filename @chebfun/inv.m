@@ -1,33 +1,34 @@
 function g = inv(f,varargin)
-% INV Invert a chebfun
-%  G = INV(F) will attempt to invert the monotonic chebfun F.
-%  If F has zero derivatives at its endpoints, then it is advisable
-%  to turn Splitting ON.
+% INV Invert a chebfun.
 %
-%  INV(F,'SPLITTING','ON') turns Splitting ON locally for the inv command.
+% G = INV(F) will attempt to invert the monotonic chebfun F.
+% If F has zero derivatives at its endpoints, then it is advisable
+% to turn Splitting ON.
 %
-%  INV(F,'EPS',TOL) will construct with the relative tolerance set by TOL.
-%  If no tolerance is passed, TOL = chebfunpref('eps') is used.
+% INV(F,'SPLITTING','ON') turns Splitting ON locally for the inv command.
 %
-%  INV(F,'MONOCHECK','ON'/'OFF') turns the check for monotonicity ON or OFF
-%  respectively. It is OFF by default.
+% INV(F,'EPS',TOL) will construct with the relative tolerance set by TOL.
+% If no tolerance is passed, TOL = chebfunpref('eps') is used.
 %
-%  G = INV(F,'RANGECHECK','ON'/'OFF') enforces that the range of G exactly
-%  matches the domain of F (by adding a linear function). RANGECHECK OFF is
-%  the default behaviour.
+% INV(F,'MONOCHECK','ON'/'OFF') turns the check for monotonicity ON or OFF
+% respectively. It is OFF by default.
 %
-%  Any of the preferences above can be used in tandem.
+% G = INV(F,'RANGECHECK','ON'/'OFF') enforces that the range of G exactly
+% matches the domain of F (by adding a linear function). RANGECHECK OFF is
+% the default behaviour.
 %
-%  Example: 
+% Any of the preferences above can be used in tandem.
+%
+% Example: 
 %   x = chebfun('x');
 %   f = sign(x) + x;
 %   g = inv(f,'splitting',true);
 %
-%  Note, this function is experimental and slow! INV may be the better
-%  choice for piecewise functions, where as INV2 is good for smooth
-%  functions.
+% Note, this function is experimental and slow! INV may be the better
+% choice for piecewise functions, where as INV2 is good for smooth
+% functions.
 %
-%  See also chebfun/inv2
+% See also chebfun/inv2
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

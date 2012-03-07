@@ -1,6 +1,7 @@
 function F = fliplr(F)
-% FLIPLR   Flip/reverse a chebfun or quasimatrix.
-% If F is a row chebfun, G = FLIPLR(F) returns a row chebfun G with the
+% FLIPLR  Flip/reverse a chebfun or quasimatrix.
+% 
+% G = FLIPLR(F) returns a row chebfun G, if F is a row chebfun, with the
 % same domain as F but reversed; that is, G(x)=F(a+b-x), where the domain
 % is [a,b]. 
 % 

@@ -1,15 +1,16 @@
 function F = isinf(F)
-%  ISINF True for infinite chebfuns.
-%     ISINF(X) operates on the continuous dimension of a chebfun X and
-%     returns a chebfun which is 1 when the elements of X are infinite and
-%     0's where they are not. Typically infinite values of X are only
-%     permitted at breakpoints of X.
+% ISINF Pointwise infinite test for chebfuns.
+%
+% ISINF(X) operates on the continuous dimension of a chebfun X and
+% returns a chebfun which is 1 when the elements of X are infinite and
+% 0's where they are not. Typically infinite values of X are only
+% permitted at breakpoints of X.
 %  
-%     For a complex-valued chebfun X, ISINF(X) returns 1 if either of the
-%     real and imaginary parts of X are infinite. For any real X, exactly one
-%     of ISFINITE(X), ISINF(X), or ISNAN(X) is 1 for each element.
+% For a complex-valued chebfun X, ISINF(X) returns 1 if either of the
+% real and imaginary parts of X are infinite. For any real X, exactly one
+% of ISFINITE(X), ISINF(X), or ISNAN(X) is 1 for each element.
 %  
-%     See also ISNAN, ISINF.
+% See also ISNAN, ISINF.
     
 for k = 1:numel(F)
     F(k) = isinfcol(F(k));          % Loop over quasimatrix rows

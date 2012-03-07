@@ -1,5 +1,6 @@
 function Fout = imag(F)
 % IMAG   Complex imaginary part.
+%
 % IMAG(F) is the imaginary part of F.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 

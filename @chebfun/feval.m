@@ -1,5 +1,6 @@
 function [Fx jumpInfoOut] = feval(F,x,varargin)
 % FEVAL   Evaluate a chebfun at one or more points.
+% 
 % FEVAL(F,X) evaluates the chebfun F at the point(s) in X.
 % FEVAL(F,X,'LEFT') or FEVAL(F,X,'RIGHT') when the chebfun F has a jump
 % determines whether to return the left or right limit values. For example,

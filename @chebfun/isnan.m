@@ -1,15 +1,16 @@
 function F = isnan(F)
-%  ISNAN True for Not-a-Number chebfuns.
-%     ISNAN(X) operates on the continuous dimension of a chebfun X and
-%     returns a chebfun which is 1 when the elements of X are NANs and
-%     0's where they are not. Typically NaN values of X are only
-%     permitted at breakpoints of X.
+% ISNAN Pointwise Not-a-Number test for chebfuns.
+%
+% ISNAN(X) operates on the continuous dimension of a chebfun X and
+% returns a chebfun which is 1 when the elements of X are NANs and
+% 0's where they are not. Typically NaN values of X are only
+% permitted at breakpoints of X.
 %  
-%     For a complex-valued chebfun X, ISNAN(X) returns 1 if either of the
-%     real and imaginary parts of X are NaN. For any real X, exactly one
-%     of ISFINITE(X), ISINF(X), or ISNAN(X) is 1 for each element.
+% For a complex-valued chebfun X, ISNAN(X) returns 1 if either of the
+% real and imaginary parts of X are NaN. For any real X, exactly one
+% of ISFINITE(X), ISINF(X), or ISNAN(X) is 1 for each element.
 %  
-%     See also ISNAN, ISINF.
+% See also ISNAN, ISINF.
 
 for k = 1:numel(F)
     F(k) = isnancol(F(k));          % Loop over quasimatrix rows

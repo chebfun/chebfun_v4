@@ -1,5 +1,6 @@
 function [F nonConst] = diff(F,n,dim,RL)
-%DIFF   Differentiation of a chebfun.
+% DIFF   Differentiation of a chebfun.
+%
 % DIFF(F) is the derivative of the chebfun F. At discontinuities, DIFF
 % creates a Dirac delta with coefficient equal to the size of the jump.
 % Dirac deltas already existing in F will increase their degree.

@@ -1,31 +1,32 @@
 function g = inv2(f,varargin)
-% INV2 Invert a chebfun
-%  G = INV2(F) will attempt to invert the monotonic chebfun F.
-%  If F has zero derivatives at its endpoints, then it is advisable
-%  to turn Splitting ON.
+% INV2 Invert a chebfun.
 %
-%  INV2(F,'SPLITTING','ON') turns Splitting ON locally for the inv command.
+% G = INV2(F) will attempt to invert the monotonic chebfun F.
+% If F has zero derivatives at its endpoints, then it is advisable
+% to turn Splitting ON.
 %
-%  INV2(F,'EPS',TOL) will construct with the relative tolerance set by TOL.
-%  If no tolerance is passed, TOL = 100*chebfunpref('eps') is used. EPS
-%  should be set to at least a factor of 100 larger than the accuracy of F.
+% INV2(F,'SPLITTING','ON') turns Splitting ON locally for the inv command.
 %
-%  INV2(F,'MONOCHECK','ON'/'OFF') turns the check for monotonicity ON or OFF
-%  respectively. It is OFF by default.
+% INV2(F,'EPS',TOL) will construct with the relative tolerance set by TOL.
+% If no tolerance is passed, TOL = 100*chebfunpref('eps') is used. EPS
+% should be set to at least a factor of 100 larger than the accuracy of F.
 %
-%  G = INV2(F,'RANGECHECK','ON'/'OFF') enforces that the range of G exactly
-%  matches the domain of F (by adding a linear function). RANGECHECK OFF is
-%  the default behaviour.
+% INV2(F,'MONOCHECK','ON'/'OFF') turns the check for monotonicity ON or OFF
+% respectively. It is OFF by default.
 %
-%  Any of the preferences above can be used in tandem.
+% G = INV2(F,'RANGECHECK','ON'/'OFF') enforces that the range of G exactly
+% matches the domain of F (by adding a linear function). RANGECHECK OFF is
+% the default behaviour.
 %
-%  Example:
+% Any of the preferences above can be used in tandem.
+%
+% Example:
 %   f = chebfun(@(x) tanh(7*x)./tanh(7)+1, [-.5 .5]);
 %   g = inv2(f,'splitting','off','rangecheck','off','monocheck','off');
 %
-%  Note, this function is experimental and slow! INV may be the better
-%  choice for piecewise functions, where as INV2 is good for smooth
-%  functions.
+% Note, this function is experimental and slow! INV may be the better
+% choice for piecewise functions, where as INV2 is good for smooth
+% functions.
 %
 %  See also chebfun/inv
 

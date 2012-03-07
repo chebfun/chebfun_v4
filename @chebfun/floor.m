@@ -1,5 +1,6 @@
 function Fout = floor(F)
 % FLOOR   Pointwise floor function.
+% 
 % G = FLOOR(F) returns the chebfun G such that G(X) = FLOOR(F(X)) for each
 % X in the domain of F.
 %

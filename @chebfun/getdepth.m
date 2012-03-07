@@ -1,5 +1,6 @@
 function d = getdepth(f)
-% GETDEPTH Obtain the AD depth of a chebfun
+% GETDEPTH Obtain the AD depth of a chebfun.
+%
 % D = GETDEPTH(F) returns the depth of the anon stored in the chebfun F.
 %
 % Due to its extensive use, this operation is carried out in this special

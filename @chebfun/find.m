@@ -1,19 +1,20 @@
 function varargout = find(f)
-%FIND  Find locations of nonzeros in a chebfun.
-%  FIND(F) returns a vector of all values at which the chebfun F is nonzero. 
+% FIND  Find locations of nonzeros in a chebfun.
 %
-%  [R,C] = FIND(F) returns two column vectors of the same length such that
-%  [ F(R(n),C(n)) for all n=1:length(R) ] is the list of all nonzero
-%  values of the quasimatrix F. One of the outputs holds dependent variable
-%  values, and the other holds quasimatrix row or column indices. 
+% FIND(F) returns a vector of all values at which the chebfun F is nonzero. 
 %
-%  If the set of nonzero locations is not finite, an error is thrown.
+% [R,C] = FIND(F) returns two column vectors of the same length such that
+% [ F(R(n),C(n)) for all n=1:length(R) ] is the list of all nonzero
+% values of the quasimatrix F. One of the outputs holds dependent variable
+% values, and the other holds quasimatrix row or column indices. 
 %
-%  Example:
-%    f = chebfun(@sin,[0 2*pi]);
-%    format long, find(f==1/2) / pi
+% If the set of nonzero locations is not finite, an error is thrown.
+%
+% Example:
+%   f = chebfun(@sin,[0 2*pi]);
+%   format long, find(f==1/2) / pi
 %    
-%  See also chebfun/roots, chebfun/eq, find.
+% See also chebfun/roots, chebfun/eq, find.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

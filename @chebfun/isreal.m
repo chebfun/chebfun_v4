@@ -1,5 +1,6 @@
 function isr=isreal(F)
-% ISREAL True for real chebfun.
+% ISREAL Real-valued chebfun test.
+%
 % ISREAL(F) returns logical true if F does not have an imaginary part
 % and false otherwise.
 %  

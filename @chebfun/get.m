@@ -1,5 +1,6 @@
 function val = get(f, propName)
 % GET   Get chebfun properties.
+%
 % P = GET(F,PROP) returns the property P specified in the string PROP from
 % the chebfun F. Valid entries for the string PROP are:
 %   'FUNS'   - Smooth components ('funs') of F.

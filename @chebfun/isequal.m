@@ -1,10 +1,11 @@
 function out = isequal(F1,F2)
-% ISEQUAL True if chebfuns are equal.
-%   ISEQUAL(F1,F2) returns logical 1 (TRUE) if quasimatrices F1 and F2 are 
-%   the same size and contain identical chebfuns as rows or columns, and 
-%   logical 0 (FALSE)  otherwise.
+% ISEQUAL Equality test for two chebfuns.
 %
-%   See also chebfun/eq.
+% ISEQUAL(F1,F2) returns logical 1 (TRUE) if quasimatrices F1 and F2 are 
+% the same size and contain identical chebfuns as rows or columns, and 
+% logical 0 (FALSE)  otherwise.
+%
+% See also chebfun/eq.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

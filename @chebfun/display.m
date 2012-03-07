@@ -1,5 +1,6 @@
 function display(F)
 % DISPLAY   Display a chebfun.
+%
 % DISPLAY(F) outputs important information about the chebfun F to the
 % command window, including its domain of definition, its length (number of
 % sample values used to represent it), and a summary of its values. Each

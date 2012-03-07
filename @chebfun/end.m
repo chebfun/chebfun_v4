@@ -1,5 +1,5 @@
 function e = end(F,k,n)
-% END  Rightmost point of a chebfuns domain (or last row/col of quasimatrix).
+% END  Rightmost point of a chebfun's domain (or last row/col of quasimatrix).
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

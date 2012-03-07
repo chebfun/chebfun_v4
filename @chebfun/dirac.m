@@ -1,9 +1,10 @@
 function d = dirac(f)
 % DIRAC delta function
-%  D = DIRAC(F) returns a chebfun D which is zero on the domain of the
-%  chebfun F except at the roots of F, where it is infinite.
+%
+% D = DIRAC(F) returns a chebfun D which is zero on the domain of the
+% chebfun F except at the roots of F, where it is infinite.
 %  
-%  See also chebfun/heaviside
+% See also chebfun/heaviside
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

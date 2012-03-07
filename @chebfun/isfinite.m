@@ -1,15 +1,16 @@
 function F = isfinite(F)
-%  ISFINITE True for finite chebfuns.
-%     ISFINITE(X) operates on the continuous dimension of a chebfun X and 
-%     returns a chebfun which is 1 when the elements of X are finite and 
-%     0's where they are not. Typically infinite values of X are only 
-%     permitted at breakpoints of X. 
+% ISFINITE True for finite chebfuns.
+%
+% ISFINITE(X) operates on the continuous dimension of a chebfun X and 
+% returns a chebfun which is 1 when the elements of X are finite and 
+% 0's where they are not. Typically infinite values of X are only 
+% permitted at breakpoints of X. 
 %  
-%     For a complex-valued chebfun X, ISFINITE(X) returns 1 if both the
-%     real and imaginary parts of X are finite. For any real X, exactly one
-%     of ISFINITE(X), ISINF(X), or ISNAN(X) is 1 for each element.
+% For a complex-valued chebfun X, ISFINITE(X) returns 1 if both the
+% real and imaginary parts of X are finite. For any real X, exactly one
+% of ISFINITE(X), ISINF(X), or ISNAN(X) is 1 for each element.
 %  
-%     See also ISNAN, ISINF.
+% See also ISNAN, ISINF.
     
 for k = 1:numel(F)
     F(k) = isfcol(F(k));            % Loop over quasimatrix rows

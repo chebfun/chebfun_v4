@@ -1,5 +1,6 @@
 function C = hypot(A,B)
-%HYPOT  Robust computation of the square root of the sum of squares
+% HYPOT  Robust computation of the square root of the sum of squares.
+%
 % C = HYPOT(A,B) returns SQRT(ABS(A).^2+ABS(B).^2) for two A and B
 % chebfuns (or a chebfun and a double) carefully computed to avoid
 % underflow and overflow. 

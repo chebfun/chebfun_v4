@@ -1,21 +1,23 @@
 function [sn,cn,dn] = ellipj(u,m,tol)
-%ELLIPJ Jacobi elliptic functions.
-%   [SN,CN,DN] = ELLIPJ(U,M) returns the chebfuns of the Jacobi elliptic 
-%   functions Sn, Cn, and Dn with parameter M composed with the chebfun U.
-%   As currently implemented, M must be a scalar and is limited to 0 <= M <= 1. 
+% ELLIPJ Jacobi elliptic functions.
 %
-%   [SN,CN,DN] = ELLIPJ(U,M,TOL) computes the elliptic functions to
-%   the accuracy TOL instead of the default TOL = CHEBFUNPREF('EPS').
+% [SN,CN,DN] = ELLIPJ(U,M) returns the chebfuns of the Jacobi elliptic 
+% functions Sn, Cn, and Dn with parameter M composed with the chebfun U.
+% As currently implemented, M must be a scalar and is limited to 
+% 0 <= M <= 1. 
 %
-%   Complex values of U are accepted, but the resulting computation may be
-%   inaccurate. Use ELLIPJC from Driscoll's SC toolbox instead.
+% [SN,CN,DN] = ELLIPJ(U,M,TOL) computes the elliptic functions to
+% the accuracy TOL instead of the default TOL = CHEBFUNPREF('EPS').
 %
-%   Some definitions of the Jacobi elliptic functions use the modulus
-%   k instead of the parameter M.  They are related by M = k^2.
+% Complex values of U are accepted, but the resulting computation may be
+% inaccurate. Use ELLIPJC from Driscoll's SC toolbox instead.
 %
-%   See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+% Some definitions of the Jacobi elliptic functions use the modulus
+% k instead of the parameter M.  They are related by M = k^2.
 %
-%   See also ELLIPKE
+% See http://www.maths.ox.ac.uk/chebfun for chebfun information.
+%
+% See also ELLIPKE
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

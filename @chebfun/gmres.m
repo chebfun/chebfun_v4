@@ -1,5 +1,6 @@
 function [u,flag,normres,Q] = gmres(varargin)
 % GMRES  Iterative solution of chebfun operator equations.
+%
 % U = GMRES(A,F) attempts to solve the operator equation A(U)=F, where F 
 % and U are chebfuns and A is a function handle defining a linear operator 
 % on chebfuns.

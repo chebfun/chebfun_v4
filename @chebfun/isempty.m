@@ -1,5 +1,6 @@
 function isemp = isempty(F)
-% ISEMPTY   True for empty chebfun.
+% ISEMPTY  Test for empty chebfun.
+%
 % ISEMPTY(F) returns logical true if F is an empty chebfun and false 
 % otherwise.
 

@@ -1,5 +1,6 @@
 function A = diag(f,d)
 % DIAG   Pointwise multiplication operator.
+% 
 % A = DIAG(F) produces a chebop that stands for pointwise multiplication by
 % the chebfun F. The result of A*G is identical to F.*G.
 %

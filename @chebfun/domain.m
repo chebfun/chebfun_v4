@@ -1,5 +1,6 @@
 function varargout = domain(f)
 % DOMAIN   Domain of definition.
+%
 % I = DOMAIN(F) returns the domain of definition of the chebfun F. This
 % includes breakpoint information if F is a single chebfun, but not if F is
 % a quasimatrix.

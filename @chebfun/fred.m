@@ -1,5 +1,6 @@
 function F = fred(k,v,onevar)
 % FRED  Fredholm integral operator.
+% 
 % F = FRED(K,V) computes the Fredholm integral with kernel K:
 %    
 %      (F*v)(x) = int( K(x,y)*v(y), y=a..b ),

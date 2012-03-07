@@ -1,7 +1,8 @@
 function h = ge(f,g)
-% GE (>=) for chebfuns
-%   H = F >= G where F and/or G are chebfuns constructs a logical chebfun H
-%   which is true (i.e. takes the value 1) where F >= G, and false (0) elsewhere.
+% GE (>=) for chebfuns.
+%
+% H = F >= G where F and/or G are chebfuns constructs a logical chebfun H
+% which is true (i.e. takes the value 1) where F >= G, and false (0) elsewhere.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

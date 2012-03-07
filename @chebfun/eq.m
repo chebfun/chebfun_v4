@@ -1,13 +1,16 @@
 function fout = eq(F1,F2)
-% ==   Equal.
-%  F1 == F2 returns a chebfun which is zero everywhere except at the
-%  intersection points of F1 and F2, where it evaluates to one.
+% EQ Pointwise equality test for two chebfuns.
 %
-%  Example:
-%    x = chebfun(@(x) x);
-%    plot(sign(x) == 1)
+% FOUT=EQ(F1,F2) returns a chebfun FOUT which is zero everywhere except at 
+% the intersection points of F1 and F2, where it evaluates to one.
+% 
+% This function is called automatically with ==.
+% 
+% Example:
+%   x = chebfun(@(x) x);
+%   plot(sign(x) == 1)
 %
-%  See also chebfun/find, chebfun/ne, chebfun/not.
+% See also chebfun/find, chebfun/ne, chebfun/not.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
