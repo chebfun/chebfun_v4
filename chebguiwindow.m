@@ -1542,3 +1542,49 @@ set(hObject,'String',newString);
 handles = callbackBCs(handles.guifile,handles,newString,'rbc');
 handles.guifile.RBC = newString;
 guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function menu_test_Callback(hObject, eventdata, handles)
+T = 0;
+folders = {'bvpdemos','pdedemos','eigdemos'};
+for k = 1:numel(folders)
+    subdir = fullfile(fileparts(which('chebtest')),'@chebgui','private',folders{k});
+    subdirlist = dir(subdir);
+    subdirnames = { subdirlist.name };
+    
+    fprintf([folders{k}(1:3) , '\n']);
+    for j = 1:length(subdirnames)
+        if subdirlist(j).isdir, continue; end;
+        file = fullfile(subdir,subdirnames{j});
+        
+        cgTemp = chebgui(file);
+        loadfields(cgTemp,handles);
+        handles.guifile = cgTemp;
+        if ~isempty(cgTemp.type)
+            handles = switchmode(cgTemp,handles,cgTemp.type);
+        end    
+        handles.hasSolution = 0;
+        guidata(hObject, handles);
+        name = subdirnames{j};
+        name = strrep(name,'.guifile','');
+        if double(name(1)) < 116, continue, end
+        fprintf(['  ' , name]);
+        try 
+            tic
+                handles = solveGUI(handles.guifile,handles);
+            t = toc;
+            guidata(hObject, handles);
+            T = T + t;
+            if ~handles.hasSolution
+                try close('Chebgui error'), end %#ok<TRYNC>
+                error('CHEBGUI:test:NoSol','No solution returned');
+            end
+            fprintf('  passed in %4.4f seconds.\n',t);
+        catch ME %#ok<NASGU>
+            try close('Chebgui error'), end %#ok<TRYNC>
+            fprintf('  FAILED.\n');
+        end
+    end
+end
+fprintf('TOTAL TIME = %4.4f.\n',T);

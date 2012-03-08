@@ -92,6 +92,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         else
             handles = solveguieig(guifile,handles);            
         end
+        handles.hasSolution = 1;
     catch
         ME = lasterror;
         MEID = ME.identifier;
@@ -109,6 +110,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         else
             resetComponents(handles);
             rethrow(ME);
+            handles.hasSolution = 0;
         end
     end
     resetComponents(handles);
@@ -121,6 +123,7 @@ else   % In stop mode
     set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
     set(handles.menu_demos,'Enable','on');
     set(handles.button_exportsoln,'Enable','off');
+    handles.hasSolution = 1;
     drawnow
 end
 
