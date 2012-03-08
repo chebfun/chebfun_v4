@@ -158,22 +158,22 @@ elseif strcmp(NEXT,'FUNC1') % Functions which take one argument
     parseFunction1();
 elseif strcmp(NEXT,'FUNC2') % Functions which take two arguments
     parseFunction2();
-elseif strcmp(NEXT,'FUNC3') % Functions which take two arguments
-    functionName = char(LEX(COUNTER));
-    advance();
-    parseFunction2();
-    thirdArg =  pop();
-    secondArg = pop();
-    if any(strcmp(functionName,{'feval','fred','volt'})) && ~stackRows
-        newTree = struct('left',secondArg,'center', {{functionName, 'FUNC2'}},...
-        'right',thirdArg,'pdeflag',0);  
-    else
-        firstArg = pop();
-        newTree = struct('left',firstArg,'center', {{functionName, 'FUNC3'}},...
-        'right',secondArg,'arg',thirdArg,'pdeflag',0);
-    end  
-     % Can assume no pde if we reach here
-    push(newTree);
+elseif strcmp(NEXT,'FUNC3') % Functions which take three arguments
+%     functionName = char(LEX(COUNTER));
+%     advance();
+    parseFunction3();
+%     thirdArg =  pop();
+%     secondArg = pop();
+%     if any(strcmp(functionName,{'feval','fred','volt'})) && ~stackRows
+%         newTree = struct('left',secondArg,'center', {{functionName, 'FUNC2'}},...
+%         'right',thirdArg,'pdeflag',0);  
+%     else
+%         firstArg = pop();
+%         newTree = struct('left',firstArg,'center', {{functionName, 'FUNC3'}},...
+%         'right',secondArg,'arg',thirdArg,'pdeflag',0);
+%     end  
+%      % Can assume no pde if we reach here
+%     push(newTree);
 elseif strcmp(NEXT,'LPAR')
     advance();
     parseExp05();
@@ -264,6 +264,63 @@ if strcmp(NEXT,'LPAR')
         if any(strcmp(functionName,oneArgAllowed)) % Have hit a function which allow one or two args
             % If we only had one argument, we convert the function to type
             % FUNC1
+            newTree = struct('center', {{functionName, 'FUNC1'}},...
+                'right', firstArg,'pdeflag',0); % Can assume no pde if we reach here
+            push(newTree);
+        else % Here we tried to call a method which requires two arguments with only one
+            reportError('Parse:func2', ['Method ''', functionName, ''' requires two input arguments.']);
+        end
+    else
+        reportError('Parse:parenths', 'Parenthesis imbalance in input fields.')
+    end
+else
+    reportError('Parse:parenths', 'Need parenthesis when using functions in input fields.')
+end
+end
+
+function parseFunction3()
+global NEXT; global COUNTER; global LEX; global STACK
+% Function which allow one or two arguments
+oneArgAllowed = {'sum','integral'};
+twoArgAllowed = {'feval','fred','volt'};
+functionName = char(LEX(COUNTER));
+advance();
+
+% Here we need ( as the next symbol
+if strcmp(NEXT,'LPAR')
+    advance();
+    parseExp1();
+    firstArg = pop();
+    if firstArg.pdeflag
+        error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
+    end
+    % Check whether we have a comma, if so, continue as normal
+    if match('COMMA')
+        parseExp1();
+        secondArg = pop();
+        if secondArg.pdeflag
+            error('Chebgui:Parse:PDE','Cannot use time derivative as function arguments.')
+        end
+        if match('COMMA') % and again
+            parseExp1();
+            thirdArg = pop();
+            % Define the new branch
+            newTree = struct('left',firstArg,'center', {{functionName, 'FUNC3'}},...
+                    'right',secondArg,'arg',thirdArg,'pdeflag',0);
+            if ~match('RPAR') % Check the final parenthesis
+                reportError('Parse:parenths','Parenthesis imbalance in input fields.')
+            end
+        elseif match('RPAR') && any(strcmp(functionName,twoArgAllowed))
+            % This was actually a two argument function in disguise
+            newTree = struct('left',firstArg,'center', {{functionName, 'FUNC2'}},...
+                    'right', secondArg,'pdeflag',0);
+        else
+            reportError('Parse:parenths','Parenthesis imbalance in input fields.')
+        end
+        push(newTree);
+    elseif match('RPAR')
+        if any(strcmp(functionName,oneArgAllowed)) % Have hit a function which allow one or two args
+            % If we only had one argument, we convert the function to type FUNC1
             newTree = struct('center', {{functionName, 'FUNC1'}},...
                 'right', firstArg,'pdeflag',0); % Can assume no pde if we reach here
             push(newTree);

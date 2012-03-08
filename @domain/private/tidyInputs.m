@@ -13,10 +13,11 @@ if iscell(n)
 end
 
 % Inherit the breakpoints from the domain.
-breaks = union(breaks, d.ends);
+ends = d.ends;
+breaks = union(breaks, ends);
 % Throw away breaks (and corresponding n) outside the domain.
-maskr = breaks > d.ends(end);     maskl = breaks < d.ends(1);       
-if numel(n) > 1,  n(maskr) = [];  n(maskl) = []; end
+maskr = breaks > ends(end);     maskl = breaks < ends(1);   
+if numel(n) > 1,  n(maskr(2:end)) = [];  n(maskl(1:end-1)) = []; end
 breaks(maskl|maskr) = [];
 numints = numel(breaks)-1;
 

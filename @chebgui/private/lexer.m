@@ -20,7 +20,7 @@ strfun1 = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...     % Trigonometric
     'asind', 'acosd', 'atand', 'acotd', 'asecd', 'acscd', 'sind', 'cosd', 'tand', 'cotd', 'secd', 'cscd', ... % Trigonometric functions in degrees
     'sqrt', 'exp', 'expm1', 'heaviside', 'log','log10','log2','log1p',... % Exp, log and sqrt functions. 
     'realsqrt','reallog', ...
-    'sum','integral','abs','sign','var','std',...                   % sum, abs, sign,var, std
+    'abs','sign','var','std',...                   % sum, abs, sign,var, std
     'erf','erfc','erfcx','erfinv','erfcinv');                   % Error functions
 
 % A string array containing all functions which take two arguments which 
@@ -28,7 +28,7 @@ strfun1 = char('sin', 'cos', 'tan', 'cot', 'sec', 'csc', ...     % Trigonometric
 strfun2 = char('airy','besselj','cumsum','diff','power','mean',...
         'eq','ne','ge','gt','le','lt','jump');          % Relational functions
     
-strfun3 = char('feval','fred','volt');    
+strfun3 = char('feval','fred','volt','sum','integral');    
     
 strarg = char('left','right','onevar','start','end');    
 

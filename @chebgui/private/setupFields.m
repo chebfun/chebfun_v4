@@ -201,7 +201,7 @@ elseif any(strcmp(type,{'BC','BCnew'}))        % Allow more types of syntax for 
         eigVarNames = [];
     else
         convertBCtoAnon = 1;
-        guifile.type = 'bvp';
+        guifile.type = 'bvp'; % Convert to 'BVP' type for BCs.
     end
 end
 
