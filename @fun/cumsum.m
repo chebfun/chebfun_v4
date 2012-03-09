@@ -223,6 +223,7 @@ elseif any(isinf(ends))
     
     % Chain rule and extrapolate
     g.vals = g.vals.*g.map.der(y);
+    g.coeffs = []; % Coeffs are destroyed by this multiplication
     g = extrapolate(g,pref,y);
     g = cumsum_unit_interval(g);
     
