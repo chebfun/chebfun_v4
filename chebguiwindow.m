@@ -16,6 +16,10 @@ gui_State = struct('gui_Name', mfilename, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
+    if strcmp(varargin{1},'DemoTest')
+        menu_test_Callback([], [], varargin{2})
+        return
+    end
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
@@ -1552,12 +1556,10 @@ for k = 1:numel(folders)
     subdir = fullfile(fileparts(which('chebtest')),'@chebgui','private',folders{k});
     subdirlist = dir(subdir);
     subdirnames = { subdirlist.name };
-    
     fprintf([folders{k}(1:3) , '\n']);
     for j = 1:length(subdirnames)
         if subdirlist(j).isdir, continue; end;
         file = fullfile(subdir,subdirnames{j});
-        
         cgTemp = chebgui(file);
         loadfields(cgTemp,handles);
         handles.guifile = cgTemp;
@@ -1565,10 +1567,8 @@ for k = 1:numel(folders)
             handles = switchmode(cgTemp,handles,cgTemp.type);
         end    
         handles.hasSolution = 0;
-        guidata(hObject, handles);
         name = subdirnames{j};
         name = strrep(name,'.guifile','');
-        if double(name(1)) < 116, continue, end
         fprintf(['  ' , name]);
         try 
             tic
