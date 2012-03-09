@@ -1,4 +1,4 @@
-function [g1 ish] = minus(g1,g2)
+function g1 = minus(g1,g2)
 % -	Minus
 % G1 - G2 subtracts fun G1 from G2 or a scalar from a fun if either
 % G1 or G2 is a scalar.
@@ -11,7 +11,6 @@ function [g1 ish] = minus(g1,g2)
 % The exponents of g1 and g2 are automatically summed. Perhaps
 % some checking should be done for cancellation??
 
-ish = true; % We're usually happy!
 
 % Scalar case:
 if isa(g1,'double') 

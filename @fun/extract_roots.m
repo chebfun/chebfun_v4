@@ -108,10 +108,16 @@ else
         rescl = diff(d)/2;
         pref = chebfunpref; pref.blowup = 0; %pref.n = f.n; 
         pref.extrapolate = true;
-        f = fun(@(x) rescl*newfun(x,f,d,sgn),f.map,pref);
-        f0 = abs(f.vals([1 end]));
-        f0(~sides) = inf;
-        num = num+1;
+        pref.maxdegree = power(2,round(log2(f.n))+1);
+        ftmp = fun(@(x) rescl*newfun(x,f,d,sgn),f.map,pref);
+        if ftmp.ish
+            f = ftmp;
+            f0 = abs(f.vals([1 end]));
+            f0(~sides) = inf;
+            num = num+1;
+        else
+            break
+        end
     end
     f.exps = exps;
        

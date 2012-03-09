@@ -1,4 +1,4 @@
-function [g ish] = simplify(g,tol,kind,force)
+function g = simplify(g,tol,kind,force)
 % This function removes leading Chebyshev coefficients that are below 
 % epsilon, relative to the verical scale stored in g.scl.v
 
@@ -23,7 +23,7 @@ if numel(g) > 1
 end
 
 % Assume we're happy!
-ish = true;
+g.ish = true;
 
 gn = g.n;
 % Deal with the trivial case
@@ -54,7 +54,7 @@ if scl.v == 0,
     return
 elseif any(isinf(scl.v))
     % Inf located: try blowup?!
-    ish = false;
+    g.ish = false;
     return
 end
 
@@ -146,7 +146,7 @@ if max(ac(1:Tlen)) < Tmax               % We have converged; now chop tail
     
 else
     % We're not happy. :(
-    ish = 0;
+    g.ish = 0;
 end
 
 % Update coefficients

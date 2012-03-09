@@ -1,4 +1,4 @@
-function [g,ish] = growfun(op,g,pref,g1,g2)
+function g = growfun(op,g,pref,g1,g2)
 % G = GROWFUN(OP,G,PREF,G1,G2)
 %
 % G = GROWFUN(OP,G,PREF) returns the fun G representing the function handle OP.
@@ -119,8 +119,8 @@ if nargin > 3
             end
             g = set(g,'vals', v);               % Set the values (and vscl)
             g = extrapolate(g,pref);            % Extrapolate if need be
-            [ish g] = ishappy(op,g,pref);       % Test happiness
-            if ish, break, end                  % We're happy. Quit.
+            g = ishappy(op,g,pref);       % Test happiness
+            if g.ish, break, end                  % We're happy. Quit.
             if ind == length(kk), break, end    % We've failed. Quit.
             
             % New vals
@@ -156,15 +156,15 @@ if nargin > 3
             end
             g = set(g,'vals', v);               % Set the values (and vscl)
             g = extrapolate(g,pref);            % Extrapolate if need be       
-            [ish g] = ishappy(op,g,pref);       % Test happiness
-            if ish, break, end                  % We're happy. Quit.
+            g = ishappy(op,g,pref);       % Test happiness
+            if g.ish, break, end                  % We're happy. Quit.
         end
     end
             
     % Original maxn was wasn't a power of 2, so trim g back.
     if trimflag && g.n > oldmaxn
         g = prolong(g,oldmaxn);
-        if ish, [ish, g] = ishappy(op,g,pref); end  % Check happiness again
+        if g.ish, g.ishh = ishappy(op,g,pref); end  % Check happiness again
     end
     
     return
@@ -176,7 +176,7 @@ map = g.map;
 % Catch horizontal scale for unbounded intervals.
 ab = map.par(1:2);% The endpoints.
 adapt = false;
-if any(isinf([ab]))
+if any(isinf(ab))
     adapt = mappref('adaptinf');
     if ~adapt
         a = ab(1); b = ab(2);
@@ -214,8 +214,8 @@ if ~resample && ~adapt     % SINGLE SAMPLING
         g = set(g,'vals', v);               % Set the values (and vscl)
         g.coeffs = [];
         g = extrapolate(g,pref,x);          % Extrapolate if need be
-        [ish, g] = ishappy(op,g,pref);      % Check for happiness
-        if ish || ind == length(kk), break, end % Either happy, or failed.
+        g = ishappy(op,g,pref);      % Check for happiness
+        if g.ish || ind == length(kk), break, end % Either happy, or failed.
         % New points and vals
         ind = ind + 1;
         x = chebpts(kk(ind),pref.chebkind);
@@ -226,7 +226,7 @@ if ~resample && ~adapt     % SINGLE SAMPLING
     % Original maxn was wasn't a power of 2, so trim g back.
     if trimflag && g.n > oldmaxn     % (This rarely happens)
         g = prolong(g,oldmaxn);
-        if ish, [ish, g] = ishappy(op,g,pref); end  % Check happiness again
+        if g.ish, g = ishappy(op,g,pref); end  % Check happiness again
     end
     
 else                      % DOUBLE SAMPLING
@@ -250,8 +250,8 @@ else                      % DOUBLE SAMPLING
                 g = extrapolate(g,pref,x);
             end
         end
-        [ish, g] = ishappy(op,g,pref);
-        if ish
+        g = ishappy(op,g,pref);
+        if g.ish
             if isfield(pref,'simplify') && ~pref.simplify
                 g = prolong(g,k);
             end
@@ -270,7 +270,7 @@ if isinf(g.scl.v)
         error('FUN:growfun:inf_split', ...
             'Function returned Inf when evaluated. Have you tried ''splitting on''?')
     else
-        ish = false;
+        g.ish = false;
         % The function blows up on this interval. We revert the vertical scale 
         % so that we can try to catch this next time with splitting and blowup.
         g.scl = old_scl;
@@ -283,14 +283,14 @@ if any(isnan(g.vals))
 % Extrapolate should have already dealt with NaNs. If we reach here, there's a problem.    
     error('FUN:growfun:naneval','Function returned NaN when evaluated.')
 end
-if ~ish && pref.blowup
+if ~g.ish && pref.blowup
     % If not happy, then we revert the scale (as the respresentation may change 
     % when using exponents).
     g.scl = old_scl;
 end
 
 %-------------------------------------------------------------------------
-function  [ish,g] = ishappy(op,g,pref)
+function  g = ishappy(op,g,pref)
 % ISHAPPY happiness test for funs
 %   [ISH,G2] = ISHAPPY(OP,G,X,PREF) tests if the fun G is a good approximation 
 %   to the function handle OP. ISH is either true or false. If ISH is true,
@@ -303,10 +303,10 @@ end
 
 g.coeffs = [];
 n = g.n;                                        % Original length
-[g ish] = simplify(g,pref.eps,pref.chebkind);   % Attempt to simplify
+g = simplify(g,pref.eps,pref.chebkind);   % Attempt to simplify
 
 % Antialiasing procedure ('sampletest')
-if ish && pref.sampletest 
+if g.ish && pref.sampletest 
     x = chebpts(g.n); % Points of 2nd kind (simplify returns vals at 2nd kind points)
     vals = g.vals;
     if g.n == 1
@@ -320,6 +320,6 @@ if ish && pref.sampletest
     v = op(map(xeval)); 
     if norm(v-bary(xeval,vals,x),inf) > max(pref.eps,1e3*eps)*g.n*g.scl.v
     % If the fun evaluation differs from the op evaluation, sample test failed.
-        ish =  false;
+        g.ish =  false;
     end
 end

@@ -19,10 +19,6 @@
 % array to PREF.EXPS, and a non-adaptive call can be forced by setting
 % PREF.N to be a positive integer.
 %
-% [G,ISH] = FUN(...) returns the constructed fun G and the boolean ISH,
-% which is true if the construction is believed to have converged and false
-% otherwise.
-%
 % FUN creates an empty fun.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 

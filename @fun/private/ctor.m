@@ -64,6 +64,7 @@ function g = ctor(g,op,ends,varargin)
                 warning('FUN:constructor:input',['Generating fun from fun on the first' ...
                     ' input argument. Other arguments are not used.'])
             end
+            g.ish = true;
             return
         case 'double'   % Assigns value to the Chebyshev points
 
@@ -90,10 +91,8 @@ function g = ctor(g,op,ends,varargin)
             else
                 g.exps = [0 0];
             end
-            
+            g.ish = true;
             return
-            
-            
         case 'char'
             % Convert string input to anonymous function.
             op = str2op(op);
