@@ -51,8 +51,20 @@ if strcmp(g.map.name,'linear')
     
     % Unbounded domain map. This works somewhat as domain truncation.
     % For functions that decay slowly, this is inaccurate. Exponential decay
-    % should work well.
-elseif any(isinf(ends))
+    % should work well. We can deal with exps on unbounded intervals as
+    % long as the exponent isn't at infinity. If it is at infinity, we
+    % pass to the slow case below.
+elseif any(isinf(ends)) && ~any(isinf(ends)&logical(exps))
+    
+    if any(exps)
+        % If there are exponents (not at infinity), we introduce a
+        % breakpoint in the interior of the domain and sum two sperate
+        % funs. For simplicity we choose the forward map of zero.
+        ab = g.map.par(1:2); a = ab(1); b = ab(2);
+        c = g.map.for(0);
+        out = sum(restrict(g,[a c])) + sum(restrict(g,[c b]));
+        return
+    end
     
     % constant case
     if g.n == 1
@@ -185,15 +197,10 @@ else
     else
         disp('Warning sum is not properly for implemented for funs')
         disp('which have both nontrivial maps and exponents.')
-        disp('It may be very slow!');
-        %         warning('FUN:sum:nonlinmap&exps',...
-        %             ['Warning sum for funs with nontirivial maps and exponents is not properly ', ...
-        %             'implemented and may be slow!']);
-%         pref = chebfunpref;
-%         pref.exps = [g.exps(1) g.exps(2)];
-%         g = fun(@(x) feval(g,x),linear(g.map.par(1:2)), pref, g.scl);
-        g = chebfun(@(x) feval(g,x),ends,'map',{'linear'}, ...
-            'splitting','on','resampling','off','exps',g.exps);
+        disp('It may be very slow and possibly inaccurate!');
+
+        exps(isinf(ends)) = 0;
+        g = chebfun(@(x) feval(g,x),ends,'splitting','on','resampling','off','exps',exps);
         out = sum(g);
     end
     
