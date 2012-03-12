@@ -88,17 +88,15 @@ if ischar(dirname)
         dirname = fullfile(chbfundir,'chebtests',lower(dirname));
     end
 end
-if isnumeric(dirname)
-    if numel(dirname) == 1
-        dirname = fullfile(chbfundir,'chebtests',['level',num2str(dirname)]);
-    else
-        error('CHEBFUN:chebtest:numdirs','Can only chebtest all test directories at once, or one at a time.');
-    end
-end
 
 if ~exist(dirname,'dir')
-  msg = ['The name "' dirname '" does not appear to be a directory on the path.'];
-  error('CHEBFUN:chebtest:nodir',msg)
+    tmpdirname = fullfile(chbfundir,'chebtests',dirname);
+    if ~exist(tmpdirname,'dir')
+          msg = ['The name "' dirname '" does not appear to be a directory on the path.'];
+          error('CHEBFUN:chebtest:nodir',msg)
+    else
+        dirname = tmpdirname;
+    end
 end
 
 
@@ -113,13 +111,30 @@ userpref.dirname = dirname;
 % Add chebtests directory to the path
 addpath(dirname)
 
-% loop over the level directories (first)
-subdirlist = dir( fullfile(dirname,'level*') );
+% Get the chebtest directory names
+subdirlist = dir( fullfile(dirname) );
 subdirnames = { subdirlist.name };
-for i=1:length(subdirnames)
+numdirs = length(subdirnames);
+
+% Assign an order
+defaultOrder = {'core','basic','quasimatrices','linops','chebops','ad','misc'};
+order = 1:numdirs;
+for i = 1:numdirs
+    idx = find(strcmp(subdirnames(i),defaultOrder));
+    if ~isempty(idx)
+        order(order == idx) = order(i);
+        order(i) = idx;
+    end
+end
+% Order is stored in inverse format. Flip.
+[ignored order] = sort(order);
+
+% loop over the level directories (first)
+for i=order
 
     % is this really a directory?
     if ~subdirlist(i).isdir, continue; end;
+    if any(strcmp(subdirnames(i),{,'.','..'})), continue; end;
     
     % add it to the path
     addpath( fullfile(dirname,subdirnames{i}) );
@@ -136,7 +151,7 @@ for i=1:length(subdirnames)
     % remove the path
     rmpath( fullfile(dirname,subdirnames{i}) )
     
-end;
+end
 
 % Get the names of any un-sorted tests
 dirlist = dir( fullfile(dirname,'*.m') );
@@ -145,7 +160,7 @@ for j=1:length(dirlist)
     tests(nr_tests).fun = dirlist(j).name(1:end-2);
     tests(nr_tests).path = [ dirname filesep dirlist(j).name ];
     tests(nr_tests).funptr = str2func( dirlist(j).name(1:end-2) );
-end;
+end
 
 % restore the original path names
 path( userpref.path );
@@ -160,7 +175,7 @@ end
 namelen = 0;
 for k = 1:nr_tests
     namelen = max(namelen,length(tests(k).fun));
-end;
+end
     
 % Initialise some storage
 failed = zeros(nr_tests,1);  % Pass/fail

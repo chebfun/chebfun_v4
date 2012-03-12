@@ -48,6 +48,7 @@ tol = pref.eps;
 savereport = true;
 comparereport = false;
 nr_tests = 0;
+nr_tests2 = 0;
 tests = struct('fun','','path','','funptr',[]);
 
 % Chebfun directory
@@ -193,12 +194,12 @@ for j = 1:nr_tests
     fprintf(' %2.3fs',sum(t(j,:)))
   catch
     failed(j) = -1;
-    t(j,:) = NaN;
-    fprintf('CRASHED: ')
+    t(j,:) = 0;
+    fprintf('CRASHED')
   end
   
   % Bail if crashed
-  if ~failed(j) && ~comparereport
+  if failed(j) || ~comparereport
       fprintf('\n')
       continue
   end

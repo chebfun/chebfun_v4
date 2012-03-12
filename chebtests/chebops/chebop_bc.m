@@ -7,7 +7,6 @@ tol = chebfunpref('eps');
 deltol = cheboppref('deltol');
 restol = cheboppref('restol');
 
-d = domain(-3,4);
 d = [-3 4];
 A = chebop(@(u) diff(u,2) + 4*diff(u) + u, d);
 
