@@ -1,17 +1,16 @@
 function C = mtimes(A,B)
 %* Chebop composition, multiplication, or application.
-%
-% If A and B are chebops, then C = A*B is a chebop where the operator
-% of C is the composition of the operators of A and B. No boundary
-% conditions are applied to C.
+% If A and B are chebops, then C = A*B is a chebop where the operator of C
+% is the composition of the operators of A and B. No boundary conditions
+% are applied to C.
 %
 % If either A or B are scalar, then C = A*B is a chebop representing scalar
-% multiplication of the original operator. In this case, boundary conditions
-% are copied into the new operator. 
+% multiplication of the original operator. In this case, boundary
+% conditions are copied into the new operator.
 %
 % If N is a chebop and U a chebfun, then N*U applies N to U. 
 %
-% See also chebop/mldivide.
+% See also CHEBOP/MLDIVIDE, CHEBOP/FEVAL
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -21,7 +20,7 @@ if isa(A,'chebfun')
 elseif isa(B,'chebfun')
     % Evaluate the chebfun differently depending on whether it's operator
     % is a linop or an anonymous function
-    if strcmp(class(A.op),'linop')
+    if isa(A.op,'linop')
         C = feval(A.op,B);
     else
         C = feval(A,B);

@@ -1,8 +1,8 @@
 function fout = diag(L)
 % DIAG The diagonal of linops
 % F = DIAG(L) returns the chebfun that lies on the diagonal line of the
-% linear operator L. Note that this is not well defined if L is not a
-% diagonal operator, in that case, diag(L) issues a warning.
+% linear operator L. Note that this is not well-defined if L is not a
+% diagonal operator, and diag(L) issues a warning.
 %
 % If L is a 1xINF linop, then F = DIAG(L) returns a diagonal linop.
 
@@ -11,7 +11,7 @@ function fout = diag(L)
 
 if isempty(L), fout = chebfun; return, end
 
-d = domain(L);
+d = domain(L); d = d.endsandbreaks;
 cheb1 = chebfun(1,d);
 s = size(feval(L,3));
 

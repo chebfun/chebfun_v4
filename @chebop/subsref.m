@@ -1,5 +1,5 @@
 function varargout = subsref(f,index)
-% SUBSREF   Evaluate a chebop
+%SUBSREF   Evaluate a chebop or reference its fields
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -13,16 +13,8 @@ switch index(1).type
           varargout = cellfun(fun,varargout,'uniform',false);
         end
     case '()'
-        if ~isnumeric(idx{1})
-            varargout = {feval(f,idx{:})};
-        else
-            [L linBC isLin] = linearise(f);
-            if ~isLin
-                error('CHEBOP:feval:expansion','Matrix expansion is only allowed for linear chebops.')
-            end
-            L = L & linBC;
-            varargout{1} = subsref(L,index);
-        end
+        varargout{1} = feval(f,idx{:});    
     otherwise
-        error('CHEBOP:subsref:indexType',['Unexpected index.type of ' index(1).type]);
+        error('CHEBOP:subsref:indexType',...
+            ['Unexpected index.type of ' index(1).type]);
 end

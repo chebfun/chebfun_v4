@@ -8,8 +8,6 @@ function e = end(F,k,n)
 %     error('CHEBFUN:end:ngt2','Index exceeds chebfun dimensions.');
 % end
 
-%kn = [k,n];
-
 if (k == 2 && ~F(1).trans) || (k == 1 && F(1).trans)
     % 'end' row/column of the quasimatrix.
     e = numel(F);

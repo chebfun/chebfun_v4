@@ -21,8 +21,8 @@ switch propName
         val = N.init;
     case 'dim'
         val = N.dim;
-    case 'jumplocs'
-        val = N.jumplocs;
+    case 'jumpinfo'
+        val = N.jumpinfo;
     otherwise
         error('CHEBOP:get:propname',[propName,' is not a valid chebop property.'])
 end

@@ -1,5 +1,5 @@
 function varargout = eigs(N,varargin)
-%EIGS  Find selected eigenvalues and eigenfunctions of a linear chebop.
+%EIGS   Find selected eigenvalues and eigenfunctions of a linear chebop.
 % D = EIGS(A) returns a vector of 6 eigenvalues of the linear chebop A.
 % EIGS will attempt to return the eigenvalues corresponding to the least
 % oscillatory eigenfunctions. (This is unlike the built-in EIGS, which
@@ -28,12 +28,11 @@ function varargout = eigs(N,varargin)
 % chebfun constructor.
 %
 % Example:
-% 
-% [d,x,N] = domain(0,pi);
-% N.op = @(u) diff(u,2);
-% N.bc = 'dirichlet';
-% [V,D] = eigs(N,10);
-% format long, sqrt(-diag(D))  % integers, to 14 digits
+%   N = chebop(@(u) diff(u,2), [0 pi])
+%   N.bc = 'dirichlet';
+%   [V,D] = eigs(N,10);
+%   format long, sqrt(-diag(D))  % integers, to 14 digits
+%   plot(V) % scaled sine waves
 %
 % See also linop/eigs.
 

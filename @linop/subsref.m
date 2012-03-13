@@ -94,8 +94,8 @@ switch s(1).type
         A = A.iszero;
       case 'isdiag'
         A = A.isdiag; 
-      case 'jumplocs'
-        A = A.jumplocs; 
+      case 'jumpinfo'
+        A = A.jumpinfo; 
       case {'domain','fundomain'}
         A = A.domain;
       otherwise 

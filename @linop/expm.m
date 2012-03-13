@@ -17,7 +17,7 @@ function E = expm(A)
 % for t = [0.001 0.01 0.1 0.5 1]
 %    E = expm(t*A & bc);
 %    plot(E*f,'color',c),  c = 0.5*c;
-%  end
+% end
 %
 % See also EXPM, CHEBOP/AND, CHEBOP/SUBSASGN.
 

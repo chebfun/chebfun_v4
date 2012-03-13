@@ -1,4 +1,4 @@
-% CHEBOP  Construct an operator on chebfuns.
+%CHEBOP  Construct an operator on chebfuns.
 % N = CHEBOP(OP) creates a chebop object N with operator defined by OP,
 % which should be a handle to a function that accepts one or more chebfuns
 % as input and returns a chebfun (or quasimatrix). The first input argument
@@ -48,6 +48,7 @@
 %   'dirichlet' : All variables equal zero at both endpoints.
 %   'neumann'   : All variables have derivative zero at both endpoints.
 %   'periodic'  : Impose periodicity on all dependent variables.
+%   function    : See below.
 %
 % The 'dirichlet' and 'neumann' keywords impose behavior that may not be
 % identical to the common understanding of Dirichlet or Neumann conditions
@@ -60,6 +61,11 @@
 % If BC is given a function handle, then each condition must give points
 % explicitly or otherwise evaluate to a scalar
 %    @(x,u) [ u(1) - u(0), sum(x.*u) ]
+%
+% BCs can also be assigned to the chebop N after it has been constructed,
+% by N.lbc = ..., N.rbc = ..., and N.bc = ... . This will overwrite the BCs
+% currently stored in the field being assigned to, but not the other
+% fields).
 %
 % CHEBOP(OP,...,'init',U) provides a chebfun as a starting point for
 % nonlinear iterations or a PDE solution. See CHEBOP/SOLVEBVP and
@@ -86,7 +92,7 @@
 % something like @(x,y,p) diff(p*diff(y)) will require a second equation
 % explicitly enforcing that diff(p) = 0.
 %
-% See also chebop/mtimes, chebop/mldivide, chebop/pde15s.
+% See also chebop/mtimes, chebop/mldivide.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

@@ -15,7 +15,7 @@ function [L linBC isLin affine] = linearise(N,u,linCheck)
 % linearisation is halted as soon as nonlinearity is detected. (This is
 % also used by CHEBOP/ISLINEAR and CHEBOP/LINOP).
 %
-% See also CHEBOP/ISLINEAR CHEBOP/LINOP CHEBOP/FINDGUESS
+% See also CHEBOP/ISLINEAR CHEBOP/LINOP CHEBOP/FINDGUESS CHEBOP/DIFF
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -131,19 +131,6 @@ else
 end
 
 %% Tidy up
-
-% % Negate the BC vals if nonlinear. WHY DO WE DO THIS?!?!
-% if ~all(isLin) && isstruct(linBC)
-%     for counter = 1:numel(linBC.left)
-%         linBC.left(counter).val = -linBC.left(counter).val;
-%     end
-%     for counter = 1:numel(linBC.right)
-%         linBC.right(counter).val = -linBC.right(counter).val;
-%     end
-%     for counter = 1:numel(linBC.other)
-%         linBC.other(counter).val = -linBC.other(counter).val;
-%     end
-% end
 
 % Find the affine part (if requested)
 if nargout > 3 

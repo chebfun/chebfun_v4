@@ -8,15 +8,15 @@ function A = and(A,bc)
 %
 %   'dirichlet' or {'dirichlet',c} :  set value to zero or to c
 %   'neumann' or {'neumann',c}     :  set derivative to zero or to c
-%   B or {B,c}                     :  B is a linop defining boundary operator          
+%   B or {B,c}                     :  B is a linop defining the boundary operator          
 %   'periodic'                     :  periodicity up to diff. order
 %
-% Alternatively, BC may be a struct with fields 'left' and 'right'. To
-% impose a single condition, each of these fields can take the form of any
-% of the first three options above. 
+% Alternatively, BC may be a struct with fields 'left', 'right', or 'bc'.
+% To impose a single condition, each of these fields can take the form of
+% any of the first three options above.
 %
 % If one wants to impose multiple conditions at one boundary, then the
-% left/right field of BC needs to be a struct array with fields 'op' and
+% left/right/bc field of BC needs to be a struct array with fields 'op' and
 % 'val'. For example:
 %
 %   lbc = struct( 'op', {'dirichlet','neumann'}, 'val', {1,0} );

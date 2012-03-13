@@ -1,5 +1,5 @@
 function C = mpower(A,m)
-% ^   Repeated composition of a chebop.
+%^   Repeated composition of a chebop.
 % For chebop A and nonnegative integer M, A^M returns the linop
 % representing M-fold application of A.
 
@@ -7,7 +7,8 @@ function C = mpower(A,m)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if ~( (numel(m)==1) && (m==round(m)) && (m>=0) )
-    error('CHEBOP:mpower:argument','Exponent must be a nonnegative integer.')
+    error('CHEBOP:mpower:argument',...
+        'Exponent must be a nonnegative integer.')
 end
 
 if (m > 0)

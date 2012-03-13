@@ -1,5 +1,5 @@
 function [M,B,c,rowreplace,P,Mmat] = feval(A,n,usebc,map,breaks)
-% FEVAL  Apply or realize a linop.
+%FEVAL  Apply or realize a linop.
 % FEVAL(A,U) for chebfun U applies A to U; i.e., it returns A*U.
 %
 % M = FEVAL(A,N) for integer N returns the matrix associated with A at size

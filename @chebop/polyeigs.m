@@ -1,5 +1,5 @@
 function varargout = polyeigs(varargin)
-%POLYEIGS Polynomial chebop eigenvalue problem.
+%POLYEIGS   Polynomial chebop eigenvalue problem.
 % [X,E] = POLYEIG(A0,A1,..,Ap,K) solves the polynomial eigenvalue problem
 % of degree p:
 %    (A0 + lambda*A1 + ... + lambda^p*Ap)*x = 0.
@@ -29,14 +29,13 @@ function varargout = polyeigs(varargin)
 % appear to have converged, as determined by the chebfun constructor.
 %
 % Example:
-% 
-% A = chebop(@(x,u) diff(u,2),[-1 1],'dirichlet');
-% B = chebop(@(x,u) -x.*diff(u));
-% C = chebop(@(x,u) u);
-% [V D] = polyeigs(A,B,C,6,0)
-% plot(V)
+%   A = chebop(@(x,u) diff(u,2),[-1 1],'dirichlet');
+%   B = chebop(@(x,u) -x.*diff(u));
+%   C = chebop(@(x,u) u);
+%   [V D] = polyeigs(A,B,C,6,0)
+%   plot(V)
 %
-% See also CHEBOP/EIGS, POLYEIG.
+% See also CHEBOP/EIGS, POLYEIG, LINOP/POLYEIGS.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

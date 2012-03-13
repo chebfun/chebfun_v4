@@ -3,7 +3,7 @@ function V = null(N,varargin)
 % Z = NULL(A) is a chebfun quasimatrix orthonormal basis for the null space
 % of the linop A. That is, A*Z has negligible elements, size(Z,2) is the
 % nullity of A, and Z'*Z = I. A may contain linear boundary conditions, but
-% they will be treated as homogenous.
+% they will be treated as homogeneous.
 %
 % Example 1:
 %  L = chebop(@(u) diff(u),[0 pi]);

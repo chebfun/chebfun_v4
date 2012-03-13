@@ -4,9 +4,9 @@ function [L f] = linop(N)
 % If N is not linear, then an error message is returned.
 %
 % [L F] = LINOP(N) returns also the affine part F of the linear chebop N
-% such that if, say, N.op = @(x,u), then L*u + F(x) = N.op(x,u).
+% such that L*u + F(x) = N.op(x,u).
 %
-% See also LINOP, CHEBOP/LINEARISE, CHEBOP/ISLINEAR
+% See also LINOP, CHEBOP/LINEARISE, CHEBOP/ISLINEAR, CHEBOP/DIFF
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

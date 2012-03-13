@@ -1,8 +1,8 @@
 function u = pde15s(N, t, varargin)
-%PDE15S for chebops.
-% PDE15S(N, T) solves the PDE u_t = N.op(u,t,x) where N is a chebop 
-% with the initial condition given by N.init. See CHEBFUN/PDE15S for 
-% more detailed information.
+%PDE15S    Basic PDE solver for chebops.
+% PDE15S(N,T) solves the PDE u_t = N.op(u,t,x) where N is a chebop with
+% the initial condition given by N.init. See CHEBFUN/PDE15S for more
+% detailed information.
 %
 % PDE15S(N, T, OPTS) allows extra input options defined by OPTS = PDESET
 %
@@ -89,3 +89,4 @@ end
 
 % Pass to chebfun/pde15s
 u = pde15s( N.op, t, N.init, bc, varargin{:} );
+

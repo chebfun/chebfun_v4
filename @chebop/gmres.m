@@ -1,11 +1,11 @@
 function varargout = gmres(varargin)
-% GMRES Iterative solution of a linear system. 
+%GMRES Iterative solution of a linear system. 
 % U = GMRES(A,F) solves the system A*U=F for chebfuns U and F and linear 
 % chebop A. If A is not linear, an error is returned.
 %
 % More calling options are available; see chebfun/gmres for details.
 %
-% EXAMPLE
+% EXAMPLE:
 %
 %   % To solve a simple Volterra integral equation:
 %   d = [-1,1];

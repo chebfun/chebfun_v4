@@ -1,5 +1,5 @@
 function [isLin L BC] = islinear(N)
-% ISLINEAR Checks whether a chebop is linear.
+%ISLINEAR Checks whether a chebop is linear.
 % ISLINEAR(N) returns 1 if N is a linear operator, 0 otherwise.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 

@@ -1,4 +1,5 @@
 function Nout = plus(N1,N2)
+%+   Addition of two chebops.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -32,11 +33,13 @@ if isnumeric(N2)
 end
 
 if ~all(N1.domain.ends == N2.domain.ends)
-    error('CHEBOP:plus:domain','Domains of operators do not match');
+    error('CHEBOP:plus:domain',...
+        'Domains of operators do not match');
 end
 
 if ~optype(N1)==optype(N2)
-    error('CHEBOP:plus:opType','Operators must be of same type (handle or linop)');
+    error('CHEBOP:plus:opType',...
+        'Operators must be of same type (handle or linop)');
 end
 
 mode = num2cell(repmat(3,size(N1.opshow)));
@@ -48,7 +51,6 @@ else
     Nout = chebop(dom, N1.op+N2.op);
     Nout.opshow = cellfun(@combineshow,N1.opshow,N2.opshow,mode,'uniform',false);
 end
-
 
 end
 
@@ -84,7 +86,8 @@ else % Chebop + chebop. Combine the output in a nice way
         fun1 = op1(firstRightParLoc1+1:end);
         fun2 = op2(firstRightParLoc2+1:end);
         if ~strcmp(funArgs1,funArgs2)
-            error('CHEBOP:plus:arguments','Arguments of chebops do not match.');
+            error('CHEBOP:plus:arguments',...
+                'Arguments of chebops do not match.');
         end
         s = [funArgs1,fun1,'+',fun2];
     end
@@ -93,8 +96,8 @@ end
 
 
 % For possible future use? Right now it doesn't allow nested hyperlinks.
-% These links are strings executed in the base workspace and so anonymous functions
-% don't seem to help.
+% These links are strings executed in the base workspace and so anonymous
+% functions don't seem to help.
 function s = linktodisplay(N)
 
 s = ['<a href="matlab:display(''',N.opshow,''')">chebop</a>'];
