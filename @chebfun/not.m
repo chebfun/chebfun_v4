@@ -1,13 +1,14 @@
 function fout = not(F)
-%~ Chebfun NOT
-%  Not returns a chebfun which evaluates to zero at all points where f is
+% ~   Chebfun logical NOT.
+%
+%  NOT returns a chebfun which evaluates to zero at all points where f is
 %  zero and one otherwise.
 %
-%   Example:
+%  Example:
 %       f = ~chebfun(0);
 %       g = ~chebfun(@(x) x); g([-1 0 1])
 %       
-%  See also chebfun/eq.
+%  See also CHEBFUN/EQ.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

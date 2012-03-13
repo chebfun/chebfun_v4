@@ -1,5 +1,6 @@
 function [y,x] = min(f,g,dim)
-% MIN   Minimum value or pointwise min function.
+% MIN   Minimum value or pointwise min of chebfuns.
+%
 % MIN(F) returns the minimum value of the chebfun F. 
 %
 % [Y,X] = MIN(F) also returns the argument (location) where the minimum 
@@ -22,7 +23,7 @@ function [y,x] = min(f,g,dim)
 % minima, but the resulting values correspond to those of the original
 % function(s).
 %
-% See also chebfun/max. 
+% See also CHEBFUN/MAX. 
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -153,7 +154,7 @@ if ~isempty(ind), y = -inf; x = f.ends(ind); return, end
 ends = f.ends;
 y = zeros(1,f.nfuns); x = y;
 for i = 1:f.nfuns
-  a = ends(i); b = ends(i+1);
+  %a = ends(i); b = ends(i+1);
   [o,p] = min(f.funs(i));
   y(i) = o;
   x(i) = p;

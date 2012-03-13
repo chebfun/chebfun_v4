@@ -1,24 +1,25 @@
 function [y,x] = minandmax(f,dim)
-% MINANDMAX Minimum and maximum values of a chebfun
-%  Y = MINANDMAX(F) returns the range of the chebfun F such that Y(1) = min(F)
-%  and Y(2) = max(F). 
+% MINANDMAX Minimum and maximum values of a chebfun.
 %
-%  [Y X] = MINANDMAX(F) returns also points X such that F(X(j)) = Y(j), j =
-%  1,2.
+% Y = MINANDMAX(F) returns the range of the chebfun F such that 
+% Y(1) = min(F) and Y(2) = max(F). 
 %
-%  [Y X] = MINANDMAX(F,'local') returns not just the global minimum and 
-%  maximum values, but all of the local extrema (i.e. local min and max).
+% [Y X] = MINANDMAX(F) returns also points X such that F(X(j)) = Y(j), j =
+% 1,2.
 %
-%  Y = MINANDMAX(F,DIM) operates along the dimension DIM of the quasimatrix
-%  F. If DIM represents the continuous variable, then Y is a vector.
-%  If DIM represents the discrete dimension, then Y is a quasimatrix.
-%  The default for DIM is 1, unless F has a singleton dimension,
-%  in which case DIM is the continuous variable. 
+% [Y X] = MINANDMAX(F,'local') returns not just the global minimum and 
+% maximum values, but all of the local extrema (i.e. local min and max).
 %
-%  If F is complex-valued, absolute values are taken to determine extrema, 
-%  but the resulting values correspond to those of the original function.
+% Y = MINANDMAX(F,DIM) operates along the dimension DIM of the quasimatrix
+% F. If DIM represents the continuous variable, then Y is a vector.
+% If DIM represents the discrete dimension, then Y is a quasimatrix.
+% The default for DIM is 1, unless F has a singleton dimension,
+% in which case DIM is the continuous variable. 
 %
-%  See also chebfun/max chebfun/min. 
+% If F is complex-valued, absolute values are taken to determine extrema, 
+% but the resulting values correspond to those of the original function.
+%
+% See also CHEBFUN/MAX, CHEBFUN/MIN. 
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -119,7 +120,7 @@ ends = f.ends;
 yy = [zeros(f.nfuns,2) ; y];
 xx = [zeros(f.nfuns,2) ; x];
 for i = 1:f.nfuns
-  a = ends(i); b = ends(i+1);
+  %a = ends(i); b = ends(i+1);
   [yk, xk] = minandmax(f.funs(i));
   yy(i,:) = yk;
   xx(i,:) = xk;

@@ -1,10 +1,11 @@
 function varargout = pde15s( pdefun, tt, u0, bc, varargin)
-%PDE15S  Solve PDEs using the chebfun system
-% UU = PDE15s(PDEFUN, TT, U0, BC) where PDEFUN is a handle to a function with 
-% arguments u, t, x, and D, TT is a vector, U0 is a chebfun, and BC is a 
-% chebop boundary condition structure will solve the PDE dUdt = PDEFUN(UU,t,x)
-% with the initial condition U0 and boundary conditions BC over the time
-% interval TT. 
+% PDE15S  Solve PDEs using the chebfun system.
+%
+% UU = PDE15s(PDEFUN, TT, U0, BC) where PDEFUN is a handle to a function 
+% with arguments u, t, x, and D, TT is a vector, U0 is a chebfun, and BC is 
+% a chebop boundary condition structure will solve the PDE 
+% dUdt = PDEFUN(UU,t,x) with the initial condition U0 and boundary 
+% conditions BC over the time interval TT. 
 %
 % PDEFUN should take the form @(U1,U2,...,UN,T,X,D,S,C), where U1,...,UN
 % are the unknown dependent variables to be solved for, T is time, X is
@@ -60,7 +61,7 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 %    BC.RIGHT = struct( 'op', 'dirichlet', 'val', @(t) .1*sin(t));
 % with the input format being the same as PDEFUN described above.
 %
-% See also pdeset, ode15s, chebop/pde15s
+% See also PDESET, ODE15S, CHEBOP/PDE15S.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

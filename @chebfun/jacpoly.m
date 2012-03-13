@@ -1,8 +1,9 @@
 function out = jacpoly(f,a,b,n)
-% JACPOLY   Jacboi polynomial coefficients.
+% JACPOLY   Jacobi polynomial coefficients.
+%
 % A = JACPOLY(F,ALPHA,BETA) returns the coefficients such that
 % F_1 = A(1) P_N(x) + ... + A(N) P_1(x) + A(N+1) P_0(x) where P_N(x) denotes 
-% the N-th Jacobi polynomial with parameters ALPHA and BETA and F_1 denotes 
+% the N-th Jacobi polynomial with parameters ALPHA and BETA, and F_1 denotes 
 % the first fun of chebfun F.
 %
 % A = JACPOLY(F,ALPHA,BETA,I) returns the coefficients for the I-th fun.

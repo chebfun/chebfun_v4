@@ -1,4 +1,4 @@
-%ODE113  Represent initial-value problem solution using chebfuns.
+% ODE113   Represent initial-value problem solution using chebfuns.
 %
 % Y = ODE113(ODEFUN,D,...) applies the standard ODE113 method to solve an
 % initial-value problem on the domain D. The result is then converted to a
@@ -17,7 +17,7 @@
 %   y = ode113(@vdp1,domain(0,20),[2;0]); % solve Van der Pol problem
 %   roots( y(:,1)-1 )   % find times when first component is 1
 %
-% See also ode113, odeset, domain/ode15s, domain/ode45
+% See also ODE113, ODESET, DOMAIN/ODE15S, DOMAIN/ODE45
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

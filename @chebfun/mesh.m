@@ -1,10 +1,12 @@
 function varargout = mesh(varargin)
-%MESH Waterfall plot for quasimatrices.
+% MESH   Mesh plot for quasimatrices.
 %
-%  MESH(U) or MESH(U,T) where LENGTH(T) = MIN(SIZE(U))
+% MESH(U) or MESH(U,T), where LENGTH(T) = MIN(SIZE(U)), draws a 
+% wireframe mesh with color determined by U so color is proportional to 
+% surface height.
 %
-%  MESH(U,'NUMPTS',N) or MESH(U,T,'NUMPTS',N) changes the number of points
-%  used in the mesh. (The default is 201).
+% MESH(U,'NUMPTS',N) or MESH(U,T,'NUMPTS',N) changes the number of points
+% used in the mesh. (The default is 201).
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

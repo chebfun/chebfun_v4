@@ -1,12 +1,13 @@
 function out = legpoly(f,n)
 % LEGPOLY   Legendre polynomial coefficients.
+%
 % A = LEGPOLY(F) returns the coefficients such that
 % F_1 = A(1) P_N(x) + ... + A(N) P_1(x) + A(N+1) P_0(x) where P_N(x) denotes 
 % the N-th Legendre polynomial and F_1 denotes the first fun of chebfun F.
 %
 % A = LEGPOLY(F,I) returns the coefficients for the I-th fun.
 %
-% There is also a LEGPOLY command in the chebfun trunk directory, which
+% There is also a LEGPOLY command in the Chebfun trunk directory, which
 % computes the chebfun corresponding to the Legendre polynomial P_n.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 

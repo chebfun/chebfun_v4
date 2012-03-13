@@ -1,5 +1,6 @@
 function H = plus(F1,F2)
 % +	  Plus.
+%
 % F + G adds chebfuns F and G, or a scalar to a chebfun if either F or G is 
 % a scalar.
 

@@ -1,9 +1,10 @@
 function R = realsqrt(X)
-%REALSQRT Real square root of a chebfun.
-%   REALSQRT(X) is the square root of the chebfun of X.  An
-%   error is produced if X is negative or complex.
+% REALSQRT Real square root of a chebfun.
 %
-%   See also CHEBFUB/SQRT, CHEBFUN/REALLOG
+% REALSQRT(X) is the square root of the chebfun of X.  An error is produced 
+% if X is negative or complex.
+%
+% See also CHEBFUB/SQRT, CHEBFUN/REALLOG.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

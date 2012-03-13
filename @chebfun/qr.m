@@ -1,5 +1,6 @@
 function [Q,R] = qr(A,econ)   
-% QR	QR factorization
+% QR   QR factorization of a column quasimatrix.
+%
 % [Q,R] = QR(A) or QR(A,0), where A is a column quasimatrix with n
 % columns, produces a column quasimatrix Q with n orthonormal columns
 % and an n x n upper triangular matrix R such that A = Q*R.
@@ -7,7 +8,7 @@ function [Q,R] = qr(A,econ)
 % If the quasimatrix A contains no exponents or non-linear maps, the
 % columns of A are discretized and a regular QR decomposition is computed
 % from this matrix. Note that we do not use Matlab's QR as we cannot control
-% the default behavious when a linearly dependent column is found. The
+% the default behaviour when a linearly dependent column is found. The
 % resulting quasimatrix Q is re-assembled from the discretized Q.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 

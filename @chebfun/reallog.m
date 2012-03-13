@@ -1,9 +1,10 @@
 function R = reallog(X)
-%REALLOG Real square root of a chebfun.
-%   REALLOG(X) is the logarithm of the chebfun of X.  An
-%   error is produced if X is negative or complex.
+% REALLOG   Real square root of a chebfun.
 %
-%   See also CHEBFUN/LOG, CHEBFUBN/REALSQRT.
+% REALLOG(X) is the logarithm of the chebfun of X.  An error is produced 
+% if X is negative or complex.
+%
+% See also CHEBFUN/LOG, CHEBFUBN/REALSQRT.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

@@ -1,11 +1,12 @@
 function H = or(F,G)
-%  |   Chebfun Logical OR.
-%     A | B performs a logical OR of chebfun A and B and returns a chebfun
-%     containing elements set to either logical 1 (TRUE) or logical 0
-%     (FALSE).  An element of the output chebfin is set to 1 if either
-%     input chebfun contains a non-zero element at that same point.
-%     Otherwise, that element is set to 0.  A and B must have the same
-%     dimensions unless one is a scalar.
+% |   Chebfun logical OR.
+%
+% A | B performs a logical OR of chebfun A and B and returns a chebfun
+% containing elements set to either logical 1 (TRUE) or logical 0
+% (FALSE).  An element of the output chebfin is set to 1 if either
+% input chebfun contains a non-zero element at that same point.
+% Otherwise, that element is set to 0.  A and B must have the same
+% dimensions unless one is a scalar.
     
 % Check for emptiness
 if isempty(F) || isempty(G)

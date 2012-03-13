@@ -1,5 +1,6 @@
 function Fout = mean(F1,F2)
-% MEAN	Average or mean value.
+% MEAN   Average or mean value of chebfun.
+%
 % MEAN(F) is the mean value of the chebfun F.
 %
 % MEAN(F,G) is the average chebfun between chebfuns F and G.

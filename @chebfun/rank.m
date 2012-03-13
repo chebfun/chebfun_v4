@@ -1,5 +1,6 @@
 function r = rank(A,tol)
-% RANK	Rank of quasimatrix.
+% RANK   Rank of a quasimatrix.
+%
 % RANK(A) produces an estimate of the number of linearly independent
 % columns or rows of A.
 %

@@ -1,5 +1,6 @@
 function f = newdomain(g,dom)
-%NEWDOMAIN chebfun change of doamin
+% NEWDOMAIN   Change of domain of a chebfun.
+%
 % NEWDOMAIN(G,DOM) returns the chebfun G but moved to the domain DOM. 
 % This is done with a linear map. DOM may be a vector of length G.ends, 
 % or a two-vector (in which case all breakpoints are scaled by the same
@@ -14,7 +15,7 @@ for k = 1:numel(g)
     % Loop over the chebfuns
     f(k) = newcol(g(k),dom);
 end
-    
+
 function g = newcol(g,dom)
 
 % Current breakpoints

@@ -1,6 +1,7 @@
 function C = mldivide(A,B)
 % \   Left matrix divide.
-% A\B in general gives the least squares solution to A*X = B
+%
+% A\B in general gives the least squares solution to A*X = B.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

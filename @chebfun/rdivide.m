@@ -1,5 +1,6 @@
 function Fout = rdivide(F1,F2)
 % ./   Pointwise chebfun right divide.
+%
 % F./G returns a chebfun that represents the function F(x)/G(x). This may
 % fail to converge if G is ever close to zero.
 

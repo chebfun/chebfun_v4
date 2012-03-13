@@ -1,5 +1,6 @@
 function X = pinv(A,tol)
-% PINV	Pseudoinverse.
+% PINV   Pseudoinverse of a column quasimatrix.
+%
 % X = PINV(A) produces a row quasimatrix X so that A*X*A = A and
 % X*A*X = X.
 %

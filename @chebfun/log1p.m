@@ -1,4 +1,6 @@
 function Fout = log1p(F)
+% LOG1P   Accurate logarithm for chebfuns with small values.
+%
 % LOG1P(Z) computes log(Z+1) accurately in the case where the chebfun Z is
 % small on its domain. Complex Z is acceptable.
 %

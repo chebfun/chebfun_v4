@@ -1,4 +1,4 @@
-%ODE45  Represent initial-value problem solution using chebfuns.
+% ODE45   Represent initial-value problem solution using chebfuns.
 %
 % Y = ODE45(ODEFUN,D,...) applies the standard ODE45 method to solve an
 % initial-value problem on the domain D. The result is then converted to a
@@ -17,7 +17,7 @@
 %   y = ode45(@vdp1,domain(0,20),[2;0]); % solve Van der Pol problem
 %   roots( y(:,1)-1 )   % find times when first component is 1
 %
-% See also ode45, odeset, domain/ode15s, domain/ode113
+% See also ODE45, ODESET, DOMAIN/ODE15S, DOMAIN/ODE113.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

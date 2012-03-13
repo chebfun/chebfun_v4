@@ -1,5 +1,6 @@
 function len = length(f)
 % LENGTH   Number of sample points used by a chebfun.
+%
 % LENGTH(F) is the number of sample points used by the chebfun F.
 %
 % If F is a quasi-matrix, LENGTH(F) is max_k{ LENGTH(F(:,k)) }.

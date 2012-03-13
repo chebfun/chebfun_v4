@@ -1,13 +1,14 @@
 function fout = ne(F1,F2)
-% ~=   Not equal.
-%  F1 ~= F2 returns a chebfun which is one everywhere except at the
-%  intersection points of F1 and F2, where it evaluates to zero.
+% ~=   Chebfun not equal.
 %
-%  Example:
+% F1 ~= F2 returns a chebfun which is one everywhere except at the
+% intersection points of F1 and F2, where it evaluates to zero.
+%
+% Example:
 %    x = chebfun(@(x) x);
 %    plot(sign(x) ~= 1)
 %
-%  See also chebfun/find, chebfun/eq, chebfun/not.
+% See also CHEBFUN/FIND, CHEBFUN/EQ, CHEBFUN/NOT.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information. 
@@ -33,7 +34,7 @@ for k = 1:min(size(F1)) % Do it for each column of F1.
 end
 
 function fout = necol(f1,f2)
-% Eq for two single chebfuns or one chebfun and one scalar
+% Eq for two single chebfuns or one chebfun and one scalar.
 % Note: f1 must be a chebfun, f2 may be a scalar
 
 fout = sign(f1-f2);

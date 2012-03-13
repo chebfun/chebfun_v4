@@ -1,5 +1,6 @@
 function fout = jacreset(fin,newjac)
-%JACRESET Reset Jacobian of a chebfun.
+% JACRESET   Reset Jacobian of a chebfun.
+%
 % Chebfuns keep track of their construction in such a way that they can be
 % queried for their Frechet derivative (Jacobian) with respect to any other
 % chebfun using DIFF. FOUT = JACRESET(FIN) resets the Jacobian field of a
@@ -10,14 +11,14 @@ function fout = jacreset(fin,newjac)
 %
 % FIN may be a quasimatrix.
 %
-% See also DIFF, ANON.
+% See also CHEBFUN/DIFF, ANON.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin > 1
   if ~isa(newjac,'anon')
-    error('chebfun:jacreset:NotAnon','New Jacobian must be an ANON object.')
+    error('CHEBFUN:jacreset:NotAnon','New Jacobian must be an ANON object.')
   end
 else
   newjac = anon('[]','',[],1);

@@ -1,16 +1,15 @@
 function r = range(f,dim)
-% RANGE Range of chebfun
-%  R = RANGE(F) returns the range R = max(F)-min(F) of the chebfun F.
+% RANGE   Range of chebfun.
 %
-%  R = RANGE(F,DIM) operates along the dimension DIM of the quasimatrix
-%  F. If DIM represents the continuous variable, then R is a vector.
-%  If DIM represents the discrete dimension, then R is a quasimatrix.
-%  The default for DIM is 1, unless F has a singleton dimension,
-%  in which case DIM is the continuous variable. 
+% R = RANGE(F) returns the range R = max(F)-min(F) of the chebfun F.
 %
-% %  For complex F, R = RANGE(F) is equivelent to RANGE(abs(F)).
+% R = RANGE(F,DIM) operates along the dimension DIM of the quasimatrix F. 
+% If DIM represents the continuous variable, then R is a vector.
+% If DIM represents the discrete dimension, then R is a quasimatrix.
+% The default for DIM is 1, unless F has a singleton dimension, in which 
+% case DIM is the continuous variable. 
 %
-%  See also chebfun/minandmax.
+% See also CHEBFUN/MINANDMAX.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

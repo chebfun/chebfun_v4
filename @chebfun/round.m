@@ -1,5 +1,6 @@
 function Fout = round(f)
 % ROUND   Round pointwise to nearest integer.
+%
 % G = ROUND(F) returns the chebfun G such that G(X) = ROUND(F(X)) for each
 % X in the domain of F.
 %

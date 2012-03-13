@@ -1,5 +1,6 @@
 function out = movie(F,varargin)
 % MOVIE  Animate columns of a quasimatrix.
+%
 % MOVIE(F) displays an animation of frames produced by plotting the columns 
 % of the quasimatrix F in sequence.
 %
@@ -53,7 +54,7 @@ end
 
 % Catch a potential error.
 if ~isempty(t) && length(t)~=size(F,2)
-  error('chebfun:movie:timesize',...
+  error('CHEBFUN:movie:timesize',...
     'Length of the time vector must equal the finite size of the quasimatrix.')
 end
 

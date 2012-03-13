@@ -1,16 +1,17 @@
 function f = polyfit(y,n)  
-%POLYFIT Fit polynomial to a chebfun.
-%   F = POLYFIT(Y,N) returns a chebfun F corresponding to the polynomial 
-%   of degree N that fits the chebfun Y in the least-squares sense.
+% POLYFIT Fit polynomial to a chebfun.
 %
-%   F = POLYFIT(X,Y,N,D) returns a chebfun F on the domain D which 
-%   corresponds to the polynomial of degree N that fits the data (X,Y) 
-%   in the least-squares sense.
+% F = POLYFIT(Y,N) returns a chebfun F corresponding to the polynomial 
+% of degree N that fits the chebfun Y in the least-squares sense.
 %
-%   Note chebfun/POLYFIT does not not support more than one output argument
-%   in the way that matlab/POLYFIT does.
+% F = POLYFIT(X,Y,N,D) returns a chebfun F on the domain D which 
+% corresponds to the polynomial of degree N that fits the data (X,Y) 
+% in the least-squares sense.
 %
-%   See also polyfit, domain/polyfit
+% Note CHEBFUN/POLYFIT does not not support more than one output argument
+% in the way that MATLAB/POLYFIT does.
+%
+% See also POLYFIT, DOMAIN/POLYFIT.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

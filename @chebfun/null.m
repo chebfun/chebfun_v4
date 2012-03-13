@@ -1,7 +1,8 @@
 function Z = null(A)
-% NULL   Null space.
-% NULL(A) returns an orthonormal basis for the null space of 
-% the column quasimatrix A.
+% NULL   Null space of a column quasimatrix.
+%
+% NULL(A) returns an orthonormal basis for the null space of the column 
+% quasimatrix A.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

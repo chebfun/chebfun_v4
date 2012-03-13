@@ -1,5 +1,6 @@
 function [y,x] = max(f,g,dim)
 % MAX   Maximum value or pointwise max function.
+%
 % MAX(F) returns the maximum value of the chebfun F. 
 %
 % [Y,X] = MAX(F) also returns the argument (location) where the maximum 
@@ -136,11 +137,6 @@ if any(smooth)
                h.funs(k-1).vals(end) = h.funs(k).vals(1);
             end
             % Take the value that is largest
-%             if h.funs(k-1).vals(end) > h.funs(k).vals(1)
-%                 h.funs(k).vals(1) = h.funs(k-1).vals(end);
-%             else
-%                 h.funs(k-1).vals(end) = h.funs(k).vals(1);
-%             end
             if isfinite(h.funs(k-1).vals(end))
                 h.imps(1,k) = h.funs(k-1).vals(end);
             else
@@ -162,7 +158,7 @@ if ~isempty(ind), y = inf; x = f.ends(ind); return, end
 ends = f.ends;
 y = zeros(1,f.nfuns); x = y;
 for i = 1:f.nfuns
-  a = ends(i); b = ends(i+1);
+  %a = ends(i); b = ends(i+1);
   [o,p] = max(f.funs(i));
   y(i) = o;
   x(i) = p;

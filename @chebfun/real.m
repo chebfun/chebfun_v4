@@ -1,5 +1,6 @@
 function Fout = real(F)
-% REAL  Complex real part.
+% REAL   Complex real part of a chebfun.
+%
 % REAL(F) is the real part of F.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 

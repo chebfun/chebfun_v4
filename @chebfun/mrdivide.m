@@ -1,6 +1,7 @@
 function C = mrdivide(B,A)
 % /   Right matrix divide.
-% B/A in general gives the least squares solution to X*A = B
+%
+% B/A in general gives the least squares solution to X*A = B.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

@@ -1,16 +1,16 @@
 function varargout = plot3(varargin)
-% PLOT3 Plot a chebfun in 3-D space
-%   PLOT3(x,y,z), where x,y,z are three chebfuns, plots a curve in 3-space
-%   where z=f(x,y).
+% PLOT3 Plot a chebfun in 3-D space.
 %
-%   PLOT3(X,Y,Z), where X, Y and Z are three chebfun quasimatrices, plots
-%   several curves obtained from the columns (or rows) of X, Y, and Z. 
+% PLOT3(x,y,z), where x,y,z are three chebfuns, plots a curve in 3-space
+% where z=f(x,y).
+%
+% PLOT3(X,Y,Z), where X, Y and Z are three chebfun quasimatrices, plots
+% several curves obtained from the columns (or rows) of X, Y, and Z. 
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 %   This code is a modification of the code in chebfun/plot.
-
 numpts = chebfunpref('plot_numpts');
 
 % Plot to a given axes

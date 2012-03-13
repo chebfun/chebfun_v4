@@ -1,35 +1,35 @@
 function [fout,mpts] = merge(f, varargin)
-% MERGE   Try to remove breakpoints.
-%   F = MERGE(F) attempts to remove unescessry breakpoints from F such that
-%   each smooth piece has at most SPLITDEGREE number of points, SPLITDEGREE 
-%   being specified in CHEBFUNPREF. In SPLITTING OFF mode instead of 
-%   SPLITDEGREE, the parameter MAXDEGREE in CHEBFUNPREF is used.
+% MERGE   Try to remove breakpoints in chebfuns.
+%
+% F = MERGE(F) attempts to remove unescessry breakpoints from F such that
+% each smooth piece has at most SPLITDEGREE number of points, SPLITDEGREE 
+% being specified in CHEBFUNPREF. In SPLITTING OFF mode instead of 
+% SPLITDEGREE, the parameter MAXDEGREE in CHEBFUNPREF is used.
+% 
+% [F, MPTS] = MERGE(F) returns the index of the merged endpoints in MPTS.
+% 
+% MERGE(F, INDEX) returns an equivalent chebfun representation of F
+% after attempting to eliminate the endpoints specified in INDEX. 
+% INDEX = 'all' is equivalent to INDEX = [2:length(F.ends)-1].
 %   
-%   [F, MPTS] = MERGE(F) returns the index of the merged endpoints in
-%   MPTS.
-%  
-%   MERGE(F, INDEX) returns an equivalent chebfun representation of F
-%   after attempting to eliminate the endpoints specified in INDEX. 
-%   INDEX = 'all' is equivalent to INDEX = [2:length(F.ends)-1].
-%   
-%   MERGE(F, INDEX, MAXDEG) restricts each smooth piece to at most
-%   degree MAXDEG as it attempts to eliminate break points.
+% MERGE(F, INDEX, MAXDEG) restricts each smooth piece to at most
+% degree MAXDEG as it attempts to eliminate break points.
 %
-%   MERGE(F, INDEX, MAXDEG, TOL) attempts elimination of breakpoints 
-%   using the relative tolerance TOL.
+% MERGE(F, INDEX, MAXDEG, TOL) attempts elimination of breakpoints using 
+% the relative tolerance TOL.
 %
-%   MERGE(..., PREF) attempts elimination of breakpoints according to the
-%   chebfun preference structure PREF.
+% MERGE(..., PREF) attempts elimination of breakpoints according to the
+% chebfun preference structure PREF.
 %
-%   In all cases, elimination is attempted from left to right.
+% In all cases, elimination is attempted from left to right.
 %
-%   Impulses will prevent merging at corresponding break points.
+% Impulses will prevent merging at corresponding break points.
 %
-%   Example:
-%       f = chebfun(@(x) abs(x),'splitting','on');
-%       [g,ind] = merge(f.^2);
+% Example:
+%     f = chebfun(@(x) abs(x),'splitting','on');
+%     [g,ind] = merge(f.^2);
 %
-%   See also SPLITTING, CHEBFUNPREF, SIMPLIFY.
+% See also SPLITTING, CHEBFUNPREF, SIMPLIFY.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

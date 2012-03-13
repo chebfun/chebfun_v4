@@ -1,13 +1,14 @@
 function Fout = mtimes(F1,F2)
-%*	  Chebfun multiplication.
+% *   Chebfun multiplication.
+%
 % c*F or F*c multiplies a chebfun F by a scalar c.
 %
 % F*G, if F is an m-by-Inf row chebfun and G is an Inf-by-n column chebfun, 
 % returns the m-by-n matrix of pairwise inner products. F and G must have
 % the same domain.
 %
-% A=F*G, if F is Inf-by-m and G is m-by-Inf, results in a rank-m linop A
-% such that A*U=F*(G*U) for any chebfun U. 
+% A = F*G, if F is Inf-by-m and G is m-by-Inf, results in a rank-m linop A
+% such that A*U = F*(G*U) for any chebfun U. 
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -87,7 +88,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         ends = [];
         for k=m, ends = union( ends , F1(k,:).ends ); end
         for k=n, ends = union( ends , F2(:,k).ends ); end
-        iends = ends(2:end-1)';
+        %iends = ends(2:end-1)';
         nfuns = length(ends) - 1;
         
         % Get the sizes in F1 and F2
@@ -181,15 +182,21 @@ elseif isa(F1,'chebfun')
         
         % Check for exponents
         hasexps = false;
-        for k=1:numel(F1), f = F1(:,k); for j=1:f.nfuns
-          hasexps = hasexps || any( f.funs(j).exps ~= 0 );
-        end; end
+        for k=1:numel(F1), 
+            f = F1(:,k); 
+            for j=1:f.nfuns
+                hasexps = hasexps || any( f.funs(j).exps ~= 0 );
+            end
+        end
 
         % Check for non-linear maps
         nonlinmap = false;
-        for k=1:numel(F1), f = F1(:,k); for j=1:f.nfuns
-          nonlinmap = nonlinmap || ~strcmp( f.funs(j).map.name , 'linear' );
-        end; end
+        for k=1:numel(F1), 
+            f = F1(:,k); 
+            for j=1:f.nfuns
+                nonlinmap = nonlinmap || ~strcmp( f.funs(j).map.name , 'linear' );
+            end
+        end
 
         % If the quasimatrix F1 has neither exponents nor non-linear maps,
         % it is discretized over a grid of Chebyshev nodes of the length
@@ -203,7 +210,7 @@ elseif isa(F1,'chebfun')
             % Get the set of breakpoints for all funs in F1
             ends = [];
             for k=1:n, ends = union( ends , F1(:,k).ends ); end
-            iends = ends(2:end-1)';
+            %iends = ends(2:end-1)';
             m = length(ends)-1;
             
             % Discretize all columns of F1

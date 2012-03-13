@@ -1,5 +1,6 @@
 function rts = roots(f,varargin)
 % ROOTS	  Roots of a chebfun.
+%
 % ROOTS(F) returns the roots of F in the interval where it is defined.
 %
 % ROOTS(F,'all') returns the roots of all the polynomials representing the

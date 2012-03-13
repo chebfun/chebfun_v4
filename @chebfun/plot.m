@@ -1,5 +1,6 @@
 function varargout = plot(varargin)
-% PLOT  Linear chebfun plot.
+% PLOT   Linear chebfun plot.
+%
 % PLOT(F,G) plot chebfun G versus chebfun F. Quasimatrices are also
 % supported in the natural way.
 %

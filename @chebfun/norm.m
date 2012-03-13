@@ -1,5 +1,6 @@
 function [normA, normLoc] = norm(A,n)
 % NORM   Chebfun or quasimatrix norm.
+%
 % For chebfuns:
 %    NORM(f) = sqrt(integral of abs(f)^2).
 %    NORM(f,2) is the same as NORM(f).
