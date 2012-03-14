@@ -47,7 +47,8 @@ A = randn(n); A = A+A'; B = randn(n); B = B+B';
 ek = @(e,k) e(k);            % returns kth element of the vector e
 eigA = @(A) sort(eig(A));    % returns sorted eigenvalues of the matrix A
 eigk = @(A,k) ek(eigA(A),k); % returns kth eigenvalue of the matrix A
-[d,t] = domain(0,1);
+d = domain(0,1);
+t = chebfun('t',d);
 E = chebfun; tic
 for k = 1:n
    E(:,k) = chebfun(@(t) eigk((1-t)*A+t*B,k),d,'splitting','off','vectorize');
