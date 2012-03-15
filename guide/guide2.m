@@ -12,6 +12,7 @@
 %%
 % Here is an example whose answer is known exactly:
   f = chebfun('log(1+tan(x))',[0 pi/4]);
+  format long
   I = sum(f)
   Iexact = pi*log(2)/8
 
@@ -291,8 +292,8 @@
 % More surprising is that integrating a derivative does the same, so long
 % as we add in the value at the left endpoint:
 
-  [left,right] = domain(f);
-  f2 = f(left) + cumsum(diff(f));
+  d = domain(f);
+  f2 = f(d(1)) + cumsum(diff(f));
   norm(f-f2)
 
 %%
@@ -453,6 +454,9 @@ toc
 %
 % [Gonnet 2009] P. Gonnet, Adaptive Quadrature Re-Revisited, ETH
 % dissertation no. 18347, Swiss Federal Institute of Technology, 2009.
+%
+% [Hale & Trefethen 2012] N. Hale and L. N. Trefethen,
+% Chebfun and numerical quadrature, Science in China, submitted, 2012.
 %
 % [Kahaner 1971] D. K. Kahaner, "Comparison of numerical quadrature
 % formulas", in J. R. Rice, ed., Mathematical Software, Academic Press,
