@@ -303,8 +303,7 @@ for k = 1:numel(str)
         if ~isempty(strk)
             init = [init eval(strk)];
         end
-    catch
-        ME = lasterror;
+    catch ME
         error('Chebgui:InitInput',ME.message)
     end
 end

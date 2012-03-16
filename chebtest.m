@@ -276,10 +276,10 @@ for j = 1:nr_tests
       %pause(0.1)
       %fprintf( repmat('\b',1,numchar) )
     end
-  catch
+  catch ME
     failed(j) = -1;
     fprintf('CRASHED: ')
-    msg = lasterror;
+    msg = ME;
     lf = findstr(sprintf('\n'),msg.message); 
     if ~isempty(lf), msg.message(1:lf(end))=[]; end
     fprintf([msg.message '\n'])

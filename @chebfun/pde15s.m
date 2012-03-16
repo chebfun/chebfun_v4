@@ -575,10 +575,9 @@ try
         end
     end
 
-catch % Fail gracefully.
-    err = lasterror;
-    err.stack = err.stack(1:end);
-    rethrow(err)
+catch ME % Fail gracefully.
+    ME.stack = ME.stack(1:end);
+    rethrow(ME)
 end
 
 if doplot && dohold && ~ish, hold off, end
@@ -916,7 +915,7 @@ while k < 4 && isempty(Nops)
         ops = opslist(1:k);
         infun(tmp,tmp2{:},ops{:});
         Nops = k;
-    catch % ME
+    catch ME
         %
     end
     k = k+1;

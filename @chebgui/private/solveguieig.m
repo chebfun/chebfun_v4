@@ -84,8 +84,7 @@ generalized = 1;
 N_LHS = chebop(d,LHS,BC);
 try
     A = linop(N_LHS);
-catch
-    ME = lasterror;
+catch ME
     MEID = ME.identifier;
     if guiMode && ~isempty(strfind(MEID,'linop:nonlinear')) 
         errordlg('Operator is not linear.', 'Chebgui error', 'modal');
@@ -101,8 +100,7 @@ if ~isempty(rhsString)
 
     try
         B = linop(N_RHS);
-    catch
-        ME = lasterror;
+    catch ME
         MEID = ME.identifier;
         if guiMode  && ~isempty(strfind(MEID,'linop:nonlinear')) 
             errordlg('Operator is not linear.', 'Chebgui error', 'modal');

@@ -18,11 +18,8 @@ function [newTree lambdaTree lambdaSign] = findLambda(treeIn,lambdaSign)
 newTree = treeIn;
 leftEmpty = 1; rightEmpty = 1;
 lambdaTree = []; lambdaTreeLeft = []; lambdaTreeRight = [];
-try
 treeCenter = treeIn.center;
-catch
-    keyboard
-end
+
 if isfield(treeIn,'left')
     [newLeft lambdaTreeLeft lambdaSign] = findLambda(treeIn.left,lambdaSign);
     newTree.left = newLeft;

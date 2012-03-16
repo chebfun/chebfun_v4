@@ -74,13 +74,12 @@ try
         error('CHEBTESTS:splittingtest:sqrt','SQRT')
     end
 
-catch
+catch ME
     
     if debug
-        err=lasterror;
         disp('catch')
         disp(x0)
-        disp(err.message)
+        disp(ME.message)
     end
     
 end

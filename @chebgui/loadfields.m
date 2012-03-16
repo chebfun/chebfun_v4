@@ -148,9 +148,7 @@ if ~isempty(guifile.init)
         if guifile.options.grid, grid on, end
         
         initSuccess = 1;
-    catch
-        ME = lasterror;
-        % Do nothing
+    catch ME
         initSuccess = 0;
     end
 else

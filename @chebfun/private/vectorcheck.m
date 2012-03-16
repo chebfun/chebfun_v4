@@ -42,9 +42,8 @@ try
             warning('CHEBFUN:vectorcheck:shapeauto',...
                 'Chebfun input should return a COLUMN array. Attempting to transpose.')
     end
-catch %ME
+catch ME
     warning(dbz_state); % Restore warnings
-    last = lasterror;
     try 
         % Perhaps it's a system?
         s = size(f(repmat({y(:)},1,1e4)));
@@ -59,7 +58,7 @@ catch %ME
             f = vec(f);
             vectorcheck(f,x,pref);
         else
-            rethrow(last)
+            rethrow(ME)
         end
     end
 end

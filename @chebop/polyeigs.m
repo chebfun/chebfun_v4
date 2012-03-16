@@ -53,9 +53,7 @@ while ~isempty(varin)
             A{k} = linop(varin{1});
             k = k+1;
             varin(1) = [];
-        catch %ME
-            % Failure: Chebop was nonlinear
-            ME = lasterror;
+        catch ME % Failure: Chebop was nonlinear
             if strcmp(ME.identifier,'CHEBOP:linop:nonlinear')
                 error('CHEBOP:eigs',['Chebop appears to be nonlinear. Currently, polyeigs only' ...
                     '\nhas support for linear chebops.']);

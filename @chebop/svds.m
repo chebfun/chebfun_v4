@@ -38,8 +38,7 @@ try
     if ~isempty(varargin) && isa(varargin{1},'chebop')
         varargin{1} = linop(varargin{1});
     end
-catch %ME
-    ME = lasterror;
+catch ME
     if strcmp(ME.identifier,'CHEBOP:linop:nonlinear')
         error('CHEBOP:svds',['Chebop appears to be nonlinear. Currently, svds only' ...
             '\nhas support for linear chebops.']);

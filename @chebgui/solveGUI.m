@@ -93,8 +93,7 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
             handles = solveguieig(guifile,handles);            
         end
         handles.hasSolution = 1;
-    catch
-        ME = lasterror;
+    catch ME
         MEID = ME.identifier;
         if strcmp(MEID,'LINOP:mldivide:NoConverge')
             errordlg([cleanErrorMsg(ME.message),' See "help cheboppref" for details ',...

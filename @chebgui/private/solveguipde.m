@@ -290,8 +290,7 @@ end
 
 try
     [t u] = pde15s(DE,tt,u0,bc,opts);
-catch
-    ME = lasterror;
+catch ME
     errordlg('Error in solution process.', 'chebopbvp error', 'modal');
     return
 end
