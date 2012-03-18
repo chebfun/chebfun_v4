@@ -36,10 +36,14 @@ else
         if ~isempty(strfind(MEID,'Chebgui:'))
             % These are expected GUI errors. We only show the dialog
             errordlg(cleanErrorMsg(ME.message), 'Chebgui error', 'modal');
+            uiwait
+            resetComponents(varargin{4});
         else
             % Show an error dialog, but also throw the error to the command
             % window
             errordlg(cleanErrorMsg(ME.message), 'Chebgui error', 'modal');
+            uiwait
+            resetComponents(varargin{4});
             rethrow(ME)
         end
     end
@@ -1587,3 +1591,14 @@ for k = 1:numel(folders)
     end
 end
 fprintf('TOTAL TIME = %4.4f.\n',T);
+
+function resetComponents(handles)
+% Enable buttons, figures, etc. Set button to 'solve' again
+set(handles.button_solve,'String','Solve');
+set(handles.button_solve,'BackgroundColor',[43 129 86]/256);
+set(handles.button_clear,'String','Clear all');
+set(handles.button_clear,'BackgroundColor',get(handles.button_export,'BackgroundColor'));
+set(handles.button_figsol,'Enable','on');
+set(handles.button_fignorm,'Enable','on');
+set(handles.button_exportsoln,'Enable','off');
+set(handles.menu_demos,'Enable','on');

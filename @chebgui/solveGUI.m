@@ -6,19 +6,13 @@ function handles = solveGUI(guifile,handles)
 
 % Check whether some input is missing
 if isempty(guifile.domain)
-    errordlg('The domain must be defined.', 'Chebgui error', 'modal');
-    resetComponents(handles);
-    return
+    error('Chebgui:EmptyDomain','The domain must be defined.');
 end
 if isempty(guifile.DE)
-    errordlg('The differential equation and its right-hand side can not be empty.', 'Chebgui error', 'modal');
-    resetComponents(handles);
-    return
+    error('Chebgui:EmptyDE','The differential equation can not be empty.');
 end
 if isempty(guifile.LBC) && isempty(guifile.RBC) && isempty(guifile.BC)
-    errordlg('Boundary conditions must be defined.', 'Chebgui error', 'modal');
-    resetComponents(handles);
-    return
+    error('Chebgui:EmptyBC','Boundary conditions must be defined.');
 end
 
 if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
@@ -27,30 +21,22 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
     dom = guifile.domain;
     a = dom(1); b = dom(end);
     if b <= a
-        s = sprintf('Error in constructing domain. %s is not valid.',dom);
-        errordlg(s, 'Chebgui error', 'modal');
-        return
+        error('Chebgui:IncorrectDomain','Error in constructing domain. %s is not valid.',dom);
     end
     tol = guifile.tol;
     if ~isempty(tol)
         tolnum = str2num(tol);
         if isnan(tolnum) || isinf(tolnum) || isempty(tolnum)
-            s = sprintf('Invalid tolerance, ''%s''.',tol);
-            errordlg(s, 'Chebgui error', 'modal');
-            return
+            error('Chebgui:InvalidTolerance','Invalid tolerance, ''%s''.',tol);
         end
     end   
     if strcmpi(guifile.type,'pde');
         tt = str2num(guifile.timedomain);
         if isempty(tt)
-            s = sprintf('Error in constructing time interval.');
-            errordlg(s, 'Chebgui error', 'modal');
-            return
+            error('Chebgui:IncorrectTimeInterval','Error in constructing time interval.');
         end
         if isempty(guifile.init)
-            s = sprintf('Initial condition is empty.');
-            errordlg(s, 'Chebgui error', 'modal');
-            return
+            error('Chebgui:EmptyInitialCondition','Initial condition is empty.');
         end
         if str2num(tol) < 1e-6
             tolchk = questdlg('WARNING: PDE solves in chebgui are limited to a tolerance of 1e-6', ...
@@ -94,22 +80,25 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         end
         handles.hasSolution = 1;
     catch ME
-        MEID = ME.identifier;
+%         rethrow(ME);
+         MEID = ME.identifier;
         if strcmp(MEID,'LINOP:mldivide:NoConverge')
-            errordlg([cleanErrorMsg(ME.message),' See "help cheboppref" for details ',...
-                'how to increase number of points.'],'Chebgui error', 'modal');
+            error('Chebgui:LINOP:mldivide:NoConverge', ...
+                [cleanErrorMsg(ME.message),' See "help cheboppref" for details ',...
+                'how to increase number of points.']);
         elseif ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:')) ...
                 ||~isempty(strfind(MEID,'Lexer:')) || ~isempty(strfind(MEID,'Chebgui:'))
-            errordlg(cleanErrorMsg(ME.message), 'Chebgui error', 'modal');
+            error(['Chebgui:',MEID], cleanErrorMsg(ME.message));
         elseif strcmp(MEID,'CHEBOP:solve:findguess:DivisionByZeroChebfun')
-            errordlg(['Error in constructing initial guess. The the zero '...
+             error(['Chebgui:',MEID],['Error in constructing initial guess. The zero '...
                 'function on the domain is not a permitted initial guess '...
                 'as it causes division by zero. Please assign an initial '...
-                'guess using the initial guess field.'], 'Chebgui error', 'modal');
+                'guess using the initial guess field.']);
         else
-            resetComponents(handles);
-            rethrow(ME);
+%             resetComponents(handles);
             handles.hasSolution = 0;
+            rethrow(ME);
+            
         end
     end
     resetComponents(handles);
