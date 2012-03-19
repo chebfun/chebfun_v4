@@ -1,8 +1,12 @@
-function gout = compfun(g1,op,g2,pref)
-% GOUT = COMPFUN(G1,OP,G2)
-% Fun composition: GOUT = OP(G1) or GOUT = OG(G1,G2)
-% Here GOUT, G1, and G2 are funs, and OP is a function handle.
-% This function is called at the chebfun level (CHEBFUN/PRIVATE/COMP.M)
+function [gout flag] = compfun(g1,op,g2,pref)
+%COMPFUN  Compostition of two funs
+% GOUT = COMPFUN(G1,OP,G2) returns GOUT = OP(G1) or GOUT = OG(G1,G2) where
+% GOUT, G1, and G2 are funs, and OP is a function handle. This function is
+% called at the chebfun level (CHEBFUN/PRIVATE/COMP.M)
+%
+% [GOUT FLAG] = COMPFUN(G1,OP,G2) prevents a warning from being thrown if
+% the composition fails to converge.
+%
 % See also FUN/PRIVATE/GROWFUN.M
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
@@ -14,6 +18,8 @@ if nargin > 2 && isstruct(g2)
 elseif nargin < 4
     pref = chebfunpref;
 end
+
+flag = [];
 
 if nargin > 2 && ~isempty(g2)
     if ~samemap(g1,g2) || any(g1.exps) || any(g2.exps)

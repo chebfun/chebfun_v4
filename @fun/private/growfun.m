@@ -87,7 +87,7 @@ if kk(end)~=maxn, kk(end+1) = maxn; end
 % Composition case: gout = op(g), or gout = op(g1,g2). (see FUN/COMPFUN.M)
 if nargin > 3
     % This uses chebpts of 2nd kind!
-    ish = false;
+    g.ish = false;
     pref.sampletest = false;
     if ~resample % Single Sampling
         v = []; ind = 1;

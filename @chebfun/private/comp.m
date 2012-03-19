@@ -78,15 +78,15 @@ for k = 1:f1.nfuns
     if ~skip
         % Attaempt to generate funs using the fun constructor.
         if isempty(f2)
-            newfun = compfun(f1.funs(k),op,pref);
+            [newfun ignored] = compfun(f1.funs(k),op,pref);
         else
-            newfun = compfun(f1.funs(k),op,f2.funs(k),pref);
+            [newfun ignored] = compfun(f1.funs(k),op,f2.funs(k),pref);
         end
         ish = get(newfun,'ish');
     else
         ish = 0;
     end
-
+    
     if ish || (~ish && ~pref.splitting && ~pref.blowup) 
     % If we're happy, or not allowed to split, this will do.
        if ~ish
