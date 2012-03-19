@@ -1,4 +1,4 @@
-%% Absolute value approximates by rationals
+%% Absolute value approximations by rationals
 % Nick Trefethen, May 2011
 
 %%
@@ -35,7 +35,7 @@ for k = 0:5
 end
 
 %%
-% The curves look nice but the exponentially growing chebfun lengths do not.
+% The curves look nice, but the exponentially growing chebfun lengths do not.
 % To improve this, we can put a breakpoint at x=0:
 x = chebfun('x',[-1 0 1]);
 r = chebfun('1',[-1 0 1]);
@@ -94,7 +94,7 @@ title('Error',FS,fs)
 % References:
 %
 % [1] D. J. Newman, Rational approximation of abs(x), Michigan Mathematical
-% Journal ?? (1964), 11-14.
+% Journal 11 (1964), 11-14.
 %
 % [2] L. N. Trefethen, Approximation Theory and Approximation Practice,
 % draft book available at http://www.maths.ox.ac.uk/chebfun/ATAP/.

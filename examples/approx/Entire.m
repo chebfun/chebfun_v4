@@ -1,4 +1,4 @@
-%% Chebyshev Interpolation of Oscillatory Entire Functions
+%% Chebyshev interpolation of oscillatory entire functions
 % Mark Richardson, 4th October 2011
 %
 %%
@@ -11,8 +11,7 @@ MS = 'MarkerSize'; ms = 14;
 % interpolation for entire functions; that is, functions that are analytic 
 % everywhere in the complex plane.
 
-%% 1. ANALYTIC FUNCTIONS
-% 
+%% 1. Analytic functions
 % In the following discussion, it will be helpful to utilise the notion of 
 % an r-ellipse, which we define as the image of a circle of radius r > 1
 % in the complex x-plane under the mapping x = (z + 1/z) / 2. 
@@ -48,7 +47,7 @@ hold off, axis equal, box on
 % Choosing an n larger than this will ensure that the interpolant is 
 % of accuracy e. 
 %
-%% 2. OSCILLATORY ENTIRE FUNCTIONS
+%% 2. Oscillatory entire functions
 %
 % When the function f is entire, then one may expect the convergence to be 
 % even better than geometric, and this is indeed the case. Consider for 

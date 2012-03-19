@@ -6,9 +6,10 @@
 
 %%
 % The smoother a function, the faster its approximants converge. Usually
-% numerical examples only consider functions which are k differentiable for some
-% integer k. Here we look at some different examples when using polynomial interpolants
-% at the Chebyshev points of the second kind called Chebyshev interpolants.
+% numerical examples only consider functions which are k times
+% differentiable for some integer k. Here we look at some different
+% examples when using polynomial interpolants at the Chebyshev points of
+% the second kind called Chebyshev interpolants.
 
 
 %% Fractional Example
@@ -33,7 +34,7 @@ title('Convergence for fractional differentiable function',FS,16);
 % explaining the convergence rate. 
 
 %% A Trigonometric Example
-% Next we swap the function abs(x)^pi for the function sin(abs(x)^5.5)
+% Next we replace the function abs(x)^pi by the function sin(abs(x)^5.5)
 
 f=sin(abs(x).^5.5);
 for j=1:length(nn)

@@ -6,27 +6,27 @@
 
 %%
 % One of the most frequently used computations in Chebfun is the one-to-one
-% operation of converting function values at Chebyshev points to Chebyshev 
-% expansion coefficients. This operation is achieved by the CHEBPOLY 
-% command. The inverse operation of mapping Chebyshev coefficients to 
-% function values is computed with CHEBPOLYVAL. In each case, the FFT 
-% (or IFFT) is used. Thus, the conversion process is very fast, 
-% exhibiting O(nlogn) complexity. 
+% operation of converting function values at Chebyshev points to Chebyshev
+% expansion coefficients. This operation is achieved by the CHEBPOLY
+% command. The inverse operation of mapping Chebyshev coefficients to
+% function values is computed with CHEBPOLYVAL. In each case, the FFT (or
+% IFFT) is used. Thus, the conversion process is very fast, with O(nlogn)
+% complexity.
 %
 % This transformation is so fundamental to Chebfun that it is useful to 
 % understand where it comes from. In order to do so, we consider an example 
 % computation.
 %%
-% Suppose that we have some function values at Chebyshev points, and that
-% we wish to compute the corresponding coeffcients of the truncated
-% Chebyshev series. Let's pick a sample Chebfun to work with.
+% Suppose that we have some function values at Chebyshev points, and we
+% wish to compute the corresponding coeffcients of the truncated Chebyshev
+% series. Let's pick a sample Chebfun to work with.
 fc = chebfun('exp(x).*sin(pi*x) + x'); n = length(fc) - 1;
 %%
 % Chebfuns are defined by the values taken at Chebyshev points. We can
 % access this data by looking in the 'vals' field.
 fvals = fc.vals; 
 %% 
-% We can plot the Chebfun and its values at Chebsyhev points with
+% We can plot the chebfun and its values at Chebsyhev points with the
 % following code, noting that this is equivalent to the command
 % PLOT(FC,'.-').
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize'; ms = 14; lw = 0.7;
@@ -75,7 +75,7 @@ valsUnitDisc = [flipud(fvals) ; fvals(2:end-1)];
 % Next, we take the FFT of the values to give Fourier/Laurent coeffcients.
 % Note that in general, we expect the Chebyshev coefficients to be 
 % real-valued. Accordingly, we take the real part of this vector in order 
-% to ameliorate the effect of any spurious imaginary components that may 
+% to eliminate any spurious imaginary components that may 
 % have appeared due to rounding errors.
 FourierCoeffs = real(fft(valsUnitDisc));
 %% 
@@ -99,9 +99,9 @@ display([chebpoly(fc)' ChebCoeffs chebpoly(fc)'-ChebCoeffs])
 % References:
 %
 % [1] Z. Battles and L. N. Trefethen, An extension of Matlab to continuous 
-%       functions and operators, SIAM J. Sci. Comp., 2004.
+%       functions and operators, SIAM J. Sci. Comp. 25 (2004), 1743-1770.
 %
-% [2] L.N. Trefethen, Spectral methods in Matlab, SIAM 2000.
+% [2] L.N. Trefethen, Spectral methods in Matlab, SIAM, 2000.
 %
 % [3] L.N. Trefethen, Approximation Theory and Approximation Practice.
 %       http://www.maths.ox.ac.uk/chebfun/ATAP/
