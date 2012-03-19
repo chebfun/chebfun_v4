@@ -10,6 +10,7 @@ set(handles.input_DE,'String','');
 set(handles.input_DE,'String','');
 set(handles.input_LBC,'String','');
 set(handles.input_RBC,'String','');
+set(handles.input_BC,'String','');
 set(handles.input_GUESS,'String','');
 set(handles.menu_tolerance,'UserData','1e-10'); % The default tolerance
 

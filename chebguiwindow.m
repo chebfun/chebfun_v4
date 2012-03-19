@@ -241,7 +241,11 @@ in = get(hObject,'String');
 input = str2num(in);
 % Checks to see if input is not numeric or empty. If so, default left end
 % of the domain is taken to be -1.
-if isempty(input) || any(isnan(input)) || length(input)<2
+if input(1) >= input(end)
+    warndlg('Empty domain. Default value [-1,1] used.')
+    in = '[-1,1]';
+    set(hObject,'String',in);
+elseif isempty(input) || any(isnan(input)) || length(input)<2
     warndlg('Domain unrecognized. Default value [-1,1] used.')
     in = '[-1,1]';
     set(hObject,'String',in);
@@ -414,8 +418,20 @@ function input_timedomain_Callback(hObject, eventdata, handles)
 str = get(hObject,'String');
 if iscell(str), str = str{:}; end
 num = str2num(str);
+
 options.WindowStyle = 'modal';
-while ~isempty(str) && numel(num) < 3;
+
+% Indicates we had timedomain with negative spacing (0:-.1:1)
+while isempty(num) 
+    str = inputdlg('Time domain should be a vector of length >2, with positive spacing, at which times solution is returned','Set time domain',...
+        1,{'0:.1:1'},options);
+    if isempty(str), str = ''; break, end
+    str = str{:};
+    num = str2num(str);
+    
+end
+
+while (~isempty(str) && numel(num) < 3)
     h = (num(2)-num(1))/20;
     def = sprintf('%s:%s:%s',num2str(num(1),'%0.0f'),num2str(h,'%0.2g'),num2str(num(2),'%0.0f'));
     str = inputdlg('Time domain should be a vector of length >2 at which times solution is returned','Set time domain',...
