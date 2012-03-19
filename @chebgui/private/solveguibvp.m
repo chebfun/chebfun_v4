@@ -1,7 +1,7 @@
 function varargout = solveguibvp(guifile,handles)
 % SOLVEGUIBVP
 
-% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Create a domain and the linear function on that domain. We use xt for the
@@ -38,9 +38,13 @@ if isa(initInput,'char'), initInput = cellstr(initInput); end
 [deString allVarString indVarNameDE ignored ignored ignored allVarNames] = setupFields(guifile,deInput,'DE');
 handles.varnames = allVarNames;
 
+% If we only have one variable appearing in allVarNames, the problem is a
+% scalar problem.
+scalarProblem = length(allVarNames) == 1;
+
 if ~isempty(bcInput{1})
     bcString = setupFields(guifile,bcInput,'BCnew',allVarString);
-%     BC = eval(bcString);
+    %     BC = eval(bcString);
 else
     bcString = '';
     BC = [];
@@ -59,7 +63,19 @@ end
 
 % Obtain the independent variable name appearing in the initial condition
 if ~isempty(initInput{1}) && isempty(guess)
-    [initString ignored indVarNameInit] = setupFields(guifile,initInput,'BC',allVarString);
+    % If we have a scalar problem, we're OK with no dependent variables
+    % appearing in the initial guess
+    if scalarProblem
+        [initString ignored indVarNameInit] = setupFields(guifile,initInput,'INITSCALAR',allVarString);
+        % If the initial guess was just passed a constant, indVarNameInit will
+        % be empty. For consistency (allowing us to do the if-statement below),
+        % convert to an empty cell.
+        if isempty(indVarNameInit)
+            indVarNameInit = {''};
+        end       
+    else
+        [initString ignored indVarNameInit] = setupFields(guifile,initInput,'INIT',allVarString);        
+    end
 else
     indVarNameInit = {''};
 end
@@ -109,14 +125,30 @@ if ~isempty(initInput{1}) && isempty(guess)
             guesses = [guesses;{currGuess}];
         end
         
-        guess = chebfun;
-        for guessCounter = 1:length(guesses)
-            guessLoc = find(order == guessCounter);
-            tempGuess = eval(vectorize(guesses{guessLoc}));
-            if isnumeric(tempGuess)
-                tempGuess = 0*xt+tempGuess;
+        % If order is still empty, that means that initial guess were
+        % passed on the form '2*x', rather than 'u = 2*x'. Allow that for
+        % scalar problems, throw an error otherwise.
+        if isempty(order) && scalarProblem
+            guess = eval(vectorize(initInput{1}));
+            % If we have a scalar guess, convert to a chebfun
+            if isnumeric(guess)
+                guess = 0*xt+guess;
             end
-            guess = [guess, tempGuess];
+        elseif length(order) == length(guesses)
+            % We have a guess to match every dependent variable in the
+            % problem.
+            guess = chebfun;
+            for guessCounter = 1:length(guesses)
+                guessLoc = find(order == guessCounter);
+                tempGuess = eval(vectorize(guesses{guessLoc}));
+                if isnumeric(tempGuess)
+                    tempGuess = 0*xt+tempGuess;
+                end
+                guess = [guess, tempGuess];
+            end
+        else % throw an error
+            error('Chebgui:InitialGuess',['Error constructing initial guess.',...
+                ' Please make sure guesses are of the form u = 2*x, v = sin(x), ...']);
         end
     else
         guessInput = vectorize(initInput);
@@ -129,7 +161,7 @@ end
 
 % Create the chebop
 if ~isempty(guess)
-    N = chebop(d,DE,BC,guess);   
+    N = chebop(d,DE,BC,guess);
 else
     N = chebop(d,DE,BC);
 end
@@ -214,7 +246,7 @@ if guiMode
     % Notify the GUI we have a solution available
     handles.hasSolution = 1;
     
-    axes(handles.fig_sol) 
+    axes(handles.fig_sol)
     plot(u,'Linewidth',2)
     % Do different things depending on whether the solution is real or not
     if isreal(u)

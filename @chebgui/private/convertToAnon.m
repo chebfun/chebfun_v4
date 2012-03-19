@@ -1,4 +1,4 @@
-function varargout = convertToAnon(guifile,str)
+function varargout = convertToAnon(guifile,str,type)
 % CONVERTTOANON Converts a string on 'natural syntax form' to an anonymous
 % function Matlab can work with.
 
@@ -13,18 +13,31 @@ if verLessThan('matlab','7.5')
     clear functions
 end
 
+if nargin <3
+    type = [];
+end
+
 % Put the original string through the lexer
 [lexOut varNames pdeVarNames eigVarNames indVarNames] = lexer(guifile,str);
 
-% Make sure we have enough variables!
-if isempty(varNames)
+% Make sure we have enough variables! If parsing the initial guess, and we
+% have a scalar problem, we allow that the dependent variable doesn't
+% appear.
+if isempty(varNames) && ~strcmp(type,'INITSCALAR')
     if numel(indVarNames) > 1 && ~isempty(indVarNames{2})
         str = sprintf('Variables ''%s'' and ''%s'' ', indVarNames{1:2});
     else
         str = sprintf('Variable ''%s'' ', indVarNames{1});
     end
-    error('Chebgui:chebgui:depvars',...
-        ['No dependent variables detected. ' str 'treated as independent.']);
+    % Throw an informative error message, depending on whether we're
+    % setting up a DE/BCs or an initial guess for a system.
+    if ~strcmp(type,'INIT')
+        error('Chebgui:chebgui:depvars',...
+            ['No dependent variables detected. ' str 'treated as independent.']);
+    else
+        error('Chebgui:chebgui:depvars',...
+            ['No dependent variables detected in the initial field. Input must be of the form "u = x, v = 2*x,...']);
+    end
 end 
 % Check whether we have something like u" = u_t+v_t which we don't allow
 if length(pdeVarNames) > 1
@@ -102,13 +115,16 @@ for k = numel(varNames):-1:1
     end
 end 
  
-% Convert the cell array varNames into one string
-varString = varNames{1};
-for varCounter = 2:length(varNames)
-    varString = [varString,',',varNames{varCounter}];
+% Convert the cell array varNames into one string. Not required when we're
+% working with the initial guess of scalar problems. If varNames is empty
+% for other kind of problems, an error would already have been thrown.
+if isempty(varNames) && ~strcmp(type,'INITSCALAR')
+    varString = varNames{1};
+    for varCounter = 2:length(varNames)
+        varString = [varString,',',varNames{varCounter}];
+    end
+    anFunComplete = ['@(', varString ') ' anFun];
 end
-anFunComplete = ['@(', varString ') ' anFun];
-
 % Also return the lambda part if we are in EIG mode
 if strcmp(guifile.type,'eig') && ~isempty(anFunLambda)
     anFunLambdaComplete = ['@(', varString ') ' anFunLambda];

@@ -59,9 +59,24 @@ if ~any(pdeflag)
 end
 idx = strfind(deString, ')');
 
+scalarProblem = length(allVarNames) == 1;
+
+% Obtain the independent variable name appearing in the initial condition
 % Obtain the independent variable name appearing in the initial condition
 if ~isempty(initInput{1})
-    [initString ignored indVarNameInit] = setupFields(guifile,initInput,'BC',allVarString);
+    % If we have a scalar problem, we're OK with no dependent variables
+    % appearing in the initial guess
+    if scalarProblem
+        [initString ignored indVarNameInit] = setupFields(guifile,initInput,'INITSCALAR',allVarString);
+        % If the initial guess was just passed a constant, indVarNameInit will
+        % be empty. For consistency (allowing us to do the if-statement below),
+        % convert to an empty cell.
+        if isempty(indVarNameInit)
+            indVarNameInit = {''};
+        end       
+    else
+        [initString ignored indVarNameInit] = setupFields(guifile,initInput,'INIT',allVarString);        
+    end
 else
     indVarNameInit = {''};
 end
@@ -207,13 +222,20 @@ if iscellstr(initInput)
     end
     
     u0 = chebfun; lenu0 = 0;
-    for k = 1:length(inits)
-        initLoc = find(order == k);
-        init_k = vectorize(inits{initLoc});
-        u0k = chebfun(init_k,dom);
-        u0k = simplify(u0k,tol);
-        u0(:,k) =  u0k;
-        lenu0 = max(lenu0,length(u0k));
+    
+    if isempty(order) && scalarProblem
+        u0 = chebfun(vectorize(initInput{1}),dom);
+        u0 = simplify(u0,tol);
+        lenu0 = length(u0);
+    else
+        for k = 1:length(inits)
+            initLoc = find(order == k);
+            init_k = vectorize(inits{initLoc});
+            u0k = chebfun(init_k,dom);
+            u0k = simplify(u0k,tol);
+            u0(:,k) =  u0k;
+            lenu0 = max(lenu0,length(u0k));
+        end
     end
 else
     initInput = vectorize(initInput);

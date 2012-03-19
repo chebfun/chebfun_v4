@@ -178,7 +178,7 @@ if ~isempty(strfind(input,'@')) % User supplied anon. function
     firstRPloc = strfind(input,')');
     trimmedInput = input(firstRPloc+1:end);
     
-    [field indVarName varNames pdeVarNames eigVarNames commaSeparated] = convertToAnon(guifile,trimmedInput);
+    [field indVarName varNames pdeVarNames eigVarNames commaSeparated] = convertToAnon(guifile,trimmedInput,type);
     
     return
 elseif any(strcmp(type,{'BC','BCnew'}))        % Allow more types of syntax for BCs
@@ -205,9 +205,10 @@ elseif any(strcmp(type,{'BC','BCnew'}))        % Allow more types of syntax for 
     end
 end
 
-if strcmp(type,'DE') || convertBCtoAnon   % Convert to anon. function string
-        [field indVarName varNames pdeVarNames eigVarNames commaSeparated] = convertToAnon(guifile,input);
+if any(strcmp(type,{'DE','INIT','INITSCALAR'})) || convertBCtoAnon   % Convert to anon. function string
+        [field indVarName varNames pdeVarNames eigVarNames commaSeparated] = convertToAnon(guifile,input,type);
 end
+    
 
 % Modified strcmp, if we compare with an empty string, give a match
 function res =  mystrcmp(str1,str2)

@@ -289,6 +289,9 @@ end
 
 loadVariables(handles.importedVar)
 
+
+guidata(hObject, handles);
+
 xtTemp = chebfun('x',str2num(handles.guifile.domain));
 % handles.init
 if ~exist('r','var'), r = xtTemp; end
@@ -305,7 +308,8 @@ for k = 1:numel(str)
     elseif numel(equalSigns) == 1
         strk = strk(equalSigns+1:end);
     elseif numel(str) > 1
-        error('Chebgui:InitInput','Input must be of form "u = %s"',strk)
+        error('Chebgui:InitInput',...
+            'Error constructing initial guess. Input must include the names of the dependent variables, i.e. be on the form "u = %s",...',strk)
     end
         
     strk = deblank(vectorize(strk));
