@@ -31,7 +31,8 @@ x = chebfun('x',[0 inf]);
 % Next we approximate the density function.
 f = 2*exp(-2*x); 
 figure('Position',[100 200 520 180])
-plot(f), grid on
+LW = 'linewidth'; lw = 1.6;
+plot(f,LW,lw), grid on
 ylim([-0.2 2.2])
 xlabel('x'), ylabel('f(x)','rotation',0)
 %%
@@ -42,7 +43,7 @@ sum(f)
 % The expectation of a continuous random variable is defined as the 
 % integral over x = -inf...inf of the function xf(x). 
 xf = x.*f;
-plot(xf), grid on
+plot(xf,LW,lw), grid on
 ylim([-0.05 0.4])
 xlabel('x'), ylabel(sprintf('x f(x)\n'),'rotation',0)
 %%
@@ -50,12 +51,12 @@ xlabel('x'), ylabel(sprintf('x f(x)\n'),'rotation',0)
 % (hopefully we can get rid of the restrict command at some point!). The
 % correct answer in this case is 1/2.
 sum(xf{0,20})
-sum(xf)
+
 %%
 % b) For E(X^2), the answer is again 1/2 and we compute this in exactly the 
 % same way as before.
 xxf = x.^2.*f;
-plot(xxf), grid on
+plot(xxf,LW,lw), grid on
 ylim([-0.03 0.31])
 xlabel('x'), ylabel('x^2 f(x)','rotation',0)
 %%
@@ -72,7 +73,7 @@ sum(xxf{0,20})
 % First, we define an appropriate Chebfun variable and the p.d.f.
 x = chebfun('x',[0 3]);
 g = 4*x.*(9-x.^2)/81;
-plot(g), grid on
+plot(g,LW,lw), grid on
 ylim([-0.01 0.61])
 xlabel('x'), ylabel('g(x)','rotation',0)
 %%
@@ -86,7 +87,7 @@ mean = sum(x.*g)
 % which is simply the indefinite integral of the probability density. This 
 % can be computed with the chebfun command CUMSUM.
 G = cumsum(g);
-plot(G), grid on
+plot(G,LW,lw), grid on
 xlabel('x'), ylabel(sprintf('G(x)\n'),'rotation',0)
 %%
 % Note again that as we would expect for any p.d.f., the integral is 1. In 
@@ -105,10 +106,10 @@ display(mode)
 mode_exact = sqrt(3)
 %%
 % Here is a graph showing the three computed values:
-plot(g), grid on, hold on
-plot([mean mean],[0 g(mean)],'-r')
-plot([median median],[0 g(median)],'-m')
-plot([mode mode],[0 g(mode)],'-k')
+plot(g,LW,lw), grid on, hold on
+plot([mean mean],[0 g(mean)],'-r',LW,lw)
+plot([median median],[0 g(median)],'-m',LW,lw)
+plot([mode mode],[0 g(mode)],'-k',LW,lw)
 text(0.2,0.55,sprintf('mean   = %1.2f',mean),'color','r')
 text(1.2,0.55,sprintf('median = %1.2f',median),'color','m')
 text(2.2,0.55,sprintf('mode   = %1.2f',mode),'color','k')

@@ -5,15 +5,16 @@
 % (Chebfun example approx/GammaFun.m)
 
 %%
-% This script displays some of the features introduced in version 3 for unbounded 
-% functions by demonstrating with the gamma function on the interval [-4 4].
+% This script displays some of the features introduced in version 3 for
+% unbounded functions by demonstrating with the gamma function on the
+% interval [-4 4].
 
 %%
 % The gamma function on [-4 4] has simple poles at the negative integers
-% and zero. Chebfun can determine the locations and orders of these
-% poles if it is called with the 'blowup' and 'splitting' flags on.
-% The 'exponents' field of the output indicates that each pole is simple,
-% that is, it has a singularity of type x^(-1).
+% and zero. Chebfun can determine the locations and orders of these poles
+% if it is called with the 'blowup' and 'splitting' flags on. The
+% 'exponents' field of the output indicates that each pole is simple, that
+% is, it has a singularity of type x^(-1).
 
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
 gam = chebfun('gamma(x)',[-4 4],'blowup','on','splitting','on')
@@ -31,7 +32,8 @@ gam_i = 1./gam;
 %%
 % (2) Compute the square root of abs(gamma)
 
-sqrtgam = real(sqrt(abs(gam)))
+absgam = abs(gam);
+sqrtgam = real(sqrt(absgam));
 
 %%
 % (3) Plot these functions

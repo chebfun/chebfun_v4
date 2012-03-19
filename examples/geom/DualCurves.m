@@ -6,11 +6,11 @@
 
 function DualCurves
 %%
-% In geometry many statements have an equally valid dual statement. For
-% example, "Two non-parallel lines intersect at exactly one point" is dual
-% to "Two distinct points are joined by exactly one line" and "Three points
-% lie on a line iff they are collinear" is dual to "Three lines meet at a
-% point iff they are concurrent".
+% In geometry many statements have an equally valid dual statement [1,2].
+% For example, "Two non-parallel lines intersect at exactly one point" is
+% dual to "Two distinct points are joined by exactly one line" and "Three
+% points lie on a line iff they are collinear" is dual to "Three lines meet
+% at a point iff they are concurrent".
 
 %%
 % The dual of a point is a line: the point (a,b) is the dual to the line
@@ -51,8 +51,7 @@ plot(x+1i*y), hold on, axis equal, plot(DualOfCurve(x+1i*y),'r');
 title('A curve and its dual',FS,16)
  
 %%
-% For completeness, here are the functions which were used to compute the
-% duals:
+% Here are the functions which were used to compute the duals:
 
     function g = DualOfPolygon(v)
         %DUALOFPOLYGON(V), computes dual polygon. v is array of complex-valued
@@ -86,5 +85,12 @@ title('A curve and its dual',FS,16)
            q = diff(rl)./(diff(im).*rl-im.*diff(rl));
            g = p+1i*q;   
     end
+
+%%
+% References
+%
+% [1] Wikipedia, "Dual curve", http://en.wikipedia.org/wiki/Dual_curve
+%
+% [2] Wikipedia, "Dual polygon", http://en.wikipedia.org/wiki/Dual_polygon
 
 end

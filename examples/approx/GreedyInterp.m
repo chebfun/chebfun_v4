@@ -1,28 +1,27 @@
-%% A Greedy Algorithm for Choosing Interpolation Points
+%% A greedy algorithm for choosing interpolation points
 % Nick Trefethen, 27 November 2011
 
 %%
 % (Chebfun example approx/GreedyInterp.m)
 
 %%
-% In the theory of polynomial interpolation, an important issue
-% is the distribution of the interpolation points.  Points that
-% cluster near the boundary, like Chebyshev points,
-% are usually much better than equispaced points.
+% In the theory of polynomial interpolation, an important issue is the
+% distribution of the interpolation points.  Points that cluster near the
+% boundary, such as Chebyshev points, are usually much better than
+% equispaced points.
 
 %%
-% Suppose we don't know any of the theory and just let an algorithm
-% pick effective points on the fly.  Specifically, suppose f is a 
-% continuous function on [-1,1]. We could take the first interpolation
-% point x0 to be a point where
-% f achieves its maximum absolute value, and compute the corresponding
-% interpolant p0 of degree 0.  Then we could take the second interpolation
-% point x1 to be a point where f-p0 achieves its maximum absolute value.
-% And so on.
+% Suppose we don't know any of the theory and just let an algorithm pick
+% effective points on the fly.  Specifically, suppose f is a continuous
+% function on [-1,1]. We could take the first interpolation point x0 to be
+% a point where f achieves its maximum absolute value and compute the
+% corresponding interpolant p0 of degree 0.  Then we could take the second
+% interpolation point x1 to be a point where f-p0 achieves its maximum
+% absolute value. And so on.
 
 %%
-% Using Chebfun's interp1 command, it is easy to try out this idea.
-% An interesting choice for f is the absolute value:
+% Using Chebfun's interp1 command, it is easy to try out this idea. An
+% interesting choice for f is the absolute value:
 x = chebfun('x');
 f = abs(x);
 

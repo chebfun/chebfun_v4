@@ -5,15 +5,13 @@
 % (Chebfun example approx/LebesgueConst.m)
 
 %%
-% Lebesgue constants are a standard notion of approximation
-% theory.  Suppose we have n+1 points xj in an
-% interval [a,b] with associated data values fj with abs(fj)<=1,
-% and we interpolate this data by a polynomial p(x) of degree n.
-% What's the maximum possible value of abs(p(x)) at each point x?
-% This function of x is called the Lebesgue function for the
-% given grid.  The Lebesgue constant is the
-% the maximum of L(x) over the interval.
-% Equivalently, it is the infinity-norm of the linear operator
+% Lebesgue constants are a standard notion of approximation theory.
+% Suppose we have n+1 points xj in an interval [a,b] with associated data
+% values fj with abs(fj)<=1, and we interpolate this data by a polynomial
+% p(x) of degree n. What's the maximum possible value of abs(p(x)) at each
+% point x? This function of x is called the Lebesgue function for the given
+% grid.  The Lebesgue constant is the the maximum of L(x) over the
+% interval. Equivalently, it is the infinity-norm of the linear operator
 % mapping data to interpolant on the given grid and interval.
 
 %%
@@ -39,17 +37,17 @@ subplot(2,1,2), semilogy(Lfun,LW,1.6), grid on
 title(sprintf('40 equispaced points    Lambda = %5.2e',Lambda),FS,14)
 
 %%
-% This picture confirms the well-known fact (the Runge phenomenon)
-% that polynomial interpolation in equispaced points is terribly
-% ill-conditioned.  In fact it is known that as n increases to
-% infinity, the Lebesgue constant for n Chebyshev points is asymptotic
-% to (2/pi)log(n) whereas for n equispaced points it is 2^n/(e n log(n)).
+% This picture confirms the well-known fact (the Runge phenomenon) that
+% polynomial interpolation in equispaced points is terribly
+% ill-conditioned.  In fact it is known that as n increases to infinity,
+% the Lebesgue constant for n Chebyshev points is asymptotic to
+% (2/pi)log(n) whereas for n equispaced points it is 2^n/(e n log(n)).
 
 %%
-% Here are results for 10 and 30 random points in [-1,1].  The reason
-% for shrinking the number from 40 to 30 is that for larger values than
-% this, difficulties arise cause by rounding errors since
-% the Lebesgue function is bigger than the inverse of machine epsilon.
+% Here are results for 10 and 30 random points in [-1,1].  The reason for
+% shrinking the number from 40 to 30 is that for larger values than this,
+% difficulties arise caused by rounding errors since the Lebesgue function
+% is bigger than the inverse of machine epsilon.
 rand('seed',1)
 [Lfun,Lambda] = lebesgue(2*rand(10,1)-1);
 subplot(2,1,1), semilogy(Lfun,LW,1.6), grid on
@@ -61,5 +59,5 @@ title(sprintf('30 random points    Lambda = %5.2e',Lambda),FS,14)
 %%
 % Reference
 %
-% L. N. Trefethen, Approximation Theory and Approximation Practice,
-% draft book available at http://www.maths.ox.ac.uk/chebfun/ATAP/.
+% L. N. Trefethen, Approximation Theory and Approximation Practice, draft
+% book available at http://www.maths.ox.ac.uk/chebfun/ATAP/.

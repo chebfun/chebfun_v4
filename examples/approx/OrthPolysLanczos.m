@@ -7,35 +7,21 @@
 format short e
 
 %%
-% Orthogonal polynomials are, as the name might suggest, polynomials which
-% are orthogonal to each other in some weighted L^2 inner product, i.e., 
+% The example approx/OrthPolys [2] discusses orthogonal polynomials, defined
+% by the condition
 %
 %      b
 %      /
 %      | w(x) P_j(x) P_k(x) dx = < P_j, P_k > = 0 for all j not equal k
 %      /
 %     a
-
-%%
-% If we normalise so that < P_j, P_j > = 1, the polynomials are called
-% "orthonormal".
-
-%%
-% Chebfun has commands built-in for some of the standard orthogonal
-% polynomials. Below is a table of the polynomial, the weight function, the 
-% standard domain [a b], and the Chebfun routine name.
 %
-%      Name       |       w(x)     |   domain   | Chebfun routine
-% -------------------------------------------------------------------
-%     Legendre    |        1       |   [-1 1]   | LEGPOLY(N)
-% Chebyshev(1st) |  1/sqrt(1-x^2) |   [-1 1]   | CHEBPOLY(N)
-% Chebyshev(2nd) |   sqrt(1-x^2)  |   [-1 1]   | CHEBPOLY(N,2)
-%     Laguerre    |     exp(-x)    |   [0 inf]  | LAGPOLY(N)
-%     Hermite     |    exp(-x^2)   | [-inf inf] | HERMPOLY(N)
+% As mentioned there, Chebfun has commands LEGPOLY, CHEBPOLY, LAGPOLY,
+% HERMPOLY for computing some standard cases.
 
 %%
-% These orthogonal polynomials can be constructed using a three-term
-% recurrence relation
+% Here, instead of Gram-Schmidt, we construct some of these polynomials
+% via a three-term recurrence relation
 %
 %    gamma(k+1)*P_k+1(x) = (x - beta(k))*P_k(x) - gamma(k)*P_k-1(x)
 %
@@ -46,11 +32,11 @@ format short e
 
 %%
 % Given any positive weight function w(x), we can construct both the
-% polynomials P_k(x) and the recursive coefficients beta(k) and gamma(k)
+% polynomials P_k(x) and the recurrence coefficients beta(k) and gamma(k)
 % using the Lanczos algorithm [1].
 
 %%
-% As opposed to the Gram-Schmidt process [2], which requires O(n^2)
+% Whereas the Gram-Schmidt process requires O(n^2)
 % evaluations of the inner product to compute the n first polynomials,
 % the Lanczos process requires only two such evaluations per
 % polynomial. Furthermore, the three-term recurrence coefficients
@@ -58,7 +44,7 @@ format short e
 % weight function w(x).
 
 %% 
-% We start by nitializing the parameters of this set of polynomials, e.g.
+% We start by initializing the parameters of this set of polynomials, e.g.
 % the variable x in the interval [-1,1], the weight function in that same
 % interval as well as the highest-degree polynomial we wish to construct.
 
@@ -103,7 +89,7 @@ err = norm(I-eye(N+1))
 %%
 % Since, along with the polynomials, we have also computed the coefficients
 % beta and gamma of the three-term recurrence relation, we can also construct
-% Gaussian Quadrature rules with respect to the weight function w using the
+% Gaussian quadrature rules with respect to the weight function w using the
 % Golub-Welsch algorithm [3]. For N points, this is
 
 J = diag(beta) + diag(gamma(1:N-1),-1) + diag(gamma(1:N-1),+1)
