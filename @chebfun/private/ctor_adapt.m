@@ -61,11 +61,22 @@ end
 
 % Support for matrix input
 if length(ops) == 1 && isnumeric(ops{1}) && min(size(ops{1})) > 1
-    pref.domain = ends;
-    f = [];
-    for k = 1:size(ops{1},2)
-        f = [f chebfun(ops{1}(:,k),pref)];
+    if ~isfield(pref,'map')
+        if all(isfinite(ends))
+            map = maps(fun,'linear',ends);
+        else
+            map = maps(fun,'unbounded',ends);
+        end
     end
+    fcell = cell(size(ops{1},2),1);
+    ftmp = chebfun(0,ends);
+    for k = 1:size(ops{1},2)
+%         fcell{k} = chebfun(ops{1}(:,k),pref);
+%         fcell{k} = ctor_adapt(f,{ops{1}(:,k)},ends,pref);
+        ftmp.funs(1) = fun(ops{1}(:,k),map,pref);
+        fcell{k} = ftmp;
+    end
+    f = horzcat(fcell{:});
     return
 end
 

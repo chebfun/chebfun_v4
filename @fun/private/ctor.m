@@ -36,7 +36,8 @@ function g = ctor(g,op,ends,varargin)
     if ~isnumeric(ends)
         % A map may optionally be passed in the second arg.
         g.map = ends;
-        ends = ends.for([-1,1]);
+%         ends = ends.for([-1,1]);
+        ends = ends.par(1:2);
     elseif any(isinf(ends))
         % The default unbounded map.
         g.map = unbounded(ends);
