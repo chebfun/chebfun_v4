@@ -1,6 +1,9 @@
 %% Singular Value Decomposition of Compact Operators: A Tool for Computing Frequency Responses of PDEs 
 % Binh K. Lieu and Mihailo R. Jovanovic, 6th January 2012
 
+%%
+% (Chebfun example pde/SVDFrequencyResponse.m)
+
 %% Introduction
 % In many physical systems there is a need to examine the effects of
 % exogenous disturbances on the variables of interest. The analysis of
@@ -11,7 +14,7 @@
 % early stages of transition to turbulence in wall-bounded shear flows of
 % Newtonian and viscoelastic fluids.
 %
-% The frequency response analysis represents an effective means for
+% Frequency response analysis represents an effective means for
 % quantifying the system's performance in the presence of a stimulus, and
 % it characterizes the steady-state response of a stable system to
 % persistent harmonic forcing. For infinite dimensional systems, the
@@ -25,13 +28,13 @@
 % We have employed Chebfun as a tool for computing frequency responses of
 % linear time-invariant PDEs in which an independent spatial variable
 % belongs to a compact interval. Our method recasts the frequency response
-% operator as a two point boundary value problem (TPBVP) and determines
+% operator as a two-point boundary value problem (TPBVP) and determines the
 % singular value decomposition of the resulting representation in Chebfun.
 % This approach has two advantages over currently available schemes: first,
 % it avoids numerical instabilities encountered in systems with
 % differential operators of high order and, second, it alleviates
-% difficulty in implementing boundary conditions. We refer the user to
-% Lieu & Jovanovic 2011 [4] for a detailed explanation of the method.
+% difficulty in implementing boundary conditions. We refer the user to Lieu
+% & Jovanovic 2011 [3] for a detailed explanation of the method.
 %
 % We have developed the following easy-to-use Matlab function (m-file) [1] 
 %  
@@ -44,8 +47,8 @@
 % of finding the adjoint operators and corresponding boundary conditions is
 % removed from the user. The algorithm is based on transforming the TPBVP
 % in differential form into an equivalent integral representation. The
-% procedure for achieving this is described in Lieu & Jovanovic 2011 [4];
-% also see T. Driscoll 2010 [3]. Additional examples are provided at [2].
+% procedure for achieving this is described in Lieu & Jovanovic 2011 [3];
+% also see T. Driscoll 2010 [2]. Additional examples are provided at [1].
 %
 %
     help svdfr
@@ -78,12 +81,12 @@
 %   E_{j}   -- point evaluation functional at the boundary y = j.
 %
 % We note that svdfr.m only requires the system's coefficients and boundary
-% conditions matrices to compute singular value decomposition of the
+% conditions matrices to compute the singular value decomposition of the
 % frequency response operator T. For completeness, we will next show how to
 % obtain the two point boundary value representations of the adjoint
 % operator Ts and the composition operator T*Ts.
 %
-% The two point boundary value representation for the adjoint of the
+% The two-point boundary value representation for the adjoint of the
 % frequency response operator, Ts, is given by
 %
 %   ( D^{(2)} + i*w )*v(y) = f(y)
@@ -111,7 +114,7 @@
 % The system parameters:
 w = 0; % set temporal frequency to the value of interest
 
-[dom,y] = domain(-1,1);     % domain of your function
+dom = domain(-1,1);         % domain of your function
 fone = chebfun(1,dom);      % one function
 fzero = chebfun(0,dom);     % zero function
 
@@ -147,7 +150,7 @@ Sf2 = sin((1/sqrt(Sa(2))).*(y+1));   % analytical soln of 2nd singular function
 norm(Sval - Sa)
 
 %%
-% Twenty five largest singular values of the frequency response operator:
+% The 25 largest singular values of the frequency response operator:
 % svdfr versus analytical results.
 plot(1:Nsigs,Sval,'bx','LineWidth',1.25,'MarkerSize',10)
 hold on
@@ -181,11 +184,9 @@ axis tight
 
 %% References
 %
-% [1] http://www.chebfun.org/examples/pde/svdfr.m
+% [1] http://www.ece.umn.edu/users/mihailo/software/chebfun-svd/
 %
-% [2] http://www.ece.umn.edu/users/mihailo/software/chebfun-svd/
-%
-% [3] T. A. Driscoll, Automatic spectral collocation for integral,
+% [2] T. A. Driscoll, Automatic spectral collocation for integral,
 % integro-differential, and integrally reformulated differential equations,
 % J. Comput. Phys. 229 (2010), 5980-5998.
 %
@@ -193,11 +194,11 @@ axis tight
 %%
 % If you are using this software please cite:
 %
-% [4] B. K. Lieu and M. R. Jovanovic,
+% [3] B. K. Lieu and M. R. Jovanovic,
 % "Computation of frequency responses for linear time-invariant PDEs on a
 % compact interval", Journal of Computational Physics (2011), submitted;
 % available at: <http://arxiv.org/abs/1112.0579 arXiv:1112.0579v1>
 %
-% [5] L. N. Trefethen and others, Chebfun Version 4.0, The Chebfun
+% [4] L. N. Trefethen and others, Chebfun Version 4.0, The Chebfun
 % Development Team, 2011, <http://www.maths.ox.ac.uk/chebfun/>
 
