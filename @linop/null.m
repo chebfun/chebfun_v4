@@ -6,13 +6,14 @@ function [Vfun S] = null(A,varargin)
 % they will be treated as homogenous.
 %
 % Example 1:
-%  [d,x] = domain(0,pi);
+%  d = domain(0,pi);
 %  A = diff(d);
 %  V = null(A);
 %  norm(A*V)
 %
 % Example 2:
-%  [d x] = domain(-1,1);
+%  d = domain(-1,1);
+%  x = chebfun('x',d);
 %  L = 0.2*diff(d,3) - diag(sin(3*x))*diff(d);
 %  L.rbc = 1;
 %  V = null(L)

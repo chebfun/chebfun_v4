@@ -84,7 +84,8 @@ if ii > 0 || (f.nfuns == 1 && ~any(f.funs(1).exps) && strcmp(f.funs(1).map.name,
 end
 
 % Compute coefficients via inner products.
-[d x] = domain(f.ends(1),f.ends(end));
+d = [f.ends(1),f.ends(end)];
+x = chebfun('x',d);
 
 if any(isinf(d))
     error('CHEBFUN:chebpoly:infint','Infinite intervals are not supported here.');

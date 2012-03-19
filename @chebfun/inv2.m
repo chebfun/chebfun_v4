@@ -98,7 +98,8 @@ if f.nfuns == 1 && ~any(f.funs(1).exps)
 end
 
 % Compute the inverse
-[domaing x] = domain(minandmax(f));
+domaing = minandmax(f).';
+x = chebfun('x',domaing);
 g = chebfun(@(x) op2(f,fp,x,tol), domaing,'resampling',0,'splitting',split_yn,'eps',tol,'minsamples',length(f));
 
 % Scale so that the range of g is the domain of f

@@ -25,7 +25,8 @@ function varargout = pde15s( pdefun, tt, u0, bc, varargin)
 %   surf(u,0:.05:3)
 %
 % Example 2: Kuramoto-Sivashinsky
-%   [d,x] = domain(-1,1);
+%   d = domain(-1,1);
+%   x = chebfun('x');
 %   I = eye(d); D = diff(d);
 %   u = 1 + 0.5*exp(-40*x.^2);
 %   bc.left = struct('op',{I,D},'val',{1,2});

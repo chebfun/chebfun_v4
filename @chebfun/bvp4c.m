@@ -19,7 +19,8 @@ function varargout = bvp4c(fun1,fun2,y0,varargin)
 % initial guess for a more difficult version. 
 %
 % Example (using built-in BVP demo functions):
-%   [d,x] = domain(0,4);
+%   d = [0 4];
+%   x = chebfun('x',d);
 %   y0 = [ x.^0, 0 ];
 %   y = bvp4c(@twoode,@twobc,y0);
 %   plot(y)

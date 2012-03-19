@@ -30,7 +30,8 @@ function varargout = polyeigs(A,varargin)
 %
 % Example:
 % 
-% [d x] = domain(-1,1);
+% d = domain(-1,1);
+% x = chebfun('x',d);
 % A = diff(d,2); A.lbc = 0; A.rbc = 0;
 % B = -diag(x)*diff(d);
 % C = eye(d);

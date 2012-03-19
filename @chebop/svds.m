@@ -21,16 +21,14 @@ function varargout = svds(N,varargin)
 %
 %
 % Example:
-%
-% [d,x] = domain(0,pi);
-% A = fred(@(x,y)sin(2*pi*(x-2*y)),d);
-% [U,S,V] = svds(A);
+%   d = domain(0,pi);
+%   A = fred(@(x,y)sin(2*pi*(x-2*y)),d);
+%   [U,S,V] = svds(A);
 %
 % See also linop/eigs.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
-
 
 % Linearize and check whether the chebop is linear
 try

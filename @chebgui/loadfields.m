@@ -116,7 +116,8 @@ if ~isempty(guifile.init)
         indVar = symvar(allString);
         
         % Create a domain and a temporary independent variable
-        [dom,xTemp] = domain(str2num(guifile.domain));
+        dom = [str2num(guifile.domain)];
+        xTemp = chebfun('x',dom);
         % Only support one independent variable for initial
         % guesses/condition.
         if length(indVar) > 1

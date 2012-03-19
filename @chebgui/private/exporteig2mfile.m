@@ -55,7 +55,8 @@ else
     rhsString = '';
 end
 % Assign x or t as the linear function on the domain
-[d,xt] = domain(str2num(dom));
+d = str2num(dom);
+xt = chebfun('x',d);
 eval([indVarName{1}, '=xt;']);
 % Convert the strings to proper anon. function using eval
 LHS  = eval(lhsString);

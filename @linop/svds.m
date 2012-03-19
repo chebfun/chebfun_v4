@@ -14,7 +14,7 @@ function varargout = svds(A,k,sigma,tol)
 % machine eps. However, the left sing. vectors U have fine accuracy.
 %
 % Example:
-% [d,x] = domain(0,pi);
+% d = domain(0,pi);
 % A = fred(@(x,y)sin(2*pi*(x-2*y)),d);
 % [U,S,V] = svds(A);
 %
