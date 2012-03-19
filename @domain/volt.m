@@ -20,7 +20,8 @@ function V = volt(k,d,onevar)
 % Example:
 %
 % To solve u(x) + x*int(exp(x-y)*u(y),y=0..x) = f(x):
-% [d,x] = domain(0,2);
+% d = domain(0,2);
+% x = chebfun('x',d);
 % V = volt(@(x,y) exp(x-y),d);
 % u = (1+diag(x)*V) \ sin(exp(3*x));
 %

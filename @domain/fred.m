@@ -24,14 +24,15 @@ function F = fred(k,d,onevar)
 %
 %   function K = kernel(X,Y)
 %   if nargin==1   % tensor product call
-%     K = exp(x)*exp(-x');   % vector outer product
+%     K = exp(X)*exp(-X');   % vector outer product
 %   else  % normal call
 %     K = exp(X-Y);
 %   end
 %
 % At the prompt:
 %
-% [d,x] = domain(0,2);
+% d = domain(0,2);
+% x = chebfun('x',d);
 % F = fred(@kernel,d);  % slow way
 % tic, u = (1-diag(x)*F) \ sin(exp(3*x)); toc
 %   %(Elapsed time is 0.265166 seconds.)
