@@ -111,7 +111,8 @@ uu = pde15s( F , tt , u0 , bc );
 % 'cumsum' are passed in the arguments of pdefun in the same way as 'diff'.
 
 % Create a domain and the linear function on it.
-[d,x] = domain(-1,1);
+d = [-1,1];
+x = chebfun('x',d);
 
 % Construct a discretisation of the time domain to solve on.
 t = 0:.1:4;

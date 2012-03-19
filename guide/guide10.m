@@ -127,7 +127,7 @@ xlabel x, ylabel y, zlabel z
 
 twoode = @(x,v) [v(2); -abs(v(1))];
 twobc = @(va,vb) [va(1); vb(1)+2];
-[d,x] = domain(0,4);
+d = [0,4];
 one = chebfun(1,d);
 v0 = [one 0*one];
 v = bvp4c(twoode,twobc,v0);
@@ -151,7 +151,7 @@ u = v(:,1); plot(u,LW,lw)
 ep = 0.01;
 ode = @(x,v) [v(2); (1-v(1)^2-2*(1-x^2)*v(1))/ep];
 bc = @(va,vb) [va(1); vb(1)];
-[d,x] = domain(-1,1);
+d = [-1,1];
 one = chebfun(1,d);
 v0 = [0*one 0*one];
 v = bvp5c(ode,bc,v0);
