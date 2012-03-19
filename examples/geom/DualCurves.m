@@ -6,7 +6,7 @@
 
 function DualCurves
 %%
-% In geometry most statements have an equally valid dual statement. For
+% In geometry many statements have an equally valid dual statement. For
 % example, "Two non-parallel lines intersect at exactly one point" is dual
 % to "Two distinct points are joined by exactly one line" and "Three points
 % lie on a line iff they are collinear" is dual to "Three lines meet at a
@@ -21,8 +21,8 @@ function DualCurves
 FS = 'FontSize'; MS = 'MarkerSize';
 a = 1; b = pi/3;
 dual = chebfun(@(x) -(a/b)*x-1/b,[-inf,inf]);
-plot(a,b,'x',MS,16), hold on, plot(dual,'r'), grid on, 
-axis([-10 10 -10 10]); title('A point and its dual',FS,16), hold off;
+plot(a,b,'x',MS,16), hold on, plot(dual,'r'), grid on
+axis([-10 10 -10 10]), title('A point and its dual',FS,16), hold off
 
 %% 
 % A polygon consists of edges (lines) and vertices (points). The dual of an
@@ -33,22 +33,22 @@ axis([-10 10 -10 10]); title('A point and its dual',FS,16), hold off;
 t = chebfun('x',[0,1]);
 vertices = [-2-1i 0-1i 2+1i 0+1i];
 polygon = (1-t)*vertices + t*circshift(vertices',-1)';
-plot(polygon,'b'); hold on, axis equal, grid on,
-dual = DualOfPolygon(vertices); plot(dual,'r'); 
-title('A polygon and its dual',FS,16), hold off;
+plot(polygon,'b'), hold on, axis equal, grid on
+dual = DualOfPolygon(vertices); plot(dual,'r') 
+title('A polygon and its dual',FS,16), hold off
 
 %%
-% A curve is the limit of piecewise linear curves so we can extend the
+% A curve is the limit of piecewise linear curves, so we can extend the
 % definition of dual to curves. Given any curve C, the dual curve is the
 % set of points which are dual to the tangent lines of C.  Given any
-% parameterised curve there is a simple formula to compute its dual curve.
+% parameterised curve, there is a simple formula to compute its dual curve.
 % Here is the dual of a smoothed heart-shaped curve.
 
 t = chebfun('x',[0,2*pi]);
 x = 2*sin(t);
 y = 2*cos(t)-(1/2)*cos(2*t)-(1/4)*cos(3*t)-(1/8)*cos(4*t);
 plot(x+1i*y), hold on, axis equal, plot(DualOfCurve(x+1i*y),'r');
-title('A curve and its dual',FS,16);
+title('A curve and its dual',FS,16)
  
 %%
 % For completeness, here are the functions which were used to compute the

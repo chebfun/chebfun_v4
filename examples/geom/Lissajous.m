@@ -1,4 +1,4 @@
-%% Lissajous Curves
+%% Lissajous curves
 % Nick Trefethen, October 2010
 
 %%

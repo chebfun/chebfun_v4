@@ -1,5 +1,5 @@
 %% Area and centroid of a 2D region
-% Stefan Güttel, October 2010
+% Stefan Guettel, October 2010
 
 %%
 % (Chebfun example geom/Area.m)
@@ -17,14 +17,14 @@ y = (a+b)*sin(t) - b*sin((a+b)/b*t);
 
 %%
 % Such curves are called epicycloids, named by the Danish 
-% astronomer Ole Rømer in 1674. Epicycloids can be produced 
+% astronomer Ole Romer in 1674. Epicycloids can be produced 
 % by tracing a point on a circle which rolls out on a
 % larger circle. Rømer discovered that cog-wheels with 
 % epicycloidal teeth turned with minimum friction. 
 % This is what our epicycloid looks like:
 
 LW = 'linewidth'; lw = 1.6;
-plot(x,y,LW,lw);
+plot(x,y,LW,lw)
 axis equal
 
 %% 
@@ -45,7 +45,7 @@ A = sum(x.*diff(y))
 
 %%
 % Let's compare this result with the exact area of the
-% epicycloid, given (for integer m) by the exact formula
+% epicycloid, given (for integer m) by the formula
 
 exact = pi*b^2*(m^2+m)
 
@@ -55,13 +55,13 @@ exact = pi*b^2*(m^2+m)
 % real-valued chebfuns):
 
 z = exp(1i*t) + (1+1i)*sin(6*t).^2;
-plot(z,LW,lw);
+plot(z,LW,lw)
 axis equal
 
 %% 
 % Because this curve is a perturbed unit circle, with
 % every perturbation occurring twice with opposite 
-% signs, the enclosed area should equal pi, which is 
+% signs, the enclosed area should equal pi, as is 
 % confirmed by Chebfun:
 
 A = sum(real(z).*diff(imag(z)));
@@ -73,7 +73,7 @@ A = sum(real(z).*diff(imag(z)));
 
 c = sum(diff(z).*z.*conj(z))/(2i*A);
 hold on
-plot(c,'r+',LW,lw);
+plot(c,'r+',LW,lw)
 
 %%
 % If you use scissors to produce a piece of paper in this 
