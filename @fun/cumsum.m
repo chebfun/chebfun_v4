@@ -273,7 +273,9 @@ cout(n+1,1) = v*cout;                         % compute C_0
 tol = chebfunpref('eps')/norm(cout,inf);
 idx = find(abs(cout)>tol,1);
 cout(1:idx-1) = [];
-n = n-idx+1;
+if ~isempty(idx)
+    n = n-idx+1;
+end
 
 % Recover vals and return the new fun
 g.vals = chebpolyval(cout);

@@ -23,9 +23,19 @@ function Fout = abscol(F)
     elseif isreal(F)             % Real case
 
         r = roots(F,'nozerofun');% Abs is singular at roots 
-        r = setdiff(r,F.ends).'; % ignore if already an endpoint
-        if ~isempty(r)           % Avoid adding new breaks where not needed
-            tol = 1000*chebfunpref('eps').*max(min(diff(F.ends)),1);
+%         r = setdiff(r,F.ends).'; % ignore if already an endpoint
+        
+        % Avoid adding new breaks where not needed
+        if ~isempty(r)           
+            tol = 100*chebfunpref('eps').*max(min(diff(F.ends)),1);
+            % Remove if sufficiently close to an existing break points
+            [rem ignored] = find(abs(bsxfun(@minus,r,F.ends))<tol);
+            r(rem) = [];
+        end
+        if ~isempty(r) 
+            tol = 10*tol;
+            % Remove if no sign change over small perturbation on either
+            % side of the break
             Fbks = feval(F,repmat(r,1,2)+repmat([-1 1]*tol,length(r),1));
             r(logical(sum(sign(Fbks),2))) = [];
         end
