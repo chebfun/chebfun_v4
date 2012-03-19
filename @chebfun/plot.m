@@ -275,7 +275,7 @@ if length(interval) == 4
     set(ax,'ylim',interval(3:4))
 elseif all(~isinf([bot top])) && infy
     try
-        set(ax,'ylim',[bot top])
+        set(gca,'ylim',[bot top])
     catch ME  %#ok<NASGU>
         % do nothing
     end
