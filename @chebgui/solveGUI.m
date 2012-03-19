@@ -80,26 +80,30 @@ if strcmp(get(handles.button_solve,'string'),'Solve')   % In solve mode
         end
         handles.hasSolution = 1;
     catch ME
-%         rethrow(ME);
-         MEID = ME.identifier;
+        Mstruct = struct('identifier',ME.identifier,'message',ME.message,'stack',ME.stack);
+        MEID = ME.identifier;
+        % For specific common errors, update the error information before
+        % rethrowing an error.
         if strcmp(MEID,'LINOP:mldivide:NoConverge')
-            error('Chebgui:LINOP:mldivide:NoConverge', ...
-                [cleanErrorMsg(ME.message),' See "help cheboppref" for details ',...
-                'how to increase number of points.']);
+            Mstruct.identifier = ['Chebgui:' Mstruct.identifier];
+            Mstruct.message = [Mstruct.message, ' See "help cheboppref" for details ',...
+                'how to increase number of points.'];
         elseif ~isempty(strfind(MEID,'Parse:')) || ~isempty(strfind(MEID,'LINOP:')) ...
                 ||~isempty(strfind(MEID,'Lexer:')) || ~isempty(strfind(MEID,'Chebgui:'))
-            error(['Chebgui:',MEID], cleanErrorMsg(ME.message));
+            Mstruct.identifier = ['Chebgui:' Mstruct.identifier];
         elseif strcmp(MEID,'CHEBOP:solve:findguess:DivisionByZeroChebfun')
-             error(['Chebgui:',MEID],['Error in constructing initial guess. The zero '...
+            Mstruct.identifier = ['Chebgui:' Mstruct.identifier];
+            Mstruct.message =  ['Error in constructing initial guess. The zero '...
                 'function on the domain is not a permitted initial guess '...
                 'as it causes division by zero. Please assign an initial '...
-                'guess using the initial guess field.']);
+                'guess using the initial guess field.'];
         else
-%             resetComponents(handles);
             handles.hasSolution = 0;
             rethrow(ME);
             
         end
+        error(Mstruct)
+
     end
     resetComponents(handles);
     set(handles.toggle_useLatest,'Enable','on');

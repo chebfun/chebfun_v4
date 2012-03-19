@@ -38,6 +38,12 @@ else
             errordlg(cleanErrorMsg(ME.message), 'Chebgui error', 'modal');
             uiwait
             resetComponents(varargin{4});
+            
+            % If in debug mode, we throw the error to the command window as
+            % well
+            if get(varargin{4}.menu_debug,'UserData')
+                rethrow(ME)
+            end
         else
             % Show an error dialog, but also throw the error to the command
             % window
@@ -1592,6 +1598,21 @@ for k = 1:numel(folders)
 end
 fprintf('TOTAL TIME = %4.4f.\n',T);
 
+
+function menu_debug_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_debug (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if strcmp(get(handles.menu_debug,'checked'),'on')
+    set(handles.menu_debug,'checked','off');
+    set(handles.menu_debug,'UserData',0);
+else
+    set(handles.menu_debug,'checked','on');
+    set(handles.menu_debug,'UserData',1);
+end
+guidata(hObject, handles);
+
+
 function resetComponents(handles)
 % Enable buttons, figures, etc. Set button to 'solve' again
 set(handles.button_solve,'String','Solve');
@@ -1602,3 +1623,5 @@ set(handles.button_figsol,'Enable','on');
 set(handles.button_fignorm,'Enable','on');
 set(handles.button_exportsoln,'Enable','off');
 set(handles.menu_demos,'Enable','on');
+
+% --------------------------------------------------------------------
