@@ -118,7 +118,7 @@ end
 % Convert the cell array varNames into one string. Not required when we're
 % working with the initial guess of scalar problems. If varNames is empty
 % for other kind of problems, an error would already have been thrown.
-if isempty(varNames) && ~strcmp(type,'INITSCALAR')
+if ~isempty(varNames) && ~strcmp(type,'INITSCALAR')
     varString = varNames{1};
     for varCounter = 2:length(varNames)
         varString = [varString,',',varNames{varCounter}];
