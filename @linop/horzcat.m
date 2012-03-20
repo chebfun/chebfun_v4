@@ -20,25 +20,39 @@ if any(isnum)
     d = domain(varargin{find(~isnum,1)});
     Z = zeros(d); I = eye(d);
     idx = find(isnum);
-    for k = 1:numel(idx)
-        if numel(varargin{idx(k)}) > 1
-            error('CHEBFUN:linop:vertcat', ...
-                'Syntax not supported in linop construction.');
-        elseif varargin{idx(k)} == 0
-            varargin{idx(k)} = Z;
+     for k = 1:numel(idx)
+        vi = varargin{idx(k)};  % the scalar or matrix that has to be replaced
+        if numel(vi)==1
+          if vi==0, newop = Z; else newop = vi*I; end
         else
-            varargin{idx(k)} = varargin{idx(k)}*I;
-        end
+          % Linops don't support block-level indexing. Thus, we have to
+          % recursively horzcat and vertcat our way up to the basic block
+          % matrix here. Slow!
+          newop = [];     % preserve the block shape
+          for i = 1:size(vi,1)
+            row = {};
+            for j = 1:size(vi,2)
+              if vi(i,j) == 0
+                row(j) = {Z};
+              else
+                row(j) = {vi(i,j)*I};
+              end
+            end
+            row = horzcat(row{:});
+            newop = [newop;row];
+          end
+        end      
+        varargin{idx(k)} = newop;
     end
 end
 
-% Size compatability.
+% Check size compatability.
 bs1 = cellfun( @(A) A.blocksize(1), varargin );
 if any(bs1~=bs1(1))
   error('LINOP:horzcat:badsize','Each block must have the same number of rows.')
 end
 
-% Domain compatability.
+% Check domain compatability.
 dom = domaincheck( varargin{:} );
 
 % Cat the varmats.

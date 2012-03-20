@@ -21,26 +21,38 @@ if any(isnum)
     Z = zeros(d); I = eye(d);
     idx = find(isnum);
     for k = 1:numel(idx)
-        vi = varargin{idx(k)};
-        tmp = [];
-        for j = 1:numel(vi)
-            if vi == 0
-                tmp = [tmp Z];
-            else
-                tmp = [tmp vi(j)*I];
+        vi = varargin{idx(k)};  % the scalar or matrix that has to be replaced
+        if numel(vi)==1
+          if vi==0, newop = Z; else newop = vi*I; end
+        else
+          % Linops don't support block-level indexing. Thus, we have to
+          % recursively horzcat and vertcat our way up to the basic block
+          % matrix here. Slow!
+          newop = [];     % preserve the block shape
+          for i = 1:size(vi,1)
+            row = {};
+            for j = 1:size(vi,2)
+              if vi(i,j) == 0
+                row(j) = {Z};
+              else
+                row(j) = {vi(i,j)*I};
+              end
             end
+            row = horzcat(row{:});
+            newop = [newop;row];
+          end
         end      
-        varargin{idx(k)} = tmp;
+        varargin{idx(k)} = newop;
     end
 end
 
-% Size compatability.
+% Check size compatability.
 bs2 = cellfun( @(A) A.blocksize(2), varargin );
 if any(bs2~=bs2(1))
   error('LINOP:vertcat:badsize','Each block must have the same number of columns.')
 end
 
-% Domain compatability.
+% Check domain compatability.
 dom = domaincheck( varargin{:} );
 
 % Cat the varmats.
@@ -64,7 +76,6 @@ A = linop( V, op, dom, difford );
 % Update the block size.
 bs1 = cellfun( @(A) A.blocksize(1), varargin );
 A.blocksize = [sum(bs1) bs2(1)];
-
 
 % Update iszero and isdiag.
 A.iszero = isz;
