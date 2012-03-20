@@ -537,7 +537,7 @@ if strcmp(NEXT,'COMMA')
     
     advance();
     leftArg  = pop();
-    parseExp0();
+    parseExpA();
     rightArg = pop();
     
     pdeflag = leftArg.pdeflag || rightArg.pdeflag;

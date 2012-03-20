@@ -5,14 +5,6 @@ function varargout = convertToAnon(guifile,str,type)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-% In Matlab2007a and previous versions, the code runs into error if we
-% don't clear the functions cache before running the code. Contacting
-% technical support at Mathworks, they told me that this bug has been fixed
-% for versions 2007b and onwards.
-if verLessThan('matlab','7.5')
-    clear functions
-end
-
 if nargin <3
     type = [];
 end
@@ -123,7 +115,11 @@ if ~isempty(varNames) && ~strcmp(type,'INITSCALAR')
     for varCounter = 2:length(varNames)
         varString = [varString,',',varNames{varCounter}];
     end
-    anFunComplete = ['@(', varString ') ' anFun];
+    if length(varNames) == 1
+        anFunComplete = ['@(', varString ') ' anFun];
+    else
+        anFunComplete = ['@(', varString ') [' anFun ']'];
+    end
 end
 % Also return the lambda part if we are in EIG mode
 if strcmp(guifile.type,'eig') && ~isempty(anFunLambda)
