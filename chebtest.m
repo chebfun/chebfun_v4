@@ -1,42 +1,37 @@
 function varargout = chebtest(dirname)
 %CHEBTEST Probe Chebfun against standard test files.
 % CHEBTEST DIRNAME runs each M-file in the directory DIRNAME. Each M-file
-% should be a function that takes no inputs and returns a logical scalar 
+% should be a function that takes no inputs and returns a logical scalar
 % value. If this value is true, the function is deemed to have 'passed'. 
-% If its result is false, the function 'failed'. If the function
-% threw an error, it is considered to have 'crashed'. A report is
-% generated in the command window, and in a file 'chebtestreport' in the
-% chebfun directory.
+% If its result is false, the function 'failed'. If the function threw an
+% error, it is considered to have 'crashed'. A report is generated in the
+% command window, and in a file 'chebtestreport' in the chebfun directory.
 %
 % CHEBTEST by itself tries to find a directory named 'chebtests' in the
 % directory in which chebtest.m resides.
 %
 % FAILED = CHEBTEST returns a cell array of all functions that either 
-% failed or crashed. 
+% failed or crashed. A report is also generated in the file
+%   <chebfun_directory>/chebtests/chebtest_report.txt
 %
-% CHEBTEST RESTORE restores user preferences prior to CHEBTEST
-% execution. CHEBTEST modifies path, warning state, and chebfunpref during
-% execution. If a CHEBTEST execution is interrupted, the RESTORE option can
-% be used to reset these values. CHEBTEST RESTORE also resets the 'avg'
-% times also returned by chebtest.
+% CHEBTEST RESTORE restores user preferences prior to CHEBTEST execution.
+% CHEBTEST modifies path, warning state, and chebfunpref during execution.
+% If a CHEBTEST execution is interrupted, the RESTORE option can be used to
+% reset these values. 
 %
-% Chebtest looks first for subdirectories labeled 'level*' and executes
-% the tests therein in alphabetical order. The tests should be assigned
-% to different levels according to the following scheme:
+% Chebtest looks first for the subdirectories below, and executes the tests
+% therein in alphabetical order. The tests should be assigned to different
+% directories according to the following scheme:
 %
-%   level0: Tests of the basic Chebfun routines such as arithmetic
-%           operators, constructors, preferences, etc...
-%   level1: Tests for more complex operations of a single chebfun, e.g.
-%           norm, max, roots, diff, sum, etc...
-%   level2: Tests involving systems of chebfuns (quasimatrices).
-%   level3: Tests involving linear chebops.
-%   level4: Tests involving non-linear chebops.
-%
-% In an ideal world, each test would only use functions and operations
-% that are tested in the same or lower levels.
-%
-% Tests residing directly in the chebtests directory will be executed
-% only after the 'level*' tests.
+%   basic:    Tests of the basic Chebfun routines such as arithmetic
+%             operators, constructors, preferences, etc...
+%   advanced: Tests for more complex operations of a single chebfun, e.g.
+%             norm, max, roots, diff, sum, etc...
+%   quasimatrices: Tests involving systems of chebfuns (quasimatrices).
+%   linops:   Tests involving linear operators (linops).
+%   chebop:   Tests involving non-linear chebops (chebops)
+%   ad:       Tests involving automatic differentiation (AD).
+%   misc:     Tests that don't fit elsewhere (BVP and IVP solvers, etc).
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -117,7 +112,7 @@ subdirnames = { subdirlist.name };
 numdirs = length(subdirnames);
 
 % Assign an order
-defaultOrder = {'core','basic','quasimatrices','linops','chebops','ad','misc'};
+defaultOrder = {'basic','advanced','quasimatrices','linops','chebops','ad','misc'};
 order = 1:numdirs;
 for i = 1:numdirs
     idx = find(strcmp(subdirnames(i),defaultOrder));
