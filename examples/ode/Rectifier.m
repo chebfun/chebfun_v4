@@ -14,18 +14,18 @@
 
 %%
 % We start off with a mild form of the problem.
-ep = 1e-3;  alpha = 12;
+ep = 1e-3;  alpha = 10;
 N = chebop(0,30);
 N.op = @(t,v) diff(v) + ep*v - ep*( exp(alpha*(sin(t)-v)) - 1 );
 N.lbc = 0;    % initial condition
-v_12 = N\0;
+v_10 = N\0;
 
 %%
 % As you can see above, the solution v(t) requires a rather large degree
 % polynomial to represent it. The system is characterized by rapid jumps
 % between slowly varying plateaus, and the jumps require high resolution.
 LW = 'linewidth'; lw = 2; 
-plot(v_12,LW,lw)
+plot(v_10,LW,lw)
 xlabel('t'), ylabel('v(t)'), 
 title(['alpha = ',num2str(alpha),', length(v) = ',int2str(length(v_12))])
 
@@ -33,7 +33,11 @@ title(['alpha = ',num2str(alpha),', length(v) = ',int2str(length(v_12))])
 % If we steepen the jumps by making the problem more stiff, we are well
 % advised to "continue from" the previous solution, by using it as the
 % initial guess to nonlinear iterations. This is done by setting the .init
-% field of N.
+% field of N. The representation length will close in on 1025, which is the
+% default maximum size, so we increase it temporarily.
+
+cheboppref('maxdegree',2048);
+
 alpha = 20;
 N.op = @(t,v) diff(v) + ep*v - ep*( exp(alpha*(sin(t)-v)) - 1 );
 N.init = v_12;
@@ -43,10 +47,6 @@ xlabel('t'), ylabel('v(t)'),
 title(['alpha = ',num2str(alpha),', length(v) = ',int2str(length(v_20))])
 
 %%
-% Let's turn up the stiffness one more time. The representation length will
-% close in on 1025, which is the default maximum size, so we increase it
-% temporarily.
-cheboppref('maxdegree',2048);
 
 alpha = 40;
 N.op = @(t,v) diff(v) + ep*v - ep*( exp(alpha*(sin(t)-v)) - 1 );

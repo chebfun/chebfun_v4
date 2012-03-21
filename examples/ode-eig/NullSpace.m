@@ -140,6 +140,8 @@ V = null(L)
 plot(V), shg
 V'*V
 
+%%
+
 sum(V(:,1))-V(0,1)
 norm(L(x,V(:,1)),1)
 sum(V(:,2))-V(0,2)
