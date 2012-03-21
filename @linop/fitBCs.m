@@ -4,7 +4,7 @@ function funcOut = fitBCs(L)
 
 % Determines how big discretization we want for each component. Individual
 % diffOrder for each component if we have a system
-indDifforder = max(L.difforder);
+indDifforder = max(L.difforder,[],1);
 
 numVar = L.blocksize(2);
 
@@ -12,8 +12,9 @@ breaks = L.domain;
 breaks = breaks.endsandbreaks;
 
 if diff(L.blocksize)
-    funcOut = repmat(chebfun(0,breaks),1,L.blocksize(2));
-    return
+%     funcOut = repmat(chebfun(0,breaks),1,L.blocksize(2));
+%     return
+    indDifforder = max(L.blocksize(2)*indDifforder,1);
 end
 
 jumplocs = [];
