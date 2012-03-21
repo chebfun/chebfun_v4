@@ -47,6 +47,8 @@ if ~isempty(F) && F(1).funreturn && nargin > 2 && varargin{1}(1) ~= 'f'
         else
             ID = F(k).ID; order = 0;               % This is a base var
         end
+        ID = repmat(ID,1,length(x));
+        order = repmat(order,1,length(x));
         jumpInfo = [jumpInfo struct('loc',x,'ID',ID,'Ord',order)]; %#ok<AGROW>
     end
 end
@@ -177,20 +179,23 @@ if (size(f.imps,1) == 1 || ~any(any(f.imps(2:end,:)))) %&& any(f.imps(1,:))
     
     % NickH fixed this also for the case when there imps has two rows.
 elseif size(f.imps,1) > 1 && any(any(f.imps(2:end,:)))
-    [ignored,ignored,pos] = intersect(x,ends); %#ok<ASGLU>
-    for k = 1:length(pos)
-        % We take the sign of the largest degree impulse?
-        [I ignored sgn] = find(f.imps(2:end,pos(k)),1,'last'); %#ok<ASGLU>
-        if isempty(I)
-            fx( x == ends(pos(k)) ) = f.imps(1,pos(k));
-        elseif I == 1
-            if sgn > 0
-                fx( x == ends(pos(k)) ) = inf;
+    for j = 1:size(x,2)
+        xj = x(:,j);
+        [ignored,ignored,pos] = intersect(xj,ends); %#ok<ASGLU>
+        for k = 1:length(pos)
+            % We take the sign of the largest degree impulse?
+            [I ignored sgn] = find(f.imps(2:end,pos(k)),1,'last'); %#ok<ASGLU>
+            if isempty(I)
+                fx( xj == ends(pos(k)) , j ) = f.imps(1,pos(k));
+            elseif I == 1
+                if sgn > 0
+                    fx( xj == ends(pos(k)) , j ) = inf;
+                else
+                    fx( xj == ends(pos(k)) , j ) = -inf;
+                end
             else
-                fx( x == ends(pos(k)) ) = -inf;
+                fx( xj == ends(pos(k)) , j ) = NaN;
             end
-        else
-            fx( x == ends(pos(k)) ) = NaN;
         end
     end
     

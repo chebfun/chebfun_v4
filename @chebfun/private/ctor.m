@@ -14,7 +14,7 @@ if nin == 0;
 end
 
 % Chebfun preferences:
-if isstruct(varargin{nin}) & ~strcmpi(varargin{nin-1},'map')
+if isstruct(varargin{nin}) && (nin>1 && ~strcmpi(varargin{nin-1},'map'))
     pref = varargin{nin};
     argin = varargin(1:end-1);
 else
@@ -162,7 +162,8 @@ if iscell(argin{2})
     
     % 'Truncate' option
     if isfield(pref,'trunc')
-        warning('CHEBFUN:chebfun:truncsys','Truncation is not supported for systems.');
+        warning('CHEBFUN:chebfun:truncsys',...
+            'Truncation is not supported for systems.');
     end
     return
 end
@@ -179,7 +180,8 @@ end
 if iscell(f)
     % 'Truncate' option
     if isfield(pref,'trunc')
-        warning('CHEBFUN:chebfun:truncsys','Truncation is not supported for systems.');
+        warning('CHEBFUN:chebfun:truncsys',...
+            'Truncation is not supported for systems.');
     end
     return
 end
@@ -203,7 +205,8 @@ end
 % 'Truncate' option
 if isfield(pref,'trunc')
     if numel(f) > 1
-        error('CHEBFUN:trunc:quasi','''trunc'' flag does not support matrix input');
+        error('CHEBFUN:trunc:quasi',...
+            '''trunc'' flag does not support matrix input');
     end
     c = chebpoly(f,0,pref.trunc);
     f = chebfun(chebpolyval(c),f.ends([1 end]));
