@@ -11,6 +11,11 @@ numVar = L.blocksize(2);
 breaks = L.domain;
 breaks = breaks.endsandbreaks;
 
+if diff(L.blocksize)
+    funcOut = repmat(chebfun(0,breaks),1,L.blocksize(2));
+    return
+end
+
 jumplocs = [];
 if ~isempty(L.jumpinfo)
     jumplocs = L.jumpinfo(:,1);
