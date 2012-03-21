@@ -136,6 +136,8 @@ end
 if nargout > 3 
     if isa(N.op,'linop')
         affine = repmat(0*xDom,1,numberOfInputVariables-1);
+    elseif ~isLin(1)
+        affine = chebfun([],dom);
     elseif numberOfInputVariables == 1
         % Need a zeroFun which won't have funreturn == 1
         zeroFun = repmat(0*xDom,1,numel(u));
@@ -281,8 +283,8 @@ end
                 
                 % Deal with jump info.
                 if strcmp(bctype,'other') && ~isempty(jumpinfoj)
-                    njumps = numel(jumpinfoj);
                     jumplocs = [jumpinfoj.loc];
+                    njumps = numel(jumplocs);
                     ID = reshape([jumpinfoj.ID].',2,njumps).';
                     jumpvars = ones(1,njumps);
                     if numel(u) > 1
@@ -294,6 +296,7 @@ end
                     end
                     jumporders = [jumpinfoj.Ord];
                     jumpinfo = [jumpinfo [jumplocs ; jumpvars ; jumporders]]; %#ok<AGROW>
+                    jumpinfo = unique(jumpinfo.','rows').';
                 end
 
             end
