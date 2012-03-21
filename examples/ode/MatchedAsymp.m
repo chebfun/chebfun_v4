@@ -20,7 +20,8 @@
 %
 % with eps<<1.  In Chebfun, we can set up the problem conveniently
 % with a couple of anonymous functions:
-[d,x,L] = domain(-1,1);
+d = domain(-1,1);
+x = chebfun('x',d);
 L = @(eps) -eps*diff(d,2) + diag(2-x.^2) & 'dirichlet';
 y = @(eps) L(eps)\1;
 

@@ -61,10 +61,13 @@ plot(g(bndry),'k'), axis equal, axis([-1.4 1.4 -1 1])
 w = .07+0.3i + 3*scribble('INFINITE STRIP');
 bndry = [chebfun('1i + t',5*[-1 1]); chebfun('t',5*[-1 1])];
 
+%% 
+% (The SC Toolbox must be on MATLAB's path for the followingto work.)
+if ~exist('scgui','file'), return, end
+
 %%
 % Next, define the map to a specified rectangle such that the ends of the
-% strip map to two corners. (The SC Toolbox must be on MATLAB's path for
-% these commands to work.) A few extra manipulations are done to make a
+% strip map to two corners. A few extra manipulations are done to make a
 % map that works for our purposes. 
 
 %%

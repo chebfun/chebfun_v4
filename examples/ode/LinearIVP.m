@@ -13,7 +13,9 @@
 %
 % on the interval [0,100].  The solution is cos(x).
 
-[d,x,L] = domain(0,100);     % domain, x variable, name of operator
+d = [0,100];                 % domain
+x = chebfun('x',d);          % x variable
+L = chebop(d);               % name of operator
 L.op = @(u) diff(u,2) + u;   % linear operator defining the ODE
 L.lbc = @(u) [u-1, diff(u)]; % imposing Dirichlet and Neumann BCs
 u = L\0;                     % solve the problem

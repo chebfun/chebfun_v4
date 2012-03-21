@@ -17,10 +17,11 @@
 % Chebfun will not converge.  Instead let's begin by solving the problem
 % with the rather large initial guess Eps = 1:
 Eps = 1;
-[d,x] = domain(0,10);
+dom = [0,10];
+x = chebfun('x',dom);
 f = sin(x);
 cheboppref('plotting',0.01)
-N = chebop(d,@(u) Eps*diff(u,2)+u-u.^3,1,-1);
+N = chebop(@(u) Eps*diff(u,2)+u-u.^3,dom,1,-1);
 tic, u = N\f; t = toc;
 
 LW = 'linewidth'; lw = 2; FS = 'fontsize'; fs = 14;
@@ -36,7 +37,7 @@ Epsvec = [.5 .2 .1 .03 .009 .003];
 for j = 1:length(Epsvec)
   close all
   Eps = Epsvec(j);
-  N = chebop(d,@(u) Eps*diff(u,2)+u-u.^3,1,-1);
+  N = chebop(@(u) Eps*diff(u,2)+u-u.^3,dom,1,-1);
   N.guess = u;
   tic, u = N\f; t = toc;
   close, plot(u,LW,lw)

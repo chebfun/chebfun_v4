@@ -21,7 +21,8 @@
 %
 % For a piecewise smooth kernel, the VOLT function can produce the original
 % operator A directly:
-[d,t] = domain(0,6);  a = 1;
+d = domain(0,6);  
+a = 1;
 K = @(s,t) (1-(a*(t-s)).^2) .* exp(-0.5*a^2*(t-s).^2 );
 A = volt(K,d);
 
@@ -37,7 +38,7 @@ B = 0.5*fred(K,d);
 %%
 % The following lines create a function to return the numerical abscissa
 % given a value for a.
-[d,t] = domain(0,6);
+d = domain(0,6);
 K = @(s,t,a) (1-(a*(t-s)).^2) .* exp(-0.5*a^2*(t-s).^2 );
 B = @(a) 0.5*fred(@(s,t) K(s,t,a),d);  % (A+A')/2 for any A
 numabs = @(a) eigs(B(a),1,'lr');       % e.v. with max real part

@@ -7,17 +7,33 @@ function make_examples(dirs,filename)
 % $Chebfunroot/examples/DIR/ where FILENAME and DIR must be strings.
 
 % The flags below can only be adjusted manually.
-html = false;  % Publish to html? (This should be true when released).
+html = true;  % Publish to html? (This should be true when released).
 pdf = false;   % By default this will be off.
 shtml = true; % This should only be used by admin for creating the 
               % shtml files for the Chebfun website.
 clean = false;
 listing = false;
 exampleshtml = false;
+release = false;
+
 if nargin > 0 && ischar(dirs) 
     if strncmp(dirs,'listing',4); listing = true; end
     if strcmp(dirs,'clean'); clean = true; end
-    if strcmp(dirs,'html'); exampleshtml = true; end, 
+    if strcmp(dirs,'html'); 
+        exampleshtml = true; 
+        shtml = false;
+        html = true;
+        pdf = false;
+        listing = false;
+    end
+    if strcmp(dirs,'release'); 
+        release = true;
+        exampleshtml = false; 
+        shtml = false;
+        html = true;
+        pdf = false;
+        listing = false;
+    end
 end
 
 webdir = '/common/htdocs/www/maintainers/hale/chebfun/';
@@ -49,7 +65,7 @@ optsPDF.catchError = false;
 % we clean up by filtering the html and tex files.
 javalist = {'ChebfunAD'};
 
-if nargin == 0 || listing || clean || exampleshtml
+if nargin == 0 || listing || clean || exampleshtml || release
     % Find all the directories (except some exclusions).
     dirlist = struct2cell(dir(fullfile(pwd)));
     dirs = {}; k = 1;
@@ -58,7 +74,8 @@ if nargin == 0 || listing || clean || exampleshtml
                 ~strncmp(dirlist{1,j},'.',1) && ...
                 ~strcmp(dirlist{1,j},'templates') && ...
                 ~strcmp(dirlist{1,j},'old_examples') && ...
-                ~strcmp(dirlist{1,j},'old')
+                ~strcmp(dirlist{1,j},'old') && ...
+                ~strcmp(dirlist{1,j},'temp')
             dirs{k} = dirlist{1,j};
             k = k + 1;
         end
@@ -246,6 +263,9 @@ elseif nargin == 2
     end
     return
 end
+
+
+dirs = {'ode'};
     
 % Clean up
 if clean
@@ -402,7 +422,7 @@ fclose(fid_et1);
 fprintf(fid0,' %s',tmp);
 
 % Sort the directories to match contents.txt
-if numel(dirs) > 1
+if numel(dirs) > 1 %|| iscell(dirs) && numel(dirs{1})
     fidc = fopen('contents.txt','r+');
     titletxt = fgetl(fidc);
     titles = [];
@@ -411,6 +431,7 @@ if numel(dirs) > 1
         titletxt = fgetl(fidc);
     end
     titles = cellstr(titles);
+    titles(strcmp(titles,'tem')) = [];
     if numel(dirs) == numel(titles)
         [ignored idx1] = sort(titles);
         [ignored idx2] = sort(idx1);
@@ -419,7 +440,7 @@ if numel(dirs) > 1
 end
 
 if exampleshtml
-    for j = 1:numel(dirs)    
+    for j = 1:numel(dirs) 
         % Find the title of this directory
         fidc = fopen('contents.txt','r+');
         titletxt = fgetl(fidc);
@@ -433,7 +454,7 @@ if exampleshtml
         titletxt = titletxt(length(dirs{j})+2:end);
         % Add entry to examples/examples.html
         if ~strcmp(dirs{j},'temp')
-            fprintf(fid0,['<li><a href="',dirs{j},'/',dirs{j},'.html" style="text-transform: uppercase;>',titletxt,'</a>\n</li>\n\n']);
+            fprintf(fid0,['<li><a href="',dirs{j},'/',dirs{j},'.html" style="text-transform: uppercase;">',titletxt,'</a>\n</li>\n\n']);
         end
     end
     % Open template
@@ -559,30 +580,34 @@ for j = 1:numel(dirs)
         %%% HTML %%%
         if html
             % Publish (to dirname/html/dirname.html)
-            mypublish([filename,'.m'],opts);           
-            
-            % Make the filename clickable
-            cd html
-            curfile = [dirs{j},'/',filename,'.m']; 
-            filetext = fileread([filename,'.html']);
-            if shtml
-                newtext = sprintf('<a href="/chebfun/examples/%s">%s</a>', ...
-                    curfile,curfile);
-            else
-                newtext = sprintf('<a href="%s">%s</a>', ...
-                    fullfile(examplesdir,dirs{j},[filename,'.m']),curfile);
+            try
+                mypublish([filename,'.m'],opts);           
+
+                % Make the filename clickable
+                cd html
+                curfile = [dirs{j},'/',filename,'.m']; 
+                filetext = fileread([filename,'.html']);
+                if shtml
+                    newtext = sprintf('<a href="/chebfun/examples/%s">%s</a>', ...
+                        curfile,curfile);
+                else
+                    newtext = sprintf('<a href="%s">%s</a>', ...
+                        fullfile(examplesdir,dirs{j},[filename,'.m']),curfile);
+                end
+                filetext = strrep(filetext,curfile,newtext);
+    %             % Copyright notice
+    %             if shtml
+    %             filetext = strrep(filetext,'<p>Licensed under a Creative Commons 3.0 Attribution license','');
+    %             filetext = strrep(filetext,'<a href="http://creativecommons.org/licenses/by/3.0/">http://creativecommons.org/licenses/by/3.0/</a>','');
+    %             filetext = strrep(filetext,'by the author above.</p>','');
+    %             end
+                fidhtml = fopen([filename,'.html'],'w+');
+                fprintf(fidhtml,'%s',filetext);
+                fclose(fidhtml);
+                cd ..
+            catch ME
+                disp([dirs{j}, '/' ,filename ' CRASHED!'])
             end
-            filetext = strrep(filetext,curfile,newtext);
-%             % Copyright notice
-%             if shtml
-%             filetext = strrep(filetext,'<p>Licensed under a Creative Commons 3.0 Attribution license','');
-%             filetext = strrep(filetext,'<a href="http://creativecommons.org/licenses/by/3.0/">http://creativecommons.org/licenses/by/3.0/</a>','');
-%             filetext = strrep(filetext,'by the author above.</p>','');
-%             end
-            fidhtml = fopen([filename,'.html'],'w+');
-            fprintf(fidhtml,'%s',filetext);
-            fclose(fidhtml);
-            cd ..
             
         end
         
@@ -598,17 +623,18 @@ for j = 1:numel(dirs)
         %%% PDF %%%
         if pdf
             % Publish (to dirname/pdf/dirname.pdf)
-            mypublish([filename,'.m'],optsPDF);        
-            if strcmp(optsPDF.format,'latex') && isunix
-                try
+            try
+                mypublish([filename,'.m'],optsPDF);
+                if strcmp(optsPDF.format,'latex') && isunix
+                    
                     cd pdf
                     eval(['!latex ',filename])
                     eval(['!dvipdfm ',filename])
                     ! rm *.aux *.log *.tex  *.dvi
                     cd ../
-                catch
-                    warning('CHEBFUN:examples:PDFfail','PDF PUBLISH FAILED.#');
-                end            
+                end
+            catch
+                warning('CHEBFUN:examples:PDFfail','PDF PUBLISH FAILED.#');
             end
         end
         

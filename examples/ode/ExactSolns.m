@@ -11,7 +11,9 @@
 % chapter.   In each case we solve an ODE with
 % Chebfun and compare with the exact solution.
 % For simplicity we pose all the equations on the domain [1,2]:
-[d,x,N] = domain(1,2);
+d = [1 2];
+x = chebfun('x',d);
+N = chebop(d);
 
 %% EXAMPLE 1: SEPARATION OF VARIABLES
 % Consider first the problem
@@ -147,7 +149,7 @@ exact = x.*sqrt(1+2*log(x));
 % Accordingly here is a solution in which an initial guess is specified.
 N.op = @(y) diff(y) - y./x - x./y;
 N.lbc = 1; N.rbc = [];
-N.guess = 1;
+N.init = 1;
 y = N\0;
 err = norm(y-exact,inf);
 

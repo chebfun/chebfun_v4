@@ -70,7 +70,9 @@ fprintf('The L2 error is: %1.3e\n', norm(f-u));
 % As an example we choose the polytropic index to be n=1.5, appropriate to 
 % model the structure of a white dwarf.
 
-[d,x,N] = domain(0,1);
+d = [0,1];
+x = chebfun('x',d);
+N = chebop(d);
 n = 1.5; eps = 1e-8;
 N.op = @(x,u,v) x.*diff(u,2) + 2*diff(u) + x.*v.^2.*(u+eps).^n;
 N.lbc = @(u,v) [u-1,diff(u)];

@@ -53,7 +53,9 @@ subspace(v,V)
 %
 %     Lu = u'' + .1*(1-x.^2)u' - sin(x)u, x in [-pi pi]                (*)
 
-[L x] = chebop(@(x,u) diff(u,2) + .1*x.*(1-x.^2).*diff(u) + sin(x).*u, [-pi pi]);
+dom = [-pi pi];
+L = chebop(@(x,u) diff(u,2) + .1*x.*(1-x.^2).*diff(u) + sin(x).*u, dom);
+x = chebfun('x',dom);
 
 %%
 % As before, it has a nullspace of rank 2.
@@ -125,9 +127,11 @@ bc_star = u_star(pi)
 %
 %             sum(u) = u(0).
 
-[L x] = chebop(@(x,u) 1e-2*diff(u,3) + sign(x).*diff(u,2) + u);
+dom = [-1 1];
+L = chebop(@(x,u) 1e-2*diff(u,3) + sign(x).*diff(u,2) + u);
 L.lbc = []; L.rbc = [];
 L.bc = @(u) sum(u)-u(0);
+x = chebfun('x',dom);
 
 %%
 % Here NULL has no problems!

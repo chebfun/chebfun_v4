@@ -29,6 +29,17 @@ if ischar(examples) || numel(examples) == 1 % Copy to the new exmaples page
     fprintf(fid,text);
     fprintf(fid,'\n\n</br>\n\n');
     j = 1;
+    
+    htmlnames = {htmlfiles.name};
+    htmlnames = strrep(htmlnames,'newexamples','');
+    htmlnames = strrep(htmlnames,'.html','');
+    for k = 1:numel(htmlnames)
+        htmlnames{k} = str2num(htmlnames{k});
+        %if isempty(htmlnames{k}), htmlnames{k} = NaN; end
+    end
+    [ignored idx] = sort([htmlnames{:}]);
+    htmlfiles = htmlfiles([1 idx+1]);
+    
     for k = numel(htmlfiles):-1:1
         if strcmp(htmlfiles(k).name,'newexamples.html'), continue, end
         name = strrep(htmlfiles(k).name,'newexamples',''); name = strrep(name,'.html','');

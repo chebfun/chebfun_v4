@@ -16,7 +16,8 @@
 % Here we compute some of these steady-state solutions, which
 % are solutions of the ODE boundary value problem
 % u"+A*exp(u)=0, u(-1)=u(1)=0.
-tic, [d,x,N] = domain(-1,1);
+
+N = chebop([-1 1]);
 N.bc = 'dirichlet';
 FS = 'fontsize'; figure
 for A = [.2 .4 .6 .8 .87]

@@ -32,11 +32,11 @@
 %%
 %  
 LW = 'linewidth';
-format
+format long, 
 
 %%
 % First, we solve the eigenvalue problem in a stable case.
-[N,x] = chebop( [0,1], @(u) diff(u,2) );    % operator on 0<x<1
+N = chebop( @(u) diff(u,2), [0 1] );    % operator on 0<x<1
 N.lbc = 0;     % fixed end
 delta = 0.96;  % stable choice 
 N.bc = @(x,u) feval(diff(u),1) + u(1) - 4*delta*sum(u);  % Barber condition
@@ -83,7 +83,7 @@ stability = chebfun(maxlam,[0.5,2],'eps',1e-11,'vectorize')
 %%
 % Finally, the transition in stability occurs when the eigenvalue passes
 % through zero. 
-format long, dstar = find(stability==0)
+dstar = find(stability==0)
 clf, plot(stability,LW,1.6), hold on, plot(dstar,0,'r*')
 xlabel('\delta'), ylabel('max \lambda'), grid on
 

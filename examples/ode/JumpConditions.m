@@ -28,52 +28,33 @@ plot(u1)
 % Suppose we want to add a jump condition at the origin. To do this we'd
 % use the .bc field as follows
 
-N.bc = @(x,u) [feval(u,0,'right') - feval(u,0,'left') - 1];
+N.bc = @(x,u) feval(u,0,'right') - feval(u,0,'left') - 1;
 u2 = N\0
 plot(u2)
-
-%%
-% The solution we get looks sensible, but notice the warning regarding the
-% number of boundary conditions. This is because, for this 2nd-order
-% operator, introducing a break at the origin requires us to introduce
-% *two* new boundary conditions. We've already dealt with the jump, so
-% let's now also enforce that the derivative is continuous.
-
-N.bc = @(x,u) [feval(u,0,'right') - feval(u,0,'left') - 1,...
-               feval(diff(u),0,'right') - feval(diff(u),0,'left')];
-u3 = N\0
-hold on, plot(u3,'--r'), hold off
-
-%%
-% Now that the problem is properly posed, we see quite a significant
-% difference in the result! (Those warning messages aren't for nothing you
-% know!)
 
 %%
 % The above notation is a bit clunky, and the syntax 'jump' can be used
 % instead. For example, we get the same result as above with
 
-N.bc = @(x,u) [jump(u,0) - 1,...
-               jump(diff(u),0)];
-u4 = N\0;
-norm(u3-u4)
+N.bc = @(x,u) jump(u,0) - 1;
+u3 = N\0
+norm(u3-u2)
 
 %%
 % We can quickly around and make a jump appear instead in the derivative
 
-N.bc = @(x,u) [jump(u,0),...
-               jump(diff(u),0) + 2*pi];
-u5 = N\0
-plot(u5)
+N.bc = @(x,u) jump(diff(u),0) + 2*pi;
+u4 = N\0
+plot(u4)
 
 %%
 % Or go crazy and introduce multiple jumps!
 
 N.bc = @(x,u) [jump(u,-.8:.2:.8) - (-.8:.2:.8),...
-               jump(diff(u),-.8:.2:.8)];
-u6 = N\0
-plot(u6)
+               jump(diff(u),-.8:.2:.8) + (-.8:.2:.8)];
+u5 = N\0
+plot(u5)
 
 %%
-% We'd be very interested to hear if you have any practical problems which
+% I'd be very interested to hear if you have any practical problems which
 % require these kinds of conditions!

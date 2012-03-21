@@ -13,7 +13,9 @@
 %
 % on the interval [0,.005].  The solution is exp(lambda*x).
 
-[d,x,L] = domain(0,.005);           % domain, x variable, name of operator
+d = [0,.005];                       % domain
+x = chebfun('x',d);                 % x variable
+L = chebop(d);                      % operator
 lambda = -10000;                    % specifying parameter lambda
 L.op = @(u) diff(u,1) - lambda*u;   % linear operator defining the ODE
 L.lbc = @(u) u-1;                   % imposing Dirichlet boundary condition

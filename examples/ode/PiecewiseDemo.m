@@ -88,7 +88,8 @@ plot(u,'b',v,'--r','LineWidth',1.6)
 % Jumps and discontinuities can also be introduced by the RHS. For example,
 % here's a smooth operator
 
-[A x] = chebop(@(x,u) -diff(u,2) + exp(x).*u);
+A = chebop(@(x,u) -diff(u,2) + exp(x).*u);
+x = chebfun('x');
 A.bc = 0
 
 %%

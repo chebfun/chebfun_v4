@@ -14,14 +14,14 @@
 
 %%
 % In Chebfun, we can define the eps-dependent operator like this:
-[d,x] = domain(0,1);
-L = @(eps) -eps*diff(d,2) - diff(d) & 'dirichlet';
+dom = domain(0,1);
+L = @(eps) -eps*diff(dom,2) - diff(dom) & 'dirichlet';
 
 %%
 % Note that since the operator L above is linear, we are defining it to be
 % a linop. Another approach would be be to define a linear chebop as
 % follows:
-L2 = @(eps) chebop(d,@(u) -eps*diff(u,2)-diff(u),0,0);
+L2 = @(eps) chebop(@(u) -eps*diff(u,2)-diff(u),dom,0,0);
 %%
 % For eps=0.1 we get this picture:
 u = L(0.1)\1;

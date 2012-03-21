@@ -16,7 +16,9 @@
 %
 %% 
 % Begin by defining the domain d, chebfun variable x and operator N.
-[d,x,N] = domain(0,5);
+d = [0 5];
+x = chebfun('x',d);
+N = chebop(d);
 %%
 % The problem has a single Dirichlet boundary condition at x = 0.
 N.lbc = 0;

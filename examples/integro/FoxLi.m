@@ -22,7 +22,7 @@
 %%
 % To create the operator in Chebfun, we define the domain and kernel, then
 % use the FRED function to build L:
-[d,x] = domain(-1,1);
+d = domain(-1,1);
 F = 64*pi;                         % Fresnel number
 K = @(x,s) exp(-1i*F*(x-s).^2 );   % kernel
 L = sqrt(1i*F/pi) * fred(K,d);     % Fredholm integral operator 
@@ -37,6 +37,7 @@ toc
 %%
 % Finally, a wonderful (and not fully understood) pattern emerges when we 
 % plot the results:
+x = chebfun('x');
 clf, plot(exp(1i*pi*x),'--r','linewidth',1.5)
 hold on, plot(lam,'k.','markersize',12)
 title('largest 80 eigenvalues of Fox-Li operator','fontsize',16)

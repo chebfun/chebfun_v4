@@ -15,7 +15,9 @@
 
 %%
 % Set up the domain and the boundary conditions.
-[d mu N] = domain(-1,1);  % Initialise the domain and the operator
+d = [-1,1];               % Define the domain
+mu = chebfun('mu',d);     % Linear function mu
+N = chebop(d);            % Initialise the operator
 N.lbc = 0; N.rbc = 0;     % Dirichlet boundary conditions
 e = 1-mu.^2;              % Initial guess
 a = 1;

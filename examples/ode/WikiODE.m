@@ -20,7 +20,9 @@
 
 %% 
 % Begin by defining the domain d, chebfun variable x and operator N.
-[d,x,N] = domain(-1,1);
+d = [-1 1];
+x = chebfun('x',d);
+N = chebop(d);
 %%
 % The problem has Dirichlet boundary conditions.
 N.lbc = exp(-2)*cos(-1);
@@ -49,7 +51,9 @@ plot(y,'linewidth',2), grid on
 %                   y(-1) = -1    
 %                   y'(1) = -pi
 %%
-[d,x,N] = domain(-1,1);
+d = [-1 1];
+x = chebfun('x',d);
+N = chebop(d);
 %%
 % This problem has a Dirichlet BC on the left,
 N.lbc = -1; 
@@ -79,7 +83,9 @@ plot(y,'linewidth',2), grid on
 %       L(y)  =  y' + 3*y  = 2        
 %                     y(0) = 2    
 %%
-[d,x,N] = domain(0,1);
+d = [0 1];
+x = chebfun('x',d);
+N = chebop(d);
 %%
 % First-order problems require only one boundary condition.
 N.lbc = 2;

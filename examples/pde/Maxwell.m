@@ -25,7 +25,8 @@ bc.right = bc.left;
 % Note how the spatial differentiation operator has to be accepted as an
 % input argument in each case. Now we can define an initial condition and 
 % solve the problem. 
-[d,x] = domain(-2,2);
+d = [-2,2];
+x = chebfun('x',d);
 E0 = exp(-16*x.^2);
 t = 0:0.05:5;
 soln = pde15s(pdefun,t,[E0,-E0],bc,pdeset('plot','on'));
@@ -50,31 +51,26 @@ plot(t,energy-energy(1),'.-')
 % amount is compatible with the default tolerance of 1e-6 in PDE15S.
 
 %%
-% Because the problem is a linear
-% evolution u_t = Au, where u=[E,B], we can use an operator exponential 
-% as an alternative for the time evolution.  The block operator A is
-% defined as
-D = diff(d);  I = eye(d);  Z = zeros(d);
-A = [ Z, D; D, Z ];
+% Because the problem is a linear evolution u_t = Au, where u=[E,B], we can
+% use an operator exponential as an alternative for the time evolution.
+% The block operator A is defined as
 
-%%
-% The syntax of boundary conditions for a system of linear equations can be
-% subtle. Here, we want to set 1*u(1) + 0*u(2) equal to zero at
-% both ends.
-A.lbc = [ I, Z ]; 
-A.rbc = [ I, Z ]; 
+A = chebop(d);
+A.op = @(x,E,B) [ diff(B), diff(E) ];
+A.lbc = @(E,B) E;
+A.rbc = @(E,B) E;
 
 %%
 % Now we use expm to solve the linear evolution. We'll save time if we just
 % apply one exponentiation repeatedly.
 Phi = expm( (t(2)-t(1))*A );
 u = [E0,-E0];
-for n = 2:length(t), u=Phi*u; E(:,n) = u(:,1); B(:,n) = u(:,2); end
+for n = 2:length(t), u=Phi*u; E(:,n) = u(:,1); B(:,n) = u(:,2); 
+plot(u), drawnow, pause(eps), end
 
 %%
 % For linear propagation, expm is far more accurate than
 % pde15s, as a check of energy conservation confirms.
 energy = sum( E.^2 + B.^2, 1 );  % integrate E^2 + B^2 in space 
 plot(t,energy-energy(1),'.-')
-
 
