@@ -27,7 +27,7 @@ v_10 = N\0;
 LW = 'linewidth'; lw = 2; 
 plot(v_10,LW,lw)
 xlabel('t'), ylabel('v(t)'), 
-title(['alpha = ',num2str(alpha),', length(v) = ',int2str(length(v_12))])
+title(['alpha = ',num2str(alpha),', length(v) = ',int2str(length(v_10))])
 
 %%
 % If we steepen the jumps by making the problem more stiff, we are well
@@ -40,7 +40,7 @@ cheboppref('maxdegree',2048);
 
 alpha = 20;
 N.op = @(t,v) diff(v) + ep*v - ep*( exp(alpha*(sin(t)-v)) - 1 );
-N.init = v_12;
+N.init = v_10;
 v_20 = N\0;
 plot(v_20,LW,lw)
 xlabel('t'), ylabel('v(t)'), 

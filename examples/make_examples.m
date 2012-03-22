@@ -263,9 +263,6 @@ elseif nargin == 2
     end
     return
 end
-
-
-dirs = {'ode'};
     
 % Clean up
 if clean

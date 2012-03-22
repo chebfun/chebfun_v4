@@ -96,7 +96,7 @@ quantumstates(abs(x));
 
 %%
 % and here is a square root function:
-quantumstates(sqrt(abs(x)));
+quantumstates(sqrt(abs(x)+.1));
 
 %%
 % Here is a double well potential, with the barrier in the middle

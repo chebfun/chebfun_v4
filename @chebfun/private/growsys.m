@@ -184,8 +184,16 @@ while any(~hpy) && all([NN{:}] < maxn) && all(ii <= numel(kk))
     
     if isfield(pref,'map')
         for j = 1:syssize
-            if ~all(NN{j} == NNold{j}),                
-                x{j} = pref.map.for(x{j}); 
+            if ~all(NN{j} == NNold{j}),     
+                if numel(pref.map) == 1
+                    x{j} = pref.map.for(x{j}); 
+                else
+                    error
+%                     for l = 1:numel(pref.map)
+%                         mask = x{j} > pref.map(l).par(1) & x{j} < pref.map(1).par(2);
+%                         x{j}(mask) = pref.map(l).for(x{j}(mask));
+%                     end
+                end
             end
         end
     end

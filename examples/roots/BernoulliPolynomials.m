@@ -6,17 +6,17 @@
 
 
 %% 
-% If there is another class of polynomials that is as fascinating and 
-% important  to mathematics as orthogonal polynomials, then these are 
-% probably the Bernoulli polynomials B_j(x), deg(B_j) = j. These polynomials 
-% appear in the most different areas of mathematics, and have a variety of 
-% applications. In this example we have cited from the excellent
+% If there is another class of polynomials that is as fascinating and
+% important  to mathematics as orthogonal polynomials, then these are
+% probably the Bernoulli polynomials B_j(x), deg(B_j) = j. These
+% polynomials appear in the most different areas of mathematics, and have a
+% variety of applications. In this example we have cited from the excellent
 % Wikipedia articles [1] and [2], and a talk of Karl Dilcher [3].
 %
 % Bernoulli polynomials are typically defined on the interval [0,1]. They
-% can be generated recursively by integrating and adding a constant such 
-% that the definite integral equals zero. Let us build a quasimatrix 
-% whose (j+1)-st column is B_j(x), and plot the first 13 polynomials:
+% can be generated recursively by integrating and adding a constant such
+% that the definite integral equals zero. Let us build a quasimatrix whose
+% (j+1)-st column is B_j(x), and plot the first 13 polynomials:
 
 close all; clear all
 LW = 'linewidth'; lw = 2; format short
@@ -38,27 +38,29 @@ B(0,1:14)
 %%
 % These numbers turn out to be the Taylor coefficients of z/(exp(z)-1).
 % Moreover, they are related to certain function values of the famous
-% Riemann zeta function at integer arguments. 
-% In fact, the unresolved Riemann Hypothesis has an alternative 
-% reformulation due to Marcel Riesz (1916) in terms of Bernoulli numbers!
-% Let us create the following chebfun f, and verify that the function 
-% values f(j), j = 0,...,13, coincide with the above Bernoulli numbers
-% (for j = 1 the sign is switched):
+% Riemann zeta function at integer arguments. In fact, the unresolved
+% Riemann Hypothesis has an alternative reformulation due to Marcel Riesz
+% (1916) in terms of Bernoulli numbers! Matlab doesn't come with a ZETA
+% function, but if you have one available (see [4], for example), we can
+% verify that the function values f(j), j = 0,...,13, coincide with the
+% above Bernoulli numbers (for j = 1 the sign is switched):
 
-f = chebfun(@(x) -x.*zeta(1-x),[0,13]);
-plot(f,LW,lw); hold on
-j = 0:13;
-f(j)
-plot(j,f(j),'ro',LW,lw); 
-axis([0,13,-.4,1.1]); 
-hold off
+if exist('zeta','file')
+    f = chebfun(@(x) -x.*zeta(1-x),[0,13]);
+    plot(f,LW,lw); hold on
+    j = 0:13;
+    f(j)
+    plot(j,f(j),'ro',LW,lw); 
+    axis([0,13,-.4,1.1]); 
+    hold off
+end
 
 %%
 % Note that (except for j = 1) every second Bernoulli number is zero. These
 % correspond to the trivial zeros of the Riemann zeta function. Using the
-% above function f (and a generalization involving the so-called Hurwitz 
-% zeta function), one can define Bernoulli numbers (and polynomials) of 
-% non-integer index. 
+% above function f (and a generalization involving the so-called Hurwitz
+% zeta function), one can define Bernoulli numbers (and polynomials) of
+% non-integer index.
 
 %%
 % Bernoulli polynomials have the property that the number of (distinct) 
@@ -129,7 +131,7 @@ fact = cumprod([1,1:99]);
 bound = 2*fact./(2*pi).^(0:99);
 for j = 1:100,
     M(j) = max(B(:,j));
-    if mod(j-1,4) == 2,
+    if mod(j-1,4) == 2 && exist('zeta','file')
         bound(j) = bound(j)*zeta(j-1);
     end
 end
@@ -155,4 +157,8 @@ axis([0,100,1e-5,1e80])
 % [3] K. Dilcher, On Multiple Zeros of Bernoulli Polynomials, Talk at the
 % 2011 "Special Functions in the 21st Century" conference in Washington,
 % http://math.nist.gov/~DLozier/SF21/SF21slides/Dilcher.pdf
+%
+% [4] Paul Godfrey, Special Functions math library, 
+% http://www.mathworks.com/matlabcentral/fileexchange/978 
+
 

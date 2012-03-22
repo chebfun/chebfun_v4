@@ -80,6 +80,7 @@ sols = chebfun;
 res = []; trueerror = [];
 for gamma = gammas
     solgamma = ugamma(gamma);
+    plot(solgamma), title(['Soln for gamma = ', num2str(gamma)]), drawnow
     sols(:,gamma) = solgamma;
     res(gamma) = norm(feval(Ns(s(gamma)),solgamma)-1);
     trueerror(gamma) = norm(solgamma - uexact(chebx,s(gamma)));
@@ -140,16 +141,16 @@ ugammabreak = @(gamma) solvebvp(Nsbreak(s(gamma)),1);
 % We're now all set to solve the problem using breakpoints for different
 % values of gamma. Here, values of gamma up to 6 work with the default
 % chebop settings, but we can obtain solutions for even larger values of
-% gamma, up to 8, by increasing the number of gridpoints the solver can use
-% (beyond 8, we run into problems with matrices being close to
-% singular)
+% gamma, up to 7, by increasing the number of gridpoints the solver can use
+% (beyond 7, we run into problems with matrices being close to singular)
 cheboppref('maxdegree',2^12+1)
 chebx = chebfun('x',[0 .5 1]);
-gammas = 1:8;
+gammas = 1:7;
 sols = chebfun;
 res = []; trueerror = []; legs = [];
 for gamma = gammas
     solgamma = ugammabreak(gamma);
+    plot(solgamma), title(['Soln for gamma = ', num2str(gamma)]), drawnow
     sols(:,gamma) = solgamma;
     res(gamma) = norm(feval(Nsbreak(s(gamma)),solgamma)-1);
     trueerror(gamma) = norm(solgamma - uexact(chebx,s(gamma)));

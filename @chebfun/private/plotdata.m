@@ -36,26 +36,26 @@ if isempty(f) && isempty(g)
 end
 
 % Set the plotting interval
-dom = domain(g); % by default use the whole domain
+dom = g(1).ends([1 end]);% by default use the whole domain
 if ~isempty(interval)
     % user defined
     if isa(interval,'domain'); interval = interval.ends; end
     if interval(1) < dom(1), interval(1) = dom(1); end
     if interval(2) > dom(2), interval(2) = dom(2); end
-    dom = domain(interval(1:2));
+    dom = interval(1:2);
 elseif any(isinf(g(1).ends([1 end]))) 
     % defaults for unbounded domains
     if all(isinf(g(1).ends([1 end])))
-        dom = domain(-unbndd_def,unbndd_def);
+        dom = [-unbndd_def,unbndd_def];
     elseif isinf(g(1).ends(end))
-        dom = domain(g(1).ends(1),g(1).ends(1)+2*unbndd_def);
+        dom = [g(1).ends(1),g(1).ends(1)+2*unbndd_def];
     elseif isinf(g(1).ends(1))
-        dom = domain(-2*unbndd_def+g(1).ends(end),g(1).ends(end));
+        dom = [-2*unbndd_def+g(1).ends(end),g(1).ends(end)];
     end     
 end
 % Don't exclude anything
 if isempty(interval), 
-    if isempty(f), interval = dom.ends([1 end]);
+    if isempty(f), interval = dom;
     else interval = [-inf inf]; end
 end
 
@@ -74,38 +74,51 @@ if isempty(f)
     % initialise y limits (auto adjusted if there are exps)
     top = -inf; bot = inf;
     
+    issingle = all([g.nfuns]==1);
+    
     % equispaced points over domain
-    ab = dom.ends; a = ab(1); b = ab(2);
-    fl = linspace(a,b,numpts).';
+    a = dom(1); b = dom(2);
+    if issingle
+        numpts = max(numpts,pi/2*length(g));
+        n = power(2,ceil(log2(numpts)));
+        fl = chebpts(n,[a b]);
+    else
+        fl = linspace(a,b,numpts).';
+    end
     
     % find all the ends and get rid of high order imps
     ends = [];
     for k = 1:numel(g)
-        % old
         ends = [ends g(k).ends];
         g(k).imps = g(k).imps(1,:);
-        % new
-%         endsk = g(:,k).ends;       
-%         endsk(endsk<a | endsk>b) = [];
-%         ends = [ends g(:,k).ends];
-%         g(:,k).imps = g(:,k).imps(1,:);
     end
-    ends = unique(ends);         ends = ends(2:end-1);
+    ends = unique(ends);         
+    ends = ends(2:end-1);
     ends(ends<a | ends>b) = [];
 
     % evaluation points
     fl = [reshape(repmat(ends,3,1),3*length(ends),1) ; setdiff(fl,ends.')];
+    mask = [];
     if greal
         % remove values outside interval
         mask = (fl < a) | (fl > b);
         fl(mask) = [];
     end
     % sort
-    [fl indx] = sort(fl);    [ignored indx2] = sort(indx);
+    [fl indx] = sort(fl);    
+    [ignored indx2] = sort(indx);
 
     % line values of g
-    gl = feval(g,fl);
-
+    if issingle
+        gl = zeros(n,numel(g));
+        for k = 1:numel(g)
+            gl(:,k) = get(prolong(g(k).funs(1),n),'vals');
+        end
+        gl(mask,:) = [];
+    else
+        gl = feval(g,fl);
+    end
+    
     if fl(1) == a, 
         for k = 1:size(gl,2)
             gl(1,k) = get(g(k).funs(1),'lval'); 
@@ -118,7 +131,7 @@ if isempty(f)
     end
     
     % Who put this here?
-    dg = domain(g);
+    dg = g(1).ends([1 end]);
     if a~=dg(1), gl(1,:) = feval(g,a);   end
     if b~=dg(end), gl(end,:) = feval(g,b);   end
     % deal with marks breakpoints
@@ -156,7 +169,6 @@ if isempty(f)
         end 
         expsk = [expsk ; expskj(2)];
         
-
         exps = reshape(get(gk,'exps')',2*gk.nfuns,1);
         expsk = [exps(1) ; zeros(gk.nfuns,1)];
         for j = 1:gk.nfuns-1
@@ -361,14 +373,16 @@ elseif isempty(h) % Two quasimatrices case
         for j = 1:fk.nfuns
             if fk.funs(j).n > gk.funs(j).n
                 xgrid = chebpts(fk.funs(j).n,gk.funs(j).map.par(1:2));
-                fkf = feval(fk.funs(j),xgrid);
+%                 fkf = feval(fk.funs(j),xgrid);
+                fkf = fk.funs(j).vals;
                 gkf = feval(gk.funs(j),xgrid);
                 fm = [fm; fkf];
                 gm = [gm; gkf];
             else
                 xgrid = chebpts(gk.funs(j).n,fk.funs(j).map.par(1:2));
                 fkf = feval(fk.funs(j),xgrid);
-                gkf = feval(gk.funs(j),xgrid);
+%                 gkf = feval(gk.funs(j),xgrid);
+                gkf = gk.funs(j).vals;
                 fm = [fm; fkf];
                 gm = [gm; gkf];
             end

@@ -3,7 +3,6 @@
 %
 % (Chebfun example ode/LaneEmden.m)
 
-
 %% 
 % This example is motivated by discussions with the astronomer Alfred
 % Gautschy. The equation is also a demo in chebgui (in the IVP section).
@@ -77,7 +76,8 @@ n = 1.5; eps = 1e-8;
 N.op = @(x,u,v) x.*diff(u,2) + 2*diff(u) + x.*v.^2.*(u+eps).^n;
 N.lbc = @(u,v) [u-1,diff(u)];
 N.rbc = @(u,v) u;
-N.init = [1-x.^2,1];
+% N.init = [1-x.^2,1];
+N.init = [cos(pi/2*x),pi];
 uv = N\0;
 
 %%

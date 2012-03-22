@@ -51,7 +51,9 @@
 % also see T. Driscoll 2010 [2]. Additional examples are provided at [1].
 %
 %
-    help svdfr
+
+urlwrite('http://www.ece.umn.edu/users/mihailo/software/chebfun-svd/matlab-files/svdfr.m','svdfr.m');
+help svdfr
 
 %% Example: one-dimensional diffusion equation
 %
@@ -117,6 +119,7 @@ w = 0; % set temporal frequency to the value of interest
 dom = domain(-1,1);         % domain of your function
 fone = chebfun(1,dom);      % one function
 fzero = chebfun(0,dom);     % zero function
+y = chebfun('x',dom);       % linear function
 
 %%
 % The system operators can be constructed as follows:
