@@ -233,6 +233,11 @@ else
     varargout{2} = vec;
 end
 
+% isLinear is returned as a vector (with elements corresponding to DE
+% and BCs. Convert to a binary, 1 if everything in the problem is linear, 0
+% otherwise
+isLinear = all(isLinear);
+
 % Now do some more stuff specific to GUI
 if guiMode
     % Store in handles latest chebop, solution, vector of norm of updates etc.
