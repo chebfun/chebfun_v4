@@ -16,10 +16,6 @@ gui_State = struct('gui_Name', mfilename, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
-    if strcmp(varargin{1},'DemoTest')
-        menu_test_Callback([], [], varargin{2})
-        return
-    end
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
@@ -354,10 +350,14 @@ handles.guifile.DE = str;
 for k = 1:numel(str)
     strk = str{k};
     if any(strfind(strk,'_'))
-        handles = switchmode(handles.guifile,handles,'pde');
+        if ~get(handles.button_pde,'value')
+            handles = switchmode(handles.guifile,handles,'pde');
+        end
         break
     elseif any(strfind(strk,'lam') | strfind(strk,'lambda'))
-        handles = switchmode(handles.guifile,handles,'eig');
+        if ~get(handles.button_eig,'value')
+            handles = switchmode(handles.guifile,handles,'eig');
+        end
         break
     end
 end
@@ -383,6 +383,8 @@ if strcmp(eventdata.Key,'tab'),
         else
             uicontrol(handles.input_domain); 
         end
+    elseif get(handles.button_pde,'value')
+        uicontrol(handles.input_LBC); 
     else
         uicontrol(handles.input_BC); 
     end
@@ -391,6 +393,22 @@ function input_BC_KeyPressFcn(hObject, eventdata, handles)
 if strcmp(eventdata.Key,'tab')
     if strcmp(eventdata.Modifier,'shift')
         uicontrol(handles.input_DE); 
+    else
+        uicontrol(handles.input_GUESS); 
+    end
+end
+function input_LBC_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        uicontrol(handles.input_DE); 
+    else
+        uicontrol(handles.input_RBC); 
+    end
+end
+function input_RBC_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        uicontrol(handles.input_LBC); 
     else
         uicontrol(handles.input_GUESS); 
     end
