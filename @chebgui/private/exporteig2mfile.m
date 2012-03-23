@@ -35,7 +35,8 @@ if isempty(K), K = '6'; end
 if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(bcInput,'char'), bcInput = cellstr(bcInput); end
 
-[allStrings allVarString indVarName pdeVarName pdeflag allVarNames] = setupFields(guifile,deInput,'DE');
+[allStrings allVarString indVarName pdeVarName pdeflag ignored allVarNames] = setupFields(guifile,deInput,'DE');
+
 % If indVarName is empty, use the default value
 if isempty(indVarName{1})
     indVarName{1} = 'x';

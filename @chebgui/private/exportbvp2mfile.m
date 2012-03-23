@@ -27,7 +27,7 @@ if isa(deInput,'char'), deInput = cellstr(deInput); end
 if isa(bcInput,'char'), bcInput = cellstr(bcInput); end
 if isa(initInput,'char'), initInput = cellstr(initInput); end
 
-[deString allVarString indVarNameDE ignored ignored allVarNames] = setupFields(guifile,deInput,'DE');
+[deString allVarString indVarNameDE ignored ignored ignored allVarNames] = setupFields(guifile,deInput,'DE');
 
 % Do some error checking before we do further printing. Check that
 % independent variable name match.
@@ -154,7 +154,7 @@ elseif ~isempty(initInput{1})
         [ignored order] = sort(order);
         initText = '_init';
         for k = 1:numel(initInput)
-            fprintf(fid,'%s%s = %s;\n',inits{order(k)},initText,guesses{order(k)})
+            fprintf(fid,'%s%s = %s;\n',inits{order(k)},initText,guesses{order(k)});
         end
         fprintf(fid,'N.init = [%s%s,',inits{order(1)},initText);
         for k = 2:numel(initInput)-1
