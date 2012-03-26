@@ -279,7 +279,7 @@ newString = removeTabs(newString);
 set(hObject,'String',newString);
 
 handles.guifile.init = newString;
-if isempty(newString)
+if isempty(newString) || (iscell(newString) && numel(newString)==1 && isempty(newString{1}))
     handles.init = '';
     axes(handles.fig_sol);
     cla(handles.fig_sol,'reset');
@@ -374,7 +374,7 @@ for k = 1:numel(str)
     str{k} = strk;
 end
 
-% Tab switches for multi-lines
+%% Keypresses
 function input_DE_KeyPressFcn(hObject, eventdata, handles)
 if strcmp(eventdata.Key,'tab'), 
     if strcmp(eventdata.Modifier,'shift')
@@ -418,7 +418,8 @@ if strcmp(eventdata.Key,'tab')
     if strcmp(eventdata.Modifier,'shift')
         uicontrol(handles.input_BC); 
     else
-        uicontrol(handles.button_solve); 
+        uicontrol(handles.button_solve);
+        set(handles.button_solve,'selected','on');
     end
 end
 function popupmenu_sigma_KeyPressFcn(hObject, eventdata, handles)
@@ -429,8 +430,43 @@ if strcmp(eventdata.Key,'tab')
         uicontrol(handles.button_solve); 
     end
 end
-
-
+function button_solve_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        if get(handles.button_eig,'value')
+            uicontrol(handles.input_BC); 
+        else
+            uicontrol(handles.input_GUESS); 
+        end
+    else
+        uicontrol(handles.button_clear); 
+    end
+elseif strcmp(eventdata.Key,'return')
+    button_solve_Callback(hObject, eventdata, handles);
+end
+function button_clear_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        uicontrol(handles.button_solve); 
+    else
+        uicontrol(handles.button_export); 
+    end
+elseif strcmp(eventdata.Key,'return')
+    button_clear_Callback(hObject, eventdata, handles);
+end
+function button_export_KeyPressFcn(hObject, eventdata, handles)
+if strcmp(eventdata.Key,'tab')
+    if strcmp(eventdata.Modifier,'shift')
+        uicontrol(handles.button_clear); 
+    elseif get(handles.button_exportsoln,'enabled')
+        uicontrol(handles.button_exportsoln);
+    else 
+        uicontrol(handles.input_domain);
+    end
+elseif strcmp(eventdata.Key,'return')
+    button_export_Callback(hObject, eventdata, handles);
+end
+%%
 
 function input_timedomain_Callback(hObject, eventdata, handles)
 str = get(hObject,'String');
@@ -734,8 +770,6 @@ function ylim1_Callback(hObject, eventdata, handles)
 function ylim2_CreateFcn(hObject, eventdata, handles)
 function ylim2_Callback(hObject, eventdata, handles)
 
-function button_solve_KeyPressFcn(hObject, eventdata, handles)
-
 function button_solve_ButtonDownFcn(hObject, eventdata, handles)
 % -------------------------------------------------------------------------
 % ----------------- Right-clicking functions ------------------------------
@@ -992,13 +1026,6 @@ while ~valid
     end
 end
 guidata(hObject, handles)
-
-
-% --------------------------------------------------------------------
-function Untitled_3_Callback(hObject, eventdata, handles)
-% hObject    handle to Untitled_3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
 % --------------------------------------------------------------------
@@ -1684,3 +1711,5 @@ set(handles.button_exportsoln,'Enable','off');
 set(handles.menu_demos,'Enable','on');
 
 % --------------------------------------------------------------------
+
+
