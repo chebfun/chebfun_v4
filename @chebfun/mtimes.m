@@ -283,9 +283,7 @@ end
 % ------------------------------------
 function f = mtimescol(a,f)
 
-for i = 1:f.nfuns
-    f.funs(i) = a*f.funs(i);
-end
+f.funs = a*f.funs;
 f.imps = a*f.imps;
 f.scl = abs(a)*f.scl;
 

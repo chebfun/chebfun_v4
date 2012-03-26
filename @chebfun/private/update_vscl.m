@@ -6,12 +6,11 @@ function f = update_vscl(f)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-vscl = 0;
-for k = 1:f.nfuns
-    vscl = max(vscl, get(f.funs(k),'scl.v'));
-end
+% vscl = 0;
+% for k = 1:f.nfuns
+%     vscl = max(vscl, get(f.funs(k),'scl.v'));
+% end
+vscl = max(get(f.funs,'scl.v'));
 
-for k = 1:f.nfuns
-    f.funs(k) = set(f.funs(k),'scl.v',vscl);
-end
+f.funs = set(f.funs,'scl.v',vscl);
 f.scl = vscl;

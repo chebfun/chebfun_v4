@@ -147,7 +147,7 @@ function f = scribbleOneLine(s)
             case {'Ê'}, t = [c([.8+1i 1i .5i .5i+.7 .5i 0 .8]) c([.1+1.1i .4+1.2i .7+1.1i])];
             case {'Þ'}, t = c([0 1i .8+1i .8+.5i .5i]);
             case {'Æ'}, t = c([0 .4+1i .8+1i .4+1i .4 .8 .4 .4+.5i .2+.5i .6+.5i]);
-            case {'Í'}, t = [c([0 .8 .4 .4+1i 1i .8+1i]) c([.2+1.1i .6+1.2i])];
+            case {'�?'}, t = [c([0 .8 .4 .4+1i 1i .8+1i]) c([.2+1.1i .6+1.2i])];
 
             otherwise,
                 t = [];
@@ -157,7 +157,7 @@ function f = scribbleOneLine(s)
         end
 
         if ~isempty(t)
-            f0 = { f0{:} , t{:} };
+            f0 = [f0 , t];
         end
 
     end

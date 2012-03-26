@@ -26,7 +26,11 @@ switch propName
     case 'scl'
         val = g.scl;
     case 'scl.v'
-        val = g.scl.v;
+%         val = g.scl.v;
+        val = zeros(numel(g),1);
+        for k=1:numel(g)
+            val(k) = g(k).scl.v;
+        end
     case 'scl.h'
         val = g.scl.h;
     case 'ish'
