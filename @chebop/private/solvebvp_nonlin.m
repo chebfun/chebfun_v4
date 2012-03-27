@@ -234,6 +234,11 @@ while nrmDeltaRel > deltol && nnormr > restol && newtonCounter < maxIter && stag
         return
     end
     
+    % If the user has pressed the pause button on the GUI, we pause
+    if ~isempty(handles) && strcmpi(get(handles.button_clear,'String'),'Continue')
+        waitfor(handles.button_clear,'String')
+    end
+    
     % Start a timer from the end of this iteration
     iterationTimeTic = tic;
 end

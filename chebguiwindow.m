@@ -172,6 +172,11 @@ else
 end
 
 function button_solve_Callback(hObject, eventdata, handles)
+% uicontrol(handles.panel_input)
+% figure(handles.chebguimainwindow)
+% set(hObject, 'Enable', 'off');
+% drawnow;
+% set(hObject, 'Enable', 'on');
 handles = solveGUI(handles.guifile,handles);
 guidata(hObject, handles);
 
@@ -1425,19 +1430,13 @@ function menu_annotateon_Callback(hObject, eventdata, handles)
 function menu_annotateoff_Callback(hObject, eventdata, handles)
 % --------------------------------------------------------------------
 function menu_about_Callback(hObject, eventdata, handles)
-aboutWindow = dialog('WindowStyle', 'normal', 'Name', 'About chebgui','Position', [500 500 200 350]);
+aboutWindow = dialog('WindowStyle', 'normal', 'Name', 'About chebgui','Position', [500 500 200 200]);
 aboutString = sprintf(['Chebgui was developed by Asgeir Birkisson and Nick Hale ',...
-    'as an interface to the differential equations in Chebfun.', ...
-    '\n\n The following keyboard shortcuts are supported:\n', ...
-    'Ctrl + Return = Solve\n', ...
-    'Ctrl + P = Pause\n', ...
-    'Ctrl + E = Export to .m file\n', ...
-    'Ctrl + + = Increase font-size\n', ...
-    'Ctrl + - = Decrease font-size',    ]);
+    'as an interface to the differential equations in Chebfun.']);
 uicontrol(aboutWindow, ... % Text
              'Style','text', ...
              'String', aboutString,...
-             'position',[0 0 200 200])
+             'position',[0 -90 200 200])
 uicontrol(aboutWindow, ... % Close button
              'Style','pushbutton','String', 'Close','position',[65 10 75 20],'callback',@(a,b,c)delete(aboutWindow))
 
@@ -1464,8 +1463,45 @@ if ~isempty(k), set(h,'fontname',flist{k(1)}), end
 axis(hPlotAxes,'off')
        
        
+function menu_shortcuts_Callback(hObject, eventdata, handles)
+% hObject    handle to menu_shortcuts (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+aboutWindow = dialog('WindowStyle', 'normal', 'Name', 'About chebgui','Position', [500 500 200 275]);
+aboutString = sprintf(['The following keyboard shortcuts are supported (case insensitive):\n', ...
+    'Ctrl + Return = Solve\n', ...
+    'Ctrl + P = Pause\n', ...
+    'Ctrl + E = Export to .m file\n', ...
+    'Ctrl + + = Increase font-size\n', ...
+    'Ctrl + - = Decrease font-size',    ]);
+uicontrol(aboutWindow, ... % Text
+             'Style','text', ...
+             'String', aboutString,...
+             'position',[0 -40 200 200])
+uicontrol(aboutWindow, ... % Close button
+             'Style','pushbutton','String', 'Close','position',[65 10 75 20],'callback',@(a,b,c)delete(aboutWindow))
 
 
+hPlotAxes = axes(...       % Axes for plotting the selected plot
+                 'Parent', aboutWindow, ...
+                 'Units', 'normalized', ...
+                 'HandleVisibility','callback','position',[0.1 0.6 .8 .25]);
+
+% Plot the logo
+f = chebpoly(10);
+xx = linspace(-1,.957,1000);
+plot(hPlotAxes,xx,f(xx),'linewidth',3)
+t = -cos(pi*(2:8)'/10) *0.99;  % cheb extrema (tweaked)
+y = 0*t;
+h = text(t, y, num2cell(transpose('chebgui')), ...
+    'fontsize',16,'hor','cen','vert','mid','parent',hPlotAxes);
+flist = listfonts;
+k = strmatch('Rockwell',flist);  % 1st choice
+k = [k; strmatch('Luxi Serif',flist)];  % 2nd choice
+k = [k; strmatch('luxiserif',flist)];  % 2.5th choice
+k = [k; strmatch('Times',flist)];  % 3rd choice
+if ~isempty(k), set(h,'fontname',flist{k(1)}), end
+axis(hPlotAxes,'off')
 
 function input_GUESS_cover_Callback(hObject, eventdata, handles)
 % hObject    handle to input_GUESS_cover (see GCBO)
@@ -1713,3 +1749,4 @@ set(handles.menu_demos,'Enable','on');
 % --------------------------------------------------------------------
 
 
+% --------------------------------------------------------------------
