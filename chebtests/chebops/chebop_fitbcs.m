@@ -58,7 +58,6 @@ N = chebop(@(x,u,v) [diff(u,2)+v,u-diff(v,2)],[-1 0 1]);
 N.lbc = @(u,v) [u-1,v-2];
 N.bc = @(x,u,v) [jump(u,.5)-3,jump(diff(v),-.5)-7];
 L = linop(N);
-L(3)
 uv = fitBCs(L); u = uv(:,1); v = uv(:,2);
 pass(8) = compAbs(u(-1),1) && compAbs(v(-1),2) && ...
     compAbs(jump(u,.5),3) && compAbs(jump(diff(v),-.5),7) && ...
