@@ -2,20 +2,51 @@ function funcOut = fitBCs(L)
 % FUNCOUT = FITBCS(L) Returns a chebfun which will satisfy the BCs and
 % other conditions of the linop L.
 
-% Determines how big discretization we want for each component. Individual
-% diffOrder for each component if we have a system
-indDifforder = max(L.difforder,[],1);
-
+% Obtain information about the number of variables involved, and about the
+% domain of problems (and potential breakpoints).
 numVar = L.blocksize(2);
 
 breaks = L.domain;
 breaks = breaks.endsandbreaks;
 
-if diff(L.blocksize)
-%     funcOut = repmat(chebfun(0,breaks),1,L.blocksize(2));
-%     return
-    indDifforder = max(L.blocksize(2)*indDifforder,1);
+
+% Determines how big discretization we want for each component. We want to
+% obtain the lowest degree polynomial which satisfies all boundary
+% conditions. In case of a system, this might mean that this won't be
+% governed by individual diffOrders, but rather, in how many BCs an unknown
+% function appears (e.g. u'+v = 0, u-v' = 0, u(-1) = u(1) = 0). This
+% information can be obtained from the iszero information of the linearised
+% BCs in the linop L.
+polyDegree = zeros(1,numVar);
+Llbc = L.lbc; Lrbc = L.rbc; Lbc = L.bc;
+
+
+if ~isempty(Llbc)
+    for bcCounter = 1:length(Llbc)
+        polyDegree = polyDegree + ~iszero(Llbc(bcCounter).op);
+    end
 end
+
+if ~isempty(Lrbc)
+    for bcCounter = 1:length(Lrbc)
+        polyDegree = polyDegree + ~iszero(Lrbc(bcCounter).op);
+    end
+end
+
+if ~isempty(Lbc)
+    for bcCounter = 1:length(Lbc)
+        polyDegree = polyDegree + ~iszero(Lbc(bcCounter).op);
+    end
+end
+   
+
+% if diff(L.blocksize)
+% %     funcOut = repmat(chebfun(0,breaks),1,L.blocksize(2));
+% %     return
+%     polyDegree = max(L.blocksize(2)*polyDegree,1);
+% end
+
+polyDegree = max(polyDegree,ones(1,numVar));
 
 jumplocs = [];
 if ~isempty(L.jumpinfo)
@@ -31,10 +62,10 @@ breaks = repmat({breaks},1,numVar);
 
 % n = repmat({n},1,L.blocksize(2));
 
-fevalOrder = {repmat(indDifforder(1),1,numBreaks+1)};
+fevalOrder = {repmat(polyDegree(1),1,numBreaks+1)};
 
 for varCounter = 2:numVar
-    fevalOrder = [fevalOrder, repmat(indDifforder(varCounter),1,numBreaks+1)];
+    fevalOrder = [fevalOrder, repmat(polyDegree(varCounter),1,numBreaks+1)];
 end
 
 map = [];
@@ -67,7 +98,7 @@ for varCounter = 1:numVar
     %
     % Here we could do some fancy vector footwork, but for the sake of
     % clarity, we work directly with counters
-    endPos = startPos + (numBreaks + 1)*indDifforder(varCounter) - 1;
+    endPos = startPos + (numBreaks + 1)*polyDegree(varCounter) - 1;
     
     % This vector holds all values for a single function.
     un = uu(startPos:endPos);
