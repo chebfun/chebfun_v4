@@ -38,26 +38,41 @@ for k = 1:syssize
 
     % Extract the right rows
     for j = 1:numfunsk-1 % Continuity conditions
+        
+        if ~any(Nsysk(j+(0:1))), continue, end % Discretisation of size zero
 
         % Enforce continuity if there's no jump here
         if ~ismember([bk(j+1) k 0],jumpinfo,'rows')
-            idx = csN(intnum)+Nsysk(j)+(0:1);
-            Cmat(bcrownum,idx) = [-1 1];
+            if Nsysk(j) && Nsysk(j+1)  
+                idx = csN(intnum)+Nsysk(j)+(0:1);
+                Cmat(bcrownum,idx) = [-1 1];
+            elseif Nsysk(j) 
+                idx = csN(intnum)+Nsysk(j);
+                Cmat(bcrownum,idx) = -1;
+            elseif Nsysk(j+1) 
+                idx = csN(intnum)+Nsysk(j)+1;
+                Cmat(bcrownum,idx) = 1;
+            end
             bcrownum = bcrownum + 1;
         end
 
         % Get correct indices
         indxl = csNsysk(j)+(1:Nsysk(j));
         indxr = csNsysk(j+1)+(1:Nsysk(j+1));
-        len = indxr(end)-indxl(1)+1;
+        len = numel([indxl indxr]);
 
         % Derivative conditions
         for l = 1:dok-1   
             % Jump condition is being enforced here, so ignore
             if ismember([bk(j+1) k l],jumpinfo,'rows'), continue, end
+            Dl = []; Dr = [];
             % No jump, enforce continuity
-            Dl = D(csNsysk(j+1),indxl,l);     % Left of break jj
-            Dr = D(csNsysk(j+1)+1,indxr,l);   % Right of break jj
+            if ~isempty(indxl)
+                Dl = D(csNsysk(j+1),indxl,l);   % Left of break jj
+            end
+            if ~isempty(indxr)
+                Dr = D(csNsysk(j+1)+1,indxr,l); % Right of break jj
+            end
             idx = csN(intnum)+(1:len);        % Global row index
             Cmat(bcrownum,idx) = [-Dl Dr];    % Add to output
             bcrownum = bcrownum + 1;          % +1 bc counter
