@@ -71,7 +71,10 @@ if nargin > 1
 end
 
 % Decide to use GW or FAST
-if strcmpi(method,'GW')
+if n == 1
+% Trivial case when N = 1    
+    x = 0; w = 2; v = 1;
+elseif strcmpi(method,'GW')
 % GW, see [1]
    beta = .5./sqrt(1-(2*(1:n-1)).^(-2)); % 3-term recurrence coeffs
    T = diag(beta,1) + diag(beta,-1);     % Jacobi matrix
