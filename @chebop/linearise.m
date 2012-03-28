@@ -279,8 +279,6 @@ end
                 if nargin(bc{j}) == 1
                     guj = bc{j}(u);
                 else
-                    keyboard
-                    mean(u)
                     guj = bc{j}(xDom,u);
                 end
                 
