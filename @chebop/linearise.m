@@ -126,7 +126,7 @@ else
     if linCheck && ~isLin(4), return, end % Bail if linearity check and nonlinear
     
     % Combine recovered domains and jumplocs
-    dom = unique([domL domR domO]);
+    dom = unique([dom domL domR domO]);
     jumpinfo = unique([jumpinfoL ; jumpinfoR ; jumpinfoO].','rows');
 end
 
@@ -275,6 +275,8 @@ end
                 if nargin(bc{j}) == 1
                     guj = bc{j}(u);
                 else
+                    keyboard
+                    mean(u)
                     guj = bc{j}(xDom,u);
                 end
                 

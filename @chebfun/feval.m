@@ -116,13 +116,17 @@ end
 % Deal with quasimatrices.
 if nchebs > 1,
     x = x(:); lenx = length(x);
+    if ~forceval && get(F,'funreturn')
+        Fx = chebconst;
+    else
+        Fx = zeros(lenx,nchebs);
+    end
     if F(1).trans
-        Fx = zeros(nchebs,lenx);
+        Fx = Fx.';
         for k = 1:nchebs
             Fx(k,:) = fevalcolumn(F(k),transpose(x),lr,forceval);
         end
     else
-        Fx = zeros(lenx,nchebs);
         for k = 1:nchebs
             Fx(:,k) = fevalcolumn(F(k),x,lr,forceval);
         end
@@ -201,7 +205,7 @@ elseif size(f.imps,1) > 1 && any(any(f.imps(2:end,:)))
     
 end
 
-if ~forceval && f.funreturn
+if ~forceval && get(f,'funreturn')
   % If length(x)>1, we will use a column quasimatrix, regardless of the
   % shape of x. This is consistent with linop interpretation of
   % quasimatrices.

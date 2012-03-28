@@ -1,4 +1,4 @@
-function [g c] = diff(g,k,c)
+function g = diff(g,k)
 % DIFF	Differentiation
 % DIFF(G) is the derivative of the fun G.
 %
@@ -28,7 +28,15 @@ function [g c] = diff(g,k,c)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if isempty(g), return, end
-if nargin==1, k=1; end
+if nargin == 1, k = 1; end
+
+if numel(g) > 1
+    for j = 1:numel(g)
+        g(j) = diff(g(j),k);
+    end
+    return
+end
+
 if nargin < 3
     c = chebpoly(g);  % obtain Cheb coeffs {C_r}
 end

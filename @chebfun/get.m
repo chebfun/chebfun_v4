@@ -23,9 +23,12 @@ function val = get(f, propName)
 val = [];
 
 if numel(f) > 1
-    val = cell(numel(f));
+    val = cell(length(f),1);
     for k = 1:numel(f)
         val{k} = get(f(k), propName);
+    end
+    if any(strcmp(propName,{'funreturn','trans'}))
+        val = any([val{:}]);
     end
     return
 end

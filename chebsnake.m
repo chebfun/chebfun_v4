@@ -1,29 +1,24 @@
 function chebsnake(nodes,alpha)
 %CHEBSNAKE   Chebfun snake game.
-%   CHEBSNAKE() Feed the snake with more and
-%   more interpolation nodes, but avoid that
-%   it hits the boundary or itself!
-%   Use the arrow keys to control the snake.
-%   Any other key will quit the game.
+%   CHEBSNAKE() Feed the snake with more and more interpolation nodes, but
+%   avoid that it hits the boundary or itself! Use the arrow keys to
+%   control the snake. Any other key will quit the game.
 %
-%   CHEBSNAKE(NODES) allows one to change the
-%   interpolation type. The default type 'cheby' 
-%   is polynomial interpolation in Chebyshev points.
-%   Other types are polynomial interpolation in 
-%   equispaced points ('equi') and 
-%   Floater-Hormann rational interpolation in 
-%   equispaced points ('fh'). 
-%   The blue dots on the snake indicate the 
-%   interpolated function values.
+%   CHEBSNAKE(NODES) allows one to change the interpolation type. The
+%   default type 'cheby' is polynomial interpolation in Chebyshev points.
+%   Other types are polynomial interpolation in equispaced points ('equi')
+%   and Floater-Hormann rational interpolation in equispaced points ('fh').
+%   The blue dots on the snake indicate the interpolated function values.
 %
-%   CHEBSNAKE(NODES,ALPHA) allows to change the
-%   initial game speed by a factor ALPHA > 0,
-%   ALPHA > 1 increases the game speed, 
-%   ALPHA < 1 decreases it (default = 1).
+%   CHEBSNAKE(NODES,ALPHA) allows to change the initial game speed by a
+%   factor ALPHA > 0, ALPHA > 1 increases the game speed, ALPHA < 1
+%   decreases it (default = 1).
 %
-%   To prevent you from neglecting your actual
-%   work, the game speed increases with the total
-%   number of achieved points...
+%   To prevent you from neglecting your actual work, the game speed
+%   increases with the total number of achieved points...
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
     % get some constants right
     if nargin < 2, alpha = 1; end
@@ -48,6 +43,9 @@ function chebsnake(nodes,alpha)
         if d == -dold; d = dold; end
     end
 
+    alpha0 = alpha;                     % set base level for alpha
+    fails = 0;                          % fail counter (no food eaten)
+    failmax = 5;                        % number of consecutive fails before quit
     while ~(d==0), % until quit
         d = 1;
         clf; 
@@ -60,6 +58,7 @@ function chebsnake(nodes,alpha)
         title('Control the snake with arrow keys. Quit with any other key.');
         axis([-1,1,-1,1]); shg; pause(0.3);
         pts = 0;                            % points counter
+        alpha = alpha0;                     % reset alpha (speed)
         t = 1;                              % convex factor for nodes
         tic;
         while ~(d==0),                      % until game over or quit
@@ -92,10 +91,13 @@ function chebsnake(nodes,alpha)
             if max(abs([real(y(end)),imag(y(end))])) > 1 || ...
                    min(abs(y(end)-y(1:end-1))) < res/2,
                 ht = plot(.8*scribble('game over'),'r',LW,lw); 
-                shg; pause(1); break
+                shg; pause(1); 
+                if pts == 0, fails = fails + 1; end
+                if fails > failmax, d = 0; end
+                break
             end
             if abs(y(end)-f) < res/2, % snake eats food ?
-                pts = pts + 1; alpha = alpha * 1.003;
+                pts = pts + 1; alpha = alpha * 1.003; fails = 0;
                 title(['Points : ' num2str(pts)]);
                 f = food();
                 set(hf,'XData',real(f),'YData',imag(f));

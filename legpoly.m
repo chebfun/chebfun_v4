@@ -1,4 +1,4 @@
-function p = legpoly(n,d,normalize)
+function [p L] = legpoly(n,d,normalize)
 %LEGPOLY Legendre polynomials.
 %   P = LEGPOLY(N) computes a chebfun of the Legendre polynomial 
 %   of Lgree N on the interval [-1,1]. N can be a vector of integers.
@@ -38,9 +38,9 @@ if strcmp(normalize,'norm')
 end
 
 % Convert the discrete values into chebfuns over the specified domain
-for k = 1:ln
-    p(:,k) = chebfun( L( : , n(k)+1 ) , d );
-end
+L = L( : , n+1 );
+if nargout == 2, return, end
+p = chebfun( L , d );
     
 % Adjust orientation
 if size(n,1) > 1, p = p.'; end

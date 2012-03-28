@@ -100,10 +100,9 @@ F.ID = newIDnum;
 for j = 1:n % Loop n times for nth derivative
     
     % Differentiate every piece and rescale
-    for i = 1:f.nfuns
-        funs(i) = diff(funs(i));
-        F.scl = max(F.scl, funs(i).scl.v);
-    end
+    funs = diff(funs);
+    newscl = max(get(funs,'scl.v'));
+    F.scl = max(F.scl,newscl);
     F.funs = funs;
 
     F.imps(1,:) = jumpvals(F.funs,ends);
@@ -131,6 +130,4 @@ for j = 1:n % Loop n times for nth derivative
 end
 
 % Update scale in funs
-for k = 1:F.nfuns
-    F.funs(k).scl.v = F.scl;
-end
+F.funs = set(funs,'scl.v',F.scl);

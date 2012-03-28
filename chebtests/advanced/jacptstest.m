@@ -32,7 +32,7 @@ v1jac = c2^(alpha+beta+1)*w*f(c1+c2*s);
 v2jac = W*f(S);
 
 % Check the scaling of the points
-pass(1) = ~norm(v1jac-v2jac,inf);
+pass(1) = norm(v1jac-v2jac,inf) < 100*tol;
 
 % Check the accuracy of the quadrature against quadgk
 pass(2) = abs(vquadgk-v2jac) < max(10*tol,1e-8);
