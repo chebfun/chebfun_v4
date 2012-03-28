@@ -3,25 +3,27 @@ function rts = roots(f,varargin)
 %
 % ROOTS(F) returns the roots of F in the interval where it is defined.
 %
-% ROOTS(F,'all') returns the roots of all the polynomials representing the
-% smooth pieces of F.
-%
 % ROOTS(F,'norecursion') deactivates the recursion procedure used to
 % compute roots (see the Guide 3: Rootfinding and minima and maxima for
 % more information of this recursion procedure).
 %
+% ROOTS(F,'all') returns the roots of all the polynomials representing the
+% smooth pieces of F. Note that by default this disables recursion, and so
+% is equivalent to ROOTS(F,'all','norecursion').
+%
 % ROOTS(F,'complex') returns the roots of all the polynomials representing
 % the smooth pieces of F that are inside a chebfun ellipse. This capability
 % may remove some spurious roots that can appear if using ROOTS(F,'all').
+% ROOTS(F,'complex') is equivalent to ROOTS(F,'complex','recursion').
+%
+% ROOTS(F,'all','recursion') and ROOTS(F,'complex','norecursion') can be
+% used to activates and deactivate the recursion procedure respectively, to
+% compute the roots as explained in the 'all' and 'complex' modes.
 %
 % ROOTS(F,'nopolish') deactivates the 'polishing' procedure of applying a
 % Newton step after solving the colleage matrix eigenvalue problem to
 % obtain the roots. Since the Chebyshev coefficients of the function have
 % already been computed, this comes at very little cost.
-%
-% ROOTS(F,'all','norecursion') and ROOTS(F,'complex','norecursion')
-% deactivates the recursion procedure to compute the roots as explained in
-% the 'all' and 'complex' modes.
 %
 % ROOTS(chebfun(0,[A,B])) will return by default a zero at the midpoint of 
 % the interval [A B], i.e., (A+B)/2. ROOTS(chebfun(0,[A,B]),'nozerofun') 
@@ -41,12 +43,14 @@ f = set(f,'funreturn',0);
 % Default preferences
 rootspref = struct('all', 0, 'recurse', 1, 'prune', 0, 'polish', chebfunpref('polishroots') , 'old' , false );
 zerofun = 1;
+recursehasbeenset = 0;
 for k = 1:nargin-1
     argin = varargin{k};
     switch argin
         case 'all',
             rootspref.all = 1;
             rootspref.prune = 0;
+            if ~recursehasbeenset, rootspref.recurse = 0; end
         case 'complex'
             rootspref.prune = 1;
             rootspref.all = 1;
@@ -63,6 +67,7 @@ for k = 1:nargin-1
         otherwise
             if strncmpi(argin,'rec',3),       % recursion
                 rootspref.recurse = 1;
+                recursehasbeenset = 1;
             elseif strncmpi(argin,'norec',5), % no recursion
                 rootspref.recurse = 0;
             else
