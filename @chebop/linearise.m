@@ -45,6 +45,10 @@ end
 % We don't want any jacobian info hanging around in the initial guess:
 u = jacreset(u);
 
+% We also want to make sure that all columns in a chebfun quasimatrix have
+% a unique ID
+u = newID(u);
+
 % EXPERIMENTAL: Let's try ALWAYS setting the funreturn flag. 
 %  We need to make sure the chebcont class is good enough to support this.
 u = set(u,'funreturn',1);
