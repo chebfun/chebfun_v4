@@ -53,9 +53,14 @@ disp(['Residual, first solution: ' num2str(norm(Nbvp(bvpSol1)))])
 %
 % Setup a IVP chebop and solve (the system will automatically construct an
 % initial guess for this problem):
+ca, clc
+cheboppref('display','iter','plotting','on','damped','on')
 Nivp = chebop(0,5);
+x = chebfun('x',domain(Nivp));
 Nivp.op = @(u) diff(u,2)+2*u.*sin(u);
 Nivp.lbc = @(u) [diff(u),u-3];
+Nivp.init = -x.^2 + 3;
+plot(Nivp.init)
 ivpSol = Nivp\0;
 
 %% Obtaining the second solution
