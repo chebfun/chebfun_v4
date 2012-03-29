@@ -74,15 +74,27 @@ if isempty(f)
     % initialise y limits (auto adjusted if there are exps)
     top = -inf; bot = inf;
     
-    issingle = all([g.nfuns]==1);
+    % If all chebfuns have one piece and the same map, we can simplify
+    % things and plot at an oversampled chebyshev grid, which is much
+    % faster to evaluate than equally spaced points
+    issimple = all([g.nfuns]==1);
+    if issimple
+        map = g(1).funs(1).map;
+        for k = 2:numel(g)
+            issimple = strcmp(g(k).funs(1).map.name,map.name);
+            if ~issimple, break, end
+        end
+    end
     
-    % equispaced points over domain
     a = dom(1); b = dom(2);
-    if issingle
+    if issimple
+        % oversampled (mapped) chebyshev grid
         numpts = max(numpts,pi/2*length(g));
         n = power(2,ceil(log2(numpts)));
-        fl = chebpts(n,[a b]);
+        fl = chebpts(n);
+        fl = map.for(fl);
     else
+        % equispaced points over domain
         fl = linspace(a,b,numpts).';
     end
     
@@ -109,7 +121,7 @@ if isempty(f)
     [ignored indx2] = sort(indx);
 
     % line values of g
-    if issingle
+    if issimple
         gl = zeros(n,numel(g));
         for k = 1:numel(g)
             gl(:,k) = get(prolong(g(k).funs(1),n),'vals');
