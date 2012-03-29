@@ -163,7 +163,15 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
             end
           end
           
-      end % new stuff?
+      end 
+      
+    % Ensure f'*f has no complex compnent  
+    ID1 = get(F1,'ID'); ID2 = get(F2,'ID'); 
+    if iscell(ID1), ID1 = reshape([ID1{:}],2,numel(F1)); end
+    if iscell(ID2), ID2 = reshape([ID2{:}],2,numel(F2)); end
+    mask = bsxfun(@eq,ID1(:,1),ID2(:,1)) & bsxfun(@eq,ID1(:,2),ID2(:,2));
+    Fout(mask) = real(Fout(mask));
+        
     end
 
 % Chebfun times double
