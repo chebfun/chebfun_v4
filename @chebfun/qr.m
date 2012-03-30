@@ -35,13 +35,17 @@ function [Q,R] = qr(A,econ)
     end
     if A(1).trans
         error('CHEBFUN:qr:transpose',...
-              'QR works only for column quasimatrices.')
+              'Chebfun QR works only for column quasimatrices.')
+    end
+    [a,b] = domain(A);
+    if any(isinf([a b]))
+         error('CHEBFUN:QR:infdomain', ...
+               'Chebfun QR does not support unbounded domains.');
     end
 
     % Get some useful values
     n = size(A,2); R = zeros(n);
     tol = chebfunpref('eps');
-
 
     % Check for exponents
     hasexps = false;
@@ -195,7 +199,6 @@ function [Q,R] = qr(A,econ)
     else
 
         % Set up target quasimatrix E with orthonormal columns: 
-        [a,b] = domain(A);
         E = legpoly(0:n-1,[a,b],'norm');
 
         % Householder triangularization:
