@@ -109,7 +109,7 @@ L = chebop(@(x,u) diff(u)+diff(u,2),[-1,1],@(u) 0,@(u) diff(u))
 
 %%
 % Here are the fields of a chebop:
-struct(L)
+disp(L)
 
 %%
 % For operators applying to more than one variable (needed for solving
@@ -233,7 +233,8 @@ B = chebop(-1,1);
 B.op = @(x,u) diff(u,2) - u;
 A = chebop(-1,1);
 A.op = @(x,u) (diff(u,4)-2*diff(u,2)+u)/Re - 1i*(2*u+(1-x.^2).*(diff(u,2)-u));
-A.bc = @(u) [u diff(u)];
+A.lbc = @(u) [u diff(u)];
+A.rbc = @(u) [u diff(u)];
 lam = eigs(A,B,60,'LR');
 clf, plot(lam,'r.'), grid on, axis equal
 spectral_abscissa = max(real(lam))

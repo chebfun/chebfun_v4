@@ -11,10 +11,13 @@ end
 % !!! This probably needs to be addressed properly when RHS is a
 % quasimatrix
 newRhs = chebfun;
-for rhsCounter = 1:numel(affine)
+if isempty(affine)
+    affine = 0;
+end
+for rhsCounter = 1:numel(rhs)
     newRhs(:,rhsCounter) = rhs(:,rhsCounter) - affine(:,rhsCounter);
 end
-% newRhs
+
 % Solve the linear system, using the linop mldivide
 u = L\newRhs;
 % delta = uguess-u;

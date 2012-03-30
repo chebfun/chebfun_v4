@@ -179,7 +179,7 @@ u = v(:,1); plot(u,LW,lw)
 
 %%
 % To illustrate Chebfun AD, consider the sequence of computations
-[d,x] = domain(0,1);
+x = chebfun('x',[0 1]);
 u = x.^2;
 v = exp(x) + u.^3;
 w = u + diff(v);
@@ -266,7 +266,7 @@ clf, plot(u,'m',LW,lw)
 
 %%
 % The object L we have created is a chebop, with these fields:
-struct(L)
+disp(L)
 
 %%
 % Notice that one of the fields is called init, which may hold an initial
