@@ -4,18 +4,19 @@ function [u nrmDeltaRelvec] = solvebvp_lin(L,rhs,affine,pref,handles)
 if isnumeric(rhs)
     if numel(rhs) == 1
         bs = get(L,'blocksize');
-        rhs = repmat(rhs,1,bs(2));
+        rhs = repmat(rhs,1,bs(1));
     end
 end
 
 % !!! This probably needs to be addressed properly when RHS is a
 % quasimatrix
 newRhs = chebfun;
-if isempty(affine)
-    affine = 0;
-end
-for rhsCounter = 1:numel(rhs)
-    newRhs(:,rhsCounter) = rhs(:,rhsCounter) - affine(:,rhsCounter);
+if ~isempty(affine)
+    for rhsCounter = 1:numel(rhs)
+        newRhs(:,rhsCounter) = rhs(:,rhsCounter) - affine(:,rhsCounter);
+    end
+else
+    newRhs = rhs;
 end
 
 % Solve the linear system, using the linop mldivide
