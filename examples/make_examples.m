@@ -263,7 +263,7 @@ elseif nargin == 2
     end
     return
 end
-    
+
 % Clean up
 if clean
     fprintf('Cleaning. Please wait ...\n')
@@ -824,7 +824,10 @@ fclose(fid);
 
 function mypublish(varargin)
 close all
+evalin('base','clear all');
+chebfunpref('factory'), cheboppref('factory')
 publish(varargin{:});
+chebfunpref('factory'), cheboppref('factory')
 close all
 
 function txt = capitalize(txt)

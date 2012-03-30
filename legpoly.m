@@ -23,6 +23,7 @@ function p = legpoly(n,d,normalize,method)
 % Parse input
 if isempty(n), p = chebfun; return; end
 if nargin < 2 || isempty(d), d = [-1,1]; end
+if nargin < 3, normalize = 0; end
 if isa(d,'char'), normalize = d; d = [-1,1]; end
 if isa(d,'domain'), d = d.ends; end
 if isempty(normalize), normalize = 0; end
