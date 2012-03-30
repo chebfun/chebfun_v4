@@ -20,12 +20,11 @@
 %
 
 %%
-% To create the operator in Chebfun, we define the domain and kernel, then
-% use the FRED function to build L:
-d = domain(-1,1);
-F = 64*pi;                         % Fresnel number
-K = @(x,s) exp(-1i*F*(x-s).^2 );   % kernel
-L = sqrt(1i*F/pi) * fred(K,d);     % Fredholm integral operator 
+% To create the operator in Chebfun, we define the kernel anduse the FRED
+% function to build L:
+F = 64*pi;                                     % Fresnel number
+K = @(x,s) exp(-1i*F*(x-s).^2 );               % kernel
+L = sqrt(1i*F/pi) * chebop(@(u) fred(K,u));    % Fredholm integral operator 
 
 %% 
 % Computing the 80 eigenvalues of largest complex magnitude requires just a call

@@ -14,7 +14,7 @@ N = chebop(@(u) diff(u,2),[-1 0 1]);
 N.lbc = 1; N.rbc = 2;
 L = linop(N);
 u = fitBCs(L);
-pass(2) = u(-1) == 1 && u(1) == 2 && all(u.ends == [-1 0 1]);
+pass(2) = compAbs(u(-1),1) && compAbs(u(1),2) && all(u.ends == [-1 0 1]);
 
 
 %% Scalar case, interior point condition
@@ -22,36 +22,36 @@ N = chebop(@(u) diff(u,2));
 N.lbc = 1; N.bc = @(u) u(.5)-3;
 L = linop(N);
 u = fitBCs(L);
-pass(3) = u(-1) == 1 && u(.5) == 3;
+pass(3) = compAbs(u(-1),1) && compAbs(u(.5),3);
 
 %% Scalar case, jump condition and breakpoints 
 N = chebop(@(u) diff(u,2),[-1 0 1]);
 N.lbc = 1; N.bc = @(u) jump(diff(u),.5)-3; N.rbc = 4;
 L = linop(N);
 u = fitBCs(L);
-pass(4) = compAbs(u(-1),1) && u(1) == 4 && ...
-    jump(diff(u),.5) == 3 && all(u.ends == [-1 0 .5 1]);
+pass(4) = compAbs(u(-1),1) && compAbs(u(1),4) && ...
+    compAbs(jump(diff(u),.5),3) && all(u.ends == [-1 0 .5 1]);
 
 %% Simple system case
 N = chebop(@(x,u,v) [diff(u,2)+v,u-diff(v)]);
 N.lbc = @(u,v) [u-1,v-2]; N.rbc = @(u,v) u-3;
 L = linop(N);
 uv = fitBCs(L); u = uv(:,1); v = uv(:,2);
-pass(5) = u(-1) == 1 && u(1) == 3 && v(-1) == 2;
+pass(5) = compAbs(u(-1),1) && compAbs(u(1),3) && compAbs(v(-1),2);
 
 %% System case, breakpoints
 N = chebop(@(x,u,v) [diff(u,2)+v,u-diff(v)],[0 .5 1]);
 N.lbc = @(u,v) [u-1,v-2]; N.rbc = @(u,v) u-3;
 L = linop(N);
 uv = fitBCs(L); u = uv(:,1); v = uv(:,2);
-pass(6) = u(0) == 1 && u(1) == 3 && v(0) == 2 && all(u.ends == [0 .5 1]);
+pass(6) = compAbs(u(0),1) && compAbs(u(1),3) && compAbs(v(0),2) && all(u.ends == [0 .5 1]);
 
 %% System case, interior point conditions
 N = chebop(@(x,u,v) [diff(u,2)+v,u-diff(v)]);
 N.lbc = @(u,v) [u-1,v-2]; N.bc = @(x,u,v) u(.5)-3;
 L = linop(N);
 uv = fitBCs(L); u = uv(:,1); v = uv(:,2);
-pass(7) = u(-1) == 1 && v(-1) == 2 && u(.5) == 3;
+pass(7) = compAbs(u(-1),1) && compAbs(v(-1),2) && compAbs(u(.5),3);
 
 %% System case, jump condition and breakpoints 
 N = chebop(@(x,u,v) [diff(u,2)+v,u-diff(v,2)],[-1 0 1]);
@@ -69,7 +69,7 @@ N.lbc = @(u,v) u+1;
 N.rbc = @(u,v) u+2;
 L = linop(N);
 uv = fitBCs(L); u = uv(:,1); v = uv(:,2);
-pass(9) = u(-1) == -1 && u(1) == -2;
+pass(9) = compAbs(u(-1),-1) && compAbs(u(1),-2);
 
 
 end

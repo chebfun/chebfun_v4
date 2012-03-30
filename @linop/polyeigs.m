@@ -164,7 +164,7 @@ if nargout < 2
   varargout = {D};
 elseif numel(breaks) == 2 && ~chebfunpref('splitting')
   V = reshape( V, [N,m,k] );
-  Vfun = cell(1,m);
+  Vfun = repmat({chebfun},1,m);
   for j = 1:k
     nrm2 = 0;
     for i = 1:m

@@ -8,7 +8,7 @@ function make_examples(dirs,filename)
 
 % The flags below can only be adjusted manually.
 html = true;  % Publish to html? (This should be true when released).
-pdf = false;   % By default this will be off.
+pdf = true;   % By default this will be off.
 shtml = true; % This should only be used by admin for creating the 
               % shtml files for the Chebfun website.
 clean = false;
@@ -618,22 +618,70 @@ for j = 1:numel(dirs)
         end
         
         %%% PDF %%%
+%         if pdf
+%             % Publish (to dirname/pdf/dirname.pdf)
+%             try
+%                 mypublish([filename,'.m'],optsPDF);
+%                 if strcmp(optsPDF.format,'latex') && isunix
+%                     
+%                     cd pdf
+%                     eval(['!latex ',filename])
+%                     eval(['!dvipdfm ',filename])
+%                     ! rm *.aux *.log *.tex  *.dvi
+%                     cd ../
+%                 end
+%             catch
+%                 warning('CHEBFUN:examples:PDFfail','PDF PUBLISH FAILED.#');
+%             end
+%         end
+
         if pdf
             % Publish (to dirname/pdf/dirname.pdf)
-            try
-                mypublish([filename,'.m'],optsPDF);
-                if strcmp(optsPDF.format,'latex') && isunix
-                    
+            mypublish([filename,'.m'],optsPDF);        
+            if strcmp(optsPDF.format,'latex') && isunix
+                try
                     cd pdf
+
+                    % Tidy up special characters
+                    filetext = fileread([filename,'.tex']);
+                    filetext = strrep(filetext,'ü','\"{u}');
+                    filetext = strrep(filetext,'ø','{\o}');
+                    filetext = strrep(filetext,'ó','\''{o}');
+                    filetext = strrep(filetext,'ö','\"{o}');
+                    filetext = strrep(filetext,'ő','\H{o}');
+                    filetext = strrep(filetext,'Ő','\H{O}');  
+                    filetext = strrep(filetext,'é','\''{e}');  
+
+                    % Fix a MATLAB bug!
+                    filetext = strrep(filetext,'$\$','$$');  
+
+                    if any(strcmp(filename,javalist))
+                        starts = strfind(filetext,'%<a href="matlab: edit');
+                        for k = numel(starts):-1:1
+                            endsk = strfind(filetext(starts(k):starts(k)+100),'</a>');
+                            strk = filetext(starts(k)+(0:endsk(1)+2));
+                            idx1 = strfind(strk,'>'); idx2 = strfind(strk,'<');
+                            newstr = strk(idx1(1)+1:idx2(2)-1);
+                            filetext(starts(k)+(1:numel(newstr))) = newstr;
+                            filetext(starts(k)+((numel(newstr)+1):endsk(1)+2)) = [];;
+    %                         filetext(starts(k)+(0:endsk(1)+2)) = newstr;
+                        end
+                    end
+
+                    fidpdf = fopen([filename,'.tex'],'w+');
+                    fprintf(fidpdf,'%s',filetext);
+                    fclose(fidpdf);
+
                     eval(['!latex ',filename])
-                    eval(['!dvipdfm ',filename])
-                    ! rm *.aux *.log *.tex  *.dvi
+                    eval(['!dvipdfm ',filename])                
+    %                 ! rm *.aux *.log *.tex  *.dvi
                     cd ../
-                end
-            catch
-                warning('CHEBFUN:examples:PDFfail','PDF PUBLISH FAILED.#');
+                catch
+                    warning('CHEBFUN:examples:PDFfail','PDF PUBLISH FAILED.');
+                end            
             end
         end
+    
         
         % Link to dirname/pdf/<filename>.pdf
 %         if exist(fullfile('pdf',[filename,'.pdf']),'file')
@@ -693,7 +741,6 @@ if shtml
             copyfile(fullfile(curdir,dirs{j},'html','*.shtml'),'html');
             if html
                 if isunix
-                    'hello'
                     eval(['!cp ',fullfile(curdir,dirs{j},'html','*.html') ' html']); 
                     eval(['!cp ',fullfile(curdir,dirs{j},'html','*.png') ' html']);
                 else
