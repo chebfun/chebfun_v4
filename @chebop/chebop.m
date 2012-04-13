@@ -50,9 +50,9 @@
 %   'periodic'  : Impose periodicity on all dependent variables.
 %   function    : See below.
 %
-% The 'dirichlet' and 'neumann' keywords impose behavior that may not be
-% identical to the common understanding of Dirichlet or Neumann conditions
-% in every problem.
+% Note that the 'dirichlet' and 'neumann' keywords impose behavior that may
+% not be identical to the common understanding of Dirichlet or Neumann
+% conditions in every problem.
 %
 % When BC is passed in the CHEBOP call, the more specialized fields LBC and
 % RBC are ignored. Note that CHEBOP(OP,0) is not the same as
@@ -129,13 +129,13 @@ end
 
 function [N dom] = ctor(N, varargin)
 
-% Return an empty chebop.
-if isempty(varargin), return, end
-
 % Initialise
 op = [];
 dom = chebfunpref('domain');
 havedomain = false;
+
+% Return an empty chebop.
+if isempty(varargin), return, end
 
 % Find the first function_handle. This will be the op.
 if isa(varargin{1},'function_handle')

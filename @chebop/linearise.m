@@ -237,7 +237,14 @@ end
                 end
                 
                 % Recover info from FEVAL and reset.
-                [ignored jumpinfoj] = feval(dummy,[],'reset'); %#ok<ASGLU>
+                [ignored jumpinfoj] = feval(dummy,[],'reset'); %#ok<ASGLU>                
+                
+                if strcmp(bctype,'other') && ~isa(guj,'chebconst')
+                    error('CHEBFUN:chebop:linearise:funhandleBCs',...
+                    ['Incorrect form of .BC: N.bc = %s.\n',...
+                    'Function handles in .bc field should evaluate to scalars.\n',...
+                    'See ''help chebop'' for details of allowed BC syntax.'],func2str(bc{j}));
+                end
 
                 % If the user assigns BCs of the form
                 %   L.lbc = @(u,v) [u-1 ; v]; 
@@ -250,8 +257,8 @@ end
                 if abs(endsu(1) - domguj(1))>=tol || ...
                         abs(endsu(end) - domguj(end))>=tol                   
                     error('CHEBFUN:chebop:linearise:semicolonBCs',...
-                        ['Incorrect form of %s BCs. Try @(u,v)[u;v] rather than @(u,v)[u,v]?\n',...
-                        'See ''help chebop'' for details of allowed BC syntax.'],bctype);
+                        ['Incorrect form of %s BCs: %s\nTry @(u,v)[u;v] rather than @(u,v)[u,v]?\n',...
+                        'See ''help chebop'' for details of allowed BC syntax.'],bctype,func2str(bc{j}));
                 end
                 
                 % Deal with jump info.
@@ -284,6 +291,13 @@ end
                 
                 % Recover info from FEVAL and reset.
                 [ignored jumpinfoj] = feval(dummy,[],'reset'); %#ok<ASGLU>
+                
+                if strcmp(bctype,'other') && ~isa(guj,'chebconst')
+                    error('CHEBFUN:chebop:linearise:funhandleBCs',...
+                    ['Incorrect form of .BC: N.bc = %s.\n',...
+                    'Function handles in .bc field should evaluate to scalars.\n',...
+                    'See ''help chebop'' for details of allowed BC syntax.'],func2str(bc{j}));
+                end
                 
                 % Deal with jump info.
                 if strcmp(bctype,'other') && ~isempty(jumpinfoj)
