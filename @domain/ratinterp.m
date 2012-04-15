@@ -303,12 +303,12 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
             [residues, poles] = residue(p,q);
 
             % prune out the spurious roots of q
-            rho_roots = ihd*(poles-md);
-            rho_roots = abs(rho_roots+sqrt(rho_roots.^2-1));
-            rho_roots(rho_roots<1) = 1./rho_roots(rho_roots<1);
-            rho = sqrt(eps)^(-1/length(q));
-            poles = poles(rho_roots<=rho);
-            residues = residues(rho_roots<=rho);
+%             rho_roots = ihd*(poles-md);
+%             rho_roots = abs(rho_roots+sqrt(rho_roots.^2-1));
+%             rho_roots(rho_roots<1) = 1./rho_roots(rho_roots<1);
+%             rho = sqrt(eps)^(-1/length(q));
+%             poles = poles(rho_roots<=rho);
+%             residues = residues(rho_roots<=rho);
             [poles,ind] = sort(poles);
             residues = residues(ind);
               
@@ -321,7 +321,8 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
            
         % Nope, poles only.
         else
-            poles = roots( q , 'complex' );
+%             poles = roots( q , 'complex' );
+              poles = roots( q , 'all' );
         end
 
     end
