@@ -332,6 +332,12 @@ end
 % Compact implementation of the barycentric interpolation formula
 % of the first type.
 function y = bary ( x , px , qx , xp , xq , wp , wq )
+    if size(x,1) > 1 && size(x,2) > 1
+        for k=1:size(x,2)
+            y(:,k) = bary( x(:,k) , px , qx , xp , xq , wp , wq );
+        end
+        return;
+    end
     np = length(px); nq = length(qx);
     pxw = px.' .* wp; qxw = qx.' .* wq;
     y = zeros(size(x));
