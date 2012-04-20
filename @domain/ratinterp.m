@@ -293,7 +293,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
                 wp = ones(1,mu+1); wp(2:2:end) = -1; wp(1) = 0.5; wp(end) = 0.5*wp(end);
                 wq = ones(1,nu+1); wq(2:2:end) = -1; wq(1) = 0.5; wq(end) = 0.5*wq(end);
                 wp = wp * (-2)^(mu-nu) / mu * nu;
-                r = @(x) bary( ihd*(x-md) , px , qx , chebpts(mu+1,2) , chebpts(nu+1,2) , wp , wq );
+                r = @(x) ratbary2( ihd*(x-md) , px , qx , chebpts(mu+1,2) , chebpts(nu+1,2) , wp , wq );
             else
                 p = chebfun( a(end:-1:1) , 'coeffs' , d );
                 q = chebfun( b , d );
@@ -359,10 +359,10 @@ end
 
 % Compact implementation of the barycentric interpolation formula
 % of the first type.
-function y = bary ( x , px , qx , xp , xq , wp , wq )
+function y = ratbary2 ( x , px , qx , xp , xq , wp , wq )
     if size(x,1) > 1 && size(x,2) > 1
         for k=1:size(x,2)
-            y(:,k) = bary( x(:,k) , px , qx , xp , xq , wp , wq );
+            y(:,k) = ratbary2( x(:,k) , px , qx , xp , xq , wp , wq );
         end
         return;
     end
@@ -385,7 +385,7 @@ function y = bary ( x , px , qx , xp , xq , wp , wq )
 end
 
 % Rational barycentric formula, stable.
-function y = ratbary ( x , fp , fq , xi )
+function y = ratbary1 ( x , fp , fq , xi )
     n = length(fp);
     w = ones(n,1); w(2:2:end) = -1; w(1) = 0.5; w(end) = 0.5*w(end);
     y = zeros(size(x));
