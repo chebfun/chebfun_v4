@@ -79,6 +79,7 @@ function h = convcol(f,g)
     
     % Flip g around
     gflip = flipud( g );
+    gflip = newdomain(gflip,-domain(g));
 
     % Construct funs
     for k = 1:length(ends)-1  
