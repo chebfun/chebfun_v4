@@ -87,9 +87,8 @@ if  strcmp(type,'clenshawlord')
         
     c = fliplr( chebpoly(F) )';                       % Chebyshev coeffs
     if length(F) < m+2*n+1, 
-        seed = rng(1);
         c = [c ; eps*randn(m + 2*n+1 - length(F),1)]; % this is more stable than zeros?
-        rng(seed)
+        rng('default')
     end    
     c(1) = 2*c(1);
     top = c(abs([m-n+1:m]) + 1);                      % top row of Hankel system
@@ -145,9 +144,8 @@ elseif strcmp(type,'maehly')
         warning('CHEBFUN:chebpade:coeffs', ...
             ['Not enough coefficients given for [',int2str(m),'/',int2str(n),'] approx.', ...])
             ' Assumming remainder are noise.']); 
-        seed = rng(1);
         a = [a ; eps*randn(m + 2*n+1 - length(F),1)]; % this is more stable than zeros?
-        rng(seed)
+        rng('default')
     end
     % denominator
     row = (1:n);
