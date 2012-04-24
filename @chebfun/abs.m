@@ -45,7 +45,6 @@ function Fout = abscol(F)
         exps = get(F,'exps');
         if any(exps(:)) || ~all(strcmp('linear',{maps.name}))
             Fout = abscol_nontrivial(F,r);
-            Fout.imps = abs(Fout.imps);
             return
         end
         
@@ -140,5 +139,6 @@ function Fout = abscol_nontrivial(F,r)
         % We simply take the abs of the values
         Fout.funs(k).vals = abs(Fout.funs(k).vals);
     end
-
+    Fout.imps = abs(Fout.imps);
+    
 end
