@@ -452,6 +452,8 @@ end
         % entries equal to each column of the quasimatrix representing the
         % current solution.
         
+        currentGuess = jacreset(currentGuess);
+        
         if numberOfInputVariables == 1
             switch type
                 case 'DE'
