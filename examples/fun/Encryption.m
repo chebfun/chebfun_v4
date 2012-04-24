@@ -1,5 +1,5 @@
 %% Encryption of a message with SCRIBBLE
-% Nick Trefethen, March 2010 
+% Nick Trefethen, 10th April 2012
 
 %%
 % (Chebfun example fun/Encryption.m)
