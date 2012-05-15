@@ -69,14 +69,18 @@ if length(ops) == 1 && isnumeric(ops{1}) && min(size(ops{1})) > 1
         end
     end
     fcell = cell(size(ops{1},2),1);
-    ftmp = chebfun(0,ends);
+    ftmp = chebfun([],ends);
+    funtmp = fun(0,map,pref);
+    vals = ops{1};
+    scl = max(abs(vals));
     for k = 1:size(ops{1},2)
-%         fcell{k} = chebfun(ops{1}(:,k),pref);
-%         fcell{k} = ctor_adapt(f,{ops{1}(:,k)},ends,pref);
-        ftmp.funs(1) = fun(ops{1}(:,k),map,pref);
+        funtmp.vals = vals(:,k);
+        funtmp.scl.v = scl(k);
+        ftmp.funs(1) = funtmp;
+        ftmp.scl = scl(k);
         fcell{k} = ftmp;
     end
-    f = horzcat(fcell{:});
+    f = builtin('horzcat',fcell{:});
     return
 end
 
