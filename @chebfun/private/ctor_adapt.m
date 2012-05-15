@@ -77,6 +77,7 @@ if length(ops) == 1 && isnumeric(ops{1}) && min(size(ops{1})) > 1
         funtmp.vals = vals(:,k);
         funtmp.scl.v = scl(k);
         ftmp.funs(1) = funtmp;
+        ftmp.imps = vals([1 end],k).';
         ftmp.scl = scl(k);
         fcell{k} = ftmp;
     end
