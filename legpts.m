@@ -340,8 +340,8 @@ derstmp = [ders(idx(1))./sin(t(idx(1))), zeros(1,numel(idx)-1)];
 [x(idx) ders(idx)] = glr(n,x(idx),derstmp);
 w(idx) = 2./((1-x(idx).^2).*ders(idx).^2);
 v(idx) = 1./ders(idx);
-v = v./max(v);
 
+v = v./max(abs(v));
 % Flip using symetry for negative nodes
 if s
     x = [-x(end:-1:2) x].';
@@ -351,7 +351,7 @@ if s
 else
     x = [-x(end:-1:1) x].';
     w = [w(end:-1:1) w];
-    v = [v(end:-1:1) v].';
+    v = [v(end:-1:1) -v].';
     ders = [ders(end:-1:1) ders].';
 end
 
