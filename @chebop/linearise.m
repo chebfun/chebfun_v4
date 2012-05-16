@@ -109,13 +109,12 @@ end
 
 
 %% Boundary conditions part
-
 % Check whether we have a mismatch between periodic BCs
-if strcmpi(N.bc,'periodic') && (~isempty(N.lbc) || ~isempty(N.rbc))
+if any(strcmpi(N.bc,'periodic')) && (~isempty(N.lbc) || ~isempty(N.rbc))
     error('CHEBOP:linearise:periodic', 'Mixed periodic and other BC types.');
 end
 
-if strcmpi(N.bc,'periodic')
+if all(strcmpi(N.bc,'periodic'))
     % Need to treat periodic BCs specially
     linBC = 'periodic';
 else
@@ -126,7 +125,7 @@ else
     [linBC.right domR jumpinfoR isLin(3)] = lineariseBC(N.rbc,'right',linCheck);
     if linCheck && ~isLin(3), return, end % Bail if linearity check and nonlinear
     % Other BCs
-    [linBC.other domO jumpinfoO isLin(4)] = lineariseBC(N.bc,'other',linCheck);
+    [linBC.other domO jumpinfoO isLin(4)] = lineariseBC(N.bc,'other',linCheck,L.difforder, L.blocksize(2));
     if linCheck && ~isLin(4), return, end % Bail if linearity check and nonlinear
     
     % Combine recovered domains and jumplocs
@@ -177,7 +176,7 @@ end
 
 %% LineariseBC
 
-    function [linBC dom jumpinfo isLin] = lineariseBC(bc,bctype,linCheck)
+    function [linBC dom jumpinfo isLin] = lineariseBC(bc,bctype,linCheck,difforder,syssize)
         % Attempt to linearise the boundary conditions
         % BCTYPE = 0 is a .LBC or .RBC, BCTYPE = 1 is a .BC
         
@@ -222,6 +221,36 @@ end
                 l = l+(1:numbcj);
                 continue
                 
+            elseif ischar(bc{j}) && strcmp(bc{j},'periodic')
+                  % mixed periodic and interior conditions                  
+                  I = eye(domu);
+                  D = diff(domu);
+                  if syssize == 1 % Single system case
+                      B = get(I,'varmat');
+                      for k = 1:difforder
+                        func = @(u) feval(diff(u,k-1),domu(1))-feval(diff(u,k-1),domu(end));
+                        linBC(l) = struct('op',linop(B(1,:) - B(end,:),func,domu),'val',0);
+                        l = l+1;
+                        B = get(D,'varmat')*B;
+                      end
+                  else      % Systems case
+                      order = max(difforder,[],1);
+                      Z = zeros(A.domain); Z = Z.varmat;
+                      for jj = 1:numel(order)
+                          B = I.varmat;
+                          Zl = repmat(Z,1,jj-1);
+                          if jj > 1, Zl = Zl(1,:); end
+                          Zr = repmat(Z,1,m-j);
+                          if jj < m, Zr = Zr(1,:); end
+                          for k = 1:order(jj)
+                            linBC(l) = struct('op',linop([Zl B(1,:)-B(end,:) Zr],func,domu),'val',0);
+                            l = l+1;
+                            B = D.varmat*B;
+                          end
+                      end
+                  end
+                  continue
+                  
             elseif nargin(bc{j}) > 1 + strcmp(bctype,'other')
                 % @(x,u,v,w,...) format. Need to expand uCell to evaluate
 

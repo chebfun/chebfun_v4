@@ -25,7 +25,7 @@ while length(propertyArgIn) >= 2,
                 if isfield(val,'bc')
                     N = set(N,'bc',val.bc);
                 end                
-            elseif isa(val,'function_handle') 
+            elseif isa(val,'function_handle') || isa(val,'cell')
                 N.bc = val;
                 N.bcshow = val;
             elseif strcmpi(val,'periodic')
