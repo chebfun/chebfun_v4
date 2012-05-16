@@ -68,11 +68,13 @@ if length(ops) == 1 && isnumeric(ops{1}) && min(size(ops{1})) > 1
             map = maps(fun,'unbounded',ends);
         end
     end
-    fcell = cell(size(ops{1},2),1);
-    ftmp = chebfun([],ends);
-    funtmp = fun(0,map,pref);
     vals = ops{1};
     scl = max(abs(vals));
+    fcell = cell(size(vals,2),1);
+    ftmp = chebfun([],ends);
+    funtmp = fun(0,map,pref);
+    funtmp.n = size(vals,1); 
+    funtmp.coeffs = [];
     for k = 1:size(ops{1},2)
         funtmp.vals = vals(:,k);
         funtmp.scl.v = scl(k);
