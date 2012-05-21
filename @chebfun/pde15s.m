@@ -577,7 +577,7 @@ try
     end
 
 catch ME % Fail gracefully.
-    ME.stack = ME.stack(1:end);
+%     ME.stack = ME.stack(1:end);
     rethrow(ME)
 end
 
