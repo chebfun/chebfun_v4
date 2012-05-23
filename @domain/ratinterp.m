@@ -381,6 +381,7 @@ function y = ratbary2 ( x , px , qx , xp , xq , wp , wq )
     lp = prod( llp , 2 ); if ~isfinite(lp), lp = exp( sum( log( llp ) , 2 ) ); end;
     llq = repmat( x(:) , 1 , nq ) - repmat( xq' , length(x) , 1 );
     lq = prod( llq , 2 ); if ~isfinite(lq), lq = exp( sum( log( llq ) , 2 ) ); end;
+    lp( lp == 0 ) = 1; lq( lq == 0 ) = 1;
     y = reshape( y(:) .* lp ./ lq , size(x) );
 end
 
