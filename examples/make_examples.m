@@ -113,6 +113,30 @@ elseif nargin == 2
                 fullfile(examplesdir,dirs,[filename,'.m']),curfile);
         end
         filetext = strrep(filetext,curfile,newtext);
+        
+        % Deal with hashtags
+        filetext = strrep(filetext,[newtext ') [Tags:'],[newtext ')<br/>[Tags:']);
+        idx1 = strfind(lower(filetext),'[tags:');
+        idx2 = strfind(filetext(idx1:end),'#');
+        idx3 = strfind(filetext(idx1:end),']');
+        tagline = filetext(idx1(1)-1+(idx2(1):idx3(1)-1));
+        idx = strfind(tagline,'#');
+        if ~isempty(idx)
+            idx2 = strfind(tagline,',');
+            tags = {};
+            for k = 1:numel(idx2)
+                tags{k} = tagline(idx(k)+1:idx2(k)-1);
+            end
+            tags{numel(idx)} = tagline(idx(end)+1:end);
+            newtagline = [];
+            for k=1:numel(tags)
+                url = '/chebfun/examples/tags.shtml#';
+                newtagline = [newtagline '<a href="' url tags{k} '">#' tags{k} '</a>, '];
+            end
+            newtagline = newtagline(1:end-2);
+            filetext = strrep(filetext,tagline,newtagline);
+        end   
+        
 %         % Copyright notice
 %         if shtml
 %             filetext = strrep(filetext,'<p>Licensed under a Creative Commons 3.0 Attribution license','');
@@ -366,13 +390,15 @@ if listing
          mfile{k} = mfile{k}(1:end-2);
          ms = max(ms,length(origdesc{k}));
          if shtml
-             newtext = sprintf(['  <tr>\n   <td style="text-transform: uppercase;">%s</td>\n', ...
+%              newtext = sprintf(['  <tr>\n   <td style="text-transform: uppercase;">%s</td>\n', ...
+             newtext = sprintf(['  <tr>\n   <td>%s</td>\n', ...
                  '   <td style="float:right"><a href="%s/" style="width:70px; display: inline-block;">%s</a></td>\n', ...
                  '   <td>(<a href="%s/html/%s.shtml">html</a>, <a href="%s/pdf/%s.pdf">PDF</a>, ',...
                  '<a href="%s/%s.m">M-file</a>)</td>\n  </tr>\n\n'], ...
                         origdesc{k},filedir{k},filedir{k},filedir{k},mfile{k},filedir{k},mfile{k},filedir{k},mfile{k});
          else
-             newtext = sprintf(['  <tr>\n   <td style="text-transform: uppercase;"><a href="%s/%s.m">%s</a></td>\n', ...
+%              newtext = sprintf(['  <tr>\n   <td style="text-transform: uppercase;"><a href="%s/%s.m">%s</a></td>\n', ...
+             newtext = sprintf(['  <tr>\n   <td><a href="%s/%s.m">%s</a></td>\n', ...
                  '   <td style="float:right">(<a href="%s/" style="width:70px; display: inline-block;">%s</a>)</td>\n  </tr>\n\n'], ...
                         filedir{k},mfile{k},origdesc{k},filedir{k},filedir{k});
          end
@@ -564,8 +590,8 @@ for j = 1:numel(dirs)
             idx = strfind(txt,':');
             if ~isempty(idx), txt = txt(1:idx(1)-1); end
         end
-%         fprintf(fid,['<span>',txt, '</span>     (']);
-        fprintf(fid,['<span style="text-transform:uppercase;">',txt, '</span>     (']);
+        fprintf(fid,['<span>',txt, '</span>     (']);
+%         fprintf(fid,['<span style="text-transform:uppercase;">',txt, '</span>     (']);
         
         % Make dirname/html/filename.shtml
         if shtml

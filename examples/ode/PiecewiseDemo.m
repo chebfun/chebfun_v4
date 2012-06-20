@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun Example ode/PiecewiseDemo.m)
+% [Tags: #nonlinearODE, #piecewise]
 
 %%
 % Here we demonstrate piecewise differential operators (incl. boundary

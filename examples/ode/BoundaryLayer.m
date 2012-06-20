@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode/BoundaryLayer.m)
+% [Tags: #linearODE, #boundarylayer]
 
 %%
 % Consider the steady-state linear advection-diffusion equation

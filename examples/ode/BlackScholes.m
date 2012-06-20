@@ -3,6 +3,7 @@
 
 %%
 % Chebfun example ode/BlackScholes.m
+% [Tags: #linearODE, #piecewise]
 
 %% 
 % The Black-Scholes equation is a partial differential equation for

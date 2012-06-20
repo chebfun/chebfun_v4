@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode/ExactSolns.m)
+% [Tags: #nonlinearODE]
 
 %%
 % Chapter 1 of the textbook by Bender and Orszag contains an
