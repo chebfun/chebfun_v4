@@ -95,7 +95,7 @@ classdef chebconst < chebfun
 %                 error('CHEBFUN:chebconst:mtimes:outerp',...
 %                     'Outer products not yet implemented for chebconsts.');
 %             end
-            if (mf == 1 || ng == 1) && (f(1).funreturn || g(1).funreturn)
+            if (mf == 1 || ng == 1) && (get(f,'funreturn') || get(g,'funreturn'))
                 h = chebconst;
                 for j = 1:numel(f)
                     for k = 1:numel(g)
