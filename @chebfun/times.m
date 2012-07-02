@@ -42,6 +42,10 @@ end
 % -------------------------------
 function h = timescol(f,g)
 
+%make copies of original f and g in F and G
+F = f;
+G = g;
+
 funreturn = f.funreturn || g.funreturn;
 f.funreturn = 0; g.funreturn = 0;
 
@@ -57,32 +61,52 @@ end
 
 % Deal with impulse matrix:
 %------------------------------------------------
-% Look for deltas in f
-hfimps = zeros(size(f.imps));
-deg_delta = find(sum(abs(f.imps),2)>eps*f.scl , 1, 'last')-1;
-dg = g;
-for j = 2:deg_delta+1
-    hfimps(j,:) = (-1)^j * feval(dg,f.ends) .* f.imps(j,:) + hfimps(j-1,:);
-    if j<deg_delta+1, dg = diff(dg); end
+% The variables degf_delta and degg_delta used below denote the order of
+% derivative of delta functions in f and g respectively. Note that 
+% degf_delta = 0 would mean the zeroth derivative of the delta function
+% in f and so on.
+degf_delta = find(sum(abs(f.imps), 2) > eps*f.scl, 1, 'last') - 2;
+degg_delta = find(sum(abs(g.imps), 2) > eps*g.scl, 1, 'last') - 2;
+if(isempty(degg_delta)), degg_delta = -1; end
+if(isempty(degf_delta)), degf_delta = -1; end
+
+% if both f and g have deltas at a common point, then the multiplication
+% f.*g is undefined
+
+if((degg_delta >= 0) && (degf_delta >= 0) )
+    error( 'CHEBFUN:times:Delta functions can not be multiplied with each other' );
 end
 
-% Look for deltas in g
-hgimps = zeros(size(g.imps));
-deg_delta = find(sum(abs(g.imps),2)>eps*g.scl , 1, 'last')-1;
-df = f;
-for j = 2:deg_delta+1
-    hgimps(j,:) = (-1)^j * feval(df,g.ends) .* g.imps(j,:) + hgimps(j-1,:);
-    if j<deg_delta+1, df = diff(df); end
+% if g has delta functions
+if( degg_delta >= 0 )
+    Hgimps = zeros(size(g.imps));
+    for j = degg_delta+2:-1:2
+        df = F; % notice that this is not f
+        hgimps = zeros(size(g.imps));
+        for k = j-2:-1:0
+            hgimps(k+2, :) = nchoosek(j-2, k)*((-1)^k)*feval(df, g.ends).*g.imps(j, :);
+            df = diff(df);            
+        end
+        Hgimps = Hgimps + (-1)^(j-2)*hgimps;
+    end
+    % update imps in the final output
+    imps = Hgimps + f.imps;
 end
 
-% Contributions of both f and g.
-imps = hfimps + hgimps;
-
-% INF if deltas at a common point
-indf = find(f.imps); indg = find(g.imps);
-if any(indg(2:end,:))
-     [indboth,trash] = intersect(indf,indg);
-     imps(indboth) = inf*sign(f.imps(indboth).*g.imps(indboth));
+% if f has delta functions
+if( degf_delta >= 0 )    
+    Hfimps = zeros(size(f.imps));
+    for j = degf_delta+2:-1:2
+        dg = G; % note that this is not g
+        hfimps = zeros(size(f.imps));
+        for k = j-2:-1:0
+            hfimps(k+2, :) = nchoosek(j-2,k)*((-1)^k)*feval(dg, f.ends).*f.imps(j, :);
+            dg = diff(dg);            
+        end
+        Hfimps = Hfimps + (-1)^(j-2)*hfimps;
+    end
+    % update imps in the final output
+    imps = Hfimps + g.imps;
 end
 
 % Update first row of h.imps (function values)
