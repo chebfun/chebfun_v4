@@ -1,10 +1,12 @@
-function d = dirac(f)
+function d = dirac(f,varargin)
 % DIRAC delta function
 %
 % D = DIRAC(F) returns a chebfun D which is zero on the domain of the
 % chebfun F except at the simple roots of F, where it is infinite. This
 % infinity may be examined by looking at the second row of the matrix
 % D.IMPS
+
+% DIRAC(F,N) is the nth derivative of DIRAC(F).
 
 % DIRAC(F) is not defined if F has a zero of order greater than one within
 % the domain of F.
@@ -17,6 +19,34 @@ function d = dirac(f)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+% Handle the case for derivatives of delta function
+if( nargin > 1 )
+    if( nargin > 2 )
+        error('CHEBFUN:dirac', 'Too many input arguments');
+    end
+    % Order of the derivative of dirac delta function
+    n = varargin{1};
+    if(~isa(n, 'double') || round(n)~=n || n < 0)
+        error('CHEBFUN:dirac', 'order of the derivative must be be a non-negative integer');
+    end
+    if( n == 0 ) % Trivial case
+        d = dirac(f);
+        return
+    else
+        % We can also say d = diff(dirac(f),n); return but
+        % the following does not call diff, hence slightly faster.
+        
+        % make a recursive call with a single argument
+        d = dirac(f);
+        % copy the impulses in (n+2)th row to represent the
+        % the nth derivative of dirac-delta functions.
+        d.imps(n+2,:) = d.imps(2,:);
+        % clean the 2nd row
+        d.imps(2,:) = 0*d.imps(2,:);
+        return;
+    end
+end
+    
 tol = chebfunpref('eps');
 
 [a b] = domain(f);
