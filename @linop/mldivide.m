@@ -278,7 +278,52 @@ function C = mldivide(A,B,varargin)
             f = [f ; P{jj}*Bj];
         end
     end
-        
+    
+        % The RHS.
+    f = [];
+    % Project the RHS.
+    if ~any(isinf(bks))
+        for jj = 1:syssize, f = [f ; B(P{jj}*y{1},jj)]; end
+    else
+        for jj = 1:syssize
+            Bj = B(y{1},jj);
+            Bj(csN(2:end),:) = B(bks(2:end),jj,'left');
+            Bj(csN(1:end-1)+1,:) = B(bks(1:end-1),jj,'right');
+            f = [f ; P{jj}*Bj];
+        end
+    end
+    
+    % modify c to incorporate appropriate boundary conditions
+    % for delta functions 
+    
+    % if B is a column vector and there are possible delta functions
+    if( size(B,2) < 2 && size( B.imps, 1 ) >= 2 && any(abs(B.imps(2,:))>100*eps) ) 
+        loc = abs(B.imps(2,:))>100*eps; % find location of delta functions.
+        deltaLoc = B.ends(loc);
+        deltaMag = B.imps(2, loc);      % magnitude of delta functions
+        if( ~isempty( deltaLoc ) )
+            d = A.domain;
+            n = A.difforder;
+            if( abs(deltaLoc(1)-d(1))<100*eps || abs(deltaLoc(end)-d(end))<100*eps)
+                % delta at the boundary, not sure what to do?
+                error( 'delta at domain boundary, not implemented yet!' );
+            end
+            % evaluate the highest coefficient of A at delta locations
+            ndelta = length( deltaLoc );
+            anx = zeros( 1, ndelta );
+            nfact = factorial(n);
+            for i = 1:ndelta
+                nthpoly = chebfun(@(u) (u-deltaLoc(i)).^n/nfact, d );
+                anx(i) = feval( feval(A,nthpoly), deltaLoc(i) );
+            end
+            if(any(abs(anx)<100*eps))
+                % singular point of the ode
+                error( 'delta at a singular point of the ODE' );
+            end
+            c(((1:ndelta)+1)*n) = deltaMag./anx; % jump conditions
+        end
+    end
+    
     % Add boundary conditions.
     f = [f ; c]; 
     
@@ -319,9 +364,3 @@ function C = mldivide(A,B,varargin)
   end
 
 end
-
-
- 
-	
-	
- 
