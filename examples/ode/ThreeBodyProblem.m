@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode/ThreeBodyProblem.m)
+% [Tags: #nonlinearODE, #ODEsystem, #astrophysics, #rational]
 
 %% 
 % This example is motivated by a correspondence with Divakar Viswanath,

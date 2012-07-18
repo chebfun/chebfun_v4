@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example ode/ChebfunAD.m)
-% [Tags: #AD]
+% [Tags: #automaticdifferention, #AD]
 
 %%
 % The key to many capabilities of Chebfun, such as solution of nonlinear

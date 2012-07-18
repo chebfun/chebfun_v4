@@ -6,11 +6,10 @@
 % [Tags: #nonlinearODE]
 
 %%
-% Chapter 1 of the textbook by Bender and Orszag contains an
-% intense review of a number of methods for solving ODEs exactly.  Here
-% are some examples illustrating techniques presented in that
-% chapter.   In each case we solve an ODE with
-% Chebfun and compare with the exact solution.
+% Chapter 1 of the textbook by Bender and Orszag [1] contains an intense
+% review of a number of methods for solving ODEs exactly.  Here are some
+% examples illustrating techniques presented in that chapter.   In each
+% case we solve an ODE with Chebfun and compare with the exact solution.
 % For simplicity we pose all the equations on the domain [1,2]:
 d = [1 2];
 x = chebfun('x',d);
@@ -162,5 +161,5 @@ title(sprintf('y'' = y/x + x/y     Error = %6.2e',err),FS,14)
 %%
 % Reference:
 %
-% C. Bender and S. A. Orszag, Advanced Mathematical Methods
+% [1] C. Bender and S. A. Orszag, Advanced Mathematical Methods
 % for Scientists and Engineers, McGraw-Hill, 1978.

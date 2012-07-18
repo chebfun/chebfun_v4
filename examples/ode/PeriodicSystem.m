@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode/PeriodicSystem.m)
+% [Tags: #linearODE, #ODEsystem, #periodic, #piecewise]
 
 %%
 % Chebfun can solve systems of ODEs with periodic boundary conditions.

@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun Example ode/LeeGreengardODEs.m)
+% [Tags: #linearODE, #boundarylayer]
 
 %%
 % In 1997 Lee and Greengard published a paper called "A fast adaptive

@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example ode/AllenCahn.m)
-% [Tags: #linearODE, #ode]
+% [Tags: #linearODE, #AllenCahn]
 
 %%
 % The Allen-Cahn equation is a reaction-diffusion that arises in material

@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example ode/BlowupFK.m)
-% [Tags: #linearODE, #blowup]
+% [Tags: #nonlinearODE, #blowup]
 
 %%
 % The Frank-Kamenetskii or "spontaneous combustion" equation is

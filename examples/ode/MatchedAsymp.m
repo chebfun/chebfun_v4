@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode/MatchedAsymp.m)
+% [Tags: #linearODE, #asymptotics]
 
 %%
 % A powerful technique for problems with large or small

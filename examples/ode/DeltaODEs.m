@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example ode/DeltaODEs.m)
-% [Tags: ]
+% [Tags: #linearODE, #deltafunctions, #jumpconditions]
 
 %% ODEs with Dirac-Delta functions on the RHS
 % Chebfun can now solve ODEs with delta functions on the right-hand side.

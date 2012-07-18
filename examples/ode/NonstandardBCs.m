@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode/NonstandardBCs.m)
+% [Tags: #linearODE, #exoticBCs, #nonstandard]
 
 %%
 % With the advances of automatic differentiation of scalars in Chebfun it

@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example ode/AdvDiffJump.m)
-% [Tags: #linearODE, #piecewise]
+% [Tags: #linearODE, #piecewise, #advectiondiffusion]
 
 %%
 % The advection-diffusion equation

@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example ode/BVPSystem.m)
-% [Tags: #system]
+% [Tags: #nonlinearODE, #ODEsystem]
 
 %% 1. System of equations
 % Here is a system of two coupled nonlinear ODEs on the

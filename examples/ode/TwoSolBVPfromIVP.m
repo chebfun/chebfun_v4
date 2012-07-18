@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode/TwoSolBVPfromIVP.m)
+% [Tags: #nonlinearODE, #IVP]
 
 %%
 % It is well known that nonlinear boundary-value problems (BVPs) can have

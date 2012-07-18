@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode/ReflectionCoefficient.m)
+% [Tags: #linearODE, #IVP]
 
 %%
 % The reflection coefficient acts as the "Fourier transform" for nonlinear 
