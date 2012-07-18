@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode-eig/NullSpace.m)
+% [Tags: #linear, #eigenvalues, #optimization, #bvp, #nonstandard]
 
 %%
 % We've recently introduced some new functionality in Chebfun for computing

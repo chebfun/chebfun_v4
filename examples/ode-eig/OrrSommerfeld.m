@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example ode-eig/OrrSommerfeld.m)
+% [Tags: #eigenvalues, #highorder, #stability]
 
 %%
 % The Orr-Sommerfield problem is a classic problem from

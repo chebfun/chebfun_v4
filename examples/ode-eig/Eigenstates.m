@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun Example ode-eig/Eigenstates.m)
+% [Tags: #eigenvalues, #quantum]
 
 %%
 % Chebfun is very good at solving eigenvalue problems in one dimension
