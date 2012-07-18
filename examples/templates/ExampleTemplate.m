@@ -1,5 +1,6 @@
 %% ONE LINE DESCRIPTION OF EXAMPLE
 % Name, Date
+% [Tags: ]
 
 %%
 % (Chebfun example dirname/FileName.m)
@@ -10,6 +11,9 @@
 %%
 % 
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
+
+%%
+% Example content
 
 %%
 % References:
