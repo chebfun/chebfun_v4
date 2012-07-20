@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example complex/Hyperfuns.m)
+% [Tags: #complex, #deltafunction, #heaviside]
 
 %% Introduction
 % Hyperfunction theory describes a generalized function f(x) on the real

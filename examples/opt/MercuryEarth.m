@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example opt/MercuryEarth.m)
-% [Tags: ]
+% [Tags: #optimization, #astrophysics]
 
 %%
 % The Earth and Mercury on their elliptical orbits around the sun can be

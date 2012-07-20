@@ -7,8 +7,8 @@ function make_examples(dirs,filename)
 % $Chebfunroot/examples/DIR/ where FILENAME and DIR must be strings.
 
 % The flags below can only be adjusted manually.
-html = false;  % Publish to html? (This should be true when released).
-pdf = false;   % By default this will be off.
+html = true;  % Publish to html? (This should be true when released).
+pdf = true;   % By default this will be off.
 shtml = true; % This should only be used by admin for creating the 
               % shtml files for the Chebfun website.
 clean = false;
@@ -85,7 +85,6 @@ elseif nargin == 1 && ischar(dirs)
     dirs = {dirs};
 elseif nargin == 2
     % Compile a single file (given)
-    html = true; pdf = true;
     if iscell(dirs), dirs = dirs{:}; end
     if strcmp(filename(end-1:end),'.m'), 
         filename = filename(1:end-2); 
@@ -117,10 +116,14 @@ elseif nargin == 2
         % Deal with hashtags
         filetext = strrep(filetext,[newtext ') [Tags:'],[newtext ')<br/>[Tags:']);
         idx1 = strfind(lower(filetext),'[tags:');
-        idx2 = strfind(filetext(idx1:end),'#');
-        idx3 = strfind(filetext(idx1:end),']');
-        tagline = filetext(idx1(1)-1+(idx2(1):idx3(1)-1));
-        idx = strfind(tagline,'#');
+        if ~isempty(idx1)
+            idx2 = strfind(filetext(idx1:end),'#');
+            idx3 = strfind(filetext(idx1:end),']');
+            tagline = filetext(idx1(1)-1+(idx2(1):idx3(1)-1));
+            idx = strfind(tagline,'#');
+        else
+            idx = [];
+        end
         if ~isempty(idx)
             idx2 = strfind(tagline,',');
             tags = {};
@@ -130,7 +133,7 @@ elseif nargin == 2
             tags{numel(idx)} = tagline(idx(end)+1:end);
             newtagline = [];
             for k=1:numel(tags)
-                url = '/chebfun/examples/tags.shtml#';
+                url = '/chebfun/examples/tags.php?query=';
                 newtagline = [newtagline '<a href="' url tags{k} '">#' tags{k} '</a>, '];
             end
             newtagline = newtagline(1:end-2);
@@ -243,9 +246,9 @@ elseif nargin == 2
                 fidpdf = fopen([filename,'.tex'],'w+');
                 fprintf(fidpdf,'%s',filetext);
                 fclose(fidpdf);
-                
-                eval(['!latex ',filename])
-                eval(['!dvipdfm ',filename])                
+                eval(['!latex ', filename, '> foo.tmp'])
+                eval(['!rm foo.tmp'])
+                eval(['!dvipdfm ', filename, ' -q'])                
 %                 ! rm *.aux *.log *.tex  *.dvi
                 cd ../
             catch
@@ -263,7 +266,7 @@ elseif nargin == 2
         cd(dirs)
         if ~exist('html','dir'), mkdir('html'), end
         if ~exist('pdf','dir'), mkdir('pdf'), end
-        fprintf('Uploading html.\n')
+        fprintf('Uploading html...')
         copyfile(fullfile(curdir,dirs,'html',[filename,'.html']),'html');
         try
             copyfile(fullfile(curdir,dirs,'html',[filename,'*.png']),'html');
@@ -272,14 +275,14 @@ elseif nargin == 2
             copyfile(fullfile(curdir,dirs,'html',[filename,'.shtml']),'html');
         end
         if isunix, cd html, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
-        fprintf('Complete.\n')
-        fprintf('Uploading pdf.\n')
+        fprintf('Complete. ')
+        fprintf('Uploading pdf...')
         copyfile(fullfile(curdir,dirs,'pdf',[filename,'.pdf']),fullfile('pdf',[filename,'.pdf']));
-        fprintf('Complete.\n')
-        fprintf('Uploading m files.\n')
+        fprintf('Complete. ')
+        fprintf('Uploading m files...')
         copyfile(fullfile(curdir,dirs,[filename,'.m']),[filename,'.m']);
-        fprintf('Complete.\n')
-        fprintf('Setting file permissions.\n')
+        fprintf('Complete. ')
+        fprintf('Setting file permissions...')
         if isunix, cd pdf, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
         if isunix, eval('!chgrp chebfun *'), eval('!chmod 775 *'), end
         fprintf('Complete.\n')
@@ -574,10 +577,12 @@ for j = 1:numel(dirs)
     
     % Loop over the files
     for k = 1:numel(mfile)
+        cd(fullfile(examplesdir,dirs{j}));
         filename = mfile{k}(1:end-2);
                
         % Grab the file description (again).
         fidk = fopen([filename,'.m']);
+
         txt = fgetl(fidk); fclose(fidk);
         if txt < 1, continue, end % Ignore this file.
         if numel(txt) >1 && strcmp(txt(1:2),'%%')
@@ -599,41 +604,18 @@ for j = 1:numel(dirs)
             if k > 1, prev = mfile{k-1}(1:end-2); else prev = []; end
             make_shtml(filename,filename,'html',(txt),titletxt,next,prev);
         end
-
-        %%% HTML %%%
-        if html
-            % Publish (to dirname/html/dirname.html)
-            try
-                mypublish([filename,'.m'],opts);           
-
-                % Make the filename clickable
-                cd html
-                curfile = [dirs{j},'/',filename,'.m']; 
-                filetext = fileread([filename,'.html']);
-                if shtml
-                    newtext = sprintf('<a href="/chebfun/examples/%s">%s</a>', ...
-                        curfile,curfile);
-                else
-                    newtext = sprintf('<a href="%s">%s</a>', ...
-                        fullfile(examplesdir,dirs{j},[filename,'.m']),curfile);
-                end
-                filetext = strrep(filetext,curfile,newtext);
-    %             % Copyright notice
-    %             if shtml
-    %             filetext = strrep(filetext,'<p>Licensed under a Creative Commons 3.0 Attribution license','');
-    %             filetext = strrep(filetext,'<a href="http://creativecommons.org/licenses/by/3.0/">http://creativecommons.org/licenses/by/3.0/</a>','');
-    %             filetext = strrep(filetext,'by the author above.</p>','');
-    %             end
-                fidhtml = fopen([filename,'.html'],'w+');
-                fprintf(fidhtml,'%s',filetext);
-                fclose(fidhtml);
-                cd ..
-            catch ME
-                disp([dirs{j}, '/' ,filename ' CRASHED!'])
-            end
-            
-        end
         
+        % Make the example
+        fprintf('Compiling %s/%s.m ...\n',dirs{j},filename);
+        try 
+            cd('../')
+            make_examples(dirs{j},filename);
+            cd(fullfile(examplesdir,dirs{j}));
+        catch ME
+            disp([dirs{j}, '/' ,filename ' CRASHED!'])
+        end
+
+        % HTML link
         if shtml && exist(fullfile('html',[filename,'.shtml']),'file')
         % Link to dirname/html/filename.shtml
             fprintf(fid,'<a href="html/%s.shtml">html</a>, ',filename);
@@ -642,85 +624,16 @@ for j = 1:numel(dirs)
             link = fullfile('html',[filename,'.html']);
             fprintf(fid,'<a href="%s">html</a>, ',link);
         end
-        
-        %%% PDF %%%
-%         if pdf
-%             % Publish (to dirname/pdf/dirname.pdf)
-%             try
-%                 mypublish([filename,'.m'],optsPDF);
-%                 if strcmp(optsPDF.format,'latex') && isunix
-%                     
-%                     cd pdf
-%                     eval(['!latex ',filename])
-%                     eval(['!dvipdfm ',filename])
-%                     ! rm *.aux *.log *.tex  *.dvi
-%                     cd ../
-%                 end
-%             catch
-%                 warning('CHEBFUN:examples:PDFfail','PDF PUBLISH FAILED.#');
-%             end
-%         end
 
-        if pdf
-            % Publish (to dirname/pdf/dirname.pdf)
-            mypublish([filename,'.m'],optsPDF);        
-            if strcmp(optsPDF.format,'latex') && isunix
-                try
-                    cd pdf
-
-                    % Tidy up special characters
-                    filetext = fileread([filename,'.tex']);
-                    filetext = strrep(filetext,'ü','\"{u}');
-                    filetext = strrep(filetext,'ø','{\o}');
-                    filetext = strrep(filetext,'ó','\''{o}');
-                    filetext = strrep(filetext,'ö','\"{o}');
-                    filetext = strrep(filetext,'ő','\H{o}');
-                    filetext = strrep(filetext,'Ő','\H{O}');  
-                    filetext = strrep(filetext,'é','\''{e}');  
-
-                    % Fix a MATLAB bug!
-                    filetext = strrep(filetext,'$\$','$$');  
-
-                    if any(strcmp(filename,javalist))
-                        starts = strfind(filetext,'%<a href="matlab: edit');
-                        for k = numel(starts):-1:1
-                            endsk = strfind(filetext(starts(k):starts(k)+100),'</a>');
-                            strk = filetext(starts(k)+(0:endsk(1)+2));
-                            idx1 = strfind(strk,'>'); idx2 = strfind(strk,'<');
-                            newstr = strk(idx1(1)+1:idx2(2)-1);
-                            filetext(starts(k)+(1:numel(newstr))) = newstr;
-                            filetext(starts(k)+((numel(newstr)+1):endsk(1)+2)) = [];;
-    %                         filetext(starts(k)+(0:endsk(1)+2)) = newstr;
-                        end
-                    end
-
-                    fidpdf = fopen([filename,'.tex'],'w+');
-                    fprintf(fidpdf,'%s',filetext);
-                    fclose(fidpdf);
-
-                    eval(['!latex ',filename])
-                    eval(['!dvipdfm ',filename])                
-    %                 ! rm *.aux *.log *.tex  *.dvi
-                    cd ../
-                catch
-                    warning('CHEBFUN:examples:PDFfail','PDF PUBLISH FAILED.');
-                end            
-            end
-        end
-    
-        
         % Link to dirname/pdf/<filename>.pdf
-%         if exist(fullfile('pdf',[filename,'.pdf']),'file')
-            if shtml
-                link = ['pdf/',filename,'.pdf'];
-            else
-                link = fullfile('pdf',[filename,'.pdf']);
-            end
-%             fprintf(fid,['<a href="',link,'" target="_blank">PDF</a>, ']);
-            fprintf(fid,'<a href="%s">PDF</a>, ',link);
-%         end
+        if shtml
+            link = ['pdf/',filename,'.pdf'];
+        else
+            link = fullfile('pdf',[filename,'.pdf']);
+        end
+        fprintf(fid,'<a href="%s">PDF</a>, ',link);
         
-        %%% M-FILES %%%
+        % Link to M-FILES %
         fprintf(fid,'<a href="%s.m">M-file</a>)\n',filename);
         fprintf(fid,'                <br/>\n\n');   
 
@@ -742,17 +655,9 @@ fclose(fid0);
 
 % Upload to web server.
 if shtml
-%     fprintf('Copy the following to a bash terminal:\n')
-%     fprintf(['cp -r ',pwd,' ',webdir,'\n'])
 
     curdir = pwd;
-    try
-        cd(fullfile(webdir,'examples'))
-    catch
-        fprintf('No connection to Chebfun server. Exiting.\n')
-        return
-    end
-    
+    cd(fullfile(webdir,'examples'))  
     
     for j = 1:numel(dirs)
         fprintf(['Uploading ',dirs{j},'. Please wait ... '])
@@ -761,29 +666,11 @@ if shtml
         cd(dirs{j});
         copyfile(fullfile(curdir,dirs{j},[dirs{j},'.html']),[dirs{j},'.html']);
         copyfile(fullfile(curdir,dirs{j},'index.shtml'),'index.shtml');
-        if ~exist('html','dir'), mkdir('html'), end
-        if ~exist('pdf','dir'), mkdir('pdf'), end
         if exist(fullfile(curdir,dirs{j},'html'),'dir')
             copyfile(fullfile(curdir,dirs{j},'html','*.shtml'),'html');
-            if html
-                if isunix
-                    eval(['!cp ',fullfile(curdir,dirs{j},'html','*.html') ' html']); 
-                    eval(['!cp ',fullfile(curdir,dirs{j},'html','*.png') ' html']);
-                else
-                    copyfile(fullfile(curdir,dirs{j},'html','*.html'),'html');
-                    copyfile(fullfile(curdir,dirs{j},'html','*.png'),'html');
-                end
-            end
-        if isunix
-            eval(['!chmod -R 775 ','html']); 
-            eval(['!chgrp -R chebfun ','html/*']); 
-        end
-        end
-        if pdf && exist(fullfile(curdir,dirs{j},'pdf'),'dir')
-            copyfile(fullfile(curdir,dirs{j},'pdf','*.pdf'),'pdf');
             if isunix
-                eval(['!chmod -R 775 ','pdf']);
-                eval(['!chgrp chebfun ','pdf/*']);
+                eval(['!chmod -R 775 ','html']); 
+                eval(['!chgrp -R chebfun ','html/*']); 
             end
         end
         cd ..
@@ -797,8 +684,6 @@ if shtml
     cd(curdir)
     return
 end
-
-
 
 function make_shtml(file1,file2,dir,title,dirtitle,next,prev)
 if nargin < 3, dir = []; end
