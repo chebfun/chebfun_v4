@@ -13,6 +13,9 @@ classdef chebconst < chebfun
 %                 if ~isfinite(length(L)) % L is inf x inf
 %                     L = full(diag(feval(L,1)));
 %                 end
+                if isa(varargin{1},'chebconst') && isa(varargin{2},'chebconst')
+                    L = full(L(1));
+                end
             else
                 f = varargin{1}; 
                 N = 1; dim = 1;
@@ -103,11 +106,22 @@ classdef chebconst < chebfun
                     end
                 end
             else
-                if isa(f,'chebconst'), f = double(f); end
-                if isa(g,'chebconst'), g = double(g); end
-                h = mtimes(f,g);
+%                 if isa(f,'chebconst'), f = double(f); end
+%                 if isa(g,'chebconst'), g = double(g); end
+%                 h = mtimes(f,g);
+                h = times(f,g);
             end
         end
+        
+        function g = mpower(f,a)
+            if isnumeric(a)
+                g = power(f,a);
+            else
+                error('CHEBFUN:chebconst:mpower:undef',...
+                    'Undefined function ''mpower'' for input arguments of type ''chebfun''.');
+            end
+        end
+                
         
         function g = feval(f,varargin)
             g = zeros(1,numel(f));

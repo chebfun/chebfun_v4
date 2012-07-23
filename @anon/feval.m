@@ -28,7 +28,11 @@ loadVariables(Fvar,Fwork)
 % variables of the feval function of anons.
 switch anonType
     case 1
-        eval(Fin.func); 
+        try
+            eval(Fin.func); 
+        catch
+            keyboard
+        end
         varargout{1} = der; varargout{2} = nonConst;
     case 2
         % Create a normal anonymous function handle that we can then evaluate
@@ -39,4 +43,12 @@ end
 
 function loadVariables(Fvar,Fwork)
 for i=1:length(Fvar), assignin('caller',Fvar{i},Fwork{i}), end
+end
+
+function isz = iszero(L)
+if isnumeric(L)
+    isz = L == 0;
+else
+    isz = L.iszero;
+end
 end

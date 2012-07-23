@@ -103,21 +103,22 @@ elseif strcmpi(method,'GW')
         v = [v ; v(end:-1:1)];
    end
    v(2:2:n) = -v(2:2:end);
-   w = (2/sum(w))*w;                     % Normalise so that sum(w) = 2
+%    w = (2/sum(w))*w;                     % Normalise so that sum(w) = 2
 elseif (n < 256 && ~method_set) || any(strcmpi(method,{'fastsmall','rec'}))
+
 % Fastsmall/REC ('fastsmall is for backward compatibiilty)
    [x ders] = fastsmall(n);              % Nodes and P_n'(x)
    w = 2./((1-x.^2).*ders.^2)';          % Quadrature weights
    v = 1./ders; v = v./max(abs(v));      % Barycentric weights  
    if ~mod(n,2), ii = (floor(n/2)+1):n; v(ii) = -v(ii);   end
-   w = (2/sum(w))*w;                     % Normalise so that sum(w) = 2
+%    w = (2/sum(w))*w;                     % Normalise so that sum(w) = 2
 elseif strcmpi(method,'GLR')
 % GLR, see [2]
    [x ders] = alg0_Leg(n);               % Nodes and P_n'(x)
    w = 2./((1-x.^2).*ders.^2)';          % Quadrature weights
    v = 1./ders; v = v./max(abs(v));      % Barycentric weights
    if ~mod(n,2), ii = (floor(n/2)+1):n;  v(ii) = -v(ii);   end
-   w = (2/sum(w))*w;                     % Normalise so that sum(w) = 2
+%    w = (2/sum(w))*w;                     % Normalise so that sum(w) = 2
 else
 % HT, see [3]
    [x w v ders] = asy1(n);               % Nodes and P_n'(x)
@@ -325,6 +326,7 @@ while norm(dt,inf) > 2*eps
     t = t + dt;                        % Next iterate
     j = j+1;
     dt = dt(1:idx);
+    if n > 5000, dt = 0; end
     if j > 10, dt = 0; end
 end
 % if nargout > 1 % Once more for luck?

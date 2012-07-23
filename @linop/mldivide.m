@@ -136,6 +136,19 @@ function C = mldivide(A,B,varargin)
       end
     end      
     warning(warnstate);  % restore old warning state
+    
+    %% dirac
+    
+    % are there any impulses in B?
+    % if there are, enforce corresponding jump conditions,
+    % i.e., 
+    % A.bc = @(u) jump(u) - 1
+%     x0 = 0; k = 1; val = 1;
+%     Jk = (feval(dom,x0,'right') - feval(dom,x0,'left'))*diff(dom,k);
+%     A.bc(end+1) = struct('op',Jk,'val',val);
+%     A.jumpinfo = [A.jumpinfo ; [x0 1 k]];
+    
+    %%
         
     if isa(A.scale,'function_handle')
         A.scale = chebfun(A.scale,ends);
@@ -313,7 +326,7 @@ function C = mldivide(A,B,varargin)
             anx = zeros( 1, ndelta );
             nfact = factorial(n);
             for i = 1:ndelta
-                nthpoly = chebfun(@(u) (u-deltaLoc(i)).^n/nfact, d );
+                nthpoly = chebfun(@(u) (u-deltaLoc(i)).^n/nfact, d , n+1);
                 anx(i) = feval( feval(A,nthpoly), deltaLoc(i) );
             end
             if(any(abs(anx)<100*eps))

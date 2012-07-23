@@ -85,6 +85,7 @@ else                                                            % Fast, see [2]
     v = exp(-x.^2/2)./ders;               % Barycentric weights
     v = v./max(abs(v));
     if ~mod(n,2), ii = (n/2+1):n; v(ii) = -v(ii); end
+    w
 end
 w = (sqrt(pi)/sum(w))*w;                  % Normalise so that sum(w) = sqrt(pi)
 

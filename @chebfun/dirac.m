@@ -74,7 +74,7 @@ end
 % check if a root coincides with an interior break-point.
 [rr ee] = meshgrid( f.ends(2:end-1), r );
 if( any(abs(rr-ee) < 100*tol*f.scl) )
-     error('CHEBFUN:dirac', 'Function has a root at a break-point');
+%      error('CHEBFUN:dirac', 'Function has a root at a break-point');
 end
 
 ends = union(r,[a b]);

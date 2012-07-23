@@ -149,16 +149,16 @@ end
 h = f;
 % Promote jacobian info for chebconsts
 if isa(f,'chebconst') && ~isa(g,'chebconst')
-    f.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f},1,'promote');
+    f.jacobian = anon('[der nonConst] = diff(f,u,''linop''); if ~isnumeric(der), der = promote(der); end',{'f'},{f},1,'promote');
     f.ID = newIDnum();
     h = g;
 elseif isa(g,'chebconst') && ~isa(f,'chebconst')
-    g.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{g},1,'promote');
+    g.jacobian = anon('[der nonConst] = diff(f,u,''linop''); if ~isnumeric(der),der = promote(der); end',{'f'},{g},1,'promote');
     g.ID = newIDnum();
 end
 
 % Set the jacobian
-h.jacobian = anon('[Jfu nonConstJfu] = diff(f,u,''linop''); [Jgu nonConstJgu] = diff(g,u,''linop''); der = diag(f)*Jgu + diag(g)*Jfu; nonConst = (nonConstJgu | nonConstJfu) | ((~all(Jfu.iszero) && ~all(Jgu.iszero)) & (~Jfu.iszero | ~Jgu.iszero));',{'f' 'g'},{f g},1,'times');
+h.jacobian = anon('[Jfu nonConstJfu] = diff(f,u,''linop''); [Jgu nonConstJgu] = diff(g,u,''linop''); der = diag(f)*Jgu + diag(g)*Jfu; nonConst = (nonConstJgu | nonConstJfu) | ((~all(iszero(Jfu)) && ~all(iszero(Jgu))) & (~iszero(Jfu) | ~iszero(Jgu)));',{'f' 'g'},{f g},1,'times');
 h.ID = newIDnum();
 
 % Assign the funs, scale, etc

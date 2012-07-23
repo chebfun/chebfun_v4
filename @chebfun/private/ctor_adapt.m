@@ -150,10 +150,12 @@ while ii < length(ops)
             [fs,es,scl] = auto(op,es,scl,pref);
         case {'chebfun','chebconst'}
             if numel(op) > 1
-                error('CHEBFUN:ctor_adapt:onechebfun','Cannot construct from quasimatrices in this way.');
+                error('CHEBFUN:ctor_adapt:onechebfun',...
+                    'Cannot construct from quasimatrices in this way.');
             end
             if op.ends(1) > ends(1) || op.ends(end) < ends(end)
-                 warning('CHEBFUN:ctor_adapt:domain','chebfun is not defined in the domain')
+                 warning('CHEBFUN:ctor_adapt:domain',...
+                     'chebfun is not defined in the domain')
             end
             if isfield(pref,'exps'), pref.exps = exps(2*ii+(-1:0)); end
             if ~isfield(pref,'trunc') && isempty(map)
@@ -163,10 +165,12 @@ while ii < length(ops)
                 [fs,es,scl] = auto(@(x) feval(op,x),es,scl,pref);
             end
         case 'cell'
-            error('CHEBFUN:ctor_adapt:inputcell',['Unrecognized input sequence: Attempted to use '...
+            error('CHEBFUN:ctor_adapt:inputcell',...
+                ['Unrecognized input sequence: Attempted to use '...
                 'more than one cell array to define the chebfun.'])
         otherwise
-            error('CHEBFUN:ctor_adapt:inputclass',['The input argument of class ' class(op) ...
+            error('CHEBFUN:ctor_adapt:inputclass',...
+                ['The input argument of class ' class(op) ...
                 ' cannot be used to construct a chebfun object.'])
     end
     % Concatenate funs, ends and handles (or ops)   
