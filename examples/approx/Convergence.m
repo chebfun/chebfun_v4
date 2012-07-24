@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example approx/Convergence.m)
-% [Tags: #Gibbsphenomenon, #discontinuity, #ABS]
+% [Tags: #Gibbsphenomenon, #discontinuity, #ABS, #fractional]
 
 %%
 % The smoother a function, the faster its approximants converge. Usually

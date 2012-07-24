@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example approx/DivergentSeries.m)
-% [Tags: #Divergentseries, #PADEAPPROX, #extrapolation]
+% [Tags: #Divergentseries, #PADEAPPROX, #extrapolation, #Pade]
 
 %%
 % The function $$ f(x) = \int_0^{\infty} {e^{-t} \over 1 + xt} dt $$ is an

@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example approx/ExactChebCoeffs.m)
-% [Tags: #Chebyshevcoefficients]
+% [Tags: #Chebyshevcoefficients, #residue]
 
 %% 1. Introduction
 % In this example, we shall compare the results of the Chebfun construction
@@ -13,10 +13,10 @@
 % This gives us an excellent excuse to visit some interesting approximation 
 % theory from the 1960s!
 
-%% 2. The residue method of Elliot
+%% 2. The residue method of Elliott
 % For certain functions, explicit formulas for the coefficients in the
 % Chebsyhev series expansion may be obtained using a contour-integral
-% technique described by Elliot [1]. Here is how it works:
+% technique described by Elliott [1]. Here is how it works:
 %
 % The Chebsyhev coefficients of a Lipschitz-continuous function f can be 
 % determined by the integral
@@ -82,5 +82,5 @@ xlabel('n'), ylabel('log(|a_n|)'), grid on
 %%
 % References:
 %
-% [1] D. Elliot, The evaluation and estimation of the coefficients in the
+% [1] D. Elliott, The evaluation and estimation of the coefficients in the
 % Chebyshev series expansion of a function, Math. Comp. 18 (1964).

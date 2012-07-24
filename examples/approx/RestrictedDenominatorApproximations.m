@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example approx/RestrictedDenominatorApproximations.m)
+% [Tags: #rational, #exponential, #best]
 
 %%
 %
