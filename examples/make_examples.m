@@ -7,14 +7,16 @@ function make_examples(dirs,filename)
 % $Chebfunroot/examples/DIR/ where FILENAME and DIR must be strings.
 
 % The flags below can only be adjusted manually.
-html = true;  % Publish to html? (This should be true when released).
-pdf = true;   % By default this will be off.
+html = false;  % Publish to html? (This should be true when released).
+pdf = false;   % By default this will be off.
 shtml = true; % This should only be used by admin for creating the 
               % shtml files for the Chebfun website.
 clean = false;
 listing = false;
 exampleshtml = false;
 release = false;
+
+nargs = nargin;
 
 if nargin > 0 && ischar(dirs) 
     if strncmp(dirs,'listing',4); listing = true; end
@@ -33,6 +35,14 @@ if nargin > 0 && ischar(dirs)
         html = true;
         pdf = false;
         listing = false;
+    end
+    if nargin > 1 && strcmp(filename,'make'); 
+        exampleshtml = false; 
+        shtml = true;
+        html = true;
+        pdf = true;
+        listing = false;
+        nargs = 1;
     end
 end
 
@@ -65,7 +75,7 @@ optsPDF.catchError = false;
 % we clean up by filtering the html and tex files.
 javalist = {'ChebfunAD'};
 
-if nargin == 0 || listing || clean || exampleshtml || release
+if nargs == 0 || listing || clean || exampleshtml || release
     % Find all the directories (except some exclusions).
     dirlist = struct2cell(dir(fullfile(pwd)));
     dirs = {}; k = 1;
@@ -80,10 +90,12 @@ if nargin == 0 || listing || clean || exampleshtml || release
             k = k + 1;
         end
     end
-elseif nargin == 1 && ischar(dirs)
+elseif nargs == 1 && ischar(dirs)
     % Directory has been passed
     dirs = {dirs};
-elseif nargin == 2
+elseif nargs == 2
+    html = true;
+    pdf = true;
     % Compile a single file (given)
     if iscell(dirs), dirs = dirs{:}; end
     if strcmp(filename(end-1:end),'.m'), 
@@ -248,7 +260,7 @@ elseif nargin == 2
                 fclose(fidpdf);
                 eval(['!latex ', filename, '> foo.tmp'])
                 eval(['!rm foo.tmp'])
-                eval(['!dvipdfm ', filename, ' -q'])                
+                eval(['!dvipdfm -q ', filename])                
 %                 ! rm *.aux *.log *.tex  *.dvi
                 cd ../
             catch
@@ -605,14 +617,16 @@ for j = 1:numel(dirs)
             make_shtml(filename,filename,'html',(txt),titletxt,next,prev);
         end
         
-        % Make the example
-        fprintf('Compiling %s/%s.m ...\n',dirs{j},filename);
-        try 
-            cd('../')
-            make_examples(dirs{j},filename);
-            cd(fullfile(examplesdir,dirs{j}));
-        catch ME
-            disp([dirs{j}, '/' ,filename ' CRASHED!'])
+        if html || pdf
+            % Make the example
+            fprintf('Compiling %s/%s.m ...\n',dirs{j},filename);
+            try 
+                cd('../')
+                make_examples(dirs{j},filename);
+                cd(fullfile(examplesdir,dirs{j}));
+            catch ME
+                disp([dirs{j}, '/' ,filename ' CRASHED!'])
+            end
         end
 
         % HTML link

@@ -1,5 +1,5 @@
 %% Rational approximation to the exponential in a complex region
-% Yuji Nakatsukasa and Stefan Güttel, 23rd July 2012
+% Yuji Nakatsukasa and Stefan GÃ¼ttel, 23rd July 2012
 
 %%
 % (Chebfun example approx/ScalingAndSquaring.m)
@@ -21,7 +21,7 @@
 % in the complex plane that contains the eigenvalues, where $s$ and $m$ are
 % suitably chosen integer parameters. It first computes $e^A$ by first
 % choosing an integer $s$ such that $A/2^s$ has norm of order 1, then
-% taking a rational (normally type $(m,m)$ Padé) approximation $r(z)$ to
+% taking a rational (normally type $(m,m)$ PadÃ©) approximation $r(z)$ to
 % $e^z$ where $m$ is chosen so that $e^{A/2^s}\approx r(A/2^s)$.  Then we
 % compute $e^A\approx (r(A/2^s))^{2^s}$ via repeated squaring of the
 % matrix.
@@ -44,15 +44,15 @@
 % is a good approximation to $e^A$.
 
 %%
-% The type $(k,m)$ Padé approximant of the exponential is explicitly
+% The type $(k,m)$ PadÃ© approximant of the exponential is explicitly
 % known to be $r(z)=p_{k,m}(z)/q_{k,m}(z)$, where
 %
 % $$p_{k,m}(z)=\sum_{j=0}^{k}\frac{(k+m-j)!k!}{(k+m)!(k-j)!}\frac{z^j}{j!},
 % \quad
-% q_{k,m}(z)=\sum_{j=0}^{k}\frac{(k+m-j)!m!}{(k+m)!(m-j)!}\frac{(-z)^j}{j!}.$
+% q_{k,m}(z)=\sum_{j=0}^{k}\frac{(k+m-j)!m!}{(k+m)!(m-j)!}\frac{(-z)^j}{j!}.$$
 %
 % Alternatively (and in particular for general functions for which
-% Padé approximants are not explicitly known), Padé approximants can be
+% PadÃ© approximants are not explicitly known), PadÃ© approximants can be
 % obtained simply and robustly via the Chebfun command |padeapprox|, see
 % [1].
 %
@@ -69,7 +69,7 @@ colorbar
 
 
 %%
-% Since we are using a Padé approximation centered at the origin, the error
+% Since we are using a PadÃ© approximation centered at the origin, the error
 % is zero at the origin and is expected to grow with $|z|$. However, notice
 % that the plot is highly nonsymmetric about the imaginary axis: the error
 % is large for large $\mbox{Re}(z)>0$ and small for $\mbox{Re}(z)<0$.  In
@@ -104,7 +104,7 @@ colorbar
 %
 % $$\max_i\left|(r(\lambda_i/2^s))^{2^s}-e^{\lambda_i}\right|/e^{\max_i\{\mbox{Re}(\lambda_i)\}}\leq
 % \max_{z\in {\cal
-%     D}}\left|(r(z/2^s))^{2^s}-e^{z}\right|/e^{\max_i\{\mbox{Re}(\lambda_i)\}}.$
+%     D}}\left|(r(z/2^s))^{2^s}-e^{z}\right|/e^{\max_i\{\mbox{Re}(\lambda_i)\}}.$$
 %
 % Since the denominator is constant (when $z$ varies in $\cal D$), this
 % means the absolute error is indeed the appropriate metric of error in the
@@ -116,7 +116,7 @@ colorbar
 %%
 % References:
 %
-% [1] P. Gonnet, S. Güttel, and L. N. Trefethen: Robust Padé approximation
+% [1] P. Gonnet, S. GÃ¼ttel, and L. N. Trefethen: Robust PadÃ© approximation
 % via SVD. To appear in SIAM Review.
 %
 % [2] N. J. Higham. Functions of Matrices: Theory and Computation. SIAM,
