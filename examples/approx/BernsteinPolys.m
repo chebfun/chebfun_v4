@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example approx/BernsteinPolys.m)
+% [Tags: #Bernstein, #Gibbs, #Weierstrass]
 
 function BernsteinPolys()
 

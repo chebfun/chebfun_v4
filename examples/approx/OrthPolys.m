@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example approx/OrthPolys.m)
+% [Tags: #orthogonal, #GramSchmidt, #LAGPOLY, #HERMPOLY, #LEGPOLY, #CHEBPOLY]
 
 function OrthPolys
 

@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example approx/BSplineConv.m)
+% [Tags: #spline, #Bspline, #convolution, #CONV, #probability]
 
 %%
 % Here is the characteristic function on the interval $[-1/2,1/2]$:

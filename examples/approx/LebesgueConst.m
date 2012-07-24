@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example approx/LebesgueConst.m)
+% [Tags: #Lebesgue]
 
 %%
 % Lebesgue constants are a standard notion of approximation theory.

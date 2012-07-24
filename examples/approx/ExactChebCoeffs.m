@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example approx/ExactChebCoeffs.m)
+% [Tags: #Chebyshevcoefficients]
 
 %% 1. Introduction
 % In this example, we shall compare the results of the Chebfun construction

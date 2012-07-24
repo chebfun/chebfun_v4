@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example approx/AbsoluteValue.m)
+% [Tags: #rational, #Newton, #abs]
 
 %%
 % Peter Lax mentioned to me recently an example that no doubt various
