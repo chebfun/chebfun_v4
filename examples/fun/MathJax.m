@@ -1,4 +1,4 @@
-%% MathJax Introduction
+%% MathJax introduction
 % Nick Hale, 5th March 2012
 
 %%

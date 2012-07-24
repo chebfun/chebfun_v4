@@ -1,4 +1,4 @@
-%% The Nullspace of Linear Operators
+%% The nullspace of a linear operator
 % Nick Hale & Stefan Güttel, 12th December 2011
 
 %%

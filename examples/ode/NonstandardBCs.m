@@ -1,4 +1,4 @@
-%% Nonstandard 'Boundary' Conditions
+%% Nonstandard 'boundary' conditions
 % Asgeir Birkisson, 18th October 2011
 
 %%

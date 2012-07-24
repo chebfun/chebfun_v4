@@ -1,4 +1,4 @@
-%% Mercury-Earth Conjunctions
+%% Mercury-Earth conjunctions
 % Tonatiuh Sanchez-Vizuet and Matthew Moye, 17th June 2012
 
 %%

@@ -1,4 +1,4 @@
-%% Quadrature Convergence Rates for Differentiable Functions
+%% Quadrature convergence rates for differentiable functions
 % Nick Trefethen, 13th June 2012
 
 %%

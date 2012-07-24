@@ -1,4 +1,4 @@
-%% Piecewise Operators Demo
+%% Piecewise operators demo
 % Nick Hale, 25th November 2011
 
 %%

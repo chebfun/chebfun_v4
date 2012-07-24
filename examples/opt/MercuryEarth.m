@@ -1,4 +1,4 @@
-%% Mercury-Earth Minimum Separation
+%% Mercury-Earth minimum separation
 % Tonatiuh Sanchez-Vizuet and Matthew Moye, 19th June 2012
 
 %%

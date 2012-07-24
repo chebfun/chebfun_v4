@@ -1,4 +1,4 @@
-%% Computing The Complex Singularities Of The Three Body Problem
+%% Three body problem complex singularities
 % Marcus Webb, 23rd August 2011
 
 %%

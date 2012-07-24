@@ -1,4 +1,4 @@
-%% Exact Chebyshev Expansion coefficients of a Function
+%% Exact Chebyshev expansion coefficients of a function
 % Mark Richardson, 13th June 2012
 
 %%
