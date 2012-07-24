@@ -1,8 +1,9 @@
-%% Transient growth
+%% Transient Growth
 % Nick Trefethen, July 2011
 
 %%
 % (Chebfun example linalg/TransientGrowth.m)
+% [Tags: #linearalgebra, #norm, #transient]
 
 %%
 % If A is a matrix whose eigenvalues are in the open left

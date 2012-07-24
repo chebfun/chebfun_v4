@@ -1,9 +1,9 @@
-%% Mercury-Earth conjunctions
+%% Mercury-Earth Conjunctions
 % Tonatiuh Sanchez-Vizuet and Matthew Moye, 17th June 2012
 
 %%
 % (Chebfun example linalg/MercuryEarthConjunctions.m)
-% [Tags: #rootfinding, #determinant]
+% [Tags: #linearalgebra, #rootfinding, #determinant]
 
 %%
 % The posititions of Earth and Mercury are given, relative to the sun at
