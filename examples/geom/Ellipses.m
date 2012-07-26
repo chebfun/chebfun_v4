@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example geom/Ellipses.m)
+% [Tags: #complex, #ode, #trajectory, #geometry]
 
 %%
 % Here's a problem from Oxford's Numerical Analysis Group Problem Solving

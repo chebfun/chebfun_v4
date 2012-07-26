@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example geom/Area.m)
+% [Tags: #parameterized, #intersection, #trajectory, #geometry]
 
 %%
 % With Chebfun it is easy to compute with parametrized

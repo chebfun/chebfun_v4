@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun Example geom/Procrustes.m)
+% [Tags: #shapeanaylsis, #affinetransformations, #geometry]
 
 function procrustes
 close all
