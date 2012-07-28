@@ -43,8 +43,8 @@ end %conv()
 function h = convcol(f,g)
 
     % Note: f and g may be defined on different domains!
-    
-    if isempty(f) || isempty(g), h=chebfun; return, end
+    h = chebfun;
+    if isempty(f) || isempty(g), return, end
 
     % if there are delta functions in f or g
     fimps = []; gimps = [];
@@ -56,8 +56,6 @@ function h = convcol(f,g)
         gimps = g.imps(2:end,:);  % store the deltas
         g.imps = g.imps(1,:);     % remove deltas from g
     end
-
-    h = chebfun;
 
     % Find all breakpoints in the convolution.
     [A,B] = meshgrid(f.ends,g.ends);
@@ -109,7 +107,8 @@ function h = convcol(f,g)
     h = update_vscl(h);
     h.trans = f.trans;
     
-    %%
+    %% 
+    % CONVOLUTION OF DELTA FUNCTIONS
     % convolution if f or g has dirac delta functions.
     % Note: delta functions of f and g are already cleaned
     % up and are stored in the variables fimps and gimps
@@ -151,7 +150,7 @@ function h = convcol(f,g)
            end
         end
     end
-    
+         
     % if both f and g have delta functions
     if(isfimps && isgimps)
         [m n] = size(fimps);
@@ -160,18 +159,23 @@ function h = convcol(f,g)
         for i=1:m
             for j=1:n
                 if(abs(fimps(i,j))>100*eps)
-                    idx = ismember(h.ends,f.ends(j)+g.ends);
+                    % find the locations of shifted ends in h.ends
+                    [xx yy] = meshgrid(h.ends,f.ends(j)+g.ends);
+                    idx = find(sum(~(abs(xx-yy)>100*eps)));
+                    % place the scaled and shifted impulses in himps
                     himps(i:i+p-1,idx) = ...
                     himps(i:i+p-1,idx) + fimps(i,j)*gimps;
                 end
             end
         end
+        % append delta functions to the imps of h
         h.imps = [ h.imps; himps ];    
-    end       
- end   % conv()
+    end
+    %%
+    
+end   % conv()
 
-
-
+%%
 function out = integral( x , f , g )
 % Assume that g has been flipped!
 
