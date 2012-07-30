@@ -8,6 +8,8 @@ function varargout = fill(varargin)
 % If C is a single character string chosen from the list 'r','g','b',
 % 'c','m','y','w','k', or an RGB row vector triple, [r g b], the
 % polygon is filled with the constant specified color.
+% 
+% The number of sample points can be adjusted with FILL(F,G,'numpts',5000).
 %
 % If F and G are quasimatrices of the same size, one region per column
 % is drawn.
@@ -30,10 +32,22 @@ function varargout = fill(varargin)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 [a,b] = domain(varargin{1});
-
-t = linspace(a,b,1000)';
+numpts = 1000;                              % default # of sample points
 
 for k = 1:nargin
+    if ischar(varargin{k})
+        if strcmpi(varargin{k},'NumPts');      
+            numpts = varargin{k+1}; 
+            kk = k;                         % note index
+        end
+    end
+end
+
+varargin(kk:kk+1) = [];                     % remove numpts data
+
+t = linspace(a,b,numpts)';
+
+for k = 1:length(varargin)
     if isa(varargin{k},'chebfun')
         varargin{k} = feval(varargin{k},t);
     end
