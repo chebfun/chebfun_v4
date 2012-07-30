@@ -203,8 +203,9 @@ while ~isempty(varargin)
     
     if ~isempty(deltaval)
         tmp = deltaval;         deltaval = {};
-        for k = 1:2:length(tmp)-1
-            deltaval = [deltaval, {tmp{k},tmp{k+1}},dmarker];
+        for k = 1:3:length(tmp)-1
+            % delta marker data:     x        y       sign     marker
+            deltaval = [deltaval, {tmp{k},tmp{k+1}, tmp{k+2}},dmarker];
         end
     elseif ~isempty(lines)
         deltaval = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2))};
@@ -272,7 +273,7 @@ else
 end
 h5 = plot(deltadata{:},'handlevis','off');
 if forcedmarks   % default setting for delta functions
-    % deal with ^ and v marker for delta functions
+    % deal with the '^' marker for delta functions
     dvaldata = makedvaldata(dvaldata);
     h6 = plot(dvaldata{:},'linestyle','none','handlevis','off');
 else
@@ -377,34 +378,52 @@ end
 end
 
 function newdvaldata = makedvaldata(dvaldata)
+% MAKEDVALDATA handles the case when '^' is 
+% used as delta marker. The number of [x,y] pairs
+% for delta data are doubled as a result of the 
+% formatting regardless of the marker type.
+% 
+% Input  format: [xdelta] [ydelta] [sign] [marker]
+% Output format: [xdelta] [positive delta] [marker],
+%                [xdelta] [negative delta] [marker]
+
 n = length(dvaldata);
-if n < 3, newdvaldata = dvaldata; return; end
-% double the lenght of dvaldata
-newdvaldata = cell(1,2*n);
-for k = 1:3:n
-    if(dvaldata{k+2}=='^')
+if n < 4, newdvaldata = dvaldata; return; end
+% check the format
+if(n/4 ~= round(n/4))
+    error('CHEBFUN:plot:makedvaldata','delta data does not have the expected format');
+end
+% set the length of newdvaldata
+newdvaldata = cell(1,2*(n-n/4));
+for k = 1:4:n
+    % index mapping from 4-block to 6-block
+    kk = (3*k-1)/2;
+    if(dvaldata{k+3}=='^')
         x1 = dvaldata{k};
         y1 = dvaldata{k+1};
+        sgn = dvaldata{k+2};
         % keep the positive deltas and nan's in one cell
-        idx =(y1>=0|isnan(y1));
-        newdvaldata{2*k-1}=x1(idx);
-        newdvaldata{2*k}=y1(idx);
-        newdvaldata{2*k+1}= '^';
+        idx =(sgn>=0|isnan(y1));
+        newdvaldata{kk}=x1(idx);
+        newdvaldata{kk+1}=y1(idx);
+        newdvaldata{kk+2}= '^';
         % if there are no neagtive deltas
         if(all(idx))
-            newdvaldata(2*k+2:2*k+3)={NaN NaN};
-            newdvaldata{2*k+4} = '';
+            % add dummy data
+            newdvaldata(kk+3:kk+4)={NaN NaN};
+            newdvaldata{kk+5} = '';
         else
-            newdvaldata{2*k+2}=x1(~idx);
-            newdvaldata{2*k+3}=y1(~idx);
-            newdvaldata{2*k+4}='v';
+            % copy negative deltas with 'v' marker
+            newdvaldata{kk+3}=x1(~idx);
+            newdvaldata{kk+4}=y1(~idx);
+            newdvaldata{kk+5}='v';
         end
     else
         % keep the original marker and data
-        newdvaldata(2*k-1:2*k+1) = {dvaldata{k:k+2}};
+        newdvaldata(kk:kk+2) = {dvaldata{k:k+1}, dvaldata{k+3}};
         % attach NaNs and a dummy marker
-        newdvaldata(2*k+2:2*k+3) = {NaN NaN};
-        newdvaldata{2*k+4} = '';
+        newdvaldata(kk+3:kk+4) = {NaN NaN};
+        newdvaldata{kk+5} = '';
     end  
 end
 end % newdeltaval()

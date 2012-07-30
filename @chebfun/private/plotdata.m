@@ -7,7 +7,9 @@ function [lines marks jumps jval deltas dval misc] = plotdata(f,g,h,numpts,inter
 %
 % OUTPUT: LINES cell array with line data. MARKS cell array for markers at
 % chebyshev data. JUMPS cell array to generate jump lines. JVAL function
-% value at jump points.
+% value at jump points. DETLAS cell array to generate delta lines. DVAL
+% is the offsetted delta fucntion magnitude and DSIGN is the sign of the
+% delta function.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -31,7 +33,6 @@ end
 
 marks = {}; jumps = {}; jval = {};
 deltas = {}; dval = {};
-
 if isempty(f) && isempty(g)
     lines = {};
     return
@@ -215,14 +216,14 @@ if isempty(f)
         [gjk jvalg isjg] = jumpvals(g(k),endsk);
         gjk2 = gjk;
         
-        % delta lines(fdk,gdk) and delta values (dvalg)
+        % delta lines(fdk,gdk) and offsetted delta values (dvalg)
         nends = length(endsk);
         if nends > 0
             fdk = reshape(repmat(endsk,3,1),3*nends,1);
         else
             fdk = Nan(3,1);
         end
-        [gdk dvalg isdg] = deltavals(g(k),endsk);
+        [gdk dvalg dsigng isdg] = deltavals(g(k),endsk);
     
         
         jvalf = endsk.';
@@ -247,10 +248,10 @@ if isempty(f)
         end
         if greal
             jval = [jval jvalf jvalg];
-            dval = [dval dvalf dvalg];
+            dval = [dval dvalf dvalg dsigng];
         else
             jval = [jval NaN NaN];
-            dval = [dval NaN NaN];
+            dval = [dval NaN NaN NaN];
             % do not plot jumps or deltas
             fjk = NaN;
             fdk = NaN;
@@ -388,7 +389,7 @@ elseif isempty(h) % Two quasimatrices case
         else
             fdk = Nan(3,1);
         end
-        [gdk dvalg isdg] = deltavals(g(k),endsk);
+        [gdk dvalg dsigng isdg] = deltavals(g(k),endsk);
         dvalf = endsk.';
         % Remove continuous breakpoints from deltas;
         for j = 1:length(endsk)
@@ -397,7 +398,7 @@ elseif isempty(h) % Two quasimatrices case
                 dvalf(j) = NaN;
             end
         end
-        dval = [dval dvalf dvalg];
+        dval = [dval dvalf dvalg dsigng];
         deltas = [deltas fdk gdk];
     end
     % marks
@@ -589,27 +590,50 @@ end
 
 end % jumpvals()
 
-function [fdelta dval isdelta] = deltavals(f,ends)
+function [fdelta dval dsign isdelta] = deltavals(f,ends)
 % DELTAVALS Finds delta functions in F
-% DVAL contains the magnitude of delta functions in F located at
-% ENDS. Each element of FDELTA is an array of the form
-% [0 DVAL(i) NaN] and can be used for plotting.
+%
+% DVAL contains the magnitude of delta functions plus the 
+% limiting values of F at ENDS, intended for delta marker
+% plotting
+%
+% Each element of FDELTA is an array of the form
+% [F(ENDS(i)) DVAL(i) NaN] and can be used for plotting
+% delta lines.
+% 
+% DSIGN is zero is the sign function applied on magnitudes
+% of delta functions.
+%
 % ISDELTA is a logical array of the same length
-% as that of ENDS and reurns the locations of delta functions
-% as a logical array. 
+% as that of ENDS and reurns the locations of delta functions. 
 
 tol = 1e-4*f.scl;
 nends = length(ends);
 if(size(f.imps,1)>=2)
+    % actual magnitudes of the delta functions
     dval = (f.imps(2,:)).';
     isdelta = (abs(dval) > tol);
+    % function values at the end points used 
+    % for offsetting delta markers and lines
+    foffset = [feval(f,ends(1), 'right'), ...
+      1/2*(feval(f,ends(2:end-1),'left')+feval(f,ends(2:end-1),'right')), ...
+               feval(f,ends(end),'left')].';
     fdelta = zeros(3*nends,1);
+    % start the delta line from the function value
+    fdelta(1:3:end) = foffset;
+    % signs of delta funtions
+    dsign = sign(dval);
+    % offset the delta fucntion magnitude
+    dval = dval + foffset;
+    % end the delta line at function value plus
+    % the delta magnitude
     fdelta(2:3:end) = dval;
     fdelta(3:3:end) = NaN;
 else
     isdelta = zeros(nends,1);
     dval = NaN(nends,1);
+    dsign = NaN(nends,1);
     fdelta = NaN(3*nends,1);
 end
 
-end %deltavals()
+end % deltavals()
