@@ -1,4 +1,4 @@
-function [lines marks jumps jval misc] = plotdata(f,g,h,numpts,interval)
+function [lines marks jumps jval deltas dval misc] = plotdata(f,g,h,numpts,interval)
 % PLOTDATA returns data (double) for plotting chebfuns.
 % This function is used in PLOT, PLOT3, WATERFALL, ...
 %
@@ -30,6 +30,8 @@ if ~isempty(f)
 end
 
 marks = {}; jumps = {}; jval = {};
+deltas = {}; dval = {};
+
 if isempty(f) && isempty(g)
     lines = {};
     return
@@ -78,11 +80,14 @@ if isempty(f)
     % equispaced points over domain
     fl = linspace(a,b,numpts).';
     
-    % find all the ends and get rid of high order imps
+    % find all the ends and get rid of
+    % derivatives of delta functions.
     ends = [];
     for k = 1:numel(g)
         ends = [ends g(k).ends];
-        g(k).imps = g(k).imps(1,:);
+        if( size(g(k).imps,1) >= 2)
+            g(k).imps = g(k).imps(1:2,:);
+        end
     end
     ends = unique(ends);         
     ends = ends(2:end-1);
@@ -206,30 +211,51 @@ if isempty(f)
         else
             fjk = NaN(3,1);
         end
+        
         [gjk jvalg isjg] = jumpvals(g(k),endsk);
         gjk2 = gjk;
-        jvalf = endsk.';
         
-        % remove jval data outside of 'interval'
+        % delta lines(fdk,gdk) and delta values (dvalg)
+        nends = length(endsk);
+        if nends > 0
+            fdk = reshape(repmat(endsk,3,1),3*nends,1);
+        else
+            fdk = Nan(3,1);
+        end
+        [gdk dvalg isdg] = deltavals(g(k),endsk);
+    
+        
+        jvalf = endsk.';
+        dvalf = jvalf;
+        
+        % remove jval and dval data outside of 'interval'
         if greal
             mask = jvalf<a | jvalf>b;
-            jvalf(mask) = NaN; jvalg(mask) = NaN;
+            jvalf(mask) = NaN; jvalg(mask) = NaN; dvalg(mask) = NaN;
         end
 
-        % Remove continuous breakpoints from jumps:
+        % Remove continuous breakpoints from jumps and deltas;
         for j = 1:length(endsk)
             if ~isjg(j)
                 jvalg(j) = NaN;
                 jvalf(j) = NaN;
             end
+            if ~isdg(j)
+                dvalg(j) = NaN;
+                dvalf(j) = NaN;
+            end
         end
         if greal
             jval = [jval jvalf jvalg];
+            dval = [dval dvalf dvalg];
         else
             jval = [jval NaN NaN];
-            % do not plot jumps
+            dval = [dval NaN NaN];
+            % do not plot jumps or deltas
             fjk = NaN;
+            fdk = NaN;
             gjk = NaN;
+            gdk = NaN;
             
             % x = real data, y = imag data
             fmk = real(gmk);
@@ -262,10 +288,13 @@ if isempty(f)
             % remove values outside interval
             mask = (fjk < a) | (fjk > b);
             fjk(mask) = []; gjk(mask) = [];
+            mask = (fdk < a) | (fdk > b);
+            fdk(mask) = []; gdk(mask) = [];
         end
         
-        % store jumps and marks
+        % store jumps, deltas and marks
         jumps = [jumps, fjk, gjk];
+        deltas = [deltas, fdk, gdk];
         % With 'interval', there might not actually be any marks.
         if numel(fmk) == 0, fmk = NaN; gmk = NaN; end
         marks = [marks, fmk, gmk];
@@ -329,6 +358,7 @@ elseif isempty(h) % Two quasimatrices case
     
     % Jump lines:
     jumps = {}; jval = {};
+    
     for k = 1:max(nf,ng)
         kf = couples(k,1); kg = couples(k,2);
         ends = unique([f(kf).ends,g(kg).ends]);
@@ -342,7 +372,34 @@ elseif isempty(h) % Two quasimatrices case
             end
         end
     end
-       
+    
+    % Delta lines:
+    deltas = {}; dval = {};
+    % ignore delta functions in f
+    % assuming plots of the kind
+    % plot(x,dirac(x)) only
+    
+    for k = 1:numel(g)
+        % delta lines(fdk,gdk) and delta values (dvalg)
+        endsk = (g(k).ends);
+        nends = length(endsk);
+        if nends > 0
+            fdk = reshape(repmat(endsk,3,1),3*nends,1);
+        else
+            fdk = Nan(3,1);
+        end
+        [gdk dvalg isdg] = deltavals(g(k),endsk);
+        dvalf = endsk.';
+        % Remove continuous breakpoints from deltas;
+        for j = 1:length(endsk)
+            if ~isdg(j)
+                dvalg(j) = NaN;
+                dvalf(j) = NaN;
+            end
+        end
+        dval = [dval dvalf dvalg];
+        deltas = [deltas fdk gdk];
+    end
     % marks
     marks = {};
     for k = 1:max(nf,ng)
@@ -459,7 +516,7 @@ else % Case of 3 quasimatrices (used in plot3)
     end
     
 end
-
+end % plotdata()
 
 
 function [fjump jval isjump] = jumpvals(f,ends)
@@ -529,3 +586,30 @@ if abs(jval(end)-ffuns(end).vals(end)) < tol
 else
     isjump(end) = true;
 end
+
+end % jumpvals()
+
+function [fdelta dval isdelta] = deltavals(f,ends)
+% DELTAVALS Finds delta functions in F
+% DVAL contains the magnitude of delta functions in F located at
+% ENDS. Each element of FDELTA is an array of the form
+% [0 DVAL(i) NaN] and can be used for plotting.
+% ISDELTA is a logical array of the same length
+% as that of ENDS and reurns the locations of delta functions
+% as a logical array. 
+
+tol = 1e-4*f.scl;
+nends = length(ends);
+if(size(f.imps,1)>=2)
+    dval = (f.imps(2,:)).';
+    isdelta = (abs(dval) > tol);
+    fdelta = zeros(3*nends,1);
+    fdelta(2:3:end) = dval;
+    fdelta(3:3:end) = NaN;
+else
+    isdelta = zeros(nends,1);
+    dval = NaN(nends,1);
+    fdelta = NaN(3*nends,1);
+end
+
+end %deltavals()
