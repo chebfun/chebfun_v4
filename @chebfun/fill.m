@@ -34,6 +34,7 @@ function varargout = fill(varargin)
 [a,b] = domain(varargin{1});
 numpts = 1000;                              % default # of sample points
 
+kk = 0;
 for k = 1:nargin
     if ischar(varargin{k})
         if strcmpi(varargin{k},'NumPts');      
@@ -43,7 +44,9 @@ for k = 1:nargin
     end
 end
 
-varargin(kk:kk+1) = [];                     % remove numpts data
+if kk > 0
+    varargin(kk:kk+1) = [];                 % remove numpts data
+end
 
 t = linspace(a,b,numpts)';
 
