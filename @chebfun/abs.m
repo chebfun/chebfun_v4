@@ -12,7 +12,7 @@ function Fout = abs(F)
         Fout(k).ID = newIDnum;
     end
 
-end
+end % abs()
 
 function Fout = abscol(F)
 
@@ -98,7 +98,25 @@ function Fout = abscol(F)
         Fout = F;
         Fout.nfuns = m;
         Fout.ends = ends;
-        Fout.imps = abs( feval( F , ends ) );
+        
+        % if there are delta functions
+        if(size(F.imps,1)>=2) 
+            tol = 100*chebfunpref('eps');
+            % find column indices which have a delta function
+            % or its derivative
+            idx = (abs(F.imps(2:end,:)) > tol);
+            idx = (sum(idx,1) ~= 0);
+            % indices with no deltas
+            idx = ~idx;
+            % make sure there is at least one index
+            % with no deltas, otherwise don't evaluate
+            if(any(idx))
+                % evaluate F and assign abs(F) to Fout
+                Fout.imps(1,idx) = abs(feval(F,ends(idx)));
+            end
+        else
+            Fout.imps = abs( feval( F , ends ) );
+        end
         Fout.funs = simplify( fun( f ) );
 
 
@@ -112,7 +130,8 @@ function Fout = abscol(F)
         Fout = sqrt(conj(Fout).*Fout);
 
     end
-
+    
+    % take the absolute value of all impulses
     Fout.imps = abs(Fout.imps);
 
 end

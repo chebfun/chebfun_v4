@@ -74,12 +74,32 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         nonlinmap = nonlinmap || ~strcmp( f.funs(j).map.name , 'linear' );
       end; end
 
+      % Check for delta functions
+      n = numel(F1);
+      hasdeltasF1 = zeros(1,n);
+      for k = 1:n 
+          f = F1(k,:);
+          if(size(f.imps,1)>=2)
+              hasdeltasF1(k) = true;
+           end
+      end
+      n = numel(F2);
+      hasdeltasF2 = zeros(1,n);
+      for k = 1:n
+          f = F2(:,k);
+          if(size(f.imps,1)>=2)
+              hasdeltasF2(k) = true;
+          end
+      end
+      hasdeltas = any(hasdeltasF1) | any(hasdeltasF2);
+          
+
       % If the quasimatrices F1 and F2 have neither exponents nor non-linear
       % maps, then we can compute a discretized inner product. This is done
       % by discretizing both F1 and F2 on a chebyshev grid of the size of
       % the sum of their lengths and computing the inner products relative
       % to the Clensaw-Curtis quadrature weights.
-      if ~hasexps && ~nonlinmap
+      if ~hasexps && ~nonlinmap && ~hasdeltas
       
         % Get the outer dimensions
         m = size(F1,1); n = size(F2,2);
@@ -152,11 +172,33 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         
       % Otherwise, same old...
       else
-      
           for k = 1:size(F1,1)
             for j = 1:size(F2,2)
               if F1(k).trans && ~F2(j).trans
-                Fout(k,j) = sum((F1(k).').*F2(j));
+                if(hasdeltasF1(k) && hasdeltasF2(j))
+                    [f1,f2] = overlap(F1(k).',F2(j));
+                    % mulitply the impulses pointwise
+                    imps = f1.imps.*f2.imps;
+                    idx = abs(imps)>100*eps;
+                    if(any(any(idx)))
+                        % signed infinity where impulses match
+                        imps(idx) = inf*imps(idx);
+                        % add infinities along rows then columns
+                        s = sum(sum(imps,2),1);  
+                        % s can be Inf or NaN
+                        if(isinf(s) || isnan(s))
+                            Fout(k,j) = s;
+                        % otherwise s is zero
+                        else
+                            Fout(k,j) = sum((F1(k).').*F2(j));
+                        end
+                    else
+                        Fout(k,j) = sum((F1(k).').*F2(j));
+                    end
+                    
+                else                 
+                    Fout(k,j) = sum((F1(k).').*F2(j));
+                end
               else
                 error('CHEBFUN:mtimes:dim','Chebfun dimensions must agree.')
               end
