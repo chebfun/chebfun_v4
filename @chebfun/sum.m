@@ -117,8 +117,10 @@ else
     end
 
     % Deal with impulses
-    if not(isempty(f.imps(2:end,:)))
-        out = out + sum(f.imps(end,:));
+    if (size(f.imps,1) >= 2)
+        % only add the delta functions, since the integral of 
+        % derivatives of delta functions is always zero.
+        out = out + sum(f.imps(2,:));
     end
     
 end
