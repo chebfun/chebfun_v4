@@ -72,41 +72,66 @@ if(isempty(degf_delta)), degf_delta = -1; end
 
 % if both f and g have deltas at a common point, then the multiplication
 % f.*g is undefined
+deltaIdxf = zeros(1,length(f.ends));
+deltaIdxg = zeros(1,length(g.ends));
 
-if((degg_delta >= 0) && (degf_delta >= 0) )
-    error( 'CHEBFUN:times:Delta functions can not be multiplied with each other' );
+if(degf_delta >= 0)
+    % indices with deltas or its derivatives
+    deltaIdxf = (abs(f.imps(2:end,:))>eps*f.scl);
+    % merge the indices columnwise
+    deltaIdxf = sum(deltaIdxf,1) ~= 0;
 end
 
+if(degg_delta >= 0)
+    % indices with deltas or its derivatives
+    deltaIdxg = (abs(g.imps(2:end,:))>eps*g.scl);
+    % merge the indices columnwise
+    deltaIdxg = sum(deltaIdxg,1) ~= 0;
+end
+
+if(any(deltaIdxf & deltaIdxg))
+    error( 'CHEBFUN:times:Delta functions at a common point can not be multiplied with each other' );
+end
+
+% f.imps and g.imps are of same size now
+% due to overlap
+Hgimps = zeros(size(g.imps));
+Hfimps = zeros(size(f.imps));
 % if g has delta functions
 if( degg_delta >= 0 )
-    Hgimps = zeros(size(g.imps));
     for j = degg_delta+2:-1:2
         df = F; % notice that this is not f
         hgimps = zeros(size(g.imps));
-        for k = j-2:-1:0
-            hgimps(k+2, :) = nchoosek(j-2, k)*((-1)^k)*feval(df, g.ends).*g.imps(j, :);
-            df = diff(df);            
+        % f and g can not have deltas at a common break point by
+        % now, so do not evaluate f at a point where it has a
+        % delta function, otherwise the corresponding impulse in
+        % g with a zero magnitude multiplied with the delta in f
+        % will result in a NaN
+        if(any(~deltaIdxf))
+            for k = j-2:-1:0
+                hgimps(k+2, ~deltaIdxf) = nchoosek(j-2, k)*((-1)^k)* ...
+                       feval(df, g.ends(~deltaIdxf)).*g.imps(j,~deltaIdxf);
+                df = diff(df);            
+            end
         end
         Hgimps = Hgimps + (-1)^(j-2)*hgimps;
     end
-    % update imps in the final output
-    imps = Hgimps + f.imps;
 end
 
 % if f has delta functions
 if( degf_delta >= 0 )    
-    Hfimps = zeros(size(f.imps));
     for j = degf_delta+2:-1:2
         dg = G; % note that this is not g
         hfimps = zeros(size(f.imps));
-        for k = j-2:-1:0
-            hfimps(k+2, :) = nchoosek(j-2,k)*((-1)^k)*feval(dg, f.ends).*f.imps(j, :);
-            dg = diff(dg);            
+        if(any(~deltaIdxg))
+            for k = j-2:-1:0
+                hfimps(k+2, ~deltaIdxg) = nchoosek(j-2,k)*((-1)^k)* ...
+                     feval(dg, f.ends(~deltaIdxg)).*f.imps(j, ~deltaIdxg);
+                dg = diff(dg);            
+            end
         end
         Hfimps = Hfimps + (-1)^(j-2)*hfimps;
     end
-    % update imps in the final output
-    imps = Hfimps + g.imps;
 end
 
 % Update first row of h.imps (function values)
@@ -118,23 +143,15 @@ tmp = f.imps(1,:).*g.imps(1,:);
 tol = 10*f.scl.*chebfunpref('eps');
 if any(isinf(tmp))
     for k = 1:length(tmp)
-        if isinf(tmp(k)) && (f.imps(1,k)<tol || g.imps(1,k)<tol)
+        if isinf(tmp(k)) && ( (abs( f.imps(1,k) ) < tol ) || ( abs(g.imps(1,k))< tol ) )
             tmp(k) = NaN;
         end
     end   
 end
+
+% update the final imps matrix
+imps = Hgimps + Hfimps; % delta functions
 imps(1,:) = tmp;
-    
-% % If there are deltas, then function value is + or - inf. (or should it
-% be nan in some cases?)
-% if size(imps,1)>1
-%     for k = 1:f.nfuns+1
-%         ind = find(imps(2:end,k),1,'first');
-%         if ~isempty(ind)            
-%             imps(1,k) = inf*sign(imps(ind+1,k));
-%         end
-%     end
-% end
 
 % update scales in funs:
 for k = 1:f.nfuns-1
