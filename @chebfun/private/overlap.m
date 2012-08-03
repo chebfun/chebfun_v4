@@ -87,14 +87,16 @@ else
     foutimps = zeros(maxrows,length(ends));      
     [trash,findex,foutind]=intersect(fends,ends);
     foutimps(2:frows,foutind)=fimps(2:frows,findex);
-    idx = any(foutimps(2:end,:));
+    idx = abs(foutimps(2:end,:)) > 100*eps*f.scl;
+    idx = sum(idx,1)~=0;
     foutimps(1,~idx)=feval(f,ends(~idx));
 %     foutimps(1,:)=feval(f,ends)
     
     goutimps = zeros(maxrows,length(ends)); 
     [trash,gindex,goutind]=intersect(gends,ends);
     goutimps(2:grows,goutind)=gimps(2:grows,gindex);
-    idx = any(goutimps(2:end,:));
+    idx = abs(goutimps(2:end,:)) > 100*eps*g.scl;
+    idx = sum(idx,1)~=0;    
     goutimps(1,~idx)=feval(g,ends(~idx));
 %     goutimps(1,:)=feval(g,ends)
     
