@@ -98,27 +98,17 @@ function Fout = abscol(F)
         Fout = F;
         Fout.nfuns = m;
         Fout.ends = ends;
-        
         % if there are delta functions
         if(size(F.imps,1)>=2) 
-            tol = 100*chebfunpref('eps');
-            % find column indices which have a delta function
-            % or its derivative
-            idx = (abs(F.imps(2:end,:)) > tol);
-            idx = (sum(idx,1) ~= 0);
-            % indices with no deltas
-            idx = ~idx;
-            % make sure there is at least one index
-            % with no deltas, otherwise don't evaluate
-            if(any(idx))
-                % evaluate F and assign abs(F) to Fout
-                Fout.imps(1,idx) = abs(feval(F,ends(idx)));
-            end
+            % overlap to get the values of F
+            % at all the ends
+            [Fout F] = overlap(chebfun(0,ends),F);
+            % copy the impulses
+            Fout.imps = abs(F.imps);
         else
-            Fout.imps = abs( feval( F , ends ) );
+            Fout.imps = abs(feval(F,ends));
         end
-        Fout.funs = simplify( fun( f ) );
-
+        Fout.funs = simplify(fun(f));
 
     elseif isreal(1i*F)          % Imaginary case
 

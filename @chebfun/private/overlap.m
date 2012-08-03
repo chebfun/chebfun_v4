@@ -87,18 +87,32 @@ else
     foutimps = zeros(maxrows,length(ends));      
     [trash,findex,foutind]=intersect(fends,ends);
     foutimps(2:frows,foutind)=fimps(2:frows,findex);
-    idx = abs(foutimps(2:end,:)) > 100*eps*f.scl;
+    idx = abs(foutimps(2:end,:)) > 100*eps;
+    % indices with deltas
     idx = sum(idx,1)~=0;
-    foutimps(1,~idx)=feval(f,ends(~idx));
-%     foutimps(1,:)=feval(f,ends)
+    % compute the average for delta indices
+    if(any(idx))
+        foutimps(1,idx) = 1/2*(feval(f,ends(idx), 'left')+feval(f,ends(idx),'right'));
+    end
+    % otherwise compute the normal fucntion values
+    if(any(~idx))
+        foutimps(1,~idx)=feval(f,ends(~idx));
+    end
     
     goutimps = zeros(maxrows,length(ends)); 
     [trash,gindex,goutind]=intersect(gends,ends);
     goutimps(2:grows,goutind)=gimps(2:grows,gindex);
-    idx = abs(goutimps(2:end,:)) > 100*eps*g.scl;
-    idx = sum(idx,1)~=0;    
-    goutimps(1,~idx)=feval(g,ends(~idx));
-%     goutimps(1,:)=feval(g,ends)
+    idx = abs(goutimps(2:end,:)) > 100*eps;
+    % indices with deltas
+    idx = sum(idx,1)~=0;
+    % compute the average for delta indices
+    if(any(idx))
+        goutimps(1,idx) = 1/2*(feval(g,ends(idx), 'left')+feval(g,ends(idx),'right'));
+    end
+    % otherwise compute the normal fucntion values
+    if(any(~idx))
+        goutimps(1,~idx)=feval(g,ends(~idx));
+    end
     
     f.funs = foutfuns; f.ends = ends; f.imps = foutimps; f.nfuns = length(ends)-1;
     g.funs = goutfuns; g.ends = ends; g.imps = goutimps; g.nfuns = f.nfuns;   
