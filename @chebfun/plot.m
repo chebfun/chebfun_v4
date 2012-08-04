@@ -41,13 +41,19 @@ function varargout = plot(varargin)
 % chebfun. For example, PLOT(F,'JumpLine','-r')  will plot discontinuities
 % as a solid red line, and PLOT(F,'-or','JumpMarker,'.k') will plot the
 % jump values with black dots. By default the plotting styles for jumplines
-% and jumpmarkers are ':' and 'x' respectively with colours chosen to match
+% and jumpmarkers are ':' and 'x' respectively colours are chosen to match
 % the lines they correspond to, and jump values are only plotted when the
 % Chebyshev points are also plotted, unless an input 'JumpMarker','x' is
 % passed. It is possible to modify other properties of jumplines and
 % jumpmarkers with syntax like PLOT(F,'JumpLine',{'r','LineWidth',5}).
 % Jumplines can be suppressed with the argument 'JumpLine','none'.
 %
+% Similarly, the parameters DeltaLine and DeltaMarker determine the 
+% type of line and markers respectively for plotting delta functions in the 
+% chebfun. For example PLOT(F,'DeltaLine', '-.r', 'DeltaMarker', '*k') will
+% plot dashed red lines for delta functions with black * markers. 
+% and for dletalines and
+% dletamarkers are '-' and '^' respectively. The 
 % PLOT(F,'interval',[A B]) restricts the plot to the interval [A,B] which 
 % can be useful when the domain of F is infinite, or for 'zooming in' 
 % on, say, oscillatory chebfuns. PLOT(F,'numpts',N) will plot the 
@@ -60,8 +66,11 @@ function varargout = plot(varargin)
 % H = PLOT(F, ...) returns a column vector of handles to line objects in
 % the plot. H(:,1) contains the handles for the 'curves' (i.e. the function),
 % H(:,2) contains handles for the 'marks', (i.e. the values at Chebyshev 
-% points), H(:,3) for the jump lines, H(:,4) for the jump vals, and H(:,5) 
-% contains the handle for a dummy plot used to supply correct legends.
+% points), H(:,3) for the jump lines, H(:,4) for the jump vals, H(:,5) for
+% delta function lines, H(:,6)/H(:,7) for positive/negative delta function
+% marker values when the marker is '^', otherwise H(:,6) contains the handles
+% for all delta function markers and H(:,7) contains dummy data. 
+% Finally, H(:,8) contains the handle for a dummy plot used to supply correct legends.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -256,9 +265,14 @@ end
 if isempty(jlinestyle) || (ischar(jlinestyle) && strcmpi(jlinestyle,'none'))
     jumpdata = {NaN, NaN};
 end
-
+% Do not plot deltalines
 if isempty(dlinestyle) || (ischar(dlinestyle) && strcmpi(dlinestyle,'none'))
     deltadata = {NaN, NaN};
+end
+
+% Do not plot delta markers
+if isempty(dmarker) || (ischar(dmarker) && strcmpi(dmarker,'none'))
+    forcedmarks = false;
 end
 % Dummy plot for legends
 hdummy = plot(dummydata{:}); hold on
@@ -276,41 +290,42 @@ if forcedmarks   % default setting for delta functions
     % deal with the '^' marker for delta functions
     dvaldata = makedvaldata(dvaldata);
     h6 = plot(dvaldata{:},'linestyle','none','handlevis','off');
+    h7 = h6(2:2:end); % handles to negative delta markers
+    h6 = h6(1:2:end); % handles to positive delta markers
 else
     h6 = NaN(size(h1));
+    h7 = NaN(size(h1));
 end
 
 
 % Colours of jumplines and val
-defjlcol = true;
+defjlcol = true; % use color of corresponding line?
 colours = {'b','g','r','c','m','y','k','w'};
 for k = 1:length(jlinestyle)
-    if ~isempty(strncmp(jlinestyle(k),colours,1))
+    if any(strncmp(jlinestyle(k),colours,1))
         defjlcol = false; break
     end
 end
-defjmcol = true;
-% The following doesn't seem correct:
+defjmcol = true; % use color of corresponding line?
 for k = 1:length(jmarker)
-   if ~isempty(strncmp(jlinestyle(k),colours,1))
+   if any(strncmp(jlinestyle(k),colours,1))
        defjmcol = false; break
    end
 end
 
 % Colours of deltalines and val
-defdlcol = true;
-% The following doesn't seem correct:
-% for k = 1:length(dlinestyle)
-%     if ~isempty(strncmp(dlinestyle(k),colours,1))
-%         defdlcol = false; break
-%     end
-% end
-defdmcol = true;
-% for k = 1:length(dmarker)
-%     if ~isempty(strncmp(dlinestyle(k),colours,1))
-%         defdmcol = false; break
-%     end
-% end
+defdlcol = true; % use color of corresponding line?
+for k = 1:length(dlinestyle)
+    if any(strncmp(dlinestyle(k),colours,1))
+        defdlcol = false; break
+    end
+end
+defdmcol = true; % use color of corresponding line?
+for k = 1:length(dmarker)
+    if any(strncmp(dlinestyle(k),colours,1))
+        defdmcol = false; break
+    end
+end
 
 % Enforce colours
 if numel(h2) == numel(h1)  % This should always be the case??
@@ -320,41 +335,27 @@ if numel(h2) == numel(h1)  % This should always be the case??
         set(h2(k),'color',h1color);
         set(h2(k),'marker',h1marker);
         set(h1(k),'marker','none');
+        
         if defjlcol && numel(h3) == numel(h1)
             set(h3(k),'color',h1color);
         end
         
-        if forcejmarks && numel(h4) == numel(h1)
-            if defjmcol
-                set(h4(k),'color',h1color);
-            end
-            %%%% how?                   ->
-            if strcmp(h1marker,'none') && ~forcejmarks
-                set(h4(k),'marker','none');
-            end
+        if forcejmarks && numel(h4) == numel(h1) && defjmcol
+            set(h4(k),'color',h1color);
         end        
-        
+              
         if defdlcol && numel(h5) == numel(h1)
             set(h5(k),'color',h1color);
-        end   
-        
-        if forcedmarks && numel(h6) == 2*numel(h1)
-            if defdmcol
-                set(h6(2*k-1:2*k),'color',h1color);
-                set(h6(2*k-1:2*k),'MarkerFaceColor', h1color);
-            end
-            % not sure about this!
-            if strcmp(h1marker,'none') && ~forcedmarks
-                set(h6(k),'marker','none');
-            end
         end
         
+        if forcedmarks && numel(h6) == numel(h1) && numel(h7) == numel(h1) && defdmcol
+            set(h6(k),'color',h1color);
+            set(h7(k),'color',h1color);
+            set(h6(k),'MarkerFaceColor',h1color);
+            set(h7(k),'MarkerFaceColor',h1color);
+        end                
     end
 end
-
-% if ~h && ~isempty(interval)
-%     set(gca,'xlim',interval)
-% end
 
 % Set the axis limits
 if length(interval) == 4
@@ -373,15 +374,15 @@ if ~h, hold off; end
 % Output handles
 if nargout == 1
     % lines markers jumplines jumpvals deltalines deltavals dummy
-    varargout = {[h1 h2 h3 h4 h5 h6 hdummy]};
+    varargout = {[h1 h2 h3 h4 h5 h6 h7 hdummy]};
 end
 end
 
 function newdvaldata = makedvaldata(dvaldata)
-% MAKEDVALDATA handles the case when '^' is 
-% used as delta marker. The number of [x,y] pairs
-% for delta data are doubled as a result of the 
-% formatting regardless of the marker type.
+% MAKEDVALDATA handles the case when '^' is used as delta
+% marker. The number of handles for plotting delta data
+% are doubled as a result of the formatting, regardless
+% of the marker type.
 % 
 % Input  format: [xdelta] [ydelta] [sign] [marker]
 % Output format: [xdelta] [positive delta] [marker],

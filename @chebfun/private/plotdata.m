@@ -7,9 +7,9 @@ function [lines marks jumps jval deltas dval misc] = plotdata(f,g,h,numpts,inter
 %
 % OUTPUT: LINES cell array with line data. MARKS cell array for markers at
 % chebyshev data. JUMPS cell array to generate jump lines. JVAL function
-% value at jump points. DETLAS cell array to generate delta lines. DVAL
-% is the offsetted delta fucntion magnitude and DSIGN is the sign of the
-% delta function.
+% value at jump points. DETLAS cell array to generate delta lines. DVAL 
+% cell array contains the x-y coordinates for delta function markers
+% and the signs of the delta functions.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -215,48 +215,82 @@ if isempty(f)
         
         [gjk jvalg isjg] = jumpvals(g(k),endsk);
         gjk2 = gjk;
-        
-        % delta lines(fdk,gdk) and offsetted delta values (dvalg)
-        nends = length(endsk);
-        if nends > 0
-            fdk = reshape(repmat(endsk,3,1),3*nends,1);
-        else
-            fdk = Nan(3,1);
-        end
-        [gdk dvalg dsigng isdg] = deltavals(g(k),endsk);
-    
-        
         jvalf = endsk.';
-        dvalf = jvalf;
-        
-        % remove jval and dval data outside of 'interval'
+        % remove jval data outside of 'interval'
         if greal
             mask = jvalf<a | jvalf>b;
-            jvalf(mask) = NaN; jvalg(mask) = NaN; dvalg(mask) = NaN;
+            jvalf(mask) = NaN; jvalg(mask) = NaN;
         end
 
-        % Remove continuous breakpoints from jumps and deltas;
+        % Remove continuous breakpoints from jumps;
         for j = 1:length(endsk)
             if ~isjg(j)
                 jvalg(j) = NaN;
                 jvalf(j) = NaN;
             end
-            if ~isdg(j)
-                dvalg(j) = NaN;
-                dvalf(j) = NaN;
-            end
         end
+        
+        % delta lines(fdk,gdk) and offsetted delta values (dvalg)
+        % If there are delta functions
+        if( size(g(k).imps,1)>=2)
+            nends = length(endsk); % ends of g(k)
+            % x-coordinate for delta functions
+            fdk = reshape(repmat(endsk,3,1),3*nends,1);
+            % y-cordinate and values for delta fucntions
+            [gdk dvalg dsigng isdg] = deltavals(g(k),endsk);
+            dvalf = endsk.';
+            % remove points with no deltas
+            for j = 1:length(endsk)
+                if ~isdg(j)
+                    dvalg(j) = NaN;
+                    dvalf(j) = NaN;
+                    dsigng(j) = NaN;
+                    fdk(3*j-2:3*j) = [NaN;NaN;NaN];
+                    gdk(3*j-2:3*j) = [NaN;NaN;NaN];               
+                end
+            end
+            % remove dval data outside of 'interval'
+            if greal
+                mask = dvalf<a | dvalf>b;
+                dvalf(mask) = NaN; dvalg(mask) = NaN; dsigng(mask) = NaN;
+            end
+        else % no deltas
+            fdk = NaN;
+            gdk = NaN;
+            dvalf = NaN;
+            dvalg = NaN;
+            dsigng = NaN;
+        end     
+        
         if greal
             jval = [jval jvalf jvalg];
             dval = [dval dvalf dvalg dsigng];
         else
+            % do not plot jump lines or jump markers for the complex case
             jval = [jval NaN NaN];
-            dval = [dval NaN NaN NaN];
-            % do not plot jumps or deltas
             fjk = NaN;
-            fdk = NaN;
             gjk = NaN;
-            gdk = NaN;
+            
+            % check for delta functions
+            if( size(g(k).imps,1) >= 2 )
+                % plotting delta functions in the complex plane
+                [fdk gdk dvalf dvalg dsigng isdg] = complexdeltavals(g(k),endsk);
+                % remove points with no deltas
+                for j = 1:length(endsk)
+                    if ~isdg(j)
+                        dvalg(j) = NaN;
+                        dvalf(j) = NaN;
+                        dsigng(j) = NaN;
+                        fdk(3*j-2:3*j) = [NaN;NaN;NaN];
+                        gdk(3*j-2:3*j) = [NaN;NaN;NaN];               
+                    end
+                end
+                dval = [dval dvalf dvalg dsigng];
+            else
+                dval = [dval NaN NaN NaN];
+                fdk = NaN;
+                gdk = NaN;
+            end        
             
             % x = real data, y = imag data
             fmk = real(gmk);
@@ -381,23 +415,32 @@ elseif isempty(h) % Two quasimatrices case
     % plot(x,dirac(x)) only
     
     for k = 1:numel(g)
-        % delta lines(fdk,gdk) and delta values (dvalg)
-        endsk = (g(k).ends);
-        nends = length(endsk);
-        if nends > 0
+        % If there are delta functions
+        if( size(g(k).imps,1)>=2)
+            endsk = g(k).ends;
+            nends = length(endsk); % ends of g(k)
+            % x-coordinate for delta functions
             fdk = reshape(repmat(endsk,3,1),3*nends,1);
-        else
-            fdk = Nan(3,1);
-        end
-        [gdk dvalg dsigng isdg] = deltavals(g(k),endsk);
-        dvalf = endsk.';
-        % Remove continuous breakpoints from deltas;
-        for j = 1:length(endsk)
-            if ~isdg(j)
-                dvalg(j) = NaN;
-                dvalf(j) = NaN;
+            % y-cordinate and values for delta fucntions
+            [gdk dvalg dsigng isdg] = deltavals(g(k),endsk);
+            dvalf = endsk.';
+            % remove points with no deltas
+            for j = 1:length(endsk)
+                if ~isdg(j)
+                    dvalg(j) = NaN;
+                    dvalf(j) = NaN;
+                    dsigng(j) = NaN;
+                    fdk(3*j-2:3*j) = [NaN;NaN;NaN];
+                    gdk(3*j-2:3*j) = [NaN;NaN;NaN];               
+                end
             end
-        end
+        else % no deltas
+            fdk = NaN;
+            gdk = NaN;
+            dvalf = NaN;
+            dvalg = NaN;
+            dsigng = NaN;
+        end   
         dval = [dval dvalf dvalg dsigng];
         deltas = [deltas fdk gdk];
     end
@@ -637,3 +680,39 @@ else
 end
 
 end % deltavals()
+
+function [xdelta ydelta dvalx dvaly dsign isdelta] = complexdeltavals(f,ends)
+% DELTAVALS Finds delta functions in a complex F
+% XDELTA contains the x-coordinate triples for delta lines
+% YDELTA contains the y-coordinate triples for delta lines
+% DVALX and DVALY together determine the location of delta markers
+% in the x-y plane.
+% ISDELTA is a logical array to indicate the presence of delta functions
+% at the ENDS of F
+%
+tol = 1e-4*f.scl;
+nends = length(ends);
+if(size(f.imps,1)>=2)
+    dval = (f.imps(2,:)).';
+    isdelta = (abs(dval) > tol);
+    xdelta = zeros(3*nends,1);
+    ydelta = zeros(3*nends,1);
+    xdelta(1:3:end) = real(f.imps(1,:)).';
+    xdelta(2:3:end) = real(f.imps(1,:)+f.imps(2,:)).';
+    xdelta(3:3:end) = NaN;
+    ydelta(1:3:end) = imag(f.imps(1,:)).';
+    ydelta(2:3:end) = imag(f.imps(1,:)+f.imps(2,:)).';
+    ydelta(3:3:end) = NaN;
+    dvalx = xdelta(2:3:end);
+    dvaly = ydelta(2:3:end);
+else
+    isdelta = zeros(nends,1);
+    dvalx = NaN(nends,1);
+    dvaly = NaN(nends,1);
+    xdelta = NaN(3*nends,1);
+    ydelta = NaN(3*nends,1);
+end
+% signs are immaterial for delta functions in the complex plane
+dsign = ones(nends,1);
+end % complexdeltavals()
+
