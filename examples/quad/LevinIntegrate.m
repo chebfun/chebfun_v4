@@ -4,6 +4,8 @@
 
 %%
 % (Chebfun example quad/LevinIntegrate.m)
+% [Tags: #quadrature, #ODE]
+
 %
 % This example computes the highly oscillatory integral of
 %

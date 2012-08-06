@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example quad/TwoCubes.m)
-
+% [Tags: #quadrature, #multiple_integrals, #singular_integral]
 %%
 % A problem from the Oxford's Numerical Analysis Problem Solving
 % Squad in 2006 was, what is the gravitational force F between

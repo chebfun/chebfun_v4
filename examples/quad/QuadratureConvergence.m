@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example quad/QuadratureConvergence.m)
-
+% [Tags: #quadrature]
 %%
 % As pointed out first by Folkmar Bornemann, the Gauss and Clenshaw-Curtis
 % quadrature formulas converge at a rate one power of $n$ faster than one
