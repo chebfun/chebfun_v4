@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example pde/SVDFrequencyResponse.m)
+% [Tags: #SVD, #compact, #linearalgebra]
 
 %% Introduction
 % In many physical systems there is a need to examine the effects of

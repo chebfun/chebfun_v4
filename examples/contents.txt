@@ -1,3 +1,4 @@
+calc Calculus
 roots Rootfinding  
 opt Optimization  
 quad Quadrature  

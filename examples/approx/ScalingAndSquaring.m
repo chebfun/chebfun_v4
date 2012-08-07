@@ -17,7 +17,7 @@
 
 %%
 % In brief, the scaling and squaring method is based on a type
-% $(m^{2^s},m^{2^s})$ rational approximation to the exponential in a region
+% $(2^sm,2^sm)$ rational approximation to the exponential in a region
 % in the complex plane that contains the eigenvalues, where $s$ and $m$ are
 % suitably chosen integer parameters. It first computes $e^A$ by first
 % choosing an integer $s$ such that $A/2^s$ has norm of order 1, then
@@ -49,7 +49,7 @@
 %
 % $$p_{k,m}(z)=\sum_{j=0}^{k}\frac{(k+m-j)!k!}{(k+m)!(k-j)!}\frac{z^j}{j!},
 % \quad
-% q_{k,m}(z)=\sum_{j=0}^{k}\frac{(k+m-j)!m!}{(k+m)!(m-j)!}\frac{(-z)^j}{j!}.$$
+% q_{k,m}(z)=\sum_{j=0}^{m}\frac{(k+m-j)!m!}{(k+m)!(m-j)!}\frac{(-z)^j}{j!}.$$
 %
 % Alternatively (and in particular for general functions for which
 % Padé approximants are not explicitly known), Padé approximants can be
