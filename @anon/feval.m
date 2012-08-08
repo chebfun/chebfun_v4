@@ -28,11 +28,7 @@ loadVariables(Fvar,Fwork)
 % variables of the feval function of anons.
 switch anonType
     case 1
-        try
-            eval(Fin.func); 
-        catch
-            keyboard
-        end
+        eval(Fin.func); 
         varargout{1} = der; varargout{2} = nonConst;
     case 2
         % Create a normal anonymous function handle that we can then evaluate
