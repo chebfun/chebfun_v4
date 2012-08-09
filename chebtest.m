@@ -107,7 +107,7 @@ userpref.dirname = dirname;
 addpath(dirname)
 
 % Get the chebtest directory names
-subdirlist = dir( fullfile(dirname) );
+subdirlist = dir( dirname );
 subdirnames = { subdirlist.name };
 numdirs = length(subdirnames);
 
