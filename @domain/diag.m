@@ -87,6 +87,7 @@ else
 end
 a = f.ends(1); b = f.ends(end);
 fx(xpts<a | xpts>b) = 0; % Zero out entries outside domain of f.
+fx = trim(fx);           % Replace infs by big numbers to avoid NaNs.
 m = spdiags(fx,0,sum(n),sum(n)); % Construct the diagonal matrix.
 end
 
