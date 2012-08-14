@@ -107,7 +107,7 @@ userpref.dirname = dirname;
 addpath(dirname)
 
 % Get the chebtest directory names
-subdirlist = dir( dirname );
+subdirlist = dir( fullfile(dirname) );
 subdirnames = { subdirlist.name };
 numdirs = length(subdirnames);
 
@@ -387,7 +387,13 @@ if createreport && any(failed)
     % display first line of Java VM version info
     fprintf(fid,['Java VM Version: ',...
     char(strread(version('-java'),'%s',1,'delimiter','\n'))]);
-
+    % get the chebfun version
+    v = struct2cell(ver);
+    for k = 1:size(v,3)
+        if strcmpi(v(1,1,k),'Chebfun')
+            fprintf(fid,['Chebfun Version ',v(2,1,k),'\n']);
+        end
+    end
     fclose(fid);
 elseif createreport && ~any(failed)
     delete(report);
