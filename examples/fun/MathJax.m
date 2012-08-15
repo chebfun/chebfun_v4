@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example fun/MathJax.m)
+% [Tags: #mathjax]
 
 %% 
 % Chebfun Examples now support LaTeX equations via MathJax 

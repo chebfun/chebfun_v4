@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun example fun/Encryption.m)
+% [Tags: #encryption, #message]
 
 %%
 % SCRIBBLE produces piecewise linear complex chebfun whose
