@@ -193,6 +193,8 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
                             Fout(k,j) = sum((F1(k).').*F2(j));
                         end
                     else
+                        % There should be no impulses at this point
+                        F1(k).imps = F1(k).imps(1,:); F2(k).imps = F2(k).imps(1,:);
                         Fout(k,j) = sum((F1(k).').*F2(j));
                     end
                     
