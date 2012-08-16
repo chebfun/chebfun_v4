@@ -38,10 +38,10 @@ function varargout = plot(varargin)
 % Besides the usual parameters that control the specifications of lines
 % (see linespec), the parameters JumpLine and JumpMarker determine the type
 % of line and style of markers respectively for discontinuities of the
-% chebfun. For example, PLOT(F,'JumpLine','-r')  will plot discontinuities
-% as a solid red line, and PLOT(F,'-or','JumpMarker,'.k') will plot the
+% chebfun F. For example, PLOT(F,'JumpLine','-r')  will plot discontinuities
+% as solid red lines, and PLOT(F,'-or','JumpMarker,'.k') will plot the
 % jump values with black dots. By default the plotting styles for jumplines
-% and jumpmarkers are ':' and 'x' respectively colours are chosen to match
+% and jumpmarkers are ':' and 'x' respectively. Colours are chosen to match
 % the lines they correspond to, and jump values are only plotted when the
 % Chebyshev points are also plotted, unless an input 'JumpMarker','x' is
 % passed. It is possible to modify other properties of jumplines and
@@ -49,11 +49,13 @@ function varargout = plot(varargin)
 % Jumplines can be suppressed with the argument 'JumpLine','none'.
 %
 % Similarly, the parameters DeltaLine and DeltaMarker determine the 
-% type of line and markers respectively for plotting delta functions in the 
-% chebfun. For example PLOT(F,'DeltaLine', '-.r', 'DeltaMarker', '*k') will
-% plot dashed red lines for delta functions with black * markers. 
-% and for dletalines and
-% dletamarkers are '-' and '^' respectively. The 
+% type of line and markers for plotting delta functions in the chebfun F.
+% For example PLOT(F,'DeltaLine', '-.r', 'DeltaMarker', '*k') will
+% plot dashed red lines for delta functions with black * markers.
+% By default delta functions are plotted as solid lines with '^'
+% as the marker. The size of the DeltaMarker is always 6 which is
+% the default Matlab marker size.
+%
 % PLOT(F,'interval',[A B]) restricts the plot to the interval [A,B] which 
 % can be useful when the domain of F is infinite, or for 'zooming in' 
 % on, say, oscillatory chebfuns. PLOT(F,'numpts',N) will plot the 
@@ -219,7 +221,6 @@ while ~isempty(varargin)
     elseif ~isempty(lines)
         deltaval = {NaN(1,size(lines{1},2)),NaN(1,size(lines{2},2))};
     end
-
     
     if ~isempty(lines)
         linedata = [linedata, lines,s];
@@ -289,7 +290,8 @@ h5 = plot(deltadata{:},'handlevis','off');
 if forcedmarks   % default setting for delta functions
     % deal with the '^' marker for delta functions
     dvaldata = makedvaldata(dvaldata);
-    h6 = plot(dvaldata{:},'linestyle','none','handlevis','off');
+    % the delta marker is always of the default size 6
+    h6 = plot(dvaldata{:}, 'markersize', 6, 'linestyle','none','handlevis','off');
     h7 = h6(2:2:end); % handles to negative delta markers
     h6 = h6(1:2:end); % handles to positive delta markers
 else
@@ -298,7 +300,7 @@ else
 end
 
 
-% Colours of jumplines and val
+% Colours of jumplines and jumpval markers
 defjlcol = true; % use color of corresponding line?
 colours = {'b','g','r','c','m','y','k','w'};
 for k = 1:length(jlinestyle)
@@ -308,12 +310,12 @@ for k = 1:length(jlinestyle)
 end
 defjmcol = true; % use color of corresponding line?
 for k = 1:length(jmarker)
-   if any(strncmp(jlinestyle(k),colours,1))
+   if any(strncmp(jmarker(k),colours,1))
        defjmcol = false; break
    end
 end
 
-% Colours of deltalines and val
+% Colours of deltalines and delta markers
 defdlcol = true; % use color of corresponding line?
 for k = 1:length(dlinestyle)
     if any(strncmp(dlinestyle(k),colours,1))
@@ -322,7 +324,7 @@ for k = 1:length(dlinestyle)
 end
 defdmcol = true; % use color of corresponding line?
 for k = 1:length(dmarker)
-    if any(strncmp(dlinestyle(k),colours,1))
+    if any(strncmp(dmarker(k),colours,1))
         defdmcol = false; break
     end
 end
@@ -335,7 +337,6 @@ if numel(h2) == numel(h1)  % This should always be the case??
         set(h2(k),'color',h1color);
         set(h2(k),'marker',h1marker);
         set(h1(k),'marker','none');
-        
         if defjlcol && numel(h3) == numel(h1)
             set(h3(k),'color',h1color);
         end
@@ -347,13 +348,18 @@ if numel(h2) == numel(h1)  % This should always be the case??
         if defdlcol && numel(h5) == numel(h1)
             set(h5(k),'color',h1color);
         end
-        
-        if forcedmarks && numel(h6) == numel(h1) && numel(h7) == numel(h1) && defdmcol
-            set(h6(k),'color',h1color);
-            set(h7(k),'color',h1color);
-            set(h6(k),'MarkerFaceColor',h1color);
-            set(h7(k),'MarkerFaceColor',h1color);
-        end                
+          
+        if forcedmarks && numel(h6) == numel(h1) && numel(h7) == numel(h1)
+            if(defdmcol)
+                % if no marker color is provided, use default
+                set(h6(k),'color',h1color, 'MarkerFaceColor', h1color);
+                set(h7(k),'color',h1color, 'MarkerFaceColor', h1color);
+            else
+                % fill the delta markers with the provided colour
+                set(h6(k),'MarkerFaceColor',get(h6(k),'color'));
+                set(h7(k),'MarkerFaceColor',get(h7(k),'color')); 
+            end
+        end               
     end
 end
 
@@ -373,7 +379,8 @@ if ~h, hold off; end
 
 % Output handles
 if nargout == 1
-    % lines markers jumplines jumpvals deltalines deltavals dummy
+    % lines markers jumplines jumpvals deltalines deltavals+ deltavasl-
+    % dummy
     varargout = {[h1 h2 h3 h4 h5 h6 h7 hdummy]};
 end
 end
