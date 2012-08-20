@@ -137,18 +137,72 @@ function C = mldivide(A,B,varargin)
     end      
     warning(warnstate);  % restore old warning state
     
-    %% dirac
-    
-    % are there any impulses in B?
-    % if there are, enforce corresponding jump conditions,
-    % i.e., 
-    % A.bc = @(u) jump(u) - 1
-%     x0 = 0; k = 1; val = 1;
-%     Jk = (feval(dom,x0,'right') - feval(dom,x0,'left'))*diff(dom,k);
-%     A.bc(end+1) = struct('op',Jk,'val',val);
-%     A.jumpinfo = [A.jumpinfo ; [x0 1 k]];
-    
-    %%
+    % ODEs with delta functions on the RHS  
+    % Are there any impulses in B?    
+    % if B is a column chebfun and there are possible delta functions
+    if( size(B,2) < 2 && size( B.imps, 1 ) >= 2 && any(abs(B.imps(2,:))>100*eps) ) 
+        loc = abs(B.imps(2,:))>100*eps; % find location of delta functions.
+        deltaLoc = B.ends(loc);
+        A.domain = dom;
+        ndelta = length(deltaLoc);
+        deltaMag = B.imps(2, loc);      % magnitude of delta functions
+        if( ~isempty( deltaLoc ) )
+            % evaluate the highest coefficient of A at delta locations
+            % all coefficents are returned as chebfuns in ANX
+            anx = recoverCoeffs(A);
+            % retain the highest order coefficent
+            anx = anx(:, end);
+            % evaluate this coefficent at delta locations
+            anx = anx(deltaLoc);
+            if(any(abs(anx)<100*eps))
+                error('linop:mldivide:delta function at a singular point of the ODE');
+            else
+                jumpVal = deltaMag./anx;
+                n = A.difforder;
+                if(isempty(A.bc))
+                    A.bc = struct('op',[],'val',[]);
+                    bcIdx = 1;
+                else
+                    bcIdx = length(A.bc)+1;
+                end
+                
+                for k = 1:ndelta;
+                    % impose a jump in the (n-1)st derivative, continuity upto
+                    % (n-2)nd derivative is done automatically           
+                    Jk = (feval(dom,deltaLoc(k),'right') - feval(dom,deltaLoc(k),'left'))*diff(dom,n-1);
+                    A.bc(bcIdx+k-1).op = Jk;
+                    A.bc(bcIdx+k-1).val = jumpVal(k);             
+                    A.numbc = A.numbc+1;
+                    A.jumpinfo = [A.jumpinfo; [deltaLoc(k) 1 n-1]];
+                end
+                
+                % deal with a delta at the left end-point (Experimental!)
+                if(abs(deltaLoc(1)-dom(1)) < 100*eps )
+                    % delta function at the left end point of the domain
+                    % discard any existing lbc and adjust the first delta
+                    % bc
+                    if(~isempty(A.lbc))
+                        nlbc = length(A.lbc);
+                        A.lbc = [];
+                        A.numbc = A.numbc-nlbc;            
+                    end
+                    % adjust bc op to evaluate from the right only
+                    A.bc(bcIdx).op = feval(dom,deltaLoc(1),'right')*diff(dom,n-1);
+                end
+                
+                % deal with a delta at the right end point
+                if(abs(deltaLoc(end)-dom(2)) < 100*eps )
+                    % discard delta function at the right end point
+                    % of the domain
+                    A.bc(end) = [];
+                    A.numbc = A.numbc - 1;
+                    A.jumpinfo(end) = [];
+                end
+                
+            end
+        end
+    end
+   
         
     if isa(A.scale,'function_handle')
         A.scale = chebfun(A.scale,ends);
@@ -291,52 +345,7 @@ function C = mldivide(A,B,varargin)
             f = [f ; P{jj}*Bj];
         end
     end
-    
-        % The RHS.
-    f = [];
-    % Project the RHS.
-    if ~any(isinf(bks))
-        for jj = 1:syssize, f = [f ; B(P{jj}*y{1},jj)]; end
-    else
-        for jj = 1:syssize
-            Bj = B(y{1},jj);
-            Bj(csN(2:end),:) = B(bks(2:end),jj,'left');
-            Bj(csN(1:end-1)+1,:) = B(bks(1:end-1),jj,'right');
-            f = [f ; P{jj}*Bj];
-        end
-    end
-    
-    % modify c to incorporate appropriate boundary conditions
-    % for delta functions 
-    
-    % if B is a column vector and there are possible delta functions
-    if( size(B,2) < 2 && size( B.imps, 1 ) >= 2 && any(abs(B.imps(2,:))>100*eps) ) 
-        loc = abs(B.imps(2,:))>100*eps; % find location of delta functions.
-        deltaLoc = B.ends(loc);
-        deltaMag = B.imps(2, loc);      % magnitude of delta functions
-        if( ~isempty( deltaLoc ) )
-            d = A.domain;
-            n = A.difforder;
-            if( abs(deltaLoc(1)-d(1))<100*eps || abs(deltaLoc(end)-d(end))<100*eps)
-                % delta at the boundary, not sure what to do?
-                error( 'delta at domain boundary, not implemented yet!' );
-            end
-            % evaluate the highest coefficient of A at delta locations
-            ndelta = length( deltaLoc );
-            anx = zeros( 1, ndelta );
-            nfact = factorial(n);
-            for i = 1:ndelta
-                nthpoly = chebfun(@(u) (u-deltaLoc(i)).^n/nfact, d , n+1);
-                anx(i) = feval( feval(A,nthpoly), deltaLoc(i) );
-            end
-            if(any(abs(anx)<100*eps))
-                % singular point of the ode
-                error( 'delta at a singular point of the ODE' );
-            end
-            c(((1:ndelta)+1)*n) = deltaMag./anx; % jump conditions
-        end
-    end
-    
+     
     % Add boundary conditions.
     f = [f ; c]; 
     
@@ -376,4 +385,82 @@ function C = mldivide(A,B,varargin)
     
   end
 
+end
+
+
+function [p varargout] = recoverCoeffs(L)
+%RECOVERCOEFFS  Recover coefficient functions of a linear operator
+% P = RECOVERCOEFFS(L) returns, for a linear operator L, a chebfun
+% quasimatrix P such that
+%         Lu = P(:,1)*u + P(:,2)*u' + P(:,3)*u" + ... P(:,M+1)*u^(M),
+% where M is the difforder of the operator. If L is not linear, an error is
+% thrown.
+%
+% For a block operator L, i.e., one defining a system of equations
+%         Lu = [L_{1,1} L_{1,2} ... L_{1,S}] [ u_1 ]
+%              [L_{2,1} L_{1,2} ... L_{1,S}] [ u_2 ]
+%              [  ...     ...   ...   ...  ] [ ... ]
+%              [L_{R,1} L_{R,2} ... L_{R,S}] [ u_S ],
+% P will be the RxS cell array such that P{J,K} = RECOVERCOEFFS(L_{J,K}).
+%
+% [P L] = RECOVERCOEFFS(L) returns also the linop L, which can be useful if
+% the input was a linear chebop.
+%
+% Example 1:
+%  [L x] = chebop(@(x,u) 0.5*diff(u,2) - sin(x).*diff(u) + x.*u);
+%  p = recoverCoeffs(L)
+%  norm(p - [x -sin(x) 0.5])  
+%
+% Example 2:
+%  [L x] = chebop(@(x,u) diff(sin(x).*(diff(cos(x).*u))),[-pi pi]);
+%  p = recoverCoeffs(L)
+%  norm(p - [-sin(2*x) 1-3*sin(x).^2 sin(2*x)/2])
+%
+% Example 3:
+%  L = chebop(@(x,u,v) [diff(u,2), 0.5*diff(v)+exp(x)]);
+%  p = recoverCoeffs(L) 
+%  norm([p{:}] - [0 0 1 0 0 0 .5])
+
+% Copyright 2011 by The University of Oxford and The Chebfun Developers.
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information. 
+
+% Convert to linop if input is a chebop. (But don't overwrite input as it's
+% more efficient to evaluate the chebop .op than the linearised .oparray!)
+if isa(L,'chebop'), L2 = linop(L); else L2 = L; end
+
+% Initialise
+s = L2.blocksize;                % Determine the size of the system
+m = L2.difforder;                %  and the difforder
+x = chebfun('x',L2.domain,2);    % Construct linear function on the domain
+x0 = chebfun(0,L2.domain);       %  and the zero function
+p = cell(s);                     % Initialise output
+p0 = L*repmat(x0,1,s(2));        % Compute non-autonomous component
+
+% The main routine
+for hh = 1:s(2)                 % Loop over each of the dependant variables
+    x0l = repmat(x0,1,hh-1);    % Set dep vars to the left to zero
+    x0r = repmat(x0,1,s(2)-hh); % Set dep vars to the right to zero
+    p1 = L*[x0l 1+0*x x0r];     % Evaluate all equations for [0 ... 1 ...0]
+    p1 = p1 - p0;               % Subtract non-autonomous compnent
+    for ll = 1:s(1)             % Loop over equations and assign
+        p{ll,hh} = p1(:,ll);
+    end
+    xk = x;                            % Update indep var to x
+    for kk = 1:max(m(:,hh))            % Loop over each x^k
+        tmp = L*[x0l xk(:,kk) x0r]-p0; % Evaluate for u = [0 ... x^k ... 0]
+        for ll = 1:s(1)                % Loop over each equation
+            if kk > m(ll,hh), continue, end % No coeffs of this order here
+            p{ll,hh}(:,kk+1) = tmp(:,ll);   % Assign the ll-th equation
+            for jj = 1:kk              % Extract the lower-order terms
+                p{ll,hh}(:,kk+1) = p{ll,hh}(:,kk+1) - p{ll,hh}(:,kk+1-jj).*xk(:,jj);
+                p{ll,hh}(:,kk+1) = simplify(p{ll,hh}(:,kk+1)); % Simplify
+            end
+        end
+        xk = [xk x.*xk(:,end)/(kk+1)]; % Update indep var to x^k/k!
+    end
+end
+
+% Tidy the output
+if max(s) == 1, p = p{:}; end          % Output quasimatrix if not a system
+if nargout == 2, varargout{1} = L; end % Output the linop if required
 end
