@@ -1,9 +1,9 @@
-%% Central limit theorem
+%% Central Limit Theorem
 % Nick Trefethen and Mohsin Javed, 30th July 2012
 
 %%
 % (Chebfun example stats/CentralLimitTheorem.m)
-% [Tags: #centrallimittheorem, #convolution, #CONV, #probability, #delta, #DIRAC]
+% [Tags: #centrallimittheorem, #convolution, #CONV, #probability, #delta, #deltafunction, #DIRAC]
 
 %%
 % The central limit theorem is one of the most striking results in the
@@ -106,7 +106,7 @@ title('Probability distribution for getting a head in a single toss')
 % $X_1$ and $X_2$ [1]. Since $X_1$ and $X_2$ are identical, we have
 p2 = conv(p1,p1);
 plot(p2), xlim([-.1 2.1])
-title('Probability distribution for getting heads in two tosses')
+title('Probability distribution for number of heads in two tosses')
 %%
 % We can verify that the probabilities add up to $1$.
 sum(p2)

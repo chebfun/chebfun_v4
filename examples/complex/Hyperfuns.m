@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example complex/Hyperfuns.m)
-% [Tags: #complex, #deltafunction, #heaviside]
+% [Tags: #DIRAC, #complex, #deltafunction, #heaviside, #hyperfunction, #delta]
 
 %% Introduction
 % Hyperfunction theory describes a generalized function f(x) on the real
@@ -25,8 +25,8 @@
 % difference along the real axis.  So properly speaking, a hyperfunction is
 % an equivalence class.)
 
-%% The delta Function
-% An elegant choice of generating function for the delta function is to
+%% The Dirac-Delta Function
+% An elegant choice of generating function for the Dirac-delta function is to
 % take both F- and F+ equal to the same function,
 F = @(z) -1./(2i*pi*z);
 
@@ -37,7 +37,7 @@ F = @(z) -1./(2i*pi*z);
 % The Heaviside function also has an elegant choice of generator, again
 % with G- = G+ equal to the same function, the integral of the previous
 % one:
-G = @(z) -1/(2*pi*i)*log(-z);
+G = @(z) -1/(2*pi*1i)*log(-z);
 
 %%
 % Using the above definitions, we define anonymous functions to describe

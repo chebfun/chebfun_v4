@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example calc/DeltaDerivs.m) 
-% [Tags: #DIRAC, #delta]
+% [Tags: #DIRAC, #delta, #impulse, #deltafunction]
 
 %%
 % Here is a sine wave on the interval $[0,20]$ to which have been added a
@@ -28,6 +28,10 @@ min(f)
 %%
 sum(f)
 %%
+norm(f,1)
+%%
+norm(f,2)
+%%
 norm(f,inf)
 
 %%
@@ -46,7 +50,7 @@ plot(h,LW,1.6,'color',[0 .7 0])
 title('The second integral of f',FS,fs)
 
 %%
-% Our eye is good at detecting this degree of nonsmoothness.  One final
+% Our eye is good at detecting this degree of non-smoothness.  One final
 % integration gives a $C^1$ function whose lack of smoothness is not so
 % obvious:
 q = cumsum(h);
