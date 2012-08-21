@@ -176,19 +176,14 @@ function C = mldivide(A,B,varargin)
                     A.jumpinfo = [A.jumpinfo; [deltaLoc(k) 1 n-1]];
                 end
                 
-                % deal with a delta at the left end-point (Experimental!)
+                % Ignore delta functions at end points (Experimental!)
                 if(abs(deltaLoc(1)-dom(1)) < 100*eps )
-                    % delta function at the left end point of the domain
-                    % discard any existing lbc and adjust the first delta
-                    % bc
-                    if(~isempty(A.lbc))
-                        nlbc = length(A.lbc);
-                        A.lbc = [];
-                        A.numbc = A.numbc-nlbc;            
-                    end
-                    % adjust bc op to evaluate from the right only
-                    A.bc(bcIdx).op = feval(dom,deltaLoc(1),'right')*diff(dom,n-1);
-                end
+                    % discard delta function at the left end point
+                    % of the domain
+                    A.bc(bcIdx) = [];
+                    A.numbc = A.numbc - 1;
+                    A.jumpinfo(end) = [];
+                end                
                 
                 % deal with a delta at the right end point
                 if(abs(deltaLoc(end)-dom(2)) < 100*eps )
