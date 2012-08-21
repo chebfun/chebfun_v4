@@ -63,7 +63,7 @@ plot(L(hat)), ylim([-2.2 1.2])
 % terminal RLC-network is modelled by a second order differential equation
 % with constant coefficients. We now find the impulse response of such a
 % network:
-d = domain([0 1]);
+d = domain([-.2 1]);
 x = chebfun('x', d);
 L = chebop(@(u) diff(u,2)+20*diff(u)+10000*u, d);
 L.lbc = @(u) [diff(u),u];
@@ -71,7 +71,7 @@ u = L\dirac(x); plot(x,u), hold on
 %%
 % The solution obtained agrees with the exact solution.
 a = 10; w = sqrt(9900);
-uexact = 1/w*exp(-a*x).*sin(w*x);
+uexact = 1/w*exp(-a*x).*sin(w*x).*heaviside(x);
 hold on,
 plot(x,uexact,'r.'), hold off
 norm(u-uexact,inf)
