@@ -38,10 +38,10 @@ else
     ends=union(fends,gends);
     
     % If ends(i) is too close to ends(i+1), merge them: ------------------
-    if min(diff(ends))<1e-13*hs   % LNT has changed this frmo 1e-15
+    if min(diff(ends))<1e-13*hs   % LNT has changed this from 1e-15
         for k=1:length(fends)
             [delta,ind]=min(abs(gends-fends(k)));
-            if delta < 1e-13*hs   % LNT has changed this frmo 1e-15
+            if delta < 1e-13*hs   % LNT has changed this from 1e-15
                 fends(k)=gends(ind);
                 % Also need to ajust ends in funs:
                 if k==1
@@ -94,7 +94,7 @@ else
     if(any(idx))
         foutimps(1,idx) = 1/2*(feval(f,ends(idx), 'left')+feval(f,ends(idx),'right'));
     end
-    % otherwise compute the normal fucntion values
+    % otherwise compute the normal function values
     if(any(~idx))
         foutimps(1,~idx)=feval(f,ends(~idx));
     end
@@ -109,7 +109,7 @@ else
     if(any(idx))
         goutimps(1,idx) = 1/2*(feval(g,ends(idx), 'left')+feval(g,ends(idx),'right'));
     end
-    % otherwise compute the normal fucntion values
+    % otherwise compute the normal function values
     if(any(~idx))
         goutimps(1,~idx)=feval(g,ends(~idx));
     end

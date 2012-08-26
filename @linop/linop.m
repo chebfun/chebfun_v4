@@ -32,7 +32,7 @@ classdef (InferiorClasses = {?double}) linop
         opshow = [];            % Pretty-print string (if available)
         difforder = 0;          % Differential order
         iszero = 0;             % Operator == 0
-        isdiag = 0;             % Diagonal (mulitplication) operator
+        isdiag = 0;             % Diagonal (multiplication) operator
         lbc = struct([]);       % Left BCs
         lbcshow = [];           % Pretty-print string (if available)
         rbc = struct([]);       % Right BCs
@@ -44,6 +44,7 @@ classdef (InferiorClasses = {?double}) linop
         jumpinfo = [];          % Locations of enforced jumps
         blocksize = [0 0];      % For block linops
         ID = [];                % ID number (for caching)
+        decoeffs=[];            % Variable coefficients of a linop. 
     end
     
     methods
@@ -85,8 +86,7 @@ classdef (InferiorClasses = {?double}) linop
             end
 
             % Constructor only supports scalar equations.
-            A.blocksize = [1 1]; 
-
+            A.blocksize = [1 1];
         end
     end
     

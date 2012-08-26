@@ -148,7 +148,7 @@ else
   % No boundary conditions
   if ~usebc, return, end
   
-  % Oldschool rowreplacement
+  % Old school row replacement
   if usebc == 1.5
       if ~isempty(breaks)
           % We force rectangular matrices in this case.

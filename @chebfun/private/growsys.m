@@ -87,7 +87,7 @@ else
 end
 maxpower = max(minpower,floor(log2(maxn-1)));
 
-% We take integer powers up to 2^6 (=64), then integer and half-interger
+% We take integer powers up to 2^6 (=64), then integer and half-integer
 % powers (i.e. 2^6.5, 2^7, 2^7.5, ...) up to 2^maxpower.
 npn = max(min(maxpower,6),minpower);
 kk = 1 + round(2.^[ (minpower:npn) (2*npn+1:2*maxpower)/2 ]);

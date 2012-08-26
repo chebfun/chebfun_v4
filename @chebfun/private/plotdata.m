@@ -6,7 +6,7 @@ function [lines marks jumps jval deltas dval misc] = plotdata(f,g,h,numpts,inter
 % number of data points to be generated.
 %
 % OUTPUT: LINES cell array with line data. MARKS cell array for markers at
-% chebyshev data. JUMPS cell array to generate jump lines. JVAL function
+% Chebyshev data. JUMPS cell array to generate jump lines. JVAL function
 % value at jump points. DETLAS cell array to generate delta lines. DVAL 
 % cell array contains the x-y coordinates for delta function markers
 % and the signs of the delta functions.

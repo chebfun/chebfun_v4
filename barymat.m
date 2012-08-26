@@ -78,7 +78,7 @@ else
     end
 end
 
-% Where points conincide there will be division by zeros (as with bary.m). 
+% Where points coincide there will be division by zeros (as with bary.m). 
 % Replace these entries with the identity.
 B(isnan(B)) = 1;
 

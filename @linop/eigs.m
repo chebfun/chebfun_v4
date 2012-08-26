@@ -175,7 +175,7 @@ else            % Unwrap the eigenvectors for output
             tmp = chebfun;
             % Build a chebfun from the piecewise parts on each interval
             for j = 1:numel(breaks)-1
-                V{1} = filter(V{1},1e-8); % These vaues haven't been filtered yet
+                V{1} = filter(V{1},1e-8); % These values haven't been filtered yet
                 funj = fun( V{1}, breaks(j:j+1), settings);
                 tmp = [tmp ; set(chebfun,'funs',funj,'ends',breaks(j:j+1),...
                     'imps',[funj.vals(1) funj.vals(end)],'trans',0)];
@@ -197,7 +197,7 @@ end
 % Multiple outputs for system case.
 if nargout > 2 && nargout == 1+length(varargout{1})
     % Allows [U V W ...  D] = eigs(L) for systems of equations
-    % (which in some cases is prefered to cell array output)
+    % (which in some cases is preferred to cell array output)
     varargout = [ {varargout{1}{:}} varargout{2} ];
 end
 
@@ -366,10 +366,10 @@ keeper(queue) = true;
 % Grab some indices
 tenPercent = ceil(N/10); % We are the 10%
 iif10 = 1:tenPercent;    % Indices of first 10%
-ii90 = tenPercent:N;     % Indicies of last 90%
-ii10 = (N-tenPercent):N; % Indicies of last 10%
+ii90 = tenPercent:N;     % Indices of last 90%
+ii10 = (N-tenPercent):N; % Indices of last 10%
 
-% % First an arbitray linear combination of the allowed vectors
+% % First an arbitrary linear combination of the allowed vectors
 % VV = V(:,idx)*[1 ; 2 + sin(1:size(idx,2)-1).']; % Form linear combination
 % if numel(N) == 1
 %     vc = cd2cp(VV);

@@ -2,7 +2,7 @@ function [u nrmDeltaRelvec isLin] = solvebvp_nonlin(N,rhs,u,pref,handles)
 % SOLVE_BVP_ROUTINES Private function of the chebop class.
 %
 % This function gets called by nonlinear backslash and solvebvp. It both
-% treates the cases where the user requests damped Newton iteration and
+% treats the cases where the user requests damped Newton iteration and
 % pure Newton iteration.
 %
 % We can safely assume we have a u0 when we enter this method -- solvebvp.m

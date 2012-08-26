@@ -149,7 +149,7 @@ switch(class(B))
             if( ~isempty( deltaLoc ) )
                 % evaluate the highest coefficient of A at delta locations
                 % all coefficents are returned as chebfuns in ANX
-                anx = recoverCoeffs(A);
+                anx = A.decoeffs;
                 % retain the highest order coefficent
                 anx = anx(:, end);
                 % evaluate this coefficent at delta locations
@@ -444,7 +444,7 @@ for hh = 1:s(2)                 % Loop over each of the dependant variables
     x0l = repmat(x0,1,hh-1);    % Set dep vars to the left to zero
     x0r = repmat(x0,1,s(2)-hh); % Set dep vars to the right to zero
     p1 = L*[x0l 1+0*x x0r];     % Evaluate all equations for [0 ... 1 ...0]
-    p1 = p1 - p0;               % Subtract non-autonomous compnent
+    p1 = p1 - p0;               % Subtract non-autonomous component
     for ll = 1:s(1)             % Loop over equations and assign
         p{ll,hh} = p1(:,ll);
     end

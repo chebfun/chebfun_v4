@@ -76,7 +76,7 @@ for k = 1:f1.nfuns
     % Update vscale (horizontal scale remains the same)
     f1.funs(k).scl.v = vscl;
     if ~skip
-        % Attaempt to generate funs using the fun constructor.
+        % Attempt to generate funs using the fun constructor.
         if isempty(f2)
             [newfun ignored] = compfun(f1.funs(k),op,pref);
         else

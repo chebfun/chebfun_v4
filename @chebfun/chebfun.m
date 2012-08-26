@@ -83,7 +83,7 @@ classdef chebfun
         nfuns = 0;         % Number of funs 
         ends = [];         % List of breakpoints
         scl = 0;           % Indication of the vertical scale
-        imps = [];         % Impulse (delta funciton) info
+        imps = [];         % Impulse (delta function) info
         trans = false;     % Row-chebfun flag
         jacobian = anon('[]','',[],1); % AD (i.e., jacobian) information
         ID = [];           % Individual ID number of chebfun - for AD

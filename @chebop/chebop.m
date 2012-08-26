@@ -21,7 +21,7 @@
 % CHEBOP(OP,D), for a domain or 2-vector D, gives a different domain.
 % [N X] = CHEBOP(OP,D) returns also the linear function X on the domain D.
 %
-% CHEBOP(OP,D,LBC,RBC) or CHEBOP(OP,LBC,RBC) specifies boundary condtions
+% CHEBOP(OP,D,LBC,RBC) or CHEBOP(OP,LBC,RBC) specifies boundary conditions
 % for functions at the left and right endpoints of the domain. Possible
 % values for LBC and RBC are:
 %
