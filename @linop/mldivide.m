@@ -149,7 +149,7 @@ switch(class(B))
             if( ~isempty( deltaLoc ) )
                 % evaluate the highest coefficient of A at delta locations
                 % all coefficents are returned as chebfuns in ANX
-                anx = A.decoeffs;
+                anx = recoverCoeffs(A);
                 % retain the highest order coefficent
                 anx = anx(:, end);
                 % evaluate this coefficent at delta locations
@@ -434,7 +434,8 @@ if isa(L,'chebop'), L2 = linop(L); else L2 = L; end
 % Initialise
 s = L2.blocksize;                % Determine the size of the system
 m = L2.difforder;                %  and the difforder
-x = chebfun('x',L2.domain,2);    % Construct linear function on the domain
+x = chebfun(@(x)x,L2.domain,2);  % faster than the line below.
+% x = chebfun('x',L2.domain,2);    % Construct linear function on the domain
 x0 = chebfun(0,L2.domain);       %  and the zero function
 p = cell(s);                     % Initialise output
 p0 = L*repmat(x0,1,s(2));        % Compute non-autonomous component

@@ -44,7 +44,6 @@ classdef (InferiorClasses = {?double}) linop
         jumpinfo = [];          % Locations of enforced jumps
         blocksize = [0 0];      % For block linops
         ID = [];                % ID number (for caching)
-        decoeffs=[];            % Variable coefficients of a linop. 
     end
     
     methods
