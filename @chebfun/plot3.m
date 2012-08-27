@@ -106,7 +106,7 @@ while ~isempty(varargin)
     linedata = [linedata, lines, s];
     jumpdata = [jumpdata, jumps];
     jvaldata = [jvaldata, jumpval];
-    dummydata = [dummydata, lines{1}(1), NaN, NaN, s];
+    dummydata = [dummydata, repmat({lines{1}(1), NaN, NaN}, 1, size(lines{1},2)), s];
 end
 markdata = [markdata, s];
 
