@@ -39,7 +39,7 @@ function [p,q,r,mu,nu,poles,residues] = ratinterp( d , f , m , n , NN , xi_type 
 %   See also CHEBFUN/RATINTERP, CHEBFUN/INTERP1, DOMAIN/INTERP1.
 
 %   Based on P. Gonnet,  R. Pachon, and L. N. Trefethen, "ROBUST RATIONAL
-%   INTERPOLATION AND LEAST-SQUARES", Electronic Transations on Numerical
+%   INTERPOLATION AND LEAST-SQUARES", Electronic Transactions on Numerical
 %   Analysis (ETNA), 38:146-167, 2011,
 %
 %   and R. Pachon, P. Gonnet and J. van Deun, "FAST AND STABLE RATIONAL
