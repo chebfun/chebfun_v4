@@ -56,7 +56,12 @@ ffuns = [];
 ends = f1.ends(1);
 if isempty(f2)
     imps = op(f1.imps(1,1));
-    vscl = norm( op(get(f1,'vals')), inf);
+    if ~any(get(f1,'exps'))
+        vals = get(f1,'vals');
+    else
+        vals = getvals(f1);
+    end
+    vscl = norm( op(vals), inf);
 else
     [f1,f2] = overlap(f1,f2);
     imps = op(f1.imps(1,1),f2.imps(1,1));
@@ -150,3 +155,29 @@ for k = 1:f1.nfuns
 end
 % Put the funs back into a chebfun.
 f1.funs = ffuns; f1.ends = ends; f1.imps = imps; f1.scl = vscl;
+
+
+function V = getvals(f)
+V = [];
+for k = 1:f.nfuns
+    vals = f.funs(k).vals;
+    exps = f.funs(k).exps;
+    if any(exps)
+        map = f.funs(k).map;    
+        ends = map.par(1:2);
+        rescl = (2/diff(ends))^sum(exps);   
+        % hack for unbounded functions on infinite intervals
+        if any(isinf(ends))
+            s = map.par(3);
+            if all(isinf(ends))
+                rescl = .5/(5*s);
+            else
+                rescl = .5/(15*s);
+            end
+            rescl = rescl.^sum(exps);
+            ends = [-1 1];   x = map.inv(chebpts(f.funs(k).n,ends));
+        end
+        vals = rescl*vals.*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2));
+    end
+end
+V = [V ; vals];
