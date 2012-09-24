@@ -647,7 +647,6 @@ function [vals ders] = feval_asy1(n,a,b,t,idx,flag) %#ok<INUSD>
         ds = dsa + dsb - dsab;
         s = s + ds;
     end
-
     p2 = exp(s)*sqrt(2*pi)*sqrt((n+a)*(n+b)/(2*n+a+b))/(2*n+a+b+1);
     g = [1 1/12 1/288 -139/51840 -571/2488320 163879/209018880 ...
          5246819/75246796800 -534703531/902961561600 ...
@@ -723,11 +722,11 @@ x = cos(t);      w = (1./ders.^2).';   v = sin(t)./ders;
         
         
         % Evaluate the Bessel functions
-        Ja = besselmx(double('J'),a,rho*t,0);
-        Jb = besselmx(double('J'),a+1,rho*t,0);
-        Jbb = besselmx(double('J'),a+1,rho2*t,0);
+        Ja = besselj(a,rho*t,0);
+        Jb = besselj(a+1,rho*t,0);
+        Jbb = besselj(a+1,rho2*t,0);
         if ~flag
-            Jab = besselmx(double('J'),a,rho2*t,0);
+            Jab = besselj(a,rho2*t,0);
         else
             % In the final step, perform accurate evaluation
             Jab = BesselTaylor(-t,rho*t);
@@ -782,7 +781,7 @@ x = cos(t);      w = (1./ders.^2).';   v = sin(t)./ders;
         H = bsxfun(@power,t,0:kmax).';
         % Compute coeffs in Taylor expansions about z (See NIST 10.6.7)
         [nu JK] = meshgrid(-kmax:kmax, z);
-        Bjk = besselmx(double('J'),a+nu,JK,0);
+        Bjk = besselj(a+nu,JK,0);
         nck = abs(pascal(floor(1.25*kmax),1)); nck(1,:) = []; % nchoosek
         AA = [Bjk(:,kmax+1) zeros(npts,kmax)];
         fact = 1;
@@ -842,8 +841,8 @@ function jk = BesselNewton(nu,jk)
 
     dx = inf; j = 0;
     while dx > sqrt(eps)/1000;
-        u = besselmx(double('J'),nu,jk,0);
-        du = besselmx(double('J'),nu-1,jk,0)-nu/jk*u;
+        u = besselj(nu,jk,0);
+        du = besselj(nu-1,jk,0)-nu/jk*u;
         dx = u./du;
         jk = jk - dx;
         j = j+1;

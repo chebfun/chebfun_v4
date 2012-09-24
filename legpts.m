@@ -34,6 +34,7 @@ function [x w v] = legpts(n,int,meth)
 
 %  'GW' by Nick Trefethen, March 2009 - algorithm adapted from [1].
 %  'GLR' by Nick Hale, April 2009 - algorithm adapted from [2].
+%  'REC' by Nick Hale, July 2011
 %  'ASY' by Nick Hale & Alex Townsend, May 2012 - see [3].
 %
 %  References:
@@ -91,7 +92,7 @@ elseif strcmpi(method,'GLR')
 else
    [x w v] = asy(n);        % HT  see [3]
 end
-v = v./max(abs(v));
+v = abs(v); v = v./max(v); v(2:2:end) = -v(2:2:end);
 
 % Rescale to arbitrary interval
 if ~all(interval == [-1 1])
@@ -118,7 +119,6 @@ function [x w v] = gw(n)
    x = diag(D); [x,i] = sort(x);         % Legendre points
    w = 2*V(1,i).^2;                      % Quadrature weights
    v = sqrt(1-x.^2).*abs(V(1,i))';       % Barycentric weights
-   v = v./max(v);
    % Enforce symmetry
    ii = 1:floor(n/2);  x = x(ii);  w = w(ii); 
    vmid = v(floor(n/2)+1); v = v(ii);
@@ -129,7 +129,6 @@ function [x w v] = gw(n)
         x = [x ; -x(end:-1:1)];      w = [w w(end:-1:1)];      
         v = [v ; v(end:-1:1)];
    end
-   v(2:2:n) = -v(2:2:end);
 end
 
 %% -------------------- Routines for REC algorithm ------------------
@@ -168,7 +167,6 @@ function [x w v] = rec(n)
 
     w = 2./((1-x.^2).*ders.^2)';          % Quadrature weights
     v = 1./ders;                          % Barycentric weights  
-    if ~mod(n,2), ii = (floor(n/2)+1):n; v(ii) = -v(ii);   end
 
 end
 
@@ -192,7 +190,6 @@ function [x w v] = alg0_Leg(n) % Driver for GLR
 
     w = 2./((1-x.^2).*ders.^2)';          % Quadrature weights
     v = 1./ders;                          % Barycentric weights
-    if ~mod(n,2), ii = (floor(n/2)+1):n;  v(ii) = -v(ii);   end
 
 end
 
@@ -304,8 +301,7 @@ function [x w v] = asy(n)
     
     % Combine
     bdyidx1 = n-(nbdy-1):n; bdyidx2 = nbdy:-1:1;
-    x(bdyidx1) = xbdy;  w(bdyidx1) = wbdy; 
-    if ~mod(n,2), v(bdyidx1) = -vbdy; else  v(bdyidx1) = vbdy; end
+    x(bdyidx1) = xbdy;  w(bdyidx1) = wbdy; v(bdyidx1) = vbdy;
     x(bdyidx2) = -xbdy; w(bdyidx2) = wbdy; v(bdyidx2) = vbdy;
     
 end
@@ -431,8 +427,27 @@ function [vals ders] = feval_asy1(n,t,mint,flag)
             if norm(dc,inf) < eps/2000, break, end
         end
         tmp(2:2:end) = -tmp(2:2:end);
-        tmp = sign(cosAlpha(1,2)*tmp(2))*tmp;
+        tmp = sign(cos((n+.5)*t(2)-.25*pi)*tmp(2))*tmp;
         cosAlpha(1,:) = tmp;
+        
+        tmp = 0; sgn = 1; fact = 1; DH = 1; dh2 = dh.*dh;
+        for j = 0:20
+            dc = sgn*DH/fact;
+            tmp = tmp + dc;
+            sgn = -sgn;
+            fact = fact*(2*j+2)*(2*j+1);
+            DH = DH.*dh2;
+            if norm(dc,inf) < eps/2000, break, end
+        end
+        tmp(2:2:end) = -tmp(2:2:end);
+        tmp = sign(sin((n+.5)*t(2)-.25*pi)*tmp(2))*tmp;
+        sinAlpha(1,:) = tmp;
+
+%         sint = sin(t); cost = cos(t);
+%         for k = 2:M
+%             cosAlpha(k,:) = cosAlpha(k-1,:).*sint+sinAlpha(k-1,:).*cost;
+%             sinAlpha(k,:) = sinAlpha(k-1,:).*sint-cosAlpha(k-1,:).*cost;
+%         end
     end
 
     % Sum up all the terms.
@@ -481,11 +496,11 @@ function [x w v] = asy2(n,npts)
         rho = n + .5; rho2 = n - .5;
         
         % Evaluate the Bessel functions
-        Ja = besselmx(double('J'),0,rho*t,0);
-        Jb = besselmx(double('J'),1,rho*t,0);
-        Jbb = besselmx(double('J'),1,rho2*t,0);
+        Ja = besselj(0,rho*t,0);
+        Jb = besselj(1,rho*t,0);
+        Jbb = besselj(1,rho2*t,0);
         if ~flag
-            Jab = besselmx(double('J'),0,rho2*t,0);
+            Jab = besselj(0,rho2*t,0);
         else
             % In the final step, perform accurate evaluation
             Jab = besseltaylor(-t,rho*t);
@@ -527,7 +542,7 @@ function Ja = besseltaylor(t,z)
     H = bsxfun(@power,t,0:kmax).';
     % Compute coeffs in Taylor expansions about z (See NIST 10.6.7)
     [nu JK] = meshgrid(-kmax:kmax, z);
-    Bjk = besselmx(double('J'),nu,JK,0);
+    Bjk = besselj(nu,JK,0);
     nck = abs(pascal(floor(1.25*kmax),1)); nck(1,:) = []; % nchoosek
     AA = [Bjk(:,kmax+1) zeros(npts,kmax)];
     fact = 1;
