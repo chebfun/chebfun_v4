@@ -190,9 +190,15 @@ end
 function w = weights1(n) % 1st-kind Chebyshev weights
 % Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis
 % quadrature rules", BIT Numerical Mathematics 43 (1), p. 001-018 (2004).
+% http://www2.maths.ox.ac.uk/chebfun/and_beyond/programme/slides/wald.pdf
 if n == 1
     w = 2;
 else
+    % new
+%     L = 0:n-1; r = 2./(1-4*min(L,n-L).^2); s1 = sign(n/2-L); % Aux vecs
+%     w = real(ifft(s1.*r.*exp(1i*pi/n*L)));  % Fejer weights
+    
+    % old
     l = floor(n/2)+1;
     K = 0:n-l;   
     v = [2*exp(1i*pi*K/n)./(1-4*K.^2)  zeros(1,l)];
@@ -202,13 +208,20 @@ end
 function w = weights2(n) % 2nd-kind Chebyshev wieghts
 % Jörg Waldvogel, "Fast construction of the Fejér and Clenshaw-Curtis 
 % quadrature rules", BIT Numerical Mathematics 43 (1), p. 001-018 (2004).
+% http://www2.maths.ox.ac.uk/chebfun/and_beyond/programme/slides/wald.pdf
 if n == 1
     w = 2;
 else
+    % new
+%     n = n-1;
+%     u0 = 1/(n^2-1+mod(n,2));                      % Boundary weights
+%     L = 0:n-1; r = 2./(1-4*min(L,n-L).^2);        % Auxiliary vectors
+%     w = [ifft(r-u0) u0];                          % C-C weights
+    
+    % old
     m = n-1;  
     c = zeros(1,n);
     c(1:2:n) = 2./[1 1-(2:2:m).^2 ]; 
     f = real(ifft([c(1:n) c(m:-1:2)]));
-    w = [f(1) 2*f(2:m) f(n)];
+    w = [f(1) 2*f(2:m) f(n)];  
 end
-
