@@ -1,10 +1,14 @@
 function d = det(N,varargin)
 %DET   Determinant of a linear chebop
-% Compute the determinant of a linear operator.
+% Compute the determinant of a linear operator. This is a well-defined
+% notion for trace-class perturbations of the identity operator. Most
+% notably, for perturbations that are Fredholm integral operators, this
+% gives the famous Fredholm determinant.
 %
 % Example: 
-%   F = chebop(@(x,u) fred(@(x,y) sin(x-y),u));
+%   F = chebop(@(x,u) u + fred(@(x,y) sin(x-y),u));
 %   d = det(F);
+%   disp([d ; (cos(4)+15)/8]);
 %
 % See also linop/det.
 

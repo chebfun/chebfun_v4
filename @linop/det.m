@@ -1,11 +1,15 @@
 function d = det(L,tol)
 %DET    Determinant of a linop
-% Compute the determinant of a linear operator.
+% Compute the determinant of a linear operator. This is a well-defined
+% notion for trace-class perturbations of the identity operator. Most
+% notably, for perturbations that are Fredholm integral operators, this
+% gives the famous Fredholm determinant.
 %
 % Example: 
 %   dom = domain(-1,1);
-%   F = fred(@(x,y) sin(x-y),dom)+eye(dom);
+%   F = eye(dom) + fred(@(x,y) sin(x-y),dom);
 %   d = det(F);
+%   disp([d ; (cos(4)+15)/8]);
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -46,51 +50,3 @@ end
 warning('LINOP:det:NoConverge',...
     ['Failed to converge with ',int2str(n),' points.\n' ...
      'Estimated error is ', num2str(err) '.'])
- 
- 
-
-%%%%%%% ALTERNATIVE %%%%%%%%%%%
-% % Some settings (sampletest, resampling, and maxdegree)
-% pref = chebfunpref; 
-% pref.sampletest = false;    % Sampletest won't work here
-% pref.resampling = true;     % We don't want to reample either
-% pref.splitting = false;     % No need for splitting..
-% maxdegree = cheboppref('maxdegree');    % Set a sensible maxdegree
-% pref.maxdegree = maxdegree;
-% if nargin < 2, tol = 100*pref.eps; end  % Aim for this tolerance
-% 
-% % Initialise the stored value (will be set inside nested function)
-% d = 0; dold = inf;
-
-% Use the fun constructor to increase the sample size in a sensible way
-% fun(@(x) detfun(x),[-1 1],pref);
-% 
-%     function y = detfun(x)
-%         % Evaluate the operator on a Chebyshev grid
-%         n = length(x);
-%         d = det(feval(L,n));
-%         
-%         % Check for convergence
-%         err = abs(d-dold);
-%         ish = err <= tol;
-%         dold = d;
-%         
-%         % Force unhappiness in vector returned to constructor
-%         y = x;
-%         if ~ish, 
-%             y(2:2:end) = -y(2:2:end); % Sawtooth
-%         end 
-% 
-%         if ~ish && n >= maxdegree
-%             warning('LINOP:det:NoConverge',...
-%                 ['Failed to converge with ',int2str(maxdegree+1),' points.\n' ...
-%                  'Estimated error is ', num2str(err) '.'])
-%         end
-%        
-%     end
-            
-            
-        
-
-
-
