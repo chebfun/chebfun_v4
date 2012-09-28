@@ -80,7 +80,9 @@ if length(ops) == 1 && isnumeric(ops{1}) && min(size(ops{1})) > 1
         if pref.chebkind == 1
             funtmp.coeffs = chebpoly(funtmp,1,'force'); 
             funtmp.vals = chebpolyval(funtmp.coeffs);
-        end   
+        else
+            funtmp.coeffs = chebpoly(funtmp,2,'force'); 
+        end
         funtmp.scl.v = scl(k);
         ftmp.funs(1) = funtmp;
         ftmp.imps = vals([1 end],k).';
