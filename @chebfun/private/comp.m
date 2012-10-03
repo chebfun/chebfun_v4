@@ -166,6 +166,7 @@ for k = 1:f.nfuns
         map = f.funs(k).map;    
         ends = map.par(1:2);
         rescl = (2/diff(ends))^sum(exps);   
+        x = chebpts(f.funs(k).n,ends);
         % hack for unbounded functions on infinite intervals
         if any(isinf(ends))
             s = map.par(3);
@@ -175,7 +176,7 @@ for k = 1:f.nfuns
                 rescl = .5/(15*s);
             end
             rescl = rescl.^sum(exps);
-            ends = [-1 1];   x = map.inv(chebpts(f.funs(k).n,ends));
+            ends = [-1 1];   x = map.inv(x);
         end
         vals = rescl*vals.*((x-ends(1)).^exps(1).*(ends(2)-x).^exps(2));
     end
