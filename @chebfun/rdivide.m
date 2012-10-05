@@ -55,13 +55,16 @@ end
 tol = 100*chebfunpref('eps');
 if isa(f1,'chebfun')
     f1r = feval(f1,r);
+    df2 = diff(f2);
 else
     f1r = inf(size(r));
 end
 j = 1;
 while j <= length(r)
-    if any(abs(r(j)-ends)<tol) || abs(f1r(j)) < tol
-        % should really test to see if a double root. Eg x./x^2. TODO
+    if any( abs(r(j)-ends) < tol ) 
+        r(j) = []; f1r(j) = [];
+    elseif isa(f1,'chebfun') && abs(f1r(j)) < tol && feval(df2,r(j)) > tol
+        % If there's a double root in the denom, then we leave it to the gods.
         r(j) = []; f1r(j) = [];
     else
         j = j+1;
@@ -76,7 +79,6 @@ if ~isempty(newbkpts)
     if isa(f1,'chebfun'), f1 = overlap(f1,d); end
     f2 = overlap(f2,d);
     fout = rdividecol(f1,f2);
-%        error('CHEBFUN:rdivide:DivisionByZero','Division by zero')
 elseif isa(f1,'double')    
     if f1 == 0
 		fout = chebfun(0, f2.ends([1,end])); 
@@ -91,7 +93,9 @@ elseif isa(f1,'double')
             end
         end
         if ~poles && ~any(any(exps)) % No exps. Old school case
-            fout = comp(f2,@(x) rdivide(f1,x));
+            pref = chebfunpref;
+            pref.extrapolate = true;
+            fout = comp(f2,@(x) rdivide(f1,x),pref);
         else % remove exps, compute without, and add back
             fout = chebfun;
             for k = 1:f2.nfuns
@@ -118,17 +122,25 @@ else
         error('CHEBFUN:rdivide:trans','The .trans field of the two functions must agree')
     end
 
-    exps1 = get(f1,'exps'); exps2 = get(f2,'exps');
-    poles = false;
-    for k = 1:f2.nfuns
-        if (abs(get(f2.funs(k),'lval'))<10*tol && abs(get(f1.funs(k),'lval'))>10*tol) || ...
-           (abs(get(f2.funs(k),'rval'))<10*tol && abs(get(f1.funs(k),'rval'))>10*tol)
-            poles = true; break
+    exps1 = get(f1,'exps'); 
+    exps2 = get(f2,'exps');
+    if any(any(exps1)) || any(any(exps2))
+        poles = true;
+    else
+        poles = false;
+        for k = 1:f2.nfuns
+            if (abs(get(f2.funs(k),'lval'))<10*tol && (abs(get(f1.funs(k),'lval'))>10*tol || abs(get(df2.funs(k),'lval'))<10*tol)) || ...
+               (abs(get(f2.funs(k),'rval'))<10*tol && (abs(get(f1.funs(k),'rval'))>10*tol || abs(get(df2.funs(k),'rval'))<10*tol))
+                % If there's a double root or more) in the denom, then we leave it to the gods.
+                poles = true; break
+            end
         end
     end
-    if ~poles && (~any(any(exps1)) && ~any(any(exps2))) % No exps. Old school case
-        fout = comp(f1, @rdivide, f2);
-    else % compute without exps (not surrently working)
+    if ~poles % No poles found or exps =  Old school case
+        pref = chebfunpref;
+        pref.extrapolate = true;
+        fout = comp(f1, @rdivide, f2, pref);
+    else % compute without exps
         fout = chebfun;
         for k = 1:f2.nfuns
             f1k = f1.funs(k);   f2k = f2.funs(k);
@@ -143,7 +155,9 @@ else
             fout = [fout ; tmp];
         end
     end
+    
     if fout.nfuns == f2.nfuns
+        % Force outgoing imps to match incoming ones.
         f1imps = feval(f1,fout.ends,'force');
         fout.imps = f1imps./f2.imps;
     end
@@ -155,9 +169,9 @@ else
         f2.jacobian = anon('[der nonConst] = diff(f,u,''linop''); der = promote(der);',{'f'},{f2},1,f2.jacobian.parent);
         f2.ID = newIDnum();
     end
-    
     fout.jacobian = anon('[Jf1u constJf1u] = diff(f1,u,''linop'');  [Jf2u constJf2u] = diff(f2,u,''linop''); der = diag(1./f2)*Jf1u - diag(f1./f2.^2)*Jf2u; nonConst = ~Jf2u.iszero | (~Jf1u.iszero & (constJf2u | constJf1u));',{'f1','f2'},{f1 f2},1,'rdivide');
     fout.ID = newIDnum();
+    
 end
 
 % Ensure correct orientation
