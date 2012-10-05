@@ -53,10 +53,11 @@ end
 % Remove poles that are close to existing breakpoints
 % (slow and hacky!)
 tol = 100*chebfunpref('eps');
+f1r = feval(f1,r);
 j = 1;
 while j <= length(r)
-    if any(abs(r(j)-ends)<tol)
-        r(j) = [];
+    if any(abs(r(j)-ends)<tol) || abs(f1r(j)) < tol
+        r(j) = []; f1r(j) = [];
     else
         j = j+1;
     end
@@ -115,7 +116,8 @@ else
     exps1 = get(f1,'exps'); exps2 = get(f2,'exps');
     poles = false;
     for k = 1:f2.nfuns
-        if abs(get(f2.funs(k),'lval'))<10*tol || abs(get(f2.funs(k),'rval'))<10*tol
+        if (abs(get(f2.funs(k),'lval'))<10*tol && abs(get(f1.funs(k),'lval'))>10*tol) || ...
+           (abs(get(f2.funs(k),'rval'))<10*tol && abs(get(f1.funs(k),'rval'))>10*tol)
             poles = true; break
         end
     end

@@ -220,6 +220,12 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
 
 % Chebfun times double
 elseif isa(F1,'chebfun')
+    
+    if ~isnumeric(F2)
+        error('CHEBFUN:mtimes:chebfunlinop',...
+            ['Chebfun-' class(F2) ' multiplication is not well-defined.']);
+    end
+    
     % scalar times chebfun
     if numel(F2) == 1
         Fout = F1;
@@ -334,7 +340,6 @@ end
 
 % ------------------------------------
 function f = mtimescol(a,f)
-
 f.funs = a*f.funs;
 f.imps = a*f.imps;
 f.scl = abs(a)*f.scl;
