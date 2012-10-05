@@ -53,10 +53,15 @@ end
 % Remove poles that are close to existing breakpoints
 % (slow and hacky!)
 tol = 100*chebfunpref('eps');
-f1r = feval(f1,r);
+if isa(f1,'chebfun')
+    f1r = feval(f1,r);
+else
+    f1r = inf(size(r));
+end
 j = 1;
 while j <= length(r)
     if any(abs(r(j)-ends)<tol) || abs(f1r(j)) < tol
+        % should really test to see if a double root. Eg x./x^2. TODO
         r(j) = []; f1r(j) = [];
     else
         j = j+1;
