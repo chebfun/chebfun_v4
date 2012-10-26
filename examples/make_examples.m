@@ -27,6 +27,11 @@ if ~isunix || ~exist(webdir,'dir')
         'which has access to the Oxford webserver.']);
 end
 
+currUser = getenv('USER');
+adminUser = 'hale';
+if strcmp(currUser,adminUser), admin = true; else admin = false; end
+
+
 if nargin > 0 && ischar(dirs) 
     if strncmp(dirs,'listing',4); listing = true; end
     if strcmp(dirs,'clean'); clean = true; end
@@ -295,24 +300,29 @@ elseif nargs == 2
         if ~exist('html','dir'), mkdir('html'), end
         if ~exist('pdf','dir'), mkdir('pdf'), end
         fprintf('Uploading html...')
-        copyfile(fullfile(curdir,dirs,'html',[filename,'.html']),'html');
+%         copyfile(fullfile(curdir,dirs,'html',[filename,'.html']),'html');
+        eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.html']),' ','html'])
         try
-            copyfile(fullfile(curdir,dirs,'html',[filename,'*.png']),'html');
+%             copyfile(fullfile(curdir,dirs,'html',[filename,'*.png']),'html');
+            eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.png']),' ','html'])
         end
         if exist(fullfile(curdir,dirs,'html',[filename,'.shtml']),'file')
-            copyfile(fullfile(curdir,dirs,'html',[filename,'.shtml']),'html');
+%             copyfile(fullfile(curdir,dirs,'html',[filename,'.shtml']),'html');
+            eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.shtml']),' ','html'])
         end
-        if isunix, cd html, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
+        if admin, cd html, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
         fprintf('Complete. ')
         fprintf('Uploading pdf...')
-        copyfile(fullfile(curdir,dirs,'pdf',[filename,'.pdf']),fullfile('pdf',[filename,'.pdf']));
+%         copyfile(fullfile(curdir,dirs,'pdf',[filename,'.pdf']),fullfile('pdf',[filename,'.pdf']));
+        eval(['!cp ',fullfile(curdir,dirs,'pdf',[filename,'.pdf']),' ',fullfile('pdf',[filename,'.pdf'])])
         fprintf('Complete. ')
         fprintf('Uploading m files...')
-        copyfile(fullfile(curdir,dirs,[filename,'.m']),[filename,'.m']);
+%         copyfile(fullfile(curdir,dirs,[filename,'.m']),[filename,'.m']);
+        eval(['!cp ',fullfile(curdir,dirs,[filename,'.m']),' ',[filename,'.m']]);
         fprintf('Complete. ')
         fprintf('Setting file permissions...')
-        if isunix, cd pdf, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
-        if isunix, eval('!chgrp chebfun *'), eval('!chmod 775 *'), end
+        if admin, cd pdf, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
+        if admin, eval('!chgrp chebfun *'), eval('!chmod 775 *'), end
         fprintf('Complete.\n')
         cd(curdir)
     end
@@ -456,7 +466,8 @@ if listing
         curdir = pwd;
         cd(webdir)
         fprintf([' Uploading. Please wait ... '])
-        copyfile(fullfile(curdir,'listing.html'),'examples');
+%         copyfile(fullfile(curdir,'listing.html'),'examples');
+        eval(['!cp ',fullfile(curdir,'listing.html'),' ','examples']);
         cd(curdir)
         fprintf('Done.\n')
     end
@@ -692,19 +703,23 @@ if shtml
     for j = 1:numel(dirs)
         fprintf(['Uploading ',dirs{j},'. Please wait ... '])
         if ~exist(dirs{j},'dir'), mkdir(dirs{j}), end
-        copyfile(fullfile(curdir,dirs{j},'*.m'),dirs{j});
+%         copyfile(fullfile(curdir,dirs{j},'*.m'),dirs{j});
+        eval(['!cp ', fullfile(curdir,dirs{j},'*.m'),' ',dirs{j}])
         cd(dirs{j});
-        copyfile(fullfile(curdir,dirs{j},[dirs{j},'.html']),[dirs{j},'.html']);
-        copyfile(fullfile(curdir,dirs{j},'index.shtml'),'index.shtml');
+%         copyfile(fullfile(curdir,dirs{j},[dirs{j},'.html']),[dirs{j},'.html']);
+        eval(['!cp ', fullfile(curdir,dirs{j},[dirs{j},'.html']),' ',[dirs{j},'.html']])
+%         copyfile(fullfile(curdir,dirs{j},'index.shtml'),'index.shtml');
+        eval(['!cp ', fullfile(curdir,dirs{j},'index.shtml'),'index.shtml'])
         if exist(fullfile(curdir,dirs{j},'html'),'dir')
-            copyfile(fullfile(curdir,dirs{j},'html','*.shtml'),'html');
-            if isunix
+%             copyfile(fullfile(curdir,dirs{j},'html','*.shtml'),'html');
+            eval(['!cp ', fullfile(curdir,dirs{j},'html','*.shtml'),' ','html'])
+            if admin
                 eval(['!chmod -R 775 ','html']); 
                 eval(['!chgrp -R chebfun ','html/*']); 
             end
         end
         cd ..
-        if isunix
+        if admin
             eval(['!chmod 775 *']);
             eval(['!chmod -R 775 ',dirs{j}]);
             eval(['!chgrp -R chebfun ',[dirs{j},'/*']]);
