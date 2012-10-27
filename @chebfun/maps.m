@@ -34,12 +34,12 @@ function map = maps(f)
 %
 %     m(y) = 15*s*(y+1)./(1-y)+a
 %
-% where s is a scaling parameter that can be changed. By default it is
+% where S is a scaling parameter that can be changed. By default it is
 % taken from mappref.parinf(1). On doubly infinite domains the map is
 %
 %     m(y) = 5*s*y./(1-y.^2)+c
 %
-% where again s is a scaling and c is a shift. These are also taken by
+% where again S is a scaling and C is a shift. These are also taken by
 % default from mappref.parinf(1:2) respectively if not supplied.
 %
 % The SING map is for dealing with functions with singular endpoints that
