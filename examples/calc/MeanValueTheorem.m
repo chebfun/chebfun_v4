@@ -1,5 +1,5 @@
 %% Mean Value Theorem
-% Kuan Xu, 23 October 2012
+% Kuan Xu, 23rd October 2012
 %
 % (Chebfun example calc/MeanValueTheorem.m)
 % [Tags: #calculus, #root]

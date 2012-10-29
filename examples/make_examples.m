@@ -709,7 +709,7 @@ if shtml
 %         copyfile(fullfile(curdir,dirs{j},[dirs{j},'.html']),[dirs{j},'.html']);
         eval(['!cp ', fullfile(curdir,dirs{j},[dirs{j},'.html']),' ',[dirs{j},'.html']])
 %         copyfile(fullfile(curdir,dirs{j},'index.shtml'),'index.shtml');
-        eval(['!cp ', fullfile(curdir,dirs{j},'index.shtml'),'index.shtml'])
+        eval(['!cp ', fullfile(curdir,dirs{j},'index.shtml'),' ','index.shtml'])
         if exist(fullfile(curdir,dirs{j},'html'),'dir')
 %             copyfile(fullfile(curdir,dirs{j},'html','*.shtml'),'html');
             eval(['!cp ', fullfile(curdir,dirs{j},'html','*.shtml'),' ','html'])

@@ -1,5 +1,5 @@
 %% Illustrating the mathematics of signal processing in Chebfun
-% Mohsin Javed, August 24, 2012
+% Mohsin Javed, 24th August, 2012
 
 %%
 % (Chebfun example approx/CommunicationSystem.m)
