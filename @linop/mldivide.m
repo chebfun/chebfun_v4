@@ -136,6 +136,16 @@ switch(class(B))
             end
         end
         warning(warnstate);  % restore old warning state
+
+        
+        if diff(A.blocksize)
+            warning('CHEBFUN:mldivide:notsquare',...
+                'Operator does not appear to be square.');
+        end
+        if numel(B) ~= syssize
+            error('CHEBFUN:mldivide:rhssize',...
+                'Inconsistent system size. Check RHS?');
+        end
         
         % ODEs with delta functions on the RHS
         % Are there any impulses in B?
