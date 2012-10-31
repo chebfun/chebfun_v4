@@ -159,7 +159,8 @@ function [x w v] = rec(n)
     for k = 1:n-1, 
         P = ((2*k+1)*Pm1.*x-k*Pm2)/(k+1);           Pm2 = Pm1; Pm1 = P; 
         PP = ((2*k+1)*(Pm2+x.*PPm1)-k*PPm2)/(k+1);  PPm2 = PPm1; PPm1 = PP;  
-    end
+    end    
+%     PP = -n*(x.*P-Pm2)./(1-x.^2);
 
     % Reflect for negative values
     x = [-x(end:-1:1+s) x].';
@@ -315,7 +316,7 @@ function [x w v] = asy1(n,nbdy)
     x = (1-(n-1)/(8*n^3)-1/(384*n^4)*(39-28./sin(theta).^2)).*cos(theta);
     t = acos(x);
     
-%     if n < 666
+    if n < 666
         % Approximation for Legendre roots (See Olver 1974)
         idx = (x>.5); npts = sum(idx);
         % Roots pf the Bessel function J_0 (Precomputed in Mathematica)
@@ -325,23 +326,23 @@ function [x w v] = asy1(n,nbdy)
              30.634606468431975    33.775820213573568].';
         if npts > 11
             % Esimate the larger Bessel roots (See Branders et al., JCP 1981).
-            p = ((length(jk)+1:npts).'-.25)*pi;
-            aa = [0.000813005721543268 0  0.0245988241803681 0 ...
-                  0.131420807470708 0 0.0682894897349453];
-            bb = [0.00650404577261471 0 0.200991122197811 0 1.16837242570470 0 1 0];
-            jk = [jk ; p + polyval(aa,p) ./ polyval(bb,p)]; 
+            p = ((length(jk)+1:npts).'-.25)*pi;  pp = p.*p;
+            num = 0.0682894897349453 + pp.*(0.131420807470708 + ...
+                  pp.*(0.0245988241803681 + pp.*0.000813005721543268));
+            den = p.*(1.0 + pp.*(1.16837242570470 + pp.*(0.200991122197811 + ...
+                  pp.*(0.00650404577261471))));
+            jk = [jk ; p + num./den];
         end
         phik = jk(1:npts)/(n+.5);
         tnew = phik + (phik.*cot(phik)-1)./(8*phik*(n+.5)^2);
         t(idx) = tnew(end:-1:1);
-%     end
+    end
 
     % locate the boundary node
     mint = t(end-nbdy+1);
     idx = max(find(t<mint,1)-1,1);
 
     dt = inf; j = 0;
-%     if n >= 10000, dt = 0; end % skip the Newton step
     % Newton iteration
     while norm(dt,inf) > sqrt(eps)/1000
         [vals ders] = feval_asy1(n,t,mint,1); % Evaluate via asy formulae
@@ -403,12 +404,12 @@ function [vals ders] = feval_asy1(n,t,mint,flag)
     twoSinT = onesM*(2*sin(t));
     denom = cumprod(twoSinT)./sqrt(twoSinT);
 
-    alpha = onesM*(n*t) + M05onesT.*(onesM*(t-.5*pi));
-    cosAlpha = cos(alpha);
-    sinAlpha = sin(alpha);
+%     alpha = onesM*(n*t) + M05onesT.*(onesM*(t-.5*pi));
+%     cosAlpha = cos(alpha);
+%     sinAlpha = sin(alpha);
 
     % Taylor expansion of cos(alpha0);
-    if flag
+%     if flag
         k = numel(t):-1:1;
         rho = n+.5;
         ta = double(single(t));    tb = t - ta;
@@ -443,12 +444,12 @@ function [vals ders] = feval_asy1(n,t,mint,flag)
         tmp = sign(sin((n+.5)*t(2)-.25*pi)*tmp(2))*tmp;
         sinAlpha(1,:) = tmp;
 
-%         sint = sin(t); cost = cos(t);
-%         for k = 2:M
-%             cosAlpha(k,:) = cosAlpha(k-1,:).*sint+sinAlpha(k-1,:).*cost;
-%             sinAlpha(k,:) = sinAlpha(k-1,:).*sint-cosAlpha(k-1,:).*cost;
-%         end
-    end
+        sint = sin(t); cost = cos(t);
+        for k = 2:M
+            cosAlpha(k,:) = cosAlpha(k-1,:).*sint+sinAlpha(k-1,:).*cost;
+            sinAlpha(k,:) = sinAlpha(k-1,:).*sint-cosAlpha(k-1,:).*cost;
+        end
+%     end
 
     % Sum up all the terms.
     vals = C*(c*(cosAlpha./denom));             
@@ -489,7 +490,7 @@ function [x w v] = asy2(n,npts)
     % Revert to x-space
     x = cos(t); w = (2./ders.^2).'; v = sin(t)./ders;
 
-    function [vals ders] = feval_asy2(n,t,flag)
+    function [vals, ders] = feval_asy2(n,t,flag)
         % Evaluate 2nd asymptotic formula (boundary)
         
         % Useful constants
@@ -512,7 +513,7 @@ function [x w v] = asy2(n,npts)
         tB0 = .25*gt;
         A1 = gtdt/8 - 1/8*gt./t - gt.^2/32;
         tB1t = tB1(t); A2t = A2(t); % Higher terms
-        
+
         % VALS:
         vals = Ja + Jb.*tB0/rho + Ja.*A1/rho^2 + Jb.*tB1t/rho^3 + Ja.*A2t/rho^4;
         % DERS:
@@ -615,7 +616,8 @@ function [tB1 A2 tB2 A3 tB3 A4] = asy2_higherterms(a,b,theta,n)
     J = (C*(f.*A1));
 
     % B1
-    tB1 = -.5*A1p - (.5+a)*I + .5*J;
+    tB1 = -.5*A1p - (.5+a)*I + .5*J;   
+    
     tB1(1) = 0;
     B1 = tB1./t;
     B1(1) = A/720+A^2/576+A*B/96+B^2/64+B/48+a*(A^2/576+B^2/64+A*B/96)-a^2*(A/720+B/48);
@@ -624,8 +626,6 @@ function [tB1 A2 tB2 A3 tB3 A4] = asy2_higherterms(a,b,theta,n)
     K = C*(f.*tB1);
     A2 = .5*(D*tB1) - (.5+a)*B1 - .5*K;
     A2 = A2 - A2(1);
-
-    %[tB1b A2b] = asy2_highertermsc(.1,-.3);
 
     if nargout < 3
         % Make function for output
