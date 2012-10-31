@@ -47,7 +47,7 @@ fpexact = diff(fexact);
 fppexact = diff(fexact,2);
 
 pass(T+4) = norm(fp-fpexact, inf) < tol;
-pass(T+5) = norm(fpp-fppexact, inf) < tol;
+pass(T+5) = norm(fpp-fppexact, inf) < 10*tol;
 
 %% 6. Test on integration of sinc(x)
 f = sinc(x);
