@@ -391,7 +391,9 @@ if createreport && any(failed)
     v = struct2cell(ver);
     for k = 1:size(v,3)
         if strcmpi(v(1,1,k),'Chebfun')
-            fprintf(fid,['Chebfun Version ',v(2,1,k),'\n']);
+            vstr = v(2,1,k);
+            if iscell(vstr), vstr = vstr{:};end
+            fprintf(fid,['Chebfun Version %s\n'],vstr);
         end
     end
     fclose(fid);
