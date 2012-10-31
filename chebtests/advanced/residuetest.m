@@ -15,8 +15,3 @@ pass(1) = (norm(sort(real(p))-sort(real(pexact)))  ...
        + norm(sort(imag(p))-sort(imag(pexact)))< tol);
 pass(2) = (norm(g./f-G./F) < tol);
 pass(3) = (norm(k-chebfun('x+10i+1.1')) < tol);
-
-(norm(sort(real(p))-sort(real(pexact)))  ...
-       + norm(sort(imag(p))-sort(imag(pexact))))
-
-   (norm(k-chebfun('x+10i+1.1')))
