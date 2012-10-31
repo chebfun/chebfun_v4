@@ -27,7 +27,7 @@ else
 end
     
 % ----------------------------------------------------
-function fout = rdividecol(f1,f2)
+function fout = rdividecol(f1,f2,tol)
 
 if (isempty(f1) || isempty(f2)), fout=chebfun; return; end
 
@@ -39,11 +39,11 @@ end
 
 for j = 1:f2.nfuns
     if ~any(get(f2.funs(j),'vals'))
-        error('CHEBFUN:rdivide:DivisionByZeroChebfun','Division by zero chebfun.');
+        warning('CHEBFUN:rdivide:DivisionByZeroChebfun','Division by zero chebfun.');
     end
 end
     
-r = roots(f2);
+r = roots(f2,'nozerofun');
 if isa(f1,'double')
     ends = get(f2,'ends');
 else
@@ -52,7 +52,9 @@ end
 
 % Remove poles that are close to existing breakpoints
 % (slow and hacky!)
-tol = 100*chebfunpref('eps');
+if nargin < 3
+    tol = 100*chebfunpref('eps');
+end
 if isa(f1,'chebfun')
     f1r = feval(f1,r);
     df2 = diff(f2);
@@ -78,7 +80,7 @@ if ~isempty(newbkpts)
     d = union(d,get(f2,'ends'));
     if isa(f1,'chebfun'), f1 = overlap(f1,d); end
     f2 = overlap(f2,d);
-    fout = rdividecol(f1,f2);
+    fout = rdividecol(f1,f2,tol);
 elseif isa(f1,'double')    
     if f1 == 0
 		fout = chebfun(0, f2.ends([1,end])); 
@@ -100,6 +102,14 @@ elseif isa(f1,'double')
             fout = chebfun;
             for k = 1:f2.nfuns
                 f2k = f2.funs(k);
+                if f2k.n == 1 && f2k.vals == 0
+                    tmp = f2.funs(k);
+                    tmp.vals = inf;
+                    tmp.exps = [0 0];
+                    tmp = chebfun(tmp,f2k.map.par([1 2]));
+                    fout = [fout ; tmp];
+                    continue
+                end
                 f2k = extract_roots(f2k);
                 expsk = f2k.exps;
                 f2k.exps = [0 0];
@@ -144,6 +154,18 @@ else
         fout = chebfun;
         for k = 1:f2.nfuns
             f1k = f1.funs(k);   f2k = f2.funs(k);
+            if ~any(f2k.vals)
+                tmp = f2.funs(k);
+                if any(f1k.vals)
+                    tmp.vals = inf;
+                else
+                    tmp.vals = NaN;
+                end
+                tmp.exps = [0 0];
+                tmp = chebfun(tmp,f2k.map.par([1 2]));
+                fout = [fout ; tmp];
+                continue
+            end
             f2k = extract_roots(f2k);
             exps1k = f1k.exps;  exps2k = f2k.exps;
             f1k.exps = [0 0];   f2k.exps = [0 0];

@@ -23,7 +23,6 @@ function Fout = abscol(F)
     elseif isreal(F)             % Real case
 
         r = roots(F,'nozerofun');% Abs is singular at roots 
-%         r = setdiff(r,F.ends).'; % ignore if already an endpoint
         
         % Avoid adding new breaks where not needed
         if ~isempty(r)           
