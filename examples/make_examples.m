@@ -291,7 +291,7 @@ elseif nargs == 2
                 fclose(fidpdf);
                 eval(['!latex ', filename, '> foo.tmp'])
                 eval(['!rm foo.tmp'])
-%                 eval(['!dvipdfm -q ', filename])                
+                eval(['!dvipdfm -q ', filename])                
 %                 ! rm *.aux *.log *.tex  *.dvi
                 cd ../
             catch
