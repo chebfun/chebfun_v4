@@ -36,6 +36,15 @@ if nargin > 0 && ischar(dirs)
     if strncmp(dirs,'listing',4); listing = true; end
     if strcmp(dirs,'clean'); clean = true; end
     if strcmp(dirs,'tags'); make_tags(); return, end
+    
+    if strcmp(dirs,'permissions'); 
+        cd(webdir)
+        eval('!chgrp -Rf chebfun *')
+        eval('!chmod -Rf 775 *')
+        eval('!chown -Rf hale *')
+        return
+    end
+   
     if strcmp(dirs,'html'); 
         exampleshtml = true; 
         shtml = false;
@@ -64,6 +73,7 @@ if nargin > 0 && ischar(dirs)
         make_examples(dirs);
         make_examples('list');
         make_tags();
+%         make_examples('permissions');
         return
     end        
 end
@@ -281,7 +291,7 @@ elseif nargs == 2
                 fclose(fidpdf);
                 eval(['!latex ', filename, '> foo.tmp'])
                 eval(['!rm foo.tmp'])
-                eval(['!dvipdfm -q ', filename])                
+%                 eval(['!dvipdfm -q ', filename])                
 %                 ! rm *.aux *.log *.tex  *.dvi
                 cd ../
             catch
@@ -299,31 +309,39 @@ elseif nargs == 2
         cd(dirs)
         if ~exist('html','dir'), mkdir('html'), end
         if ~exist('pdf','dir'), mkdir('pdf'), end
+        
         fprintf('Uploading html...')
-%         copyfile(fullfile(curdir,dirs,'html',[filename,'.html']),'html');
         eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.html']),' ','html'])
         try
-%             copyfile(fullfile(curdir,dirs,'html',[filename,'*.png']),'html');
             eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.png']),' ','html'])
         end
         if exist(fullfile(curdir,dirs,'html',[filename,'.shtml']),'file')
-%             copyfile(fullfile(curdir,dirs,'html',[filename,'.shtml']),'html');
             eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.shtml']),' ','html'])
         end
-        if admin, cd html, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
         fprintf('Complete. ')
+        
         fprintf('Uploading pdf...')
-%         copyfile(fullfile(curdir,dirs,'pdf',[filename,'.pdf']),fullfile('pdf',[filename,'.pdf']));
         eval(['!cp ',fullfile(curdir,dirs,'pdf',[filename,'.pdf']),' ',fullfile('pdf',[filename,'.pdf'])])
         fprintf('Complete. ')
+        
         fprintf('Uploading m files...')
-%         copyfile(fullfile(curdir,dirs,[filename,'.m']),[filename,'.m']);
         eval(['!cp ',fullfile(curdir,dirs,[filename,'.m']),' ',[filename,'.m']]);
         fprintf('Complete. ')
+        
         fprintf('Setting file permissions...')
-        if admin, cd pdf, eval('!chgrp chebfun *'), eval('!chmod 775 *') , cd .., end
-        if admin, eval('!chgrp chebfun *'), eval('!chmod 775 *'), end
+            eval(['!chgrp -f chebfun ' filename '.m'])
+            eval(['!chmod -f 775 ' filename '.m'])
+            eval(['!chown -f hale ' filename '.m'])
+        cd html
+            eval(['!chgrp -f chebfun ' filename '.*'])
+            eval(['!chmod -f 775 ' filename '.*'])
+            eval(['!chown -f hale ' filename '.*'])
+        cd ../pdf/
+            eval(['!chgrp -f chebfun ' filename '.pdf'])
+            eval(['!chmod -f 775 ' filename '.pdf'])
+            eval(['!chown -f hale ' filename '.pdf'])
         fprintf('Complete.\n')
+        
         cd(curdir)
     end
     return
@@ -466,8 +484,10 @@ if listing
         curdir = pwd;
         cd(webdir)
         fprintf([' Uploading. Please wait ... '])
-%         copyfile(fullfile(curdir,'listing.html'),'examples');
         eval(['!cp ',fullfile(curdir,'listing.html'),' ','examples']);
+        eval(['!chgrp -f chebfun examples/listing.html']);
+        eval(['!chmod -f 775 examples/listing.html']);
+        eval(['!chown -f hale examples/listing.html']);
         cd(curdir)
         fprintf('Done.\n')
     end
@@ -703,26 +723,24 @@ if shtml
     for j = 1:numel(dirs)
         fprintf(['Uploading ',dirs{j},'. Please wait ... '])
         if ~exist(dirs{j},'dir'), mkdir(dirs{j}), end
-%         copyfile(fullfile(curdir,dirs{j},'*.m'),dirs{j});
         eval(['!cp ', fullfile(curdir,dirs{j},'*.m'),' ',dirs{j}])
         cd(dirs{j});
-%         copyfile(fullfile(curdir,dirs{j},[dirs{j},'.html']),[dirs{j},'.html']);
         eval(['!cp ', fullfile(curdir,dirs{j},[dirs{j},'.html']),' ',[dirs{j},'.html']])
-%         copyfile(fullfile(curdir,dirs{j},'index.shtml'),'index.shtml');
         eval(['!cp ', fullfile(curdir,dirs{j},'index.shtml'),' ','index.shtml'])
         if exist(fullfile(curdir,dirs{j},'html'),'dir')
-%             copyfile(fullfile(curdir,dirs{j},'html','*.shtml'),'html');
             eval(['!cp ', fullfile(curdir,dirs{j},'html','*.shtml'),' ','html'])
             if admin
-                eval(['!chmod -R 775 ','html']); 
-                eval(['!chgrp -R chebfun ','html/*']); 
+                eval(['!chmod -Rf 775 ','html']); 
+                eval(['!chgrp -Rf chebfun ','html/*']); 
+                eval(['!chown -Rf hale ','html/*']); 
             end
         end
         cd ..
         if admin
-            eval(['!chmod 775 *']);
-            eval(['!chmod -R 775 ',dirs{j}]);
-            eval(['!chgrp -R chebfun ',[dirs{j},'/*']]);
+            eval(['!chmod -f 775 *']);
+            eval(['!chmod -Rf 775 ',dirs{j}]);
+            eval(['!chgrp -Rf chebfun ',[dirs{j},'/*']]);
+            eval(['!chown -Rf hale ',dirs{j}]);
         end  
         fprintf('Complete.\n')
     end
@@ -1130,6 +1148,11 @@ fprintf('Uploading tags...')
 try
     eval(['!mv ' tagsfile ' ' webdir 'examples/'])
     eval(['!mv ' listfile ' ' webdir 'examples/'])
+    currdir = pwd;
+    eval(['!cd ' webdir 'examples/'])
+    eval(['!chgrp chebfun ' webdir 'examples/tags.php'])
+    eval(['!chgrp chebfun ' webdir 'examples/tags.list'])
+    eval(['!cd ' currdir])
     fprintf('DONE!\n')
 catch
     fprintf('FAILED!\n')
