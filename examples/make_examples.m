@@ -313,7 +313,7 @@ elseif nargs == 2
         fprintf('Uploading html...')
         eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.html']),' ','html'])
         try
-            eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.png']),' ','html'])
+            eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'*.png']),' ','html'])
         end
         if exist(fullfile(curdir,dirs,'html',[filename,'.shtml']),'file')
             eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.shtml']),' ','html'])
@@ -333,9 +333,9 @@ elseif nargs == 2
             eval(['!chmod -f 775 ' filename '.m'])
             eval(['!chown -f hale ' filename '.m'])
         cd html
-            eval(['!chgrp -f chebfun ' filename '.*'])
-            eval(['!chmod -f 775 ' filename '.*'])
-            eval(['!chown -f hale ' filename '.*'])
+            eval(['!chgrp -f chebfun ' filename '*'])
+            eval(['!chmod -f 775 ' filename '*'])
+            eval(['!chown -f hale ' filename '*'])
         cd ../pdf/
             eval(['!chgrp -f chebfun ' filename '.pdf'])
             eval(['!chmod -f 775 ' filename '.pdf'])
@@ -1150,8 +1150,8 @@ try
     eval(['!mv ' listfile ' ' webdir 'examples/'])
     currdir = pwd;
     eval(['!cd ' webdir 'examples/'])
-    eval(['!chgrp chebfun ' webdir 'examples/tags.php'])
-    eval(['!chgrp chebfun ' webdir 'examples/tags.list'])
+    eval(['!chgrp -f chebfun ' webdir 'examples/tags.php'])
+    eval(['!chgrp -f chebfun ' webdir 'examples/tags.list'])
     eval(['!cd ' currdir])
     fprintf('DONE!\n')
 catch

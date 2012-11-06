@@ -6,7 +6,7 @@ linalg Linear algebra
 approx Approximation of functions  
 complex Complex variables 
 geom Geometry
-stats Statistics
+stats Probability and statistics
 ode Ordinary differential equations 
 ode-eig ODE eigenvalue problems
 integro Integral and integro-differential equations  
