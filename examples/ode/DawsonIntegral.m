@@ -1,9 +1,11 @@
 %% Dawson's integral
 % Kuan Xu, 17th October 2012
-%
+
+%%
 % (Chebfun example ode/DawsonIntegral.m)
 % [Tags: #linearODE, #special function, #Dawson]
-%
+
+%%
 % Here is an ODE which is simple and linear.
 % 
 % $$ \frac{dF}{dx}+2xF = 1 \mbox{  with  } F(0) = 0.$$
