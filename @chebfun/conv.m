@@ -86,7 +86,13 @@ function h = convcol(f,g)
 
     % Construct funs
     for k = 1:length(ends)-1  
-        newfun = fun( @(x) integral(x,f,gflip) , ends(k:k+1) , pref , scl );
+        
+        % note that deg(H(x)) = deg(gflip)+deg(f)+1 where deg(gflip) =
+        % length(gflip)-1 and deg(f) = length(f)-1. Hence, length(H(x)) =
+        % deg(gflip)+deg(f)+2 = length(gflip)+length(f). The adaptive 
+        % construction process with fun of increasing length is avoided.
+        
+        newfun = fun( @(x) integral(x,f,gflip) , ends(k:k+1) , length(gflip)+length(f));
         scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
         funs = [ funs , newfun ];
     end
