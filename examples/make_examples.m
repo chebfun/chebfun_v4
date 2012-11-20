@@ -1,6 +1,6 @@
 function make_examples(dirs,filename,str)
 %MAKE_EXAMPLES  Publish the files in the examples directory to website.
-% MAKE_EXAMPLES(DIR,FILE,'NEW') will only publish the file FILENAME.M in
+% MAKE_EXAMPLES(DIR,FILENAME,'NEW') will only publish the file FILENAME.M in
 % directory $Chebfunroot/examples/DIR/ where FILENAME and DIR must be
 % strings. The additional string 'NEW' creates the additional index files,
 % tags, and listings that are required for new Examples.
