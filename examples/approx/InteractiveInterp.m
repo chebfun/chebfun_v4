@@ -15,9 +15,9 @@ function InteractiveInterp
 %%
 % The game is to select interpolation points by clicking on the function.
 % The code will then compute the interpolant through these points and plot
-% it on the same graph. For those inteerested in the details, it computes
-% the interpolant in barycentric form using Chebfun's BARY and BARY_WEIGHTS
-% functions.
+% it on the same graph. For those interested in the details, it computes
+% the interpolant in stable way using barycentric form via CHEBFUN/INTERP1,
+% which uses BARY and BARY_WEIGHTS
 
 %%
 % Unfortunately, I'm not allowed to play this game any more, but here's
@@ -76,20 +76,3 @@ end
 % References:
 %
 % [1] http://www.chebfun.org/examples/approx/html/GreedyInterp.shtml
-
-
-%%
-% junk
-%         % for writing only!
-%         n = n+1;
-%         frame = getframe(1);
-%         im = frame2im(frame);
-%         [imind,cm] = rgb2ind(im,256);
-%         set(gcf,'Color','w')
-%         if n == 1;
-%             imwrite(imind,cm,'InteractiveInterp_01.gif','gif', 'Loopcount',inf,'DelayTime',1,'BackgroundColor',1);
-%         else
-%             imwrite(imind,cm,'InteractiveInterp_01.gif','gif','WriteMode','append','DelayTime',1,'BackgroundColor',1);
-%         end
-%       end
-            
