@@ -90,7 +90,9 @@ rs = [];
 % rts = []; % All roots will be stored here
 rts = f.ends(abs(f.imps(1,:))<tol*hs*f.scl).'; % Zero imps are roots.
 % But don't include if function is zero anyway (prevents double counting).
-rts(feval(f,rts,'left')<tol*hs*f.scl | feval(f,rts,'right')<tol*hs*f.scl) = [];
+if ~isempty(rts)
+    rts(feval(f,rts,'left')<tol*hs*f.scl | feval(f,rts,'right')<tol*hs*f.scl) = [];
+end
 realf = isreal(f);
 for i = 1:f.nfuns
     b = ends(i+1);

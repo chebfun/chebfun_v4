@@ -21,7 +21,7 @@ classdef chebconst < chebfun
                 N = 1; dim = 1;
                 if nargin > 1 && ~isempty(varargin{2}), N = varargin{2}; end
                 if nargin > 2 && dim == varargin{2}; end
-                if numel(f) == 1, L = constfun(0,domain(f)); return, end
+                if numel(f) == 1, L = chebconst(0,domain(f)); return, end
                 L = f;
                 for j = 1:N 
                    for k = 1:numel(L)-j

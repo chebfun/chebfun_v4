@@ -112,6 +112,7 @@ while ii < length(ops)
                     if  N > 2,        c(1) = .5*(op(1) + c(3)); end
                     op = c(end:-1:1);
                 end
+                c = op;
                 op = chebpolyval(op,pref.chebkind);
             end
             if ~isfield(pref,'map')
@@ -119,6 +120,7 @@ while ii < length(ops)
             else
                 fs = fun(op,maps(pref.map,es),pref);
             end
+            if isfield(pref,'coeffs'), fs.coeffs = c; end % put given coeffs back
             scl.v = max(scl.v, fs.scl.v);
         case 'fun'
             if numel(op) > 1
