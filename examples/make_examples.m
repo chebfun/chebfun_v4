@@ -211,6 +211,15 @@ elseif nargs == 2
             filetext = strrep(filetext,png,gif);
         end
         
+        if strcmp(filename,'InteractiveInterp')
+            png = 'InteractiveInterp_01.png';
+            gif = 'InteractiveInterp_01.gif';
+            try
+                eval(['!cp ../InteractiveInterp_01.gif ' webdir 'examples/approx/html/'])
+            end
+            filetext = strrep(filetext,png,gif);
+        end
+        
         % Try to insert hyperlinks for references
         try
             refloc = strfind(lower(filetext),'reference');
@@ -1145,9 +1154,11 @@ fclose(fid);
 
 % Upload
 fprintf('Uploading tags...')
+type(tagsfile)
+type(listfile)
 try
-    eval(['!mv ' tagsfile ' ' webdir 'examples/'])
-    eval(['!mv ' listfile ' ' webdir 'examples/'])
+    eval(['!cp ' tagsfile ' ' webdir 'examples/'])
+    eval(['!cp ' listfile ' ' webdir 'examples/'])
     currdir = pwd;
     eval(['!cd ' webdir 'examples/'])
     eval(['!chgrp -f chebfun ' webdir 'examples/tags.php'])
