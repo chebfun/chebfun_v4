@@ -37,7 +37,7 @@ end
 yy = pchip(x,y,xx);
 
 % Orientate nicely
-if size(yy,1) ~= 4*(length(x)-1), yy = yy.'; end
+if ~any(size(yy,1) == 4*(length(x)+(-1:1))), yy = yy.'; end
 
 % Construct the chebfun
 f = chebfun;
