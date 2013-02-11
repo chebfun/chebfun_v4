@@ -2,7 +2,8 @@ function [x,w,v] = jacpts(n,a,b,varargin)
 %JACPTS  Gauss-Jacobi Quadrature Nodes and Weights.
 %  X = JACPTS(N,ALPHA,BETA) returns the N roots of the degree N Jacobi 
 %       polynomial with parameters ALPHA and BETA (which must both be 
-%       greater than or equal -1)
+%       greater than or equal -1) where the Jacobi weight function is 
+%       defined by w(x) = (1-x)^ALPHA*(1+x)^BETA.
 %
 %  [X,W] = JACPTS(N,ALPHA,BETA) returns also a row vector W of weights for 
 %       Gauss-Jacobi quadrature.
@@ -97,31 +98,32 @@ end
 
 % Special cases
 if ~(a || b)                % Legendre: alpha = beta = 0
-    [x w v] = legpts(n,varargin{:});
-    [x w] = rescale(x,w,interval,a,b);
+    [x, w, v] = legpts(n,varargin{:});
+    [x, w] = rescale(x,w,interval,a,b);
     return
 elseif a == -.5 && b == -.5 % Gauss-Chebyshev: alpha = beta = -.5
-    [x ignored v] = chebpts(n,interval,1); %#ok<*ASGLU>
+    [x, ignored, v] = chebpts(n,interval,1); %#ok<*ASGLU>
     w = repmat(pi/n,1,n);
-    [x w] = rescale(x,w,interval,a,b);
+    [x, w] = rescale(x,w,interval,a,b);
     return
 elseif a == .5 && b == .5   % Gauss-Chebyshev2: alpha = beta = .5
     x = chebpts(n+2,2);     x = x(2:n+1);
     w = pi/(n+1)*(1-x.^2);  w = w';
     if nargout == 3, v = (1-x.^2);  v(2:2:end) = -v(2:2:end); end
-    [x w] = rescale(x,w,interval,a,b);
+    [x, w] = rescale(x,w,interval,a,b);
     return
 end
 
 % Choose an algorithm
 if (n < 100 && ~method_set) || any(strcmpi(method,{'fastsmall','rec'}))
-    [x w v] = rec(n,a,b); % REC ('fastsmall' is for backward compatibiilty)
+    [x, w, v] = rec(n,a,b); % REC ('fastsmall' is for backward compatibiilty)
 elseif strcmpi(method,'GW')
-    [x w v] = gw(n,a,b);  % GW  see [1]
+    [x, w, v] = gw(n,a,b);  % GW  see [1]
 elseif strcmpi(method,'GLR')  
-    [x w v] = glr(n,a,b); % GLR see [2]
+    [x, w, v] = glr(n,a,b); % GLR see [2]
+    w = w/sum(w);
 else
-    [x w v] = asy(n,a,b); % HT  see [3]
+    [x, w, v] = asy(n,a,b); % HT  see [3]
 end
 
 % Constant for weights
@@ -132,6 +134,10 @@ if a && b
             C = C + phi;
             phi = -(m+a)*(m+b)/(m+1)/(n-m)*phi;
             if abs(phi/C) < eps/100, break, end
+        end
+        if any(strcmpi(method,{'rec','fastsmall','GLR'}))
+            C = gamma(2+a)*gamma(2+b)/(gamma(2+a+b)*(a+1)*(b+1));
+            w = w/sum(w);
         end
     else
         C = gamma(n+a+1)*gamma(n+b+1)/gamma(n+a+b+1)/factorial(n);
