@@ -187,45 +187,6 @@ $Revision: 1.1.6.23 $  $Date: 2010/03/31 18:23:33 $
   </xsl:choose>
 </xsl:template>
 
-
-<!-- Figure and model snapshots and equations -->
-<!-- Original -
-<xsl:template match="img[@class='equation']">
-  <img>
-    <xsl:attribute name="src"><xsl:value-of select="@src"/></xsl:attribute>
-    <xsl:attribute name="alt"><xsl:value-of select="@alt"/></xsl:attribute>
-  </img>
-</xsl:template>
-- End original -->
-<!-- MathJax -
-<xsl:template match="img[@class='equation']">
-  <span class="MathJax_Preview">
-      <img>
-          <xsl:attribute name="src"><xsl:value-of select="@src"/></xsl:attribute>
-          <xsl:attribute name="alt"><xsl:value-of select="@alt"/></xsl:attribute>
-      </img>
-  </span>
-  <script type="math/tex">
-    <xsl:call-template name="removeDollars">
-      <xsl:with-param name="string" select="@alt"/>
-    </xsl:call-template>
-  </script>
-</xsl:template>
-<xsl:template name="removeDollars">
-  <xsl:param name="string"/>
-    <xsl:choose>
-      <xsl:when test="concat(substring($string,1,2),substring($string,string-length($string)-1,2))='$$$$'">
-        <xsl:value-of select="substring($string,3,string-length($string)-4)"/>
-      </xsl:when>
-      <xsl:when test="concat(substring($string,1,1),substring($string,string-length($string),1))='$$'">
-        <xsl:value-of select="substring($string,2,string-length($string)-2)"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$string"/>
-      </xsl:otherwise>
-    </xsl:choose>
-</xsl:template>
-- End MathJax -->
 <!-- Nick Hale -->
 <xsl:template match="img[@class='equation']">
   <xsl:value-of select="@alt"/>

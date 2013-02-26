@@ -211,6 +211,15 @@ elseif nargs == 2
             filetext = strrep(filetext,png,gif);
         end
         
+        if strcmp(filename,'BouncingBall')
+            png = 'BouncingBall_01.png';
+            gif = 'BouncingBall_01.gif';
+            try
+                eval(['!cp BouncingBall.gif ' webdir 'examples/ode/html/BouncingBall_01.gif'])
+            end
+            filetext = strrep(filetext,png,gif);
+        end
+        
         if strcmp(filename,'InteractiveInterp')
             png = 'InteractiveInterp_01.png';
             gif = 'InteractiveInterp_01.gif';
@@ -449,7 +458,7 @@ if listing
     if ~shtml
         fprintf(fid,'Here is the complete list of Chebfun Examples and the sections they belong to.<br/><br/>\n');
     end
-    fprintf(fid,'<table style="padding-left:15px; cellpadding:2px; width:700px;">\n');
+    fprintf(fid,'<table style="padding-left:15px; cellpadding:2px; width:100%;">\n');
     ms = 0;
     for k = 1:numel(mfile)
          if isempty(desc{k}), continue, end

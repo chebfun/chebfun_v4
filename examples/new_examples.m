@@ -55,6 +55,7 @@ if ischar(examples) || numel(examples) == 1 % Copy to the new exmaples page
             text = strrep(text,'style="float:left;','style="float:right;');
             text = strrep(text,'tempOX26Le','style="float:left;');
             text = strrep(text,'thumbnail','thumbnailleft');
+            text = strrep(text,'<span><br/>','<span style="margin-left:-300px;">br/>');
         end
         
         fprintf(fid,text);
@@ -73,8 +74,8 @@ dir1 = examples{1}; file1 = examples{2};
 newline = '\n'     ;
 % str1 = '        <h3>New Examples:</h3>';
 str1 = '';
-str2 = '        <div style="background:#fff; color:#000; height:170px;">';
-str3 = '            <div style="float:left; background:#fff; width:410px; padding:1px 0px; height:160px">';
+str2 = '        <div style="background:#fff; color:#000; height:160px;">';
+str3 = '            <div style="float:left; background:#fff; width:605px; padding:1px 0px; height:160px">';
 str = [str1,newline,str2,newline,str3];
 fprintf(fid,str);
 
@@ -129,14 +130,14 @@ end
 
 str = {};
 str{1} = '            </div>';
-str{2} = '            <div style="float:right; width:220px; padding-left:10px; padding-right:16px;">';
-str{3} = '                <b class="rtop2"><b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b></b>';
+str{2} = '            <div style="float:right; width:220px; padding-left:0px; padding-right:0px; margin-top:-10px;">';
+str{3} = '                <b class="rtop2" style="margin-top:5px"><b class="r1"></b><b class="r2"></b><b class="r3"></b><b class="r4"></b></b>';
 str{4} = ['                <div style="float:right; background:',color{1},'; width:190; height:160px; padding-left:10px; padding-right:10px; align:center;">'];
 str{5} = ['                    <a class="thumbnail" name="imageLink" href="',examplesdir,dir1,'/html/',file1,'.shtml">',...
                               '<img src="',examplesdir,dir1,'/html/',file1,'_',defaultimage,'.png" height="150px" width="200px" name="exampleImage" style="margin-top:5px;" border="0px">',...
-                              '<span><br/><img src="',examplesdir,dir1,'/html/',file1,'_',defaultimage,'.png" name="exampleImageB"/></span></a>'];
+                              '<span style="margin-left:-300px;"><br/><img src="',examplesdir,dir1,'/html/',file1,'_',defaultimage,'.png" name="exampleImageB"/></span></a>'];
 str{6} = '                </div>';
-str{7} = '                <b class="rbottom2"><b class="r4"></b><b class="r3"></b><b class="r2"></b><b class="r1"></b></b>';
+str{7} = '                <b class="rbottom2" style="margin-top:160px;"><b class="r4"></b><b class="r3"></b><b class="r2"></b><b class="r1"></b></b>';
 str{8} = '            </div>';
 str{9} = '      </div>';
 
