@@ -2,6 +2,8 @@ function h = rdivide(f,g)
 %./   Pointwise chebfun2v right divide.
 %
 % Right componentwise divide for a chebfun2v. 
+%
+% See also LDIVIDE.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

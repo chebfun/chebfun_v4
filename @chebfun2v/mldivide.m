@@ -1,7 +1,11 @@
 function h = mldivide(f,g)
-%/   Chebfun2v left divide.
+%\  Chebfun2v left divide.
 %
-% Left divide for a chebfun2v. Only allowed to divide by scalars.
+%  c\F Divides each component of a chebfun2v by the scalar c. 
+%
+%  Only allowed to divide a chebfun2v by a scalar.
+%
+% See also MRDIVIDE.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

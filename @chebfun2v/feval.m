@@ -1,7 +1,7 @@
 function vals = feval(f,x,y,varargin)
 %FEVAL pointwise evaluate a chebfun2v.
 %
-%  F(X,Y) returns the evaluation of F at the coordinate (X,Y)
+%  F(X,Y) returns the evaluation of F at the coordinate (X,Y).
 %
 % See also SUBSREF.
 

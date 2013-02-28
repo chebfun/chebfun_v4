@@ -1,8 +1,15 @@
 function f = mtimes( f , g ) 
 %*  mtimes for chebfun2v. 
 %
-% THIS FUNCTION NEEDS MORE THOUGHT.  
+%  c*F or F*c multiplies each component of a chebfun2v by a scalar. 
+% 
+%  A*F multiplies the vector of functions F by the matrix A assuming that 
+%  size(A,2) == size(F,1).
 %
+%  F*G calculates the inner product between F and G if size(F,3) ==
+%  size(G,1). If the sizes are appropriate then F*G = dot(F.',G).
+%
+% See also TIMES.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information. 

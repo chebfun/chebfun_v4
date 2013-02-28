@@ -7,7 +7,7 @@ function f = cross(F,G)
 % 
 %   CROSS(F,G) = F(1)*G(2) - F(2)*G(1)
 % 
-% where F = (F(1);F(2)) and G = (G(1);G(2)).  If F and G have three
+% where F = (F(1);F(2)) and G = (G(1); G(2)).  If F and G have three
 % components then it returns the chebfun2v representing the 3D cross
 % product. 
 

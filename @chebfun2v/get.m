@@ -6,6 +6,7 @@ function val = get(f,propName)
 %   'XCHEB'  - The chebfun2 in the first component.
 %   'YCHEB'  - The chebfun2 in the second component.
 %   'ZCHEB'  - The chebfun2 in the third component.
+%   'isTransposed' - Is the chebfun2v a column or row vector?
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
@@ -26,10 +27,6 @@ switch propName
         val = f.ycheb;
     case 'zcheb'
         val = f.zcheb;
-    case 'autodom'
-        val = f.autodom;
-    case 'init'
-        val=f.init;
     case 'isTransposed'
         val=f.isTransposed;
     otherwise

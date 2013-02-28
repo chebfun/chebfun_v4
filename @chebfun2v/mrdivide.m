@@ -1,7 +1,11 @@
 function h = mrdivide(f,g)
 %/   Chebfun2v right divide.
 %
-% Right divide for a chebfun2v. Only allowed to divide by scalars. 
+% F/c divides each component of a chebfun2v by a scalar. 
+% 
+% Only allowed to divide by scalars. 
+% 
+% See also MLDIVIDE.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
