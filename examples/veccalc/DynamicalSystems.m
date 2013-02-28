@@ -1,23 +1,23 @@
 %% Classification of dynamical systems
-% Georges Klein, 4th of March 2013
+% Georges Klein, 4th March 2013
 
 %%
-% (Chebfun2 example VectorCalculus/DynamicalSystems.m)
+% (Chebfun2 example veccalc/DynamicalSystems.m)
+% [Tags: #dynamical systems, #phase portrait, #Hopf bifurcation, #Chebfun2]
 
 %%
-% A linear dynamical system in $\mathbf{R}^2$ for the trajectory $x(t)$ can 
-% be written as  
-% $$ x'(t) = A x(t), \qquad x(0) = x_0,$$ 
-% where $A$ is a $2\times 2$ matrix. If $\lambda_1$ and $\lambda_2$ are the
-% eigenvalues of $A$ (assuming that $A$ is diagonalizable) with eigenvectors 
-% $v_1$ and $v_2$, then the solution is given by
-% $$ x(t) = \alpha_1 e^{\lambda_1 t} v_1 + \alpha_2 e^{\lambda_2 t} v_2.$$
-% The solution thus depends heavily on the eigenvalues of A; see also [1].
+% A linear dynamical system in $\mathbf{R}^2$ for the trajectory $x(t)$ can be
+% written as $$ x'(t) = A x(t), \qquad x(0) = x_0,$$ where $A$ is a $2\times 2$
+% matrix. If $\lambda_1$ and $\lambda_2$ are the eigenvalues of $A$ (assuming
+% that $A$ is diagonalizable) with eigenvectors $v_1$ and $v_2$, then the
+% solution is given by $$ x(t) = \alpha_1 e^{\lambda_1 t} v_1 + \alpha_2
+% e^{\lambda_2 t} v_2.$$ The solution thus depends heavily on the eigenvalues of
+% A; see also [1].
 %
-% If both eigenvalues have positive real part, then the solution must
-% diverge. The following code uses Chebfun2 first to plot the phase plane 
-% with quiver, then to plot two individual trafectories. 
-% The initial value of each solution is marked with a dot.
+% If both eigenvalues have positive real part, then the solution must diverge.
+% The following code uses Chebfun2 first to plot the phase plane with quiver,
+% then to plot two individual trafectories. The initial value of each solution
+% is marked with a dot.
 
 LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
 
@@ -31,11 +31,11 @@ plot(y,'r',LW,2), plot(y(0),'r.',MS,20)
 plot(y,'g',LW,2), plot(y(0),'g.',MS,20), hold off
 
 %%
-% Since at least one of the eigenvalues has positive real part, the phase 
-% portrait has an unstable fixed point (source, repellor) at the origin.
-% If both eigenvalues have nonpositive real part, then the solution can not 
-% grow infinitely large in absolute value. The origin is here a stable fixed 
-% point (sink, attractor).
+% Since at least one of the eigenvalues has positive real part, the phase
+% portrait has an unstable fixed point (source, repellor) at the origin. If both
+% eigenvalues have nonpositive real part, then the solution can not grow
+% infinitely large in absolute value. The origin is here a stable fixed point
+% (sink, attractor).
 
 A = [-2 0; 0 -2];
 G = A*g;
@@ -46,8 +46,7 @@ plot(y,'r',LW,2), plot(y(0),'r.',MS,20)
 plot(y,'g',LW,2), plot(y(0),'g.',MS,20), hold off
 
 %%
-% When both eigenvalues are purely imaginary, the phase portrait has a
-% center:
+% When both eigenvalues are purely imaginary, the phase portrait has a center:
 
 A = [0 1;-2 0]; eig(A)
 G = A*g;
@@ -58,10 +57,10 @@ plot(y,'r',LW,2), plot(y(0),'r.',MS,20)
 plot(y,'g',LW,2), plot(y(0),'g.',MS,20), hold off
 
 %%
-% Of course, not every matrix has only real or imaginary eigenvalues. Assume 
-% the entries of $A$ are real, the remaining cases of complex eigenvalues are 
-% most conveniently described by the trace and the determinant of the matrix A, 
-% and all cases can be summarized in the following picture:
+% Of course, not every matrix has only real or imaginary eigenvalues. Assume the
+% entries of $A$ are real, the remaining cases of complex eigenvalues are most
+% conveniently described by the trace and the determinant of the matrix A, and
+% all cases can be summarized in the following picture:
 
 s1 = .3*scribble('saddles');
 s2 = .3*scribble('unstable');
@@ -112,12 +111,12 @@ plot(y,'g',LW,2), plot(y(0),'g.',MS,20), hold off
 
 %%
 % Let us now look at nonlinear dynamical systems, beginning with a Hopf
-% bifurcation system, which contains a stable circular limit cycle. 
-% In the first case, every solution tends a the circle. The system is
-% $$ \frac{\mathrm{d} x}{\mathrm{d} t} = bx - y - (x^2+y^2)x  $$
-% $$ \frac{\mathrm{d} y}{\mathrm{d} t} = x + by - (x^2+y^2)y. $$
-% With $b>0$, this Hopf bifurcation is supercritical, meanig that the 
-% trajectories move toward the limit cycle rather than away.
+% bifurcation system, which contains a stable circular limit cycle. In the first
+% case, every solution tends a the circle. The system is $$ \frac{\mathrm{d}
+% x}{\mathrm{d} t} = bx - y - (x^2+y^2)x  $$ $$ \frac{\mathrm{d} y}{\mathrm{d}
+% t} = x + by - (x^2+y^2)y. $$ With $b>0$, this Hopf bifurcation is
+% supercritical, meanig that the trajectories move toward the limit cycle rather
+% than away.
 
 b = .3;
 G = chebfun2v(@(x,y) b*x-y-(x.^2+y.^2).*x ,@(x,y) x+b*y-(x.^2+y.^2).*y);
@@ -130,13 +129,12 @@ s = chebfun('s',[0 2*pi]);
 plot(sqrt(0.3)*exp(1i*s),'k',LW,2), hold off
 
 %%
-% The following lightly modified Hopf bifurcation is subcritical, it has an 
-% unstable closed orbit limit cycle when $b<0$,
-% $$ \frac{\mathrm{d} x}{\mathrm{d} t} = bx - y + (x^2+y^2)x   $$
-% $$ \frac{\mathrm{d} y}{\mathrm{d} t} = x + by + (x^2+y^2)y.  $$
-% If the initial value is on
-% that cycle, then the solution remains thereon; a small perturbation
-% causes the solution to moce away.
+% The following lightly modified Hopf bifurcation is subcritical, it has an
+% unstable closed orbit limit cycle when $b<0$, $$ \frac{\mathrm{d}
+% x}{\mathrm{d} t} = bx - y + (x^2+y^2)x   $$ $$ \frac{\mathrm{d} y}{\mathrm{d}
+% t} = x + by + (x^2+y^2)y.  $$ If the initial value is on that cycle, then the
+% solution remains thereon; a small perturbation causes the solution to moce
+% away.
 
 b = -1.2;
 G = chebfun2v(@(x,y) b*x-y+(x.^2+y.^2).*x, @(x,y) x+b*y+(x.^2+y.^2).*y);
@@ -149,10 +147,10 @@ plot(sqrt(1.2)*exp(1i*s),'k'), hold off
 
 
 %%
-% As a last continuous dynamical system, we show a Van der Pol oscillator,
-% which has a stable cycle with a more interesting shape; see also [3]. 
-% The oscillator evolves in time according to
-% $$ \frac{\mathrm{d}^2 y}{\mathrm{d}^2 t} - \frac{\mathrm{d} y}{\mathrm{d} t} \mu (a-y^2) + y = 0. $$
+% As a last continuous dynamical system, we show a Van der Pol oscillator, which
+% has a stable cycle with a more interesting shape; see also [3]. The oscillator
+% evolves in time according to $$ \frac{\mathrm{d}^2 y}{\mathrm{d}^2 t} -
+% \frac{\mathrm{d} y}{\mathrm{d} t} \mu (a-y^2) + y = 0. $$
 
 a = 0.1; mu = 10;
 F = chebfun2v(@(x,y) y, @(x,y) -x+mu*y.*(a-x.^2));
@@ -163,9 +161,9 @@ plot(y,'r',LW,2), plot(y(0),'r.',MS,20)
 plot(y,'g',LW,2), plot(y(0),'g.',MS,20), hold off
 
 %%
-% So far we have been looking at continuous dynamical systems. There is
-% also a discrete analogue, sometimes called maps. 
-% One out of a huge catalogue is the Tinkerbell map; see [3].
+% So far we have been looking at continuous dynamical systems. There is also a
+% discrete analogue, sometimes called maps. One out of a huge catalogue is the
+% Tinkerbell map; see [3].
 
 a = .9; b = -.6013; c =2; d = 0.50;
 G = chebfun2v(@(x,y) x.^2-y.^2+a*x+b*y,@(x,y) 2*x.*y+c*x+d*y,2*[-1 1 -1 1]);
@@ -182,10 +180,10 @@ title('Tinkerbell map')
 
 %% 
 % References:
-%%
+%
 % [1] R. Abraham and J. E. Marsden, \textit{Foundations of Mechanics},
 % Benjamin–Cummings, 1978.
-%% 
+% 
 % [2] http://en.wikipedia.org/wiki/Van_der_Pol_oscillator
-%%
+%
 % [3] http://en.wikipedia.org/wiki/Tinkerbell_map

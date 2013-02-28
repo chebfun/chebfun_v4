@@ -2,7 +2,8 @@
 % Nick Hale, 4th March 2013
 
 %%
-% (Chebfun example Optimization/Rosenbrock.m)
+% (Chebfun example opt/Rosenbrock2.m)
+% [Tags: #Rosenbrock, #optimization, #Chebfun2]
 
 LW = 'LineWidth';  lw = 1;
 MS = 'MarkerSize'; ms = 20;
@@ -26,8 +27,8 @@ hold on, plot(minx(1), minx(2), '.k', MS, ms), hold off
 %% 2. A function with several local minima
 % The example [2] explained how Chebfun computed these results: by taking maxima
 % along 1D slices, and then taking the maxiumum of these results. For functions
-% with multiple local minima, like the one below, this meant the 'splitting' 'on'
-% flag needed to be set.
+% with multiple local minima, like the one below, this meant the 'splitting'
+% 'on' flag needed to be set.
 
 f = @(x,y) exp(x-2*x.^2-y.^2).*sin(6*(x + y + x.*y.^2));
 
@@ -65,10 +66,8 @@ plot(g, 'r', LW, 2), shg
 
 %%
 % References:
-
-%%
+%
 % [1] H. H. Rosenbrock, "An automatic method for finding the greatest or least
 % value of a function", Computer Journal, 3 (1960), 175-184.
-
-%%
+%
 % [2] http://www.chebfun.org/examples/opt/html/Rosenbrock.shtml

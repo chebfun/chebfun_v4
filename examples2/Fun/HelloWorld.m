@@ -5,9 +5,9 @@
 % (Chebfun2 Example: Fun/HelloWorld.m)
 
 %%
-% In any programming language printing "Hello World" to the command line
-% is always a first example.  Here we display "Hello" using
-% Chebfun2. Can you adapt it to display "Hello World" instead? 
+% In any programming language printing "Hello World" to the command line is
+% always a first example.  Here we display "Hello" using Chebfun2. Can you adapt
+% it to display "Hello World" instead?
 
 %% 
 % Here is a matrix that encodes the word "Hello", from Exercise 9.3 of [1]. 
@@ -19,26 +19,25 @@ A(6:13,34:35)=1; A(6:13,38:39)=1; A(6:7,36:37)=1; A(12:13,36:37)=1;
 spy(A)  % spy plot
 
 %%
-% The matrix is size 15 by 40 and hence, of rank at most 15.  In this case
-% it is of rank 10 because there are five zero rows:
+% The matrix is size 15 by 40 and hence, of rank at most 15.  In this case it is
+% of rank 10 because there are five zero rows:
 
 rank(A)
 
 %% Constructing a chebfun2 from discrete data
-% Usually Chebfun2 is passed a function of two variables, but it can also
-% deal with discrete data such as a matrix, with syntax such as 
-% chebfun2(A). The matrix A, of size m by n, is assumed 
-% to contain data values of a function sampled at a m by n Chebyshev 
-% tensor grid, and the resulting chebfun2 interpolates A, for example:
+% Usually Chebfun2 is passed a function of two variables, but it can also deal
+% with discrete data such as a matrix, with syntax such as chebfun2(A). The
+% matrix A, of size m by n, is assumed to contain data values of a function
+% sampled at a m by n Chebyshev tensor grid, and the resulting chebfun2
+% interpolates A, for example:
 
 f = chebfun2(A);           % chebfun2
 X = chebpolyval2(f);       % evaluate on a grid
 norm(A - X)                % interpolation error
 
 %% Saying Hello
-% We can also pass the Chebfun2 constructor an integer k so that the 
-% resulting chebfun2 is of rank exactly k. Here is one way to 
-% say "Hello": 
+% We can also pass the Chebfun2 constructor an integer k so that the resulting
+% chebfun2 is of rank exactly k. Here is one way to say "Hello":
     
 m = 500; 
 x = linspace(-1,1,m);

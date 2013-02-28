@@ -22,10 +22,10 @@ release = false;
 nargs = nargin;
 
 webdir = '/common/htdocs/www/maintainers/hale/chebfun/';
-if ~isunix || ~exist(webdir,'dir')
-    error(['This file is designed only to run on a Linux box ' ...
-        'which has access to the Oxford webserver.']);
-end
+% if ~isunix || ~exist(webdir,'dir')
+%     error(['This file is designed only to run on a Linux box ' ...
+%         'which has access to the Oxford webserver.']);
+% end
 
 currUser = getenv('USER');
 adminUser = 'hale';
@@ -736,7 +736,11 @@ fclose(fid0);
 if shtml
 
     curdir = pwd;
-    cd(fullfile(webdir,'examples'))  
+    try
+        cd(fullfile(webdir,'examples'))  
+    catch
+        return
+    end
     
     for j = 1:numel(dirs)
         fprintf(['Uploading ',dirs{j},'. Please wait ... '])

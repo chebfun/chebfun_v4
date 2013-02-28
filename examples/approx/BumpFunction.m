@@ -2,15 +2,15 @@
 % Alex Townsend, 4th March 2013 
 
 %%
-% (Chebfun2 example Approximation/BumpFunctions.m)
+% (Chebfun2 example approx/BumpFunction.m)
+% [Tags: #bump, #gaussian, #Chebfun2]
 
 %% Adding bumps
-% A Gaussian bump happens to be a rank-1 function because it can be written
-% as a product of univariate functions [2]. That is,
-% $$e^{-\gamma(x^2+y^2)} = e^{-\gamma x^2}e^{-\gamma y^2}.$$
-% To illustrate Chebfun2, we can shift these Gaussian bump functions to 
-% arbitrary locations and add them together. In this experiment we add up 
-% 100 of them:
+% A Gaussian bump happens to be a rank-1 function because it can be written as a
+% product of univariate functions [2]. That is, $$e^{-\gamma(x^2+y^2)} =
+% e^{-\gamma x^2}e^{-\gamma y^2}.$$ To illustrate Chebfun2, we can shift these
+% Gaussian bump functions to arbitrary locations and add them together. In this
+% experiment we add up 100 of them:
 
 set(0,'DefaultLineLineWidth',2); FS='FontSize'; fs=16;
 
@@ -27,19 +27,17 @@ for n = 1:100
 end
 
 %% The surprise 
-% Generically, the sum of 100 rank-1 functions is a rank-100 function. 
-% However, in this case the numerical rank is significantly less than the
-% mathematical rank:
+% Generically, the sum of 100 rank-1 functions is a rank-100 function. However,
+% in this case the numerical rank is significantly less than the mathematical
+% rank:
 
 fprintf('Rank of function is %u\n',rank(f))
 
 %% Why the surprise?
-% If you write the bivariate function in terms of its singular value 
-% decomposition [2] $$f(x,y)   \approx   \sum  \sigma_k \phi_k(x)
-% \psi_k(y),$$
-% the singular values decay supergeometrically. This phenomenon is 
-% exploited in the Fast Gauss Transform [1]. Here is a plot showing the
-% supergeometric decay: 
+% If you write the bivariate function in terms of its singular value
+% decomposition [2] $$f(x,y)   \approx   \sum  \sigma_k \phi_k(x) \psi_k(y),$$
+% the singular values decay supergeometrically. This phenomenon is exploited in
+% the Fast Gauss Transform [1]. Here is a plot showing the supergeometric decay:
 
 clf, semilogy(svd(f))
 title('Decay of singular values of f',FS,fs),legend('SVD')
@@ -47,15 +45,15 @@ xlabel('Index',FS,fs),ylabel('Magnitude',FS,fs)
 
 %% Playing around
 % Once we have a function we can also see what it looks like along a
-% cross-section (like along $y=\pi/12$), which is represented by a smooth 
+% cross-section (like along $y=\pi/12$), which is represented by a smooth
 % chebfun:
 
 plot(f(:,pi/12)), title('Cross-section along y=\pi/12',FS,fs)
 
 %%
 % Or, we can calculate its maximum along each column, a function which is
-% represented by a piecewise smooth chebfun with several points of
-% discontinuity of its slope:
+% represented by a piecewise smooth chebfun with several points of discontinuity
+% of its slope:
 
 plot(max(f)), title('Maximum in the y-direction',FS,fs)
 xlabel('x',FS,fs), ylabel('Maximum',FS,fs)
@@ -73,4 +71,4 @@ title('Global maximum of f',FS,fs)
 % Comput., 12 (1991), pp. 79-94.
 %%
 % [2] A. Townsend and L. N. Trefethen, An extension of Chebfun to two
-% dimensions, submitted, 2013. 
+% dimensions, submitted, 2013.
