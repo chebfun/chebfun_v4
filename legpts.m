@@ -1,4 +1,4 @@
-function [x w v] = legpts(n,int,meth)
+function [x w v t] = legpts(n,int,meth)
 %LEGPTS  Legendre points and Gauss-Legendre Quadrature Weights.
 %  LEGPTS(N) returns N Legendre points X in (-1,1).
 %
@@ -50,6 +50,7 @@ function [x w v] = legpts(n,int,meth)
 interval = [-1,1];
 method = 'default';
 method_set = nargin == 3;
+t = [];
 
 % Deal with trivial cases
 if n < 0
@@ -57,9 +58,9 @@ if n < 0
 elseif n == 0   % Return empty vector if n == 0
     x = []; w = []; v = []; return
 elseif n == 1   % n == 1    
-    x = 0;  w = 2;  v = 1;  return
+    x = 0;  w = 2;  v = 1; t = 1; return
 elseif n == 2   % n == 2
-    x = [-1 1]/sqrt(3); w = [1 1]; v = [1 -1]; return
+    x = [-1 1]/sqrt(3); w = [1 1]; v = [1 -1]; t = acos(x); return
 end
 
 % Check the inputs
@@ -90,9 +91,11 @@ elseif strcmpi(method,'GW')
 elseif strcmpi(method,'GLR')
    [x w v] = alg0_Leg(n);   % GLR see [2]
 else
-   [x w v] = asy(n);        % HT  see [3]
+   [x w v t] = asy(n);        % HT  see [3]
 end
 v = abs(v); v = v./max(v); v(2:2:end) = -v(2:2:end);
+
+if nargout == 4 && isempty(t), t = acos(x); end
 
 % Rescale to arbitrary interval
 if ~all(interval == [-1 1])
@@ -133,7 +136,7 @@ end
 
 %% -------------------- Routines for REC algorithm ------------------
 
-function [x w v] = rec(n)
+function [x, w, v] = rec(n)
 
     % Asymptotic formula (WKB) - only positive x.
     if mod(n,2), s = 1; else s = 0; end 
@@ -173,7 +176,7 @@ end
 
 %% -------------------- Routines for GLR algorithm ------------------------
 
-function [x w v] = alg0_Leg(n) % Driver for GLR
+function [x, w, v] = alg0_Leg(n) % Driver for GLR
 
     % Compute coefficients of P_m(0), m = 0,..,N via recurrence relation.
     Pm2 = 0; Pm1 = 1; 
@@ -185,9 +188,9 @@ function [x w v] = alg0_Leg(n) % Driver for GLR
         x((n-1)/2) = 0;                              % Zero is a root
         ders((n+1)/2) = n*Pm2;                       % P'(0)    
     else                                             % n is even
-        [x(n/2+1) ders(n/2+1)] = alg2_Leg(P,n);      % Find first root
+        [x(n/2+1), ders(n/2+1)] = alg2_Leg(P,n);      % Find first root
     end       
-    [x ders] = alg1_Leg(x,ders);          % Other roots and derivatives
+    [x, ders] = alg1_Leg(x,ders);          % Other roots and derivatives
 
     w = 2./((1-x.^2).*ders.^2)';          % Quadrature weights
     v = 1./ders;                          % Barycentric weights
@@ -196,7 +199,7 @@ end
 
 % ---------------------
 
-function [roots ders] = alg1_Leg(roots,ders)  % Main algorithm for GLR
+function [roots, ders] = alg1_Leg(roots,ders)  % Main algorithm for GLR
 
     n = length(roots);
     if mod(n,2), N = (n-1)/2; s = 1; else N = n/2; s = 0; end   
@@ -254,7 +257,7 @@ end
 
 % ---------------------
 
-function [x1 d1] = alg2_Leg(Pn0,n) % Find the first root (note P_n'(0)==0)
+function [x1, d1] = alg2_Leg(Pn0,n) % Find the first root (note P_n'(0)==0)
 
     % Approximate first root via asymptotic formula
     k = ceil(n/2); theta = pi*(4*k-1)/(4*n+2);
@@ -289,25 +292,25 @@ end
 
 %% -------------------- Routines for ASY algorithm ------------------------
 
-function [x w v] = asy(n)
+function [x w v t] = asy(n)
 
     % Determine switch between interior and boundary regions
     nbdy = min(10,floor(n/2));
 
     % Interior
-    [x w v] = asy1(n,nbdy);   
+    [x w v t] = asy1(n,nbdy);   
 
     % Boundary
-    [xbdy wbdy vbdy] = asy2(n,nbdy); 
+    [xbdy wbdy vbdy tbdy] = asy2(n,nbdy); 
     
     % Combine
     bdyidx1 = n-(nbdy-1):n; bdyidx2 = nbdy:-1:1;
-    x(bdyidx1) = xbdy;  w(bdyidx1) = wbdy; v(bdyidx1) = vbdy;
-    x(bdyidx2) = -xbdy; w(bdyidx2) = wbdy; v(bdyidx2) = vbdy;
+    x(bdyidx1) = xbdy;  w(bdyidx1) = wbdy; v(bdyidx1) = vbdy; t(bdyidx1) = tbdy;
+    x(bdyidx2) = -xbdy; w(bdyidx2) = wbdy; v(bdyidx2) = vbdy; t(bdyidx2) = -tbdy;
     
 end
 
-function [x w v] = asy1(n,nbdy)
+function [x w v t] = asy1(n,nbdy)
     % Interior method
   
     % Approximate roots via asymptotic formula. (Tricomi)
@@ -361,9 +364,9 @@ function [x w v] = asy1(n,nbdy)
 
     % Flip using symetry for negative nodes
     if s
-        x = [-x(end:-1:2) x].';  w = [w(end:-1:2) w];  v = -[v(end:-1:2) v].';
+        x = [-x(end:-1:2) x].';  w = [w(end:-1:2) w];  v = -[v(end:-1:2) v].'; t = [-t(end:-1:2) t].';
     else
-        x = [-x(end:-1:1) x].';  w = [w(end:-1:1) w];  v = [-v(end:-1:1) v].';
+        x = [-x(end:-1:1) x].';  w = [w(end:-1:1) w];  v = [-v(end:-1:1) v].';  t = [-t(end:-1:1) t].';
     end
     
 end
@@ -458,7 +461,7 @@ function [vals ders] = feval_asy1(n,t,mint,flag)
 
 end
 
-function [x w v] = asy2(n,npts)
+function [x w v t] = asy2(n,npts)
     % Boundary method
 
     if npts > ceil((n+1)/2), error('CHEBFUN:legpts:asy2:N', ...
@@ -512,7 +515,7 @@ function [x w v] = asy2(n,npts)
         gtdt = .5*(-csc(t).^2 + 1./t.^2);
         tB0 = .25*gt;
         A1 = gtdt/8 - 1/8*gt./t - gt.^2/32;
-        tB1t = tB1(t); A2t = A2(t); % Higher terms
+        tB1t = tB1(t); A2t = A2(t);    % Higher terms
 
         % VALS:
         vals = Ja + Jb.*tB0/rho + Ja.*A1/rho^2 + Jb.*tB1t/rho^3 + Ja.*A2t/rho^4;
@@ -520,7 +523,8 @@ function [x w v] = asy2(n,npts)
         vals2 = Jab + Jbb.*tB0/rho2 + Jab.*A1/rho2^2 + Jbb.*tB1t/rho2^3 + Jab.*A2t/rho2^4;
         
         % Higher terms (not needed for n > 1000).
-        tB2t = tB2(t); A3t = A3(t);
+        tB2t = tB2(t);
+        A3t = A3(t);
         vals = vals + Jb.*tB2t/rho^5 + Ja.*A3t/rho^6;
         vals2 = vals2 + Jbb.*tB2t/rho2^5 + Jab.*A3t/rho2^6;
         
@@ -530,7 +534,7 @@ function [x w v] = asy2(n,npts)
         % Common factors
         denom = sqrt(t./sin(t));
         ders = ders.*denom;
-        vals = vals.*denom;     
+        vals = vals.*denom;  
        
     end
 
@@ -542,9 +546,9 @@ function Ja = besseltaylor(t,z)
     kmax = min(ceil(abs(log(eps)/log(norm(t,inf)))),30);
     H = bsxfun(@power,t,0:kmax).';
     % Compute coeffs in Taylor expansions about z (See NIST 10.6.7)
-    [nu JK] = meshgrid(-kmax:kmax, z);
+    [nu, JK] = meshgrid(-kmax:kmax, z);
     Bjk = besselj(nu,JK,0);
-    nck = abs(pascal(floor(1.25*kmax),1)); nck(1,:) = []; % nchoosek
+    nck = abs(pascal(floor(1.25*kmax),1)); nck(1,:) = []; % nchoosek    
     AA = [Bjk(:,kmax+1) zeros(npts,kmax)];
     fact = 1;
     for k = 1:kmax
