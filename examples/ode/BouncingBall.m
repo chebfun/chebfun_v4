@@ -33,7 +33,7 @@ v_0y(i) = v0*sin(theta);    % Initial velocity in the y direction
 
 while ( theta > 0.15 )
     
-    % Time in which the ball impacts the ground:
+    % Time at which the ball impacts the ground:
     t_ground(i) = (v_0y(i)+sqrt(v_0y(i)^2+2*g*y0))/g;
     
     % x coordinate of the impact point:
@@ -43,7 +43,7 @@ while ( theta > 0.15 )
     x = chebfun('x', [x0, x_ground(i)]);
     y = y0 + (-g/(2*v_0x^2))*(x-x0).^2 + (v_0y(i)/v_0x)*(x-x0);
     
-    % Pecewise chebfun:
+    % Piecewise chebfun:
     trajectory = [trajectory ; y];
     
     % Velocity at the impact point:
@@ -68,7 +68,7 @@ final_part = chebfun(@(y) 0*y);
 trajectory = [trajectory ; final_part];
 
 %%
-% I shift the trajectory vertically of a quantity equal to the radius r in order
+% I shift the trajectory vertically by a quantity equal to the radius r in order
 % to visualize the impact with the ground:
 trajectory = trajectory + r;
 
@@ -86,10 +86,10 @@ m = 0.313;  % Weight of the ball in gr
 
 %%
 % Plot the result nicely:
-axis([0,900,0,25])
+axis([0, 900 , 0, 25])
 
-% Since I cant set axis equal to see the ball I must increase the eccentricity
-a = 20;
+% Since I can't set axis equal to see the ball I must increase the eccentricity.
+a = 25;
 b = 1;
 M = [];
 for j = 1:i
