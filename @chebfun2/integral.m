@@ -18,6 +18,7 @@ else
     if ~isa(varargin{1},'chebfun')
         I = integral2(f,varargin{:});
     else
+        x = varargin{1}; 
        % line integral along a complex valued chebfun. 
         if ( ~isreal(x) )
             % integral along the path of the complex-valued chebfun.
