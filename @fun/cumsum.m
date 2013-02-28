@@ -52,6 +52,7 @@ if strcmp(g.map.name,'linear')
         g.vals = g.vals*g.map.der(0); % From change of variables to [-1,1]
         g.coeffs = g.coeffs*g.map.der(0);
         g = cumsum_unit_interval(g);
+        g = g - g.vals(1);
         gsing = fun(0,g.map.par(1:2));
     elseif any(g.exps<=-1)
         if nargout > 1

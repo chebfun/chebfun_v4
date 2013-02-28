@@ -92,7 +92,7 @@ switch method
 end
 
 % Ensure P_n has length n+1
-p = simplify(p,1e-14,'force');   % Final valid coeff will be O(1) anyway
+% p = simplify(p,1e-14,'force');   % Final valid coeff will be O(1) anyway
 
 
 % Adjust orientation
