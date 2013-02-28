@@ -40,18 +40,18 @@ norm(A - X)                % interpolation error
 % resulting chebfun2 is of rank exactly k. Here is one way to 
 % say "Hello": 
     
-[m,n]=size(A);
-x = linspace(-1,1,n); y = linspace(-1,1,m);
-[xx yy]=meshgrid(x,y);
+m = 500; 
+x = linspace(-1,1,m);
+[xx yy]=meshgrid(x);
+[ss tt]=chebpts2(m,m);
 
 B = flipud(A);             % flip because of matrix indexing
 for k = [1 3 5 7 10]
     f = chebfun2(B,k);
-    X = chebpolyval2(f);
+    X = f(ss,tt);
     figure
     contour(xx,yy,X,.1:.1:.99), axis off
     title(sprintf('Rank %u',k),'fontsize',16)
-    pause(.1)
 end
 
 %% 
