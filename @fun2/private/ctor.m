@@ -2,6 +2,9 @@ function g = ctor( g , op , ends , varargin )
 % CTOR  fun2 constructor
 % See also FUN2
 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 ni = nargin;
 if ni == 0, return; end;  % return empty fun2.
 if ni == 1

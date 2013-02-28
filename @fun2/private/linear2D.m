@@ -7,6 +7,9 @@ function map = linear2D(corners)
 % MAP.INV is the inverse map. 
 % MAP.ID is a string that identifies the map. 
 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Extract out input. 
 a = corners(1); b = corners(2); c=corners(3); d=corners(4);
 

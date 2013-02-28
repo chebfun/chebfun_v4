@@ -4,6 +4,9 @@ function g = ctor(g , opx , opy, ends , varargin )
 
 % Chebfun2v is just vector of chebfun2 objects.
 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % no ends supplied so use preferences.
 pref = chebfun2pref;
 threecomponents = 0;

@@ -1,6 +1,9 @@
 function g = nonadaptive_ctor(g , op , ends , vectorize, varargin )
 % CTOR  chebfun2 constructor
 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 rank = varargin{1};
 pref2 = chebfun2pref;
 % Extract out properties from structures.

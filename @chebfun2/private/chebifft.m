@@ -1,5 +1,9 @@
 function v = chebifft(X)
 % Vectorised chebfun ifft.
+
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
     lc = size(X,1);
     ii = 2:lc-1;
     X(ii,:) = 0.5*X(ii,:);

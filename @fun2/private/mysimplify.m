@@ -2,7 +2,7 @@ function values = mysimplify(values,hscale,vscale,tol,force)
 % This function removes leading Chebyshev coefficients that are below
 % epsilon, relative to the verical scale stored in vscale
 
-% Copyright 2011 by The University of Oxford and The Chebfun Developers.
+% Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 if nargin < 5, force = false; end

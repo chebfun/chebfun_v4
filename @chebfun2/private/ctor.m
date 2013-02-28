@@ -1,6 +1,9 @@
 function g = ctor(g , op , ends , varargin )
 % CTOR  chebfun2 constructor
 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % At the moment a Chebfun2 is really just a fun2.
 
 % no ends supplied so use preferences.

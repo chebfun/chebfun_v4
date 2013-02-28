@@ -1,5 +1,8 @@
 function [PivotValue,PivotElement,Rows,Cols,ifail] = nonadapt_ACA(A,rank)
 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 % Set up output variables.
 [nx,ny]=size(A);
 width = min(nx,ny);         % Use to tell us how many pivots we can take.

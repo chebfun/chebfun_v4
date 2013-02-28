@@ -4,6 +4,9 @@ function [bol,wzero] = singlesigntest(F)
 %
 % wzero = 1 if a zero has been found. 
 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
 
 
 bol = 0 ;   % assume false. 
