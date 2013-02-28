@@ -2,7 +2,7 @@ function chebsnake2(f,nodes,alfa)
 %CHEBSNAKE2   Chebfun2 snake game on a surface.
 %   This is the Chebfun2 analogue of Chebfun's chebsnake.
 % 
-%   CHEBSNAKE2() Feed the snake with more and more 1D interpolation nodes, but
+%   CHEBSNAKE2 Feed the snake with more and more 1D interpolation nodes, but
 %   avoid that it hits the boundary or itself! Use the arrow keys to
 %   control the snake. Any other key will quit the game.
 %
@@ -20,7 +20,9 @@ function chebsnake2(f,nodes,alfa)
 %   decreases it (default = 1).
 %
 %   To prevent you from neglecting your actual work, the game speed
-%   increases with the total number of achieved points...
+%   increases with the total number of achieved points.
+%
+% See also CHEBSNAKE.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
