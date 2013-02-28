@@ -7,7 +7,7 @@ function I = integral(f,varargin)
 % I = INTEGRAL(F,g), returns the integral of a chebfun2 along the curve
 % defined by the complex-valued chebfun g. 
 % 
-% See also INTEGRAL1, SUM2, QUAD2D.
+% See also INTEGRAL2, SUM2, QUAD2D.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

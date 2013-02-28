@@ -7,6 +7,10 @@ function I = integral2(f,varargin)
 % I = INTEGRAL2(F,[a b c d]) integrate F over the rectangle region [a b] x
 %     [c d] provide this rectangle is in the domain of F.
 %
+% I = INTEGRAL2(F,C) computes the volume under the surface F over the region D with
+% boundary C. C should be a complex-valued chebfun that represents a closed
+% curve. 
+%
 % See also INTEGRAL, SUM2, QUAD2D.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
