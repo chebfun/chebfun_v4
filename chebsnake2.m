@@ -44,6 +44,7 @@ function chebsnake2(f,nodes,alfa)
     end     
 
     LW = 'LineWidth'; lw = 2;
+    MS = 'MarkerSize'; ms = 10;
     res = 0.15; len = 5; dom = domain(-1,1); d = 1;
     food = @() res*(round((1.8*rand-.9)/res)+1i*round((1.8*rand-.9)/res));
     pause on
@@ -80,10 +81,11 @@ function chebsnake2(f,nodes,alfa)
         s = linspace(res*(1-len),0,len) + 1i*eps;
         hs1 = plot3(real(s(1:end-1)),imag(s(1:end-1)),f(real(s(1:end-1)),imag(s(1:end-1))),'b-',LW,lw); hold on
         hs2 = plot3(real(s(1:end-1)),imag(s(1:end-1)),f(real(s(1:end-1)),imag(s(1:end-1))),'bo',LW,lw);
-        hs3 = plot(s(1:end-1),'k-',LW,lw/2);
+        hs1s = plot(s(1:end-1),'k-',LW,lw/2);
+        hs2s = plot(s(1:end-1),'ko',LW,lw/2);
         fd = food();
-        hf = plot3(real(fd),imag(fd),f(real(fd),imag(fd)),'md','MarkerSize',10,'MarkerFaceColor','m');
-        hf2 = plot(real(fd),imag(fd),'kd','MarkerSize',10/2,'MarkerFaceColor','k');
+        hf = plot3(real(fd),imag(fd),f(real(fd),imag(fd)),'md',MS,ms,'MarkerFaceColor','m');
+        hfs = plot(real(fd),imag(fd),'kd',MS,ms/2,'MarkerFaceColor','k');
         ht = plot(8,0);                     % dummy handle
         title('Control the snake with arrow keys. Quit with any other key.');
         axis([-1,1,-1,1,0,maxf]); shg;
@@ -101,7 +103,7 @@ function chebsnake2(f,nodes,alfa)
             y = (1-t)*s(1:end-1)+t*s(2:end);
             if nodes==1,
                 c = chebfun(y);
-                c = c.vals; 
+                c = c(chebpts(5*length(y)));
             elseif nodes==2,
                 fhd = min(ceil(0.4*sqrt(length(y))),4);
                 c = bary(linspace(-1,1,5*length(y)),y,linspace(-1,1,...
@@ -114,9 +116,10 @@ function chebsnake2(f,nodes,alfa)
                 delete(hs1(k));
             end
             hs1 = plot3(real(c),imag(c),f(real(c),imag(c)),'b-',LW,lw);
-            delete(hs2); delete(hs3);
+            delete(hs2,hs1s,hs2s);
             hs2 = plot3(real(y),imag(y),f(real(y),imag(y)),'bo',LW,lw);
-            hs3 = plot(y,'k-',LW,lw/2);
+            hs1s = plot(c,'k-',LW,lw/2);
+            hs2s = plot(y,'k.',LW,lw/2);
             shg; 
             %pause(max(0.01,0.03-toc)/alfa); 
             tic;
@@ -135,7 +138,7 @@ function chebsnake2(f,nodes,alfa)
                 title(['Points : ' num2str(pts)]);
                 fd = food();
                 set(hf,'XData',real(fd),'YData',imag(fd),'ZData',f(real(fd),imag(fd)));
-                set(hf2,'XData',real(fd),'YData',imag(fd));
+                set(hfs,'XData',real(fd),'YData',imag(fd));
             end
         end
         for k = 1:numel(ht)
