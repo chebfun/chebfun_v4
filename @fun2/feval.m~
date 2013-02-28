@@ -1,0 +1,98 @@
+function v = feval(f,x,y,varargin)
+% FEVAL(F,X), evaluates a fun2 (x,y)
+
+pref2 = chebfun2pref;
+
+if nargin == 1, error('FUN2:feval:nargin','Not enough inputs'); end
+
+if nargin == 2 && isnumeric(x)
+    if size(x,2) == 2
+        y = x(:,2); x = x(:,1);
+    elseif size(x,1) == 2
+        y = x(2,:); x = x(1,:);
+    else
+        error('FUN2:feval:nargin','Not enough inputs');
+    end
+end
+
+if ~all(size(x)==size(y))
+    if length(x) == 1
+        x = repmat(x(:),size(y));
+    elseif length(y) == 1
+        y = repmat(y(:),size(x));
+    else
+        error('FUN:feval:inputs','inconsistent inputs')
+    end
+end
+
+takediag = 0 ;
+if nargin == 3 && isnumeric(x) && isnumeric(y)         
+%     nx = size(x,1); ny=size(y,2);
+       if min(size(x))>1 && all(size(x) == size(y))
+          % at this point x and y should come from meshgrid. 
+           x = x(1,:); y=y(:,1);
+       else
+           takediag = 1;    % take diagonal at the end. 
+           nx = size(x,1);  % is x a column or row.
+       end
+       
+%       else
+%           x = x(1,:); y=y(:,1);
+%       end
+end
+
+
+% x is row and y should be column.
+x = transpose(x(:)); y = y(:);
+
+
+% Extract CUR factorisation. 
+C = get(f,'C'); R = get(f,'R'); Pivots = get(f,'U'); 
+% Evaluate columns and rows.
+if pref2.mode
+    c = C(y,:); r = R(:,x);
+else
+    % No chebfuns in column so just form funs. 
+%     c = zeros(length(y),size(C,2));
+    d = getdomain(f); 
+    
+    % evaluate columns. 
+    [xx,~,vv]=chebpts(size(C,1),[d(3) d(4)]);
+    vv = vv(:,ones(length(./(y(:,ones(1,length(xx)))-xx); repair = find(vv==inf); 
+    c=(vv.'*C)./sum(vv);
+    if ~isempty(repair), c = C(repair,:); end 
+    
+     % evaluate rows
+    [xx,~,vv]=chebpts(size(R,2),[d(1) d(2)]);
+    vv = vv./(x-xx); repair = find(vv==inf); 
+    r=(R*vv)./sum(vv);
+    if ~isempty(repair), r = R(:,repair); end 
+%     for jj=1:size(C,2)
+%        tmp = fun(C(:,jj),[d(3) d(4)]);
+%        c(:,jj) = feval(tmp,y);
+%     end
+%     r = zeros(size(R,1),length(x));
+%     for jj=1:size(R,1)
+%        tmp = fun(R(jj,:),[d(1) d(2)]);
+%        r(jj,:) = feval(tmp,x);
+%     end
+end
+
+% catch for the zero function. 
+if f.rank == 0, Pivots = 1; end
+
+% Evaluate the approximant.
+v = c*(diag(1./Pivots)*r);
+
+if takediag == 1 
+    v = diag(v); 
+    if nx>1
+        v = v(:); 
+    else
+        v = v(:)';
+    end
+end
+% v = v (1:nx,1:ny);
+
+end
+    
