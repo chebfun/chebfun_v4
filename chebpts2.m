@@ -1,12 +1,15 @@
 function [xx,yy] = chebpts2(nx,ny,varargin)
-%CHEBPTS2 bivariate Chebyshev points
+%CHEBPTS2 Chebyshev tensor points
 %
-% [XX YY] = CHEBPTS2(NX,NY) constructs an NX by NY grid of bivariate
+% [XX YY] = CHEBPTS2(N) constructs an N by N grid of Chebyshev 
+% tensor points on [-1 1]^2. 
+%
+% [XX YY] = CHEBPTS2(NX,NY) constructs an NX by NY grid of
 % Chebyshev tensor points on [-1 1]^2.  
 %
-% [XX YY] = CHEBPTS2(NX,NY,D) constructs an NX by NY grid of bivariate
+% [XX YY] = CHEBPTS2(NX,NY,D) constructs an NX by NY grid of 
 % Chebyshev tensor points on the rectangle [a b] x [c d], where 
-%  D = [a b c d].
+% D = [a b c d].
 %
 % See also CHEBPTS.
 
