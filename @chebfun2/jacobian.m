@@ -4,6 +4,9 @@ function J = jacobian(f,g)
 % J = JACOBIAN(F,G) returns the Jacobian determinant of the Jacobian
 % matrix. 
 %
+% Note we return the determinant of the Jacobian matrix and not the
+% Jacobian matrix itself. 
+%
 % See also CHEBFUN2V/JACOBIAN. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
