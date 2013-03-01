@@ -2,7 +2,7 @@ function g = ctor( g , op , ends , varargin )
 % CTOR  fun2 constructor
 % See also FUN2
 
-% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 ni = nargin;
@@ -229,25 +229,20 @@ else
             if size(Cols,1)>1 && size(Rows,2)>1
                 % See if the slices are resolved.
                 newCols = mysimplify(Cols,hscale,scl,tol);
-                if length(newCols) < length(Cols),ResolvedCols=1;else ResolvedCols=0;end
-                %             lenc = length(Cols); lenc = 2.^(log2(lenc-1) - 1)+1;   % truncate columns if we went too far.
-                %             while length(newCols) <= lenc
-                %                 lenc = 2.^(log2(lenc-1) - 1)+1;
-                %                 Cols = Cols(1:2:end,:);
-                %             end
+                if size(newCols,1) < size(Cols,1),ResolvedCols=1;else ResolvedCols=0;end
                 lenc = 2.^ceil(log2(size(newCols,1))) + 1;
-                %             lenc = size(newCols,1);
-                Cols = wrap(Cols,lenc);
+                lenc = max(lenc,length(PivotValue));
+
                 newRows = mysimplify(Rows.',hscale,scl,tol).';
-                if length(newRows) < length(Rows),ResolvedRows=1;else ResolvedRows=0;end
-                %             lenr = length(Rows); lenr = 2.^(log2(lenr-1) - 1)+1;    % truncate rows if we went too far.
-                %             while length(newRows) <= lenr
-                %                 lenr = 2.^(log2(lenr-1) - 1)+1;
-                %                 Rows = Rows(:,1:2:end);
-                %             end
+                if size(newRows,2) < size(Rows,2),ResolvedRows=1;else ResolvedRows=0;end
                 lenr = 2.^ceil(log2(size(newRows,2))) + 1;
-                %             lenr = size(newRows,1);
-                Rows = wrap(Rows.',lenr).';
+                lenr = max(lenr,length(PivotValue));
+                
+                Cols = wrap(Cols,lenc);
+                Rows = wrap(Rows.',lenr).';                
+                
+                % truncate the rank if we can 
+                                
                 ResolvedSlices = ResolvedRows & ResolvedCols;
                 if strike >= 3, ResolvedSlices =1; end   %If the function is 0+noise then pass along as resolved.
             end
@@ -324,15 +319,16 @@ else
                 end
             end
         end
-        % Simplify now to any length.
-        %         if norm(Cols)~=0   % in case we were given the zero function.
-        %           Cols = mysimplify(Cols,hscale,scl,tol);
-        %         end
-        %         if norm(Rows)~=0
-        %           Rows = mysimplify(Rows.',hscale,scl,tol).';
-        %         end
-        %           Cols = wrap(Cols,size(nCols,1));
-        %           Rows = wrap(Rows.',size(nRows,2)).';
+        % Simplify to any length:
+        if norm(Cols)~=0   % in case we were given the zero function.
+            Cols = mysimplify(Cols,hscale,scl,tol);
+        end
+        if norm(Rows)~=0
+            Rows = mysimplify(Rows.',hscale,scl,tol).';
+        end
+%         Cols = wrap(Cols,size(newCols,1));
+%         Rows = wrap(Rows.',size(newRows,2)).';
+        
         
         % Now slices and columns are resolved make chebfuns.
         if pref2.mode

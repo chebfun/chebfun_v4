@@ -5,6 +5,9 @@ function J = jacobian(F)
 % associated to the vector-valued chebfun2v F. The chebfun2v must have two
 % components. 
 %
+% Note we return the determinant of the Jacobian matrix and not the
+% Jacobian matrix itself. 
+%
 % See also CHEBFUN2/GRADIENT. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.

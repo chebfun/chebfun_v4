@@ -23,7 +23,7 @@ pass(j) = (abs(f(r,s) - fun.feval(r,s))<tol);j=j+1;
 
 % Are we evaluating on arrays correctly
 r = rand(10,1); s = rand(10,1); [rr ss]=meshgrid(r,s);
-pass(j) = (norm((f(r,s) - fun.feval(r,s)))<tol);j=j+1;
+pass(j) = (norm((f(r,s) - fun.feval(r,s)))<2*tol);j=j+1;
 pass(j) = (norm((f(rr,ss) - fun.feval(rr,ss)))<10*tol);j=j+1; % on arrays as well. 
 
 % Evaluating at Chebyshev points. 

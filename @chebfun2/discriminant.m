@@ -1,10 +1,10 @@
 function H = discriminant(f,x,y,varargin)
 %DISCRIMINANT the determinant of Hessian of a chebfun2 at (x,y) 
 %
-% H = DISCRIMANT(F,x,y) returns the determinant of the Hessian of F at
+% H = DISCRIMINANT(F,x,y) returns the determinant of the Hessian of F at
 % (x,y).  The gradient of F should be zero at (x,y). 
 % 
-% H = DISCRIMANT(F,G,x,y) returnes the determinant of the 'border' Hessian
+% H = DISCRIMINANT(F,G,x,y) returnes the determinant of the 'border' Hessian
 % of F at (x,y).
 %
 % Note that we cannot represent the Hessian matrix because we do not allow
