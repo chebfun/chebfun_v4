@@ -244,7 +244,10 @@ else
                 % truncate the rank if we can 
                                 
                 ResolvedSlices = ResolvedRows & ResolvedCols;
-                if strike >= 3, ResolvedSlices =1; end   %If the function is 0+noise then pass along as resolved.
+                if strike >= 3
+                    ResolvedSlices =1;
+                    Cols = 0; Rows = 0; PivotValue=0; 
+                end   %If the function is 0+noise then pass along as resolved.
             end
             
             
