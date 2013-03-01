@@ -10,15 +10,15 @@
 % the unit sphere, which is obtained by rotating $\sqrt{1-x^2}$ defined on
 % $[-1,1]$ around the x-axis.
 
-x = chebfun('x');
-f = sqrt(1-x.^2);
-plot(f)
-axis equal
-snapnow
-cylinder(f);
-[xx,yy,zz] = cylinder(f);
-surf(xx,yy,2*zz-1)
-axis equal
+% x = chebfun('x');
+% f = sqrt(1-x.^2);
+% plot(f)
+% axis equal
+% snapnow
+% cylinder(f);
+% [xx,yy,zz] = cylinder(f);
+% surf(xx,yy,2*zz-1)
+% axis equal
 
 %%
 % An even simpler example is a cone, which is constructed by rotating a linear
@@ -98,8 +98,8 @@ set(h(1), 'visible', 'off')
 colormap(gray)
 view(0,10)
 theta = (0:12)/12*2*pi;
-plot3(cos(theta),sin(theta),.25*ones(size(theta)),'g.')
-plot3(fls(.4)/2*cos(theta),fls(.4)/2*sin(theta),.42*ones(size(theta)),'r.')
-plot3(fls(.4)/2*cos(theta),fls(.4)/2*sin(theta),.08*ones(size(theta)),'y.')
+plot3(cos(theta),sin(theta),.01*ones(size(theta)),'g.')
+plot3(fls(.4)/2*cos(theta),fls(.4)/2*sin(theta),.35*ones(size(theta)),'r.')
+plot3(fls(.4)/2*cos(theta),fls(.4)/2*sin(theta),-.35*ones(size(theta)),'y.')
 
 
