@@ -51,7 +51,7 @@ if isempty(argin)
 end
 
 if ( isa(f,'chebfun2') )
-    if ( ( nargin == 1 ) || ( ~isa(argin{1},'chebfun2') ) ) % surf(f,...)
+    if ( ( nargin == 1 ) || ( nargin > 1 && ~isempty(argin) && ~isa(argin{1},'chebfun2') ) || ( nargin == 3 && isempty(argin))) % surf(f,...)
         % Get domain.
         rect = f.corners;
         x = chebfun2(@(x,y) x,rect); y = chebfun2(@(x,y) y,rect);
