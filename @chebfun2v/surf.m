@@ -4,6 +4,8 @@ function varargout = surf(f,varargin)
 % SURF(F) is the surface plot of F, where F is a chebfun2v with three
 % components.
 %
+% SURF(F,'-') also shows the seams of the parameterisation on the surface. 
+%
 % SURF(F,...) allows for the same plotting options as Matlab's SURF
 % command.
 %
