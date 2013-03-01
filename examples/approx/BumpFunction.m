@@ -12,7 +12,7 @@
 % Gaussian bump functions to arbitrary locations and add them together. In this
 % experiment we add up 100 of them:
 
-set(0,'DefaultLineLineWidth',2); FS='FontSize'; fs=16;
+FS='FontSize'; fs=16;
 
 gam=100; j=1;
 f = chebfun2(0);
