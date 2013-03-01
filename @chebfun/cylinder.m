@@ -9,7 +9,7 @@ function varargout = cylinder(r)
 %   revolution. SURF(F) displays the cylinder.
 %
 %   Omitting output arguments causes the cylinder to be displayed with a SURF
-%   command and no outputs to be returned.
+%   command and no outputs are returned.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

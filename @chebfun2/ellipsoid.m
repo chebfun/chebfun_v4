@@ -1,5 +1,6 @@
 function varargout = ellipsoid(a,b,c)
-%ELLIPSOID Generate ELLIPSOID
+%ELLIPSOID Generate an ellipsoid-like surface. Not necessarily an
+%ellipsoid.
 %
 %  ELLIPSOID(A,B,C), where A, B, and C are chebfun2 objects on the domain 
 %  [0 pi]x[0 2*pi] plots the "ELLIPSOID" of semi axis lengths A(th,phi), 
@@ -12,13 +13,16 @@ function varargout = ellipsoid(a,b,c)
 %  F = ELLIPSOID(A,B,C) returns the chebfun2v representing the ELLIPSOID 
 %  SURF(F) plots the ELLIPSOID. 
 %
+%  Omitting output arguments causes the ELLIPSOID command to be displayed 
+%  with a SURF command and no outputs are returned.
+%
 % For the ellipsoid: 
 %   a = chebfun2(@(th,phi) 1+0*th,[0 pi 0 2*pi]);
-%   ellipsoid(a,2*a,3*a)
+%   F = ellipsoid(a,2*a,3*a); surf(F)
 %
 % For a badly shaped ship: 
 %   a = chebfun2(@(th,phi) th,[0 pi 0 2*pi])
-%   ellipsoid(a,2*a,cos(2*a)+.25)
+%   F = ellipsoid(a,2*a,cos(2*a)+.25); surf(F)
 %
 % See also SPHERE, CYLINDER.
 

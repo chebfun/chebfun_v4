@@ -1,5 +1,5 @@
 function varargout = sphere(r)
-%SPHERE Generate sphere
+%SPHERE Generate a spherical surface. Not necessarily a sphere.
 %
 %  SPHERE(R), where R is a chebfun2 on the domain [0 pi]x[0 2*pi] plots 
 %  the "sphere" of radius R(th,phi).
@@ -10,15 +10,18 @@ function varargout = sphere(r)
 %  F = SPHERE(R) returns the chebfun2v representing the sphere of radius R.
 %  SURF(F) plots a sphere of radius R. 
 %
-% For the sphere: 
+%   Omitting output arguments causes the SPHERE command to be displayed 
+%   with a SURF command and no outputs are returned.
+%
+% For the unit sphere: 
 %   r = chebfun2(@(th,phi) 1+0*th,[0 pi 0 2*pi]);
-%   sphere(r)
+%   F = sphere(r);   surf(F)
 %
 % For a sea shell:
 %   r = chebfun2(@(th,phi) phi,[0 pi 0 2*pi]);
-%   sphere(r)
+%   F = sphere(r); surf(F)
 % 
-% See also CYLINDER.
+% See also CYLINDER, ELLIPSOID.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
