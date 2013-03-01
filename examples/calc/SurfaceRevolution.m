@@ -1,24 +1,22 @@
 %% Surfaces of revolution
-% Georges Klein, 20th February 2013
+% Georges Klein, 4th March 2013
 
-% (Chebfun example calc/CylinderDemo.m)
-% [Tags: #calculus, #surface of revolution]
+% (Chebfun2 example calc/CylinderDemo.m)
+% [Tags: #Chebfun2, #calculus, #surface of revolution]
 
 %%
 % A surface of revolution can be created by rotating a planar generator curve
 % around an axis lying in the same plane as the curve. A classical example is
 % the unit sphere, which is obtained by rotating $\sqrt{1-x^2}$ defined on
-% $[-1,1]$ around the x-axis.
+% $[-1,1]$ around the x-axis. Here we have to rotate $\sqrt{1.0001-x^2}$
+% because Chebfun2 cannot represent functions with square roots
+% singularities. 
 
-% x = chebfun('x');
-% f = sqrt(1-x.^2);
-% plot(f)
-% axis equal
-% snapnow
-% cylinder(f);
-% [xx,yy,zz] = cylinder(f);
-% surf(xx,yy,2*zz-1)
-% axis equal
+x = chebfun('x');
+f = sqrt(1.0001-x.^2);
+plot(f), axis equal
+snapnow
+cylinder(f), axis equal
 
 %%
 % An even simpler example is a cone, which is constructed by rotating a linear
@@ -45,7 +43,7 @@ f = chebfun(@(x) 2.8*sin(0.2*x - 0.1) + 6.3, [-5 35]);
 ends = f.ends;
 [xx, yy, zz] = cylinder(f);
 zzstr = diff(ends)*zz + ends(1);
-surf(zzstr,fliplr(yy),xx)
+surf(zzstr,flipud(yy),xx)
 
 %%
 % Let us create yet another surface and study some of its properties within Chebfun.
@@ -53,7 +51,7 @@ surf(zzstr,fliplr(yy),xx)
 x = chebfun('x', [0 2*pi]);
 f = sqrt(4 + 2*sin(2*x));
 [xx, yy, zz] = cylinder(f);
-surf(xx,yy,2*pi*zz)
+surf(xx,yy,zz)
 
 %%
 % The volume of this object can be computed as $$ V = \pi \int_a^b f^2(x)\,
@@ -90,7 +88,7 @@ J = pi/2*sum(f.^4)
 % And a last one:
 fls = chebfun('1./(1+8*x.^2)');
 [xx, yy, zz] = cylinder(fls);
-surf(xx,yy,zz/2)
+surf(xx,yy,zz/4)
 axis equal
 hold on
 h = findobj('type', 'axes');
@@ -99,7 +97,6 @@ colormap(gray)
 view(0,10)
 theta = (0:12)/12*2*pi;
 plot3(cos(theta),sin(theta),.01*ones(size(theta)),'g.')
-plot3(fls(.4)/2*cos(theta),fls(.4)/2*sin(theta),.35*ones(size(theta)),'r.')
-plot3(fls(.4)/2*cos(theta),fls(.4)/2*sin(theta),-.35*ones(size(theta)),'y.')
-
+plot3(fls(.4)/2*cos(theta),fls(.4)/2*sin(theta),.17*ones(size(theta)),'r.')
+plot3(fls(.4)/2*cos(theta),fls(.4)/2*sin(theta),-.17*ones(size(theta)),'y.')
 
