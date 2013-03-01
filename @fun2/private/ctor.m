@@ -158,9 +158,13 @@ switch class(op)
         if (vectorize == 0) && all( size(op(m1*E,m2*E)) == [1 1])
             % sizes are not going to match so let's try with the vectorize
             % flag on.
-            warning('FUN2:CTOR:VECTORIZE','Function did not correctly evaluate on an array. Turning on the ''vectorize'' flag. Did you intend this? Use the ''vectorize'' flag in the chebfun2 constructor call to avoid this warning message.');
-            g = fun2(op,ends,'vectorize');
-            return;
+            if ~( numel(op(m1*E,m2*E))==1 && norm(op(m1*E,m2*E))==0 )
+                
+                
+                warning('FUN2:CTOR:VECTORIZE','Function did not correctly evaluate on an array. Turning on the ''vectorize'' flag. Did you intend this? Use the ''vectorize'' flag in the chebfun2 constructor call to avoid this warning message.');
+                g = fun2(op,ends,'vectorize');
+                return;
+            end
         elseif ( (vectorize == 0) && isempty(vscl) )
             % check for cases: @(x,y) x*y, and @(x,y) x*y'
             [xx yy]=meshgrid(ends(1:2),ends(3:4));
@@ -232,21 +236,21 @@ else
                 if size(newCols,1) < size(Cols,1),ResolvedCols=1;else ResolvedCols=0;end
                 lenc = 2.^ceil(log2(size(newCols,1))) + 1;
                 lenc = max(lenc,length(PivotValue));
-
+                
                 newRows = mysimplify(Rows.',hscale,scl,tol).';
                 if size(newRows,2) < size(Rows,2),ResolvedRows=1;else ResolvedRows=0;end
                 lenr = 2.^ceil(log2(size(newRows,2))) + 1;
                 lenr = max(lenr,length(PivotValue));
                 
                 Cols = wrap(Cols,lenc);
-                Rows = wrap(Rows.',lenr).';                
+                Rows = wrap(Rows.',lenr).';
                 
-                % truncate the rank if we can 
-                                
+                % truncate the rank if we can
+                
                 ResolvedSlices = ResolvedRows & ResolvedCols;
                 if strike >= 3
                     ResolvedSlices =1;
-                    Cols = 0; Rows = 0; PivotValue=0; 
+                    Cols = 0; Rows = 0; PivotValue=0;
                 end   %If the function is 0+noise then pass along as resolved.
             end
             
@@ -329,8 +333,8 @@ else
         if norm(Rows)~=0
             Rows = mysimplify(Rows.',hscale,scl,tol).';
         end
-%         Cols = wrap(Cols,size(newCols,1));
-%         Rows = wrap(Rows.',size(newRows,2)).';
+        %         Cols = wrap(Cols,size(newCols,1));
+        %         Rows = wrap(Rows.',size(newRows,2)).';
         
         
         % Now slices and columns are resolved make chebfuns.

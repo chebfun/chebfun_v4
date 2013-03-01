@@ -16,7 +16,7 @@ function N = normal(F,varargin)
 N = cross(diff(F,1,2),diff(F,1,1));
 
 if nargin > 1 
-    if strcmpi(unit,'unit')
+    if strcmpi(varargin{1},'unit')
         N = N./norm(N);
     else
         error('CHEBFUN:NORMAL','Second argument is not recognised.');
