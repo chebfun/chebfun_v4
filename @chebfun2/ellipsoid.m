@@ -1,5 +1,5 @@
 function varargout = ellipsoid(a,b,c)
-%ELLIPSOID Generate ELLIPSOID represented by chebfun2 or chebfun2v objects.
+%ELLIPSOID Generate ELLIPSOID
 %
 %  ELLIPSOID(A,B,C), where A, B, and C are chebfun2 objects on the domain 
 %  [0 pi]x[0 2*pi] plots the "ELLIPSOID" of semi axis lengths A(th,phi), 
@@ -16,7 +16,7 @@ function varargout = ellipsoid(a,b,c)
 %   a = chebfun2(@(th,phi) 1+0*th,[0 pi 0 2*pi]);
 %   ellipsoid(a,2*a,3*a)
 %
-% For a 'bad' looking ship: 
+% For a badly shaped ship: 
 %   a = chebfun2(@(th,phi) th,[0 pi 0 2*pi])
 %   ellipsoid(a,2*a,cos(2*a)+.25)
 %

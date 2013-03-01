@@ -1,5 +1,5 @@
 function varargout = sphere(r)
-%SPHERE Generate sphere represented by chebfun2 or chebfun2v objects.
+%SPHERE Generate sphere
 %
 %  SPHERE(R), where R is a chebfun2 on the domain [0 pi]x[0 2*pi] plots 
 %  the "sphere" of radius R(th,phi).

@@ -214,7 +214,7 @@ else
                 error('FUN2:CTOR','Function returned NaN when evaluated');
             end
             [PivotValue,PivotPos,Rows,Cols,ifail] = CompleteACA(vals,tol);
-            strike = 0;
+            strike = 1;
             while ifail && rk<=maxrank && strike < 3
                 rk=2^(floor(log2(rk))+1)+1;                % Double the sampling
                 [xx,yy]=chebpts2(rk,rk,ends);
