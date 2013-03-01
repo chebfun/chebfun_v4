@@ -136,8 +136,8 @@ help chebfun2/max2
 x = chebfun2(@(x,y) x, [-2 3 -4 4]);    % f(x,y) = x on [-2 3]x[-4 0]
 y = chebfun2(@(x,y) y, [-2 3 -4 4]);    % f(x,y) = y on [-2 3]x[-4 0]
 
-f = 1./( sqrt(.01 + x.^2 + y.^2) );
-plot(f)
+f = 1./( 2 + cos(.25 + x.^2.*y + y.^2) );
+contour(f)
 
 %% 1.7 WHAT TO DO NOW
 % To find out more about Chebfun2 you can continue reading this guide, or 

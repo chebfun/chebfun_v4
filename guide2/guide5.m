@@ -1,4 +1,4 @@
-%% CHEBFUN2 GUIDE 5: VECTOR CALCULUS
+%% CHEBFUN2 GUIDE 5: VECTOR CALCULUS AND DIFFERENTIAL GEOMETRY
 % A. Townsend, March 2013
 
 %% 5.1 WHAT IS A CHEBFUN2V? 
@@ -141,13 +141,79 @@ plot(y,'r'), hold on,
 quiver(F,'b'), axis equal
 title('The Duffing oscillator','FontSize',16)
 
-%% 5.6 MORE INFORMATION 
+%% 5.6 PARAMETRIC SURFACES
+% So far, we have been exploring chebfun2v objects with two components, but
+% to represent parametric surfaces, i.e. a surface in $R^3$ which
+% is defined by a parametric equation with two parameters, we will need a
+% third component. For example, we can represent the unit sphere via spherical 
+% coordinates as follows:
+
+th = chebfun2(@(th,phi) th, [0 pi 0 2*pi]);
+phi = chebfun2(@(th,phi) phi, [0 pi 0 2*pi]);
+
+x = sin(th).*cos(phi);
+y = sin(th).*sin(phi);
+z = cos(th); 
+
+% A chebfun2v with three components representing the unit sphere:
+F = [x;y;z]; 
+surf(F), axis equal
+
+%%
+% Above, we have formed a chebfun2v with three components by vertical 
+% concatenation of chebfun2 objects. For surfaces such as
+% cylinders, spheres, and ellipsoids we have overloaded the commands
+% CYLINDER, SPHERE, and ELLIPSOID to generate these surfaces for you. 
+% For example, a cylinder of radius 1 and height 5 can be constructed like this:
+
+h = 5; 
+r = chebfun(@(th) 1+0*th,[0 h]);
+F = cylinder(r);
+surf(F)
+
+%% 
+% An important class of parametric surfaces are surfaces of revolution,
+% which are formed by revolving a curve in the left half plane about the
+% z-axis. The CYLINDER command can be used to generate surfaces of 
+% revolution. For example: 
+
+f = chebfun(@(t) (sin(pi*t)+1.1).*t.*(t-10),[0 5]);
+F = cylinder(f);
+surf(F)
+
+%%
+% Given a chebfun2v representing a surface the normal can be computed, for
+% instance, here are the unit normal vectors to the torus:
+
+r1 = 1; r2 = 1/3;   % inner and outer radius
+d = [0 2*pi 0 2*pi];
+u = chebfun2(@(u,v) u,d);
+v = chebfun2(@(u,v) v,d);
+F = [-(r1+r2*cos(v)).*sin(u); (r1+r2*cos(v)).*cos(u); r2*sin(v)];  % torus
+
+surf(F), hold on
+quiver3(F(1),F(2),F(3),normal(F,'unit'),'numpts',10), axis equal
+
+%%
+% Once we have the surface normals we can compute the volume of the torus,
+% by applying Divergence theorem:
+% $$ \int\int_V\int div(G) dV = \int_S\int G\cdot d\mathbf{S},$$
+% where $div(G)=1$. 
+
+G = F./3;  % full 3D divergence of G is 1 because F = [x;y;z]. 
+integral2(dot(G,normal(F)))
+exact = 2*pi^2*r1*r2.^2
+
+%%
+% A warning about divergence... 
+
+%% 5.7 MORE INFORMATION 
 % More information on vector calculus in Chebfun2 is available in the
 % Chebfun2 Examples.  Vector calculus is also described in [Townsend & Trefethen
 % 2013]. For more details about particular commands type, for instance, 
 
 help chebfun2v/plus
 
-%% 5.7 REFERENCES
+%% 5.8 REFERENCES
 % [Townsend & Trefethen 2013] A. Townsend and L. N. Trefethen, An extension
 % of Chebfun to two dimensions, submitted. 
