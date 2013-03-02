@@ -51,6 +51,15 @@ elseif ( isa(f,'chebfun2v') && isa(g,'chebfun2v') )
     else
         error('CHEBFUN2v:times','Chebfun2v size mismatch.');
     end
+elseif isa(f,'chebfun2v') && isa(g,'chebfun2')
+%% chebfun2 * chebfun2v
+
+    % This functionality may be taken out of a release.  
+    f.xcheb = g.*f.xcheb; 
+    f.ycheb = g.*f.ycheb;
+    if ~isempty(f.zcheb)
+        f.zcheb = g.*f.zcheb;
+    end
 else  % error
     error('CHEBFUN2v:times:inputs','Chebfun2v can only times to a double');
 end

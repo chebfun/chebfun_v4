@@ -133,8 +133,8 @@ help chebfun2/max2
 % chebfun2 objects is by composing them together with operations such as 
 % '+', '-', '.*', and '.^'. For instance,
   
-x = chebfun2(@(x,y) x, [-2 3 -4 4]);    % f(x,y) = x on [-2 3]x[-4 0]
-y = chebfun2(@(x,y) y, [-2 3 -4 4]);    % f(x,y) = y on [-2 3]x[-4 0]
+x = chebfun2(@(x,y) x, [-2 3 -4 4]);    % f(x,y) = x on [-2 3]x[-4 4]
+y = chebfun2(@(x,y) y, [-2 3 -4 4]);    % f(x,y) = y on [-2 3]x[-4 4]
 
 f = 1./( 2 + cos(.25 + x.^2.*y + y.^2) );
 contour(f)

@@ -38,9 +38,16 @@ elseif ( isa(f,'chebfun2') && isa(g,'chebfun2') )
     % In general, we have to resample.
     f.fun2 = (f.fun2).*(g.fun2);
 
-elseif ( isa(f,'chebfun2') && isa(g,'chebfun2v') )
-     f = mtimes(f,g); 
+elseif isa(f,'chebfun2') && isa(g,'chebfun2v')
+%% chebfun2 * chebfun2v
 
+    % This functionality may be taken out of a release.  
+    g.xcheb = f.*g.xcheb; 
+    g.ycheb = f.*g.ycheb;
+    if ~isempty(g.zcheb)
+        g.zcheb = f.*g.zcheb;
+    end
+    f = g;
 else
 
     % We had a chebfun2.*unknown, so complain. 

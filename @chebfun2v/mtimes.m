@@ -117,8 +117,6 @@ elseif (isa(f,'chebfun2v') && isa(g,'chebfun2v') ) % dot product if dimensions a
      else
         error('CHEBFUN2v:mtimes:sizes','Inner dimensions must agree');
      end
-elseif isa(f,'chebfun2v') && isa(g,'chebfun2')
-    f.xcheb = g.*f.xcheb; f.ycheb = g.*f.ycheb; 
 else  % error
     error('CHEBFUN2v:mtimes:inputs','Chebfun2v can only mtimes to chebfun2v or double');
 end

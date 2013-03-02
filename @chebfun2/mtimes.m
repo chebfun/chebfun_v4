@@ -50,16 +50,6 @@ elseif isa(f,'chebfun2') && isa(g,'chebfun')
     f = C * (diag(1./f.fun2.U) * (R * g));
     f = simplify(f);
 
-elseif isa(f,'chebfun2') && isa(g,'chebfun2v')
-%% chebfun2 * chebfun2v
-
-    % This functionality may be taken out of a release.  
-    g.xcheb = f.*g.xcheb; 
-    g.ycheb = f.*g.ycheb;
-    if ~isempty(g.zcheb)
-        g.zcheb = f.*g.zcheb;
-    end
-    f = g;
 else
     error('CHEBFUN2:MTIMES','mtimes does not support this.');
 end
