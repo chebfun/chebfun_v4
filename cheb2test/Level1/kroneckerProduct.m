@@ -1,4 +1,6 @@
 function pass = kroneckerProduct
+% This function does outerproduct with * and kron. 
+% Alex Townsend, March 2013. 
 
 tol = max(chebfunpref('eps'),chebfun2pref('eps')); 
 
@@ -15,7 +17,8 @@ h2 = chebfun2(@(x,y) y.^2.*sin(x));
 
 pass(j) = (norm(h1 - kron(f', g)) < 10*tol); j = j + 1; 
 pass(j) = (norm(h2 - kron(f, g')) < 10*tol); j = j + 1;
-
+pass(j) = (norm(h1 - g*f') < 10*tol); j = j + 1; 
+pass(j) = (norm(h2 - f*g') < 10*tol); j = j + 1;
 %%
 
 % different domain in x and y  
@@ -29,7 +32,8 @@ h2 = chebfun2(@(x,y) y.^2.*sin(x), [d(3:4) d(1:2)]);
 
 pass(j) = ( norm(h1 - kron(f', g)) < 10*tol); j = j + 1; 
 pass(j) = (norm(h2 - kron(f, g')) < 10*tol); j = j + 1;
-
+pass(j) = ( norm(h1 - g*f') < 10*tol); j = j + 1; 
+pass(j) = (norm(h2 - f*g') < 10*tol); j = j + 1;
 %% 
 % Quasimatrices and rank 4 chebfun2
 
@@ -42,7 +46,8 @@ h2 = chebfun2(@(x,y) 1 + y.*cos(x) + y.^2.*sin(x) + y.^4.*x.^5);
 
 pass(j) = (norm(h1 - kron(F', G)) < 10*tol); j = j + 1; 
 pass(j) = (norm(h2 - kron(F, G')) < 10*tol); j = j + 1;
-
+pass(j) = (norm(h1 - G*F') < 10*tol); j = j + 1; 
+pass(j) = (norm(h2 - F*G') < 10*tol); j = j + 1;
 %% 
 % different domains and quasi matrices 
 
@@ -58,5 +63,6 @@ h2 = chebfun2(@(x,y) 1 + y.*cos(x) + y.^2.*sin(x) + y.^4.*x.^5,[d(3:4) d(1:2)]);
 
 pass(j) = (norm(h1 - kron(F', G)) < 10*tol); j = j + 1; 
 pass(j) = (norm(h2 - kron(F, G')) < 10*tol); j = j + 1;
-
+pass(j) = (norm(h1 - G*F') < 10*tol); j = j + 1; 
+pass(j) = (norm(h2 - F*G') < 10*tol); j = j + 1;
 end

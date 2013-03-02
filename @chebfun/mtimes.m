@@ -7,10 +7,17 @@ function Fout = mtimes(F1,F2)
 % returns the m-by-n matrix of pairwise inner products. F and G must have
 % the same domain.
 %
-% A = F*G, if F is Inf-by-m and G is m-by-Inf, results in a rank-m linop A
-% such that A*U = F*(G*U) for any chebfun U. 
+% A = F*G, if F is Inf-by-m and G is m-by-Inf constructs a
+% chebfun2 H of rank m such that
+%
+%  H(x,y) = F(y,1)*G(x,1) + ... + F(y,m)*G(x,m).
+%
+% See KRON for the linop representing the Fredholm operator with kernel 
+% H(x,y).
+%
+% See also KRON. 
 
-% Copyright 2011 by The University of Oxford and The Chebfun Developers. 
+% Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 % Quasi-matrices product
@@ -19,34 +26,9 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         error('CHEBFUN:mtimes:quasi','Quasimatrix dimensions must agree.')
     end
     if isinf(size(F1,1))     % outer product
-      splitstate = chebfunpref('splitting');
-      splitting off
-      sampstate = chebfunpref('resampling');
-      resampling on
-      Fout = 0;
-      d = domain(F1);
-      if ~(d==domain(F2))
-        error('CHEBFUN:mtimes:outerdomain',...
-          'Domains must be identical for outer products.')
-      end
-      for i = 1:size(F1,2)
-        f = F1(i);
-        g = F2(i);
-        op = @(u) f * (g*u);  % operational form
-                    
-        % Matrix form available only for unsplit functions.
-        if f.nfuns==1 && g.nfuns==1 
-          x = @(n) d(1) + (1+sin(pi*(2*(1:n)'-n-1)/(2*n-2)))/2*length(d);
-          C = cumsum(d);
-          w = C(end,:);  % Clenshaw-Curtis weights, any n
-          mat = @(n) matfun(n,w,x,f,g);
-        else
-          mat = [];
-        end
-        Fout = Fout + linop(mat,op,d);
-      end
-      chebfunpref('splitting',splitstate)
-      chebfunpref('resampling',sampstate)
+        % OuterProduct so form a chebfun2:
+        Fout = kron(F1,F2);   % Kronecker product
+
     else      % inner product
     
       funreturn = F1(1).funreturn || F2(1).funreturn;
@@ -353,10 +335,4 @@ else
     f.jacobian = an;
 end
 f.ID = newIDnum;
-end
-
-% ------------------------------------
-function m = matfun(n,w,x,f,g)
-    if iscell(n), n = n{1}; end
-    m = feval(f,x(n)) * (w(n) .* feval(g,x(n)).');
 end
