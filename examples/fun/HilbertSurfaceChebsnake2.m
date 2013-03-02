@@ -58,9 +58,9 @@ chebsnake2(f)
 %%
 % References:
 %
-% [1] http://www.chebfun.org/examples/Approximation/PrettyFunctions.shtml 
+% [1] http://www2.maths.ox.ac.uk/chebfun/examples/approx/html/PrettyFunctions.shtml 
 % 
-% [2] http://www.chebfun.org/examples/Approximation/BumpFunctions.shtml 
+% [2] http://www2.maths.ox.ac.uk/chebfun/examples/approx/html/BumpFunction.shtml
 % 
 % [3] D. Hilbert, Uber die stetige Abbildung einer Linie auf ein Flachenstuck, 
 %     Mathematische Annalen 38 (1891), 459-460.

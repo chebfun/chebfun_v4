@@ -65,3 +65,8 @@ end
 %             'WriteMode', 'append', 'DelayTime', 1e-5);
 %     end
 % end
+
+%%
+% References:
+% [Valentines Day] Anonymous, 14th February 2013, 
+% http://www2.maths.ox.ac.uk/chebfun/examples/fun/html/ValentinesDay.shtml

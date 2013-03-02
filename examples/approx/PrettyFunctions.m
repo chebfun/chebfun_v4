@@ -71,4 +71,4 @@ clf, waterfall(H,'-')
 % For plots of complex valued functions see the Phase portrait example [1].
 
 %% References
-% [1] http://www.chebfun.org/examples/complex/html/PhasePortraits.shtml
+% [1] http://www2.maths.ox.ac.uk/chebfun/examples/complex/html/PhasePortraits.shtml
