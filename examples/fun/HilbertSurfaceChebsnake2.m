@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun2 example fun/HilbertSurfaceChebsnake2.m)
-% [Tags: #chebsnake, #chebsnake2, #Hilbert, #Chebfun2]
+% [Tags: #Chebfun2, #chebsnake, #chebsnake2, #Hilbert]
 
 %%
 % Functions of two variables can be plotted easily in Chebfun2; see for instance

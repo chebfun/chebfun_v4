@@ -86,7 +86,7 @@ if all(max(ac(1:Tlen,:)) < Tmax)        % We have converged; now chop tail
         return
     end
      
-    %Tend = min(size(ac,1),Tend);    % hack to make things work on rare occasions. 
+    Tend = min(size(ac,1),Tend);    % hack to make things work on rare occasions. 
     ac = ac(1:Tend,:);                     % Restrict to coeffs of interest
     ac(1,:) = .225*tol;                    % <-- Why do we do this?
     for k = 2:Tend                       % Compute the cumulative max of

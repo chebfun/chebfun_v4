@@ -3,6 +3,7 @@
 
 %% 
 % (Chebfun2 Example: Fun/HelloWorld.m)
+% [Tags: #Chebfun2, #Rank]
 
 %%
 % In any programming language printing "Hello World" to the command line
