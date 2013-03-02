@@ -5,7 +5,7 @@ function pass = threecomponents
 
 %% Testing chebfun2v objects with three components. 
 
-tol = chebfun2pref('eps'); j = 1; 
+tol = 100*chebfun2pref('eps'); j = 1; 
 
 %% Different calls to the constructor. 
 f = chebfun2(@(x,y) x ); 
@@ -32,7 +32,7 @@ G = chebfun2v(f,2*f,3*f);
 H = F + G; 
 pass(j) = ( norm( H(1,1) - [2 3 4]' )  < tol ); j = j + 1; 
 H = G + 1; 
-pass(j) = ( norm( H(pi/6,1) - pi/6*[1 2 3]' -1 ) <tol ); j = j + 1; 
+pass(j) = ( norm( H(pi/6,1) - pi/6*[1 2 3]' - 1 ) <tol ); j = j + 1; 
 H = G + [1 2 3]; 
 pass(j) = ( norm( H(pi/6,1) - pi/6*[1 2 3]' -[1 2 3]' ) <tol ); j = j + 1; 
 
@@ -82,6 +82,7 @@ pass(j) = ( norm(div(curl(G))) < 10*tol); j = j + 1;
 pass(j) = ( norm(div(grad(f)) - lap(f)) < 10*tol); j = j + 1; 
 pass(j) = ( norm(curl(curl(G)) - ([grad(div(G));0] - lap(G))) < 10*tol); j = j + 1; 
 
+%%
 if all(pass) 
     pass = 1; 
 else

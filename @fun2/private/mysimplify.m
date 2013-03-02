@@ -86,7 +86,7 @@ if all(max(ac(1:Tlen,:)) < Tmax)        % We have converged; now chop tail
         return
     end
      
-    Tend = min(size(ac,1),Tend);    % hack to make things work on rare occasions. 
+    %Tend = min(size(ac,1),Tend);    % hack to make things work on rare occasions. 
     ac = ac(1:Tend,:);                     % Restrict to coeffs of interest
     ac(1,:) = .225*tol;                    % <-- Why do we do this?
     for k = 2:Tend                       % Compute the cumulative max of
@@ -96,7 +96,7 @@ if all(max(ac(1:Tlen,:)) < Tmax)        % We have converged; now chop tail
         repmat(length(coeffs)-(1:Tend)',1,size(ac,2));       % Bang/buck of chopping at each pos
     [ignored,Tchop] = max(Tbpb(3:Tend,:)); % Tchop = pos at which to chop
     Tchop = min(Tchop); 
-    if size(coeffs,1) - Tchop < size(coeffs,2), Tchop = 1; end % don't allow chopping so k < = min(m,n) 
+    if size(coeffs,1) - Tchop < size(coeffs,1), Tchop = 1; end % don't allow chopping so k < n 
     coeffs = coeffs(Tchop+3:end,:);         % Chop the tail
     v = chebifft(coeffs);            % Values at 2nd kind points
 

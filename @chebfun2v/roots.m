@@ -106,11 +106,11 @@ else
     for kk = 1:size(r,1)
     x0 = [r(kk,1),r(kk,2)].';dx=1; iter = 1; 
     warnstate = warning('off','CHEBFUN2:NEWTON');   % turn warnings off, and capture Newton failure instead. 
-    while ( norm(dx) > 10*tol && iter < 10 )      
+    while ( norm(dx) > 10*tol && iter < 15 )      
         dx = J(x0(1),x0(2)) \ -[feval(f,x0(1),x0(2));feval(g,x0(1),x0(2))];    % update
         x0 = dx + x0; iter = iter + 1;
     end
-    if norm(dx) < sqrt(tol) % we may have diverged so don't always update.
+    if norm(dx) < 10*sqrt(tol) % we may have diverged so don't always update.
         r(kk,:) = x0; 
     else
         NewtonFail = 1;

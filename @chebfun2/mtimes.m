@@ -8,13 +8,13 @@ function f = mtimes(f,g)
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+if ( isempty(f) || isempty(g) )  % just return an empty chebfun2
+    f = chebfun2; 
+    return;
+end
+
 if ( isa(f,'double') )   
 %% double * chebfun2
-   
-    if ( isempty(g) ) % check for empty chebfun2.
-        f=g;
-        return;
-    end
 
     % Times with double, and update scaling.
     g.fun2.U = (g.fun2.U)./f;
@@ -24,10 +24,6 @@ if ( isa(f,'double') )
 
 elseif ( isa(g,'double') )  
 %% chebfun2 * double
-
-    if ( isempty(f) ) % check for empty chebfun2.
-        return;
-    end
 
     % Times with double, and update scaling.
     f.fun2.U = (f.fun2.U)./g;
@@ -49,7 +45,13 @@ elseif isa(f,'chebfun2') && isa(g,'chebfun')
     end
     f = C * (diag(1./f.fun2.U) * (R * g));
     f = simplify(f);
-
+elseif isa(f,'chebfun2') && isa(g,'chebfun2v')
+    g.xcheb = f.*g.xcheb; 
+    g.ycheb = f.*g.ycheb;
+    if ~isempty(g.zcheb) 
+        g.zcheb = f.*g.zcheb;
+    end
+    f = g; 
 else
     error('CHEBFUN2:MTIMES','mtimes does not support this.');
 end

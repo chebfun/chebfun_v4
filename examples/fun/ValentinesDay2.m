@@ -40,7 +40,7 @@ view(180, 6)
 
 % Rotate:
 % M = [];
-TA = linspace(-1.25, 3, 200); 
+TA = linspace(-1.25, 3, 500); 
 for ta = TA
     view(180*ta, 6)
     axis([-1.1 1.1 -1.1 1.1 -2 .1333])

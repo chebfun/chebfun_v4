@@ -294,13 +294,13 @@ else
                 % Are the columns and rows resolved now?
                 if ~ResolvedCols
                     newCols = mysimplify(Cols,hscale,scl,tol);
-                    if length(newCols) < length(Cols)
+                    if size(newCols,1) < size(Cols,1)
                         ResolvedCols=1;
                     end
                 end
                 if ~ResolvedRows
                     newRows = mysimplify(Rows.',hscale,scl,tol).';
-                    if length(newRows) < length(Rows)
+                    if size(newRows,2) < size(Rows,2)
                         ResolvedRows=1;
                     end
                 end
