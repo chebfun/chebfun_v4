@@ -9,7 +9,8 @@ function I = integral2(f,varargin)
 %
 % I = INTEGRAL2(F,C) computes the volume under the surface F over the region D with
 % boundary C. C should be a complex-valued chebfun that represents a closed
-% curve. 
+% curve. This is a very slow feature, and is only reliable for small degree
+% bivariate polynomials.
 %
 % See also INTEGRAL, SUM2, QUAD2D.
 
@@ -36,9 +37,10 @@ elseif ( nargin == 2 )
             
             rect = f.corners;
             
-            % Green's theorem tells that you can integrate s*f(sx,sy) along
-            % the boundary of the curve. There are plenty of different ways
-            % of doing this and this is AT's choice.
+            % Green's theorem tells that you can integrate a function over 
+            % a region by integration along the boundary of the region's 
+            % boundary. There are plenty of different ways of applying
+            % Green's thoerem and this is AT's choice.
             Fs = chebfun2(@(x,y) sum( chebfun(@(s) feval(f,s*x,s*y).*s, [0 1] ) ), rect, 'vectorize');
             
             x = chebfun2(@(x,y) x, rect);
