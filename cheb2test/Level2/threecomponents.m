@@ -76,7 +76,7 @@ end
 f = chebfun2(@(x,y) sin(x.*y)); 
 
 pass(j) = ( norm(curl( F + G ) - (curl(F) + curl(G))) < 100*tol); j=j+1; 
-pass(j) = ( norm(div( f*G ) - (dot(G,[grad(f);0]) + f.*div(G))) <100*tol); j=j+1; 
+pass(j) = ( norm(div( f.*G ) - (dot(G,[grad(f);0]) + f.*div(G))) <100*tol); j=j+1; 
 
 pass(j) = ( norm(div(curl(G))) < 10*tol); j = j + 1; 
 pass(j) = ( norm(div(grad(f)) - lap(f)) < 10*tol); j = j + 1; 

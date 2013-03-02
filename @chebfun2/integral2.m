@@ -9,7 +9,7 @@ function I = integral2(f,varargin)
 %
 % I = INTEGRAL2(F,C) computes the volume under the surface F over the region D with
 % boundary C. C should be a complex-valued chebfun that represents a closed
-% curve. This is a very slow feature, and is only reliable for small degree
+% curve. This is a very slow feature, and is only fast for small degree
 % bivariate polynomials.
 %
 % See also INTEGRAL, SUM2, QUAD2D.
