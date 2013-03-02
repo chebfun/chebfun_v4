@@ -174,5 +174,4 @@ contour(f)
 % elimination as an iterative algorithm, SIAM News, March 2013.
 %%
 % [Trefethen & others] Chebfun Version 4.2, The Chebfun Development Team, 
-% 2011, http://www.maths.ox.ac.uk/chebfun/http://www2.maths.ox.ac.uk/chebfun/
-
+% 2011, http://www.maths.ox.ac.uk/chebfun/

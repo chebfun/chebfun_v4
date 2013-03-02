@@ -40,7 +40,7 @@ plot(f)
 %% 4.3 REFERENCES
 %%
 % [Trefethen 2013] L. N. Trefethen, Phase Portraits for functions with poles, 
-% http://www2.maths.ox.ac.uk/chebfun/chebfun2/examples/ComplexAnalysis/PortraitsWithPoles.shtml
+% http://www2.maths.ox.ac.uk/chebfun/examples/complex/html/PortraitsWithPoles.shtml
 %%
 % [Wegert 2012] E. Wegert, Visual Complex Functions: An Introduction with
 % Phase Portraits, Springer Basel, 2012
