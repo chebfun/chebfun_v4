@@ -51,7 +51,6 @@ plot3(real(valhilb),imag(valhilb),hilly(valhilb),'k','linewidth',2), hold off
 % chebsnake, the shadow of the snake and the "food" are displayed as well
 
 f = chebfun2(@(x,y) (x.^2-1).*(y.^2-1)-.4*exp(-10*(x.^2+y.^2)));
-figure
 chebsnake2(f)
 
 
