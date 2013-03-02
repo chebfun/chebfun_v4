@@ -31,6 +31,7 @@ function varargout = chebtest(dirname)
 %   linops:   Tests involving linear operators (linops).
 %   chebop:   Tests involving non-linear chebops (chebops)
 %   ad:       Tests involving automatic differentiation (AD).
+%   chebfun2: Tests involving 2D computations.
 %   misc:     Tests that don't fit elsewhere (BVP and IVP solvers, etc).
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
@@ -112,7 +113,7 @@ subdirnames = { subdirlist.name };
 numdirs = length(subdirnames);
 
 % Assign an order
-defaultOrder = {'basic','advanced','quasimatrices','linops','chebops','ad','misc'};
+defaultOrder = {'basic','advanced','quasimatrices','linops','chebops','ad','chebfun2','misc'};
 order = 1:numdirs;
 for i = 1:numdirs
     idx = find(strcmp(subdirnames(i),defaultOrder));
