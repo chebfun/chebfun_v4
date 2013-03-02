@@ -10,6 +10,8 @@ function [Y,X] = minandmax2(f)
 %
 %  F(X(1,1),X(1,2)) = Y(1)     and      F(X(2,1),X(2,2)) = Y(2).
 %
+% For high accuracy results this command requires the Optimization Toolbox.
+%
 % See also MAX2, MIN2, NORM.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.

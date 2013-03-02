@@ -11,7 +11,7 @@ function h = kron(f,g)
 %
 %  H(x,y) = G(y,1)*F(x,1) + ... + G(y,K)*F(x,K).
 % 
-% This is the continous analogue of that Matlab command KRON. 
+% This is the continous analogue of the Matlab command KRON. 
 %
 % See also KRON.
 

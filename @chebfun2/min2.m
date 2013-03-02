@@ -4,7 +4,9 @@ function [Y X]=min2(f)
 % Y = MIN2(F) returns the global minium of F.
 % 
 % [Y X]=MIN2(F) returns the global minimum of F and its coordinates in 
-%    X = (X(1), X(2)).  
+%    X = (X(1), X(2)). 
+%
+% For high accuracy results this command requires the Optimization Toolbox.
 %
 % See also MAX2, MINANDMAX2.
 

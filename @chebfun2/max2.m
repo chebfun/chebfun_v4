@@ -4,6 +4,8 @@ function [Y X]=max2(f)
 % Y = MAX2(F) returns the global maximum of F over its domain. 
 %   
 % [Y X] = MAX2(F) returns the global maximum in Y and its location X.  
+%
+% For high accuracy results this command requires the Optimization Toolbox.
 % 
 % See also MIN2, MINANDMAX2.
 

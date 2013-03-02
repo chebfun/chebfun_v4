@@ -5,7 +5,7 @@
 % We have already seen the sum2 command, which returns the definite double
 % integral of a chebfun2 over its domain of definition. The sum command 
 % is a little different and integrates with respect to one variable at a time. For
-% instance, the following commands integrates over the y variable: 
+% instance, the following commands integrate over the y variable: 
 
 f = chebfun2(@(x,y) sin(10*x.*y),[0 pi/4 0 3]); 
 sum(f) 
@@ -20,9 +20,9 @@ sum(f,2), plot(sum(f,2))
 %% 
 % A closer look reveals that sum(f) returns a row
 % chebfun while sum(f,2) returns a column chebfun. This distinction is made
-% to indicate that sum(f) is a function of x while sum(f,2) is a function
-% of y. If we integrate over y and then x the result
-% is the double integral of f.
+% to indicate that sum(f) is a function of $x$ while sum(f,2) is a function
+% of $y$. If we integrate over $y$ and then $x$ the result
+% is the double integral of $f$.
 
 sum2(f)
 sum(sum(f))
@@ -51,7 +51,7 @@ fprintf('CHEBFUN2/SUM2:  I = %17.15f  time = %6.4f secs\n',I,t)
 % 2005].
 
 %% 2.2 NORM, MEAN, AND MEAN2
-% The L2-norm of a function f(x,y) can be computed as the square root of the 
+% The $L^2$-norm of a function $f(x,y)$ can be computed as the square root of the 
 % double integral of $f^2$. In Chebfun2 norm(f), 
 % without any additional arguments, computes this quantity. For example, 
 
@@ -59,15 +59,15 @@ f = chebfun2( 'exp(-(x.^2 + y.^2 +4*x.*y))' );
 norm(f), sqrt(sum2(f.^2))
 
 %%
-% Here is another example. This time we compute the norms of f(x,y), 
-% cos(f(x,y)), and the fifth power of f(x,y).
+% Here is another example. This time we compute the norms of $f(x,y)$, 
+% $\cos(f(x,y))$, and the fifth power of $f(x,y)$.
 
 f = chebfun2( @(x,y) exp(-1./( sin(x.*y) + x ).^2) );
 norm(f), norm( cos(f) ), norm( f.^5 )
 
 %% 
 % Just as sum2 performs double integration, mean2 computes the 
-% average value of f(x,y) over both variables:
+% average value of $f(x,y)$ over both variables:
 
 help chebfun2/mean2
 
@@ -86,8 +86,8 @@ mean2(runge)
 plot(mean(runge)), title('Mean value of 2D Runge function wrt y')
 
 %%
-% If we average over the y variable and then the
-% x variable, we obtain the mean value over the whole domain
+% If we average over the $y$ variable and then the
+% $x$ variable, we obtain the mean value over the whole domain
 
 mean(mean(runge))      % compare with mean2(runge)
 
@@ -105,7 +105,8 @@ help chebfun2/cumsum2
 % integral, as we can check numerically. 
 
 f = chebfun2(@(x,y) exp(-(x.^2 + 3*x.*y+y.^2) ));
-contour(cumsum2(f),'numpts',400), title('Contours of cumsum2(f)') 
+contour(cumsum2(f),'numpts',400), axis equal
+title('Contours of cumsum2(f)') 
 norm( cumsum(cumsum(f),2) - cumsum2(f) ) 
 
 %% 2.4 COMPLEX ENCODING
@@ -131,13 +132,13 @@ subplot(1,2,2), plot(c), axis equal, title('One complex-valued function')
 
 %%
 % We hope users become comfortable with using complex encodings, though 
-% they are certainly not required for the vast majority of Chebfun2
+% they are certainly not required for the majority of Chebfun2
 % functionality. 
 
 %% 2.5 INTEGRATION ALONG CURVES
-% We can compute the integral of f(x,y) along a curve (x(t),y(t)). 
-% We use the complex encoding trick and encode the curve (x(t),y(t)) 
-% as a complex valued chebfun x(t) + iy(t).
+% We can compute the integral of $f(x,y)$ along a curve $(x(t),y(t))$. 
+% We use the complex encoding trick and encode the curve $(x(t),y(t))$ 
+% as a complex valued chebfun $x(t) + iy(t)$.
 % For instance, what is the area under the following curve? 
 clf
 f = chebfun2(@(x,y) cos(10*x.*y.^2) + exp(-x.^2)); % chebfun2 object
@@ -160,7 +161,7 @@ help chebfun2/diff
 
 %%
 % Here we use DIFF to check that the Cauchy-Riemann equations hold for a 
-% holomorphic function. 
+% analytic function. 
 
 f = chebfun2(@(x,y) sin(x+1i*y));   % a holomorphic function
 u = real(f); v = imag(f);           % real and imaginary parts

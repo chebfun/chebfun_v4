@@ -2,11 +2,11 @@
 % A. Townsend, March 2013
 
 %% 1.1  WHAT IS A CHEBFUN2?
-% A chebfun2 is a function of two variables defined on an rectangle
-% [a,b]x[c,d]. The syntax for chebfun2 objects is similar to the syntax 
+% A chebfun2 is a function of two variables defined on a rectangle
+% $[a,b]\times[c,d]$. The syntax for chebfun2 objects is similar to the syntax 
 % for matrices in Matlab. Chebfun2 objects have many Matlab commands
 % overloaded. For instance, trace(f) returns the sum of the diagonal entries
-% when f is a matrix and returns the integral of f(x,x) when f is a chebfun2. 
+% when $f$ is a matrix and returns the integral of $f(x,x)$ when $f$ is a chebfun2. 
 
 %%
 % Chebfun2 builds on Chebfun, a well-established software system for 
@@ -15,9 +15,9 @@
 % Chebfun to functions of two variables.
 
 %%
-% The implementation of Chebfun2 exploits the numerical observation that many
+% The implementation of Chebfun2 exploits the observation that many
 % functions of two variables can be well approximated by low rank approximants.
-% A rank 1 function is of the form u(y)v(x), and a rank k function can be
+% A rank 1 function is of the form $u(y)v(x)$, and a rank k function can be
 % written as the sum of k rank 1 functions. Smooth functions tend to be 
 % well approximated by functions of low rank.  
 % Chebfun2 makes use of an adaptive procedure to automatically
@@ -28,34 +28,34 @@
 %% 
 % The underlying function representations are related to work by Carvajal, 
 % Chapman and Geddes [Carvajal, Chapman, & Geddes 2008] and others including
-% Bebendorf [Bebendorf 2008], Hackbusch, Oseledets, and Tyrtyshnikov.
+% Bebendorf [Bebendorf 2008], Hackbusch, Khoromshij, Oseledets, and Tyrtyshnikov.
 
 %% 1.2 WHAT IS A CHEBFUN2V?
-% Chebfun2 can represent scalar valued functions, such as exp(x+y), and
-% vector valued functions, such as [exp(x+y);cos(x-y)].  We represent 
+% Chebfun2 can represent scalar valued functions, such as $e^{x+y}$, and
+% vector valued functions, such as $[e^{x+y};\cos(x-y)]$.  We represent 
 % vector valued functions as chebfun2v objects, and these are useful for
-% performing vector calculus. For more information about
-% chebfun2v objects and vector calculus see Chapter 5 of this
+% performing vector calculus. For information about
+% chebfun2v objects and vector calculus see Chapter 5 and 6 of this
 % guide.
 
 %% 1.3 CONSTRUCTING CHEBFUN2 OBJECTS
 % A chebfun2 is constructed by supplying the Chebfun2 constructor with a
 % function handle or string. The default rectangular domain of a chebfun2 is 
-% [-1,1]x[-1,1]. (An example showing how to specify a different domain is 
+% $[-1,1]\times [-1,1]$. (An example showing how to specify a different domain is 
 % given at the end of this chapter). For example, here is how to make a chebfun2 that
-% represents cos(xy) on [-1,1]x[-1,1] and then plot it. 
+% represents $\cos(xy)$ on $[-1,1]\times[-1,1]$ and then plot it. 
 
 f = chebfun2(@(x,y) cos(x.*y)); 
-plot(f)
+plot(f), zlim([-2 2])
 
 %% 
 % There are several different ways to plot a chebfun2, such as plot,
-% contour, surf, and mesh.  Here is a contour plot of f:
+% contour, surf, and mesh.  Here is a contour plot of $f$:
 
 contour(f), axis square
 
 %%
-% One way to find the rank of the approximant used to represent f(x,y) is the
+% One way to find the rank of the approximant used to represent $f(x,y)$ is the
 % following:
 
 length(f)
@@ -68,7 +68,7 @@ f
 
 %%
 % The corner values are the values of the chebfun2 at 
-% (-1,-1), (-1,1), (1,-1), and (1,1), in that order. The vertical scale is
+% $(-1,-1)$, $(-1,1)$, $(1,-1)$, and $(1,1)$, in that order. The vertical scale is
 % used by operations to aim for essentially machine precision relative 
 % to that number. 
 
@@ -84,33 +84,41 @@ sum2(f)
 exact = 3.784332281468732
 
 %%
-% We can also evaluate a chebfun2 at a point (x,y), or along a line.
+% We can also evaluate a chebfun2 at a point $(x,y)$, or along a line.
 % When evaluating along a line a chebfun is returned because the answer is
 % a function of one variable.
 
-% evaluation at a point
-x = 2*rand - 1; y = 2*rand - 1;  % random point in domain of f
+%%
+% Evaluation at a point:
+
+x = 2*rand - 1; y = 2*rand - 1; 
 f(x,y) 
 %% 
+% Evaluation along the line $y = \pi/6$:
 
-% evaluation along a line 
-f(:,pi/6)                            % The function f(x,pi/6) 
+f(:,pi/6)
 
 %% 
 % There are plenty of other questions that may be of interest.  For
-% instance, what are the zero contours of f(x,y) - .95? 
+% instance, what are the zero contours of $f(x,y) - .95$? 
 
-r = roots(f-.95);       % zero contours of f.
+r = roots(f-.95);
 plot(r), axis square, title('Zero contours of f-.95')
 
 %%
 % What is the partial derivative $\partial f/\partial y$? 
 
-fy = diff(f);     % diff defaults to differentiation in the y variable.
+fy = diff(f,1,1);
 plot(fy)
 
 %%
-% What is the mean value of f(x,y) on [-1,1]x[-1,1]? 
+% The syntax for the DIFF command can cause confusion because we are
+% following the matrix syntax in Matlab. We also offer DIFFX(f,k) and 
+% DIFFY(f,k) which differentiates $f(x,y)$ k-times in the first and 
+% second variable, respectively.
+
+%%
+% What is the mean value of $f(x,y)$ on $[-1,1]\times[-1,1]$? 
 
 mean2(f) 
 
@@ -133,8 +141,8 @@ help chebfun2/max2
 % chebfun2 objects is by composing them together with operations such as 
 % '+', '-', '.*', and '.^'. For instance,
   
-x = chebfun2(@(x,y) x, [-2 3 -4 4]);    % f(x,y) = x on [-2 3]x[-4 4]
-y = chebfun2(@(x,y) y, [-2 3 -4 4]);    % f(x,y) = y on [-2 3]x[-4 4]
+x = chebfun2(@(x,y) x, [-2 3 -4 4]); 
+y = chebfun2(@(x,y) y, [-2 3 -4 4]);   
 
 f = 1./( 2 + cos(.25 + x.^2.*y + y.^2) );
 contour(f)
