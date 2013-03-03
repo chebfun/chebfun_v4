@@ -8,7 +8,7 @@ function N = normal(F,varargin)
 % N = NORMAL(F,'unit') returns the unit normal vector, represented as a
 % chebfun2v, to the surface F. 
 %
-% See also NORMAL. 
+% See also CHEBFUN/NORMAL. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
