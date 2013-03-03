@@ -1,6 +1,10 @@
 function g = ctor( g , op , ends , varargin )
 % CTOR  fun2 constructor
-% See also FUN2
+% The classic constructor for fun2. This is where almost every
+% function gets approximated.  We adaptively decide the rank and
+% polynomial degrees of the approximant. First the rank is decided using
+% iterative Gaussian elimination, and then the polynomials degrees are
+% decided. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

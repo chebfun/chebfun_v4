@@ -1,5 +1,9 @@
 function g = ctor(g , op , ends , varargin )
 % CTOR  chebfun2 constructor
+% This constructor is basically just a parser and then calls the fun2
+% constructor.  At the moment a chebfun2 is made up of just one fun2, but
+% this could change in a future release. The command fun2/private/ctor is 
+% where every function gets approximated. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

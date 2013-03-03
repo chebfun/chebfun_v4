@@ -1,6 +1,8 @@
 function values = mysimplify(values,hscale,vscale,tol,force)
 % This function removes leading Chebyshev coefficients that are below
-% epsilon, relative to the verical scale stored in vscale
+% epsilon, relative to the verical scale stored in vscale. This function is
+% a vectorised version on CHEBFUN/SIMPLIFY. In Version 5 when vector valued
+% funCheb2 is available this script can be replaced. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

@@ -1,5 +1,7 @@
 function [PivotValue,PivotElement,Rows,Cols,ifail] = CompleteACA(A,tol)
-% Adaptive Cross Approximation with complete pivoting.
+% Adaptive Cross Approximation with complete pivoting. This command is 
+% completely analogous to Gaussian elimination with complete pivoting. We
+% adaptively find the rank of the approximant in this command. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

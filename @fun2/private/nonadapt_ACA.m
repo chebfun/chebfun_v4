@@ -1,4 +1,6 @@
 function [PivotValue,PivotElement,Rows,Cols,ifail] = nonadapt_ACA(A,rank)
+% This script does iterative Gaussian elimination with a predetermined
+% number of steps.  There is nothing adaptive decided adaptively here. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

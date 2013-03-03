@@ -1,5 +1,9 @@
 function g = nonadaptive_ctor(g , op , ends , vectorize, varargin )
 % CTOR  chebfun2 constructor
+%
+% This constructor is the same as the adaptive one, except the rank of the
+% resulting fun2 is fixed. We adapt on (m,n), the polynomial degree of the
+% fun2, but not on the rank k. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

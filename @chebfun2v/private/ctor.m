@@ -1,8 +1,7 @@
 function g = ctor(g , opx , opy, ends , varargin )
 % CTOR  chebfun2v constructor
-% See also CHEBFUN2v
-
-% Chebfun2v is just vector of chebfun2 objects.
+% This function calls the chebfun2 constructor once for each non-zero
+% component because a chebfun2v is just vector of chebfun2 objects.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

@@ -1,5 +1,6 @@
 function v = chebifft(X)
-% Vectorised chebfun ifft.
+% Vectorised chebfun ifft.  Converts coefficients to values in a vectorised
+% way. 
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
