@@ -7,6 +7,11 @@ function [f,g] = overlap(f,g)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+if ( ~isa(f, 'chebfun') )
+    [g, f] = overlap(g, f);
+    return
+end
+
 if isnumeric(g) && numel(g) == 1
     g = 0*f + g;
     return
