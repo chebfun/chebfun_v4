@@ -100,10 +100,10 @@ elseif length(f) <= maxsize
     
     A = cvals*rvals.';
     % Maximum entry in discretisation.
-    [~,ind]=min(A(:)); [row,col]=ind2sub(size(A),ind);
+    [ignored,ind]=min(A(:)); [row,col]=ind2sub(size(A),ind);
     X(1,1) =xpts(col);  X(1,2) = ypts(row); Y(1) = feval(fun,X(1,1),X(1,2));
     % Minimum entry in discretisation.
-    [~,ind]=max(A(:)); [row,col]=ind2sub(size(A),ind);
+    [ignored,ind]=max(A(:)); [row,col]=ind2sub(size(A),ind);
     X(2,1) =xpts(col);  X(2,2) = ypts(row); Y(2) = feval(fun,X(2,1),X(2,2));
     
     % Get more digits with optimisation algorithms.

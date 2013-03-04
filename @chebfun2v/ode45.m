@@ -23,7 +23,7 @@ tol = chebfun2pref('eps');
 if ( isa(init,'function_handle') )
     g = @(t,y) feval(F,y(1),y(2));
     L = chebop(@(x,u) diff(u,2)); L.lbc = init; % dummy linear chebop;
-    [Wa,~,r] = recoverCoeffsBC(L);
+    [Wa,ignored,r] = recoverCoeffsBC(L);
     r = Wa \ r;
     if ( nargin == 3 )
         opts = odeset('AbsTol',tol);

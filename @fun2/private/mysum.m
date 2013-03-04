@@ -4,7 +4,7 @@ function out = mysum(F,ends)
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-[n,~] = size(F); %n = length(F);                                  % size of F. 
+[n,ignored] = size(F); %n = length(F);                                  % size of F. 
 % cc = reshape(F.vals(:),n,m); 
 c = chebfft(F);  
 c = c(end:-1:1,:);% convert to coefficients. 

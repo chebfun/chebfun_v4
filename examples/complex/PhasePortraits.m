@@ -8,7 +8,7 @@
 %% Phase portraits for complex functions 
 % Phase portraits are a technique for visualising complex valued functions of a
 % single complex variable. They rely on the visual encoding of complex numbers:
-% if z = r*exp(1i*t) then the rainbow colours represent the phase of z. Red
+% if $z = re^{it}$ then the rainbow colours represent the phase of z. Red
 % indicates an argument of 0 and the rainbow goes through red, yellow, green,
 % blue, violet as the argument increases. By default, Chebfun2 produces a phase
 % portrait when asked to plot a chebfun2 object that is complex. For example,
@@ -23,10 +23,10 @@ plot(f), title('Phase portrait for sin(z)',FS,fs);
 % example above.
 
 %% Uniqueness
-% If two complex valued functions $f(z)$ and $g(z)$ have the same phase
-% portrait, then there is a real constant c such that $f(z) = cg(z)$.
+% If two complex valued analytic functions $f(z)$ and $g(z)$ have the same phase
+% portrait, then there is a real positive constant c such that $f(z) = cg(z)$.
 % Therefore, one can tell a huge amount about a function $f(z)$ just by
-% considering its domain colouring plot [1].
+% considering its phase portrait [1].
 
 %% Some more pretty plots
 % We find these plots addictive to draw. Here are two of our favourites:

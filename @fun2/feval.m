@@ -57,7 +57,7 @@ else
     d = getdomain(f); 
     
     % evaluate columns. 
-    [xx,~,vv]=chebpts(size(C,1),d(3:4));
+    [xx,ignored,vv]=chebpts(size(C,1),d(3:4));
     vv = vv(:,ones(length(y),1))./(y(:,ones(length(xx),1)).'-xx(:,ones(length(y),1))); 
     [repx repy] = find(abs(vv)==inf); sumv = sum(vv).'; 
     c=(vv.'*C)./sumv(:,ones(size(C,2),1));
@@ -65,7 +65,7 @@ else
     
      % evaluate rows
      x = x.';
-    [xx,~,vv]=chebpts(size(R,2),d(1:2));
+    [xx,ignored,vv]=chebpts(size(R,2),d(1:2));
     vv = vv(:,ones(length(x),1))./(x(:,ones(length(xx),1)).'-xx(:,ones(length(x),1))); 
     [repx repy] = find(abs(vv)==inf); sumv = sum(vv).'; 
 %     r=(R*vv)./sum(vv);

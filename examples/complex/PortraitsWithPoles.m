@@ -37,7 +37,7 @@ g = chebfun2(@(z) smash(ff(z)),d);
 plot(g), axis(d), axis square on
 
 %%
-% For another example, here is $\tan((31+3i)z)$.  Compare Figure 3.20 of [1].
+% For another example, here is $\tan((3+3i)z)$.  Compare Figure 3.20 of [1].
 hh = @(z) tan((3+3i)*z);
 h = chebfun2(@(z) smash(hh(z)),d);
 plot(h), axis(d), axis square on

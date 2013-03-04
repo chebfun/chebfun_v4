@@ -98,7 +98,7 @@ function [normF normloc]=poweroptimization(f)
         
         % Prevent vector increasing in rank by doing the SVD.
         [Qc Rc] = qr(X,0); [Qr Rr] = qr(Y,0);
-        [U,~,V] = svd(Rc*Rr.');
+        [U,ignored,V] = svd(Rc*Rr.');
         U = Qc*U; V = Qr*V;
         x(xi) = U(:,1); y(yi) = V(:,1);
         
@@ -107,8 +107,8 @@ function [normF normloc]=poweroptimization(f)
     end
     
     % % Estimate maximum from final vectors.
-    [~,idx]=max(abs(x)); ystar=xpts(idx);
-    [~,idy]=max(abs(y)); xstar=xpts(idy);
+    [ignored,idx]=max(abs(x)); ystar=xpts(idx);
+    [ignored,idy]=max(abs(y)); xstar=xpts(idy);
     
     % get domain.
     rect = f.corners; 
