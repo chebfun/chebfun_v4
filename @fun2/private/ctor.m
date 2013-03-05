@@ -337,9 +337,20 @@ else
         if norm(Rows)~=0 && size(Rows,2)>2
             Rows = mysimplify(Rows.',hscale,scl,tol).';
         end
-        %         Cols = wrap(Cols,size(newCols,1));
-        %         Rows = wrap(Rows.',size(newRows,2)).';
         
+        
+        % For some reason, on some computers simplify is giving back a
+        % scalar zero.  In which case the function is numerically zero. 
+        % Artifically set the columns and rows to zero.  
+        if norm(Cols) == 0 
+            Cols = 0; Rows = 0; PivotValue = 0; 
+            PivPos=[0 0]; ResolvedSlices=1;
+        end
+        
+        if norm(Rows) == 0 
+            Cols = 0; Rows = 0; PivotValue = 0; 
+            PivPos=[0 0]; ResolvedSlices=1;
+        end
         
         % Now slices and columns are resolved make chebfuns.
         if pref2.mode
