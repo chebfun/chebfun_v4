@@ -334,7 +334,7 @@ else
         if norm(Cols)~=0 && size(Cols,1)>2  % in case we were given the zero function.
             Cols = mysimplify(Cols,hscale,scl,tol);
         end
-        if norm(Rows)~=0 && size(Cols,1)>2
+        if norm(Rows)~=0 && size(Rows,2)>2
             Rows = mysimplify(Rows.',hscale,scl,tol).';
         end
         %         Cols = wrap(Cols,size(newCols,1));

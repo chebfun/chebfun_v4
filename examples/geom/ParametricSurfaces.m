@@ -58,7 +58,7 @@ f = (sin(10*t)).*cos(15*p);
 surf(x,y,z,f), axis equal tight
 
 %%
-% Here is the top view.
+% Here is the top view:
 
 view(0,90)
 
@@ -80,6 +80,11 @@ z = 1-exp(u/(3*pi))-sin(v)+exp(u/(6*pi)).*sin(v);
 
 surf(x,y,z), camlight
 view(160,10), axis equal, box on
+
+%%
+% Here is the top view:
+
+view(-180,90)
 
 %%
 % <html>

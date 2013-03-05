@@ -82,11 +82,32 @@ pass(j) = ( norm(div(curl(G))) < 10*tol); j = j + 1;
 pass(j) = ( norm(div(grad(f)) - lap(f)) < 10*tol); j = j + 1; 
 pass(j) = ( norm(curl(curl(G)) - ([grad(div(G));0] - lap(G))) < 10*tol); j = j + 1; 
 
-%%
-if all(pass) 
-    pass = 1; 
-else
-    pass = 0; 
-end
+%% Torus example, that used to crash. 
+
+u = chebfun2(@(u,v) u, [0 2*pi 0 2*pi]); 
+v = chebfun2(@(u,v) v, [0 2*pi 0 2*pi]);
+x = (3+cos(v)).*cos(u); 
+y = (3+cos(v)).*sin(u); 
+z = sin(v); 
+r = [x;y;z]; 
+n = normal(r,'unit');
+f = x;
+r1 = diff(r,1,1); r2 = diff(r,1,2);
+g = diff(f,1,1).*r1 + diff(f,1,2).*r2;
+V = cross(n,g);
+
+% This works;
+f1 = diff(V(2),1,2);
+% This also works
+f2 = diff(r,1,2);
+f = f1 * f2;
+fx = f.xcheb; 
+
+% should be zero on the boundary. 
+pass(j) = (norm(fx(:,2*pi))<1e3*tol); j = j +1; 
+pass(j) = (norm(fx(:,0))<1e3*tol); j = j +1; 
+pass(j) = (norm(fx(2*pi,:))<10*tol); j = j +1; 
+pass(j) = (norm(fx(0,:))<10*tol); j = j +1; 
+
 
 end
