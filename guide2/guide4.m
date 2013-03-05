@@ -35,7 +35,9 @@ plot(f)
 %% 4.2 FURTHER WORK
 % Complex-valued chebfun2 objects are a relatively recent feature of
 % Chebfun2 and this chapter of the guide will be extended when new
-% functionality is added. 
+% functionality is added. There are also many different styles for phase
+% portraits and to find Matlab code to produce lots of them see 
+% http://www.visual.wegert.com
 
 %% 4.3 REFERENCES
 %%

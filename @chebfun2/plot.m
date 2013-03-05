@@ -31,8 +31,10 @@ function varargout = plot(f,varargin)
 %                               p     pentagram
 %                               h     hexagram
 %
-% For phase portrait plotting see: E. Wegert, Visual Complex Functions: An
-% introduction with Phase Portraits, Springer Basel, 2012. 
+% For phase portraits see: E. Wegert, Visual Complex Functions: An
+% introduction with Phase Portraits, Springer Basel, 2012, or for MATLAB
+% code to produce many different styles of phase portraits go to: 
+% http://www.visual.wegert.com
 % 
 % See also SURF, MESH.
 
