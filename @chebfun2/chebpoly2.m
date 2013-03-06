@@ -15,11 +15,18 @@ function varargout = chebpoly2(f)
 
 mode = chebfun2pref('mode');  % discrete or continuous mode.
 
-g=f.fun2; CC = g.C; RR = g.R; % get fun2 information. 
-
-if ( isempty(f.fun2) )
+if ( isempty(f.fun2) ) % empty check
     varargout = {[], [], []}; return;
 end
+
+% zero function check
+if ( norm(f) == 0 )
+   varargout = {0, 0, 0};
+   return; 
+end
+
+
+g=f.fun2; CC = g.C; RR = g.R; % get fun2 information. 
 
 if ( nargout < 2 )
     % Return the matrix of coefficients
