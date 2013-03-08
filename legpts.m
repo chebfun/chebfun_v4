@@ -60,7 +60,7 @@ elseif n == 0   % Return empty vector if n == 0
 elseif n == 1   % n == 1    
     x = 0;  w = 2;  v = 1; t = 1; return
 elseif n == 2   % n == 2
-    x = [-1 1]/sqrt(3); w = [1 1]; v = [1 -1]; t = acos(x); return
+    x = [-1 ; 1]/sqrt(3); w = [1 1]; v = [1 ; -1]; t = acos(x); return
 end
 
 % Check the inputs
