@@ -56,6 +56,7 @@ if ( isa(f,'chebfun2') )
         rect = f.corners;
         x = chebfun2(@(x,y) x,rect); y = chebfun2(@(x,y) y,rect);
         h = surf(x,y,f,defaultopts{:},argin{:},'numpts',minplotnum);
+        xlim(rect(1:2)), ylim(rect(3:4))
     elseif ( nargin > 2)                    %surf(x,y,f,...), with x, y, f chebfun2 objects
         x = f; y = argin{1};
         if isa(y,'chebfun2')
@@ -93,7 +94,7 @@ if ( isa(f,'chebfun2') )
             end
             
             h = surf(x,y,vals,C,defaultopts{:},argin{3:end});
-            xlabel('x'), ylabel('y')
+            xlabel('x'), ylabel('y'), xlim(rect(1:2)), ylim(rect(3:4))
             
             % There is a bug in matlab surf plot when vals are very nearly a constant.
             % Fix this manually by resetting axis scaling.
@@ -109,6 +110,7 @@ if ( isa(f,'chebfun2') )
         rect = f.corners;
         x = chebfun2(@(x,y) x,rect); y = chebfun2(@(x,y) y,rect);
         h = surf(x,y,f,argin{1},defaultopts{:},argin{2:end});
+        xlim(rect(1:2)), ylim(rect(3:4))
     end
 else     % surf(X,Y,f,...)
     error('CHEBFUN2:SURF:INPUTS','Data should be given as chebfun2 objects \n For example: \n x = chebfun2(@(x,y)x); y = chebfun2(@(x,y)y);\n surf(x,y,f)');
