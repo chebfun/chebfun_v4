@@ -77,24 +77,37 @@ function h = convcol(f,g)
     pref.sampletest = false;
     pref.resampling = false;
     pref.splitting = false;
-    pref.blowup = false;
+    pref.blowup = -1;
     pref.extrapolate = true;
     
-    % Flip g around
-    gflip = flipud( g );
-    gflip = newdomain(gflip,-domain(g));
+    if ( ~any(isinf(domain(g))) )
+        % Flip g around
+        gflip = flipud( g );
+        gflip = newdomain(gflip,-domain(g));
+        pref.n = length(gflip)+length(f);
 
-    % Construct funs
-    for k = 1:length(ends)-1  
+        % Construct funs
+        for k = 1:length(ends)-1  
+
+            % note that deg(H(x)) = deg(gflip)+deg(f)+1 where deg(gflip) =
+            % length(gflip)-1 and deg(f) = length(f)-1. Hence, length(H(x)) =
+            % deg(gflip)+deg(f)+2 = length(gflip)+length(f). The adaptive 
+            % construction process with fun of increasing length is avoided.
+            newfun = fun( @(x) integral(x,f,gflip) , ends(k:k+1), pref);
+            scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
+            funs = [ funs , newfun ];
+        end
         
-        % note that deg(H(x)) = deg(gflip)+deg(f)+1 where deg(gflip) =
-        % length(gflip)-1 and deg(f) = length(f)-1. Hence, length(H(x)) =
-        % deg(gflip)+deg(f)+2 = length(gflip)+length(f). The adaptive 
-        % construction process with fun of increasing length is avoided.
+    else
+        % Unbounded domains must be treated differently. This may be much slower.
         
-        newfun = fun( @(x) integral(x,f,gflip) , ends(k:k+1) , length(gflip)+length(f));
-        scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
-        funs = [ funs , newfun ];
+        % Construct funs
+        for k = 1:length(ends)-1 
+            newfun = fun(@(x) integral_old(x,a,b,c,d,f,g,pref,scl), ends(k:k+1), pref, scl);
+            scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
+            funs = [funs simplify(newfun)];
+        end
+
     end
 
     % Construct chebfun
@@ -190,7 +203,7 @@ function out = integral( x , f , g )
 
     % init the output vector
     out = zeros(size(x));
-    
+   
     % Loop over the input values
     for k=1:length(x)
     
@@ -198,9 +211,10 @@ function out = integral( x , f , g )
         if ( f.ends(end) <= g.ends(1) + x(k) ) || ( f.ends(1) >= g.ends(end) + x(k) )
             continue;
         end
-    
+
         % get the common ends in f and the shifted g
         ends = union( f.ends , g.ends + x(k) );
+        ends(isnan(ends)) = [];
         
         % Trim the ends so that we only have the overlapping bit
         l = 1; r = length(ends);
@@ -213,6 +227,7 @@ function out = integral( x , f , g )
         % while we're at it)
         hasexps = false; nonlinmaps = false;
         sizes = zeros( nfuns , 1 );
+        lr = l:r;
         for j=1:nfuns
             m = (ends(j)+ends(j+1))/2;
             fn = f.funs( find( f.ends > m , 1 ) - 1 );
@@ -257,3 +272,18 @@ function out = integral( x , f , g )
     end % loop over input values
 
 end % integral
+
+function out = integral_old(x,a,b,c,d,f,g,pref,scl)
+    out = 0.*x;
+    for k = 1:length(x)
+        A = max(a,x(k)-d); B = min(b,x(k)-c);
+        if A < B      
+            ends = union(x(k)-g.ends,f.ends);
+            ee = [A ends(A<ends & ends< B)  B];
+            for j = 1:length(ee)-1
+                F = @(t) feval(f,t).*feval(g,x(k)-t);
+                out(k) = out(k) + quadgk(F, ee(j), ee(j+1), 'AbsTol', scl.v, 'RelTol', scl.v); 
+            end
+        end
+    end
+end % integral_old()
