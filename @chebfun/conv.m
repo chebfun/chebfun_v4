@@ -282,7 +282,8 @@ function out = integral_old(x,a,b,c,d,f,g,pref,scl)
             ee = [A ends(A<ends & ends< B)  B];
             for j = 1:length(ee)-1
                 F = @(t) feval(f,t).*feval(g,x(k)-t);
-                out(k) = out(k) + quadgk(F, ee(j), ee(j+1), 'AbsTol', scl.v, 'RelTol', scl.v); 
+                tol = max(100*eps('double'), scl.h*scl.v*eps);
+                out(k) = out(k) + quadgk(F, ee(j), ee(j+1), 'AbsTol', tol , 'RelTol', tol); 
             end
         end
     end
