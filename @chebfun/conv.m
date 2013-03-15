@@ -72,20 +72,19 @@ function h = convcol(f,g)
     scl.v = 2*max(g.scl,f.scl);
 
     % Avoid resampling for speed up!
-    %res = chebfunpref('resampling');
     pref = chebfunpref;
     pref.sampletest = false;
     pref.resampling = false;
     pref.splitting = false;
-    pref.blowup = -1;
-    pref.extrapolate = true;
+    pref.blowup = false;
+    pref.extrapolate = false;
     
     if ( ~any(isinf(domain(g))) )
+        
         % Flip g around
         gflip = flipud( g );
         gflip = newdomain(gflip,-domain(g));
-        pref.n = length(gflip)+length(f);
-
+    
         % Construct funs
         for k = 1:length(ends)-1  
 
@@ -93,11 +92,11 @@ function h = convcol(f,g)
             % length(gflip)-1 and deg(f) = length(f)-1. Hence, length(H(x)) =
             % deg(gflip)+deg(f)+2 = length(gflip)+length(f). The adaptive 
             % construction process with fun of increasing length is avoided.
-            newfun = fun( @(x) integral(x,f,gflip) , ends(k:k+1), pref);
+            pref.n = length(gflip)+length(f);
+            newfun = fun( @(x) integral(x,f,gflip) , ends(k:k+1) , pref);
             scl.v = max(newfun.scl.v, scl.v); newfun.scl = scl;
             funs = [ funs , newfun ];
         end
-        
     else
         % Unbounded domains must be treated differently. This may be much slower.
         
@@ -203,7 +202,7 @@ function out = integral( x , f , g )
 
     % init the output vector
     out = zeros(size(x));
-   
+    
     % Loop over the input values
     for k=1:length(x)
     
@@ -211,10 +210,9 @@ function out = integral( x , f , g )
         if ( f.ends(end) <= g.ends(1) + x(k) ) || ( f.ends(1) >= g.ends(end) + x(k) )
             continue;
         end
-
+    
         % get the common ends in f and the shifted g
         ends = union( f.ends , g.ends + x(k) );
-        ends(isnan(ends)) = [];
         
         % Trim the ends so that we only have the overlapping bit
         l = 1; r = length(ends);
@@ -227,7 +225,6 @@ function out = integral( x , f , g )
         % while we're at it)
         hasexps = false; nonlinmaps = false;
         sizes = zeros( nfuns , 1 );
-        lr = l:r;
         for j=1:nfuns
             m = (ends(j)+ends(j+1))/2;
             fn = f.funs( find( f.ends > m , 1 ) - 1 );
