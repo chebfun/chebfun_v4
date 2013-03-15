@@ -301,7 +301,7 @@ end
                     storage = struct([]);
                 end
                 dd = 1./max(abs(Amat),[],2);
-                Dl = spdiags(dd,0,size(Amat,1),size(Amat,2));
+                Dl = spdiags(dd,0,size(Amat,1),size(Amat,1));
                 [L U p] = lu(Dl*Amat,'vector');
                 storage(A.ID).L{N} = L;
                 storage(A.ID).U{N} = U;

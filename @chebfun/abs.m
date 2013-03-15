@@ -62,6 +62,7 @@ function Fout = abscol(F)
         
         % Get the ends with the new breakpoints
         ends = union( F.ends , r );
+        ends = ends(:).';
         m = length(ends)-1;
 
         % Get the sizes of the funs in the intervals of F

@@ -250,6 +250,7 @@ elseif isa(F1,'chebfun')
             % Get the set of breakpoints for all funs in F1
             ends = [];
             for k=1:n, ends = union( ends , F1(:,k).ends ); end
+            ends = ends(:).';
             %iends = ends(2:end-1)';
             m = length(ends)-1;
             

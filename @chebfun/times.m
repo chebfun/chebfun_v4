@@ -51,6 +51,7 @@ f.funreturn = 0; g.funreturn = 0;
 
 % product of two chebfuns
 [f,g] = overlap(f,g);
+
 ffuns = [];
 scl = 0;
 for k = 1:length(f.ends)-1

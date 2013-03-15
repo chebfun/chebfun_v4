@@ -28,7 +28,6 @@ end
 fends=f.ends; gends=g.ends;
 frows=size(f.imps,1); grows=size(g.imps,1); maxrows=max(frows,grows);
 fimps=f.imps; gimps=g.imps;
-
 if length(fends)==length(gends) && all(fends==gends)
 
     f.imps=[fimps; zeros(maxrows-frows,length(fends))];

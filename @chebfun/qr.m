@@ -69,6 +69,7 @@ function [Q,R] = qr(A,econ)
         % Get the set of breakpoints for all funs in A
         ends = [];
         for k=1:n, ends = union( ends , A(:,k).ends ); end
+        ends = ends(:).';
         iends = ends(2:end-1)';
         m = length(ends)-1;
 

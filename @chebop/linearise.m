@@ -359,11 +359,13 @@ end
                 l = l+1;
                 domk = get(Dgujk,'domain');
                 dom = union(dom, domk.endsandbreaks);
+                dom = dom(:).';
             end
             
             % Include jumplocs in the domain
             if ~isempty(jumplocs)
                 dom = union(dom,jumpinfo(1,:));
+                dom = dom(:).';
             end
 
         end
