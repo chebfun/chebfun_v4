@@ -16,16 +16,41 @@ function f = cumsum2(f)
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+
+mode = chebfun2pref('mode'); 
 fun = f.fun2;
+rect = f.corners; 
+
 if ( isempty(f) ) % check for empty chebfun2.
     f = 0;
     return;
 end
 
+if ( mode == 0 )
+    C = chebfun(fun.C, rect(3:4));
+    R = chebfun(fun.R.', rect(1:2)).';
+else
+   C = fun.C; 
+   R = fun.R;
+end
+
 % cumsum along the columns.
-fun.C = cumsum(fun.C);
+C = cumsum(C);
 % cumsum along the rows.
-fun.R = cumsum(fun.R);
+R = cumsum(R);
+
+if ( mode == 0 )
+    x = chebpts(length(C), rect(3:4));
+    C = C(x, :);
+    fun.C = C;
+    x = chebpts(length(R), rect(1:2));
+    R = R(:, x).';
+    fun.R = R; 
+else
+   fun.C = C; 
+   fun.R = R; 
+end
+
 f.fun2 = fun;
 
 end
