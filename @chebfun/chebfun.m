@@ -72,6 +72,8 @@
 %
 % CHEBFUN(F,...,'map',{MAPNAME,MAPPARS}) allows the use of mapped Chebyshev
 % expansions. See help chebfun/maps for more information.
+%
+% See also chebfunpref.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.

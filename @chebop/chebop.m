@@ -92,7 +92,7 @@
 % something like @(x,y,p) diff(p*diff(y)) will require a second equation
 % explicitly enforcing that diff(p) = 0.
 %
-% See also chebop/mtimes, chebop/mldivide.
+% See also chebop/mtimes, chebop/mldivide, cheboppref.
 
 % Copyright 2011 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
