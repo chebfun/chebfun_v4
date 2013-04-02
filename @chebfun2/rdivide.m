@@ -33,9 +33,7 @@ elseif ( isa(f,'chebfun2') && isa(g,'double') )
         if ( abs(g) < eps )
             error('CHEBFUN2:rdivide:DivisionByZero','Division by zero or near zero.')
         end
-        h = f; 
-        h.fun2.U = f.fun2.U.*g;  
-        h.scl = f.scl/g;
+        h = f.*(1/g);
 elseif ( isa(f,'double') && isa(g,'chebfun2') )
        [bol wzero] = singlesigntest(g);   % only attempt if g is of single sign. 
        if bol == 1 && wzero == 0
