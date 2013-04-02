@@ -1,4 +1,4 @@
-function f = diff(f,n,dim)
+function f = diff(f,order,dim)
 %DIFF Derivative of a chebfun2.
 %
 % DIFF(F) is the derivative of F along the y direction.
@@ -23,22 +23,22 @@ if ( isempty(f) ) % check for empty chebfun2.
 end
 
 if ( nargin == 1 ) % defaults.
-    n = 1;
+    order = 1;
     dim = 1;
 end
 if ( nargin == 2 ) 
-    if length(n) == 1 % diff in y is default.
+    if length(order) == 1 % diff in y is default.
         dim = 1;
-    elseif length(n) == 2
+    elseif length(order) == 2
             rect = f.corners;
-            f = diff(chebfun2(diff(f.fun2,n(1),2),rect),n(2),1);
+            f = diff(chebfun2(diff(f.fun2,order(1),2),rect),order(2),1);
             return;
     else
        error('CHEBFUN2:DIFF','Undetermined direction of differentiation.'); 
     end
 end
-if ( isempty(n) )  % empty n defaults to y-derivative.
-    n = 1;
+if ( isempty(order) )  % empty n defaults to y-derivative.
+    order = 1;
 end
 
 rect = f.corners;
@@ -46,6 +46,20 @@ if ( ~( dim == 1 ) && ~( dim == 2) )
     error('CHEBFUN2:DIFF:dim','Can compute derivative in x or y only.');
 end
 
-f = chebfun2(diff(f.fun2,n,dim),rect);
+% This computes the derivative of the fun2. But first, store the old AD info.
+derivOld = f.deriv;
+f = chebfun2(diff(f.fun2,order,dim),rect);
 
+% This updates the AD info
+[m, n] = size(derivOld);
+if dim == 1 % Computing derivatives w.r.t. y
+   % Shift derivative information to the left. This amounts to adding zero
+   % columns(s) to the right end side of the matrix
+   f.deriv = [derivOld, zeros(m,order)];
+   
+else % Computing derivatives w.r.t. x
+   % Shift derivative information upwards. This amounts to adding zero
+   % row(s) to the bottom of the matrix.
+   f.deriv = [derivOld; zeros(order,n)];
+end
 end

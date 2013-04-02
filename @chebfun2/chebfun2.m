@@ -27,6 +27,7 @@ classdef chebfun2
           corners     % Corners of rectangular domain. 
           scl = 0;    % Vertical scale used for determining relative 
                       % machine precision.
+          deriv = 1;  % This will be a matrix for obtaining derivative information
     end
     properties  ( GetAccess = 'private' , SetAccess = 'private' )
         
