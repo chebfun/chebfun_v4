@@ -55,6 +55,7 @@ elseif ( isa(f,'chebfun2') && isa(g,'chebfun2') )
     fderiv = f.deriv;
     gderiv = g.deriv;
     
+    % Obtain the dimensions of the derivatives of the inputs.
     [mf, nf] = size(fderiv);
     [mg, ng] = size(gderiv);
     
@@ -66,8 +67,13 @@ elseif ( isa(f,'chebfun2') && isa(g,'chebfun2') )
     fderivNew = newDeriv;
     gderivNew = newDeriv;
     
+    % Replace entries of the matrices of the correct size with information from
+    % the input variables.
     fderivNew(end-mf+1:end,end-nf+1:end) = fderiv;
     gderivNew(end-mg+1:end,end-ng+1:end) = gderiv;
+    
+    % Add the two derivative matrices together, and assign to the deriv field of
+    % the output variable.
     h.deriv = fderivNew + gderivNew;
 else
     error('CHEBFUN2:plus:type','Cannot add these two objects together');
