@@ -9,8 +9,6 @@ function Z = atan2(Y,X)
 % Copyright 2011 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-flag = nargin < 3;
-
 nX = numel(X);
 nY = numel(Y);
 
@@ -36,7 +34,7 @@ end
 
 
     function p = colfun(y,x)
-
+        
     % We'll need to extrapolate here
     pref = chebfunpref;
     pref.extrapolate = 1;

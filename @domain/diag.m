@@ -18,10 +18,11 @@ if isa(f,'domain')
 end
 
 % Unset funreturn flag, as we want to evaluate f and get back doubles
-f = set(f,'funreturn',0);
+% f = set(f,'funreturn',0);
 
 % Sort out the domain
 fends = f.ends; fends(fends<d.ends(1) | fends>d.ends(end)) = [];
+f.funreturn = 0;
 d = domain(union(d.ends,fends));
 
 % Define the oparray
