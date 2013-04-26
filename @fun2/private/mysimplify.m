@@ -98,7 +98,12 @@ if all(max(ac(1:Tlen,:)) < Tmax)        % We have converged; now chop tail
         repmat(length(coeffs)-(1:Tend)',1,size(ac,2));       % Bang/buck of chopping at each pos
     [ignored,Tchop] = max(Tbpb(3:Tend,:)); % Tchop = pos at which to chop
     Tchop = min(Tchop); 
-    if size(coeffs,1) - Tchop < size(coeffs,1), Tchop = 1; end % don't allow chopping so k < n 
+    
+    % don't allow chopping so k < n 
+    if (size(coeffs,1) - Tchop < size(coeffs,2)) 
+        Tchop = 1; 
+    end 
+    
     coeffs = coeffs(Tchop+3:end,:);         % Chop the tail
     v = chebifft(coeffs);            % Values at 2nd kind points
 
