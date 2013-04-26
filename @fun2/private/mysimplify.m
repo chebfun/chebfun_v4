@@ -77,8 +77,8 @@ Tmax = max(tol,epstol*min(1e12,max(mdiff,Tlen^(2/3)))); % Max size of tail
 
 % Check for convergence and chop
 if all(max(ac(1:Tlen,:)) < Tmax)        % We have converged; now chop tail
-    Tend = find(ac>=repmat(Tmax,size(ac,1),1),1,'first')-1;  % Pos of first entry above Tmax
-    
+%     Tend = find(ac>=repmat(Tmax,size(ac,1),1),1,'first')-1; 
+    Tend = find(max(ac,[],2)>=max(Tmax),1,'first')-1; % Pos of first entry above Tmax
     
     % Is g the zero function?
     if isempty(Tend)
