@@ -22,6 +22,13 @@ X = rot90(X,2);                 % Rotate (MATLAB's convention)
 yl = find(X(1,:)>tol, 1, 'last'); 
 xl = find(X(:,1)>tol, 1, 'last');
 zl = find(diag(X)>tol, 1, 'last');
+
+% If the diagonal contains only zeros, then zl is empty. Make it zero if zl
+% is empty. 
+if ( isempty(zl) )
+   zl = 0;  
+end
+
 xl = max(xl, zl); yl = max(yl, zl); 
 X = X(1:xl, 1:yl);            % Truncate off small coeffs for better visual
 [yl xl]=size(X); 
