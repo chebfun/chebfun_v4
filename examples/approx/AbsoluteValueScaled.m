@@ -108,7 +108,7 @@ axis([-1 1 1e-18 10]), grid on
 %%
 % References:
 %
-% [1] http://www.chebfun.org/examples/appox/html/AbsoluteValue.shtml
+% [1] http://www.chebfun.org/examples/approx/html/AbsoluteValue.shtml
 %
 % [2] R. Byers and H. Xu. A new scaling for Newton's iteration for the
 % polar decomposition and its backward stability. SIAM J. Matrix Anal.
