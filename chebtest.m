@@ -234,6 +234,9 @@ for j = 1:nr_tests
   % Print the test name
   if javacheck
       link = ['<a href="matlab: edit ''' whichfun '''">' fun '</a>'];
+  elseif any(strfind(fun, 'plot'))
+      % Don't test PLOT() tests is jvm is off.
+      continue
   else
       link = fun;
   end
