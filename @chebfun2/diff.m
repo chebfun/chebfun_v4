@@ -46,20 +46,7 @@ if ( ~( dim == 1 ) && ~( dim == 2) )
     error('CHEBFUN2:DIFF:dim','Can compute derivative in x or y only.');
 end
 
-% This computes the derivative of the fun2. But first, store the old AD info.
-derivOld = f.deriv;
+% Differentiate the fun2
 f = chebfun2(diff(f.fun2,order,dim),rect);
 
-% This updates the AD info
-[m, n] = size(derivOld);
-if dim == 1 % Computing derivatives w.r.t. y
-   % Shift derivative information to the left. This amounts to adding zero
-   % columns(s) to the right end side of the matrix
-   f.deriv = [derivOld, zeros(m,order)];
-   
-else % Computing derivatives w.r.t. x
-   % Shift derivative information upwards. This amounts to adding zero
-   % row(s) to the bottom of the matrix.
-   f.deriv = [derivOld; zeros(order,n)];
-end
 end

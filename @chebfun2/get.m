@@ -44,8 +44,6 @@ switch ( propName )
         val = chebpoly2(f);
     case 'vals'
         val = chebpolyval2(f);
-    case 'deriv'
-        val = f.deriv;
     otherwise
         error('CHEBFUN2:get:propnam',[propName,' is not a valid chebfun2 property.'])
 end

@@ -8,5 +8,4 @@ function f = uminus(f)
 
 f.fun2 = uminus(f.fun2);
 
-f.deriv = -f.deriv;
 end

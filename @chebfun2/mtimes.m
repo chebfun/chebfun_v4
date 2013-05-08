@@ -21,9 +21,6 @@ if ( isa(f,'double') )
         g.fun2.scl = abs(f)*g.fun2.scl;
         g.scl=abs(f)*g.scl;
         
-        % This updates the derivative information of the output variable,
-        % multiplying the derivative matrix with the scalar.
-        g.deriv = f*(g.deriv);
         f=g;
     elseif numel(f) == 2
         f = [f(1)*g;f(2)*g];
@@ -40,9 +37,6 @@ elseif ( isa(g,'double') )
         f.fun2.scl = abs(g)*f.fun2.scl;
         f.scl = f.scl*abs(g);
         
-        % This updates the derivative information of the output variable,
-        % multiplying the derivative matrix with the scalar.
-        f.deriv = g*(f.deriv);
     elseif numel(g) == 2
         f = [g(1)*f;g(2)*f];
     elseif numel(g) == 3
