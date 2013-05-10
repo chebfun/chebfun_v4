@@ -8,11 +8,16 @@ function bol = isequal(f,g)
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-bol=1; % assume they are the same.
+bol=true; % assume they are the same.
+
+if size(f) ~= size(g)
+    bol = false;
+    return
+end
 
 % Are the functions and domains the same?
 if ( ~isequal(f.fun2,g.fun2) )
-    bol = 0;
+    bol = false;
     return;
 end
 
