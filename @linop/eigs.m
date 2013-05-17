@@ -306,7 +306,6 @@ else % Generalised: [PA ; BC]*v = lambda*[P*B ; 0]*v
     [V,D] = eig(full(Amat),full(Bmat));
     
 end
-
 % Find the droids we're looking for.
 idx = nearest(diag(D),V,sigma,min(k,N),N);
 V = V(:,idx);
@@ -393,6 +392,20 @@ ii10 = (N-tenPercent):N; % Indices of last 10%
 %     idx = idx( keeper ); % Return the keepers.
 % end
 
+lenV = size(V);
+sumN = sum(N);
+if ( lenV > sumN )
+    numVars = lenV/sumN;
+    if ( round(numVars) ~= numVars )
+        error('Oops.');
+    end
+    VNew = V(1:sumN, :);
+    for j = 1:numVars-1
+        VNew = VNew + V(j*sumN + (1:sumN), :);
+    end
+    V = VNew;
+end
+
 % Check for high frequency energy (indicative of spurious eigenvalues) in
 % each of the remaining valid eigenfunctions.
 while ~isempty(queue)
@@ -412,13 +425,15 @@ while ~isempty(queue)
         end
         vc = vc(end:-1:1);
     end
+    vc = abs(vc);
     
     % Recipe: More than half of the energy in the last 90% of the Chebyshev
     % modes is in the highest 10% modes, and the energy of the last 90% is
     % not really small (1e-8) compared to the first 10% (i.e. is not noise).
     norm90 = norm(vc(ii90)); % Norm of last 90%
     norm10 = norm(vc(ii10)); % Norm of last 10%
-    if norm10 > 0.5*norm90 && norm90 > 1e-8*norm(vc(iif10))
+    normfirst10 = norm(vc(iif10)); % Norm of first 10%
+    if ( norm10 > 0.5*norm90 && norm90 > 1e-8*normfirst10 )
         keeper(j) = false;
         if queue(end) < length(idx)
             m = queue(end)+1;
