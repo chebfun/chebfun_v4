@@ -1,5 +1,5 @@
 function r=roots(f,varargin)
-%ROOTS zero contours of a chebfun2
+%ROOTS zero contours of a chebfun2, or common zeros of two chebfun2 objects
 % 
 % R = ROOTS(F), returns the zero contours of F as a quasimatrix of chebfuns. 
 % Each column of R is one zero contour. This command only finds contours when
@@ -11,12 +11,29 @@ function r=roots(f,varargin)
 % In the special case when F is of length 1 then the zero contours are 
 % found to full precision. 
 %
-% R = roots(F,G) returns the isolated points of F and G.
+% R = ROOTS(F,G) returns the isolated points of F and G, which are computed
+% by either the marching squares or a resultant method depending on the
+% properties of F and G (see CHEBFUN2V/ROOTS). The resultant method is
+% considered more robust and reliable.
+% 
+% ROOTS(F,G,'ms') or ROOTS(F,G),'marchingsquares') computes the isolated
+% common zeros by an algorithm based on marching squares. 
+%
+% ROOTS(F,G,'resultant') computes the isolated common zeros by a
+% resultant-based method (see [1]). 
+%
+% [1] Y. Nakatsukasa, V. Noferini, and A. Townsend, Computing the common 
+% zeros of two bivariate functions via Bezout resultants, in preparation, 
+% (2013).
 % 
 % See also CHEBFUN2V/ROOTS.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
+
+if isempty(f)
+    error('CHEBFUN2:ROOTS:INPUT','The chebfun2 is an empty object');
+end
 
 
 if ( nargin == 1 )
@@ -63,7 +80,11 @@ else
     end
 end
 elseif ( isa(varargin{1},'chebfun2') )
-   r = roots(chebfun2v(f,varargin{1})); 
+   if ( isempty(varargin{1}) )
+       warning('CHEBFUN2:ROOTS:EMPTY','Second chebfun2 is empty. Computing zero contours.')
+       r = roots(f);
+   end
+   r = roots(chebfun2v(f,varargin{1}),varargin{2:end});  % change back to roots later.
 end
     
 end

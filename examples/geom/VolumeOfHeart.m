@@ -173,6 +173,52 @@ Vol = integral2(F'*v)
 lx = (max2(x)-min2(x)); ly = (max2(y)-min2(y)); lz = (max2(z)-min2(z));
 VolBox = lx*ly*lz
 
+%% The volume of a seashell
+% In our final example we compute the volume of the seashell region 
+% parameterized by the following equations. 
+ 
+u = chebfun2(@(u,v) u, [0 6*pi 0 2*pi]);
+v = chebfun2(@(u,v) v, [0 6*pi 0 2*pi]);
+
+x = 2*(1-exp(u/(6*pi))).*cos(u).*cos(v/2).^2;
+y = 2*(-1+exp(u/(6*pi))).*sin(u).*cos(v/2).^2;
+z = 1-exp(u/(3*pi))-sin(v)+exp(u/(6*pi)).*sin(v);
+
+surf(x,y,z), camlight
+view(160,10), axis equal, box on
+
+%%
+% Notice that in this case the parametrization gives an open surface at
+% $y=0$ (corresponding to $u=2\pi$). As can be seen below, however, there is 
+% no flux across the open part of the seashell, as the vector filed $[0,0,z]$
+% is parallel to it.
+
+hold on
+F = [0*z;0*z;z];
+quiver3(x,y,z,F,'g',lw,2);
+hold off
+
+%%
+% As in the previous examples, therefore, the net flux across this surface 
+% gives the volume of the seashell.
+
+r = [x;y;z];                         
+v = -normal(r); 
+Vol = integral2(F'*v)
+
+%%
+% For comparison, here is the volume  the bounding box that encloses the 
+% seashell. 
+
+lx = (max2(x)-min2(x)); ly = (max2(y)-min2(y)); lz = (max2(z)-min2(z));
+VolBox = lx*ly*lz
+
+%% 
+% Notice that this solid fills about 21% of its bounding box.
+
+Vol/VolBox
+
+
 %% References
 %%
 % [1] <http://www2.maths.ox.ac.uk/chebfun/examples/fun/html/ValentinesDay.shtml>
