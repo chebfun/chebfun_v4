@@ -30,7 +30,7 @@ MS = 'markersize'; ms = 20;
 % Chebfun2. Old Chebfun2 used a contouring algorithm based on Marching 
 % Squares [5], which is adequate for many examples, but not completely 
 % robust (see below). 
-% As of today, new Chebfun2 employs a resultant method based on Bezout
+% As of today, the new Chebfun2 employs a resultant method based on Bezout
 % matrices, regularisation, and 2D subdivision [2]. We have found this 
 % approach to be numerically robust, and surprisingly efficient for 
 % high degree examples. In this Example we will play with the command 
@@ -40,7 +40,7 @@ MS = 'markersize'; ms = 20;
 %% Optional arguments and defaults
 % The new Chebfun2 roots command allows for a third argument to supply a 
 % user preferred method. The syntax roots(f,g,'resultant') and 
-% roots(f,g,'marchingsquares') employs the new resultant based algorithm 
+% roots(f,g,'marchingsquares') employ the new resultant based algorithm 
 % and the old Marching Squares approach, respectively. For example 
 
 f = chebfun2(@(x,y) cos(7*x.^2.*y + y)); 
@@ -107,7 +107,7 @@ max( norm(f(r(:,1),r(:,2))), norm(g(r(:,1),r(:,2))))
 
 %%
 % For this example the exact solutions can be derived and checked to be
-% to be very accurate. 
+% very accurate. 
 
 %% Example 3: Autonomous system: 
 % Here we repeat an example from [4]: 
@@ -124,12 +124,12 @@ axis(rect), axis equal, hold off
 
 %% Failure of Marching Squares 
 % It is easy to derive a rootfinding problem that causes Marching 
-% Squares to fail.  For instance, here is a problem where a 
-% solution is missed: 
+% Squares to fail.  For instance, here is a problem where the two 
+% solutions are missed: 
 
 d = [-.2 .2 -1 1];
 f = chebfun2(@(x,y) (y - 5*x).*(y + 5*x), d); 
-g = chebfun2(@(x,y) 0.01*y - x, d); 
+g = chebfun2(@(x,y) 0.01*y - x + .0001, d); 
 r = roots(f, g, 'ms')
 
 plot(roots(f), 'r', LW, lw), hold on 
@@ -137,7 +137,7 @@ plot(roots(g), 'b', LW, lw), axis(d);
 title('Marching Squares misses a solution',FS,fs)
 
 %%
-% We can compute the correct solution by using the resultant method: 
+% We can compute the correct solutions by using the resultant method: 
 
 r = roots(f, g, 'resultant');
 plot(roots(f), 'r', LW, lw), hold on 

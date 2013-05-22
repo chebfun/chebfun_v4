@@ -126,8 +126,8 @@ if sum(sum(FGG))>0, % Bezout could have missed these, do local search
         for j=1:size(FGG,2)
             if FGG(i,j)==1,
                 s = svd([FX(i,j) FY(i,j);GX(i,j) GY(i,j)]);
-                Jacobs = s(end); % conditioning of original problem
-                if Jacobs < 1e15, % give up if solution is too ill conditioned
+                Jacobs = 1./s(end); % conditioning of original problem
+                if ( Jacobs < 1e15 ), % give up if solution is too ill conditioned
                     xx(ip) = xpts(j);        yy(ip) = ypts(i);
                     ip = ip+1;
                 end
@@ -157,7 +157,7 @@ for i = 1:max(m)
     znow = z(m==i); xnow = real(znow); ynow = imag(znow);
     J = [fx(mean(xnow),mean(ynow)) fy(mean(xnow),mean(ynow));gx(mean(xnow),mean(ynow)) gy(mean(xnow),mean(ynow))];
     s = svd(J);
-    Jacobs = s(end);     % original conditioning
+    Jacobs = 1./s(end);     % original conditioning
     Jacobsbez = 1/abs(det(J)); % Bezout conditioning
     tolb = max(tolbdefault,eps*100*Jacobsbez);
     tolb = min(tolb,xwid*1e-2); % give up if Jacobs too large

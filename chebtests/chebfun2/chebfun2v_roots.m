@@ -87,7 +87,7 @@ g = chebfun2(@(x,y)(2*(x+0.1).^2+(y+0.1).^2-1).*(2*(x+0.1).^2+(y-0.1).^2-1).*(2*
 r2 = roots([f;g],'resultant'); 
 pass(j) = ~( length(r2) - 45 ); j = j+1;
 pass(j) = ( norm(f(r2(:,1),r2(:,2))) < tol ); j = j + 1; 
-pass(j) = ( norm(g(r2(:,1),r2(:,2))) < tol ); j = j + 1; 
+pass(j) = ( norm(g(r2(:,1),r2(:,2))) < 100*tol ); j = j + 1; 
 
 %%
 f = chebfun2(@(x,y)sin(3*(x+y))); 
