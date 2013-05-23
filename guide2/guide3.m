@@ -62,8 +62,10 @@ plot(real(splat(r(:,2))),imag(splat(r(:,2))),'.k','markersize',20)
 hold off
 
 %%
-% Chebfun2 uses an algorithm based on Marching Squares though other 
-% algorithms can be used [Nakatsukasa, Noferini & Townsend Example 2013].
+% Chebfun2 uses an algorithm based the resultant method, see
+% [Nakatsukasa, Noferini & Townsend 2013], 
+% [Nakatsukasa, Noferini & Townsend Example 2013], and 
+% [Townsend Example 2013].
 
 %% 3.4 GLOBAL OPTIMISATION: MAX2, MIN2, AND MINANDMAX2
 % Chebfun2 also provides functionality for global optimisation. Here is
@@ -131,8 +133,16 @@ norm(f,inf)
 % [Nakatsukasa, Noferini & Townsend Example 2013] Y. Nakatsukasa, V. Noferini
 % and A. Townsend, Computing common roots of two bivariate functions,
 % Chebfun Example, February 2013. 
+%%
+% [Nakatsukasa, Noferini & Townsend 2013] Y. Nakatsukasa, V. Noferini
+% and A. Townsend, Computing the common zeros of two bivariate functions
+% via Bezout resultants, (2013). 
+%%
 % [Townsend & Trefethen 2013] A. Townsend and L. N. Trefethen, An extension
 % of Chebfun to two dimensions, submitted. 
+%%
+% [Townsend Example 2013] A. Townsend, A new bivariate rootfinder in 
+% Chebfun2 based on Bezout resultants, May 2013. 
 %%
 % [Trott 2007] M. Trott, Applying Groebner Basis to Three Problems in
 % Geometry, Mathematica in Education and Research, 6 (1997), pp.15-28.
