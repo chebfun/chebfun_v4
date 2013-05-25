@@ -35,14 +35,14 @@
 % vector valued functions, such as $[e^{x+y};\cos(x-y)]$.  We represent 
 % vector valued functions as chebfun2v objects, and these are useful for
 % performing vector calculus. For information about
-% chebfun2v objects and vector calculus see Chapter 5 and 6 of this
+% chebfun2v objects and vector calculus see Chapters 5 and 6 of this
 % guide.
 
 %% 1.3 CONSTRUCTING CHEBFUN2 OBJECTS
 % A chebfun2 is constructed by supplying the Chebfun2 constructor with a
 % function handle or string. The default rectangular domain of a chebfun2 is 
 % $[-1,1]\times [-1,1]$. (An example showing how to specify a different domain is 
-% given at the end of this chapter). For example, here is how to make a chebfun2 that
+% given at the end of this chapter.) For example, here is how to make a chebfun2 that
 % represents $\cos(xy)$ on $[-1,1]\times[-1,1]$ and then plot it. 
 
 f = chebfun2(@(x,y) cos(x.*y)); 
@@ -114,7 +114,7 @@ plot(fy)
 %%
 % The syntax for the DIFF command can cause confusion because we are
 % following the matrix syntax in Matlab. We also offer DIFFX(f,k) and 
-% DIFFY(f,k) which differentiates $f(x,y)$ k-times in the first and 
+% DIFFY(f,k) which differentiate $f(x,y)$ k-times in the first and 
 % second variable, respectively.
 
 %%

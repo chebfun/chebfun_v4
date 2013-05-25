@@ -106,7 +106,7 @@ help chebfun2/cumsum2
 
 f = chebfun2(@(x,y) exp(-(x.^2 + 3*x.*y+y.^2) ));
 contour(cumsum2(f),'numpts',400), axis equal
-title('Contours of cumsum2(f)') 
+title('Contours of cumsum2(f)'), axis([-1 1 -1 1])
 norm( cumsum(cumsum(f),2) - cumsum2(f) ) 
 
 %% 2.4 COMPLEX ENCODING

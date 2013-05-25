@@ -19,7 +19,7 @@ r(:,1)
 
 %%
 % The zero contours of a function are computed by Chebfun2 to plotting
-% accuracy and the are typically not accurate to machine precision. 
+% accuracy and they are typically not accurate to machine precision. 
 
 %% 3.2 ROOTS
 % Chebfun2 also comes with the capability of finding zeros of bivariate
@@ -42,8 +42,8 @@ plot(r(:,1),r(:,2),'.k','markersize',20)  % point intersections
 axis([-1 1 -1 1]), axis square, hold off
 
 %%
-% The solution to bivariate systems, and intersections of curves are,
-% typically, computed to full machine precision.
+% The solution to bivariate polynomial systems and intersections of curves, are
+% typically computed to full machine precision.
 
 %% 3.3 INTERSECTIONS OF CURVES
 % The determination of the intersections of real parameterised complex curves can be expressed as a
