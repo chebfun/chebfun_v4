@@ -50,6 +50,22 @@ while ( ~isempty(varargin) )
     end
 end
 
+if ( nargin >=2 && length(argin{1})<5 )
+%% Column, row, pivot plot
+        % Only option with <=3 letters is a colour, marker, line
+        ll = regexp(argin{1},'[-:.]+','match');
+        %cc = regexp(varargin{1},'[bgrcmykw]','match');  % color
+        mm = regexp(argin{1},'[.ox+*sdv^<>ph]','match');  % marker
+        if ( ~isempty(ll) || ~isempty(mm) )
+           plot(f,argin{:}), hold on 
+           argin(1)=[];
+           contour(f,argin{:})
+           return
+        end  
+end
+
+
+
 if isa(f,'double')  % contour(xx,yy,F,...)
     if nargin >= 3 && isa(varargin{1},'double') && isa(varargin{2},'chebfun2')
         xx = f; yy = varargin{1}; f = varargin{2};

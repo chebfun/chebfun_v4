@@ -98,7 +98,7 @@ if ( ~isempty(varargin) )
         if plotline
             opts = {}; 
             if ~isempty(ll)
-                opts = {opts{:},'LineStyle',ll{:}};
+                opts = {opts{:},'LineStyle',ll{:},'color',cc{:}};
             end
             %plot column lines:
             line([crosses(:,1) crosses(:,1)].',[nw+ht/8 ne-ht/8],opts{:});
