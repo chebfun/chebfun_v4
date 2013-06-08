@@ -50,7 +50,7 @@ while ( ~isempty(varargin) )
     end
 end
 
-if ( nargin >=2 && length(argin{1})<5 )
+if ( ~isempty(argin) && length(argin{1})<5 )
 %% Column, row, pivot plot
         % Only option with <=3 letters is a colour, marker, line
         ll = regexp(argin{1},'[-:.]+','match');

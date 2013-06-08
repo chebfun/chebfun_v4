@@ -40,7 +40,7 @@ if( dim == 1 )
     C = cumsum(C);
 elseif( dim == 2 )
     % cumsum along the rows.
-    R = cumsum(R);
+    R = cumsum(R.').';
 else
     error('CHEBFUN2:CUMSUM:DIM','Integration direction must be x or y');
 end
@@ -50,7 +50,8 @@ if ( mode == 0 )
     C = C(x,:);
     fun.C = C;
     x = chebpts(length(R), rect(1:2));
-    R = R(:,x).';
+    S = R.'; 
+    R = S(x,:).';
     fun.R = R;
 else
    fun.C = C; 

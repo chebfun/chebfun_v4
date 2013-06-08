@@ -20,7 +20,7 @@ if ( isempty(f.fun2) ) % empty check
 end
 
 % zero function check
-if ( norm(f) == 0 )
+if ( norm(f.fun2.U) == 0 )
    varargout = {0, 0, 0};
    return; 
 end

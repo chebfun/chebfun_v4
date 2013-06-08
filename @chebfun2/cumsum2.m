@@ -37,14 +37,15 @@ end
 % cumsum along the columns.
 C = cumsum(C);
 % cumsum along the rows.
-R = cumsum(R);
+R = cumsum(R.').';
 
 if ( mode == 0 )
     x = chebpts(length(C), rect(3:4));
     C = C(x, :);
     fun.C = C;
     x = chebpts(length(R), rect(1:2));
-    R = R(:, x).';
+    S = R.'; 
+    R = S(x,:).';
     fun.R = R; 
 else
    fun.C = C; 
