@@ -145,7 +145,7 @@ x = chebfun2(@(x,y) x, [-2 3 -4 4]);
 y = chebfun2(@(x,y) y, [-2 3 -4 4]);   
 
 f = 1./( 2 + cos(.25 + x.^2.*y + y.^2) );
-contour(f)
+contour(f), axis square
 
 %% 1.7 WHAT TO DO NOW
 % To find out more about Chebfun2 you can continue reading this guide, or 

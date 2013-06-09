@@ -3,6 +3,7 @@
 
 %% 
 % (Chebfun2 example /geom/VolumeOfHeart.m)
+% [Tags: #heart, #chebfun2, #surfaces]
 
 %% 
 % This example demonstrates how to compute the volume of a solid enclosed 
