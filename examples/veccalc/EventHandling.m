@@ -63,7 +63,7 @@ u0 = [2 0 0];  % u0 = [h(0) h'(0) x(0)]
 % chebfun2v object (see [2]):  
 
 t0 = 0; Tend = 50;  
-F = chebfun2v(@(y,yp)yp, @(y,yp)-1-.01*yp, @(y,yp)1+0*y,[0 30 0 2]);
+F = chebfun2v(@(h,hp)hp, @(h,hp)-1-.01*hp, @(h,hp)1+0*h,[0 30 0 2]);
 
 %% 
 % Once the ball makes contact with the ground we suppose that the ball
@@ -73,7 +73,8 @@ F = chebfun2v(@(y,yp)yp, @(y,yp)-1-.01*yp, @(y,yp)1+0*y,[0 30 0 2]);
 % We terminate the ODE45 solver when the maximum height of a bounce
 % is below 5cm.  Here is the path taken by the bouncing ball:
 
-options = odeset('events', @p1Event1);% Event when the ball hits the ground. 
+% Event when the ball hits the ground. 
+options = odeset('RelTol',100*eps, 'events', @p1Event1);
 h = []; v = []; x = [];   % store solution
 while ( 1 )  
     sol = ode45(F, [t0, Tend], u0, options); 

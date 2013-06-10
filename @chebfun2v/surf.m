@@ -90,7 +90,9 @@ else
     h = surf(f.xcheb, f.ycheb, f.zcheb, varargin{:});
 end
 
-
+xlim([min2(f.xcheb),max2(f.xcheb)]) 
+ylim([min2(f.ycheb),max2(f.ycheb)]) 
+zlim([min2(f.zcheb),max2(f.zcheb)]) 
 
 
 if ~ish

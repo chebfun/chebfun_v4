@@ -46,7 +46,8 @@ if ~isempty(F.zcheb)
 end
 
 
-tol = 100*chebfun2pref('eps');
+abstol = 100*chebfun2pref('eps');
+reltol = 1e10*chebfun2pref('eps');% we don't expect 16 digits of relative tolerance, but at least require some. 
 
 if ( isa(init, 'function_handle') )
     g = @(t,y) feval(F,y(1),y(2));
@@ -54,20 +55,20 @@ if ( isa(init, 'function_handle') )
     [Wa, ignored, r] = recoverCoeffsBC(L);
     r = Wa \ r;
     if ( nargin == 3 )
-        opts = odeset('RelTol', tol, 'AbsTol', tol);
+        opts = odeset('RelTol', reltol, 'AbsTol', abstol);
         sol = ode45(g, tspan, r', opts);
     else
-        opts = odeset('RelTol', tol, 'AbsTol', tol);
+        opts = odeset('RelTol', tol, 'AbsTol', abstol);
         opts = odeset(opts, varargin{:});
         sol = ode45(g, tspan, r', varargin{:});
     end
 else
     g = @(t,y) feval(F,y(1),y(2));
     if ( nargin == 3 )
-        opts = odeset('RelTol', tol, 'AbsTol', tol);
+        opts = odeset('RelTol', reltol, 'AbsTol', abstol);
         sol = ode45(g, tspan, init, opts);
     else
-        opts = odeset('RelTol', tol, 'AbsTol', tol);
+        opts = odeset('RelTol', reltol, 'AbsTol', abstol);
         opts = odeset(opts, varargin{:});
         sol = ode45(g, tspan, init, opts);
     end
@@ -76,7 +77,7 @@ end
 % Have a look at sol and see if events stopped the solution process. If so
 % truncate the time interval.
 tvec = sol.x; 
-if abs(tvec(end) - tspan(end)) > tol
+if abs(tvec(end) - tspan(end)) > abstol
     for jj = length(tspan):-1:1
        if tvec(end) <= tspan(jj)
           tspan(jj) = [];  
@@ -86,10 +87,12 @@ if abs(tvec(end) - tspan(end)) > tol
 end
 
 % split solution at event locations. 
-tvec = sol.xe; 
-if ~isempty(tvec)
-    tspan = [tspan tvec]; 
-    tspan = unique(sort(tspan)); 
+if isfield(sol,'xe')
+    tvec = sol.xe;
+    if ~isempty(tvec)
+        tspan = [tspan tvec];
+        tspan = unique(sort(tspan));
+    end
 end
 
 t = chebfun(tspan([1 end]), tspan);
