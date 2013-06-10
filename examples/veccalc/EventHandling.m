@@ -12,7 +12,7 @@ FS = 'fontsize'; fs = 16;
 MS = 'markersize'; ms = 20;
 
 %%
-% A few days ago Jonathon Black from the OCIAM group in Oxford University
+% A few days ago Jonathan Black from the OCIAM group in Oxford University
 % was interested in using chebfun2v's command ODE45 for solving an
 % autonomous system with event handling. Unfortunately, Chebfun2 did not
 % provide support for event handling. This Example details two small
@@ -94,12 +94,8 @@ title('Bouncing ball',FS,fs)
 % command. Since we do not want to count the bounces we supply the roots
 % command with the flag 'nojump'.
 
-d = roots(h ,'jump'); 
+d = roots(diff(h) ,'nojump'); 
 plot(x(d),h(d),'.r',MS,ms)
-
-%% 
-% Warning: For some reason the 'nojump' flag did not work, and we are
-% looking into why this is the case. 
 
 end
 
