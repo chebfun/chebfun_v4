@@ -65,17 +65,17 @@ if ( ~isempty(varargin) )
             
             x = chebpts(100,rect(1:2));
             lft = rect(3)*ones(length(x),1);
-            h2 = plot3(f1(x,lft),f2(x,lft),f3(x,lft),'-','Color',cc{1},LW,lw);
+            h2 = plot3(f1(x,lft),f2(x,lft),f3(x,lft),'linestyle',ll{1},'Color',cc{1},LW,lw); hold on
         
             rght = rect(4)*ones(length(x),1);
-            h3 = plot3(f1(x,rght),f2(x,rght),f3(x,rght),'k','Color',cc{1},LW,lw);
+            h3 = plot3(f1(x,rght),f2(x,rght),f3(x,rght),'linestyle',ll{1},'Color',cc{1},LW,lw);
             
             y = chebpts(100,rect(3:4));
             dwn = rect(1)*ones(length(x),1);
-            h4 = plot3(f1(dwn,y),f2(dwn,y),f3(dwn,y),'k','Color',cc{1},LW,lw);
+            h4 = plot3(f1(dwn,y),f2(dwn,y),f3(dwn,y),'linestyle',ll{1},'Color',cc{1},LW,lw);
             
             up = rect(2)*ones(length(x),1);
-            h5 = plot3(f1(up,y),f2(up,y),f3(up,y),'k','Color',cc{1},LW,lw);
+            h5 = plot3(f1(up,y),f2(up,y),f3(up,y),'linestyle',ll{1},'Color',cc{1},LW,lw);
         
             h = [h1 h2 h3 h4 h5];
         else 

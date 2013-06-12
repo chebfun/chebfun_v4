@@ -2,7 +2,7 @@
 % Alex Townsend, 9th of June 2013
 
 %% 
-% (Chebfun2 Example: approx/Other2DDomains)
+% (Chebfun2 Example: approx/Other2DDomains.m)
 % [Tags: #Domain, #Approximation, #Chebfun2]
 
 %%

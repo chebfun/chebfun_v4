@@ -13,12 +13,14 @@ function varargout = chebpolyval2(F)
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
 
+mode = chebfun2pref('mode');
+
 if ( nargout <= 1 )
     X = chebpoly2(F);  % get tensor coefficients.
     X = chebpolyval2(X); % convert them to values.
     varargout = {X};
 elseif (nargout > 1) 
-    g=f.fun2; CC = g.C; RR = g.R; % get fun2 information. 
+    g=F.fun2; CC = g.C; RR = g.R; % get fun2 information. 
     % Return the matrix of values in low rank form.
     if ( mode )
         A = [CC.vals]; % convert columns to coefficients.
