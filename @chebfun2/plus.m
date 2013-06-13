@@ -48,8 +48,8 @@ elseif ( isa(f,'chebfun2') && isa(g,'chebfun2') )
         h = g; return
     end
     h = f;
-    h.scl = f.scl;
     h.fun2 = plus(f.fun2,g.fun2);
+    h.scl = h.fun2.scl;
 else
     error('CHEBFUN2:plus:type','Cannot add these two objects together');
 end
