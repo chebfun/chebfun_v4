@@ -38,10 +38,14 @@ minplotnum = chebfun2pref('plot_numpts'); %How dense a grid do we work out the c
 rect = f.corners; % domain of f.
 
 % Number of points to plot
-j = 1; argin = {};
+j = 1; argin = {}; pivots = 0;
 while ( ~isempty(varargin) )
     if ( strcmpi(varargin{1},'numpts') ) % If given numpts then use them.
         minplotnum = varargin{2};
+        varargin(1:2) = [];
+    elseif ( strcmpi(varargin{1},'pivots') ) % If given numpts then use them.
+        pivots = 1;
+        argin{j} = varargin{2};
         varargin(1:2) = [];
     else
         argin{j} = varargin{1};
@@ -50,21 +54,21 @@ while ( ~isempty(varargin) )
     end
 end
 
-% Uncomment this line if you want contour(f,'.') to plot the pivot
-% locations. 
-% if ( ~isempty(argin) && length(argin{1})<5 )
-% %% Column, row, pivot plot
-%         % Only option with <=3 letters is a colour, marker, line
-%         ll = regexp(argin{1},'[-:.]+','match');
-%         %cc = regexp(varargin{1},'[bgrcmykw]','match');  % color
-%         mm = regexp(argin{1},'[.ox+*sdv^<>ph]','match');  % marker
-%         if ( ~isempty(ll) || ~isempty(mm) )
-%            plot(f,argin{:}), hold on 
-%            argin(1)=[];
-%            contour(f,argin{:})
-%            return
-%         end  
-% end
+if ( pivots )
+    if ( ~isempty(argin) && length(argin{1})<5 )
+        %% Column, row, pivot plot
+        % Only option with <=3 letters is a colour, marker, line
+        ll = regexp(argin{1},'[-:.]+','match');
+        %cc = regexp(varargin{1},'[bgrcmykw]','match');  % color
+        mm = regexp(argin{1},'[.ox+*sdv^<>ph]','match');  % marker
+        if ( ~isempty(ll) || ~isempty(mm) )
+            plot(f,argin{:}), hold on
+            argin(1)=[];
+            contour(f,argin{:})
+            return
+        end
+    end
+end
 
 
 if isa(f,'double')  % contour(xx,yy,F,...)
@@ -77,7 +81,7 @@ if isa(f,'double')  % contour(xx,yy,F,...)
     end
 elseif isa(f,'chebfun2')
     if nargin == 3 || ( nargin > 3 && ~isa(argin{1},'chebfun2') )
-        rect = f.corners; 
+        rect = f.corners;
         x = linspace(rect(1),rect(2),minplotnum);
         y = linspace(rect(3),rect(4),minplotnum);
         [xx yy] = meshgrid(x,y);
