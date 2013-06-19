@@ -50,20 +50,21 @@ while ( ~isempty(varargin) )
     end
 end
 
-if ( ~isempty(argin) && length(argin{1})<5 )
-%% Column, row, pivot plot
-        % Only option with <=3 letters is a colour, marker, line
-        ll = regexp(argin{1},'[-:.]+','match');
-        %cc = regexp(varargin{1},'[bgrcmykw]','match');  % color
-        mm = regexp(argin{1},'[.ox+*sdv^<>ph]','match');  % marker
-        if ( ~isempty(ll) || ~isempty(mm) )
-           plot(f,argin{:}), hold on 
-           argin(1)=[];
-           contour(f,argin{:})
-           return
-        end  
-end
-
+% Uncomment this line if you want contour(f,'.') to plot the pivot
+% locations. 
+% if ( ~isempty(argin) && length(argin{1})<5 )
+% %% Column, row, pivot plot
+%         % Only option with <=3 letters is a colour, marker, line
+%         ll = regexp(argin{1},'[-:.]+','match');
+%         %cc = regexp(varargin{1},'[bgrcmykw]','match');  % color
+%         mm = regexp(argin{1},'[.ox+*sdv^<>ph]','match');  % marker
+%         if ( ~isempty(ll) || ~isempty(mm) )
+%            plot(f,argin{:}), hold on 
+%            argin(1)=[];
+%            contour(f,argin{:})
+%            return
+%         end  
+% end
 
 
 if isa(f,'double')  % contour(xx,yy,F,...)
