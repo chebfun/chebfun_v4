@@ -10,7 +10,7 @@ LW = 'linewidth'; lw = 2;
 FS = 'fontsize'; fs = 16; 
 MS = 'markersize'; ms = 20; 
 
-%% Chebfun2's constructor and rectangular domains
+%% The Chebfun2 constructor and rectangular domains
 % Chebfun2's constructor performs Gaussian elimination with
 % complete pivoting on matrices and hence is inherently tied to sampling 
 % a function at adaptively 
@@ -58,7 +58,7 @@ plot(sector,'k',LW,lw), axis(2*[-1 1 -1 1]), axis equal, hold on,
 title('Sector domain',FS,fs)
 
 %%
-% We can easily represent functions on such a sector by introducing polar
+% We can represent functions on such a sector by introducing polar
 % coordinates: 
 r = chebfun2(@(r,t) r,[r1 r2 t1 t2]);
 t = chebfun2(@(r,t) t,[r1 r2 t1 t2]);
@@ -68,13 +68,13 @@ surf([x;y;f])
 title('Function on sector domain',FS,fs)
 
 %%
-% Since the Jacobian of the change of variables is well-behaviour we can, 
+% Since the Jacobian of the change of variables is well-behaved we can, 
 % for example, calculate the integral of $f$ over the sector domain: 
 
 integral2(f.*jacobian([x;y]))
 
 %% Warping the sector domain 
-% Moreover, we can represent function on more general domains such as the following
+% Moreover, we can represent functions on more general domains such as the following
 % warped sector domain: 
 clf
 r = chebfun2(@(r,t) r + .1*cos(5*t),[r1 r2 t1 t2]);
@@ -106,18 +106,15 @@ surf([x;y;f]), view(0,90)
 
 %%
 % However, in this case the Jacobian becomes singular and most operations
-% on the rectanglar domain because meaningless:
+% on the rectanglar domain becomes meaningless:
 
 plot(jacobian([x;y])), title('Jacobian',FS,fs)
 
 %% The significance of conformal maps 
-% A conformal map is a holomorphic function that preserves angles. 
-% This can be seen as a special case
-% of a change of variables since conformal maps can be viewed as changes of 
-% variables where the Jacobian is a non-zero constant. While
-% conformal maps are very useful and can make the computations slightly 
-% simiplier they are not essential for extending Chebfun2 to
-% non-rectangular domains. 
+% A conformal map is a holomorphic function whose derivative does not 
+% vanish (hence it preserves angles). This can be seen as a special case
+% of a change of variables. While conformal maps can be used they 
+% are not essential for extending Chebfun2 to non-rectangular domains. 
 
 %% Method of frames
 % For a different approach to representing functions on non-rectangular
