@@ -34,7 +34,7 @@ function chebsnake2(f,nodes,alfa)
     if ( nargin < 2 )
         nodes = 1;
     end
-    if ( (nargin > 0 && ~isa(f,'chebfun2')) || nargin == 0 )
+    if ( (nargin > 0 && ~isa(f,'chebfun2')) || nargin == 0 || isempty(f) )
         f = chebfun2(@(x,y) 2-x.^2 - y.^2);
     end
     if ( nargin > 1 && strcmp(nodes,'equi')) 
@@ -56,6 +56,10 @@ function chebsnake2(f,nodes,alfa)
         f = f + abs(min2(f));
     end
     maxf = max2(f);
+    if maxf == 0
+        maxf = 1;
+    end
+    
     % keyboard interaction
     figure('KeyPressFcn',@keypress);
     function keypress(~,evnt)
