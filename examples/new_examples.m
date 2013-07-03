@@ -99,9 +99,14 @@ while ~isempty(examples)
 
     filedir = [examplesdir, dirk, '/html/'];
     STYLE = ['style="background:',color{k},';"'];
-    tmp = [dirk,'/',file,'.m']
+    tmp = [dirk,'/',file,'.m'];
     fidk = fopen([dirk,'/',file,'.m']);
-    title = fgetl(fidk);
+    try
+        title = fgetl(fidk);
+    catch ME
+        [dirk,'/',file,'.m']
+        rethrow(ME)
+    end
     title = title(4:end);
     nameanddate = fgetl(fidk);
     nameanddate = nameanddate(3:end);

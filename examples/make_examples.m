@@ -31,6 +31,7 @@ currUser = getenv('USER');
 adminUser = 'hale';
 if strcmp(currUser,adminUser), admin = true; else admin = false; end
 
+precsign = '%';
 
 if nargin > 0 && ischar(dirs) 
     if strncmp(dirs,'listing',4); listing = true; end
@@ -458,7 +459,7 @@ if listing
     if ~shtml
         fprintf(fid,'Here is the complete list of Chebfun Examples and the sections they belong to.<br/><br/>\n');
     end
-    fprintf(fid,'<table style="padding-left:15px; cellpadding:2px; width:100%;">\n');
+    fprintf(fid,'<table style="padding-left:15px; cellpadding:2px; width:100%s;">\n',precsign);
     ms = 0;
     for k = 1:numel(mfile)
          if isempty(desc{k}), continue, end

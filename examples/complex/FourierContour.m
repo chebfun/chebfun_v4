@@ -1,5 +1,5 @@
 %% Fourier Transforms using Contour Integrals
-% Mohsin Javed, 3rd July, 2013.
+% Mohsin Javed, 3rd July 2013.
  
 %%
 % (Chebfun example complex/FourierTransforms.m)
