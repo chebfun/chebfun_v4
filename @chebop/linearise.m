@@ -129,7 +129,7 @@ else
     if linCheck && ~isLin(4), return, end % Bail if linearity check and nonlinear
     
     % Combine recovered domains and jumplocs
-    dom = unique([dom domL domR domO]);
+    dom = unique([dom(:) ; domL(:) ; domR(:) ; domO(:)]).';
     jumpinfo = unique([jumpinfoL ; jumpinfoR ; jumpinfoO].','rows');
 end
 
