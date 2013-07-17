@@ -13,11 +13,15 @@ function N = normal(F,varargin)
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
-N = cross(diff(F,1,2),diff(F,1,1));
+N = cross(diff(F,1,2), diff(F,1,1));
 
 if nargin > 1 
     if strcmpi(varargin{1},'unit')
-        N = N./norm(N);
+        r = roots(N); 
+        if ~isempty(r) || norm(N) == 0
+           error('CHEBFUN:NORMAL:ZERO','Normal vector is zero'); 
+        end
+        N = N./abs(N);
     else
         error('CHEBFUN:NORMAL','Second argument is not recognised.');
     end

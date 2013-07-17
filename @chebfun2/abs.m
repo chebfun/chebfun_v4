@@ -10,8 +10,13 @@ function f = abs(f)
 
 if isempty(f.fun2), return; end % check for empty chebfun2.
 
-% positive/negative test. 
-bol = singlesigntest(f); 
+if ~isreal(f)
+   % absolute value of complex-valued function
+   g = f.*conj(f);
+   f = sqrt(real(g)); 
+end
+
+bol = singlesigntest(f);
 
 if bol == 0
    error('CHEBFUN2:ABS','A change of sign has been detected, unable to represent the result.'); 
