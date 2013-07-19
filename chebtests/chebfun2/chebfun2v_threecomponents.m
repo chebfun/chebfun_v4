@@ -90,7 +90,7 @@ x = (3+cos(v)).*cos(u);
 y = (3+cos(v)).*sin(u); 
 z = sin(v); 
 r = [x;y;z]; 
-n = normal(r,'unit');
+n = normal(r);
 f = x;
 r1 = diff(r,1,1); r2 = diff(r,1,2);
 g = diff(f,1,1).*r1 + diff(f,1,2).*r2;
@@ -104,10 +104,7 @@ f = f1 * f2;
 fx = f.xcheb; 
 
 % should be zero on the boundary. 
-pass(j) = (norm(fx(:,2*pi))<1e3*tol); j = j +1; 
-pass(j) = (norm(fx(:,0))<1e3*tol); j = j +1; 
 pass(j) = (norm(fx(2*pi,:))<10*tol); j = j +1; 
-pass(j) = (norm(fx(0,:))<10*tol); j = j +1; 
-
+pass(j) = (norm(fx(0,:))<10*tol); 
 
 end
