@@ -1,4 +1,4 @@
-function p = interp1(xk,f)
+function p = interp1(xk,f,varargin)
 % INTERP1   Chebfun polynomial interpolant at any distribution of points.
 % 
 % P = INTERP1(X,F), where X is a vector and F is a chebfun, returns the
@@ -39,4 +39,4 @@ function p = interp1(xk,f)
 % This is simply a wrapper for @DOMAIN/INTERP1.
 
 yk = feval(f,xk);
-p = interp1(xk,yk,domain(f));
+p = interp1(xk,yk,domain(f),varargin{:});
