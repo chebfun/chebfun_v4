@@ -57,6 +57,7 @@ end
 
 %% %%%%%%%%%%%%%%%%% Asymptotics / interior region %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 c_leg = zeros(N+1, 1);                                 % Initialise output.
+dst1Transpose([], 1);                                  % Clear persistent storage.
 for k = 1:K-1 % Loop over the block partitions.
     c_k = zeros(N+1, 1);                               % Initialise local LHS.
     hm = ones(N+1,1); hm([1:nM(k)-1,nM(k+1):end]) = 0; % Initialise h_m.

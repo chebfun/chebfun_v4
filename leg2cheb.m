@@ -52,6 +52,7 @@ end
 %% %%%%%%%%%%%%%%%%% Asymptotics / interior region %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 c_leg = constantOutTheFront(N).*c_leg;            % Scaling factor, eqn (3.3).
 v_cheb = zeros(N+1, 1);                           % Initialise output vector.
+dst1([], 1);                                      % Clear persistent storage.
 for k = 1:K-1 % Loop over the block partitions:
     v_k = zeros(N+1, 1);                          % Initialise local LHS.
     hm = ones(N+1,1); hm([1:nM(k)+1,nM(k+1)+2:end]) = 0; % Initialise h_m.
