@@ -2,9 +2,9 @@
 % Jie Gao, 2nd July 2013
 
 %%
-% (Chebfun example stats/BetaExercises.m)
+% (Chebfun example stats/BetaExercise.m)
 % [Tags: #Beta distribution, #probability, #mode, #median,
-% #Bayesian inference, #Hypothesis Testing, #prior odds, #posterior odds
+% #Bayesian inference, #Hypothesis Testing, #prior odds, #posterior odds]
 
 %% 1. Introduction
 % Probability and statistics textbooks contain many exercise problems concerning
@@ -272,8 +272,8 @@ bay_f_s = pos_odds_s/prior_odds_s
 % Let us make a table for three types of priors, their prior odds, posterior
 % odds, and Bayes factors.
 f = figure('Position',[100 100 400 150]);
-% I can explicitly enter the values of the above three variables and 
-% use uitable:   
+% I can explicitly enter the values of the above three variables and use
+% uitable:
 dat = {'Beta(0.5,0.5)', 0.7728, 26.6073, 34.4317;
     'Beta(1,1)', 0.6667, 20.5411, 30.8116;
     'Beta(2,2)', 0.5432, 13.3650, 24.6037;};
