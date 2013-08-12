@@ -71,6 +71,13 @@ if length(ops) == 1 && isnumeric(ops{1}) && min(size(ops{1})) > 1
     vals = ops{1};
     scl = max(abs(vals));
     fcell = cell(size(vals,2),1);
+    if isfield(pref,'equi')
+        for k = 1:size(ops{1},2)
+            fcell{k} = chebfun(vals(:,k),'equi',ends);
+        end
+        f = builtin('horzcat',fcell{:});
+        return
+    end
     ftmp = chebfun([],ends);
     funtmp = fun(0,map,pref);
     funtmp.n = size(vals,1); 

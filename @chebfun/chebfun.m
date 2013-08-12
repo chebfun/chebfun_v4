@@ -10,6 +10,8 @@
 % used as function values at n Chebyshev points of the 2nd kind, i.e. 
 % chebpts(n). If F is a matrix CHEBFUN(F) returns a chebfun 'quasimatrix', 
 % taking each column of F as function values in the same way as above.
+% CHEBFUN(F,'equi') is similar, but here the data is assumed to come from
+% an equispaced grid linspace(-1,1,n).
 %
 % CHEBFUN(F,[A B]) specifies an interval [A B] where the function is
 % defined. A and/or B may be infinite.
