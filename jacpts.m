@@ -104,7 +104,7 @@ if ~(a || b)                % Legendre: alpha = beta = 0
 elseif a == -.5 && b == -.5 % Gauss-Chebyshev: alpha = beta = -.5
     [x, ignored, v] = chebpts(n,interval,1); %#ok<*ASGLU>
     w = repmat(pi/n,1,n);
-    [x, w] = rescale(x,w,interval,a,b);
+    [ignored, w] = rescale(x,w,interval,a,b);
     return
 elseif a == .5 && b == .5   % Gauss-Chebyshev2: alpha = beta = .5
     x = chebpts(n+2,2);     x = x(2:n+1);
@@ -989,7 +989,3 @@ function [tB1 A2 tB2 A3 tB3 A4] = asy2_higherterms(a,b,theta,n)
     A4 = @(theta) bary(theta,A4,t,v);    
 
 end
-
-
-
-

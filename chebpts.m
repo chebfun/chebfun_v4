@@ -172,6 +172,9 @@ if scale
     if ~any(isinf(d))   % Finite interval
         dab05 = .5*diff(d);
         x = x*dab05 + (d(1) + dab05);
+        if ( kind == 2 ) 
+            x([1,end]) = d([1,end]);
+        end
         w = dab05*w;
     else                % Infinite interval
         m = maps(fun,{'unbounded'},d); % Use default map
