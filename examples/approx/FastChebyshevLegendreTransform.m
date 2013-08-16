@@ -81,8 +81,8 @@ t = .999i; f = chebfun(@(x) 1./sqrt(1 - 2*x.*t +t.^2)); % generating function
 N = length(f); 
 ns = sprintf('No. of evaluation points = %u\n',N);
 
-s = tic;                                           % evaluate |x-.1|^(7/4)
-c_leg = t.^(N-1:-1:0);                                % via Legendre coeffs
+s = tic;                                           % evaluate f
+c_leg = t.^(N-1:-1:0);                             % via Legendre coeffs
 cheb_vals = chebpolyval(leg2cheb(c_leg));          % and time it...
 tt = toc(s);
 
@@ -102,14 +102,15 @@ axis([-1 1 1e-16 1e-12]), set(gca, FS, fs), hold off
 
 %% 
 % Let's solve a linear ODE that requires about N = 32000 Legendre coefficients
-% to resolve the solution.  The ODE is
+% to resolve the solution. The ODE is
 %
 % $u''(x) + (10000\pi)^2u = 0, \qquad u(-1) = u(1) = 1,$ 
 % 
 % and hence, the solution is $\cos(10000\pi x)$. 
 
+tic
 w = 10000*pi;                                  % solution is cos(wx)
-f = chebfun(@(x) cos(w*x)); N = length(f);
+f = chebfun(@(x) cos(w*x)); N = length(f)
 D1 = spdiags(ones(N,1),1,N,N); D2 = 3*D1;      % diff operators
 S1 = spdiags((.5./((0:N-1)'+.5)),0,N,N) -...
                               spdiags((.5./((0:N)'+.5)),2,N,N);           
@@ -121,13 +122,20 @@ A(end,:) = ones(1,N);                          % right bc
 b = [zeros(N-2,1);f(-1);f(1)];                 % rhs
 P = spdiags([(1:N-2) 1 1]',0,N,N);             % preconditioner
 c_leg = flipud( (P*A) \ (P*b) );               % solve
+toc
 
+%%
+% We can now form a chebfun from solution using LEG2CHEB():
+
+tic
 c_cheb = leg2cheb(c_leg);
-u = chebfun(flipud(c_cheb), 'coeffs');         % form chebfun from solution
+u = chebfun(c_cheb, 'coeffs');                 
+toc
 
-clf, plot(u)                                   % plot
-title('Computed solution (zoomed in)', FS, fs), xlim([-.1,.1])
-set(gca, FS, fs), xlabel('x', FS, fs)
+clf, plot(u, 'interval', [-.001, .001])        % plot u on [-0.001, 0.001]
+title('Computed solution (zoomed in)', FS, fs)
+set(gca, FS, fs), xlabel('x', FS, fs), shg
+
 %% 
 % Here is the error between the computed solution and the true solution:
 
