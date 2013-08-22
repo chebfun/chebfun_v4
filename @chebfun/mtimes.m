@@ -323,6 +323,7 @@ end
 
 % ------------------------------------
 function f = mtimescol(a,f)
+% a = full(a);
 f.funs = a*f.funs;
 f.imps = a*f.imps;
 f.scl = abs(a)*f.scl;
