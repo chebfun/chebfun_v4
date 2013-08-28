@@ -3,6 +3,7 @@
 
 %%
 % (Chebfun2 Example: AverageDegreeReduction2D.m)
+% [Tags: #roots, #Chebfun2, #subdivision]
 function AverageDegreeReduction2D
 
 %% 2D subdivision
@@ -28,17 +29,17 @@ function AverageDegreeReduction2D
 % of $f(x,y)$. That is, if a polynomial of degree $n$ (in the $x$-
 % and $y$-variable) is required to approximate $f(x,y)$ on $[-1,1]\times[-1,1]$
 % then the average degree required to approximate $f$ on $[-1,r]\times[-1,s]$
-% (and the other subdomains) is $\tau n$, where $r$ and $s$ are two different
+% (and the other subdomains) is $\tau n$, where $r$ and $s$ are two
 % small arbitrary constants. Throughout this Example we take
 % symmetric functions, i.e., $f(x,y) = f(y,x)$ since then the degree reduction is identical in the $x$
 % and $y$ direction, which considerably simplifies the discussion. The
 % average degree reduction parameter was introduced in [1].
 
 %% Rank one functions
-% A function $f(x,y)$ is of rank one if it can can be written as
+% A function $f(x,y)$ is of rank $1$ if it can can be written as
 % a product of univariate functions, i.e., $f(x,y) = h(x)k(y)$. Since in
 % this example we are considering only symmetric functions we have
-% $f(x,y) = h(x)h(y)$. For rank one functions the average degree reduction
+% $f(x,y) = h(x)h(y)$. For rank $1$ functions the average degree reduction
 % parameter is typically about $1/2$ because under subdivision the degree
 % reduction is directly determined by the degree reduction in $h(x)$.
 % The average degree reduction parameter for univariate functions is
@@ -63,13 +64,8 @@ compute_tau(f, 2)          % Expected to be approximately 1/2
 subdivisionDiagram(f)
 
 %%
-% On each level the numerical degrees should be the same in each box. This
-% is not precisely what we observe numerically, and we are not sure of the 
-% exact reason for this. The Chebfun2 constructor works in mysterious ways.
-
-%%
 % In general, if $h(x)$ is a univariate function with average degree reduction
-% parameter $\tau$ then the rank one function $f(x,y) = h(x)h(y)$ has the
+% parameter $\tau$ then the rank $1$ function $f(x,y) = h(x)h(y)$ has the
 % same average degree reduction parameter.
 
 %% Toeplitz functions
@@ -84,7 +80,7 @@ f = @(x,y) sin(M*(x-y));
 compute_tau(f, 2)          % Expected to be approximately 1/sqrt(2) = 0.707
 
 %% 
-% The average tau parameter can be explain since all the oscillations 
+% The average tau parameter can be explained since all the oscillations 
 % of $f$ occur along diagonals, i.e., $y=-x$ (rather than in the coordinate directions). 
 % Two subdivisions, one in the $x$ and one in the $y$ direction are required
 % to halve the length of the diagonal lines and hence, $\tau^2 \approx 1/2$

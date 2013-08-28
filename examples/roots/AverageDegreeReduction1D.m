@@ -3,6 +3,7 @@
 
 %% 
 % (Chebfun Example: AverageDegreeReduction1D.m) 
+% [Tags: #roots, #subdivision]
 function AverageDegreeReduction1D
 
 %% 1D subdivision
@@ -16,7 +17,7 @@ function AverageDegreeReduction1D
 % and $f_{right}(x)=0$ on $[r,1]$, where $r$ is an
 % arbitrary small constant. Furthermore, it continues to subdivide $f$ on
 % smaller domains until it is of degree 49 or less on each subinterval. The
-% expection is that if $f$ is of degree $n$ then $f_{left}$ and $f_{right}$ are
+% expectation is that if $f$ is of degree $n$ then $f_{left}$ and $f_{right}$ are
 % of lower degree than $n$, but this is not always the case.
 
 %% The average degree reduction in 1D
@@ -47,12 +48,12 @@ subdivisionDiagram(f,3)
 
 %% 
 % As the parameter $M$ tends to infinity the function becomes more oscillatory
-% and the value of $\tau$ tends to one half. 
+% and the value of $\tau$ tends to 1/2. 
 
 %% Locally nonsmooth functions
 % Functions that are locally nonsmooth at a point on the interval, but that 
 % are smooth everywhere else can have an average degree reduction significantly 
-% lower than $1/2$. This is especially true if the subdivision 
+% less than $1/2$. This is especially true if the subdivision 
 % almost exactly isolates the difficult point.  For instance, 
 f = @(x) abs(x).^3; 
 compute_tau(f, 2)
@@ -84,7 +85,7 @@ subdivisionDiagram(f,3)
 % The function 1/(z-1.0001) is meromorphic with a simple pole at $z=1.0001$
 % and for these types of functions the Chebyshev coefficient are explicitly 
 % known (see [4,5]). In this case it can be shown that the numerical degree
-% of $f$ on the subinterval $[a,1]$ for $a = -1,0,1/2,1/4$ satisfy are the 
+% of $f$ on the subinterval $[a,1]$, for $a = -1,0,1/2,1/4$, satisfy are the 
 % following integers:
 
 for lvl = 1:4
@@ -114,11 +115,10 @@ compute_tau(f, 2)
 % The average degree reduction parameter can take almost any value between 
 % $0$ and $1$. For functions that are equally difficult throughout the 
 % whole interval $\tau$ is close to $1/2$. For functions that are difficult 
-% only near one part of the interval subdivision reduce the degrees of 
-% the polynomial interpolant much better.  Therefore, one would expect that
+% local $\tau$ is often small. Therefore, one would expect that
 % Chebfun's rootfinding
-% algorithm would be extremely efficient at finding the roots of functions
-% with a small $\tau$.  However, this is not the case as the following two 
+% algorithm would be more efficient at finding the roots of functions
+% that have a small $\tau$.  However, this is not the case as the following two 
 % examples (of roughly the same size) show: 
 
 M = 2000; 
