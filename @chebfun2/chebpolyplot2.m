@@ -19,8 +19,8 @@ tol = chebfun2pref('eps');
 
 X = chebpoly2(f); X = abs(X);   % absolute value of coefficients. 
 X = rot90(X,2);                 % Rotate (MATLAB's convention)
-yl = find(X(1,:)>tol, 1, 'last'); 
-xl = find(X(:,1)>tol, 1, 'last');
+yl = find(max(X)>tol, 1, 'last'); 
+xl = find(max(X,[],2)>tol, 1, 'last');
 zl = find(diag(X)>tol, 1, 'last');
 
 % If the diagonal contains only zeros, then zl is empty. Make it zero if zl
@@ -31,12 +31,12 @@ end
 
 xl = max(xl, zl); yl = max(yl, zl); 
 X = X(1:xl, 1:yl);            % Truncate off small coeffs for better visual
-[yl xl]=size(X); 
+[yl, xl]=size(X); 
 
 %% 
 % Use a stem3 plot changing the axis to log scale. 
 
-[xx yy] = meshgrid(1:xl, 1:yl);
+[xx, yy] = meshgrid(1:xl, 1:yl);
 h = stem3(xx, yy, X, 'fill', 'markerfacecolor',...
                                         'k','markeredgecolor', 'k');
 xlabel('j'), ylabel('k')
