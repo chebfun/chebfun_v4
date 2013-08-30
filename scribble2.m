@@ -223,11 +223,26 @@ if ( nargout == 0 )
     for rk = 1:r
         f = chebfun2(flipud(Str), rk);
         contour(f,.3:.1:.85,'numpts',1000), axis off
+        set(gcf, 'color', 'w')
         t = sprintf('Rank = %u',rk);
         title(t,'fontsize',16)
-        shg
-        drawnow
+%         im = frame2im(getframe());
+%         [imind, cm] = rgb2ind(im, 16);
+%         if ( rk == 1 )
+%             imwrite(imind, cm, 'Scribble2.gif', 'gif', ...
+%                 'Loopcount', inf, 'DelayTime', 1e-5);
+%         else
+%             imwrite(imind, cm, 'Scribble2.gif', 'gif', ...
+%                 'WriteMode', 'append', 'DelayTime', 1e-5);
+%         end
+%         shg
+%         drawnow
+        
     end
 else
-   varargout = {f}; 
+	varargout = {f}; 
 end
+
+
+
+
