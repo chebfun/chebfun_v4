@@ -35,19 +35,23 @@ function Fout = abscol(F)
             % Remove if no sign change over small perturbation on either
             % side of the break
             
+            % NH removed this AUg 2013 as it breaks when f is very small.
+            % We are better off introducing unneccessary breaks than missing
+            % necessary ones!
+            
             % Choose a perturbation that involves:
             %  * The vertical scale of F
             %  * The size of the values in F
             %  * The distance between roots
             % [TODO]: This should be more systematic.
-            r = unique(r);
-            mdr = min(diff(r));
-            if isempty(mdr), mdr = 1; end
-            pert = F.scl.*min(sqrt(eps), eps+max(abs(get(F, 'vals'))))/eps*tol*mdr;
-            % Evaluate F on either side of proposed roots:
-            Fbks = feval(F, repmat(r,1,2) + repmat([-1 1]*pert, length(r), 1));
-            % Check for sign changes:
-            r(logical(sum(sign(Fbks), 2))) = [];
+%             r = unique(r);
+%             mdr = min(diff(r));
+%             if isempty(mdr), mdr = 1; end
+%             pert = F.scl.*min(sqrt(eps), eps+max(abs(get(F, 'vals'))))/eps*tol*mdr
+%             % Evaluate F on either side of proposed roots:
+%             Fbks = feval(F, repmat(r,1,2) + repmat([-1 1]*pert, length(r), 1))
+%             % Check for sign changes:
+%             r(logical(sum(sign(Fbks), 2))) = [];
         end
         
         % Deal with exponents and nontrivial maps separately
