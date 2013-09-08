@@ -74,6 +74,8 @@ chbfundir = fileparts(which('chebtest.m'));
 if nargin < 1
     % Attempt to find "chebtests" directory.
     dirname = fullfile(chbfundir,'chebtests');
+else
+    dirname = fullfile(chbfundir,'chebtests',dirname);
 end
 
 % Deal with levelX input
@@ -108,7 +110,7 @@ userpref.dirname = dirname;
 addpath(dirname)
 
 % Get the chebtest directory names
-subdirlist = dir( fullfile(dirname) );
+subdirlist = dir( dirname );
 subdirnames = { subdirlist.name };
 numdirs = length(subdirnames);
 
