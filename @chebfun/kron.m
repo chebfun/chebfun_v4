@@ -56,13 +56,13 @@ if ( nargin <= 2 )
         rect = [gint fint];
         h = chebfun2(0,rect);
         for kk = 1:nf
-            h = h + chebfun2(@(x,y) feval(f(:,kk),y).*feval(g(kk,:),x), rect);
+            h = h + chebfun2(@(x,y) feval(f(kk),y).*feval(g(kk),x), rect);
         end
     elseif isinf(nf)
         rect = [fint gint];
         h = chebfun2(0,rect);
         for kk = 1:mf
-            h = h + chebfun2(@(x,y) feval(g(:,kk),y).*feval(f(kk,:),x), rect);
+            h = h + chebfun2(@(x,y) feval(g(kk),y).*feval(f(kk),x), rect);
         end
     else
         % We can probably never reach here, but display an error if we do.

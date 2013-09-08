@@ -40,19 +40,19 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
       
       % Check for exponents
       hasexps = false;
-      for k=1:numel(F1), f = F1(k,:); for j=1:f.nfuns
+      for k=1:numel(F1), f = F1(k); for j=1:f.nfuns
         hasexps = hasexps || any( f.funs(j).exps ~= 0 );
       end; end
-      for k=1:numel(F2), f = F2(:,k); for j=1:f.nfuns
+      for k=1:numel(F2), f = F2(k); for j=1:f.nfuns
           hasexps = hasexps || any( f.funs(j).exps ~= 0 );
       end; end
         
       % Check for non-linear maps
       nonlinmap = false;
-      for k=1:numel(F1), f = F1(k,:); for j=1:f.nfuns
+      for k=1:numel(F1), f = F1(k); for j=1:f.nfuns
         nonlinmap = nonlinmap || ~strcmp( f.funs(j).map.name , 'linear' );
       end; end
-      for k=1:numel(F2), f = F2(:,k); for j=1:f.nfuns
+      for k=1:numel(F2), f = F2(k); for j=1:f.nfuns
         nonlinmap = nonlinmap || ~strcmp( f.funs(j).map.name , 'linear' );
       end; end
 
@@ -60,7 +60,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
       n = numel(F1);
       hasdeltasF1 = zeros(1,n);
       for k = 1:n 
-          f = F1(k,:);
+          f = F1(k);
           if(size(f.imps,1)>=2)
               hasdeltasF1(k) = true;
            end
@@ -68,7 +68,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
       n = numel(F2);
       hasdeltasF2 = zeros(1,n);
       for k = 1:n
-          f = F2(:,k);
+          f = F2(k);
           if(size(f.imps,1)>=2)
               hasdeltasF2(k) = true;
           end
@@ -88,15 +88,15 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
       
         % Get the set of breakpoints for all funs in F1 and F2
         ends = [];
-        for k=1:m, ends = union( ends , F1(k,:).ends ); end
-        for k=1:n, ends = union( ends , F2(:,k).ends ); end
+        for k=1:m, ends = union( ends , F1(k).ends ); end
+        for k=1:n, ends = union( ends , F2(k).ends ); end
         %iends = ends(2:end-1)';
         nfuns = length(ends) - 1;
         
         % Get the sizes in F1 and F2
         sizes1 = zeros( nfuns , m );
         for k=1:m
-            f = F1(k,:); ef = f.ends;
+            f = F1(k); ef = f.ends;
             for j=1:nfuns
                 sizes1(j,k) = f.funs( find( ef > (ends(j)+ends(j+1))/2 , 1 ) - 1 ).n;
             end
@@ -104,7 +104,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         sizes1 = max( sizes1 , [] , 2 );
         sizes2 = zeros( nfuns , n );
         for k=1:n
-            f = F2(:,k); ef = f.ends;
+            f = F2(k); ef = f.ends;
             for j=1:nfuns
                 sizes2(j,k) = f.funs( find( ef > (ends(j)+ends(j+1))/2 , 1 ) - 1 ).n;
             end
@@ -123,7 +123,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
         dF1 = zeros( sum(sizes) , m );
         if nfuns > 1
             for k=1:m
-                f = F1(k,:); ef = f.ends;
+                f = F1(k); ef = f.ends;
                 for j=1:nfuns
                     ind = find( ef > (ends(j)+ends(j+1))/2 , 1 ) - 1;
                     dF1( inds(j)+1:inds(j+1) , k ) = feval( f.funs(ind) , pts( inds(j)+1:inds(j+1) ) );
@@ -131,13 +131,13 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
             end
         else
             for k=1:m
-                dF1( : , k ) = chebpolyval( [ zeros( sizes(j) - F1(k,:).funs.n , 1 ) ; F1(k,:).funs(1).coeffs ] );
+                dF1( : , k ) = chebpolyval( [ zeros( sizes(j) - F1(k).funs.n , 1 ) ; F1(k).funs(1).coeffs ] );
             end
         end
         dF2 = zeros( sum(sizes) , n );
         if nfuns > 1
             for k=1:n
-                f = F2(:,k); ef = f.ends;
+                f = F2(k); ef = f.ends;
                 for j=1:nfuns
                     ind = find( ef > (ends(j)+ends(j+1))/2 , 1 ) - 1;
                     dF2( inds(j)+1:inds(j+1) , k ) = feval( f.funs(ind) , pts( inds(j)+1:inds(j+1) ) );
@@ -145,7 +145,7 @@ if (isa(F1,'chebfun') && isa(F2,'chebfun'))
             end
         else
             for k=1:n
-                dF2( : , k ) = chebpolyval( [ zeros( sizes(j) - F2(:,k).funs.n , 1 ) ; F2(:,k).funs.coeffs ] );
+                dF2( : , k ) = chebpolyval( [ zeros( sizes(j) - F2(k).funs.n , 1 ) ; F2(k).funs.coeffs ] );
             end
         end
         
@@ -223,7 +223,7 @@ elseif isa(F1,'chebfun')
         % Check for exponents
         hasexps = false;
         for k=1:numel(F1), 
-            f = F1(:,k); 
+            f = F1(k); 
             for j=1:f.nfuns
                 hasexps = hasexps || any( f.funs(j).exps ~= 0 );
             end
@@ -232,7 +232,7 @@ elseif isa(F1,'chebfun')
         % Check for non-linear maps
         nonlinmap = false;
         for k=1:numel(F1), 
-            f = F1(:,k); 
+            f = F1(k); 
             for j=1:f.nfuns
                 nonlinmap = nonlinmap || ~strcmp( f.funs(j).map.name , 'linear' );
             end
@@ -249,7 +249,7 @@ elseif isa(F1,'chebfun')
         
             % Get the set of breakpoints for all funs in F1
             ends = [];
-            for k=1:n, ends = union( ends , F1(:,k).ends ); end
+            for k=1:n, ends = union( ends , F1(k).ends ); end
             ends = ends(:).';
             %iends = ends(2:end-1)';
             m = length(ends)-1;
@@ -257,7 +257,7 @@ elseif isa(F1,'chebfun')
             % Discretize all columns of F1
             sizes = zeros( m , n );
             for k=1:n
-                f = F1(:,k); ef = f.ends;
+                f = F1(k); ef = f.ends;
                 for j=1:m
                     sizes(j,k) = f.funs( find( ef > (ends(j)+ends(j+1))/2 , 1 ) - 1 ).n;
                 end
@@ -266,7 +266,7 @@ elseif isa(F1,'chebfun')
             dF = zeros( sum(sizes) , n );
             if m > 1
                 for k=1:n
-                    f = F1(:,k); ef = f.ends;
+                    f = F1(k); ef = f.ends;
                     for j=1:m
                         ind = find( ef > (ends(j)+ends(j+1))/2 , 1 ) - 1;
                         dF( inds(j)+1:inds(j+1) , k ) = feval( f.funs(ind) , chebpts( sizes(j) , ends(j:j+1) ) );
@@ -274,10 +274,10 @@ elseif isa(F1,'chebfun')
                 end
             else
                 for k=1:n
-                    if F1(:,k).funs.n == sizes(1)
-                        dF( : , k ) = F1(:,k).funs.vals;
+                    if F1(k).funs.n == sizes(1)
+                        dF( : , k ) = F1(k).funs.vals;
                     else
-                        dF( : , k ) = chebpolyval( [ zeros( sizes(1) - F1(:,k).funs.n , 1 ) ; F1(:,k).funs.coeffs ] );
+                        dF( : , k ) = chebpolyval( [ zeros( sizes(1) - F1(k).funs.n , 1 ) ; F1(k).funs.coeffs ] );
                     end
                 end
             end
@@ -298,8 +298,8 @@ elseif isa(F1,'chebfun')
                     g.imps(j+1) = res(inds(j+1),k);
                 end
                 g.funs = simplify( fun( f ) );
-                % g.jacobian = anon( '[dF,nonConst]=diff(F,u,''linop''); der=dF*x;' , {'x','F'} , { F2(:,k) , F1 } , 1 , 'mtimes' );
-                Fout(:,k) = g;
+                % g.jacobian = anon( '[dF,nonConst]=diff(F,u,''linop''); der=dF*x;' , {'x','F'} , { F2(k) , F1 } , 1 , 'mtimes' );
+                Fout(k) = g;
             end
         
         % Otherwise, don't use new features.
