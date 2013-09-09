@@ -22,7 +22,7 @@ function [x w v] = chebpts(n,d,kind)
 %
 %   [X W V] = CHEBPTS(N,KIND) or CHEBPTS(N,D,KIND) returns Chebyshev points
 %   and weights of the 1st-kind if KIND = 1 and 2nd-kind if KIND = 2
-%   (default). (Note that if KIND is not suplpied, chebpts will always
+%   (default). (Note that if KIND is not supplied, chebpts will always
 %   return 2nd-kind points, regardless of the value of 'chebkind' in
 %   chebfunpref.).
 %
