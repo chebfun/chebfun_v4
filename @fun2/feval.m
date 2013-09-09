@@ -6,6 +6,8 @@ function v = feval(f,x,y,varargin)
 % Copyright 2013 by The University of Oxford and The Chebfun Developers.
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+warning('off', 'MATLAB:divideByZero'); % TODO: Delete this.
+
 pref2 = chebfun2pref;
 
 if ( nargin == 1 ) 

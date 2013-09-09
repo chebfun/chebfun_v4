@@ -303,7 +303,7 @@ for j = 1:nr_tests
 end
 warning(warnstate)
 chebfunpref(pref);
-cheboppref(userpref.oppref);
+%cheboppref(userpref.oppref); % TODO: Add this.
 
 % Final output
 ts = sum(t); tm = ts/60;

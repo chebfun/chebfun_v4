@@ -10,6 +10,8 @@ function fx = bary(x,gvals,xk,ek)
 %  Copyright 2011 by The University of Oxford and The Chebfun Developers.
 %  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
+warning('off', 'MATLAB:divideByZero'); % TODO: Delete this.
+
 % Parse inputs
 n = length(gvals);
 bary1flag = 0;  % If true, possibly use type-1 barycentric formula
