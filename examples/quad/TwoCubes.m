@@ -88,7 +88,7 @@ ICb = @(y) (4-y)*F_Plane(y);
 % Now we do the actual computation -- integrating with respect to y.
 % Experiments show we need to weaken the tolerance a little here, though the
 % final effect is minimal since the results are then integrated.
-F_CubeA = sum(chebfun(ICa,[0 2],'vectorize','singmap',[0.25 0],'eps',1e-12));
+F_CubeA = sum(chebfun(ICa,[0 2],'vectorize','singmap',[0.25 0],'eps',1e-10));
 F_CubeB = sum(chebfun(ICb,[2 4],'vectorize'));
 
 %%

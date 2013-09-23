@@ -43,7 +43,7 @@ f = chebfun(@(x) 1./(1 + 1000*(x-.1).^2));  % A Runge-type function
 c_cheb = chebpoly(f).';                     % Chebyshev coeffs in O(NlogN)
 c_leg = cheb2leg(c_cheb);                   % Leg coeffs with the new algorithm
 
-semilogy(flipud(abs(c_leg)), '.r'), hold on  % plot them
+semilogy(flipud(abs(c_leg)), '-r'), hold on  % plot them
 semilogy(flipud(abs(c_cheb)), '.b', LW, lw)
 legend('Legendre coefficients','Chebyshev coefficients')
 xlabel('n', FS, fs), set(gca, FS, fs), hold off
@@ -139,7 +139,8 @@ set(gca, FS, fs), xlabel('x', FS, fs), shg
 %% 
 % Here is the error between the computed solution and the true solution:
 
-norm(c_cheb-chebpoly(f)', inf)
+norm(c_cheb - chebpoly(f).', inf)
+norm(u - f)
 
 %% Conclusion
 % We believe that such a fast and practical Chebyshev-Legendre transform could

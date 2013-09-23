@@ -230,6 +230,15 @@ elseif nargs == 2
             filetext = strrep(filetext,png,gif);
         end
         
+        if strcmp(filename,'Scribble2')
+            png = 'Scribble2_03.png';
+            gif = 'Scribble2_03.gif';
+            try
+                eval(['!cp ../Scribble2.gif ' webdir 'examples/fun/html/Scribble2_03.gif'])
+            end
+            filetext = strrep(filetext,png,gif);
+        end
+        
         % Try to insert hyperlinks for references
         try
             refloc = strfind(lower(filetext),'reference');
