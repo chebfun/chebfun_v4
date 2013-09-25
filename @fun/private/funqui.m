@@ -7,6 +7,11 @@ function f = funqui(vals, ends)
 
 n = length(vals) - 1;
 
+if ( n <= 1 )
+    f = @(zz) bary(zz,vals,ends(:),[1; -1]);
+    return
+end
+
 % Limit the maximal d to try depending on n:
 if ( n < 60 )
     maxd = min(n, 35);
@@ -57,7 +62,7 @@ else
 end
 
 % Compute FH weights:
-if ( dOpt <= (n+1)/2 ) 
+if ( dOpt <= (n-1)/2 ) 
     wl = abs( fhBaryWts(x, dOpt, dOpt+1) );
     w = [wl; wl(end)*ones(n-1-2*dOpt, 1); flipud(wl)];
     w(1:2:end) = -w(1:2:end);

@@ -79,6 +79,7 @@ function g = ctor(g,op,ends,varargin)
             vals = op(:);
             if isfield(pref,'equi')
                 op = funqui(vals,ends);
+                pref.minsamples = length(vals);
             else
                 g.n = length(op); g.vals = vals;
                 if pref.chebkind == 1
