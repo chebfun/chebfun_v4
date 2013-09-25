@@ -1,4 +1,4 @@
-function varargout = scribble2(s)
+function varargout = scribble2(s,rk)
 %SCRIBBLE2  Writing text with chebfun2 objects
 %  SCRIBBLE('STRING') returns a chebfun2 representing the text in
 %  STRING. The full English alphabet is supported.
@@ -7,8 +7,8 @@ function varargout = scribble2(s)
 %   f = scribble('Happy birthday LNT!');
 %   contour(f,.2:.1:.85), axis equal
 %
-% See also scribble
-%
+%  See also scribble.
+
 %  Copyright 2011 by The University of Oxford and The Chebfun Developers.
 %  See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
@@ -59,7 +59,7 @@ F(4:5,7) = 0;
 
 G = space;
 G([1,9],3:8) = 1;
-G([2,8],[2:9]) = 1;
+G([2,8],2:9) = 1;
 G([3,7],[1:3 7:9]) = 1;
 G([4,5,6],1:2) = 1;
 G([5,6],6:9)=1;
@@ -190,6 +190,64 @@ Z(9:8:end) = 1;
 Z(8:8:end) = 1;
 Z(10:8:end) = 1;
 
+%Numerals
+zero = O;
+zero(5,5) = 1;
+
+one = I;
+one(1:2,[1:3 7:9]) = 0;
+one(2,3) = 1;
+one(3,2:3) = 1;
+one(4,1:2) = 1;
+
+two = space;
+two(1,2:8) = 1;
+two(2,:) = 1;
+two(3,[1:2 7:9]) = 1;
+two(4,6:8) = 1;
+two(5,5:7) = 1;
+two(6,4:6) = 1;
+two(7,3:5) = 1;
+two(8:9,:) = 1;
+
+three = fliplr(E);
+three([4 6],3:6) = 0;
+three([1 5 9],9) = 0;
+three([3 7],7) = 1;
+three(5,2) = 1;
+
+four = space;
+four(:,6:8) = 1;
+four(6:7,:) = 1;
+four(2,5) = 1;
+four(3,4:5) = 1;
+four(4,3:4) = 1;
+four(5,2:3) = 1;
+
+five = S;
+five([1 5],1) = 1;
+five(7,1:2) = 1;
+five(9,1) = 0;
+
+six = S;
+six(5:8,1:2) = 1;
+six(9,1) = 0;
+six(1,9) = 0;
+
+seven = two;
+seven(1,[1 9]) = 1;
+seven(8,[1 5:9]) = 0;
+seven(9,4:9) = 0;
+
+eight = B;
+eight([1 5 9]) = 0;
+
+nine = S;
+nine(3:5,8:9) = 1;
+nine([1 9],[1 9]) = 0;
+nine(7,1:2) = 1;
+
+ % Punctuation
 exclam = space;
 exclam([1:6 8:9],4:6) = 1;
 
@@ -203,27 +261,60 @@ for jj = 1:length(s)
     b = [b ; 0, 0];                 %#ok<AGROW>
     pad = [pad ; zeros(1, 9)];      %#ok<AGROW>
     
-    if ( strcmp(s(jj), ' ') )
-        Str = [ [Str, b], [pad ; space]];
-    elseif ( strcmp(s(jj), '!') )
-        Str = [ [Str, b], [pad ; exclam]];
-    else
-        Str = [ [Str, b], [pad ; eval(s(jj))]];
-    end
+    switch s(jj)
+        case {' '}
+            Str = [ [Str, b], [pad ; space]];
+        case {'!'}
+            Str = [ [Str, b], [pad ; exclam]];
+        case {'0'}
+            Str = [ [Str, b], [pad ; zero]];   
+        case {'1'}
+            Str = [ [Str, b], [pad ; one]];
+        case {'2'}
+            Str = [ [Str, b], [pad ; two]];
+        case {'3'}
+            Str = [ [Str, b], [pad ; three]];
+        case {'4'}
+            Str = [ [Str, b], [pad ; four]];   
+        case {'5'}
+            Str = [ [Str, b], [pad ; five]];   
+        case {'6'}
+            Str = [ [Str, b], [pad ; six]];   
+        case {'7'}
+            Str = [ [Str, b], [pad ; seven]];   
+        case {'8'}
+            Str = [ [Str, b], [pad ; eight]];   
+        case {'9'}
+            Str = [ [Str, b], [pad ; nine]];   
+        otherwise
+            Str = [ [Str, b], [pad ; eval(s(jj))]];
+    end     
+%     if ( strcmp(s(jj), ' ') )
+%         Str = [ [Str, b], [pad ; space]];
+%     elseif ( strcmp(s(jj), '!') )
+%         Str = [ [Str, b], [pad ; exclam]];
+%     else
+%         Str = [ [Str, b], [pad ; eval(s(jj))]];
+%     end
 end
 
 % Padding:
 Str = [Str, zeros(size(Str, 1), 50)];
 Str = [zeros(20, size(Str, 2)); Str ; zeros(20, size(Str, 2))];
 
-f = chebfun2(flipud(Str));
+if (nargin == 2)
+    f = chebfun2(flipud(Str),rk);
+else
+    f = chebfun2(flipud(Str));
+end
 
 if ( nargout == 0 )
-    r = rank(f);
-    for rk = 1:r
-        f = chebfun2(flipud(Str), rk);
+%    r = rank(f);
+%    for rk = 1:r
+%        f = chebfun2(flipud(Str), rk);
         contour(f,.3:.1:.85,'numpts',1000), axis off
-        set(gcf, 'color', 'w')
+%        set(gcf, 'color', 'w')
+        rk = length(f);
         t = sprintf('Rank = %u',rk);
         title(t,'fontsize',16)
 %         im = frame2im(getframe());
@@ -238,7 +329,7 @@ if ( nargout == 0 )
 %         shg
 %         drawnow
         
-    end
+%    end
 else
 	varargout = {f}; 
 end

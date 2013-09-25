@@ -22,12 +22,13 @@ function chebsnake2(f,nodes,alfa)
 %   To prevent you from neglecting your actual work, the game speed
 %   increases with the total number of achieved points.
 %
-% See also CHEBSNAKE.
+% See also CHEBSNAKE, CHEBTUNE.
 
 % Copyright 2013 by The University of Oxford and The Chebfun Developers. 
 % See http://www.maths.ox.ac.uk/chebfun/ for Chebfun information.
 
     % get some constants right
+    W = warning; 
     if ( nargin < 3 )
         alfa = 1; 
     end
@@ -38,7 +39,7 @@ function chebsnake2(f,nodes,alfa)
         f = chebfun2(@(x,y) 2-x.^2 - y.^2);
     end
     if ( nargin > 1 && strcmp(nodes,'equi')) 
-        nodes = 0; 
+        nodes = 0;  warning('off','MATLAB:polyfit:RepeatedPointsOrRescale');
     elseif ( nargin > 1 && strcmp(nodes,'fh'))
         nodes = 2;  
     else
@@ -62,7 +63,7 @@ function chebsnake2(f,nodes,alfa)
     
     % keyboard interaction
     figure('KeyPressFcn',@keypress);
-    function keypress(~,evnt)
+    function keypress(ignored,evnt)
         dold = d;
         switch evnt.Key
             case 'leftarrow', d = -1;
@@ -74,10 +75,16 @@ function chebsnake2(f,nodes,alfa)
         if d == -dold; d = dold; end
     end
 
-    alfa0 = alfa;                     % set base level for alfa
+
+    lvl = 1;
+    pts = 0;
     fails = 0;                         
-        hold on, view(0,4) % fail counter (no food eaten)
+    hold on, view(0,4) % fail counter (no food eaten)
     failmax = 5;                        % number of consecutive fails before quit
+    lv = chebfun(@(x) exp(x),[0 pi]);
+    dd = chebfun(@(x) exp(-x),[-pi 0]);
+    grb = chebfun(@(x) 20*cos(x),[0 2*pi]);
+    kld = chebfun(@(x) exp(-.5*x).*(2+cos(10*x)),[-pi 0]);
     while ~(d==0), % until quit
         d = 1;
         clf; 
@@ -86,19 +93,29 @@ function chebsnake2(f,nodes,alfa)
         hold on
         s = linspace(res*(1-len),0,len) + 1i*eps;
         hs1 = plot3(real(s(1:end-1)),imag(s(1:end-1)),f(real(s(1:end-1)),imag(s(1:end-1))),'b-',LW,lw); hold on
-        hs2 = plot3(real(s(1:end-1)),imag(s(1:end-1)),f(real(s(1:end-1)),imag(s(1:end-1))),'bo',LW,lw);
+        hs2 = [plot3(real(s(1:end-2)),imag(s(1:end-2)),f(real(s(1:end-2)),imag(s(1:end-2))),'bo','MarkerFaceColor','b',LW,lw) ... 
+            plot3(real(s(end-1)),imag(s(end-1)),f(real(s(end-1)),imag(s(end-1))),'bo',LW,lw)];
         hs1s = plot(s(1:end-1),'k-',LW,lw/2);
-        hs2s = plot(s(1:end-1),'ko',LW,lw/2);
+        hs2s = plot(s(1:end-1),'k.',LW,lw/2);
         fd = food();
-        hf = plot3(real(fd),imag(fd),f(real(fd),imag(fd)),'md',MS,ms,'MarkerFaceColor','m');
-        hfs = plot(real(fd),imag(fd),'kd',MS,ms/2,'MarkerFaceColor','k');
+        hf = plot3(real(fd),imag(fd),f(real(fd),imag(fd)),'ro',MS,ms);
+        if ~rem(pts+1,30) && pts
+            set(hf,'MarkerFaceColor','r','Color',[0,0.6,0]);
+        else
+            set(hf,'MarkerFaceColor',[0,0.6,0],'Color','r');
+        end
+        hfs = plot(real(fd),imag(fd),'ko',MS,ms/2,'MarkerFaceColor','k');
         ht = plot(8,0);                     % dummy handle
+        %set(gca,'XTick',[]); set(gca,'YTick',[]); 
+        xlabel(''); ylabel(''); 
         title('Control the snake with arrow keys. Quit with any other key.');
         axis([-1,1,-1,1,0,maxf]); shg;
-        pts = 0;                            % points counter
-        alfa = alfa0;                     % reset alfa (speed)
         t = 1;                              % convex factor for nodes
         tic;
+        go = plot(.7*scribble('ready?'),'r',LW,lw);
+        shg; pause(1); delete(go(~isnan(go)));
+        go = plot(.4*scribble('go!'),'r',LW,lw);
+        shg; pause(.5); delete(go(~isnan(go)));
         while ~(d==0),                      % until game over or quit
             t = t + .51*alfa;
             if t > 1,
@@ -123,7 +140,8 @@ function chebsnake2(f,nodes,alfa)
             end
             hs1 = plot3(real(c),imag(c),f(real(c),imag(c)),'b-',LW,lw);
             delete(hs2,hs1s,hs2s);
-            hs2 = plot3(real(y),imag(y),f(real(y),imag(y)),'bo',LW,lw);
+            hs2 = [plot3(real(y(1:end-1)),imag(y(1:end-1)),f(real(y(1:end-1)),imag(y(1:end-1))),'bo','MarkerFaceColor','b',LW,lw), ... 
+                plot3(real(y(end)),imag(y(end)),f(real(y(end)),imag(y(end))),'bo',LW,lw)];
             hs1s = plot(c,'k-',LW,lw/2);
             hs2s = plot(y,'k.',LW,lw/2);
             shg; 
@@ -134,17 +152,40 @@ function chebsnake2(f,nodes,alfa)
             if max(abs([real(y(end)),imag(y(end))])) > 1 || ...
                    min(abs(y(end)-y(1:end-1))) < res/2,
                 ht = plot(.8*scribble('game over'),'r',LW,lw); 
+                chebtune(dd,.5);
                 shg; pause(1); 
-                if pts == 0, fails = fails + 1; end
+                fails = fails + 1;
                 if fails > failmax, d = 0; end
                 break
             end
             if abs(y(end)-fd) < res/2, % snake eats food ?
-                pts = pts + 1; alfa = alfa * 1.003; fails = 0;
-                title(['Points : ' num2str(pts)]);
+                pts = pts + 1;
+                chebtune(grb,.5);
+                if ~rem(pts,10)
+                    lvl = lvl + 1;
+                    alfa = alfa * 1.1;
+                    chebtune(10*chebpoly(pts));
+                end
+                if ~rem(pts,30) && (pts-1)
+                    fails = fails - 1;
+                    up = plot(.8*scribble('1 up!'),'r',LW,lw);
+                    chebtune(lv,1);
+                    shg; pause(1); 
+                    delete(up(~isnan(up)));
+                end
+                title(['Points : ' num2str(pts) '       Level : ' num2str(lvl) ...
+                    '       Lives: ' num2str(failmax-fails)],'color','k');
                 fd = food();
+                while ( any( abs(fd-y) < res/2) )
+                    fd = food();
+                end
                 set(hf,'XData',real(fd),'YData',imag(fd),'ZData',f(real(fd),imag(fd)));
                 set(hfs,'XData',real(fd),'YData',imag(fd));
+                if ~rem(pts+1,30) && (pts-1)
+                    set(hf,'MarkerFaceColor','r','Color',[0,0.6,0]);
+                else
+                    set(hf,'MarkerFaceColor',[0,0.6,0],'Color','r');
+                end
             end
         end
         for k = 1:numel(ht)
@@ -152,8 +193,9 @@ function chebsnake2(f,nodes,alfa)
             delete(ht(k));
         end
     end;
-    plot(.8*scribble('goodbye'),'r',LW,lw);
+    plot(.8*scribble('goodbye'),'r',LW,lw); chebtune(kld,1);
     shg; pause(1); close(gcf);
+    warning(W);
 
     function w = weights(n,fhd) % weights for Floater-Hormann interpolation
         w = zeros(1,n+1);
@@ -168,4 +210,4 @@ function chebsnake2(f,nodes,alfa)
         end
     end
 
-end % chebsnake()
+end % chebsnake2()
