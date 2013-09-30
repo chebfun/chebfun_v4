@@ -37,7 +37,7 @@ if( ni > 3 )
         if(length(varargin{1}) == 2)  % then its corners.
             % Take as second half of domain.
             ends = [ ends varargin{1}];
-        elseif( ~iscell(varargin{1}) )
+        elseif( ~iscell(varargin{1}) && ~strcmpi(varargin{1},'equi'))
             pref2.rank=varargin{1};              % Non-adaptive case
         elseif( iscell(varargin{1}) )
             ends = [ ends varargin{1}{1}];
@@ -118,7 +118,30 @@ switch class(op)
         Cols = Cols(:,1:idx);
         Rows = Rows(1:idx,:);
         
-        [n,m]=size(op);
+        % If we are given equispaced data, if so transform to Chebyshev grid
+        if (ni > 3 && any(strcmpi(varargin{1}, 'equi')))
+            % Find near optimal d and necessary length to represent the columns/rows
+            linComb = sin((1:idx));
+            ColComb = Cols*linComb'; 
+            RowComb = linComb*Rows;
+            [ColCombFqi, ColDOpt] = funqui(ColComb, ends(3:4)); % fun2/private/funqui.m
+            [RowCombFqi, RowDOpt] = funqui(RowComb', ends(1:2));
+            ColCombFqi = chebfun(ColCombFqi, ends(3:4));
+            RowCombFqi = chebfun(RowCombFqi, ends(1:2));
+            y = chebpts(length(ColCombFqi), ends(3:4));
+            x = chebpts(length(RowCombFqi), ends(1:2));
+            ColsEqui = Cols; RowsEqui = Rows;
+            Cols = zeros(length(ColCombFqi),idx);
+            Rows = zeros(idx,length(RowCombFqi));
+            for k = 1:idx
+                ColFqi = funqui(ColsEqui(:,k), ends(3:4), ColDOpt);
+                RowFqi = funqui(RowsEqui(k,:).', ends(1:2), RowDOpt);
+                Cols(:,k) = ColFqi(y);
+                Rows(k,:) = RowFqi(x).';
+            end
+        end
+        
+        [n,m] = size(op);
         x = chebpts(m,ends(1:2)); y = chebpts(n,ends(3:4));
         %x = flipud(x); y = flipud(y);
         

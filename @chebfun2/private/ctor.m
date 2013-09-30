@@ -73,6 +73,18 @@ if any(strcmpi(ends,'coeffs'))
     return;
 end
 
+% If we are given equispaced data and the 'equi' flag, arrange domain input.
+if any(strcmpi(ends,'equi'))
+    if (nargin < 4) 
+        ends = [pref.xdom pref.ydom];
+    elseif (length(varargin{1}) == 4)
+        ends = varargin{1};
+    else
+        error('CHEBFUN2:CONSTRUCTOR','Prescribed domain should be a vector of doubles.');        
+    end
+    varargin = {'equi'};
+end
+
 % % If we have been given a rank. 
 % if any(strcmpi(ends,'rank'))
 %     % varargin should not be empty
