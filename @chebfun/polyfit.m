@@ -11,7 +11,7 @@ function f = polyfit(y,n)
 % Note CHEBFUN/POLYFIT does not not support more than one output argument
 % in the way that MATLAB/POLYFIT does.
 %
-% If y is a global polynomial of degree n then this code has an O(n (log n)^2)
+% If y is a global polynomial of degree n then this code has an O(n (log n)^2/loglog n)
 % complexity. If y is piecewise polynomial then it has an O(n^2) complexity.  
 %
 % See also POLYFIT, DOMAIN/POLYFIT, LEG2CHEB, CHEB2LEG.
@@ -26,17 +26,13 @@ end
 for k = 1:numel(y)
     f(k) = columnfit(y(k),n);
 end
+end
 
 function f = columnfit(y,n)
 
-% any exponents. 
-for j = 1:length(y) 
-     
-end
-
 if n > length(y) && y.nfuns == 1
     f = y;
-elseif ( all(y.funs.exps == 0) )
+elseif ( all(all(get(y,'exps') == 0)) )
     % The code below is a fast version of the code: 
     % Enorm = legpoly(0:n,[a,b],'norm');  % Legendre-Vandermonde matrix   
     % f = Enorm*(Enorm'*y);               % least squares chebfun
@@ -73,6 +69,7 @@ elseif ( all(y.funs.exps == 0) )
         f = chebfun( c, 'coeffs', [a,b] ); 
     end
 else
+    [a,b] = domain(y); 
    % back to old method
    Enorm = legpoly(0:n,[a,b],'norm');  % Legendre-Vandermonde matrix   
    f = Enorm*(Enorm'*y);               % least squares chebfun
