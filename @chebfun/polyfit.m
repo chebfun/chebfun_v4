@@ -29,9 +29,14 @@ end
 
 function f = columnfit(y,n)
 
+% any exponents. 
+for j = 1:length(y) 
+     
+end
+
 if n > length(y) && y.nfuns == 1
     f = y;
-else
+elseif ( all(y.funs.exps == 0) )
     % The code below is a fast version of the code: 
     % Enorm = legpoly(0:n,[a,b],'norm');  % Legendre-Vandermonde matrix   
     % f = Enorm*(Enorm'*y);               % least squares chebfun
@@ -45,7 +50,7 @@ else
             yfun = yfuns( jj );                     % For each piece calc
             dom = [ends(jj) ends(jj+1)];            % int P_k f(x)dx, over
             sdom = 2*(dom - a)./(b - a) - 1;        % subdomain. 
-            [xscaled, w] = legpts(max(length(y),n+1), sdom);
+            [xscaled, w] = legpts(max(length(yfun),n+1), sdom);
             val = feval( yfun, (xscaled + 1) * (b-a)/2 + a );
             cleg( 1 ) = cleg( 1 ) + w * val;
             cleg( 2 ) = cleg( 2 ) + w * ( xscaled .* val );
@@ -63,8 +68,13 @@ else
         % if y only has one fun, then we can do this much faster. 
         c = y.funs.coeffs;
         c = cheb2leg( c ); 
-        c = c( end - n + 1 : end ); 
+        c = c( end - n : end ); 
         c = leg2cheb( c ); 
         f = chebfun( c, 'coeffs', [a,b] ); 
     end
+else
+   % back to old method
+   Enorm = legpoly(0:n,[a,b],'norm');  % Legendre-Vandermonde matrix   
+   f = Enorm*(Enorm'*y);               % least squares chebfun
+end
 end
