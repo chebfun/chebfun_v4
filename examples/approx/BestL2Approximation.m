@@ -55,7 +55,7 @@ cleg = cleg(end-n:end);              % truncate
 ccheb = leg2cheb(cleg);              % convert them back to form a chebfun
 pn = chebfun(ccheb,'coeffs');        % form a chebfun
 plot(f,LW,lw), hold on, plot(pn,'r',LW,lw)
-title('Best L^2 approx to Runge function of degree 5','fontsize',16), hold off
+title('Best L^2 approx to Runge function of degree 10','fontsize',16), hold off
 
 %%
 % This is the algorithm that is used in Chebfun's polyfit, as of today. 
@@ -65,7 +65,7 @@ n = 10;
 f = 1./(1+25*x.^2);                  % Runge function 
 pn = polyfit(f,n); 
 plot(f,LW,lw), hold on, plot(pn,'r',LW,lw)
-title('Best L^2 approx to Runge function of degree 5','fontsize',16), hold off
+title('Best L^2 approx to Runge function of degree 10','fontsize',16), hold off
 
 %% High-degree best $L^2$ approximation for smooth functions
 % The fast algorithms now employed by polyfit mean we can compute very high 
