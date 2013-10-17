@@ -46,10 +46,12 @@ elseif ( all(all(get(y,'exps') == 0)) )
             yfun = yfuns( jj );                     % For each piece calc
             dom = [ends(jj) ends(jj+1)];            % int P_k f(x)dx, over
             sdom = 2*(dom - a)./(b - a) - 1;        % subdomain. 
-            [xscaled, w] = legpts(max(length(yfun),n+1), sdom);
+            [xscaled, w] = legpts(length(yfun)+(n+1), sdom);
             val = feval( yfun, (xscaled + 1) * (b-a)/2 + a );
             cleg( 1 ) = cleg( 1 ) + w * val;
-            cleg( 2 ) = cleg( 2 ) + w * ( xscaled .* val );
+            if ( n > 0 )
+                cleg( 2 ) = cleg( 2 ) + w * ( xscaled .* val );
+            end
             Pm2 = 1; Pm1 = xscaled; 
             for kk = 1:n-1                          % Eval legpoly by rec.
                P = (2-1/(kk+1))*Pm1.*xscaled - kk/(kk+1)*Pm2;  
