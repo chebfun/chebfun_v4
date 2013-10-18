@@ -48,7 +48,7 @@ for k = 1:K % Loop over the block partitions:
     tmp(1:2) = [sum(wf_bdy) ; x_bdy'*wf_bdy];          % First two terms.
     Pm2 = 1; Pm1 = x_bdy;                              % Initialise recurrence.
     for n = 1:min(nM(k)-3, N-1) % Recurrence:
-        P = (2-1/(n+1))*Pm1.*x_bdy - n/(n+1)*Pm2; 
+        P = (2-1/(n+1))*Pm1.*x_bdy - (1-1/(n+1))*Pm2; 
         Pm2 = Pm1; Pm1 = P;
         tmp(n+2) = P'*wf_bdy;                          % Update local LHS.
     end

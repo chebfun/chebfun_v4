@@ -42,7 +42,7 @@ for k = 1:K % Loop over the partitions:
     tmp = c_leg(1) + c_leg(2)*x_bdy;            % Entries of mat-vec result.       
     Pm2 = 1; Pm1 = x_bdy;                       % Initialise recurrence.
     for n = 1:nM(k)-1  % Recurrence:
-        P = (2-1/(n+1))*Pm1.*x_bdy-n/(n+1)*Pm2;
+        P = (2-1/(n+1))*Pm1.*x_bdy-(1-1/(n+1))*Pm2;
         Pm2 = Pm1; Pm1 = P;
         tmp = tmp + c_leg(n+2)*P;               % Update local LHS.
     end
