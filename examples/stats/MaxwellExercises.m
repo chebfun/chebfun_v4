@@ -27,8 +27,8 @@
 
 %%
 % _The Maxwell distribution is defined by
-% $$f(x;b)=\frac{\sqrt{2}}{b^3\sqrt{\pi}}x^2\exp(-x^2/(2b^2)).$$ Calculate the
-% mean and variance._
+% $$f(x;b)=\frac{\sqrt{2}}{b^3\sqrt{\pi}}x^2\exp(\frac{-x^2}{2b^2}).$$ Calculate
+% the mean and variance._
 
 %%
 % Let us take b to be 2.3.
@@ -103,7 +103,7 @@ plot( [v_avg, v_avg], [0, f(v_avg)], '--r' )
 grid on
 %%
 % The average speed-squared is:
-vsqr_avg = sum(chebfun( @(x) x.^2.*ff(x), [0, inf]))
+vsqr_avg = sum(chebfun(@(x) x.^2.*ff(x), [0, inf]))
 %%
 % Now we can compute the average kinetic energy of a particle of mass 0.15 kg by
 % the formula K = 1/2*m*v^2:
