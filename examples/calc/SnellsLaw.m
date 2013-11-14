@@ -3,7 +3,7 @@
 
 %%
 % (Chebfun example calculus/SnellsLaw.m)
-% [Tags: #calculus, #snell'sLaw, #snell]
+% [Tags: #calculus, #Snell's Law, #Snell]
 
 %% How to save a drowning man
 % On a bright sunny day we are having nice time on the beach:
@@ -30,21 +30,21 @@ vLand = 10;
 vWater = 3;
 
 %%
-% This means that rather than running straight to the drowning man, he 
-% should run a little longer along the ground to make use of his faster 
-% speed. Exactly what path should he take can be computed by minimizing 
-% the time equation involving the two different speeds. This can be easily
-% done in Chebfun. Let $x_0$ be the unknown point on the shore that we should 
-% run towards in order to reach the drowning man in a minimum time. 
-% In order to find $x_0$, we first declare a chebfun $x$:
+% This means that rather than running straight to the drowning man, he should
+% run a little longer along the ground to make use of his faster speed. Exactly
+% what path should he take can be computed by minimizing the time equation
+% involving the two different speeds. This can be easily done in Chebfun. Let
+% $x_0$ be the unknown point on the shore that we should run towards in order to
+% reach the drowning man in a minimum time. In order to find $x_0$, we first
+% declare a chebfun $x$:
 x = chebfun('x', [real(sMan), real(dMan)] );
 %%
-% The total time required to reach the drowning man as a function of a
-% point $x$ on the shore is given by:
+% The total time required to reach the drowning man as a function of a point $x$
+% on the shore is given by:
 T = abs(x-sMan)/vLand + abs(x-dMan)/vWater;
 %%
-% We now find the minimum time $T_{min}$ and the location of the ninimum 
-% $x_0$, i.e., the point on the shore that the lifeguard should aim for.
+% We now find the minimum time $T_{min}$ and the location of the ninimum $x_0$,
+% i.e., the point on the shore that the lifeguard should aim for.
 [Tmin, x0] = min(T)
 figure(2); plot(x,T, LW, lw), hold on
 plot( x0, Tmin, 'r.', MS, 20 ), hold off
@@ -52,20 +52,19 @@ title( sprintf( 'Optimal Point x_0= %.5f    Minimum Time = %.5f', Tmin, x0 ));
 xlabel('x'), ylabel('Time')
 
 %%
-% Let us now draw the optimal path that should be followed in order to 
-% reach the drowning man as quickly as possible.
+% Let us now draw the optimal path that should be followed in order to reach the
+% drowning man as quickly as possible.
 figure(1)
 plot([real(sMan), x0], [imag(sMan), 0] )
 plot([x0, real(dMan)], [0, imag(dMan)], 'r' )
 
 %% Verifying Snell's Law
-% Actually this problem is an example of the famous Snell's law. 
-% Whenever an object is subject to motion with different speeds in different
-% media, the angle at which the object should hit the interface of the two 
-% media for an optimal path, i.e. the one requiring the least amount of 
-% time, is determined by Snell's Law:
-% $$ \frac{\sin(\theta_1)}{\nu_1} = \frac{\sin(\theta_2)}{\nu_2}. $$
-% We can verify this in Chebfun very easily. 
+% Actually this problem is an example of the famous Snell's law. Whenever an
+% object is subject to motion with different speeds in different media, the
+% angle at which the object should hit the interface of the two media for an
+% optimal path, i.e. the one requiring the least amount of time, is determined
+% by Snell's Law: $$ \frac{\sin(\theta_1)}{\nu_1} =
+% \frac{\sin(\theta_2)}{\nu_2}. $$ We can verify this in Chebfun very easily.
 plot([x0, x0], [-4, 4], '--k')
 sinTh1 = abs(real(sMan)-x0)/abs(sMan-x0); 
 sinTh2 = abs(real(dMan)-x0)/abs(dMan-x0);
