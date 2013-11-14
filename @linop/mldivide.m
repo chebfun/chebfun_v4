@@ -137,8 +137,7 @@ switch(class(B))
         end
         warning(warnstate);  % restore old warning state
 
-        
-        if diff(A.blocksize)
+        if ~npar && diff(A.blocksize)
             warning('CHEBFUN:mldivide:notsquare',...
                 'Operator does not appear to be square.');
         end
