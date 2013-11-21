@@ -13,7 +13,7 @@
 % and Greengard's interesting collection of examples.  These problems are
 % linear.
 
-%% EXAMPLE 1. VISCOUS SHOCK
+%% Example 1. Viscous shock
 % The first example is
 % $$ \varepsilon u''(x) + 2 x u'(x) = 0, \quad u(-1) = 1, ~ u(1) = 1. $$
 % The following anonymous function produces a Chebfun solution as a
@@ -33,7 +33,7 @@ for k = 1:2
     title(s,FS,10)
 end
 
-%% EXAMPLE 2.  BESSEL EQUATION
+%% Example 2. Bessel equation
 % The second example is
 % $$ u''(x) + x^{-1} u'(x) + {x^2-\nu^2\over x^2} u(x) = 0, 
 % \quad u(0) = 0, ~ u(600) = 1 $$
@@ -49,7 +49,7 @@ clf, plot(u,LW,1.2), grid on
 s = sprintf('nu = %3d   Length =%4d   Time =%6.3f',nu,length(u),t);
 title(s,FS,10)
 
-%% EXAMPLE 3. TURNING POINT
+%% Example 3. Turning point
 % This example is an Airy equation,
 % $$ \varepsilon u''(x) - x u(x) = 0, \quad u(-1) = 1, ~ u(1) = 1. $$
 % We proceed as usual:
@@ -64,7 +64,7 @@ for k = 1:2
     title(s,FS,10)
 end
 
-%% EXAMPLE 4. POTENTIAL BARRIER
+%% Example 4. Potential barrier
 % The fourth example is
 % $$ \varepsilon u''(x) + (x^2-0.25)u(x) = 0, \quad u(-1) = 1, ~ u(1) = 2. $$
 % Here we go:
@@ -78,7 +78,7 @@ for k = 1:2
     title(s,FS,10)
 end
 
-%% EXAMPLE 5. CUSP
+%% Example 5. Cusp
 % This time we have
 % $$ \varepsilon u''(x) + x u'(x) - 0.5u(x) = 0, \quad u(-1) = 1, ~ u(1) = 2. $$
 % With a global discretization and standard defaults, Chebfun can go down
@@ -95,7 +95,7 @@ for k = 1:2
     title(s,FS,10)
 end
 
-%% EXAMPLE 6. EXPONENTIAL ILL-CONDITIONING
+%% Example 6. Exponential ill-conditioning
 % Finally we consider
 % $$ \varepsilon u''(x) - x u'(x) + u(x) = 0, \quad u(-1) = 1, ~ u(1) = 2. $$
 % The pictures look fine down to Lee and Greengard's value of ep = 1/70:

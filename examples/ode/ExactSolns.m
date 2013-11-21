@@ -15,7 +15,7 @@ d = [1 2];
 x = chebfun('x',d);
 N = chebop(d);
 
-%% EXAMPLE 1: SEPARATION OF VARIABLES
+%% Example 1: Separation of variables
 % Consider first the problem
 %
 %     xy' = y^2 - 2y + 1,    y(1) = 0.
@@ -46,7 +46,7 @@ LW = 'linewidth'; FS = 'fontsize'; MS = 'markersize';
 plot(y,'.-',LW,1,MS,18), grid on
 title(sprintf('xy'' = y^2-2y+1     Error = %6.2e',err),FS,14)
 
-%% EXAMPLE 2: SEPARATION OF VARIABLES
+%% Example2: Separation of variables
 % As another example, consider
 %
 %     y' = sin(y),   y(1) = pi/2.
@@ -79,7 +79,7 @@ err = norm(y-exact,inf);
 plot(y,'.-',LW,1,MS,18), grid on
 title(sprintf('y'' = sin(y)     Error = %6.2e',err),FS,14)
 
-%% EXAMPLE 3: ORDER REDUCTION FOR AUTONOMOUS EQUATION
+%% Example 3: Order reduction for an autonomous equation
 % Consider the autonomous problem
 %
 %     yy' = 2(y')^2,   y(1) = 1, y(2) = 2,
@@ -117,7 +117,7 @@ err = norm(y-exact,inf);
 plot(y,'.-',LW,1,MS,18), grid on
 title(sprintf('yy'''' = 2(y'')^2     Error = %6.2e',err),FS,14)
 
-%% EXAMPLE 4: BERNOULLI EQUATION
+%% Example 4: Bernoulli equation
 % An equation of the form y' = a(x)y +b(x)y^p, known as a
 % Bernoulli equation, can be made linear by the change
 % of variables u=y^(1-p).  Consider for example the problem

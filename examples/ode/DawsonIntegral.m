@@ -90,6 +90,7 @@ toc
 
 %%
 % If you have the Symbolic Toolbox...
+
 % semilogy(abs(f-fexact)), grid on
 
 function w = cef(z,N)  % Weideman's beautiful complex error function routine
