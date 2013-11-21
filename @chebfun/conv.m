@@ -225,13 +225,18 @@ function out = integral( x , f , g )
         % while we're at it)
         hasexps = false; nonlinmaps = false;
         sizes = zeros( nfuns , 1 );
+        
         for j=1:nfuns
             m = (ends(j)+ends(j+1))/2;
             fn = f.funs( find( f.ends > m , 1 ) - 1 );
             hasexps = hasexps || any( fn.exps ~= 0 );
             nonlinmaps = nonlinmaps || ~strcmp( fn.map.name , 'linear' );
             sizes(j) = fn.n;
-            fn = g.funs( find( g.ends + x(k) > m , 1 ) - 1 );
+            idx = find( g.ends + x(k) > m , 1 ) - 1;
+            if ( isempty(idx) ) % Sometimes we miss the final interval.
+                idx = numel(g.funs);
+            end
+            fn = g.funs(idx);
             hasexps = hasexps || any( fn.exps ~= 0 );
             nonlinmaps = nonlinmaps || ~strcmp( fn.map.name , 'linear' );
             sizes(j) = sizes(j) + fn.n - 1;
@@ -249,7 +254,11 @@ function out = integral( x , f , g )
             for j=1:nfuns
                 m = (ends(j)+ends(j+1))/2;
                 df( inds(j)+1:inds(j+1) ) = feval( f.funs( find( f.ends > m , 1 ) - 1 ) , pts( inds(j)+1:inds(j+1) ) );
-                dg( inds(j)+1:inds(j+1) ) = feval( g.funs( find( g.ends + x(k) > m , 1 ) - 1 ) , pts( inds(j)+1:inds(j+1) ) - x(k) );
+                idx = find( g.ends + x(k) > m , 1 ) - 1;
+                if ( isempty(idx) ) % Sometimes we miss the final interval.
+                    idx = numel(g.funs);
+                end
+                dg( inds(j)+1:inds(j+1) ) = feval( g.funs( idx ) , pts( inds(j)+1:inds(j+1) ) - x(k) );
             end
 
             % Compute the integral
