@@ -62,7 +62,7 @@ title('Solution to the Lorenz Attractor as Scalar Functions', FS, 14)
 % a Psi-series. A Psi-series centred at $t_0$ in the complex plane is a 
 % series of the form:
 %
-% $$ \sum_{j = -J}^\infty P_j(\eta)(t-t_0)^j, \quad \eta = \log(b(t-t_0)),$$
+% $$ \sum_{j = -J}^\infty P_j(\eta)(t-t_0)^j, \quad \eta = \log(b(t-t_0)), $$
 %
 % where $J$ is an integer, $P_j$ is a polynomial and $b$ is a complex
 % number with $|b| = 1$.
@@ -72,7 +72,7 @@ title('Solution to the Lorenz Attractor as Scalar Functions', FS, 14)
 % form:
 %
 % $$ x(t) = \qquad \qquad \quad \frac{P_{-1}(\eta)}{t-t_0} + P_0(\eta) +
-% P_1(\eta)(t-t_0) + P_2(t-t_0)^2 + \ldots,$$
+% P_1(\eta)(t-t_0) + P_2(t-t_0)^2 + \ldots, $$
 %
 % $$ y(t) = \frac{Q_{-2}(\eta)}{(t-t_0)^2} + \frac{Q_{-1}(\eta)}{t-t_0} +
 % Q_0(\eta) + Q_1(\eta)(t-t_0) + Q_2(t-t_0)^2 + \ldots, $$

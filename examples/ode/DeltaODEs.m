@@ -129,7 +129,7 @@ norm(r,inf)
 
 %%
 % $\delta(x)$ is also a solution of the Bessel's equation
-% $$x^2y''+xy'+(x^2-1)y=0.$$ Again, we can verify this easily.
+% $$x^2y''+xy'+(x^2-1)y=0. $$ Again, we can verify this easily.
 r = x.^2.*diff(y,2)+x.*diff(y)+(x.^2-1).*y;
 r.imps
 

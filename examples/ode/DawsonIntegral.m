@@ -8,7 +8,7 @@
 %%
 % Here is an ODE which is simple and linear.
 % 
-% $$ \frac{dF}{dx}+2xF = 1 \mbox{  with  } F(0) = 0.$$
+% $$ \frac{dF}{dx}+2xF = 1 \mbox{  with  } F(0) = 0. $$
 %
 % Chebfun and Chebop can crack this ODE with ease in a few lines. 
 % Instead of a boundary condition, we will specify an 
@@ -30,7 +30,7 @@ plot(f,LW,lw), xlim([-W W]), hold on, grid on;
 %%
 % Equation (1) can be solved analytically:
 %
-% $$ F(x) = e^{-x^2} \int_0^x e^{t^2} dt.$$
+% $$ F(x) = e^{-x^2} \int_0^x e^{t^2} dt. $$
 %
 % Users with access to the Matlab Symbolic Toolbox
 % could also solve it with the following code:
@@ -108,7 +108,7 @@ end
 % Weideman's algorithm takes advantage of a slick rational expansion which
 % approximates the Faddeeva function 
 %
-% $$w(x) = e^{-x^2}+\frac{2i}{\sqrt{\pi}}e^{-x^2}\int_0^x e^{t^2} dt$$ 
+% $$w(x) = e^{-x^2}+\frac{2i}{\sqrt{\pi}}e^{-x^2}\int_0^x e^{t^2} dt $$ 
 %
 % uniformly accurately in the complex plane with only a small number of
 % terms (denoted by $N$ in the code above). With $N = 36$, Dawson's
