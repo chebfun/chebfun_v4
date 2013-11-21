@@ -20,25 +20,18 @@ function InteractiveInterp
 % which uses BARY and BARY_WEIGHTS
 
 %%
-% Unfortunately, I'm not allowed to play this game any more, but here's
-% an animation of me clicking:
-if any(strcmp({getenv('USER'),getenv('UserName')},'hale'))
-    plot(0) % ignore this!
-    return
-end
-
-%%
 % Now it's your turn! If you're reading this example, you probably already
 % know what kind of points to choose, but it's still fun to play!
     
-ClickToInterpolate()
+plot(0)
+% ClickToInterpolate() % Commented out to ensure the Example publishes OK.
 
 %%
 
     function ClickToInterpolate(F)
         % Select interpolation points by right clicking.
         % When you get bored, left or double click to finish.
-        if nargin == 0,
+        if ( nargin == 0 ) 
           F = @(x) 1-.9*abs(x);          % default function 
         end
         
@@ -50,18 +43,18 @@ ClickToInterpolate()
           hold off
           plot(xx,F(xx),'-k',LW,2), shg  % plot function F
           hold on, axis([-1 1 -1 2])
-          if ~isempty(x)
+          if ( ~isempty(x) )
             plot(x,F(x),'.b',MS,20)      % plot interpolation points
             plot(x,0*x,'.k',MS,6)        % plot x values alone
             y = interp1(x,F(x),d);       % interpolate the data
             plot(y,'-b',LW,2), shg       % plot interpolant
-            if numel(x) > 1,
+            if ( numel(x) > 1 )
                 [~,L] = lebesgue(x,d);   % lebesgue constant
                 title(['Lebesgue constant = ' num2str(L)],FS,14)
             end
           end
           [gx,gy,button] = ginput(1);    % input new interpolation point
-          if button == 3, break, end     % if right button, stop
+          if ( button == 3 ) break, end  % if right button, stop
           x = unique([x; gx]);           % #ok<AGROW>
         end
     end
