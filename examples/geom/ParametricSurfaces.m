@@ -8,7 +8,7 @@
 %% 
 % This example shows Chebfun2 being used to represent parameterized surfaces. 
 % We start by plotting two simple quadratic surfaces that are commonly taught 
-% in multivariate calculus: a cone and a Hyperboloid of one sheet.
+% in multivariate calculus: a cone and a hyperboloid of one sheet.
 %
 % These two surfaces can be parameterized using polar 
 % coordinates. We first define the radial and angular
@@ -63,13 +63,9 @@ surf(x,y,z,f), axis equal tight
 view(0,90)
 
 %% 
-% <html>
 % There are many other interesting surfaces that can be represented by 
 % Chebfun2 objects. The parameterization of this seashell was taken from
-% <a
-% href="http://msenux.redwoods.edu/Math4Textbook/Plotting/ParametricSurfaces.pdf">
-% here. </a>
-% </html>
+% [1]. 
 
 u = chebfun2(@(u,v) u, [0 6*pi 0 2*pi]);
 v = chebfun2(@(u,v) v, [0 6*pi 0 2*pi]);
@@ -87,11 +83,8 @@ view(160,10), axis equal, box on
 view(-180,90)
 
 %%
-% <html>
-% And here is the well known 
-% <a href = "http://en.wikipedia.org/wiki/Möbius_strip">Möbius strip</a>,
+% And here is the well known Moebius strip, see [2],
 % often used as an example of a non-orientable surface.
-% </html>
 
 u = chebfun2(@(u,v) u, [0 2*pi -1 1]);
 v = chebfun2(@(u,v) v, [0 2*pi -1 1]);
@@ -100,7 +93,7 @@ x = (1+0.5*v.*cos(u/2)).*cos(u);
 y = (1+0.5*v.*cos(u/2)).*sin(u);
 z = 0.5*v.*sin(u/2);
 
-surf(x,y,z), view(-63,78), camlight
+surf(x,y,z), camlight, axis equal, box on
 
 %%
 % What happens if we try to plot normal vectors to this surface?
@@ -116,8 +109,8 @@ axis tight
 
 %%
 % The normal, as computed, is clearly not continuous on this surface.
-% The normal vector field computed above is ru x rv. Both ru and
-% rv are parallel to the surface. We illustrate this below
+% The normal vector field computed above is $ru$ x $rv$. Both $ru$ and
+% $rv$ are parallel to the surface. We illustrate this below
 
 ru = diff(r,1,1);
 rv = diff(r,1,2);
@@ -147,11 +140,9 @@ quiver3(x,y,z,PV,2,'k','numpts',30)
 hold off
 
 %%
-% <html>
-% Our final example is the <a href="http://en.wikipedia.org/wiki/Klein_bottle">
-% Klein Bottle</a>, which is also non-orientable. A plot of the 
-% "figure 8" immersion (Klein bagel) of the Klein bottle is below. 
-% </html>
+% Our final example is the Klein Bottle, see [3], which is also 
+% non-orientable. A plot of the "figure 8" immersion (Klein bagel) of 
+% the Klein bottle is below. 
 
 u = chebfun2(@(u,v) u, [0 2*pi 0 2*pi]);
 v = chebfun2(@(u,v) v, [0 2*pi 0 2*pi]);
@@ -178,9 +169,12 @@ view(90,0)
 u = chebfun2(@(u,v) u, [0 pi 0 2*pi]);
 v = chebfun2(@(u,v) v, [0 pi 0 2*pi]);
 
-x = -(2/15)*cos(u).*(3*cos(v)-30*sin(u)+90*cos(u).^4.*sin(u)- 60*cos(u).^6.*sin(u)+5*cos(u).*cos(v).*sin(u));
-y = -(1/15)*sin(u).*(3*cos(v)-3*cos(u).^2.*cos(v)-48*cos(u).^4.*cos(v)+48*cos(u).^6.*cos(v)-60*sin(u)+5*cos(u).*cos(v).*sin(u) ...
-    -5*cos(u).^3.*cos(v).*sin(u) -80*cos(u).^5.*cos(v).*sin(u)+80*cos(u).^7.*cos(v).*sin(u));
+x = -(2/15)*cos(u).*(3*cos(v)-30*sin(u)+90*cos(u).^4.*sin(u)- ... 
+    60*cos(u).^6.*sin(u)+5*cos(u).*cos(v).*sin(u));
+y = -(1/15)*sin(u).*(3*cos(v)-3*cos(u).^2.*cos(v)-48*cos(u).^4.*cos(v)+ ...
+    48*cos(u).^6.*cos(v)-60*sin(u)+5*cos(u).*cos(v).*sin(u) ...
+    -5*cos(u).^3.*cos(v).*sin(u) -80*cos(u).^5.*cos(v).*sin(u)+ ... 
+    80*cos(u).^7.*cos(v).*sin(u));
 z = (2/15)*(3+5*cos(u).*sin(u)).*sin(v);
 
 surf(x,y,z,'FaceAlpha',.5), camlight left, axis tight equal off
@@ -192,3 +186,12 @@ surf(x,y,z,'FaceAlpha',.5), camlight left, axis tight equal off
 hold on
 quiver3(x,y,z,-normal([x;y;z]),2,'k')
 hold off
+
+%%
+% References
+%
+% [1] http://msenux.redwoods.edu/Math4Textbook/Plotting/ParametricSurfaces.pdf
+%
+% [2] Wikipedia, "Moebius strip", http://en.wikipedia.org/wiki/Mobius_strip
+%
+% [3] Wikipedia, "Klein bottle", "http://en.wikipedia.org/wiki/Klein_bottle
