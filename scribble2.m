@@ -326,8 +326,8 @@ if ( nargout == 0 )
 %             imwrite(imind, cm, 'Scribble2.gif', 'gif', ...
 %                 'WriteMode', 'append', 'DelayTime', 1e-5);
 %         end
-%         shg
-%         drawnow
+        shg
+        drawnow
         
 %    end
 else
