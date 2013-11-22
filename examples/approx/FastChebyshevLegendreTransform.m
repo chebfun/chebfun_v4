@@ -145,7 +145,7 @@ norm(u - f)
 %% Conclusion
 % We believe that such a fast and practical Chebyshev-Legendre transform could
 % allow the Chebfun project to occasionally compute with Legendre
-% representations. This could simplify some algorithms and led to the
+% representations. This could simplify some algorithms and lead to the
 % development of others.
 
 %% References 

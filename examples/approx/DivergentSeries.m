@@ -47,7 +47,7 @@ f(1)
 %%
 % Suppose we try to estimate this limit from those not-quite-Taylor
 % coefficients.  We could use the epsilon algorithm, which amounts to
-% constructing a Padé approximation and evaluating it at $z=1$.
+% constructing a Pade approximation and evaluating it at $z=1$.
 % Here's the result, showing 2 digits of accuracy:
 r = padeapprox((-1).^(0:10).*factorial(0:10),5,5);
 r(1)

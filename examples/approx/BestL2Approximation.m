@@ -12,7 +12,7 @@ FS = 'Fontsize'; fs = 16;
 % best $L^2$ approximation of degree $n$ is the polynomial $p_n$ of degree at most
 % $n$ such that 
 %
-%  $$ \| f - p_n \|_2 = minimum$$
+%  $$ \| f - p_n \|_2 = minimum $$
 %
 % A good introduction to $L^2$ approximations can be found in [2]. The polyfit command in 
 % Chebfun returns the best $L^2$ approximation of a given degree to a chebfun: 
