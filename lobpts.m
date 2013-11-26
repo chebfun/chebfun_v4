@@ -28,25 +28,22 @@ function [x, w, v] = lobpts(n,varargin)
 [x, w, v] = jacpts(n-2,1,1,varargin{:});
 x = [-1 ; x ; 1];
 
-if nargout < 2, return, end
-
 %% Quadrature weights
-
-% Initialise
-Pm2 = 1; Pm1 = x;
-% Use recurrence relation
-for k = 1:n-2, 
-    P = ((2*k+1)*Pm1.*x-k*Pm2)/(k+1);
-    Pm2 = Pm1; 
-    Pm1 = P; 
-end   
-w = 2./(n*(n-1)*P.^2);
+w = [-1, w,  1];
+w = w./(1-x.^2).';
 w([1 end]) = 2/(n*(n-1));
 
-if nargout < 3, return, end
-
 %% Barycentric weights
-vv = bary_weights(x);
 v = v./(1-x(2:n-1).^2);
-v = v/max(abs(v));
-v = [vv(1) ; v ; vv(end)];
+if ( mod(n, 2) )
+    v1 = -abs(sum(v.*x(2:end-1).^2)/2);
+    sgn = 1;
+else
+    v1 = -abs(sum(v.*x(2:end-1))/2);
+    sgn = -1;
+end
+
+v = [v1 ; v ; sgn*v1];
+
+end
+

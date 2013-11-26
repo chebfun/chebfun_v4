@@ -26,28 +26,17 @@ function [x, w, v] = radaupts(n)
 %  See also chebpts, legpts, jacpts, legpoly, lobpts.
 
 %% Nodes
-[x, ignored, v] = jacpts(n-1,0,1);
+[x, w, v] = jacpts(n-1,0,1);
 x = [-1 ; x];
 
-if nargout < 2, return, end
-
 %% Quadrature weights
-
-% Initialise
-Pm2 = 1; Pm1 = x;  PPm2 = 0; PPm1 = 1;
-% Use recurrence relation
-for k = 1:n-1, 
-    P = ((2*k+1)*Pm1.*x-k*Pm2)/(k+1);           Pm2 = Pm1; Pm1 = P; 
-    PP = ((2*k+1)*(Pm2+x.*PPm1)-k*PPm2)/(k+1);  PPm2 = PPm1; PPm1 = PP;  
-end   
-w = 1./((1-x).*PP.^2);
-w(1) = 2/n^2;
-
-if nargout < 3, return, end
+w = [2/n^2, w./(1+x(2:end).')];
 
 %% Barycentric weights
-vv = bary_weights(x);
 v = v./(1+x(2:end));
 v = v/max(abs(v));
-v = [vv(1) ; v];
+v1 = -abs(sum(x(2:end).*v));
+v = [v1 ; v];
+
+end
 
