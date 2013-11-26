@@ -208,7 +208,7 @@ while any(~hpy) && all([NN{:}] < maxn) && all(ii <= numel(kk))
             vjk = v{j}(indx).';
 
             % Set fun scales (horizontal and vertical).
-            sclv(l) = max(sclv(l), norm(vjk,inf));
+            sclv(l) = max(sclv(l), norm(v{j},inf));
             scl = struct('h',sclh(l),'v',sclv(l));
               
             % The new fun.

@@ -114,17 +114,18 @@ elseif length(f) <= maxsize
    
 %     try
         try 
+            warnstate = warning;
             warning('off'); % disable verbose warnings from fmincon.
             options = optimset('Display','off','TolFun', eps, 'TolX', eps);
             [mn Y(1)] = fmincon(@(x,y) feval(f,x(1),x(2)),X(1,:),[],[],[],[],lb,ub,[],options);
             [mx Y(2)] = fmincon(@(x) -feval(f,x(1),x(2)),X(2,:),[],[],[],[],lb,ub,[],options);
             Y(2) = -Y(2);  X(1,:)=mn; X(2,:)=mx;    
-            warning('on');
+            warning(warning);
         catch
             % Nothing is going to work so initial guesses will have to do.
             mn = X(1,:); mx = X(2,:);
-            warning('on');
-            warning('CHEBFUN2:MINANDMAX2','Unable to find Matlab''s optimization toolbox so results will be inaccurate.');
+%             warning('on');
+%             warning('CHEBFUN2:MINANDMAX2','Unable to find Matlab''s optimization toolbox so results will be inaccurate.');
         end
 %     catch
 %         % This will work if optimset and fminsearch is on the matlab path.
