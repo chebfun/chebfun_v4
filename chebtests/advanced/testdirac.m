@@ -5,7 +5,7 @@ function pass = testdirac
 % Mohsin Javed, August 2012
 % (A Level 1 Chebtest)
 
-tol = chebfunpref('eps');
+tol = 100*chebfunpref('eps');
 x = chebfun('x');
 
 % No impulse, zero chebfun
