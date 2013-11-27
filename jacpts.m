@@ -207,7 +207,6 @@ function [x w v] = rec(n,a,b)
    ders = [ders2(end:-1:1) ; ders1];
    w = 1./((1-x.^2).*ders.^2)';        % Quadrature weights
    v = 1./ders;                        % Barycentric weights
-   
 end
 
 function [x PP] = rec_main(n,a,b,flag)
@@ -229,7 +228,11 @@ function [x PP] = rec_main(n,a,b,flag)
     end
     % Once more for derivatives
     [ignored PP] = eval_Jac(x,n,a,b);
-
+    
+    if ( isempty(x) )
+        PP = [];
+    end
+        
 end
 
 %% ------------------------- Routines for GLR ---------------------------

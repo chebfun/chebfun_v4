@@ -1,4 +1,4 @@
-function [x, w, v] = radaupts(n)
+function [x, w, v] = radaupts(n, varargin)
 %RADAUPTS  Gauss-Legendre-Radau Quadrature Nodes and Weights.
 %  RADAUPTS(N) returns N Legendre-Radau points X in (-1,1).
 %
@@ -25,8 +25,21 @@ function [x, w, v] = radaupts(n)
 %
 %  See also chebpts, legpts, jacpts, legpoly, lobpts.
 
+%% Trivial case:
+if ( n == 1 )
+    x = -1;
+    w = 2;
+    v = 1;
+    return
+elseif ( n == 1 )
+    x = [-1, 1/3];
+    w = [.5 ; 1.5];
+    v = [-1 ; 1];
+    return
+end
+
 %% Nodes
-[x, w, v] = jacpts(n-1,0,1);
+[x, w, v] = jacpts(n-1,0,1,varargin{:});
 x = [-1 ; x];
 
 %% Quadrature weights

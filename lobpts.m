@@ -1,4 +1,4 @@
-function [x, w, v] = lobpts(n,varargin)
+function [x, w, v] = lobpts(n, varargin)
 %LOBPTS  Gauss-Legendre-Lobatto Quadrature Nodes and Weights.
 %  LOBPTS(N) returns N Legendre-Lobatto points X in (-1,1).
 %
@@ -24,8 +24,18 @@ function [x, w, v] = lobpts(n,varargin)
 %
 %  See also chebpts, legpts, jacpts, legpoly, radaupts.
 
+%% Trivial case:
+if ( n == 1 )
+    error('CHEBFUN:lobpts', 'N = 1 is not supported.');
+elseif ( n ==2 )
+    x = [-1 ; 1];
+    w = [1, 1];
+    v = [-1 ; 1];
+    return
+end
+
 %% Nodes
-[x, w, v] = jacpts(n-2,1,1,varargin{:});
+[x, w, v] = jacpts(n-2, 1, 1, varargin{:});
 x = [-1 ; x ; 1];
 
 %% Quadrature weights
@@ -35,7 +45,11 @@ w([1 end]) = 2/(n*(n-1));
 
 %% Barycentric weights
 v = v./(1-x(2:n-1).^2);
-if ( mod(n, 2) )
+v = v/max(abs(v));
+if ( n == 3 )
+    v1 = -.5;
+    sgn = 1;
+elseif ( mod(n, 2) )
     v1 = -abs(sum(v.*x(2:end-1).^2)/2);
     sgn = 1;
 else
