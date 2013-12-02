@@ -62,7 +62,7 @@ xlabel('t', FS, 14)
 %%
 % Let's see how the maximum decays with time:
 umax = max(u(:, :));
-plot(umax, '.', MS, 14), grid on
+plot(t100, umax, '.', MS, 14), grid on
 xlabel('t', FS, 14), ylabel('max(u)', FS, 14) 
 
 %%
