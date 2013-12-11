@@ -6,7 +6,7 @@
 % [Tags: #Allen-Cahn, #metastability, #EQUI, #PDE15S]
 
 %% 1. The metastability phenomenon
-% Oxford's Numerical Analysis Problem Squad faced a problem this month involving
+% Oxford's Numerical Analysis Problem Solving Squad faced a problem this month involving
 % the 1D Allen-Cahn equation, which is the following nonlinear PDE: $$ u_t =
 % u_{xx} + u(1-u^2) . $$ This equation has three constant solutions: $u(x)=-1$,
 % $u(x)=1$, and $u(x) = 0$, the first two stable and the third unstable.
