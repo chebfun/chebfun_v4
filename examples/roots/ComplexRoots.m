@@ -121,8 +121,8 @@ end
 % method for lcoating the zeros of an analytic function,
 % Mathematics of Computation 21 (1967), 543-560.
 %
-% [2] D. Jackson, Roots and singular points of analytic
-% functions, Annals of Matheamtics 19 (1917), 142-151.
+% [2] D. Jackson, Roots and singular points of semi-analytic
+% functions, Annals of Mathematics 19 (1917), 142-151.
 %
 % [3] J. E. McCune, Exact inversion of dispersion relations,
 % Physics of Fluids 9 (1966), 2082-2084.
