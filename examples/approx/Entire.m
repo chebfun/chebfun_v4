@@ -121,5 +121,5 @@ fprintf('\n')
 % References:
 %
 % [1] L.N. Trefethen, Approximation Theory and Approximation Practice,
-% http://www.maths.ox.ac.uk/chebfun/ATAP/
+% SIAM, 2013.
 

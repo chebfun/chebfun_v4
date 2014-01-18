@@ -19,7 +19,7 @@ title( 'Function to be Approximated', FS, fs), hold on
 % The existence and uniqueness of the the best mini-max approximation of $f$ in
 % the space of polynomials of degree upto $n$ is well known. The best degree $n$
 % approximation is characterized by the equioscillation of the error at least
-% $n+2$ times. The error consequently changes sign at least $n+1$ times [1]. Let
+% $n+2$ times. The error consequently changes sign at least $n+1$ times [2]. Let
 % us suppose we want to find the degree $n$ best approximation of this function.
 % Chebfun's $\verb|remez|$ command can be used to find this polynomial:
 n = 4;
@@ -41,7 +41,7 @@ plot( [-1, 1], [0 0], 'k--', LW, 1.5)
 % It is also interesting to note that the error curve of the best weighted $L_2$
 % approximation of a continuous function by a degree $n$ polynomial has the same
 % oscillation property. The error curve is guaranteed to change sign at least
-% $n+1$ times [2], however, in this case, the error curve does not generally
+% $n+1$ times [1], however, in this case, the error curve does not generally
 % equioscillate. For the same function, we now construct a degree $n$
 % approximation by Chebyshev polynomials. This can be done in Chebfun using the
 % 'trunc' option, since best $L_2$ approximations are simply given by truncated
@@ -70,9 +70,9 @@ legend( [h1(:,1), h2(:,1), h3(:,1), h4(:,1)], ...
 % always have zeros at $-1$ and $1$.
 
 %% References
-% 
-% [1] Trefethen, L. N., Approximation Theory and Approximation Practice, SIAM,
-% 2013.
 %
-% [2] Davis, P. J., Interpolation and Approximation, Blaisdell Publishing
+% [1] P. J. Davis, Interpolation and Approximation, Blaisdell Publishing
 % Company, 1965.
+% 
+% [2] L. N. Trefethen, Approximation Theory and Approximation Practice, SIAM,
+% 2013.

@@ -48,11 +48,10 @@ A = randn(n); A = A+A'; B = randn(n); B = B+B';
 ek = @(e,k) e(k);            % returns kth element of the vector e
 eigA = @(A) sort(eig(A));    % returns sorted eigenvalues of the matrix A
 eigk = @(A,k) ek(eigA(A),k); % returns kth eigenvalue of the matrix A
-d = domain(0,1);
-t = chebfun('t',d);
+t = chebfun('t',[0 1]);
 E = chebfun; tic
 for k = 1:n
-   E(:,k) = chebfun(@(t) eigk((1-t)*A+t*B,k),d,'splitting','off','vectorize');
+   E(:,k) = chebfun(@(t) eigk((1-t)*A+t*B,k),[0 1],'splitting','off','vectorize');
 end
 FS = 'fontsize'; LW = 'linewidth'; MS = 'markersize';
 figure, plot(E,LW,1.6), grid on
