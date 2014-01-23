@@ -12,8 +12,11 @@ LW = 'linewidth'; lw = 2; FS = 'fontsize'; fs = 16; MS = 'markersize'; ms = 20;
 %% One-dimensional constrained optimization
 % By virtue of Chebfun's capabilities with global rootfinding and global
 % optimization, some constrained optimization is possible. For example, for
-% $x\in[0,10]$, solve \[ \min( \sin(x)^2 + \sin(x^2) ) \quad \text{s.t.}\quad
-% \lfloor x\rfloor = \text{prime}.\]
+% $x\in[0,10]$, solve 
+%
+%  $$\max( \sin(x)^2 + \sin(x^2) ) \quad \text{s.t.}\quad
+% \lfloor x\rfloor = \text{prime}.$$
+%
 
 x = chebfun('x', [0 10]); 
 objective = chebfun( @(x) sin(x).^2 + sin(x.^2), [0 10] ); 
@@ -28,14 +31,16 @@ plot(g), hold on, plot(loc, mx, 'r.', MS, ms), hold off
 title(sprintf('constrained maximum = %1.3f', mx), FS, fs), set(gca, FS, fs)
 
 %% 
-% Here, to deal with the simple constrain on the independent variable a
+% Here, to deal with the simple constraint on the independent variable a
 % characteristic function was constructed and multiplied with the objective
 % function. 
 
-%% Inequality constraints
-% A similar thing can be done when there are inequality constraints.  
+%% Another constraint
+% A similar thing can be done with other constraints.  
 % For example, consider, for $x\in[0,10]$,
-% \[ \min(\sin(x)^2+\sin(x^2)) \quad \text{s.t.} \quad \sin(10x)<1/2.\]
+%
+% $$ \min(\sin(x)^2+\sin(x^2)) \quad \text{s.t.} \quad |\sin(10x)|<1/2.$$
+%
 
 x = chebfun('x', [0 10]); 
 objective = chebfun( @(x) sin(x).^2 + sin(x.^2), [0 10] ); 
@@ -47,8 +52,11 @@ title(sprintf('constrained maximum = %1.3f', mx),FS,fs), set(gca,FS,fs)
 
 %% Two-dimensional constrained optimization
 % Chebfun2 also has capabilities for global rootfinding and optimization
-% and hence, also constrained optimization. For example, consider maximizing \[
-% \cos((x-1/10)y)^2 + x \sin(3x+y) \] over the following smooth-heart region:
+% and hence, also some constrained optimization. For example, consider maximizing 
+% 
+% $$\cos((x-1/10)y)^2 + x \sin(3x+y)$$ 
+%
+% over the following heart-shaped region:
   
 t = chebfun('t',[0,2*pi]);
 x = 2*sin(t); y = 2*cos(t)-(1/2)*cos(2*t)-(1/4)*cos(3*t)-(1/8)*cos(4*t);
@@ -62,10 +70,11 @@ objective = chebfun2(@(x,y) cos((x-.1).*y).^2 + x.*sin(3*x+y), [-3 3 -3 3]);
 
 contour(objective, LW, lw), axis equal, hold on
 plot( constrain, 'k-', LW, lw), set(gca, FS, fs)
+axis([-3 3 -3 3])
 
 %%
 % We can solve this by first finding all the local extrema of the objective
-% function, restricting to those that lie inside the smoothed-heart region, and
+% function, restricting to those that lie inside the heart-shaped region, and
 % then picking the maximum:
 
 r = roots( grad( objective ) ); 
@@ -77,13 +86,24 @@ max_boundary = max(objective(constrain));
 max_overall = max(max_inside, max_boundary)
 
 %% 
-% The maximum occurs inside the smoothed-heart region. Let's plot it: 
+% The maximum occurs inside the heart-shaped region. Let's plot it: 
 
 [ignored, loc] = max(objective(r(:,1), r(:,2)));
 plot( r(loc,1), r(loc,2), 'r.', MS, 40)
 title(sprintf('Overall maximum = %1.3f', max_overall), FS, fs)
 
+%% Humble comment
+% The reason that Chebfun and Chebfun2 are able to perform some constrained
+% optimization is by virtue of global optimization. For large scale problems
+% this approach quickly becomes too computationally expensive, and there is a 
+% huge field of mathematics devoted to more efficient methods. 
+
 end
+
+%% Inpolygon
+% The script below is an overload of the INPOLYGON command in MATLAB. 
+% Functionality may be added into a new release of Chebfun, in which case this 
+% script will be removed. 
 
 function [in,on] = inpolygon(x,y,p)
 %INPOLYGON True for points inside or on a region with chebfun boundary.
