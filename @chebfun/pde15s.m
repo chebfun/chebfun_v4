@@ -902,6 +902,51 @@ function U = Cumsum(u)
     U = c*(C*u);
 end 
 
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  FRED  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function U = Fred(K, u)
+% Computes the Fredholm integral of u.
+
+    global GLOBX QUASIN
+    persistent W
+
+    if ( isempty(W) )
+    	W = {};
+    end
+
+    if ( nargin == 0 )
+        error('CHEBFUN:pde15s:fred:nargin', ...
+		'No input arguments recieved in Fred.');
+    end
+
+    if ( isa(u,'chebfun') )
+    	U = fred(K, u);
+	return
+    end
+
+    % For finding the order of the RHS
+    if ( any(isnan(u)) )
+        if ( size(u,2) > 1)
+            QUASIN = false;
+	end
+        U = u;
+        return
+    end
+
+    % Retrieve or compute weights:
+    N = length(u);
+    if ( (N > 5) && (numel(W) >= N) && ~isempty(W{N}) )
+    	% Weights are already stored.
+    else
+    	x = GLOBX;
+        c = diff(x([1 end]))/2;
+    	[ignored, w] = chebpts(N);
+    	W{N} = c*w.';
+    end
+
+    [X, Y] = ndgrid(GLOBX);
+    U = K(X, Y)*(W{N}.*u);
+end
+
 function outfun = parsefun(infun,syssize)
 global QUASIN
 Nin = nargin(infun);
@@ -909,8 +954,8 @@ tmp = NaN(1,syssize);
 % Number of operators, (i.e. diff, sum, cumsum) present in infun
 % Also computes QUASIN through global variable in Diff.
 k = 1; Nops = [];
-opslist = {@Diff,@Sum,@Cumsum};
-while k < 4 && isempty(Nops)
+opslist = {@Diff,@Sum,@Cumsum,@Fred};
+while k < 5 && isempty(Nops)
     tmp2 = repmat({tmp},1,nargin(infun)-(k+1));
     try
         ops = opslist(1:k);
@@ -928,7 +973,9 @@ end
 % and won't work if the function is, say, an mfile.
 if isempty(Nops)
     funstr = func2str(infun); funstrl = lower(funstr);
-    if ~isempty(strfind(funstrl,'cumsum('))
+    if ~isempty(strfind(funstrl,'fred('))
+        Nops = 4;
+    elseif ~isempty(strfind(funstrl,'cumsum('))
         Nops = 3;
     elseif ~isempty(strfind(funstrl,'sum(')) || ~isempty(strfind(funstrl,'int('))
         Nops = 2;
