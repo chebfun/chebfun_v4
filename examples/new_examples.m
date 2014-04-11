@@ -26,6 +26,7 @@ if ischar(examples) || numel(examples) == 1 % Copy to the new exmaples page
     text = strrep(text,'<h3>New Examples:</h3>','');
     text = strrep(text,'exampleImage',['exampleImage' int2str(numel(htmlfiles)+1)]);
     text = strrep(text,'imageLink',['imageLink' int2str(numel(htmlfiles)+1)]);
+    text = strrep(text,'width:390px','width:605px');
     fprintf(fid,text);
     fprintf(fid,'\n\n</br>\n\n');
     j = 1;
@@ -75,7 +76,8 @@ newline = '\n'     ;
 % str1 = '        <h3>New Examples:</h3>';
 str1 = '';
 str2 = '        <div style="background:#fff; color:#000; height:160px;">';
-str3 = '            <div style="float:left; background:#fff; width:605px; padding:1px 0px; height:160px">';
+% str3 = '            <div style="float:left; background:#fff; width:605px; padding:1px 0px; height:160px">';
+str3 = '            <div style="float:left; background:#fff; width:390px; padding:1px 0px; height:160px">';
 str = [str1,newline,str2,newline,str3];
 fprintf(fid,str);
 

@@ -346,15 +346,15 @@ elseif nargs == 2
         if exist(fullfile(curdir,dirs,'html',[filename,'.shtml']),'file')
             eval(['!cp ', fullfile(curdir,dirs,'html',[filename,'.shtml']),' ','html'])
         end
-        fprintf('Complete. ')
+        fprintf('Complete.\n')
         
         fprintf('Uploading pdf...')
         eval(['!cp ',fullfile(curdir,dirs,'pdf',[filename,'.pdf']),' ',fullfile('pdf',[filename,'.pdf'])])
-        fprintf('Complete. ')
+        fprintf('Complete.\n')
         
         fprintf('Uploading m files...')
         eval(['!cp ',fullfile(curdir,dirs,[filename,'.m']),' ',[filename,'.m']]);
-        fprintf('Complete. ')
+        fprintf('Complete.\n\n')
         
         fprintf('Setting file permissions...')
             eval(['!chgrp -f chebfun ' filename '.m'])
@@ -368,7 +368,8 @@ elseif nargs == 2
             eval(['!chgrp -f chebfun ' filename '.pdf'])
             eval(['!chmod -f 775 ' filename '.pdf'])
             eval(['!chown -f hale ' filename '.pdf'])
-        fprintf('Complete.\n')
+        fprintf('Complete.\n\n')
+        disp(' ')
         
         cd(curdir)
     end
@@ -838,6 +839,7 @@ fwrite(fid, tmp1);
 if ~isempty(dir)
     % 2nd level
     fprintf(fid,'            <div id="breadcrumb">\n            <table id="bctable"><tbody><tr>\n');
+%    fprintf(fid,'            <td> > <a href="../../">examples</a> > '); % REMOVE ME!
     fprintf(fid,'            <td> > <a href="../../">examples</a> > <a href="../" class="lc">%s</a>',dirtitle);
     if ~isempty(prev)
         fprintf(fid, ' | <a href="%s.shtml">previous</a>',prev);

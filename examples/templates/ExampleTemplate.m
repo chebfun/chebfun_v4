@@ -1,9 +1,9 @@
 %% ONE LINE DESCRIPTION OF EXAMPLE
 % Name, Date
-% [Tags: ]
 
 %%
 % (Chebfun example dirname/FileName.m)
+% [Tags: ]
 
 %%
 % Short description of what the example does.
