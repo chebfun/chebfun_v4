@@ -144,7 +144,7 @@ new_examples('copy')
 
 %%
 
-
+new_examples({'ode', 'vdPorbit', 2, 'temp', 'LejaSequences', 2, 'approx', 'FastConvWeierstrass', 4})
 
 
 
