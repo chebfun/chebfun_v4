@@ -164,7 +164,7 @@ if nargin > 3
     % Original maxn was wasn't a power of 2, so trim g back.
     if trimflag && g.n > oldmaxn
         g = prolong(g,oldmaxn);
-        if g.ish, g.ishh = ishappy(op,g,pref); end  % Check happiness again
+        if g.ish, g = ishappy(op,g,pref); end  % Check happiness again
     end
     
     return
