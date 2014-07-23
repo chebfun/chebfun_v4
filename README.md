@@ -1,4 +1,4 @@
-chebfunV4
+chebfun_v4
 =========
 
 Chebfun V4 (and earlier) code.
